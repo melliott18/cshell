@@ -1,10 +1,8 @@
-# README
+# cshell
 
-# CSE 134 Assignment 1: Simple shell
-
-<p>Mitchell Elliott</p>
-<p>miclelli@ucsc.edu</p>
-<p>4/12/2021</p>
+<p>Simple shell program written in C<p>
+<p>Author: Mitchell Elliott</p>
+<p>Email: mitch.elliott@pacbell.net</p>
 
 ## Program Operation
 
