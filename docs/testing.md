@@ -12,6 +12,25 @@ prompt on non-interactive stdout, and explicitly send `exit` because EOF handlin
 is incomplete. Passing them does not establish POSIX compliance or correct
 quoting, pipelines, redirections, or signal behavior.
 
+Both supported test entry points use the same smoke runner. Native tests build
+with the host toolchain; Docker copies source into an image and builds with its
+Linux toolchain. Each path checks stdout, stderr, exit status, and timeouts:
+
+```mermaid
+flowchart TB
+    native["make test"] --> host["Host toolchain: build cshell"]
+    docker["make docker-test"] --> source["Source-only Docker build context"]
+    source --> linux["Linux image: build cshell with its own toolchain"]
+    host --> smoke["tests/smoke.py: same cases in each environment"]
+    linux --> smoke
+    smoke --> checks["Check stdout, stderr, exit status, and timeout"]
+    checks --> result["Report PASS or FAIL; return test status"]
+```
+
+The diagram describes the current smoke suite. Planned behavioral,
+pseudo-terminal, and conformance coverage is listed under
+[Growing the suite](#growing-the-suite).
+
 ## Native tests
 
 Install the build dependencies from the [README](../README.md) and Python 3:

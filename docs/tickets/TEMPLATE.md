@@ -2,8 +2,11 @@
 
 - Status: backlog
 - Type: feat
+- Kind: implementation
+- Parent: None
 - Depends on: None
 - Branch: Assigned when work starts
+- Issue: Assigned when published
 
 ## Goal
 
@@ -33,3 +36,8 @@ When implementation begins, record design decisions, exact validation commands
 and results, and links to follow-up tickets for remaining work. Do not mark this
 ticket done until its acceptance criteria and recorded checks are satisfied and
 the change is integrated into `main`; use `review` before integration.
+
+For a milestone, use `Kind: milestone`, add a `Children` metadata field and a
+Completion gate section linking every child. Preserve the original acceptance
+criteria. Children depend on their own explicit prerequisites, not implicitly
+on the parent's prerequisites, and never on their parent itself.

@@ -2,8 +2,12 @@
 
 - Status: backlog
 - Type: fix
+- Kind: milestone
+- Parent: None
 - Depends on: CSH-001
+- Children: CSH-014, CSH-015
 - Branch: Assigned when work starts
+- Issue: [#3](https://github.com/melliott18/cshell/issues/3)
 
 ## Goal
 
@@ -50,3 +54,13 @@ against the implementation under review.
 CSH-001 resets the argument count on each input iteration and removes the unused
 series helper. The remaining active pipeline allocation and scanner defects are
 still in scope here.
+
+## Completion gate
+
+- [ ] [CSH-014: Input and memory safety](CSH-014-input-memory-safety.md) is done.
+- [ ] [CSH-015: Process and pipe safety](CSH-015-process-pipe-safety.md) is done.
+- [ ] The original acceptance criteria above pass together on the integrated
+  code, with sanitizer and bounded process-cleanup evidence recorded here.
+
+The children can proceed in parallel after CSH-001. Coordinate changes to the
+input/execution boundary so command storage has one documented owner.

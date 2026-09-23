@@ -6,6 +6,7 @@ Start with the [project README](../README.md) for installation and current statu
 | --- | --- |
 | [Contributing](../CONTRIBUTING.md) | Tickets, branch names, validation, and documentation workflow |
 | [Architecture](architecture.md) | Current source layout and target module responsibilities |
+| [Visual implementation plan](implementation-plan.md) | Dependencies, parallel tasks, and milestone completion |
 | [Testing](testing.md) | Native and Docker commands, smoke coverage, and troubleshooting |
 | [POSIX tracking](posix.md) | Specification target, gaps, and conformance evidence |
 | [Ticket index](tickets/README.md) | Implementation order and dependencies |
@@ -15,3 +16,7 @@ Start with the [project README](../README.md) for installation and current statu
 The ticket files are the source of truth for implementation status. Architecture
 and POSIX documents describe the design and requirements; neither substitutes
 for acceptance evidence in a completed ticket.
+
+The architecture, implementation plan, and testing documents contain Mermaid
+diagrams. GitHub renders these diagrams; each is accompanied by text or tables
+so the information remains accessible in a plain Markdown reader.

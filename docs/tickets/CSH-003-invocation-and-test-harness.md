@@ -2,8 +2,12 @@
 
 - Status: backlog
 - Type: feat
+- Kind: milestone
+- Parent: None
 - Depends on: CSH-002
+- Children: CSH-016, CSH-017, CSH-018
 - Branch: Assigned when work starts
+- Issue: [#4](https://github.com/melliott18/cshell/issues/4)
 
 ## Goal
 
@@ -48,3 +52,15 @@ hanging fixture is stopped by the test runner.
 
 Invocation arguments must be retained even before parameter expansion exists.
 Interactive terminal behavior receives full pseudo-terminal coverage in CSH-011.
+
+## Completion gate
+
+- [ ] [CSH-016: Input and invocation](CSH-016-input-and-invocation.md) is done.
+- [ ] [CSH-017: Test harness and CI](CSH-017-test-harness-and-ci.md) is done.
+- [ ] [CSH-018: Status and CLI integration](CSH-018-status-and-cli-integration.md)
+  is done.
+- [ ] The original acceptance criteria above pass across all three invocation
+  modes through the native and Docker entry points, with CI evidence recorded.
+
+CSH-017 starts after CSH-001 using the existing stdin mode; it need not wait for
+the safety milestone or new invocation modes. CSH-018 joins the two streams.

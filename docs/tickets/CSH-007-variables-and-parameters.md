@@ -2,8 +2,12 @@
 
 - Status: backlog
 - Type: feat
+- Kind: milestone
+- Parent: None
 - Depends on: CSH-003, CSH-006
+- Children: CSH-022, CSH-023
 - Branch: Assigned when work starts
+- Issue: [#8](https://github.com/melliott18/cshell/issues/8)
 
 ## Goal
 
@@ -41,3 +45,16 @@ replacement, unsetting, empty values, readonly failures, and subshell isolation.
 
 Do not use the process environment as the only variable store: unexported shell
 variables and variable attributes require separate state.
+
+## Completion gate
+
+- [ ] [CSH-022: Shell state storage](CSH-022-shell-state-storage.md) is done.
+- [ ] [CSH-023: Assignment environments](CSH-023-assignment-environments.md) is
+  done.
+- [ ] The original acceptance criteria above pass at the state/execution API
+  boundary, including command-category fixtures, and CSH-003 and CSH-006 are done.
+
+CSH-022 can start after CSH-016 and run alongside language-front-end work.
+CSH-023 joins the state and simple-command APIs. Full function and special-builtin
+integration remains in CSH-009 and CSH-010; those consumers must preserve the
+assignment rules verified here.

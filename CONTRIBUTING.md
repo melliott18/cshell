@@ -1,8 +1,9 @@
 # Contributing to cshell
 
 Development proceeds through the [implementation tickets](docs/tickets/README.md).
-These Markdown files are the project backlog and implementation record. They can
-be reviewed in a browser, editor, or terminal without a separate tracking service.
+These Markdown files are the project backlog and implementation record. Their
+`Issue` links connect to GitHub Issues. Keep both representations aligned; the
+Markdown remains readable in a browser, editor, or terminal.
 
 ## Branch names
 
@@ -19,19 +20,20 @@ separated by hyphens. Every implementation branch identifies its ticket.
 | --- | --- | --- |
 | `feat` | New shell behavior | `feat/CSH-004-quote-aware-lexer` |
 | `fix` | Correct existing behavior | `fix/CSH-002-runtime-safety` |
-| `refactor` | Change code structure | `refactor/CSH-016-executor-cleanup` |
-| `docs` | Documentation changes | `docs/CSH-013-developer-guide` |
-| `test` | Test coverage or test tooling | `test/CSH-014-parser-cases` |
-| `build` | Build or CI changes | `build/CSH-015-linux-ci` |
+| `refactor` | Change code structure | `refactor/CSH-NNN-module-boundaries` |
+| `docs` | Documentation changes | `docs/CSH-013-visual-roadmap` |
+| `test` | Test coverage or test tooling | `test/CSH-017-test-harness-and-ci` |
+| `build` | Build or CI changes | `build/CSH-NNN-toolchain-update` |
 | `chore` | Project maintenance | `chore/CSH-001-project-foundation` |
 
-Examples do not allocate ticket IDs; create the matching ticket before starting
-new work. This convention replaces the `codex/` branch prefix for this repository.
+Replace `NNN` with an allocated ticket number. Examples do not allocate IDs;
+create the matching ticket before starting new work. This convention replaces
+the `codex/` branch prefix for this repository.
 It is a documented convention, not an installed Git hook or server-side rule.
 
 ## Ticket lifecycle
 
-1. Choose a ticket whose dependencies are complete. For new work, copy the
+1. Choose an implementation ticket whose own dependencies are complete. For new work, copy the
    [template](docs/tickets/TEMPLATE.md), allocate the next unused ID, and add it to
    the index. Define observable acceptance criteria before implementation.
 2. Create the ticket branch from the agreed integration branch (`main` initially).
@@ -49,10 +51,21 @@ Allowed statuses are `backlog`, `ready`, `in-progress`, `blocked`, `review`, and
 For `blocked`, describe the actual blocker and what resolves it. Keep status in
 the ticket itself; the index provides navigation and dependency order.
 
-A large roadmap ticket may be split into smaller tickets before implementation.
-Retain the original ID as a parent, link the children, and define when the parent
-is complete. Dependencies on a parent are satisfied only when its required
-children are complete.
+A large roadmap ticket is retained as a `Kind: milestone` when split. Its
+`Children` list identifies implementation tickets, whose `Parent` fields point
+back to it. Parent prerequisites are milestone completion gates, not additional
+prerequisites silently inherited by every child. A child never depends on its own
+parent. Close the milestone only when all children, its prerequisites, and the
+original acceptance criteria are complete.
+
+In GitHub, milestone tickets are parent issues and their children are native
+sub-issues. This use of "milestone" describes the ticket's role; it does not
+create a separate GitHub Milestones object. Keep both these relationships and
+the Markdown child checklists synchronized.
+
+See the [visual implementation plan](docs/implementation-plan.md) for the first
+parallel tasks and shared-interface boundaries. A milestone is not a second
+implementation branch; changes happen through its child tickets.
 
 ## Build and validation
 
@@ -97,6 +110,7 @@ Use paths, ticket IDs, and concrete commands when describing implementation work
 - docs/README.md indexes the documentation.
 - docs/architecture.md describes current and planned module boundaries.
 - docs/testing.md documents native and Docker test entry points and coverage.
+- docs/implementation-plan.md diagrams implementation dependencies and parallel work.
 - docs/posix.md records the conformance target and evidence policy.
 - Each ticket owns its scope, status, acceptance criteria, and validation record.
 - AGENTS.md points agents to the same documents used by people; global agent
@@ -105,3 +119,7 @@ Use paths, ticket IDs, and concrete commands when describing implementation work
 Separate implemented behavior from planned behavior. Update code references when
 moving modules, and never label a feature compliant solely because one example
 works.
+
+Use fenced Mermaid blocks for small engineering diagrams. GitHub renders them
+visually; nearby prose or tables must preserve the essential meaning for readers
+without Mermaid support. Render and inspect changed diagrams before review.
