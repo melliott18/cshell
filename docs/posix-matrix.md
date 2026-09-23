@@ -35,9 +35,10 @@ or inapplicable result.
 Fixture names below are **planned logical IDs**, not links to existing files or
 a new harness format. CSH-017/033 own the behavioral/PTY adapters; implementation
 tickets add actual fixture paths and case IDs when available. All runtime
-families remain `missing`: prototype observations and the bounded CSH-016/CSH-022 API
-evidence below do not establish complete replacement-runtime behavior. `implemented`
-requires a linked implementation; `verified` additionally requires passing,
+families remain open: prototype observations and the bounded CSH-016, CSH-004,
+and CSH-022 API evidence below do not establish complete replacement-runtime
+behavior. `implemented` requires a linked implementation; `verified` additionally
+requires passing,
 revision-qualified results for the scoped cases. `inapplicable` requires a
 resolved source-based scope decision and remains distinct from skipped tests.
 
@@ -64,6 +65,20 @@ do not supply the revision-qualified end-to-end evidence needed to mark the
 families below `verified`. CSH-018 owns replacement-runtime integration and
 CSH-039 owns the public executable cutover. Each affected row keeps its broader
 runtime or untested subcases open.
+
+<a id="csh-004-api-evidence"></a>
+
+### CSH-004 API evidence
+
+The [lexer contract](lexer-and-words.md), [`src/lexer.c`](../src/lexer.c), and
+[`tests/lexer.py`](../tests/lexer.py) implement and test lexical token kinds,
+physical spans, quote/escape provenance, incremental nesting, and parser handoffs.
+The [validation record](tickets/CSH-004-lexer-and-words.md#validation-evidence-2026-09-23)
+details native, sanitizer, and Linux checks. Command-substitution grammar and
+here-document queue/delimiter processing remain with CSH-005; aliases remain
+with CSH-030. Dollar-single-quote escapes remain raw until CSH-024 decodes them
+before expansion. Locale-sensitive multibyte lexical interpretation remains
+open in ENV-004/CSH-037. These module checks do not establish runtime conformance.
 
 <a id="csh-022-api-evidence"></a>
 
@@ -100,11 +115,11 @@ tickets; the broader families below remain `missing`.
 
 | ID | Requirement | Source | Scope / variations | Owning tickets | Planned fixture ID | Current evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| <a id="lex-001"></a>LEX-001 | Recognize words, longest operators, comments, newlines, and nested substitutions without early expansion. | [2.3](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_03) | required | [CSH-004](tickets/CSH-004-lexer-and-words.md) | `lexer/tokens-nesting` | missing |
-| <a id="lex-002"></a>LEX-002 | Apply backslash escaping and remove escaped newlines before token boundaries. | [2.2.1](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_02_01) | required | [CSH-004](tickets/CSH-004-lexer-and-words.md) | `lexer/escape-continuation` | missing |
-| <a id="lex-003"></a>LEX-003 | Preserve literal single-quoted text, empty words, and adjacent quoted/unquoted fragments. | [2.2.2](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_02_02) | required | [CSH-004](tickets/CSH-004-lexer-and-words.md) | `lexer/single-quotes` | missing |
-| <a id="lex-004"></a>LEX-004 | Preserve double-quote context for dollar/backquote/backslash and parameter/substitution nesting. | [2.2.3](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_02_03) | required; undefined/unspecified nested edge cases kept out of exact oracles | [CSH-004](tickets/CSH-004-lexer-and-words.md), [CSH-024](tickets/CSH-024-value-expansions.md), [CSH-026](tickets/CSH-026-substitution-and-heredoc-integration.md) | `lexer/double-quotes` | missing |
-| <a id="lex-005"></a>LEX-005 | Decode Issue 8 dollar-single-quote escapes and retain resulting quoting. | [2.2.4](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_02_04) | required; unspecified escape cases and implementation-defined locale encoding, D-003 | [CSH-004](tickets/CSH-004-lexer-and-words.md) | `lexer/dollar-single-quotes` | missing |
+| <a id="lex-001"></a>LEX-001 | Recognize words, longest operators, comments, newlines, and nested substitutions without early expansion. | [2.3](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_03) | required | [CSH-004](tickets/CSH-004-lexer-and-words.md) | `lexer/tokens-nesting` | [API evidence](#csh-004-api-evidence); runtime and remaining grammar/expansion cases open |
+| <a id="lex-002"></a>LEX-002 | Apply backslash escaping and remove escaped newlines before token boundaries. | [2.2.1](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_02_01) | required | [CSH-004](tickets/CSH-004-lexer-and-words.md) | `lexer/escape-continuation` | [API evidence](#csh-004-api-evidence); runtime and remaining grammar/expansion cases open |
+| <a id="lex-003"></a>LEX-003 | Preserve literal single-quoted text, empty words, and adjacent quoted/unquoted fragments. | [2.2.2](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_02_02) | required | [CSH-004](tickets/CSH-004-lexer-and-words.md) | `lexer/single-quotes` | [API evidence](#csh-004-api-evidence); runtime and remaining grammar/expansion cases open |
+| <a id="lex-004"></a>LEX-004 | Preserve double-quote context for dollar/backquote/backslash and parameter/substitution nesting. | [2.2.3](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_02_03) | required; undefined/unspecified nested edge cases kept out of exact oracles | [CSH-004](tickets/CSH-004-lexer-and-words.md), [CSH-024](tickets/CSH-024-value-expansions.md), [CSH-026](tickets/CSH-026-substitution-and-heredoc-integration.md) | `lexer/double-quotes` | [API evidence](#csh-004-api-evidence); runtime and remaining grammar/expansion cases open |
+| <a id="lex-005"></a>LEX-005 | Decode Issue 8 dollar-single-quote escapes and retain resulting quoting. | [2.2.4](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_02_04) | required; unspecified escape cases and implementation-defined locale encoding, D-003 | [CSH-004](tickets/CSH-004-lexer-and-words.md), [CSH-024](tickets/CSH-024-value-expansions.md) | `lexer/dollar-single-quotes` | missing decoding; [API evidence](#csh-004-api-evidence) preserves dollar-single quote boundaries and raw escapes |
 | <a id="lex-006"></a>LEX-006 | Substitute eligible aliases recursively with recursion prevention and correct token/parse timing. | [2.3.1](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_03_01) | required; alias/reserved-word and parse timing choices, D-004 | [CSH-030](tickets/CSH-030-alias-substitution.md), [CSH-004](tickets/CSH-004-lexer-and-words.md), [CSH-005](tickets/CSH-005-parser-and-ast.md) | `lexer/alias-boundaries` | missing |
 | <a id="gram-001"></a>GRAM-001 | Recognize reserved words only in their grammatical positions; preserve names and assignment words. | [2.4; 2.10.1](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_04) | required; extra reserved words have specified/unspecified cases | [CSH-005](tickets/CSH-005-parser-and-ast.md), [CSH-027](tickets/CSH-027-compound-syntax.md) | `parser/reserved-assignments` | missing |
 | <a id="gram-002"></a>GRAM-002 | Parse pipelines, lists, groups, redirections and complete commands with specified precedence. | [2.10.2](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_10_02) | required; optional IO_LOCATION tracked D-002 | [CSH-005](tickets/CSH-005-parser-and-ast.md) | `parser/precedence-complete-command` | missing |
@@ -189,7 +204,7 @@ must not silently become normative requirements for other shells.
 | --- | --- | --- | --- |
 | D-001 | SH-003: optional PATH search for a slashless script missing from cwd; SH-004: handling `-i` when real/effective identity differs. | [CSH-016](tickets/CSH-016-input-and-invocation.md) documents policy and targeted invocation fixtures. | API choice: [direct path opening without PATH search](input-and-invocation.md#invocation-contract). `-i` unconditionally selects interactivity in [the parser](../src/invocation.c); unequal-identity and PATH-only negative fixtures remain missing, as does runtime evidence |
 | D-002 | SH-009, RED-001, GRAM-002: offset and descriptor maxima (at least descriptors 0–9); whether optional `{varname}` IO_LOCATION is supported, with its implementation-defined behavior if selected. | [CSH-019](tickets/CSH-019-simple-command-redirections.md) records limits/choice with [CSH-005](tickets/CSH-005-parser-and-ast.md); CSH-037 checks platforms. | missing; open |
-| D-003 | LEX-005, EXP-007: dollar-single-quote byte encodings where locale encoding is implementation-defined; additional IFS whitespace classification. | [CSH-004](tickets/CSH-004-lexer-and-words.md) and [CSH-025](tickets/CSH-025-field-and-pathname-expansion.md) document choices and locale cases. | missing; open |
+| D-003 | LEX-005, EXP-007: dollar-single-quote byte encodings where locale encoding is implementation-defined; additional IFS whitespace classification. | [CSH-024](tickets/CSH-024-value-expansions.md) and [CSH-025](tickets/CSH-025-field-and-pathname-expansion.md) document choices and locale cases. | missing; open |
 | D-004 | LEX-006, EXP-005: alias parse timing and command-substitution parsing alternatives permitted by the source. | [CSH-030](tickets/CSH-030-alias-substitution.md) and [CSH-026](tickets/CSH-026-substitution-and-heredoc-integration.md) record supported timing; oracle allows source-permitted alternatives. | missing; open |
 | D-005 | EXP-006: optional arithmetic extensions, numeric representation and platform limits. | [CSH-024](tickets/CSH-024-value-expansions.md) records required integer support and separates extension tests; CSH-037 checks portability. | missing; open |
 | D-006 | EXP-011, EXEC-002/014: assignment visibility/export/persistence where unspecified; expanded declaration names; optional extra characters in function names. | [CSH-023](tickets/CSH-023-assignment-environments.md), [CSH-028](tickets/CSH-028-control-flow-and-functions.md) and [CSH-031](tickets/CSH-031-evaluation-builtins.md) choose consistent semantics and classify fixtures. | missing; open |
