@@ -32,8 +32,10 @@ make CC=clang  # Select a compiler
 ```sh
 make test          # Input API and selected behavioral fixtures; Python 3.9+
 make test-input    # Replacement input/invocation API checks only
+make test-pty      # Controlling-terminal startup and explicit-exit fixture
 make test-harness  # Test the runner's failure detection and cleanup
 make docker-test   # Build and run the selected fixtures in a Linux container
+make docker-test-pty # Build and run the selected terminal fixtures in Linux
 ```
 
 `make test` includes independent input/invocation API checks. Its default
@@ -41,6 +43,12 @@ behavioral suite records the current prototype's stdin behavior and explicit
 prompt allowance. Replacement shell and module tests select their executable and
 fixture suite separately; passing prototype tests does not establish replacement
 behavior or POSIX compliance.
+
+`make test-pty` independently selects a candidate and terminal suite with
+`PTY_TEST_TARGET`, `PTY_TEST_BINARY`, and `PTY_TEST_SUITE`. Its default fixture
+checks startup and explicit exit on a controlling pseudo-terminal. Harness
+self-tests exercise terminal signals and foreground ownership with helper
+programs; they do not claim that cshell implements signals or job control.
 
 The Docker path requires Docker with a running Linux engine and uses its own
 compiler, Flex, and Python. Native Linux, native macOS, and Docker checks also run
@@ -70,7 +78,7 @@ src/input.c      Replacement physical-line input sources
 src/invocation.c Replacement invocation and operand mapping
 src/legacy/      Transitional lexer and executor
 docs/            Architecture, POSIX tracking, and implementation tickets
-tests/           Input API fixtures, behavioral runner, and harness self-tests
+tests/           Input API fixtures, pipe/PTY behavioral runner, and self-tests
 build/           Generated scanner and object files (ignored by Git)
 ```
 

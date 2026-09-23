@@ -15,6 +15,8 @@ import sys
 import tempfile
 import time
 
+import pty_harness
+
 
 DEFAULT_SUITE = Path(__file__).parent / "fixtures" / "prototype.json"
 SUITE_LIMIT = 1024 * 1024
@@ -66,14 +68,24 @@ def load_suite(path):
         raise ValueError("suite cases must be a nonempty array")
     names = set()
     for case in suite["cases"]:
-        fields(case, ("name", "stdin", "expect"),
-               ("args", "env", "setup", "platforms", "skip_reason", "timeout", "output_limit", "strip_prompt"), "case")
+        fields(case, ("name", "expect"),
+               ("stdin", "transport", "steps", "args", "env", "setup", "platforms", "skip_reason", "timeout", "output_limit", "strip_prompt"), "case")
         name = case["name"]
         if not isinstance(name, str) or not name.strip() or name in names:
             raise ValueError("case names must be nonempty unique strings")
         names.add(name)
-        if not isinstance(case["stdin"], str):
-            raise ValueError(f"{name}: stdin must be a string")
+        transport = case.get("transport", "pipe")
+        if transport not in ("pipe", "pty"):
+            raise ValueError(f"{name}: transport must be pipe or pty")
+        if transport == "pipe":
+            if not isinstance(case.get("stdin"), str):
+                raise ValueError(f"{name}: stdin must be a string")
+            if "steps" in case:
+                raise ValueError(f"{name}: steps require transport pty")
+        else:
+            if "stdin" in case or "strip_prompt" in case:
+                raise ValueError(f"{name}: PTY cases use steps and exact output, not stdin/strip_prompt")
+            validate_steps(case.get("steps"), name)
         args = case.get("args", [])
         if not isinstance(args, list) or any(not isinstance(a, str) or "\0" in a for a in args):
             raise ValueError(f"{name}: args must be strings without NUL")
@@ -93,9 +105,10 @@ def load_suite(path):
             if not isinstance(content, str):
                 raise ValueError(f"{name}: setup contents must be strings")
         expected = case["expect"]
-        fields(expected, ("stdout", "stderr", "status"), ("files",), f"{name}: expect")
-        if any(not isinstance(expected[k], str) for k in ("stdout", "stderr")):
-            raise ValueError(f"{name}: expected stdout and stderr must be strings")
+        streams = ("output",) if transport == "pty" else ("stdout", "stderr")
+        fields(expected, (*streams, "status"), ("files",), f"{name}: expect")
+        if any(not isinstance(expected[k], str) for k in streams):
+            raise ValueError(f"{name}: expected {'/'.join(streams)} must be strings")
         if type(expected["status"]) is not int:
             raise ValueError(f"{name}: expected status must be an integer")
         files = expected.get("files", {})
@@ -128,6 +141,23 @@ def load_suite(path):
     return suite
 
 
+def validate_steps(steps, name):
+    if not isinstance(steps, list):
+        raise ValueError(f"{name}: PTY steps must be an array")
+    for index, step in enumerate(steps, 1):
+        if not isinstance(step, dict) or len(step) != 1:
+            raise ValueError(f"{name}: PTY step {index} must contain exactly one action")
+        action, value = next(iter(step.items()))
+        choices = {"control": pty_harness.CONTROLS, "signal": pty_harness.SIGNALS,
+                   "foreground": ("leader", "other")}
+        if action not in ("expect", "send", *choices):
+            raise ValueError(f"{name}: unknown PTY step action {action!r}")
+        if not isinstance(value, str) or (action == "expect" and not value):
+            raise ValueError(f"{name}: PTY {action} must be a string (expect must be nonempty)")
+        if action in choices and value not in choices[action]:
+            raise ValueError(f"{name}: invalid PTY {action}: {value!r}")
+
+
 def child_limits(timeout, output_limit):
     """Run only in the forked child of this single-threaded POSIX runner."""
     for kind, limit in (
@@ -158,6 +188,9 @@ def capture(binary, case, directory, timeout, output_limit):
     environment.update(case.get("env", {}))
     for target in (".home", ".tmp"):
         (directory / target).mkdir()
+    if case.get("transport") == "pty":
+        return pty_harness.capture(binary, case, directory, timeout, output_limit,
+                                   environment, child_limits)
     data = case["stdin"].encode("utf-8")
     output = {"stdout": bytearray(), "stderr": bytearray()}
     failures = []
@@ -277,7 +310,7 @@ def run_case(binary, case, timeout, output_limit):
         expected = case["expect"]
         if status != expected["status"]:
             failures.append(f"status: expected {expected['status']}, got {status}")
-        for name in ("stdout", "stderr"):
+        for name in output:
             actual = bytes(output[name])
             if name == "stdout" and case.get("strip_prompt", False):
                 actual = actual.replace(b"Shell> ", b"")
@@ -322,6 +355,10 @@ def main():
             continue
         try:
             failures = run_case(binary, case, args.timeout, args.output_limit)
+        except pty_harness.PtyUnavailable as error:
+            print(f"SKIP: {case['name']}: {error}", flush=True)
+            skipped += 1
+            continue
         except (OSError, ValueError, subprocess.SubprocessError) as error:
             failures = [str(error)]
         if failures:
