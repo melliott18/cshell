@@ -27,13 +27,20 @@ make CC=clang  # Select a compiler
 ## Test
 
 ```sh
-make test         # Native smoke checks; requires Python 3
-make docker-test  # Build and run the checks in a Linux container
+make test          # Native prototype fixtures; requires Python 3.9+
+make test-harness  # Test the runner's failure detection and cleanup
+make docker-test   # Build and run the selected fixtures in a Linux container
 ```
 
+The default suite records the current prototype's stdin behavior and its explicit
+prompt allowance. Replacement shell and module tests select their executable and
+fixture suite separately; passing prototype tests does not establish replacement
+behavior or POSIX compliance.
+
 The Docker path requires Docker with a running Linux engine and uses its own
-compiler, Flex, and Python. See [Testing](docs/testing.md) for direct Docker
-commands, coverage limits, and troubleshooting.
+compiler, Flex, and Python. Native Linux, native macOS, and Docker checks also run
+in CI. See [Testing](docs/testing.md) for fixture authoring, executable selection,
+resource limits, direct Docker commands, and troubleshooting.
 
 ## Where to start
 
@@ -55,7 +62,7 @@ include/cshell/   Internal module interfaces
 src/main.c       Program entry point and current input loop
 src/legacy/      Transitional lexer and executor
 docs/            Architecture, POSIX tracking, and implementation tickets
-tests/           Bounded smoke checks
+tests/           Fixture runner, behavioral fixtures, and harness self-tests
 build/           Generated scanner and object files (ignored by Git)
 ```
 

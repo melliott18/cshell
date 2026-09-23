@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "name": "runner contract examples",
+  "kind": "self",
+  "cases": [
+    {
+      "name": "stdin args stdout stderr and status",
+      "stdin": "fixture input\n",
+      "args": ["echo", "intentional diagnostic\n", "7"],
+      "expect": {
+        "stdout": "fixture input\n",
+        "stderr": "intentional diagnostic\n",
+        "status": 7
+      }
+    },
+    {
+      "name": "setup and filesystem effects",
+      "stdin": "",
+      "args": ["files"],
+      "setup": {"seed/input.txt": "seed\n", "remove.txt": "remove me\n"},
+      "expect": {
+        "stdout": "",
+        "stderr": "",
+        "status": 0,
+        "files": {
+          "result.txt": {"type": "file", "content": "seed\nprocessed\n"},
+          "artifacts/empty": {"type": "directory"},
+          "remove.txt": {"type": "absent"}
+        }
+      }
+    },
+    {
+      "name": "first isolated working directory",
+      "stdin": "",
+      "args": ["write", "case-local.txt", "private"],
+      "expect": {
+        "stdout": "", "stderr": "", "status": 0,
+        "files": {"case-local.txt": {"type": "file", "content": "private"}}
+      }
+    },
+    {
+      "name": "second isolated working directory",
+      "stdin": "",
+      "args": ["echo"],
+      "expect": {
+        "stdout": "", "stderr": "", "status": 0,
+        "files": {"case-local.txt": {"type": "absent"}}
+      }
+    }
+  ]
+}
