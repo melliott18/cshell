@@ -8,7 +8,6 @@ import os
 from pathlib import Path, PurePosixPath
 import resource
 import selectors
-import signal
 import stat
 import subprocess
 import sys
@@ -173,11 +172,10 @@ def child_limits(timeout, output_limit):
     os.umask(0o077)
 
 
-def kill_group(process):
-    try:
-        os.killpg(process.pid, signal.SIGKILL)
-    except ProcessLookupError:
-        pass
+def kill_group(process, deadline=None):
+    if deadline is None:
+        deadline = time.monotonic() + 1.0
+    pty_harness.kill_group(process.pid, process.pid, deadline)
 
 
 def capture(binary, case, directory, timeout, output_limit):
@@ -254,10 +252,24 @@ def capture(binary, case, directory, timeout, output_limit):
                     break
     finally:
         # Also runs on interruption, I/O errors, and normal completion.
-        kill_group(process)
-        for stream in (process.stdin, process.stdout, process.stderr):
-            stream.close()
-        process.wait()
+        cleanup_deadline = time.monotonic() + 1.0
+        try:
+            kill_group(process, cleanup_deadline)
+        except (OSError, ValueError, subprocess.SubprocessError) as error:
+            failures.append(f"pipe cleanup failed: {error}")
+            # A snapshot/group failure must not prevent trying to stop and reap
+            # the leader. Keep the original failure even if this fallback works.
+            try:
+                process.kill()
+            except OSError as error:
+                failures.append(f"pipe cleanup could not kill leader: {error}")
+        finally:
+            for stream in (process.stdin, process.stdout, process.stderr):
+                stream.close()
+            try:
+                process.wait(timeout=max(0, cleanup_deadline - time.monotonic()))
+            except subprocess.TimeoutExpired:
+                failures.append("pipe cleanup could not reap leader within 1s")
     return process.returncode, output, failures
 
 

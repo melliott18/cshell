@@ -125,16 +125,7 @@ def cleanup_session(process, master, timeout=1.0):
             # Stop jobs before the session leader, avoiding an unnecessary
             # orphan/hangup transition while other groups are being killed.
             for group in sorted(groups, key=lambda group: group == process.pid):
-                try:
-                    os.killpg(group, signal.SIGKILL)
-                except ProcessLookupError:
-                    pass
-                except PermissionError:
-                    # Darwin may report EPERM for a group that became entirely
-                    # zombies between the snapshot and killpg. Only suppress it
-                    # when a fresh snapshot proves there is no live member.
-                    if any(pgid == group for _, pgid in session_members(process.pid, deadline)):
-                        raise
+                kill_group(group, process.pid, deadline)
             groups.clear()
             if not members:
                 break
@@ -159,6 +150,22 @@ def cleanup_session(process, master, timeout=1.0):
         except subprocess.TimeoutExpired:
             failures.append(f"PTY cleanup could not reap leader within {timeout:g}s")
     return failures
+
+
+def kill_group(group, session, deadline):
+    """Kill an owned group; accept Darwin EPERM only after proving it exited."""
+    try:
+        os.killpg(group, signal.SIGKILL)
+    except ProcessLookupError:
+        pass
+    except PermissionError as error:
+        # XNU skips zombies when delivering group signals and returns EPERM
+        # when none of the group's members remain eligible. A prior successful
+        # kill, or the leader's exit, alone does not prove descendants exited.
+        if sys.platform != "darwin" or error.errno != errno.EPERM:
+            raise
+        if any(pgid == group for _, pgid in session_members(session, deadline)):
+            raise
 
 
 def owned_group(group, session, deadline):
