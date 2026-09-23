@@ -29,7 +29,7 @@ retained below only as a superseded historical milestone.
 
 ## Standalone work
 
-Foundation, front-end implementation, and roadmap maintenance:
+Foundation, front-end implementation, roadmap maintenance, and test infrastructure:
 
 | Ticket | Deliverable | Depends on | GitHub |
 | --- | --- | --- | --- |
@@ -38,6 +38,7 @@ Foundation, front-end implementation, and roadmap maintenance:
 | [CSH-005](CSH-005-parser-and-ast.md) | Parse commands into an owned syntax tree | [CSH-004](CSH-004-lexer-and-words.md) | [#6](https://github.com/melliott18/cshell/issues/6) |
 | [CSH-013](CSH-013-visual-roadmap.md) | Document visual architecture and parallel implementation work | [CSH-001](CSH-001-project-foundation.md) | [#14](https://github.com/melliott18/cshell/issues/14) |
 | [CSH-038](CSH-038-legacy-retirement-plan.md) | Remove legacy constraints from the implementation roadmap | [CSH-013](CSH-013-visual-roadmap.md) | [#40](https://github.com/melliott18/cshell/issues/40) |
+| [CSH-040](CSH-040-macos-harness-cleanup.md) | Make repeated macOS harness cleanup reliable | [CSH-017](CSH-017-test-harness-and-ci.md) | [#48](https://github.com/melliott18/cshell/issues/48) |
 
 ## Child implementation tickets
 

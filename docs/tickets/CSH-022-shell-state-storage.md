@@ -115,3 +115,12 @@ unprivileged UID 10001.
 
 These results establish the CSH-022 storage API, not end-to-end shell behavior
 or general POSIX conformance. The ticket remains in review until integration.
+
+
+Hosted CI for implementation commit `c35b80f` passed all three branch jobs and
+all three PR jobs: native Ubuntu/GCC, native macOS/Clang, and Docker Linux.
+[PR run](https://github.com/melliott18/cshell/actions/runs/35920676755) and
+[branch run](https://github.com/melliott18/cshell/actions/runs/35920657825).
+The first PR macOS attempt hit an existing descendant-cleanup EPERM failure;
+its retry passed. [CSH-040](CSH-040-macos-harness-cleanup.md) records the evidence
+and follow-up regression work. CSH-022 does not modify that harness code.
