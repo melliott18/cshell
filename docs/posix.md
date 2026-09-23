@@ -16,10 +16,26 @@ dollar-single-quote syntax and the `pipefail` option. Track optional facilities
 and implementation-defined choices explicitly as coverage grows. A shell
 implementation's compliance is separate from certification of an entire system.
 
-## Initial coverage map
+## Requirements and evidence
 
-This is a planning map, not a completed conformance test inventory. Ticket status
-lives in the [ticket files](tickets/README.md).
+The [requirements matrix](posix-matrix.md) inventories the shell language and
+`sh` contract using stable IDs, precise Issue 8 sources, scope decisions,
+implementation owners, planned fixtures and current evidence. Its companion
+[utility and option map](posix-utilities.md) covers special/intrinsic utilities,
+host dependencies and conditional profiles. Use [requirements by ticket](posix-owners.md)
+to find a ticket's rows, or follow a row's owner and evidence links in the other
+direction.
+
+[Evidence conventions](posix-evidence.md) define missing, implemented, verified
+and inapplicable states, exact smoke-test limits, and a reproducible differential
+example. Unimplemented requirements and pending scope decisions remain open.
+Reference-shell output does not establish expected results or cshell conformance.
+Ticket lifecycle status continues to live in the [ticket files](tickets/README.md).
+
+## Runtime baseline
+
+This summary describes the prototype at the matrix's recorded base revision.
+The requirement rows are the detailed planning and evidence record.
 
 | Area | Current evidence / gap | Owning tickets |
 | --- | --- | --- |
@@ -56,9 +72,9 @@ not the authority: use the standard to resolve differences and avoid asserting
 one result where behavior is unspecified. Record reference-shell versions,
 especially when testing Issue 8 additions.
 
-Before claiming the target is covered, expand this map into a requirement-level
-matrix with test links, close documented gaps, and validate on the supported
-systems. Sanitizers and Linux/macOS builds are complementary safety and
+Before claiming the target is covered, refine each matrix family into its full
+fixture inventory, link passing results, close documented gaps, and validate on
+the supported systems. Sanitizers and Linux/macOS builds are complementary safety and
 portability checks, not substitutes for language conformance tests.
 
 See [Testing](testing.md) for the current native and Docker entry points and

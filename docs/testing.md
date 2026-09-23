@@ -98,6 +98,17 @@ If Docker reports that it cannot connect to the daemon, start Docker Desktop or
 the configured engine and check `docker info`. Build and test failures propagate
 through `make docker-test` as a nonzero exit status.
 
+## Conformance fixture planning
+
+Before adding a behavioral case, find its stable requirement ID in the
+[requirements matrix](posix-matrix.md) or [utility and option map](posix-utilities.md).
+Follow the [evidence conventions](posix-evidence.md) for specification-derived
+expectations, environment capture, allowed alternatives and reference comparisons.
+The [smoke evidence map](posix-evidence.md#existing-smoke-evidence) records exactly
+what today's three cases observe; planned fixture IDs are not passing tests.
+CSH-017 and CSH-033 own harness formats and adapters, so this documentation adds
+no new runner or required unsupported invocation mode.
+
 ## Growing the suite
 
 - [CSH-002](tickets/CSH-002-legacy-safety.md) adds regression cases for memory,

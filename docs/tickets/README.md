@@ -130,5 +130,10 @@ Use the [ticket template](TEMPLATE.md) for new work. A child uses its own
 explicit prerequisites; it does not inherit all parent completion gates.
 Milestones are not closed merely because they were split.
 
+Use [requirements by ticket](../posix-owners.md) to find the POSIX requirements
+and intended fixtures assigned to each implementation ticket. Each requirement
+links its source, owner, scope and current evidence; update both directions when
+splitting or reallocating work.
+
 Tests and conformance evidence grow with each implementation ticket.
 CSH-037 is the final audit, not the first testing milestone.
