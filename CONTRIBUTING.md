@@ -90,6 +90,7 @@ From the repository root:
 make clean
 make -j
 make test
+make test-pty
 make test-harness
 ```
 
@@ -99,8 +100,10 @@ fixtures; its default suite checks the prototype's startup, explicit exit, and
 simple external commands. `make test-input` checks only the replacement input
 modules, without Flex or legacy dependencies. `make test-harness` checks the
 runner's own assertions, resource limits, and descendant cleanup, including
-deliberately failing cases. These checks do not establish shell correctness
-or POSIX compliance.
+deliberately failing cases and terminal-control helpers. `make test-pty` checks
+the selected candidate on a controlling pseudo-terminal; its default prototype
+fixture checks startup and explicit exit. These checks do not establish shell
+correctness or POSIX compliance.
 
 `make test-state` checks the replacement shell-state API, including controlled
 allocation failures. It also needs no Flex or legacy dependencies. See
@@ -118,9 +121,23 @@ make test TEST_TARGET=build/module-test TEST_BINARY=./build/module-test TEST_SUI
 ```
 
 Use `TEST_TARGET=` for an executable that is already built. Fixture authors must
-assert stdout, stderr, and exit status, include relevant filesystem effects, and
+assert stdout, stderr, and exit status for pipe cases, or exact combined terminal
+output and exit status for PTY cases. Include relevant filesystem effects, and
 explain any platform restriction with `skip_reason`. Prompt stripping is an
-explicit per-case allowance reserved for prototype suites.
+explicit per-case allowance reserved for prototype pipe cases.
+
+Select a terminal candidate and suite independently with `PTY_TEST_TARGET`,
+`PTY_TEST_BINARY`, `PTY_TEST_SUITE`, and optional `PTY_TEST_CASE`:
+
+```sh
+make test-pty PTY_TEST_TARGET= PTY_TEST_BINARY=/absolute/path/to/candidate PTY_TEST_SUITE=tests/fixtures/candidate-pty.json
+```
+
+These example paths must be replaced with the actual candidate and suite.
+Terminal fixtures use `transport: "pty"` and ordered `steps`; consult the
+[PTY fixture contract](docs/testing.md#terminal-fixtures) before adding signal or
+foreground-process-group assertions. Keep helper capability tests separate from
+shell behavior evidence.
 
 Put generated replacement or module executables under `build/` and give them a
 Make target. Keep `tests/` for source fixtures and helper scripts. Docker excludes
@@ -131,6 +148,7 @@ For a Linux build and the same tests using Docker's toolchain:
 
 ```sh
 make docker-test
+make docker-test-pty
 ```
 
 See [Testing](docs/testing.md) for the fixture schema, runner limits, image

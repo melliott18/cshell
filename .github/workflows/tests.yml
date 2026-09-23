@@ -44,6 +44,8 @@ jobs:
         run: make -j2
       - name: Test input/state APIs and selected behavior
         run: make test
+      - name: Test terminal startup and exit
+        run: make test-pty
       - name: Test harness failure handling
         run: make test-harness
       - name: Check state ownership with ASan and UBSan
@@ -62,5 +64,7 @@ jobs:
       - uses: actions/checkout@v6
       - name: Build Linux image and test input/state APIs and selected behavior
         run: make docker-test
+      - name: Test terminal startup and exit in Linux image
+        run: make docker-test-pty
       - name: Test harness failure handling in Linux image
         run: docker run --rm --init cshell-test:local make test-harness

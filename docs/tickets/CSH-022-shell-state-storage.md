@@ -124,3 +124,18 @@ all three PR jobs: native Ubuntu/GCC, native macOS/Clang, and Docker Linux.
 The first PR macOS attempt hit an existing descendant-cleanup EPERM failure;
 its retry passed. [CSH-040](CSH-040-macos-harness-cleanup.md) records the evidence
 and follow-up regression work. CSH-022 does not modify that harness code.
+
+
+### Integration validation
+
+Integrated `origin/main` at `a7c4e8b` before merging CSH-022, retaining CSH-033's
+pipe/PTY harness selection and both state and terminal CI coverage. Resolved
+shared Makefile and entry-point/testing documentation without changing the state
+implementation or its C fixtures.
+
+`make -j8` followed by `make test test-pty test-harness` passed on macOS: both
+state suites, 63 input/invocation checks, four pipe fixtures, one PTY fixture,
+and all 50 harness self-tests. `make docker-test DOCKER_IMAGE=cshell-test:csh-022-merge`
+and `docker run --rm --init cshell-test:csh-022-merge make test-pty test-harness`
+passed the same combined coverage on Linux aarch64. No integration failures
+occurred. The state code remains the previously sanitizer-validated version.
