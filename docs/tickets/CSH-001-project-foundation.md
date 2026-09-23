@@ -1,6 +1,6 @@
 # CSH-001: Establish the cshell project foundation
 
-- Status: review
+- Status: done
 - Type: chore
 - Depends on: None
 - Branch: chore/CSH-001-project-foundation
@@ -79,5 +79,7 @@ glibc 2.36. Deliberately failing and hanging fixtures verified that the runner
 returns failure and enforces its timeout. No claim of amd64 testing is made.
 See [Testing](../testing.md) for reproducible commands and coverage limits.
 
-The implementation is ready for review on the recorded branch. Change the
-status to `done` after integration into `main` and link the merged pull request.
+Integrated into `main` through [pull request #1](https://github.com/melliott18/cshell/pull/1)
+on 2026-09-23. Implementation commit: `12b7014`; merge commit: `844787a`.
+The clean native build, native/Docker smoke suites, and documentation checks
+passed before merging.
