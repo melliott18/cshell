@@ -1,6 +1,6 @@
 # CSH-004: Preserve shell tokens and quoting
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: None
@@ -136,3 +136,15 @@ macOS harness follow-up. `make test test-pty test-harness` passed again: 61 lexe
 checks, 63 input checks, both state suites, four prototype pipe fixtures,
 one prototype PTY fixture, and all 50 harness self-tests. The lexer sources and
 fixtures remain identical to the sanitizer-validated implementation.
+
+
+Integrated into `main` through [pull request #49](https://github.com/melliott18/cshell/pull/49)
+on 2026-09-23. Implementation commit: `1605c4d`; validated integration head:
+`c20389c`; merge commit: `ae2964c`.
+
+Both [pull-request CI](https://github.com/melliott18/cshell/actions/runs/35922626695)
+and [branch CI](https://github.com/melliott18/cshell/actions/runs/35922620990)
+passed all three jobs for `c20389c`: Ubuntu 24.04/GCC, macOS 15/Clang, and Docker
+Linux. Checks include the input/lexer/state APIs, prototype pipe and PTY
+fixtures, and combined harness self-tests; native jobs also check state
+ownership with ASan/UBSan. Runtime integration remains with CSH-018 and CSH-039.
