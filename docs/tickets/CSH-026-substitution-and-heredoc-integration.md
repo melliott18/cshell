@@ -45,3 +45,16 @@ cases. Record stdout, stderr, status, state effects, and sanitizer results.
 Record integration evidence here, including remaining gaps. Review every original
 [CSH-008](CSH-008-word-expansion.md) criterion before completing that milestone;
 passing substitution examples alone is insufficient.
+
+
+### CSH-024 integration handoff
+
+Consume [the structured expansion contract](../value-expansions.md), preserving
+field/span provenance through CSH-025 and resolving lazy command/backquote
+callbacks from parser-owned ASTs. CSH-024 provides `csh_arith_probe()` and the
+shared `csh_quote_decode()` helper. CSH-005 coordination identified that the
+lexer also needs input checkpoint/replay before the probe can enable Issue 8
+arithmetic-first command-substitution fallback. Track that joint parser/lexer
+integration explicitly here; module arithmetic tests do not resolve the existing
+`$((echo hi); )` limitation. Verify execution-level expansion errors, callback
+status/isolation, and field handling before closing the CSH-008 milestone.

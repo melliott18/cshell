@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "name": "arithmetic-api",
+  "kind": "module",
+  "cases": [
+    {
+      "name": "arithmetic contracts",
+      "stdin": "",
+      "expect": {
+        "stdout": "arithmetic fixtures passed\n",
+        "stderr": "",
+        "status": 0
+      }
+    }
+  ]
+}

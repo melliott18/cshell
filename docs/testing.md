@@ -78,7 +78,7 @@ make test-pty
 make test-harness
 ```
 
-`make test` builds `TEST_TARGET`, runs the input, lexer, and state API checks,
+`make test` builds `TEST_TARGET`, runs input, lexer, state, and value-expansion API checks,
 and runs the selected behavioral suite.
 `make test-pty` builds `PTY_TEST_TARGET` and runs its independently selected
 terminal suite. It does not run the input, lexer, or state API tests. Keeping
@@ -487,3 +487,27 @@ drivers, and validates clean builds with no legacy sources or objects.
 Add a fixture when a behavior is implemented and record which executable and
 suite supplied the evidence. Do not turn a passing harness self-test or a
 prototype allowance into a language-conformance claim.
+
+## Value-expansion API and sanitizer checks
+
+`make test-expand` builds independent expansion, arithmetic, and quote-decoder
+fixtures and runs five bounded module suites. These check structured fields and
+span provenance, state effects, lazy operands, explicit deferred substitutions,
+integer boundaries, and allocation failures. They do not execute shell scripts
+or claim field splitting, pathname expansion, or command-capture behavior.
+
+```sh
+make test-expand
+make clean
+ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 make test-expand CC=clang CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -DNDEBUG -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+make docker-test DOCKER_IMAGE=cshell-test:csh-024
+```
+
+`make test` includes these suites on native and Docker paths. Native CI also
+runs expansion/state sanitizer checks. Fault-only objects instrument expansion
+and quote allocations together, and arithmetic/state allocations together;
+production objects contain no allocator hooks. All fixture checks stay active
+with `-DNDEBUG`. The shared decoder's standalone target is
+`build/tests/quote_fixture`, allowing parser reuse without linking the expansion
+engine. See [Value expansion](value-expansions.md) for supported contexts,
+locale/unspecified choices, ownership, and remaining integration requirements.
