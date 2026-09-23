@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "name": "shell-state-allocation-faults",
+  "kind": "module",
+  "cases": [
+    {
+      "name": "allocation failure atomicity and cleanup",
+      "stdin": "",
+      "expect": {"stdout": "state allocation faults passed\n", "stderr": "", "status": 0}
+    }
+  ]
+}
