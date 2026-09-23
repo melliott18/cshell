@@ -1,6 +1,6 @@
 # CSH-016: Introduce input sources and shell invocation modes
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-003
@@ -121,9 +121,9 @@ unprivileged UID 10001.
 
 The implementation is based on the CSH-038 roadmap branch (`6118669`) because
 its updated CSH-016 scope was already published in issue #17 while PR #42 was
-still open. This ticket remains `review` until integration into `main`.
-Default `cshell` command execution is unchanged; no general POSIX conformance
-claim or Linux amd64 validation is made.
+still open when this branch was created. Both are now integrated into `main`,
+as recorded below. Default `cshell` command execution is unchanged; no general
+POSIX conformance claim is made. Local and Docker validation above used arm64.
 
 
 ### Integration validation
@@ -141,3 +141,15 @@ API checks, the current four prototype fixtures, and 23 harness self-tests.
 and invocation implementation is unchanged from the sanitizer-validated
 `8f91ff3` revision above. Matrix annotations distinguish API evidence from
 remaining runtime and conformance requirements.
+
+
+Integrated into `main` through [pull request #45](https://github.com/melliott18/cshell/pull/45)
+on 2026-09-23. Implementation commit: `8f91ff3`; validated integration head:
+`3b8bed4`; merge commit: `0e527c3`.
+
+Both [pull-request CI](https://github.com/melliott18/cshell/actions/runs/35918534833)
+and [branch CI](https://github.com/melliott18/cshell/actions/runs/35918535248)
+passed all three jobs for `3b8bed4`: Ubuntu 24.04/GCC, macOS 15/Clang, and Docker
+Linux. Each job ran the input API checks, selected prototype fixtures, and
+harness self-tests. CSH-003 remains incomplete until CSH-018 and its remaining
+runtime acceptance criteria are complete.

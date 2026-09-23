@@ -1,6 +1,6 @@
 # CSH-038: Remove legacy constraints from the implementation roadmap
 
-- Status: review
+- Status: done
 - Type: docs
 - Kind: implementation
 - Parent: None
@@ -61,3 +61,11 @@ Verified all 39 GitHub issue bodies and states against the ticket files (allowin
 source links to retain published revision snapshots), all 25 native parent/child
 relationships, and `not_planned` closure reasons for CSH-002/014/015. CSH-039
 remains open; retirement is future implementation work, not a completed result.
+
+
+Integrated into `main` on 2026-09-23 as the prerequisite of
+[pull request #45](https://github.com/melliott18/cshell/pull/45), merge commit
+`0e527c3`. GitHub also marked [pull request #42](https://github.com/melliott18/cshell/pull/42)
+merged because its `6118669` head is included. The CSH-017 harness/CI and CSH-036
+conformance work already on `main` were preserved during that integration.
+CSH-039 remains the owner of the future runtime retirement.

@@ -1,6 +1,6 @@
 # CSH-004: Preserve shell tokens and quoting
 
-- Status: backlog
+- Status: ready
 - Type: feat
 - Kind: implementation
 - Parent: None

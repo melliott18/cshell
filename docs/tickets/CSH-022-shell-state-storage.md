@@ -1,6 +1,6 @@
 # CSH-022: Define shell variable and parameter storage
 
-- Status: backlog
+- Status: ready
 - Type: feat
 - Kind: implementation
 - Parent: CSH-007

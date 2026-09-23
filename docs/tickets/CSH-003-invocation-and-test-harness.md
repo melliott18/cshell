@@ -57,7 +57,7 @@ Interactive terminal behavior receives full pseudo-terminal coverage in CSH-011.
 
 ## Completion gate
 
-- [ ] [CSH-016: Input and invocation](CSH-016-input-and-invocation.md) is done.
+- [x] [CSH-016: Input and invocation](CSH-016-input-and-invocation.md) is done.
 - [x] [CSH-017: Test harness and CI](CSH-017-test-harness-and-ci.md) is done.
 - [ ] [CSH-018: Status and CLI integration](CSH-018-status-and-cli-integration.md)
   is done.
