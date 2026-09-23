@@ -2,6 +2,7 @@
 """CLI integration tests for the runner, independent of shell correctness."""
 
 import copy
+import errno
 import json
 import os
 from pathlib import Path
@@ -11,6 +12,10 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest import mock
+
+import pty_harness
+import smoke
 
 
 TESTS = Path(__file__).resolve().parent
@@ -71,10 +76,8 @@ class HarnessTests(unittest.TestCase):
     def kill_recorded_group(self, marker):
         if marker.exists():
             record = json.loads(marker.read_text())
-            try:
-                os.killpg(record["parent"], signal.SIGKILL)
-            except ProcessLookupError:
-                pass
+            pty_harness.kill_group(record["parent"], record["parent"],
+                                   time.monotonic() + 1)
 
     def assert_not_running(self, pid):
         # On minimal container images an orphan can briefly remain a zombie
@@ -170,6 +173,61 @@ class HarnessTests(unittest.TestCase):
         record = self.process_record(marker)
         self.assert_not_running(record["parent"])
         self.assert_not_running(record["child"])
+
+    def test_repeated_cleanup_after_parent_exit_accepts_verified_darwin_eperm(self):
+        marker = self.directory / "processes.json"
+        self.addCleanup(self.kill_recorded_group, marker)
+        item = case(args=["fork-exit", str(marker)], timeout=1)
+        killpg = os.killpg
+        calls = []
+
+        def kill_then_report_zombies(group, signum):
+            calls.append((group, signum))
+            if len(calls) == 1:
+                # The first cleanup must really kill the child holding pipes.
+                return killpg(group, signum)
+            record = self.process_record(marker)
+            self.assert_not_running(record["parent"])
+            self.assert_not_running(record["child"])
+            raise PermissionError(errno.EPERM, "injected zombie-only group")
+
+        with mock.patch.object(os, "killpg", side_effect=kill_then_report_zombies), \
+                mock.patch.object(pty_harness, "sys", platform="darwin"), \
+                mock.patch.object(pty_harness, "session_members", return_value=[]) as snapshot:
+            failures = smoke.run_case(CANDIDATE, item, 1, 65536)
+        self.assertEqual(failures, [])
+        self.assertEqual(len(calls), 2, "both post-exit and final cleanup must run")
+        self.assertEqual(calls[0], calls[1])
+        snapshot.assert_called_once()
+
+    def test_cleanup_error_still_closes_streams_and_reaps_leader(self):
+        for error in (PermissionError(errno.EPERM, "injected real permission failure"),
+                      OSError("injected snapshot failure")):
+            with self.subTest(error=error):
+                marker = self.directory / "processes.json"
+                self.addCleanup(self.kill_recorded_group, marker)
+                item = case(args=["hang", str(marker)], timeout=0.15)
+                processes = []
+                popen = subprocess.Popen
+
+                def record_process(*args, **kwargs):
+                    process = popen(*args, **kwargs)
+                    processes.append(process)
+                    return process
+
+                started = time.monotonic()
+                with mock.patch.object(smoke, "kill_group", side_effect=error), \
+                        mock.patch.object(subprocess, "Popen", side_effect=record_process):
+                    failures = smoke.run_case(CANDIDATE, item, 1, 65536)
+                self.assertTrue(any("pipe cleanup failed" in failure and str(error) in failure
+                                    for failure in failures), failures)
+                self.assertLess(time.monotonic() - started, 3)
+                self.assertEqual(len(processes), 1)
+                process = processes[0]
+                self.assertIsNotNone(process.returncode)
+                self.assertTrue(all(stream.closed for stream in
+                                    (process.stdin, process.stdout, process.stderr)))
+                self.assert_not_running(process.pid)
 
     def test_output_flood_fails_promptly_with_bounded_diagnostics(self):
         marker = self.directory / "processes.json"

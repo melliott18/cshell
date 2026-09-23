@@ -334,19 +334,21 @@ process group. Pipe cleanup kills that group after success or failure, including
 descendants left behind by a candidate that exits early. PTY cleanup covers all
 process groups still in the candidate's session, including stopped foreground
 jobs, background groups, and descendants left after the leader exits. Terminal
-descriptors are closed on success and failure. PTY cleanup has its own one-second
-budget separate from the case's overall timeout; inability to complete teardown within
-that bound fails the case instead of hanging the runner.
+descriptors are closed on success and failure. Final pipe and PTY cleanup have
+their own one-second budgets separate from the case's overall timeout; inability
+to reap the leader within that bound fails the case instead of hanging the
+runner. PTY cleanup also verifies that no live session members remain.
 
 PTY session discovery uses `/proc` on Linux and `/bin/ps` plus process-session
-queries on macOS. These must be available for reliable cleanup. A discovery or
-teardown error fails the case, including after an otherwise successful exit.
-
-Known limitation: repeated process-group cleanup can intermittently report
-`Operation not permitted` on macOS after a candidate exits. The failure and a
-focused investigation are tracked in
-[CSH-040](tickets/CSH-040-macos-harness-cleanup.md). Passing retries do not resolve
-that issue, and the harness continues to report permission errors as failures.
+queries on macOS. Both transports share the group-kill check: macOS can return
+`EPERM` when a group contains only zombies, so that error is accepted only after
+a fresh, bounded session snapshot proves there are no live members of the target
+group. The pipe post-exit check allows up to one second for this snapshot. Other
+permission errors, a live group, or a failed snapshot remain failures, including
+after an otherwise successful exit. The macOS snapshot facilities must therefore
+also be available when pipe cleanup encounters `EPERM`. See
+[CSH-040](tickets/CSH-040-macos-harness-cleanup.md) for deterministic regression
+evidence.
 
 The candidate also receives POSIX resource limits: CPU time is limited to at most
 the effective timeout rounded up plus one second, each file is limited to the larger
