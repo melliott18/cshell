@@ -1,6 +1,6 @@
 # CSH-013: Document visual architecture and parallel implementation work
 
-- Status: in-progress
+- Status: review
 - Type: docs
 - Kind: implementation
 - Parent: None
@@ -29,7 +29,7 @@ dependencies understandable to people and agents, with reviewable work units.
 - [x] Every child has a parent, explicit prerequisites, bounded scope, and validation.
 - [x] Original milestone scope and acceptance criteria remain covered by the children.
 - [x] Dependency and completion edges are acyclic; documentation links resolve.
-- [ ] GitHub Issues and Markdown agree on scope, dependencies, and parent/child links.
+- [x] GitHub Issues and Markdown agree on scope, dependencies, and parent/child links.
 
 ## Validation
 
@@ -52,6 +52,8 @@ were compared with `main` and preserved.
 
 An independent review identified unowned alias/evaluation/option integration;
 CSH-031 now depends on CSH-030 and CSH-032 on CSH-031, with explicit final checks.
-GitHub child issues have been created and attached to their parent issues.
-Final issue-body synchronization will be verified against the published revision.
+GitHub publication was verified: all 37 issue bodies and states match the ticket
+records, and all 24 native parent/child relationships match the completion gates.
+Issue source links point to the published documentation revision. The original
+foundation issue remains closed; all new implementation work remains open.
 No shell code changed, so unrelated shell behavior tests were not rerun.
