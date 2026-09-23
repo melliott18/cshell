@@ -2,8 +2,11 @@
 
 - Status: done
 - Type: chore
+- Kind: implementation
+- Parent: None
 - Depends on: None
 - Branch: chore/CSH-001-project-foundation
+- Issue: [#2](https://github.com/melliott18/cshell/issues/2)
 
 ## Goal
 

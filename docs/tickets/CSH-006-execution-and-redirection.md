@@ -2,8 +2,12 @@
 
 - Status: backlog
 - Type: feat
+- Kind: milestone
+- Parent: None
 - Depends on: CSH-005
+- Children: CSH-019, CSH-020, CSH-021
 - Branch: Assigned when work starts
+- Issue: [#7](https://github.com/melliott18/cshell/issues/7)
 
 ## Goal
 
@@ -47,3 +51,17 @@ failure injection. Use sanitizer checks and timeouts for all hang-prone cases.
 The executor should consume expanded command data through a defined interface,
 allowing CSH-008 to replace any temporary literal-word adapter. Interactive
 process groups and terminal ownership are completed in CSH-011.
+
+## Completion gate
+
+- [ ] [CSH-019: Simple commands and redirections](CSH-019-simple-command-redirections.md)
+  is done.
+- [ ] [CSH-020: Pipeline lifecycle](CSH-020-pipeline-lifecycle.md) is done.
+- [ ] [CSH-021: Lists and execution contexts](CSH-021-lists-and-execution-contexts.md)
+  is done.
+- [ ] The original acceptance criteria above pass together through the new
+  executor, the legacy executor is removed, and resource-ownership evidence is
+  recorded here.
+
+The execution children are sequential. CSH-019 also consumes the state-storage
+API from CSH-022, which can be built independently of the parser.

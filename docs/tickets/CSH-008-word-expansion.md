@@ -2,8 +2,12 @@
 
 - Status: backlog
 - Type: feat
+- Kind: milestone
+- Parent: None
 - Depends on: CSH-004, CSH-006, CSH-007
+- Children: CSH-024, CSH-025, CSH-026
 - Branch: Assigned when work starts
+- Issue: [#9](https://github.com/melliott18/cshell/issues/9)
 
 ## Goal
 
@@ -40,6 +44,18 @@ Use temporary directories with controlled filenames and a stable locale for
 deterministic cases. Check fields with an argument-inspection fixture, including
 embedded whitespace and empty values. Test nested substitutions, large output,
 substitution statuses, redirection operands, and here-document expansion.
+
+## Completion gate
+
+- [ ] [CSH-024: Value expansions](CSH-024-value-expansions.md) is done.
+- [ ] [CSH-025: Field and pathname expansion](CSH-025-field-and-pathname-expansion.md) is done.
+- [ ] [CSH-026: Substitution and here-document integration](CSH-026-substitution-and-heredoc-integration.md) is done.
+- [ ] The original acceptance criteria above pass together, with recorded
+  cross-feature evidence and all completion prerequisites satisfied.
+
+Child dependencies control when each work item can start. The parent
+dependencies are completion prerequisites; they are not inherited start gates.
+Completing one child does not establish the milestone or POSIX compliance.
 
 ## Implementation notes/evidence
 

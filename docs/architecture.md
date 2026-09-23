@@ -5,6 +5,16 @@
 CSH-001 establishes source boundaries and a portable build. It does not complete
 the shell language rewrite.
 
+The input loop asks the legacy scanner for an argument array, then dispatches
+that array to the legacy executor. This is the current path:
+
+```mermaid
+flowchart LR
+    main["src/main.c: input loop"] -->|"read arguments"| lexer["src/legacy/lexer.l: scanner"]
+    lexer -->|"borrowed argument array"| main
+    main -->|"dispatch arguments"| execute["src/legacy/execute.c: executor"]
+```
+
 | Path | Responsibility |
 | --- | --- |
 | `src/main.c` | Entry point, prompt, input loop, and dispatch |
@@ -47,20 +57,35 @@ same contract; avoid a header that exposes every internal structure.
 
 ## Processing model
 
-```text
-input -> lexer <-> parser -> command tree
-                                |
-                         tree evaluation
-                                |
-                 expansion + redirection + dispatch
-                                |
-                     builtin or child process
+The following diagram is the proposed replacement, not the current execution
+path. Input, lexer, and parser construct a command tree (AST). The executor
+evaluates that tree and coordinates expansion, shell state, builtins,
+redirections, and child processes. Arrows below the executor show collaborating
+modules, not a fixed execution sequence.
+
+```mermaid
+flowchart TB
+    input["Input sources"] --> lexer["Lexer and words"]
+    lexer <-->|"syntax context"| parser["Parser"]
+    parser --> ast["Command tree"]
+    ast --> execute["Executor"]
+    execute --> expand["Expansion"]
+    execute --> builtins["Builtins"]
+    execute --> redirect["Redirections"]
+    execute --> children["Child processes"]
+    execute --> jobs["Signals and jobs"]
+    expand --> state["Shell state"]
+    builtins --> state
+    execute --> state
+    jobs <-->|"signals and process state"| children
 ```
 
 Parsing and execution proceed at appropriate complete-command boundaries.
 Aliases and here-documents require parser/lexer cooperation, and input must not
 consume bytes intended for a command that reads stdin. Avoid a design that
 unconditionally tokenizes or expands an entire script before executing it.
+The module table above defines ownership even when a Markdown viewer cannot
+render the diagram.
 
 The tree records simple commands, pipelines, AND/OR and sequential/background
 lists, compound commands, and functions. A word retains quoted and unquoted

@@ -2,8 +2,12 @@
 
 - Status: backlog
 - Type: test
+- Kind: milestone
+- Parent: None
 - Depends on: CSH-008, CSH-009, CSH-010, CSH-011
+- Children: CSH-036, CSH-037
 - Branch: Assigned when work starts
+- Issue: [#13](https://github.com/melliott18/cshell/issues/13)
 
 ## Goal
 
@@ -44,6 +48,17 @@ Run the full documented validation procedure on each supported platform and
 record compiler, libc, reference-shell, and test-suite versions. Review the
 requirements matrix independently against the standard, then reproduce a
 sample of its linked cases from a clean checkout.
+
+## Completion gate
+
+- [ ] [CSH-036: Conformance matrix](CSH-036-conformance-matrix.md) is done.
+- [ ] [CSH-037: Portability audit](CSH-037-portability-audit.md) is done.
+- [ ] The original acceptance criteria above pass together, with recorded
+  cross-feature evidence and all completion prerequisites satisfied.
+
+Child dependencies control when each work item can start. The parent
+dependencies are completion prerequisites; they are not inherited start gates.
+Completing one child does not establish the milestone or POSIX compliance.
 
 ## Implementation notes/evidence
 

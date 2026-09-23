@@ -2,8 +2,11 @@
 
 - Status: backlog
 - Type: feat
+- Kind: implementation
+- Parent: None
 - Depends on: CSH-004
 - Branch: Assigned when work starts
+- Issue: [#6](https://github.com/melliott18/cshell/issues/6)
 
 ## Goal
 

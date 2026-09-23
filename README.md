@@ -40,6 +40,7 @@ commands, coverage limits, and troubleshooting.
 | Task | Read |
 | --- | --- |
 | Find the next implementation ticket | [Ticket index](docs/tickets/README.md) |
+| See dependencies and parallel work | [Visual implementation plan](docs/implementation-plan.md) |
 | Create a branch or contribute a change | [Contributing](CONTRIBUTING.md) |
 | Run native or Docker tests | [Testing](docs/testing.md) |
 | Understand the code and planned modules | [Architecture](docs/architecture.md) |

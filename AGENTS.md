@@ -8,6 +8,7 @@ Read [README.md](README.md) for build commands and current limitations, then
 
 - [Documentation index](docs/README.md)
 - [Architecture and module ownership](docs/architecture.md)
+- [Visual implementation plan](docs/implementation-plan.md)
 - [Native and Docker tests](docs/testing.md)
 - [POSIX scope and evidence](docs/posix.md)
 - [Ticket index and dependencies](docs/tickets/README.md)
