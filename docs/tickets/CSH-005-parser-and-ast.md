@@ -1,6 +1,6 @@
 # CSH-005: Parse commands into an owned syntax tree
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: None
@@ -149,3 +149,16 @@ GNU Make 4.3, Python 3.11.2, Docker Engine 24.0.6; tests run as UID 10001.
 - Changed Markdown links resolve; `git diff --check` passes. Existing Mermaid
   diagrams are unchanged. These are API/structural checks, not complete shell
   conformance or replacement execution evidence.
+
+Integrated into `main` through [pull request #52](https://github.com/melliott18/cshell/pull/52)
+on 2026-09-23. Implementation commit: `4aee69d`; integration commit after
+CSH-024 and CSH-040: `062557f`; merge commit: `7d6ae67`. GitHub closed issue #6
+when the pull request merged.
+
+At `062557f`, the combined native suite passed 63 input/invocation checks, 61
+lexer checks, 114 parser checks plus direct AST ownership checks, state and
+value-expansion suites, four prototype pipe cases, one prototype PTY case, and
+all 61 harness self-tests. Both the
+[pull-request CI](https://github.com/melliott18/cshell/actions/runs/35933831829)
+and [branch CI](https://github.com/melliott18/cshell/actions/runs/35933827839)
+passed Ubuntu/GCC, macOS/Clang, and Docker Linux after the integration.
