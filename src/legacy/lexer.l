@@ -1,9 +1,13 @@
+%option noyywrap noinput nounput
+
 %{
-    const char *_args[1024];
-    unsigned    _argcount = 0;
-    int         _bufpos = 0;
-    int         _ypos = 0;
-    char        _linebuf[4096];
+    #include "cshell/legacy.h"
+
+    static char *_args[1024];
+    static unsigned _argcount = 0;
+    static int _bufpos = 0;
+    static int _ypos = 0;
+    static char _linebuf[4096];
 %}
 
 WORD    [a-zA-Z_0-9\/\.-]+
@@ -24,7 +28,7 @@ QUOTE   (\'[^\']*\')|(\"[^\"]*\")
     }
 }
 
-\n	return (long)_args;
+\n	return 1;
 
 [ \t]+
 
@@ -32,5 +36,9 @@ QUOTE   (\'[^\']*\')|(\"[^\"]*\")
 
 %%
 
-const char * const *getargs() { yylex(); return (_args);}
+char **legacy_read_args(void)
+{
+    yylex();
+    return _args;
+}
 

@@ -1,0 +1,12 @@
+# Send only the inputs needed to build and test a source snapshot.
+# Host binaries, build output, Git metadata, and documentation stay outside it.
+**
+!.dockerignore
+!Dockerfile
+!Makefile
+!include/
+!include/**
+!src/
+!src/**
+!tests/
+!tests/**
