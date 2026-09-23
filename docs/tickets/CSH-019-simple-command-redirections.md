@@ -20,6 +20,10 @@ with correct lookup, child ownership, and redirection restoration.
 - Centralize lookup, exec/wait, status conversion, and executable-format fallback.
 - Apply ordered file, descriptor, and here-document input redirections.
 - Support builtin dispatch in the parent with saved/restored descriptors.
+- Supply bootstrap `cd` and `exit` handlers needed to retire the prototype;
+  CSH-018 completes exit/status rules and CSH-029 completes state-builtin coverage.
+- Build against replacement input/AST/state interfaces only, without copying
+  the legacy scanner or operator dispatcher into renamed modules.
 
 ## Acceptance criteria
 
@@ -31,6 +35,11 @@ with correct lookup, child ownership, and redirection restoration.
   failed external execution cannot return into the parent's input loop.
 - [ ] Child ownership is explicit: waits target owned children, and fork/open/
   duplication failures release every acquired descriptor and command allocation.
+- [ ] Unsupported syntax or expansions are rejected before that construct
+  has side effects; the literal-word adapter never delegates to legacy code
+  and is replaced by CSH-008 expansion integration.
+- [ ] Bootstrap `cd` changes the parent directory once without external-command
+  fallthrough, and the execution test driver links no legacy objects or symbols.
 - [ ] Adapter/dispatch interfaces document ownership and execution categories,
   with focused tests that permit later expansion and assignment integration.
 

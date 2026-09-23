@@ -19,6 +19,8 @@ supported platforms before publishing final behavior or compliance statements.
   toolchains, Docker architecture/libc, sanitizers, and applicable PTY cases.
 - Exercise locales, large input, resource failures, and bounded parser/expansion
   robustness cases; compare versioned reference shells against the standard.
+- Verify CSH-039 retirement evidence and confirm that no legacy runtime,
+  fallback, build dependency, or expired transition adapter has returned.
 - Reconcile installation, invocation, architecture, tests, limitations, and
   contribution docs with observed behavior and unresolved findings.
 

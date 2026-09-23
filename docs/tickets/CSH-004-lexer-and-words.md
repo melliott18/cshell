@@ -31,13 +31,17 @@ retain the information required by parsing and expansion.
 - [ ] Escaping, nested substitutions, and incomplete quotes retain their context.
 - [ ] Tokens carry sufficient provenance for actionable syntax diagnostics.
 - [ ] Lexer storage has documented ownership and is released on failure.
-- [ ] The legacy lexer is removed from the active path after the new interface
-  is integrated; temporary adapters are identified explicitly.
+- [ ] Lexer fixtures build and run without the legacy scanner or header; the
+  word/token API does not expose the prototype argument-array contract.
+- [ ] Long tokens, many words, repeated scans, and allocation failures have
+  bounded, sanitizer-checked cleanup without truncation or stale token reuse.
+- [ ] Runtime integration is assigned to CSH-018 and complete legacy deletion
+  to CSH-039; no adapter to the old executor is needed to complete this ticket.
 
 ## Validation
 
 Use lexer-level fixtures for token kinds, word fragments, and source positions,
-plus behavioral cases through the shell. Cover long input, empty quotes, adjacent
+with runtime behavioral cases delivered by CSH-018. Cover long input, empty quotes, adjacent
 fragments, newline continuations, nested constructs, and EOF in an open quote.
 Compare behavior only where POSIX specifies the result.
 

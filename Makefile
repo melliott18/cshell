@@ -23,8 +23,11 @@ LEXFLAGS ?=
 
 CSHELL_CPPFLAGS = -D_POSIX_C_SOURCE=200809L -Iinclude
 OBJECTS = build/main.o build/legacy/execute.o build/legacy/lexer.o
+INPUT_OBJECTS = build/input.o build/invocation.o
+INPUT_HEADERS = include/cshell/input.h include/cshell/invocation.h
+INPUT_FAULT_OBJECTS = build/tests/fault-input.o build/tests/fault-invocation.o
 
-.PHONY: all test test-harness docker-build docker-test docker-shell clean
+.PHONY: all test test-input test-harness docker-build docker-test docker-shell clean
 
 all: cshell
 
@@ -42,7 +45,26 @@ build/legacy/lexer.c: src/legacy/lexer.l
 build/legacy/lexer.o: build/legacy/lexer.c include/cshell/legacy.h
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-test: $(TEST_TARGET)
+$(INPUT_OBJECTS): build/%.o: src/%.c $(INPUT_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+build/tests/input_fixture: tests/input_fixture.c $(INPUT_OBJECTS) $(INPUT_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/input_fixture.c $(INPUT_OBJECTS) $(LDLIBS)
+
+$(INPUT_FAULT_OBJECTS): build/tests/fault-%.o: src/%.c $(INPUT_HEADERS) tests/input_faults.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/input_faults.h -c $< -o $@
+
+build/tests/input_faults: tests/input_faults.c tests/input_faults.h $(INPUT_FAULT_OBJECTS) $(INPUT_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/input_faults.c $(INPUT_FAULT_OBJECTS) $(LDLIBS)
+
+test-input: build/tests/input_fixture build/tests/input_faults
+	$(PYTHON) tests/input.py build/tests/input_fixture --fault-binary build/tests/input_faults
+
+test: $(TEST_TARGET) test-input
 	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
 

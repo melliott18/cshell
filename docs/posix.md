@@ -40,8 +40,8 @@ The requirement rows are the detailed planning and evidence record.
 | Area | Current evidence / gap | Owning tickets |
 | --- | --- | --- |
 | Build and source organization | Foundation only; no language conformance implied | [CSH-001](tickets/CSH-001-project-foundation.md) |
-| Memory and process safety | Known buffer, allocation, child-exit, and pipe defects | [CSH-002](tickets/CSH-002-legacy-safety.md) |
-| Invocation and input | No `-c` or script operand handling; broken EOF and status handling | [CSH-003](tickets/CSH-003-invocation-and-test-harness.md) |
+| Memory and process safety | Known prototype defects; replacement modules own safety coverage | [CSH-016](tickets/CSH-016-input-and-invocation.md), [CSH-004](tickets/CSH-004-lexer-and-words.md), [CSH-019](tickets/CSH-019-simple-command-redirections.md), [CSH-020](tickets/CSH-020-pipeline-lifecycle.md) |
+| Invocation and input | [Replacement APIs](input-and-invocation.md) cover string/script/stdin sources, supported invocation operands, explicit EOF, and interactive detection; default executable integration and final runtime statuses remain pending | [CSH-016](tickets/CSH-016-input-and-invocation.md), [CSH-018](tickets/CSH-018-status-and-cli-integration.md), [CSH-039](tickets/CSH-039-legacy-retirement.md) |
 | Token recognition and quoting | Flat token splitter; quotes retained in arguments | [CSH-004](tickets/CSH-004-lexer-and-words.md) |
 | Grammar and command composition | No AST; semicolon dispatch unimplemented | [CSH-005](tickets/CSH-005-parser-and-ast.md) |
 | Execution and redirections | Partial external command support; incomplete descriptor semantics | [CSH-006](tickets/CSH-006-execution-and-redirection.md) |
@@ -53,8 +53,10 @@ The requirement rows are the detailed planning and evidence record.
 | Conformance evidence and portability | Native/Docker smoke runner exists; conformance suite pending | [CSH-012](tickets/CSH-012-conformance-and-portability.md) |
 
 Legacy syntax such as `|&` and `>>&` must not be used as evidence of POSIX
-coverage. Resolve extension behavior explicitly during the parser and execution
-tickets, with standard syntax taking precedence.
+coverage or retained as compatibility requirements. New modules take their
+contracts from the standard. [CSH-039](tickets/CSH-039-legacy-retirement.md)
+removes the old runtime without waiting for full POSIX coverage; unsupported
+constructs must fail explicitly until their implementation tickets are complete.
 
 ## Evidence required
 

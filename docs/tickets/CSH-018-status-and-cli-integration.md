@@ -4,7 +4,7 @@
 - Type: feat
 - Kind: implementation
 - Parent: CSH-003
-- Depends on: CSH-016, CSH-017
+- Depends on: CSH-016, CSH-017, CSH-019
 - Branch: Assigned when work starts
 - Issue: [#19](https://github.com/melliott18/cshell/issues/19)
 
@@ -15,14 +15,20 @@ output, failure behavior, and final shell status.
 
 ## Scope
 
-- Retain command completion and signal-derived statuses in shell state.
+- Connect input, lexer/parser, and the CSH-019 executor through an internal
+  candidate runtime/test driver that links no legacy code. CSH-039 owns the
+  default `cshell` cutover and deletion after pipeline integration.
+- Retain command completion and signal-derived statuses in CSH-022 shell state.
 - Define and implement tested `exit` behavior with and without an operand.
 - Run shared behavioral cases through `-c`, script files, and redirected stdin.
-- Remove prototype prompt allowances for non-interactive harness fixtures.
+- Use strict non-interactive output checks for all candidate-runtime fixtures;
+  remove the old prototype allowances entirely at the CSH-039 cutover.
 - Connect the expanded suite to existing native and Docker CI entry points.
 
 ## Acceptance criteria
 
+- [ ] The candidate runs only the replacement modules; unsupported constructs
+  produce a diagnostic before that construct executes, with no legacy fallback.
 - [ ] Equivalent commands in all three modes have matching stdout, stderr, and
   statuses; successful completion, nonzero completion, and unknown commands are
   covered with specified expectations.
@@ -37,14 +43,15 @@ output, failure behavior, and final shell status.
 
 ## Validation
 
-Run `make test` and `make docker-test` with shared command fixtures across every
-mode. Use helper executables for exact exit and signal statuses, avoiding syntax
-that the prototype does not implement. Test malformed `exit` operands separately
+Run shared fixtures across every mode using the candidate runtime in both native
+and Docker test targets, and record the precise build/test commands. Keep any
+prototype smoke results separate. Use helper executables for exact exit and
+signal statuses, avoiding features outside the declared bootstrap subset. Test malformed `exit` operands separately
 in interactive and non-interactive contexts and record specification decisions.
 
 ## Implementation notes/evidence
 
 This is the integration gate for CSH-003, not another independent test runner.
-Use the input API from CSH-016 and harness from CSH-017. Preserve a documented
-status interface for CSH-022 and later execution work; signal fixtures must assert
+Use the input API from CSH-016, harness from CSH-017, and executor from CSH-019.
+Use the status interface supplied by CSH-022; signal fixtures must assert
 the defined mapping instead of assuming every shell returns the same integer.

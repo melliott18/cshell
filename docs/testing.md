@@ -2,6 +2,21 @@
 
 ## Coverage and suite selection
 
+CSH-016 adds independent replacement-input API fixtures alongside the behavioral
+suites. `make test-input` builds only `src/input.c`, `src/invocation.c`, and their
+fixtures; it needs no legacy header, scanner, executor, or Flex. These fixtures
+do not execute shell commands. They cover source bytes and positions, owned
+invocation operands, explicit EOF, diagnostics/status data, descriptor ownership
+and read boundaries, and terminal/prompt selection. The Python runner uses
+five-second subprocess timeouts, including for its pseudo-terminal cases.
+
+The fault fixture compiles separate module objects with test-only allocator and
+read wrappers. It fails each allocation in turn across all constructors,
+invocation modes, and line-buffer growth; it checks retained-allocation counts
+and descriptor cleanup after every run. It injects read errors before, within,
+and after physical lines, checks that partial lines never escape, and verifies
+EINTR retries. Production objects contain no fault-injection hooks.
+
 `tests/smoke.py` is a bounded fixture runner for a selected executable. The default
 `tests/fixtures/prototype.json` suite checks the current prototype's startup,
 explicit exit, external command execution, successive commands, and filesystem
@@ -35,7 +50,8 @@ make test
 make test-harness
 ```
 
-`make test` builds `TEST_TARGET` and runs the selected behavioral suite.
+`make test` builds `TEST_TARGET`, runs the input API checks, and runs the
+selected behavioral suite.
 `make test-harness` runs Python unit tests against helper executables and
 self-fixtures. Some helpers intentionally produce wrong output, nonzero statuses,
 filesystem mismatches, hangs, descendants, or excessive output; the unit tests
@@ -55,7 +71,7 @@ The same runner is used by native tests, Docker, and CI. Test selection is expli
 
 | Make variable | Default | Meaning |
 | --- | --- | --- |
-| `TEST_TARGET` | `cshell` | Target to build before running; set empty for an already built executable. |
+| `TEST_TARGET` | `cshell` | Behavioral candidate target to build; set empty for an already built executable. Input API fixtures still build and run. |
 | `TEST_BINARY` | `./cshell` | Candidate executable. |
 | `TEST_SUITE` | `tests/fixtures/prototype.json` | JSON fixture suite. |
 | `TEST_TIMEOUT` | `5` | Maximum wall-clock seconds per case. |
@@ -88,6 +104,22 @@ Cases report `PASS`, `FAIL`, or `SKIP`. Failures include the case name and relev
 differences, status, timeout, or output-limit details. Invalid suites and unknown
 case names also return a nonzero status. A suite with all selected cases skipped
 fails with `no cases ran on this platform`. Make and Docker preserve failures.
+
+## Input API and sanitizer checks
+
+For the replacement input layer alone, including sanitizer validation:
+
+```sh
+make clean
+make test-input
+make clean
+make test-input CC=clang CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+```
+
+Run sanitizer checks against this target: the prototype has known memory defects
+that are outside CSH-016. Allocation counters work on both macOS and Linux;
+Linux ASan also checks leaks. See the [input contract](input-and-invocation.md)
+and [ticket evidence](tickets/CSH-016-input-and-invocation.md).
 
 ## Authoring fixtures
 
@@ -198,8 +230,9 @@ From the repository root:
 make docker-test
 ```
 
-This builds the test image from the current source files and runs the selected
-suite inside it. `TEST_TARGET`, `TEST_BINARY`, `TEST_SUITE`, `TEST_TIMEOUT`,
+This builds the test image from the current source files and runs the input API
+checks and selected behavioral suite inside it. `TEST_TARGET`, `TEST_BINARY`,
+`TEST_SUITE`, `TEST_TIMEOUT`,
 `TEST_OUTPUT_LIMIT`, and `TEST_CASE` select the same tests as the native target.
 The build target is compiled using the container's Linux toolchain. Candidate
 executables and suites must exist inside the image; host absolute paths are not
@@ -246,8 +279,8 @@ test failures propagate through `make docker-test` as a nonzero exit status.
 ## Continuous integration
 
 [`.github/workflows/tests.yml`](../.github/workflows/tests.yml) builds and runs the
-default prototype suite and the harness self-tests on Ubuntu 24.04 with GCC and
-macOS 15 with Clang. A separate Ubuntu job builds and runs the Docker Linux path
+input API checks, default prototype suite, and harness self-tests on Ubuntu 24.04
+with GCC and macOS 15 with Clang. A separate Ubuntu job builds and runs the Docker Linux path
 and runs the same harness self-tests in the image. Failing builds, fixtures, or
 self-tests fail their jobs.
 
@@ -261,20 +294,32 @@ Before adding a behavioral case, find its stable requirement ID in the
 [requirements matrix](posix-matrix.md) or [utility and option map](posix-utilities.md).
 Follow the [evidence conventions](posix-evidence.md) for specification-derived
 expectations, environment capture, allowed alternatives and reference comparisons.
-The [smoke evidence map](posix-evidence.md#existing-smoke-evidence) records exactly
-what today's three cases observe; planned fixture IDs are not passing tests.
-CSH-017 and CSH-033 own harness formats and adapters, so this documentation adds
-no new runner or required unsupported invocation mode.
+The [smoke evidence map](posix-evidence.md#existing-smoke-evidence) records the
+observations from its pinned prototype baseline; planned fixture IDs are not
+passing tests. The current prototype suite also includes the filesystem case
+added by CSH-017, and the input API checks have their own linked ticket evidence.
+CSH-017 and CSH-033 own behavioral harness formats and adapters. Planned shell
+fixtures must select a runtime that supports their invocation modes.
 
 ## Growing the suite
 
-- [CSH-002](tickets/CSH-002-legacy-safety.md) tracks regression cases for memory,
-  process, descriptor, and EOF defects, including sanitizer runs.
+- [CSH-016](tickets/CSH-016-input-and-invocation.md) and
+  [CSH-004](tickets/CSH-004-lexer-and-words.md) cover replacement input/EOF and
+  allocation safety; [CSH-019](tickets/CSH-019-simple-command-redirections.md)
+  and [CSH-020](tickets/CSH-020-pipeline-lifecycle.md) cover child/descriptor
+  failures and high-volume pipelines. The superseded legacy repair tickets
+  remain defect history, not required implementation work.
 - [CSH-003](tickets/CSH-003-invocation-and-test-harness.md) tracks shell invocation
   and behavioral coverage; its children extend strict replacement expectations.
 - [CSH-011](tickets/CSH-011-signals-and-job-control.md) adds pseudo-terminal tests.
 - [CSH-012](tickets/CSH-012-conformance-and-portability.md) audits coverage and
   supported environments, including compiler/libc versions.
+
+CSH-018 runs strict fixtures against an explicitly selected replacement runtime
+before the default executable changes. Legacy quirks are not golden outputs.
+[CSH-039](tickets/CSH-039-legacy-retirement.md) moves both standard test targets
+to the replacement `cshell`, removes prototype-only allowances and temporary
+drivers, and validates clean builds with no legacy sources or objects.
 
 Add a fixture when a behavior is implemented and record which executable and
 suite supplied the evidence. Do not turn a passing harness self-test or a

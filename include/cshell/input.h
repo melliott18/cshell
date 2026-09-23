@@ -1,0 +1,66 @@
+#ifndef CSHELL_INPUT_H
+#define CSHELL_INPUT_H
+
+#include <stddef.h>
+
+/* Byte offsets are zero-based; physical lines and byte columns are one-based. */
+struct csh_position {
+    size_t offset;
+    size_t line;
+    size_t column;
+};
+
+/* No allocated members. message is static; argument_index is zero if unknown.
+ * status is a suggested shell failure status, not a request to exit. */
+struct csh_error {
+    const char *message;
+    int system_errno;
+    int status;
+    size_t argument_index;
+    struct csh_position position;
+};
+
+struct csh_input;
+
+/* Constructors copy strings and set *out to NULL on failure. Return 0 on
+ * success, -1 on failure. error is required and cleared on success. */
+int csh_input_from_string(struct csh_input **out, const char *text,
+                          const char *name, struct csh_error *error);
+int csh_input_from_file(struct csh_input **out, const char *path,
+                        struct csh_error *error);
+/* Duplicates fd with close-on-exec; never closes the borrowed descriptor.
+ * The duplicate shares the underlying offset and file status flags; callers
+ * must serialize reads. FIFO/terminal O_NONBLOCK is cleared on the shared open
+ * file description, as required for shell stdin. Other flags are preserved. */
+int csh_input_from_fd(struct csh_input **out, int fd, const char *name,
+                      struct csh_error *error);
+void csh_input_destroy(struct csh_input *input);
+
+/* Borrowed name remains valid until destroy. Position is the next unread byte. */
+const char *csh_input_name(const struct csh_input *input);
+struct csh_position csh_input_position(const struct csh_input *input);
+
+struct csh_input_line {
+    const unsigned char *data;
+    size_t length;
+    struct csh_position start;
+    struct csh_position end;
+};
+
+enum csh_input_result {
+    CSH_INPUT_ERROR = -1,
+    CSH_INPUT_EOF = 0,
+    CSH_INPUT_LINE = 1
+};
+
+/* Acquires exactly one physical line, including its newline when present.
+ * No descriptor read-ahead past that newline. A final unterminated line is
+ * returned before EOF. data is borrowed until the next read or destroy;
+ * length, not the trailing convenience NUL, defines the bytes (NULs survive).
+ * A line is NOT a complete shell command: syntax/continuations belong to the
+ * lexer/parser. EOF and failures are sticky; *line is cleared on either, and
+ * partial lines are never published on failure. error is required. */
+enum csh_input_result csh_input_read_line(struct csh_input *input,
+    struct csh_input_line *line, struct csh_error *error);
+
+#endif

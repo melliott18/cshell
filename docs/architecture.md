@@ -32,16 +32,38 @@ API for the replacement parser.
 
 Existing limitations include fixed scanner storage, incomplete quoting, no
 grammar tree, incomplete descriptor/process management, and missing status and
-EOF semantics. The safety and invocation tickets precede the language rewrite.
+EOF semantics. The original implementation is reference material, not a required
+foundation for the replacement. Its safety-repair tickets CSH-002, CSH-014, and
+CSH-015 are superseded; new input and runtime work does not wait for repairs to
+code that will be deleted. These known defects still require regression coverage
+in the replacement modules.
+
+## Current replacement modules
+
+CSH-016 adds standalone input and invocation APIs. They have no dependency on
+the legacy header, scanner, or executor, and the default executable does not
+call them yet.
+
+| Path | Responsibility |
+| --- | --- |
+| `src/input.c` / `include/cshell/input.h` | Owned string, script, and descriptor sources; physical lines, byte positions, explicit EOF, and sticky errors |
+| `src/invocation.c` / `include/cshell/invocation.h` | Supported invocation options, owned `$0` and positional operands, interactive detection, and prompt selection |
+
+See [Input and invocation](input-and-invocation.md) for the concrete ownership,
+descriptor, position, and error contracts. Physical input lines do not establish
+command completeness; that remains the lexer/parser's responsibility. CSH-018
+integrates replacement-runtime fixtures and CSH-039 switches the executable.
 
 ## Target module boundaries
 
-Add modules when their implementation ticket starts; the following paths are
-planned, not claims that these files exist today.
+The input and invocation modules above exist; add the remaining modules when
+their implementation tickets start. This table defines target responsibilities
+and does not claim that every listed module is implemented.
 
-| Planned module | Owns | Must not own |
+| Module | Owns | Must not own |
 | --- | --- | --- |
-| `input` | Source abstraction for strings, scripts, and stdin; positions; complete/incomplete/EOF results | Command execution |
+| `input` | Source abstraction for strings, scripts, and stdin; byte positions; physical-line/EOF/error results | Command completeness, syntax interpretation, or execution |
+| `invocation` | Input-mode and option selection, operand mapping, interactive detection, prompt selection | Parameter expansion, prompt output, or execution |
 | `lexer` | Tokens and word fragments with quote/escape provenance | Expansion into final argument strings |
 | `parser` / `ast` | Grammar, syntax errors, command trees, ordered redirections, deferred here-documents | Forks or global shell mutation |
 | `variables` / `state` | Shell variables and attributes, positional parameters, options, last status | Scanning input |
@@ -54,6 +76,12 @@ planned, not claims that these files exist today.
 Public-to-the-project headers live under `include/cshell/`. Keep module-private
 helpers `static`. Introduce shared types only when multiple modules need the
 same contract; avoid a header that exposes every internal structure.
+
+New modules must not import `cshell/legacy.h`, call legacy functions, or depend
+on the scanner's flat argument vector. Do not copy the old dispatcher into a new
+filename or preserve its assumptions in new interfaces. POSIX requirements and
+the ownership contracts below determine the design; existing quirks and
+unsupported operator spellings are not compatibility requirements.
 
 ## Processing model
 
@@ -112,10 +140,46 @@ their tickets:
 
 ## Replacement strategy
 
-Keep the prototype isolated while the new input, lexer, parser, and executor
-interfaces are implemented. Wire each usable path into the program in a bounded
-ticket. Remove the obsolete legacy path once its replacement is integrated;
-avoid indefinitely maintaining two independent shell implementations.
+Build replacement modules independently of the prototype. CSH-016 defines
+input and invocation APIs; CSH-004 and CSH-005 establish tokens, words, and the
+syntax tree. API fixtures validate these modules before the replacement can run
+commands. CSH-019 adds command execution and redirections, and CSH-020 adds
+pipelines. Input, allocation, descriptor, and child-process safety belong to
+those modules from their first implementation.
+
+CSH-018 integrates invocation modes and statuses through a test driver for the
+replacement runtime. This driver is temporary test infrastructure, not another
+public shell mode. The initial literal-word adapter in CSH-019 is a bounded
+replacement-module stub pending CSH-008 expansion; it neither calls legacy code
+nor flattens syntax for the old dispatcher. Unsupported syntax or expansion must
+fail before the affected construct produces side effects, with no legacy
+fallback.
+
+[CSH-039](tickets/CSH-039-legacy-retirement.md) owns the explicit cutover after
+CSH-018 and CSH-020. It switches the default `cshell` executable to the new path
+and verifies its documented bootstrap subset through native and Docker tests:
+input modes, external commands, `cd`, `exit`, redirections, and pipelines. This
+is an intermediate shell implementation; full builtin semantics and the
+remaining POSIX features continue in their tickets.
+
+Cutover is complete only when:
+
+- `src/legacy/`, `include/cshell/legacy.h`, and the old input/dispatch loop are
+  deleted from the current source tree.
+- Legacy scanner generation, compilation rules, object files, linked symbols,
+  and legacy-only build dependencies are absent from a clean build.
+- The default executable has one runtime path; temporary migration drivers,
+  fallback paths, feature switches, and compatibility adapters are removed.
+- Prototype-specific test allowances, including non-interactive prompt
+  stripping, are removed, and documentation describes the replacement's actual
+  capabilities and limitations.
+- The implementation contains no renamed or copied legacy dispatcher hidden
+  behind the new module interfaces.
+
+Git history and historical ticket evidence remain intact. Removal concerns the
+current implementation and its dependencies, and requires no history rewrite.
+The larger POSIX roadmap proceeds on the replacement after cutover; finishing
+every later feature is not a prerequisite for deleting the prototype.
 
 See the [ticket index](tickets/README.md) for sequencing and the
 [POSIX tracking document](posix.md) for the behavior target.

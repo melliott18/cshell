@@ -4,20 +4,22 @@ Use the [visual implementation plan](../implementation-plan.md) to understand
 the dependency paths and parallel work. Ticket files own scope, acceptance,
 and status; their GitHub links connect to the matching issues.
 
-CSH-014, CSH-015, CSH-017, and CSH-036 depend only on the completed CSH-001
-foundation and are the initial independent implementation tasks.
+CSH-016, CSH-017, and CSH-036 are the first parallel tasks. Legacy repair
+tickets CSH-002, CSH-014, and CSH-015 are superseded, not completed; they retain
+defect history, while replacement tickets own the safety requirements.
+CSH-039 explicitly switches the default executable and deletes the legacy code.
 
 ## Milestones
 
-These original tickets retain their acceptance criteria and collect child
-completion. Implement their child tickets; close a milestone only after its
-children, completion prerequisites, and original acceptance criteria pass.
+Active milestones collect child completion. Close them only after their
+children, completion prerequisites, and acceptance criteria pass. CSH-002 is
+retained below only as a superseded historical milestone.
 
 | Milestone | Scope | Children | GitHub |
 | --- | --- | --- | --- |
 | [CSH-002](CSH-002-legacy-safety.md) | Contain memory and process defects in the legacy shell | [CSH-014](CSH-014-input-memory-safety.md), [CSH-015](CSH-015-process-pipe-safety.md) | [#3](https://github.com/melliott18/cshell/issues/3) |
 | [CSH-003](CSH-003-invocation-and-test-harness.md) | Define invocation, input lifecycle, and behavioral testing | [CSH-016](CSH-016-input-and-invocation.md), [CSH-017](CSH-017-test-harness-and-ci.md), [CSH-018](CSH-018-status-and-cli-integration.md) | [#4](https://github.com/melliott18/cshell/issues/4) |
-| [CSH-006](CSH-006-execution-and-redirection.md) | Execute syntax trees with explicit resource ownership | [CSH-019](CSH-019-simple-command-redirections.md), [CSH-020](CSH-020-pipeline-lifecycle.md), [CSH-021](CSH-021-lists-and-execution-contexts.md) | [#7](https://github.com/melliott18/cshell/issues/7) |
+| [CSH-006](CSH-006-execution-and-redirection.md) | Execute syntax trees with explicit resource ownership | [CSH-019](CSH-019-simple-command-redirections.md), [CSH-020](CSH-020-pipeline-lifecycle.md), [CSH-021](CSH-021-lists-and-execution-contexts.md), [CSH-039](CSH-039-legacy-retirement.md) | [#7](https://github.com/melliott18/cshell/issues/7) |
 | [CSH-007](CSH-007-variables-and-parameters.md) | Model variables, environments, and positional parameters | [CSH-022](CSH-022-shell-state-storage.md), [CSH-023](CSH-023-assignment-environments.md) | [#8](https://github.com/melliott18/cshell/issues/8) |
 | [CSH-008](CSH-008-word-expansion.md) | Implement context-sensitive word expansion | [CSH-024](CSH-024-value-expansions.md), [CSH-025](CSH-025-field-and-pathname-expansion.md), [CSH-026](CSH-026-substitution-and-heredoc-integration.md) | [#9](https://github.com/melliott18/cshell/issues/9) |
 | [CSH-009](CSH-009-compounds-and-functions.md) | Add compound commands and shell functions | [CSH-027](CSH-027-compound-syntax.md), [CSH-028](CSH-028-control-flow-and-functions.md) | [#10](https://github.com/melliott18/cshell/issues/10) |
@@ -35,10 +37,11 @@ Foundation, front-end implementation, and roadmap maintenance:
 | [CSH-004](CSH-004-lexer-and-words.md) | Preserve shell tokens and quoting | [CSH-016](CSH-016-input-and-invocation.md), [CSH-017](CSH-017-test-harness-and-ci.md) | [#5](https://github.com/melliott18/cshell/issues/5) |
 | [CSH-005](CSH-005-parser-and-ast.md) | Parse commands into an owned syntax tree | [CSH-004](CSH-004-lexer-and-words.md) | [#6](https://github.com/melliott18/cshell/issues/6) |
 | [CSH-013](CSH-013-visual-roadmap.md) | Document visual architecture and parallel implementation work | [CSH-001](CSH-001-project-foundation.md) | [#14](https://github.com/melliott18/cshell/issues/14) |
+| [CSH-038](CSH-038-legacy-retirement-plan.md) | Remove legacy constraints from the implementation roadmap | [CSH-013](CSH-013-visual-roadmap.md) | [#40](https://github.com/melliott18/cshell/issues/40) |
 
 ## Child implementation tickets
 
-### CSH-002: Contain memory and process defects in the legacy shell
+### CSH-002: Legacy safety (superseded)
 
 Parent acceptance: [CSH-002](CSH-002-legacy-safety.md).
 
@@ -53,9 +56,9 @@ Parent acceptance: [CSH-003](CSH-003-invocation-and-test-harness.md).
 
 | Ticket | Deliverable | Depends on | GitHub |
 | --- | --- | --- | --- |
-| [CSH-016](CSH-016-input-and-invocation.md) | Introduce input sources and shell invocation modes | [CSH-002](CSH-002-legacy-safety.md) | [#17](https://github.com/melliott18/cshell/issues/17) |
+| [CSH-016](CSH-016-input-and-invocation.md) | Introduce input sources and shell invocation modes | [CSH-001](CSH-001-project-foundation.md) | [#17](https://github.com/melliott18/cshell/issues/17) |
 | [CSH-017](CSH-017-test-harness-and-ci.md) | Build a bounded behavioral harness and continuous integration | [CSH-001](CSH-001-project-foundation.md) | [#18](https://github.com/melliott18/cshell/issues/18) |
-| [CSH-018](CSH-018-status-and-cli-integration.md) | Integrate invocation modes with command and shell exit statuses | [CSH-016](CSH-016-input-and-invocation.md), [CSH-017](CSH-017-test-harness-and-ci.md) | [#19](https://github.com/melliott18/cshell/issues/19) |
+| [CSH-018](CSH-018-status-and-cli-integration.md) | Integrate invocation modes with command and shell exit statuses | [CSH-016](CSH-016-input-and-invocation.md), [CSH-017](CSH-017-test-harness-and-ci.md), [CSH-019](CSH-019-simple-command-redirections.md) | [#19](https://github.com/melliott18/cshell/issues/19) |
 
 ### CSH-006: Execute syntax trees with explicit resource ownership
 
@@ -66,6 +69,7 @@ Parent acceptance: [CSH-006](CSH-006-execution-and-redirection.md).
 | [CSH-019](CSH-019-simple-command-redirections.md) | Execute simple commands with ordered redirections | [CSH-005](CSH-005-parser-and-ast.md), [CSH-022](CSH-022-shell-state-storage.md) | [#20](https://github.com/melliott18/cshell/issues/20) |
 | [CSH-020](CSH-020-pipeline-lifecycle.md) | Execute pipelines with explicit child and descriptor ownership | [CSH-019](CSH-019-simple-command-redirections.md) | [#21](https://github.com/melliott18/cshell/issues/21) |
 | [CSH-021](CSH-021-lists-and-execution-contexts.md) | Execute lists, groups, and background contexts | [CSH-020](CSH-020-pipeline-lifecycle.md) | [#22](https://github.com/melliott18/cshell/issues/22) |
+| [CSH-039](CSH-039-legacy-retirement.md) | Switch cshell to the replacement runtime and delete the legacy code | [CSH-018](CSH-018-status-and-cli-integration.md), [CSH-020](CSH-020-pipeline-lifecycle.md) | [#41](https://github.com/melliott18/cshell/issues/41) |
 
 ### CSH-007: Model variables, environments, and positional parameters
 

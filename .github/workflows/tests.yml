@@ -42,7 +42,7 @@ jobs:
           echo "$(brew --prefix flex)/bin" >> "$GITHUB_PATH"
       - name: Build
         run: make -j2
-      - name: Test prototype behavior
+      - name: Test input APIs and selected behavior
         run: make test
       - name: Test harness failure handling
         run: make test-harness
@@ -53,7 +53,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
-      - name: Build Linux image and test prototype behavior
+      - name: Build Linux image and test input APIs and selected behavior
         run: make docker-test
       - name: Test harness failure handling in Linux image
         run: docker run --rm --init cshell-test:local make test-harness

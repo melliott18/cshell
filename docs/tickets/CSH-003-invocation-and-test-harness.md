@@ -4,7 +4,7 @@
 - Type: feat
 - Kind: milestone
 - Parent: None
-- Depends on: CSH-002
+- Depends on: CSH-001
 - Children: CSH-016, CSH-017, CSH-018
 - Branch: Assigned when work starts
 - Issue: [#4](https://github.com/melliott18/cshell/issues/4)
@@ -24,8 +24,10 @@ standard input, with correct prompting and observable exit statuses.
   POSIX requirements; preserve inputs needed for multiline parsing.
 - Extend the CSH-001 smoke runner into a portable behavioral harness, preserving
   timeouts and per-case temporary folders while adding fixtures and filesystem
-  assertions. Remove the legacy prompt allowance for non-interactive cases.
-- Run the growing suite through both `make test` and `make docker-test`.
+  assertions. Use strict output checks for non-interactive candidate fixtures;
+  CSH-039 removes the remaining prototype allowances at the default cutover.
+- Run the growing suite through native and Docker targets with explicit candidate
+  selection before CSH-039 switches `make test` and `make docker-test` defaults.
 - Add build and behavioral checks to CI, including the Docker Linux path and
   native checks on the supported platforms.
 
@@ -62,5 +64,9 @@ Interactive terminal behavior receives full pseudo-terminal coverage in CSH-011.
 - [ ] The original acceptance criteria above pass across all three invocation
   modes through the native and Docker entry points, with CI evidence recorded.
 
-CSH-017 starts after CSH-001 using the existing stdin mode; it need not wait for
-the safety milestone or new invocation modes. CSH-018 joins the two streams.
+CSH-016 and CSH-017 start independently after CSH-001. CSH-016 defines input
+contracts without using the legacy scanner. CSH-018 joins the new front end,
+CSH-019 executor, and harness in a testable candidate runtime. CSH-039 switches
+the default executable after pipeline validation; this milestone can complete
+on the candidate, with the tested target recorded explicitly. Legacy repairs
+are not prerequisites for either path.
