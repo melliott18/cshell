@@ -1,6 +1,6 @@
 # CSH-017: Build a bounded behavioral harness and continuous integration
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: CSH-003
@@ -94,6 +94,7 @@ fixture metadata for future invocation modes, not mandatory unsupported flags.
 - Hosted [CI run 35915656573](https://github.com/melliott18/cshell/actions/runs/35915656573)
   passed for implementation commit `d91a726`: native Ubuntu 24.04/GCC, native
   macOS 15/Clang, and Docker Linux each built and passed both suites.
-- [PR #43](https://github.com/melliott18/cshell/pull/43) is ready for review.
-  The ticket remains `review` until integration; passing these tests is not a
-  claim of POSIX shell compliance.
+- [PR #43](https://github.com/melliott18/cshell/pull/43) merged into `main` on
+  2026-09-23 as `e88d4d1`. The [merge CI run](https://github.com/melliott18/cshell/actions/runs/35917985709)
+  passed native Ubuntu/GCC, native macOS/Clang, and Docker Linux. Passing these
+  tests is not a claim of POSIX shell compliance.

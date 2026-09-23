@@ -36,10 +36,10 @@ standard input, with correct prompting and observable exit statuses.
 - [ ] File-open and usage errors produce diagnostics and failure statuses.
 - [ ] Child termination and command-not-found statuses are retained in shell state.
 - [ ] `exit` with and without an operand has defined, tested behavior.
-- [ ] Tests assert stdout, stderr, status, and relevant filesystem effects.
-- [ ] The runner reports hangs as failures and cleans up spawned process groups.
-- [ ] Tests and CI instructions are linked from the contributor documentation.
-- [ ] Docker and native targets run the same suite, and CI fails on test errors.
+- [x] Tests assert stdout, stderr, status, and relevant filesystem effects.
+- [x] The runner reports hangs as failures and cleans up spawned process groups.
+- [x] Tests and CI instructions are linked from the contributor documentation.
+- [x] Docker and native targets run the same suite, and CI fails on test errors.
 
 ## Validation
 
@@ -56,7 +56,7 @@ Interactive terminal behavior receives full pseudo-terminal coverage in CSH-011.
 ## Completion gate
 
 - [ ] [CSH-016: Input and invocation](CSH-016-input-and-invocation.md) is done.
-- [ ] [CSH-017: Test harness and CI](CSH-017-test-harness-and-ci.md) is done.
+- [x] [CSH-017: Test harness and CI](CSH-017-test-harness-and-ci.md) is done.
 - [ ] [CSH-018: Status and CLI integration](CSH-018-status-and-cli-integration.md)
   is done.
 - [ ] The original acceptance criteria above pass across all three invocation
