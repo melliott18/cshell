@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "name": "Prototype smoke checks",
+  "kind": "prototype",
+  "cases": [
+    {
+      "name": "exit",
+      "stdin": "exit\n",
+      "strip_prompt": true,
+      "expect": {"stdout": "", "stderr": "", "status": 0}
+    },
+    {
+      "name": "external command",
+      "stdin": "/bin/echo cshell-smoke-ok\nexit\n",
+      "strip_prompt": true,
+      "expect": {"stdout": "cshell-smoke-ok\n", "stderr": "", "status": 0}
+    },
+    {
+      "name": "successive commands",
+      "stdin": "/bin/echo first second third\n/bin/echo fourth\nexit\n",
+      "strip_prompt": true,
+      "expect": {"stdout": "first second third\nfourth\n", "stderr": "", "status": 0}
+    },
+    {
+      "name": "external filesystem effects",
+      "stdin": "/bin/cp input.txt copied.txt\n/bin/mkdir created\n/bin/rm removed.txt\nexit\n",
+      "setup": {"input.txt": "fixture contents\n", "removed.txt": "remove me\n"},
+      "strip_prompt": true,
+      "expect": {
+        "stdout": "", "stderr": "", "status": 0,
+        "files": {
+          "input.txt": {"type": "file", "content": "fixture contents\n"},
+          "copied.txt": {"type": "file", "content": "fixture contents\n"},
+          "created": {"type": "directory"},
+          "removed.txt": {"type": "absent"}
+        }
+      }
+    }
+  ]
+}

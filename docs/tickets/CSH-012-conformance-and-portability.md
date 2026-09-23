@@ -51,7 +51,7 @@ sample of its linked cases from a clean checkout.
 
 ## Completion gate
 
-- [ ] [CSH-036: Conformance matrix](CSH-036-conformance-matrix.md) is done.
+- [x] [CSH-036: Conformance matrix](CSH-036-conformance-matrix.md) is done.
 - [ ] [CSH-037: Portability audit](CSH-037-portability-audit.md) is done.
 - [ ] The original acceptance criteria above pass together, with recorded
   cross-feature evidence and all completion prerequisites satisfied.

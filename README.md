@@ -30,13 +30,22 @@ make CC=clang  # Select a compiler
 ## Test
 
 ```sh
-make test         # Native API and smoke checks; requires Python 3
-make docker-test  # Build and run the checks in a Linux container
+make test          # Input API and selected behavioral fixtures; Python 3.9+
+make test-input    # Replacement input/invocation API checks only
+make test-harness  # Test the runner's failure detection and cleanup
+make docker-test   # Build and run the selected fixtures in a Linux container
 ```
 
+`make test` includes independent input/invocation API checks. Its default
+behavioral suite records the current prototype's stdin behavior and explicit
+prompt allowance. Replacement shell and module tests select their executable and
+fixture suite separately; passing prototype tests does not establish replacement
+behavior or POSIX compliance.
+
 The Docker path requires Docker with a running Linux engine and uses its own
-compiler, Flex, and Python. See [Testing](docs/testing.md) for direct Docker
-commands, coverage limits, and troubleshooting.
+compiler, Flex, and Python. Native Linux, native macOS, and Docker checks also run
+in CI. See [Testing](docs/testing.md) for fixture authoring, executable selection,
+resource limits, direct Docker commands, and troubleshooting.
 
 ## Where to start
 
@@ -61,7 +70,7 @@ src/input.c      Replacement physical-line input sources
 src/invocation.c Replacement invocation and operand mapping
 src/legacy/      Transitional lexer and executor
 docs/            Architecture, POSIX tracking, and implementation tickets
-tests/           Bounded smoke checks and replacement API fixtures
+tests/           Input API fixtures, behavioral runner, and harness self-tests
 build/           Generated scanner and object files (ignored by Git)
 ```
 

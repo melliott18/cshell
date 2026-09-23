@@ -6,6 +6,13 @@ LDLIBS ?=
 PYTHON ?= python3
 DOCKER ?= docker
 DOCKER_IMAGE ?= cshell-test:local
+TEST_BINARY ?= ./cshell
+TEST_SUITE ?= tests/fixtures/prototype.json
+# Clear TEST_TARGET when testing an already available executable, e.g. /bin/sh.
+TEST_TARGET ?= cshell
+TEST_TIMEOUT ?= 5
+TEST_OUTPUT_LIMIT ?= 65536
+TEST_CASE ?=
 
 # GNU make defines LEX=lex by default; use flex unless explicitly overridden.
 ifeq ($(origin LEX),default)
@@ -20,7 +27,7 @@ INPUT_OBJECTS = build/input.o build/invocation.o
 INPUT_HEADERS = include/cshell/input.h include/cshell/invocation.h
 INPUT_FAULT_OBJECTS = build/tests/fault-input.o build/tests/fault-invocation.o
 
-.PHONY: all test test-input docker-build docker-test docker-shell clean
+.PHONY: all test test-input test-harness docker-build docker-test docker-shell clean
 
 all: cshell
 
@@ -57,14 +64,21 @@ build/tests/input_faults: tests/input_faults.c tests/input_faults.h $(INPUT_FAUL
 test-input: build/tests/input_fixture build/tests/input_faults
 	$(PYTHON) tests/input.py build/tests/input_fixture --fault-binary build/tests/input_faults
 
-test: cshell test-input
-	$(PYTHON) tests/smoke.py ./cshell
+test: $(TEST_TARGET) test-input
+	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
+		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
+
+test-harness:
+	$(PYTHON) -m unittest discover -s tests -p 'test_harness.py' -v
 
 docker-build:
-	$(DOCKER) build --tag "$(DOCKER_IMAGE)" .
+	$(DOCKER) build --tag "$(DOCKER_IMAGE)" --build-arg "TEST_TARGET=$(TEST_TARGET)" .
 
 docker-test: docker-build
-	$(DOCKER) run --rm --init "$(DOCKER_IMAGE)"
+	$(DOCKER) run --rm --init "$(DOCKER_IMAGE)" make test \
+		"TEST_BINARY=$(TEST_BINARY)" "TEST_SUITE=$(TEST_SUITE)" \
+		"TEST_TARGET=$(TEST_TARGET)" "TEST_TIMEOUT=$(TEST_TIMEOUT)" \
+		"TEST_OUTPUT_LIMIT=$(TEST_OUTPUT_LIMIT)" "TEST_CASE=$(TEST_CASE)"
 
 docker-shell: docker-build
 	$(DOCKER) run --rm --init -it "$(DOCKER_IMAGE)" /bin/sh

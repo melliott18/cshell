@@ -124,3 +124,20 @@ its updated CSH-016 scope was already published in issue #17 while PR #42 was
 still open. This ticket remains `review` until integration into `main`.
 Default `cshell` command execution is unchanged; no general POSIX conformance
 claim or Linux amd64 validation is made.
+
+
+### Integration validation
+
+Merged the newer CSH-017 harness/CI and CSH-036 conformance documentation into
+the implementation branch before main integration. Resolved shared build and
+entry-point documentation while retaining candidate selection, Docker controls,
+and harness self-tests. `make test` now runs the independent input API checks
+alongside the selected behavioral suite; hosted CI uses the same targets.
+
+A clean native build followed by `make test test-harness` passed all 63 input
+API checks, the current four prototype fixtures, and 23 harness self-tests.
+`make docker-test DOCKER_IMAGE=cshell-test:csh-016-merge` plus the image's
+`make test-harness` passed the same checks on Linux arm64. The production input
+and invocation implementation is unchanged from the sanitizer-validated
+`8f91ff3` revision above. Matrix annotations distinguish API evidence from
+remaining runtime and conformance requirements.

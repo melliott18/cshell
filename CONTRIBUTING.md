@@ -90,13 +90,36 @@ From the repository root:
 make clean
 make -j
 make test
+make test-harness
 ```
 
-The tests require Python 3 and check replacement input/invocation APIs alongside
-prototype startup, explicit exit, and simple external commands. `make test-input`
-builds and checks the replacement modules without Flex or legacy dependencies.
-These checks do not establish shell correctness or POSIX compliance. CSH-003
-extends the behavioral harness and integrates replacement execution.
+The tests require Python 3.9 or newer. `make test` runs the replacement
+input/invocation API checks and the selected behavioral fixtures; its default
+suite checks the prototype's startup, explicit exit, and simple external
+commands. `make test-input` builds and checks only the replacement input modules,
+without Flex or legacy dependencies. `make test-harness` checks the runner's own
+assertions, resource limits, and descendant cleanup, including deliberately
+failing cases. These checks do not establish shell correctness or POSIX
+compliance.
+
+Keep prototype expectations in a `prototype` suite. Add replacement shell or
+module expectations in a separate `replacement` or `module` suite and select both
+the executable and suite explicitly. For example, once a module has a build
+target and fixtures:
+
+```sh
+make test TEST_TARGET=build/module-test TEST_BINARY=./build/module-test TEST_SUITE=tests/fixtures/module.json
+```
+
+Use `TEST_TARGET=` for an executable that is already built. Fixture authors must
+assert stdout, stderr, and exit status, include relevant filesystem effects, and
+explain any platform restriction with `skip_reason`. Prompt stripping is an
+explicit per-case allowance reserved for prototype suites.
+
+Put generated replacement or module executables under `build/` and give them a
+Make target. Keep `tests/` for source fixtures and helper scripts. Docker excludes
+`build/` and the host `cshell` executable, then rebuilds the selected target with
+its Linux toolchain.
 
 For a Linux build and the same tests using Docker's toolchain:
 
@@ -104,8 +127,9 @@ For a Linux build and the same tests using Docker's toolchain:
 make docker-test
 ```
 
-See [Testing](docs/testing.md) for coverage limits, image details, direct Docker
-commands, and troubleshooting. Keep native platform checks alongside Docker.
+See [Testing](docs/testing.md) for the fixture schema, runner limits, image
+details, direct Docker commands, and troubleshooting. CI runs native Linux and
+macOS checks alongside Docker; a Linux container cannot validate Darwin behavior.
 See each ticket for the validation required by its changes.
 
 The Makefile accepts compiler, preprocessor, compiler flag, linker flag, library,

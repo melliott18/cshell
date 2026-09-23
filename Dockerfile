@@ -14,6 +14,8 @@ COPY --chown=cshell:cshell src/ src/
 COPY --chown=cshell:cshell tests/ tests/
 
 USER cshell
-RUN make
+# Build the selected source target with Linux tools, never a host executable.
+ARG TEST_TARGET=cshell
+RUN if [ -n "$TEST_TARGET" ]; then make "$TEST_TARGET"; fi
 
 CMD ["make", "test"]

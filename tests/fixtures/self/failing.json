@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "name": "intentional runner failures",
+  "kind": "self",
+  "cases": [
+    {
+      "name": "mismatched stdout", "stdin": "actual stdout\n", "args": ["echo"],
+      "expect": {"stdout": "expected stdout\n", "stderr": "", "status": 0}
+    },
+    {
+      "name": "mismatched stderr", "stdin": "", "args": ["echo", "actual stderr\n"],
+      "expect": {"stdout": "", "stderr": "expected stderr\n", "status": 0}
+    },
+    {
+      "name": "mismatched status", "stdin": "", "args": ["echo", "", "7"],
+      "expect": {"stdout": "", "stderr": "", "status": 0}
+    },
+    {
+      "name": "missing file", "stdin": "", "args": ["echo"],
+      "expect": {
+        "stdout": "", "stderr": "", "status": 0,
+        "files": {"missing.txt": {"type": "file", "content": "expected contents"}}
+      }
+    },
+    {
+      "name": "mismatched file content", "stdin": "", "args": ["write", "result.txt", "actual contents"],
+      "expect": {
+        "stdout": "", "stderr": "", "status": 0,
+        "files": {"result.txt": {"type": "file", "content": "expected contents"}}
+      }
+    },
+    {
+      "name": "hanging candidate", "stdin": "", "args": ["hang"], "timeout": 0.2,
+      "expect": {"stdout": "", "stderr": "", "status": 0}
+    },
+    {
+      "name": "excessive output", "stdin": "", "args": ["flood"], "output_limit": 4096,
+      "expect": {"stdout": "", "stderr": "", "status": 0}
+    }
+  ]
+}
