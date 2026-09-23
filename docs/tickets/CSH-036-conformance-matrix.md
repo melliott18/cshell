@@ -1,6 +1,6 @@
 # CSH-036: Map POSIX requirements to implementation and test evidence
 
-- Status: review
+- Status: done
 - Type: docs
 - Kind: implementation
 - Parent: CSH-012
@@ -105,3 +105,7 @@ allocates missing history/vi/mail work before selecting full UP; the profile
 owners resolve XSI and documented choices; CSH-037 audits all rows and platforms.
 No unimplemented requirement is marked verified. Native/Docker smoke results do
 not establish cross-platform conformance or close any behavioral milestone.
+
+Integrated into `main` through [pull request #44](https://github.com/melliott18/cshell/pull/44)
+on 2026-09-23. Implementation commit: `a574faf`; merge commit: `8e097b2`.
+The parent milestone remains open pending CSH-037 and its other completion gates.
