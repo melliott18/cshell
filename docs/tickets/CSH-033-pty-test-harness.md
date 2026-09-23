@@ -1,6 +1,6 @@
 # CSH-033: Add a bounded pseudo-terminal test harness
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: CSH-011
@@ -100,3 +100,12 @@ without closing [CSH-011](CSH-011-signals-and-job-control.md).
   tests/test_pty_harness.py tests/helpers/pty_candidate.py` and
   `git diff --check` passed. Native Ubuntu/GCC, macOS/Clang, and Docker CI now
   invoke the prototype PTY case and both harness test modules.
+
+### Integration
+
+- [PR #47](https://github.com/melliott18/cshell/pull/47) merged into `main` on
+  2026-09-23 as `a7c4e8b`.
+- [PR CI run 35920735096](https://github.com/melliott18/cshell/actions/runs/35920735096)
+  passed native Ubuntu/GCC, native macOS/Clang, and Docker Linux for implementation
+  commit `d1eda9a`.
+- CSH-033 is complete. CSH-011 remains open for the CSH-034/035 shell behavior work.
