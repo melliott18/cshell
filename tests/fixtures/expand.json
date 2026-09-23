@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "name": "expand-api",
+  "kind": "module",
+  "cases": [
+    {
+      "name": "expand contracts",
+      "stdin": "",
+      "expect": {
+        "stdout": "PASS: value expansions, provenance, lazy operands, callbacks, arithmetic, ownership, rollback\n",
+        "stderr": "",
+        "status": 0
+      }
+    }
+  ]
+}

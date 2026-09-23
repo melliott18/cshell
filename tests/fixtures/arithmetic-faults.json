@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "name": "arithmetic-faults-api",
+  "kind": "module",
+  "cases": [
+    {
+      "name": "arithmetic allocation failures",
+      "stdin": "",
+      "expect": {
+        "stdout": "arithmetic allocation failure fixtures passed\n",
+        "stderr": "",
+        "status": 0
+      }
+    }
+  ]
+}

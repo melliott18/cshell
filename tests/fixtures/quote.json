@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "name": "quote-api",
+  "kind": "module",
+  "cases": [
+    {
+      "name": "quote contracts",
+      "stdin": "",
+      "expect": {
+        "stdout": "quote fixtures passed\n",
+        "stderr": "",
+        "status": 0
+      }
+    }
+  ]
+}

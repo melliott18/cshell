@@ -88,7 +88,7 @@ regions remain represented even though they contain no text. Expansion must
 keep this information: an explicit empty quoted argument differs from an
 unquoted expansion that produces no fields.
 
-Dollar-single-quoted escapes remain source spelling in this module. CSH-024
+Dollar-single-quoted escapes remain source spelling in this module. [CSH-024](value-expansions.md)
 decodes them before expansion and owns the resulting byte and locale choices.
 The lexer records boundaries and quoting without evaluating escape values.
 
@@ -155,8 +155,9 @@ contexts and its closing `))`, but cannot decide whether the contents form a
 valid arithmetic expression. The
 [Issue 8 ambiguity rule](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_06_03)
 also requires trying command-substitution parsing once the input cannot be
-parsed as arithmetic. CSH-005 and CSH-024 must coordinate that
-grammar decision and fallback. Until then, an ambiguous input such as
+parsed as arithmetic. CSH-024 supplies `csh_arith_probe()` for grammar-only classification;
+[its contract](value-expansions.md#arithmetic-and-parser-cooperation) records the
+coordinated CSH-005/CSH-026 requirement for lexer checkpoint/replay and fallback. Until then, an ambiguous input such as
 `$((echo hi); )` is diagnosed as incomplete arithmetic; the explicitly
 separated `$( (echo hi); )` uses the command-parser handshake. This limitation
 does not affect the lexer preserving ordinary arithmetic expansion syntax.
