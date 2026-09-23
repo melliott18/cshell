@@ -86,12 +86,14 @@ make test-pty
 make test-harness
 ```
 
-`make test` builds `TEST_TARGET`, runs the input, lexer, parser, and state API checks,
+`make test` builds `TEST_TARGET`, runs the input, lexer, parser, state, and
+value-expansion API checks,
 and runs the selected behavioral suite.
 `make test-pty` builds `PTY_TEST_TARGET` and runs its independently selected
-terminal suite. It does not run the input, lexer, parser, or state API tests. Keeping
-separate selection variables means choosing a module for `make test` does not
-silently run that module against prototype terminal expectations.
+terminal suite. It does not run the input, lexer, parser, state, or
+value-expansion API tests. Keeping separate selection variables means choosing
+a module for `make test` does not silently run that module against prototype
+terminal expectations.
 `make test-harness` runs Python unit tests against helper executables and
 self-fixtures. Some helpers intentionally produce wrong output, nonzero statuses,
 filesystem mismatches, hangs, descendants in multiple terminal process groups,
@@ -112,7 +114,7 @@ The same runner is used by native tests, Docker, and CI. Test selection is expli
 
 | Make variable | Default | Meaning |
 | --- | --- | --- |
-| `TEST_TARGET` | `cshell` | Behavioral candidate target to build; set empty for an already built executable. Input, lexer, parser, and state API fixtures still build and run. |
+| `TEST_TARGET` | `cshell` | Behavioral candidate target to build; set empty for an already built executable. Input, lexer, parser, state, and value-expansion API fixtures still build and run. |
 | `TEST_BINARY` | `./cshell` | Candidate executable. |
 | `TEST_SUITE` | `tests/fixtures/prototype.json` | JSON fixture suite. |
 | `TEST_TIMEOUT` | `5` | Maximum wall-clock seconds per case. |
@@ -363,19 +365,21 @@ process group. Pipe cleanup kills that group after success or failure, including
 descendants left behind by a candidate that exits early. PTY cleanup covers all
 process groups still in the candidate's session, including stopped foreground
 jobs, background groups, and descendants left after the leader exits. Terminal
-descriptors are closed on success and failure. PTY cleanup has its own one-second
-budget separate from the case's overall timeout; inability to complete teardown within
-that bound fails the case instead of hanging the runner.
+descriptors are closed on success and failure. Final pipe and PTY cleanup have
+their own one-second budgets separate from the case's overall timeout; inability
+to reap the leader within that bound fails the case instead of hanging the
+runner. PTY cleanup also verifies that no live session members remain.
 
 PTY session discovery uses `/proc` on Linux and `/bin/ps` plus process-session
-queries on macOS. These must be available for reliable cleanup. A discovery or
-teardown error fails the case, including after an otherwise successful exit.
-
-Known limitation: repeated process-group cleanup can intermittently report
-`Operation not permitted` on macOS after a candidate exits. The failure and a
-focused investigation are tracked in
-[CSH-040](tickets/CSH-040-macos-harness-cleanup.md). Passing retries do not resolve
-that issue, and the harness continues to report permission errors as failures.
+queries on macOS. Both transports share the group-kill check: macOS can return
+`EPERM` when a group contains only zombies, so that error is accepted only after
+a fresh, bounded session snapshot proves there are no live members of the target
+group. The pipe post-exit check allows up to one second for this snapshot. Other
+permission errors, a live group, or a failed snapshot remain failures, including
+after an otherwise successful exit. The macOS snapshot facilities must therefore
+also be available when pipe cleanup encounters `EPERM`. See
+[CSH-040](tickets/CSH-040-macos-harness-cleanup.md) for deterministic regression
+evidence.
 
 The candidate also receives POSIX resource limits: CPU time is limited to at most
 the effective timeout rounded up plus one second, each file is limited to the larger
@@ -404,7 +408,8 @@ make docker-test-pty
 ```
 
 This builds the test image from the current source files and runs the input,
-lexer, parser, and state API checks and selected behavioral suite inside it. `TEST_TARGET`,
+lexer, parser, state, and value-expansion API checks and selected behavioral
+suite inside it. `TEST_TARGET`,
 `TEST_BINARY`, `TEST_SUITE`, `TEST_TIMEOUT`,
 `TEST_OUTPUT_LIMIT`, and `TEST_CASE` select the same tests as the native target.
 The build target is compiled using the container's Linux toolchain. Candidate
@@ -419,8 +424,8 @@ The harness allocates its own controlling PTY inside the container: the
 `devpts` mount at `/dev/pts`, as provided by the normal Docker environment. If
 container restrictions prevent PTY allocation or acquiring a controlling
 terminal, the affected PTY cases report capability-specific skips. This does not
-skip unrelated pipe, input, lexer, parser, or state API tests, and an entirely skipped
-selected suite still fails. Investigate container device/mount restrictions
+skip unrelated pipe, input, lexer, parser, state, or value-expansion API tests,
+and an entirely skipped selected suite still fails. Investigate container device/mount restrictions
 instead of adding platform skips for ordinary test failures.
 
 The image uses Debian Bookworm, GCC, GNU Make, Flex, and Python 3. Source is copied
@@ -516,3 +521,27 @@ drivers, and validates clean builds with no legacy sources or objects.
 Add a fixture when a behavior is implemented and record which executable and
 suite supplied the evidence. Do not turn a passing harness self-test or a
 prototype allowance into a language-conformance claim.
+
+## Value-expansion API and sanitizer checks
+
+`make test-expand` builds independent expansion, arithmetic, and quote-decoder
+fixtures and runs five bounded module suites. These check structured fields and
+span provenance, state effects, lazy operands, explicit deferred substitutions,
+integer boundaries, and allocation failures. They do not execute shell scripts
+or claim field splitting, pathname expansion, or command-capture behavior.
+
+```sh
+make test-expand
+make clean
+ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 make test-expand CC=clang CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -DNDEBUG -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+make docker-test DOCKER_IMAGE=cshell-test:csh-024
+```
+
+`make test` includes these suites on native and Docker paths. Native CI also
+runs expansion/state sanitizer checks. Fault-only objects instrument expansion
+and quote allocations together, and arithmetic/state allocations together;
+production objects contain no allocator hooks. All fixture checks stay active
+with `-DNDEBUG`. The shared decoder's standalone target is
+`build/tests/quote_fixture`, allowing parser reuse without linking the expansion
+engine. See [Value expansion](value-expansions.md) for supported contexts,
+locale/unspecified choices, ownership, and remaining integration requirements.

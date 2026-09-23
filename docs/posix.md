@@ -58,6 +58,14 @@ contracts from the standard. [CSH-039](tickets/CSH-039-legacy-retirement.md)
 removes the old runtime without waiting for full POSIX coverage; unsupported
 constructs must fail explicitly until their implementation tickets are complete.
 
+## Replacement value-expansion evidence
+
+CSH-024 adds [module-level value expansion](value-expansions.md), with checked
+parameter/tilde/arithmetic behavior, quote provenance, and dollar-single-quote
+decoding. Field splitting, pathname expansion, real substitutions, and arithmetic
+ambiguity replay remain integration gaps. The prototype table above remains a
+runtime baseline; standalone API fixtures do not establish shell conformance.
+
 ## Evidence required
 
 As a feature is implemented, link its specific specification section and tests

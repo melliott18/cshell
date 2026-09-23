@@ -10,6 +10,7 @@ Start with the [project README](../README.md) for installation and current statu
 | [Lexer and words](lexer-and-words.md) | Replacement tokens, quoting provenance, nested parser frames, and raw here-document handoff |
 | [Parser and AST](parser-and-ast.md) | Complete-command parsing, owned syntax trees, ordered here-documents, and diagnostics |
 | [Shell state](shell-state.md) | Owned variables, parameters, attributes, environment snapshots, copying, and restoration |
+| [Value expansion](value-expansions.md) | Structured expansion contexts, parameters, tilde, arithmetic, decoding, and deferred substitutions |
 | [Visual implementation plan](implementation-plan.md) | Dependencies, parallel tasks, and milestone completion |
 | [Testing](testing.md) | Native and Docker commands, smoke coverage, and troubleshooting |
 | [POSIX tracking](posix.md) | Specification target, gaps, and conformance evidence |

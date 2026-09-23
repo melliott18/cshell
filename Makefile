@@ -36,8 +36,10 @@ PARSER_OBJECTS = build/parser.o build/ast.o build/lexer.o build/input.o build/qu
 PARSER_FAULT_OBJECTS = build/tests/parser-fault-parser.o build/tests/parser-fault-ast.o \
 	build/tests/parser-fault-lexer.o build/tests/parser-fault-input.o build/tests/parser-fault-quote.o
 STATE_HEADERS = include/cshell/state.h $(INPUT_HEADERS)
+EXPAND_HEADERS = include/cshell/expand.h include/cshell/arithmetic.h include/cshell/quote.h $(LEXER_HEADERS) $(STATE_HEADERS)
+EXPAND_OBJECTS = build/expand.o build/quote.o build/arithmetic.o
 
-.PHONY: all test test-input test-lexer test-parser test-state test-pty test-harness docker-build docker-test docker-test-pty docker-shell clean
+.PHONY: all test test-input test-lexer test-parser test-state test-expand test-pty test-harness docker-build docker-test docker-test-pty docker-shell clean
 
 all: cshell
 
@@ -93,7 +95,11 @@ build/tests/lexer_faults: tests/lexer_faults.c tests/lexer_faults.h build/tests/
 test-lexer: build/tests/lexer_fixture build/tests/lexer_faults
 	$(PYTHON) tests/lexer.py build/tests/lexer_fixture --fault-binary build/tests/lexer_faults
 
-build/parser.o build/ast.o build/quote.o: build/%.o: src/%.c $(PARSER_HEADERS)
+build/parser.o build/ast.o: build/%.o: src/%.c $(PARSER_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+build/quote.o: src/quote.c include/cshell/quote.h
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
@@ -137,7 +143,46 @@ test-state: build/tests/state_fixture build/tests/state_faults
 	$(PYTHON) tests/smoke.py ./build/tests/state_fixture --suite tests/fixtures/state.json
 	$(PYTHON) tests/smoke.py ./build/tests/state_faults --suite tests/fixtures/state-faults.json
 
-test: $(TEST_TARGET) test-input test-lexer test-parser test-state
+build/expand.o build/arithmetic.o: build/%.o: src/%.c $(EXPAND_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+build/tests/expand_fixture: tests/expand_fixture.c $(EXPAND_OBJECTS) build/state.o build/lexer.o $(EXPAND_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/expand_fixture.c $(EXPAND_OBJECTS) build/state.o build/lexer.o $(LDLIBS)
+
+build/tests/fault-expand.o build/tests/fault-quote.o: build/tests/fault-%.o: src/%.c $(EXPAND_HEADERS) tests/expand_faults.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/expand_faults.h -c $< -o $@
+
+build/tests/expand_faults: tests/expand_faults.c tests/expand_faults.h build/tests/fault-expand.o build/tests/fault-quote.o build/arithmetic.o build/state.o build/lexer.o $(EXPAND_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/expand_faults.c build/tests/fault-expand.o build/tests/fault-quote.o build/arithmetic.o build/state.o build/lexer.o $(LDLIBS)
+
+build/tests/arithmetic_fixture: tests/arithmetic_fixture.c build/arithmetic.o build/state.o $(EXPAND_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/arithmetic_fixture.c build/arithmetic.o build/state.o $(LDLIBS)
+
+build/tests/quote_fixture: tests/quote_fixture.c build/quote.o include/cshell/quote.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/quote_fixture.c build/quote.o $(LDLIBS)
+
+build/tests/arith-fault-arithmetic.o build/tests/arith-fault-state.o: build/tests/arith-fault-%.o: src/%.c $(EXPAND_HEADERS) tests/arithmetic_faults.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/arithmetic_faults.h -c $< -o $@
+
+build/tests/arithmetic_faults: tests/arithmetic_faults.c tests/arithmetic_faults.h build/tests/arith-fault-arithmetic.o build/tests/arith-fault-state.o $(EXPAND_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/arithmetic_faults.c build/tests/arith-fault-arithmetic.o build/tests/arith-fault-state.o $(LDLIBS)
+
+test-expand: build/tests/arithmetic_faults build/tests/expand_fixture build/tests/expand_faults build/tests/arithmetic_fixture build/tests/quote_fixture
+	$(PYTHON) tests/smoke.py ./build/tests/expand_fixture --suite tests/fixtures/expand.json
+	$(PYTHON) tests/smoke.py ./build/tests/expand_faults --suite tests/fixtures/expand-faults.json
+	$(PYTHON) tests/smoke.py ./build/tests/arithmetic_fixture --suite tests/fixtures/arithmetic.json
+	$(PYTHON) tests/smoke.py ./build/tests/quote_fixture --suite tests/fixtures/quote.json
+	$(PYTHON) tests/smoke.py ./build/tests/arithmetic_faults --suite tests/fixtures/arithmetic-faults.json
+
+test: $(TEST_TARGET) test-input test-lexer test-parser test-state test-expand
 	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
 

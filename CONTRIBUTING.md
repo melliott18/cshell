@@ -91,12 +91,14 @@ make clean
 make -j
 make test
 make test-pty
+make test-expand
 make test-harness
 ```
 
 The tests require Python 3.9 or newer. `make test` runs the replacement
-input/invocation, lexer, parser/AST, and shell-state API checks and the selected
-behavioral fixtures; its default suite checks the prototype's startup, explicit exit, and
+input/invocation, lexer, parser/AST, shell-state, and value-expansion API checks
+and the selected behavioral fixtures; its default suite checks the prototype's
+startup, explicit exit, and
 simple external commands. `make test-input` checks only the replacement input
 modules, without Flex or legacy dependencies. `make test-lexer` independently
 builds and checks replacement tokens, fragments, and parser handoffs.
@@ -114,6 +116,10 @@ allocation failures. It also needs no Flex or legacy dependencies. See
 [Shell state](docs/shell-state.md) for its ownership and restoration contracts,
 and [Testing](docs/testing.md#shell-state-api-and-sanitizer-checks)
 for focused sanitizer and Docker commands.
+
+`make test-expand` checks value expansion, arithmetic, the shared quote decoder,
+and allocation failures without the legacy scanner or executor. See
+[Value expansion](docs/value-expansions.md) for the intermediate output contract.
 
 Keep prototype expectations in a `prototype` suite. Add replacement shell or
 module expectations in a separate `replacement` or `module` suite and select both

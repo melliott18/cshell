@@ -41,9 +41,10 @@ in the replacement modules.
 ## Current replacement modules
 
 CSH-016 adds standalone input and invocation APIs, CSH-004 adds the lexer and
-structured token/word API, CSH-005 adds parser/AST ownership, and CSH-022 adds
-shell-state storage. They have no dependency on the legacy header, scanner, or
-executor, and the default executable does not call them yet.
+structured token/word API, CSH-005 adds parser/AST ownership, CSH-022 adds
+shell-state storage, and CSH-024 adds value expansion. They have no
+dependency on the legacy header, scanner, or executor, and the default
+executable does not call them yet.
 
 | Path | Responsibility |
 | --- | --- |
@@ -52,7 +53,9 @@ executor, and the default executable does not call them yet.
 | `src/lexer.c` / `include/cshell/lexer.h` | Owned tokens and fragment trees, incremental quote/substitution contexts, shared-cursor nested command lexers, and raw here-document handoff |
 | `src/parser.c` / `include/cshell/parser.h` | Complete-command grammar, contextual words, nested command parsing, ordered here-document collection, and source diagnostics |
 | `src/ast.c` / `include/cshell/ast.h` | Owned syntax nodes, words, substitutions, and ordered redirections with allocation-safe cleanup |
-| `src/quote.c` / `include/cshell/quote.h` | Shared dollar-single-quote byte decoding for delimiter quote removal and later expansion |
+| `src/expand.c` / `include/cshell/expand.h` | Structured value expansion, quote/empty provenance, context restrictions, and lazy substitution handoff |
+| `src/arithmetic.c` / `include/cshell/arithmetic.h` | Checked signed-long arithmetic and grammar-only parser probe |
+| `src/quote.c` / `include/cshell/quote.h` | Reusable dollar-single-quote decoding before expansion or delimiter quote removal |
 | `src/state.c` / `include/cshell/state.h` | Owned variables and attributes, copied invocation parameters, option/status metadata, environment snapshots, and full-state copying/restoration |
 
 See [Input and invocation](input-and-invocation.md) for the concrete ownership,
@@ -74,10 +77,15 @@ initialization to CSH-029. Full-state checkpoints do not implement selective
 temporary assignments; CSH-023 owns their execution-category rules. The state
 module neither reads nor modifies the process environment.
 
+See [Value expansion](value-expansions.md) for intermediate fields, quoted empty
+values, transactional expansion errors, arithmetic limits, and the parser/executor
+handoffs. Field splitting and pathname expansion remain CSH-025 work.
+
 ## Target module boundaries
 
-The input, invocation, lexer, parser/AST, quote, and state modules above exist.
-Add the remaining modules when their implementation tickets start. This table defines target
+The input, invocation, lexer, parser/AST, quote, state, and value-expansion
+modules above exist. Add the remaining modules when their implementation
+tickets start. This table defines target
 responsibilities and does not claim that every listed module is implemented.
 
 | Module | Owns | Must not own |

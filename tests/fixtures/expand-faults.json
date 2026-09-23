@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "name": "expand-faults-api",
+  "kind": "module",
+  "cases": [
+    {
+      "name": "expand-faults contracts",
+      "stdin": "",
+      "expect": {
+        "stdout": "PASS: every expansion/decoder allocation failure, cleanup, full-state rollback\n",
+        "stderr": "",
+        "status": 0
+      }
+    }
+  ]
+}
