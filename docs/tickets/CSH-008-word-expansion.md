@@ -47,7 +47,7 @@ substitution statuses, redirection operands, and here-document expansion.
 
 ## Completion gate
 
-- [ ] [CSH-024: Value expansions](CSH-024-value-expansions.md) is done.
+- [x] [CSH-024: Value expansions](CSH-024-value-expansions.md) is done.
 - [ ] [CSH-025: Field and pathname expansion](CSH-025-field-and-pathname-expansion.md) is done.
 - [ ] [CSH-026: Substitution and here-document integration](CSH-026-substitution-and-heredoc-integration.md) is done.
 - [ ] The original acceptance criteria above pass together, with recorded
