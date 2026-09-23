@@ -27,7 +27,7 @@ test harness with `Operation not permitted` during repeated process-group kills.
   candidate exit, including the macOS zombie-group transition where feasible.
 - [x] Cleanup remains safe and idempotent for exited groups while live
   descendants are still terminated and real permission failures are reported.
-- [ ] Native macOS/Linux and Docker harness self-tests pass with bounded checks.
+- [x] Native macOS/Linux and Docker harness self-tests pass with bounded checks.
 
 ## Validation
 
@@ -86,4 +86,10 @@ all EPERM errors. No harness behavior was changed in CSH-022.
 - Python byte-compilation of the four changed harness modules and
   `git diff --check` passed. Independent implementation review found no
   actionable issues.
-- Native Linux CI validation is pending the implementation PR.
+- [PR #50](https://github.com/melliott18/cshell/pull/50) implements this ticket.
+  [PR CI run 35931206050](https://github.com/melliott18/cshell/actions/runs/35931206050)
+  passed native Ubuntu 24.04/GCC, native macOS 15/Clang, and Docker Linux at
+  implementation commit `19cfc44`. The jobs include all harness self-tests,
+  module and behavioral fixtures, PTY smoke checks, and native state sanitizer
+  checks. The corresponding push CI run also passed all three environments.
+  The ticket remains in review until integration into `main`.
