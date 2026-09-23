@@ -38,14 +38,32 @@ CSH-015 are superseded; new input and runtime work does not wait for repairs to
 code that will be deleted. These known defects still require regression coverage
 in the replacement modules.
 
+## Current replacement modules
+
+CSH-016 adds standalone input and invocation APIs. They have no dependency on
+the legacy header, scanner, or executor, and the default executable does not
+call them yet.
+
+| Path | Responsibility |
+| --- | --- |
+| `src/input.c` / `include/cshell/input.h` | Owned string, script, and descriptor sources; physical lines, byte positions, explicit EOF, and sticky errors |
+| `src/invocation.c` / `include/cshell/invocation.h` | Supported invocation options, owned `$0` and positional operands, interactive detection, and prompt selection |
+
+See [Input and invocation](input-and-invocation.md) for the concrete ownership,
+descriptor, position, and error contracts. Physical input lines do not establish
+command completeness; that remains the lexer/parser's responsibility. CSH-018
+integrates replacement-runtime fixtures and CSH-039 switches the executable.
+
 ## Target module boundaries
 
-Add modules when their implementation ticket starts; the following paths are
-planned, not claims that these files exist today.
+The input and invocation modules above exist; add the remaining modules when
+their implementation tickets start. This table defines target responsibilities
+and does not claim that every listed module is implemented.
 
-| Planned module | Owns | Must not own |
+| Module | Owns | Must not own |
 | --- | --- | --- |
-| `input` | Source abstraction for strings, scripts, and stdin; positions; complete/incomplete/EOF results | Command execution |
+| `input` | Source abstraction for strings, scripts, and stdin; byte positions; physical-line/EOF/error results | Command completeness, syntax interpretation, or execution |
+| `invocation` | Input-mode and option selection, operand mapping, interactive detection, prompt selection | Parameter expansion, prompt output, or execution |
 | `lexer` | Tokens and word fragments with quote/escape provenance | Expansion into final argument strings |
 | `parser` / `ast` | Grammar, syntax errors, command trees, ordered redirections, deferred here-documents | Forks or global shell mutation |
 | `variables` / `state` | Shell variables and attributes, positional parameters, options, last status | Scanning input |

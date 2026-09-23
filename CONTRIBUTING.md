@@ -92,9 +92,11 @@ make -j
 make test
 ```
 
-The tests require Python 3 and check startup, explicit exit, and simple external
-commands. They do not establish shell correctness or POSIX compliance. CSH-003
-extends this smoke runner into a broader behavioral harness.
+The tests require Python 3 and check replacement input/invocation APIs alongside
+prototype startup, explicit exit, and simple external commands. `make test-input`
+builds and checks the replacement modules without Flex or legacy dependencies.
+These checks do not establish shell correctness or POSIX compliance. CSH-003
+extends the behavioral harness and integrates replacement execution.
 
 For a Linux build and the same tests using Docker's toolchain:
 

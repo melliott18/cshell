@@ -2,7 +2,22 @@
 
 ## Current coverage
 
-The current suite checks startup, explicit exit, external command execution, and
+CSH-016 adds independent replacement-input API fixtures alongside the prototype
+smoke checks. `make test-input` builds only `src/input.c`, `src/invocation.c`, and
+their fixtures; it needs no legacy header, scanner, executor, or Flex. These
+fixtures do not execute shell commands. They cover source bytes and positions,
+owned invocation operands, explicit EOF, diagnostics/status data, descriptor
+ownership and read boundaries, and terminal/prompt selection. The Python runner
+uses five-second subprocess timeouts, including for its pseudo-terminal cases.
+
+The fault fixture compiles separate module objects with test-only allocator and
+read wrappers. It fails each allocation in turn across all constructors,
+invocation modes, and line-buffer growth; it checks retained-allocation counts
+and descriptor cleanup after every run. It injects read errors before, within,
+and after physical lines, checks that partial lines never escape, and verifies
+EINTR retries. Production objects contain no fault-injection hooks.
+
+The prototype smoke suite checks startup, explicit exit, external command execution, and
 successive commands. Each case runs in a temporary directory with a five-second
 timeout. The runner checks output, stderr, and exit status, and kills the test
 process group on timeout.
@@ -12,7 +27,7 @@ prompt on non-interactive stdout, and explicitly send `exit` because EOF handlin
 is incomplete. Passing them does not establish POSIX compliance or correct
 quoting, pipelines, redirections, or signal behavior.
 
-Both supported test entry points use the same smoke runner. Native tests build
+Both supported test entry points use the same input fixtures and smoke runner. Native tests build
 with the host toolchain; Docker copies source into an image and builds with its
 Linux toolchain. Each path checks stdout, stderr, exit status, and timeouts:
 
@@ -39,12 +54,27 @@ Install the build dependencies from the [README](../README.md) and Python 3:
 make test
 ```
 
-`make test` builds `cshell` when necessary and runs `tests/smoke.py`. To test a
+`make test` builds `cshell` when necessary and runs both the input API fixtures
+and `tests/smoke.py`. To test a
 specific executable or change the timeout:
 
 ```sh
 python3 tests/smoke.py ./cshell --timeout 10
 ```
+
+For the replacement input layer alone, including sanitizer validation:
+
+```sh
+make clean
+make test-input
+make clean
+make test-input CC=clang CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+```
+
+Run sanitizer checks against this target: the prototype has known memory defects
+that are outside CSH-016. Allocation counters work on both macOS and Linux;
+Linux ASan also checks leaks. See the [input contract](input-and-invocation.md)
+and [ticket evidence](tickets/CSH-016-input-and-invocation.md).
 
 ## Docker tests
 

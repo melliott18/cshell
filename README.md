@@ -17,7 +17,10 @@ make -j
 
 Enter `exit` to quit. EOF handling, quoting, pipelines, and redirections still
 have known defects; see the [implementation tickets](docs/tickets/README.md).
-Script-file and `-c` invocation are planned, not currently supported.
+The replacement [input and invocation APIs](docs/input-and-invocation.md)
+support script files, `-c`, and stdin in API fixtures. The default `cshell`
+executable still uses the prototype input loop; script-file and `-c` arguments
+remain unavailable until runtime integration.
 
 ```sh
 make clean     # Remove the executable and generated build files
@@ -27,7 +30,7 @@ make CC=clang  # Select a compiler
 ## Test
 
 ```sh
-make test         # Native smoke checks; requires Python 3
+make test         # Native API and smoke checks; requires Python 3
 make docker-test  # Build and run the checks in a Linux container
 ```
 
@@ -44,6 +47,7 @@ commands, coverage limits, and troubleshooting.
 | Create a branch or contribute a change | [Contributing](CONTRIBUTING.md) |
 | Run native or Docker tests | [Testing](docs/testing.md) |
 | Understand the code and planned modules | [Architecture](docs/architecture.md) |
+| Use replacement input and invocation APIs | [Input and invocation](docs/input-and-invocation.md) |
 | Check the POSIX target and known gaps | [POSIX tracking](docs/posix.md) |
 | Browse all project documentation | [Documentation index](docs/README.md) |
 | Find project context as an agent | [Agent entry point](AGENTS.md) |
@@ -53,9 +57,11 @@ commands, coverage limits, and troubleshooting.
 ```text
 include/cshell/   Internal module interfaces
 src/main.c       Program entry point and current input loop
+src/input.c      Replacement physical-line input sources
+src/invocation.c Replacement invocation and operand mapping
 src/legacy/      Transitional lexer and executor
 docs/            Architecture, POSIX tracking, and implementation tickets
-tests/           Bounded smoke checks
+tests/           Bounded smoke checks and replacement API fixtures
 build/           Generated scanner and object files (ignored by Git)
 ```
 

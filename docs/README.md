@@ -6,6 +6,7 @@ Start with the [project README](../README.md) for installation and current statu
 | --- | --- |
 | [Contributing](../CONTRIBUTING.md) | Tickets, branch names, validation, and documentation workflow |
 | [Architecture](architecture.md) | Current source layout and target module responsibilities |
+| [Input and invocation](input-and-invocation.md) | Replacement input sources, invocation operands, ownership, positions, and errors |
 | [Visual implementation plan](implementation-plan.md) | Dependencies, parallel tasks, and milestone completion |
 | [Testing](testing.md) | Native and Docker commands, smoke coverage, and troubleshooting |
 | [POSIX tracking](posix.md) | Specification target, gaps, and conformance evidence |
