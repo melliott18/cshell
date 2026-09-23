@@ -6,6 +6,13 @@ LDLIBS ?=
 PYTHON ?= python3
 DOCKER ?= docker
 DOCKER_IMAGE ?= cshell-test:local
+TEST_BINARY ?= ./cshell
+TEST_SUITE ?= tests/fixtures/prototype.json
+# Clear TEST_TARGET when testing an already available executable, e.g. /bin/sh.
+TEST_TARGET ?= cshell
+TEST_TIMEOUT ?= 5
+TEST_OUTPUT_LIMIT ?= 65536
+TEST_CASE ?=
 
 # GNU make defines LEX=lex by default; use flex unless explicitly overridden.
 ifeq ($(origin LEX),default)
@@ -17,7 +24,7 @@ LEXFLAGS ?=
 CSHELL_CPPFLAGS = -D_POSIX_C_SOURCE=200809L -Iinclude
 OBJECTS = build/main.o build/legacy/execute.o build/legacy/lexer.o
 
-.PHONY: all test docker-build docker-test docker-shell clean
+.PHONY: all test test-harness docker-build docker-test docker-shell clean
 
 all: cshell
 
@@ -35,14 +42,21 @@ build/legacy/lexer.c: src/legacy/lexer.l
 build/legacy/lexer.o: build/legacy/lexer.c include/cshell/legacy.h
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-test: cshell
-	$(PYTHON) tests/smoke.py ./cshell
+test: $(TEST_TARGET)
+	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
+		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
+
+test-harness:
+	$(PYTHON) -m unittest discover -s tests -p 'test_harness.py' -v
 
 docker-build:
-	$(DOCKER) build --tag "$(DOCKER_IMAGE)" .
+	$(DOCKER) build --tag "$(DOCKER_IMAGE)" --build-arg "TEST_TARGET=$(TEST_TARGET)" .
 
 docker-test: docker-build
-	$(DOCKER) run --rm --init "$(DOCKER_IMAGE)"
+	$(DOCKER) run --rm --init "$(DOCKER_IMAGE)" make test \
+		"TEST_BINARY=$(TEST_BINARY)" "TEST_SUITE=$(TEST_SUITE)" \
+		"TEST_TARGET=$(TEST_TARGET)" "TEST_TIMEOUT=$(TEST_TIMEOUT)" \
+		"TEST_OUTPUT_LIMIT=$(TEST_OUTPUT_LIMIT)" "TEST_CASE=$(TEST_CASE)"
 
 docker-shell: docker-build
 	$(DOCKER) run --rm --init -it "$(DOCKER_IMAGE)" /bin/sh
