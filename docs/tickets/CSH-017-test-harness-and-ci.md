@@ -91,6 +91,9 @@ fixture metadata for future invocation modes, not mandatory unsupported flags.
   build `cshell`; generated module executables belong under excluded `build/`.
 - Actionlint 1.7.12 accepted `.github/workflows/tests.yml`; `git diff --check`
   passed. The documented strict JSON example passed against `/bin/sh`.
-- Hosted CI results will be recorded after the branch is pushed. The ticket
-  remains `review` until integration; passing these tests is not a claim of
-  POSIX shell compliance.
+- Hosted [CI run 35915656573](https://github.com/melliott18/cshell/actions/runs/35915656573)
+  passed for implementation commit `d91a726`: native Ubuntu 24.04/GCC, native
+  macOS 15/Clang, and Docker Linux each built and passed both suites.
+- [PR #43](https://github.com/melliott18/cshell/pull/43) is ready for review.
+  The ticket remains `review` until integration; passing these tests is not a
+  claim of POSIX shell compliance.
