@@ -117,3 +117,13 @@ GNU Make 4.3, Python 3.11.2, Docker Engine 24.0.6; tests run as UID 10001.
   comparisons, 700 randomized ASan/UBSan streaming comparisons, and targeted
   nesting/backquote/long-continuation cases. Changed Markdown links resolve;
   `git diff --check` passed. Existing Mermaid diagrams are unchanged.
+
+
+### Integration validation
+
+Integrated the CSH-033 controlling-terminal harness from `main` (`a7c4e8b`),
+resolving shared Makefile and contributor documentation while retaining both
+lexer and PTY targets. No lexer source or interface changed. A clean native
+build followed by `make test test-pty test-harness` passed all 61 lexer checks,
+63 input checks, four prototype pipe fixtures, one prototype PTY fixture, and
+50 combined harness self-tests.
