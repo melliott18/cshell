@@ -31,9 +31,15 @@ INPUT_OBJECTS = build/input.o build/invocation.o
 INPUT_HEADERS = include/cshell/input.h include/cshell/invocation.h
 INPUT_FAULT_OBJECTS = build/tests/fault-input.o build/tests/fault-invocation.o
 LEXER_HEADERS = include/cshell/lexer.h include/cshell/input.h
+PARSER_HEADERS = include/cshell/parser.h include/cshell/ast.h include/cshell/quote.h $(LEXER_HEADERS)
+PARSER_OBJECTS = build/parser.o build/ast.o build/lexer.o build/input.o build/quote.o
+PARSER_FAULT_OBJECTS = build/tests/parser-fault-parser.o build/tests/parser-fault-ast.o \
+	build/tests/parser-fault-lexer.o build/tests/parser-fault-input.o build/tests/parser-fault-quote.o
 STATE_HEADERS = include/cshell/state.h $(INPUT_HEADERS)
+EXPAND_HEADERS = include/cshell/expand.h include/cshell/arithmetic.h include/cshell/quote.h $(LEXER_HEADERS) $(STATE_HEADERS)
+EXPAND_OBJECTS = build/expand.o build/quote.o build/arithmetic.o
 
-.PHONY: all test test-input test-lexer test-state test-expand test-pty test-harness docker-build docker-test docker-test-pty docker-shell clean
+.PHONY: all test test-input test-lexer test-parser test-state test-expand test-pty test-harness docker-build docker-test docker-test-pty docker-shell clean
 
 all: cshell
 
@@ -89,6 +95,34 @@ build/tests/lexer_faults: tests/lexer_faults.c tests/lexer_faults.h build/tests/
 test-lexer: build/tests/lexer_fixture build/tests/lexer_faults
 	$(PYTHON) tests/lexer.py build/tests/lexer_fixture --fault-binary build/tests/lexer_faults
 
+build/parser.o build/ast.o: build/%.o: src/%.c $(PARSER_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+build/quote.o: src/quote.c include/cshell/quote.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+build/tests/parser_fixture: tests/parser_fixture.c $(PARSER_OBJECTS) $(PARSER_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/parser_fixture.c $(PARSER_OBJECTS) $(LDLIBS)
+
+build/tests/ast_fixture: tests/ast_fixture.c build/ast.o build/lexer.o $(PARSER_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/ast_fixture.c build/ast.o build/lexer.o $(LDLIBS)
+
+$(PARSER_FAULT_OBJECTS): build/tests/parser-fault-%.o: src/%.c $(PARSER_HEADERS) tests/parser_faults.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/parser_faults.h -c $< -o $@
+
+build/tests/parser_faults: tests/parser_faults.c tests/parser_faults.h $(PARSER_FAULT_OBJECTS) $(PARSER_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/parser_faults.c $(PARSER_FAULT_OBJECTS) $(LDLIBS)
+
+test-parser: build/tests/parser_fixture build/tests/parser_faults build/tests/ast_fixture
+	$(PYTHON) tests/parser.py build/tests/parser_fixture --fault-binary build/tests/parser_faults
+	./build/tests/ast_fixture
+
 build/state.o: src/state.c $(STATE_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
@@ -109,10 +143,7 @@ test-state: build/tests/state_fixture build/tests/state_faults
 	$(PYTHON) tests/smoke.py ./build/tests/state_fixture --suite tests/fixtures/state.json
 	$(PYTHON) tests/smoke.py ./build/tests/state_faults --suite tests/fixtures/state-faults.json
 
-EXPAND_HEADERS = include/cshell/expand.h include/cshell/arithmetic.h include/cshell/quote.h $(LEXER_HEADERS) $(STATE_HEADERS)
-EXPAND_OBJECTS = build/expand.o build/quote.o build/arithmetic.o
-
-$(EXPAND_OBJECTS): build/%.o: src/%.c $(EXPAND_HEADERS)
+build/expand.o build/arithmetic.o: build/%.o: src/%.c $(EXPAND_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
@@ -151,7 +182,7 @@ test-expand: build/tests/arithmetic_faults build/tests/expand_fixture build/test
 	$(PYTHON) tests/smoke.py ./build/tests/quote_fixture --suite tests/fixtures/quote.json
 	$(PYTHON) tests/smoke.py ./build/tests/arithmetic_faults --suite tests/fixtures/arithmetic-faults.json
 
-test: $(TEST_TARGET) test-input test-lexer test-state test-expand
+test: $(TEST_TARGET) test-input test-lexer test-parser test-state test-expand
 	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
 

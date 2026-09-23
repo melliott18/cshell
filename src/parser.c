@@ -1,0 +1,1030 @@
+#include "cshell/parser.h"
+#include "cshell/quote.h"
+
+#include <errno.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+
+/* Iterative sequences have no fixed length limit. Recursive grammar contexts
+ * have an explicit limit so hostile grouping cannot exhaust the C stack. */
+#define PARSER_NESTING_LIMIT 128
+
+struct csh_parser {
+    struct csh_input *input;
+    struct csh_lexer *lexer;
+    enum csh_parse_result failure_result;
+    struct csh_error failure;
+    int final;
+    int eof;
+};
+
+struct parse_frame {
+    struct csh_parser *parser;
+    struct csh_lexer *lexer;
+    struct csh_ast_word look;
+    int has_look;
+    int eof;
+    size_t depth;
+    struct csh_ast_redirection **documents;
+    size_t document_count;
+    size_t document_capacity;
+};
+
+enum closing { CLOSE_NONE, CLOSE_PAREN, CLOSE_BRACE };
+struct bytes { unsigned char *data; size_t length, capacity; };
+
+static struct csh_ast *parse_list(struct parse_frame *, enum closing, int,
+    struct csh_position);
+
+static int fail_at(struct parse_frame *frame, enum csh_parse_result result,
+    const char *message, int number, struct csh_position position)
+{
+    struct csh_parser *parser = frame->parser;
+    if (parser->failure.message == NULL) {
+        memset(&parser->failure, 0, sizeof(parser->failure));
+        parser->failure.message = message;
+        parser->failure.system_errno = number;
+        parser->failure.status = number != 0 ? 1 : 2;
+        parser->failure.position = position;
+        parser->failure_result = result;
+    }
+    return -1;
+}
+
+static struct csh_position position(struct parse_frame *frame)
+{
+    size_t length;
+    int final;
+    struct csh_position result;
+    if (frame->has_look)
+        return frame->look.token.start;
+    (void)csh_lexer_pending(frame->lexer, &length, &result, &final);
+    return result;
+}
+
+static int adopt_error(struct parse_frame *frame, const struct csh_error *error)
+{
+    if (frame->parser->failure.message == NULL) {
+        frame->parser->failure = *error;
+        if (frame->parser->failure.position.line == 0)
+            frame->parser->failure.position = position(frame);
+        frame->parser->failure_result = frame->parser->final &&
+            error->system_errno == 0 &&
+            error->message != NULL &&
+            strncmp(error->message, "unterminated ", 13) == 0 ?
+            CSH_PARSE_INCOMPLETE : CSH_PARSE_ERROR;
+    }
+    return -1;
+}
+
+static int reserve(struct parse_frame *frame, void **pointer, size_t *capacity,
+    size_t count, size_t size)
+{
+    size_t grown = *capacity == 0 ? 16 : *capacity;
+    void *replacement;
+    if (count <= *capacity)
+        return 0;
+    if (count > SIZE_MAX / size)
+        return fail_at(frame, CSH_PARSE_ERROR, "parser storage overflow",
+            EOVERFLOW, position(frame));
+    while (grown < count) {
+        if (grown > SIZE_MAX / 2) { grown = count; break; }
+        grown *= 2;
+    }
+    if (grown > SIZE_MAX / size)
+        grown = count;
+    replacement = realloc(*pointer, grown * size);
+    if (replacement == NULL)
+        return fail_at(frame, CSH_PARSE_ERROR, "cannot allocate parser storage",
+            ENOMEM, position(frame));
+    *pointer = replacement;
+    *capacity = grown;
+    return 0;
+}
+
+static int append(struct parse_frame *frame, struct bytes *buffer,
+    const void *data, size_t length)
+{
+    if (length >= SIZE_MAX - buffer->length)
+        return fail_at(frame, CSH_PARSE_ERROR, "parser storage overflow",
+            EOVERFLOW, position(frame));
+    if (reserve(frame, (void **)&buffer->data, &buffer->capacity,
+                buffer->length + length + 1, 1) == -1)
+        return -1;
+    if (length != 0)
+        memcpy(buffer->data + buffer->length, data, length);
+    buffer->length += length;
+    buffer->data[buffer->length] = 0;
+    return 0;
+}
+
+static int feed_line(struct parse_frame *frame)
+{
+    struct csh_input_line line;
+    struct csh_error error;
+    enum csh_input_result result;
+    result = csh_input_read_line(frame->parser->input, &line, &error);
+    if (result == CSH_INPUT_ERROR)
+        return adopt_error(frame, &error);
+    if (result == CSH_INPUT_EOF) {
+        frame->parser->final = 1;
+        if (csh_lexer_feed(frame->lexer, NULL, 0, 1, &error) == -1)
+            return adopt_error(frame, &error);
+    } else if (csh_lexer_feed(frame->lexer, line.data, line.length, 0, &error) == -1)
+        return adopt_error(frame, &error);
+    return 0;
+}
+
+static void frame_destroy(struct parse_frame *frame)
+{
+    csh_ast_word_destroy(&frame->look);
+    free(frame->documents);
+}
+
+static int peek(struct parse_frame *frame)
+{
+    struct csh_error error;
+    if (frame->has_look)
+        return 1;
+    if (frame->eof)
+        return 0;
+    for (;;) {
+        enum csh_lex_result result = csh_lexer_next(frame->lexer,
+            &frame->look.token, &error);
+        if (result == CSH_LEX_ERROR)
+            return adopt_error(frame, &error);
+        if (result == CSH_LEX_MORE) {
+            if (feed_line(frame) == -1)
+                return -1;
+            continue;
+        }
+        if (result == CSH_LEX_EOF) {
+            frame->eof = 1;
+            return 0;
+        }
+        if (result == CSH_LEX_COMMAND) {
+            struct parse_frame child;
+            struct csh_ast_substitution substitution;
+            struct csh_position opening;
+            const char *context;
+            memset(&child, 0, sizeof(child));
+            memset(&substitution, 0, sizeof(substitution));
+            (void)csh_lexer_context(frame->lexer, &context, &opening);
+            if (frame->depth >= PARSER_NESTING_LIMIT)
+                return fail_at(frame, CSH_PARSE_ERROR, "parser nesting limit exceeded",
+                    0, opening);
+            child.parser = frame->parser;
+            child.depth = frame->depth + 1;
+            if (csh_lexer_command_begin(frame->lexer, &child.lexer, &error) == -1)
+                return adopt_error(frame, &error);
+            substitution.body = parse_list(&child, CLOSE_PAREN, 1, opening);
+            if (substitution.body == NULL) {
+                frame_destroy(&child);
+                return -1;
+            }
+            substitution.begin = opening.offset;
+            substitution.end = child.look.token.end.offset;
+            if (child.document_count != 0) {
+                fail_at(&child, CSH_PARSE_ERROR,
+                    "command substitution closes before here-document body", 0,
+                    child.look.token.start);
+                csh_ast_destroy(substitution.body);
+                frame_destroy(&child);
+                return -1;
+            }
+            if (csh_lexer_command_end(frame->lexer, child.lexer,
+                    &child.look.token, &error) == -1) {
+                csh_ast_destroy(substitution.body);
+                frame_destroy(&child);
+                return adopt_error(frame, &error);
+            }
+            frame_destroy(&child);
+            if (csh_ast_word_add_substitution(&frame->look, &substitution, &error) == -1) {
+                csh_ast_destroy(substitution.body);
+                return adopt_error(frame, &error);
+            }
+            continue;
+        }
+        {
+            size_t i, j = 0;
+            for (i = 0; i < frame->look.substitution_count; ++i) {
+                struct csh_ast_substitution *sub = &frame->look.substitutions[i];
+                sub->begin -= frame->look.token.start.offset;
+                sub->end -= frame->look.token.start.offset;
+                sub->fragment_index = CSH_FRAGMENT_ROOT;
+                for (; j < frame->look.token.fragment_count; ++j) {
+                    const struct csh_fragment *fragment = &frame->look.token.fragments[j];
+                    if (fragment->kind == CSH_FRAGMENT_COMMAND &&
+                        fragment->begin == sub->begin && fragment->end == sub->end) {
+                        sub->fragment_index = j;
+                        break;
+                    }
+                }
+            }
+        }
+        frame->has_look = 1;
+        return 1;
+    }
+}
+
+static void take(struct parse_frame *frame, struct csh_ast_word *word)
+{
+    *word = frame->look;
+    memset(&frame->look, 0, sizeof(frame->look));
+    frame->has_look = 0;
+}
+
+static void discard(struct parse_frame *frame)
+{
+    csh_ast_word_destroy(&frame->look);
+    frame->has_look = 0;
+}
+
+/* Only unquoted text and removed continuations are eligible for reserved-word
+ * and IO_NUMBER recognition. Escapes, even of ordinary letters, quote a word. */
+static int plain_equal(const struct csh_token *token, const char *text)
+{
+    size_t i, n = 0;
+    if (token->kind != CSH_TOKEN_WORD)
+        return 0;
+    for (i = 0; i < token->fragment_count; ++i) {
+        const struct csh_fragment *f = &token->fragments[i];
+        size_t j;
+        if (f->kind == CSH_FRAGMENT_CONTINUATION)
+            continue;
+        if (f->kind != CSH_FRAGMENT_TEXT || f->quote != CSH_QUOTE_NONE)
+            return 0;
+        for (j = f->begin; j < f->end; ++j) {
+            if (text[n] == 0 || token->raw[j] != (unsigned char)text[n])
+                return 0;
+            ++n;
+        }
+    }
+    return text[n] == 0;
+}
+
+static int io_number(const struct csh_token *token)
+{
+    size_t i, count = 0;
+    for (i = 0; i < token->fragment_count; ++i) {
+        const struct csh_fragment *f = &token->fragments[i];
+        size_t j;
+        if (f->kind == CSH_FRAGMENT_CONTINUATION)
+            continue;
+        if (f->kind != CSH_FRAGMENT_TEXT || f->quote != CSH_QUOTE_NONE)
+            return 0;
+        for (j = f->begin; j < f->end; ++j) {
+            if (token->raw[j] < '0' || token->raw[j] > '9')
+                return 0;
+            ++count;
+        }
+    }
+    return count != 0;
+}
+
+static int name_start(unsigned char c)
+{
+    return c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
+
+static int assignment(const struct csh_token *token)
+{
+    size_t i, count = 0;
+    for (i = 0; i < token->fragment_count; ++i) {
+        const struct csh_fragment *f = &token->fragments[i];
+        size_t j;
+        if (f->kind == CSH_FRAGMENT_CONTINUATION)
+            continue;
+        if (f->kind != CSH_FRAGMENT_TEXT || f->quote != CSH_QUOTE_NONE)
+            return 0;
+        for (j = f->begin; j < f->end; ++j) {
+            unsigned char c = token->raw[j];
+            if (c == '=')
+                return count != 0;
+            if (!(name_start(c) || (count != 0 && c >= '0' && c <= '9')))
+                return 0;
+            ++count;
+        }
+    }
+    return 0;
+}
+
+static int reserved(const struct csh_token *token)
+{
+    static const char *const words[] = {"if", "then", "else", "elif", "fi",
+        "do", "done", "case", "esac", "while", "until", "for", "in",
+        "{", "}", "!"};
+    size_t i;
+    for (i = 0; i < sizeof(words) / sizeof(words[0]); ++i)
+        if (plain_equal(token, words[i]))
+            return 1;
+    return 0;
+}
+
+static int redirection_kind(enum csh_token_kind kind)
+{
+    return kind == CSH_TOKEN_LESS || kind == CSH_TOKEN_GREAT ||
+        kind == CSH_TOKEN_DLESS || kind == CSH_TOKEN_DGREAT ||
+        kind == CSH_TOKEN_LESS_AND || kind == CSH_TOKEN_GREAT_AND ||
+        kind == CSH_TOKEN_LESS_GREAT || kind == CSH_TOKEN_DLESS_DASH ||
+        kind == CSH_TOKEN_CLOBBER;
+}
+
+/* A here-document delimiter undergoes quote removal without any expansion.
+ * Consequently expansion-looking punctuation remains literal: quoting is
+ * interpreted over the delimiter spelling, not by evaluating its fragments.
+ * For example ${x:-"EOF"} becomes ${x:-EOF}, while "$(echo 'EOF')" keeps
+ * the single quotes protected by the delimiter's double quotes. */
+static int delimiter_spelling(struct parse_frame *frame,
+    const struct csh_token *token, struct bytes *buffer, int *quoted)
+{
+    size_t i = 0;
+    unsigned char quote = 0;
+    while (i < token->length) {
+        unsigned char byte = token->raw[i];
+        if (quote == '\'') {
+            if (byte == '\'') {
+                quote = 0;
+                ++i;
+                continue;
+            }
+        } else if (byte == '\\' && i + 1 < token->length) {
+            unsigned char next = token->raw[i + 1];
+            if (next == '\n') {
+                i += 2;
+                continue;
+            }
+            if (quote == 0 || strchr("$`\\\"", next) != NULL) {
+                *quoted = 1;
+                if (append(frame, buffer, token->raw + i + 1, 1) == -1)
+                    return -1;
+                i += 2;
+                continue;
+            }
+        } else if (byte == '"') {
+            quote = quote == '"' ? 0 : '"';
+            *quoted = 1;
+            ++i;
+            continue;
+        } else if (quote == 0 && byte == '\'') {
+            quote = '\'';
+            *quoted = 1;
+            ++i;
+            continue;
+        } else if (quote == 0 && byte == '$') {
+            size_t opening = i + 1, end, length;
+            char *decoded = NULL;
+            enum csh_quote_result result;
+            while (opening + 1 < token->length && token->raw[opening] == '\\' &&
+                   token->raw[opening + 1] == '\n')
+                opening += 2;
+            if (opening < token->length && token->raw[opening] == '\'') {
+                end = opening + 1;
+                while (end < token->length && token->raw[end] != '\'') {
+                    if (token->raw[end] == '\\' && end + 1 < token->length)
+                        ++end;
+                    ++end;
+                }
+                if (end < token->length) {
+                    result = csh_quote_decode(token->raw + opening + 1,
+                        end - opening - 1, &decoded, &length);
+                    if (result != CSH_QUOTE_OK) {
+                        free(decoded);
+                        return fail_at(frame, CSH_PARSE_ERROR,
+                            result == CSH_QUOTE_NOMEM ? "cannot decode here-document delimiter" :
+                            "invalid dollar-single-quoted here-document delimiter",
+                            result == CSH_QUOTE_NOMEM ? ENOMEM : 0, token->start);
+                    }
+                    *quoted = 1;
+                    if (append(frame, buffer, decoded, length) == -1) {
+                        free(decoded);
+                        return -1;
+                    }
+                    free(decoded);
+                    i = end + 1;
+                    continue;
+                }
+            }
+        }
+        if (append(frame, buffer, token->raw + i, 1) == -1)
+            return -1;
+        ++i;
+    }
+    return 0;
+}
+
+static int prepare_document(struct parse_frame *frame,
+    struct csh_ast_redirection *redirection)
+{
+    struct bytes delimiter = {0};
+    if (delimiter_spelling(frame, &redirection->operand.token,
+                           &delimiter, &redirection->delimiter_quoted) == -1) {
+        free(delimiter.data);
+        return -1;
+    }
+    if (append(frame, &delimiter, NULL, 0) == -1) {
+        free(delimiter.data);
+        return -1;
+    }
+    redirection->delimiter = delimiter.data;
+    redirection->delimiter_length = delimiter.length;
+    if (frame->document_count == SIZE_MAX ||
+        reserve(frame, (void **)&frame->documents, &frame->document_capacity,
+                frame->document_count + 1, sizeof(*frame->documents)) == -1)
+        return -1;
+    frame->documents[frame->document_count++] = redirection;
+    return 0;
+}
+
+static int append_document_line(struct parse_frame *frame, struct bytes *body,
+    const struct bytes *line, int strip_tabs, int quoted)
+{
+    size_t i = 0;
+    if (strip_tabs) {
+        while (i < line->length) {
+            if (line->data[i] == '\t') {
+                ++i;
+            } else if (!quoted && i + 1 < line->length &&
+                       line->data[i] == '\\' && line->data[i + 1] == '\n') {
+                if (append(frame, body, line->data + i, 2) == -1)
+                    return -1;
+                i += 2;
+            } else
+                break;
+        }
+    }
+    return append(frame, body, line->data + i, line->length - i);
+}
+
+static int collect_documents(struct parse_frame *frame)
+{
+    size_t i;
+    struct csh_error error;
+    for (i = 0; i < frame->document_count; ++i) {
+        struct csh_ast_redirection *document = frame->documents[i];
+        struct bytes body = {0}, line = {0}, logical = {0};
+        struct csh_position line_start;
+        int strip_tabs = document->operator_kind == CSH_TOKEN_DLESS_DASH;
+        document->body_start = position(frame);
+        line_start = document->body_start;
+        for (;;) {
+            const unsigned char *pending;
+            size_t available, length, content, backslashes = 0, skip = 0;
+            struct csh_position start;
+            int final, continued;
+            pending = csh_lexer_pending(frame->lexer, &available, &start, &final);
+            if (available == 0) {
+                if (final) {
+                    fail_at(frame, CSH_PARSE_INCOMPLETE,
+                        "unterminated here-document", 0, document->operand.token.start);
+                    goto document_failed;
+                }
+                if (feed_line(frame) == -1)
+                    goto document_failed;
+                continue;
+            }
+            if (line.length == 0)
+                line_start = start;
+            for (length = 0; length < available && pending[length] != '\n'; ++length)
+                ;
+            content = length;
+            if (length < available)
+                ++length;
+            if (!document->delimiter_quoted && length > content) {
+                while (backslashes < content &&
+                       pending[content - backslashes - 1] == '\\')
+                    ++backslashes;
+            }
+            continued = (backslashes % 2) != 0;
+            if (append(frame, &line, pending, length) == -1 ||
+                append(frame, &logical, pending, content - (continued ? 1 : 0)) == -1)
+                goto document_failed;
+            if (csh_lexer_skip_raw(frame->lexer, length, &error) == -1) {
+                adopt_error(frame, &error);
+                goto document_failed;
+            }
+            if (continued)
+                continue;
+            if (strip_tabs)
+                while (skip < logical.length && logical.data[skip] == '\t')
+                    ++skip;
+            if (logical.length - skip == document->delimiter_length &&
+                memcmp(logical.data + skip, document->delimiter,
+                       document->delimiter_length) == 0) {
+                if (append(frame, &body, NULL, 0) == -1)
+                    goto document_failed;
+                document->body = body.data;
+                document->body_length = body.length;
+                document->body_end = line_start;
+                free(line.data);
+                free(logical.data);
+                break;
+            }
+            if (append_document_line(frame, &body, &line, strip_tabs,
+                                     document->delimiter_quoted) == -1)
+                goto document_failed;
+            line.length = logical.length = 0;
+        }
+        continue;
+    document_failed:
+        free(body.data);
+        free(line.data);
+        free(logical.data);
+        return -1;
+    }
+    frame->document_count = 0;
+    return 0;
+}
+
+static int newline(struct parse_frame *frame)
+{
+    discard(frame);
+    return collect_documents(frame);
+}
+
+static struct csh_ast *new_node(struct parse_frame *frame, enum csh_ast_kind kind)
+{
+    struct csh_ast *node = NULL;
+    struct csh_error error;
+    if (csh_ast_create(&node, kind, &error) == -1)
+        adopt_error(frame, &error);
+    return node;
+}
+
+/* The operator is lookahead. An optional IO_NUMBER has already been moved
+ * out of lookahead so one token suffices for adjacency classification. */
+static int parse_redirection(struct parse_frame *frame, struct csh_ast *node,
+    struct csh_ast_word *descriptor)
+{
+    struct csh_ast_redirection *redirection = NULL;
+    struct csh_error error;
+    struct csh_position opening = frame->look.token.start;
+    int result;
+    if (csh_ast_redirection_create(&redirection, frame->look.token.kind, &error) == -1)
+        return adopt_error(frame, &error);
+    redirection->start = descriptor == NULL ? opening : descriptor->token.start;
+    if (descriptor != NULL) {
+        redirection->has_io_number = 1;
+        redirection->io_number = descriptor->token;
+        memset(&descriptor->token, 0, sizeof(descriptor->token));
+    }
+    discard(frame);
+    result = peek(frame);
+    if (result <= 0) {
+        if (result == 0)
+            fail_at(frame, CSH_PARSE_INCOMPLETE, "missing redirection operand", 0, opening);
+        csh_ast_redirection_destroy(redirection);
+        return -1;
+    }
+    if (frame->look.token.kind != CSH_TOKEN_WORD) {
+        fail_at(frame, CSH_PARSE_ERROR, "expected redirection operand", 0, position(frame));
+        csh_ast_redirection_destroy(redirection);
+        return -1;
+    }
+    redirection->end = frame->look.token.end;
+    take(frame, &redirection->operand);
+    if (redirection->operator_kind == CSH_TOKEN_DLESS ||
+        redirection->operator_kind == CSH_TOKEN_DLESS_DASH) {
+        if (prepare_document(frame, redirection) == -1) {
+            csh_ast_redirection_destroy(redirection);
+            return -1;
+        }
+    }
+    node->end = redirection->end;
+    if (csh_ast_add_redirection(node, &redirection, &error) == -1) {
+        csh_ast_redirection_destroy(redirection);
+        return adopt_error(frame, &error);
+    }
+    return 0;
+}
+
+static int skip_newlines(struct parse_frame *frame)
+{
+    int result;
+    while ((result = peek(frame)) > 0 && frame->look.token.kind == CSH_TOKEN_NEWLINE)
+        if (newline(frame) == -1)
+            return -1;
+    return result;
+}
+
+static struct csh_ast *parse_command(struct parse_frame *frame)
+{
+    struct csh_ast *node = NULL;
+    struct csh_error error;
+    struct csh_position opening;
+    int result = peek(frame), command_name = 0, prefix = 0;
+    if (result <= 0) {
+        if (result == 0)
+            fail_at(frame, CSH_PARSE_INCOMPLETE, "expected command", 0, position(frame));
+        return NULL;
+    }
+    opening = frame->look.token.start;
+    if (frame->look.token.kind == CSH_TOKEN_LPAREN || plain_equal(&frame->look.token, "{")) {
+        enum closing closing = frame->look.token.kind == CSH_TOKEN_LPAREN ? CLOSE_PAREN : CLOSE_BRACE;
+        if (frame->depth >= PARSER_NESTING_LIMIT) {
+            fail_at(frame, CSH_PARSE_ERROR, "parser nesting limit exceeded", 0, opening);
+            return NULL;
+        }
+        node = new_node(frame, closing == CLOSE_PAREN ? CSH_AST_SUBSHELL : CSH_AST_BRACE);
+        if (node == NULL)
+            return NULL;
+        node->start = opening;
+        discard(frame);
+        ++frame->depth;
+        node->data.group.body = parse_list(frame, closing, 0, opening);
+        --frame->depth;
+        if (node->data.group.body == NULL)
+            goto failed;
+        node->end = frame->look.token.end;
+        discard(frame);
+        for (;;) {
+            struct csh_ast_word descriptor = {0};
+            result = peek(frame);
+            if (result <= 0)
+                break;
+            if (redirection_kind(frame->look.token.kind)) {
+                if (parse_redirection(frame, node, NULL) == -1)
+                    goto failed;
+            } else if (frame->look.token.kind == CSH_TOKEN_WORD && io_number(&frame->look.token)) {
+                take(frame, &descriptor);
+                result = peek(frame);
+                if (result > 0 && redirection_kind(frame->look.token.kind) &&
+                    descriptor.token.end.offset == frame->look.token.start.offset) {
+                    if (parse_redirection(frame, node, &descriptor) == -1) {
+                        csh_ast_word_destroy(&descriptor);
+                        goto failed;
+                    }
+                    csh_ast_word_destroy(&descriptor);
+                } else {
+                    fail_at(frame, CSH_PARSE_ERROR, "unexpected word after compound command", 0,
+                        descriptor.token.start);
+                    csh_ast_word_destroy(&descriptor);
+                    goto failed;
+                }
+            } else
+                break;
+        }
+        if (result < 0)
+            goto failed;
+        return node;
+    }
+    node = new_node(frame, CSH_AST_SIMPLE);
+    if (node == NULL)
+        return NULL;
+    node->start = opening;
+    for (;;) {
+        struct csh_ast_word word = {0};
+        int is_assignment;
+        result = peek(frame);
+        if (result <= 0)
+            break;
+        if (redirection_kind(frame->look.token.kind)) {
+            if (parse_redirection(frame, node, NULL) == -1)
+                goto failed;
+            prefix = 1;
+            continue;
+        }
+        if (frame->look.token.kind != CSH_TOKEN_WORD)
+            break;
+        if (!command_name && !prefix && reserved(&frame->look.token)) {
+            fail_at(frame, CSH_PARSE_ERROR, "unsupported or unexpected reserved word", 0, position(frame));
+            goto failed;
+        }
+        take(frame, &word);
+        result = peek(frame);
+        if (result < 0) {
+            csh_ast_word_destroy(&word);
+            goto failed;
+        }
+        if (result > 0 && redirection_kind(frame->look.token.kind) &&
+            word.token.end.offset == frame->look.token.start.offset && io_number(&word.token)) {
+            if (parse_redirection(frame, node, &word) == -1) {
+                csh_ast_word_destroy(&word);
+                goto failed;
+            }
+            csh_ast_word_destroy(&word);
+            prefix = 1;
+            continue;
+        }
+        is_assignment = !command_name && assignment(&word.token);
+        if (!is_assignment)
+            command_name = 1;
+        prefix = 1;
+        node->end = word.token.end;
+        if (csh_ast_add_word(node, &word, is_assignment, &error) == -1) {
+            csh_ast_word_destroy(&word);
+            adopt_error(frame, &error);
+            goto failed;
+        }
+    }
+    if (result < 0)
+        goto failed;
+    if (node->data.simple.word_count == 0 && node->redirection_count == 0) {
+        fail_at(frame, CSH_PARSE_ERROR, "expected command", 0, opening);
+        goto failed;
+    }
+    return node;
+failed:
+    csh_ast_destroy(node);
+    return NULL;
+}
+
+static struct csh_ast *parse_pipeline(struct parse_frame *frame)
+{
+    struct csh_ast *pipeline = NULL, *command;
+    struct csh_position opening = position(frame);
+    struct csh_error error;
+    int negated = frame->has_look && plain_equal(&frame->look.token, "!");
+    int result;
+    if (negated)
+        discard(frame);
+    command = parse_command(frame);
+    if (command == NULL)
+        return NULL;
+    result = peek(frame);
+    if (result < 0) {
+        csh_ast_destroy(command);
+        return NULL;
+    }
+    if (!negated && (result == 0 || frame->look.token.kind != CSH_TOKEN_PIPE))
+        return command;
+    pipeline = new_node(frame, CSH_AST_PIPELINE);
+    if (pipeline == NULL) {
+        csh_ast_destroy(command);
+        return NULL;
+    }
+    pipeline->start = opening;
+    pipeline->end = command->end;
+    pipeline->data.pipeline.negated = negated;
+    if (csh_ast_pipeline_add(pipeline, &command, &error) == -1) {
+        adopt_error(frame, &error);
+        goto failed;
+    }
+    while (result > 0 && frame->look.token.kind == CSH_TOKEN_PIPE) {
+        struct csh_position pipe_position = frame->look.token.start;
+        discard(frame);
+        result = skip_newlines(frame);
+        if (result <= 0) {
+            if (result == 0)
+                fail_at(frame, CSH_PARSE_INCOMPLETE, "missing command after pipe", 0, pipe_position);
+            goto failed;
+        }
+        command = parse_command(frame);
+        if (command == NULL)
+            goto failed;
+        pipeline->end = command->end;
+        if (csh_ast_pipeline_add(pipeline, &command, &error) == -1) {
+            adopt_error(frame, &error);
+            goto failed;
+        }
+        result = peek(frame);
+        if (result < 0)
+            goto failed;
+    }
+    return pipeline;
+failed:
+    csh_ast_destroy(command);
+    csh_ast_destroy(pipeline);
+    return NULL;
+}
+
+static struct csh_ast *parse_and_or(struct parse_frame *frame)
+{
+    struct csh_ast *left = parse_pipeline(frame);
+    int result;
+    if (left == NULL)
+        return NULL;
+    for (;;) {
+        enum csh_ast_kind kind;
+        struct csh_ast *node, *right;
+        struct csh_position operator_position;
+        result = peek(frame);
+        if (result < 0)
+            goto failed;
+        if (result == 0 || (frame->look.token.kind != CSH_TOKEN_AND_IF &&
+                            frame->look.token.kind != CSH_TOKEN_OR_IF))
+            return left;
+        kind = frame->look.token.kind == CSH_TOKEN_AND_IF ? CSH_AST_AND : CSH_AST_OR;
+        operator_position = frame->look.token.start;
+        discard(frame);
+        result = skip_newlines(frame);
+        if (result <= 0) {
+            if (result == 0)
+                fail_at(frame, CSH_PARSE_INCOMPLETE, "missing command after and-or operator",
+                    0, operator_position);
+            goto failed;
+        }
+        right = parse_pipeline(frame);
+        if (right == NULL)
+            goto failed;
+        node = new_node(frame, kind);
+        if (node == NULL) {
+            csh_ast_destroy(right);
+            goto failed;
+        }
+        node->start = left->start;
+        node->end = right->end;
+        node->data.binary.left = left;
+        node->data.binary.right = right;
+        left = node;
+    }
+failed:
+    csh_ast_destroy(left);
+    return NULL;
+}
+
+static int at_close(struct parse_frame *frame, enum closing closing)
+{
+    return frame->has_look &&
+        ((closing == CLOSE_PAREN && frame->look.token.kind == CSH_TOKEN_RPAREN) ||
+         (closing == CLOSE_BRACE && plain_equal(&frame->look.token, "}")));
+}
+
+/* A nested list leaves its closing token in lookahead for the group or lexer
+ * handshake. A root list stops immediately after the first complete newline. */
+static struct csh_ast *parse_list(struct parse_frame *frame, enum closing closing,
+    int allow_empty, struct csh_position opening)
+{
+    struct csh_ast *list = new_node(frame, CSH_AST_LIST);
+    struct csh_error error;
+    int result;
+    if (list == NULL)
+        return NULL;
+    list->start = opening;
+    list->end = opening;
+    result = skip_newlines(frame);
+    if (result < 0)
+        goto failed;
+    if (at_close(frame, closing)) {
+        if (!allow_empty) {
+            fail_at(frame, CSH_PARSE_ERROR, "empty command group", 0, position(frame));
+            goto failed;
+        }
+        return list;
+    }
+    for (;;) {
+        struct csh_ast_list_item item;
+        memset(&item, 0, sizeof(item));
+        if (result == 0) {
+            if (closing != CLOSE_NONE) {
+                fail_at(frame, CSH_PARSE_INCOMPLETE, "unterminated command group", 0, opening);
+                goto failed;
+            }
+            break;
+        }
+        item.command = parse_and_or(frame);
+        if (item.command == NULL)
+            goto failed;
+        if (list->data.list.item_count == 0)
+            list->start = item.command->start;
+        list->end = item.command->end;
+        result = peek(frame);
+        if (result < 0) {
+            csh_ast_destroy(item.command);
+            goto failed;
+        }
+        if (result > 0) {
+            enum csh_token_kind kind = frame->look.token.kind;
+            if (kind == CSH_TOKEN_SEMI || kind == CSH_TOKEN_AMPERSAND ||
+                kind == CSH_TOKEN_NEWLINE) {
+                item.separator = kind == CSH_TOKEN_SEMI ? CSH_AST_SEMI :
+                    kind == CSH_TOKEN_AMPERSAND ? CSH_AST_AMPERSAND : CSH_AST_NEWLINE;
+                item.separator_start = frame->look.token.start;
+                item.separator_end = frame->look.token.end;
+                list->end = item.separator_end;
+            } else if (!at_close(frame, closing)) {
+                fail_at(frame, CSH_PARSE_ERROR, "expected command separator", 0, position(frame));
+                csh_ast_destroy(item.command);
+                goto failed;
+            }
+        }
+        {
+            enum csh_ast_separator separator = item.separator;
+            if (csh_ast_list_add(list, &item, &error) == -1) {
+                csh_ast_destroy(item.command);
+                adopt_error(frame, &error);
+                goto failed;
+            }
+            if (separator == CSH_AST_NEWLINE) {
+                if (newline(frame) == -1)
+                    goto failed;
+                if (closing == CLOSE_NONE)
+                    return list;
+            } else if (separator == CSH_AST_SEMI || separator == CSH_AST_AMPERSAND)
+                discard(frame);
+            else {
+                if (result == 0 && closing != CLOSE_NONE) {
+                    fail_at(frame, CSH_PARSE_INCOMPLETE, "unterminated command group", 0, opening);
+                    goto failed;
+                }
+                break;
+            }
+        }
+        /* A semicolon followed by a newline ends the same complete command.
+         * Never peek past this newline before returning a root tree. */
+        result = peek(frame);
+        if (result < 0)
+            goto failed;
+        if (closing == CLOSE_NONE && result > 0 &&
+            frame->look.token.kind == CSH_TOKEN_NEWLINE) {
+            list->end = frame->look.token.end;
+            if (newline(frame) == -1)
+                goto failed;
+            return list;
+        }
+        if (closing != CLOSE_NONE) {
+            result = skip_newlines(frame);
+            if (result < 0)
+                goto failed;
+        }
+        if (at_close(frame, closing))
+            break;
+    }
+    if (closing == CLOSE_NONE && frame->document_count != 0) {
+        fail_at(frame, CSH_PARSE_INCOMPLETE, "here-document requires a following newline",
+            0, frame->documents[0]->operand.token.start);
+        goto failed;
+    }
+    return list;
+failed:
+    csh_ast_destroy(list);
+    return NULL;
+}
+
+int csh_parser_create(struct csh_parser **out, struct csh_input *input,
+    struct csh_error *error)
+{
+    struct csh_parser *parser;
+    *out = NULL;
+    memset(error, 0, sizeof(*error));
+    if (input == NULL || csh_input_position(input).offset != 0) {
+        error->message = input == NULL ? "invalid parser input" :
+            "parser requires an unread input source";
+        error->system_errno = EINVAL;
+        error->status = 1;
+        error->position.line = error->position.column = 1;
+        return -1;
+    }
+    parser = calloc(1, sizeof(*parser));
+    if (parser == NULL) {
+        error->message = "cannot allocate parser";
+        error->system_errno = ENOMEM;
+        error->status = 1;
+        error->position.line = error->position.column = 1;
+        return -1;
+    }
+    parser->input = input;
+    if (csh_lexer_create(&parser->lexer, csh_input_name(input), error) == -1) {
+        free(parser);
+        return -1;
+    }
+    *out = parser;
+    return 0;
+}
+
+void csh_parser_destroy(struct csh_parser *parser)
+{
+    if (parser == NULL)
+        return;
+    csh_lexer_destroy(parser->lexer);
+    free(parser);
+}
+
+const char *csh_parser_source_name(const struct csh_parser *parser)
+{
+    return csh_input_name(parser->input);
+}
+
+enum csh_parse_result csh_parser_next(struct csh_parser *parser,
+    struct csh_ast **out, struct csh_error *error)
+{
+    struct parse_frame frame;
+    int result;
+    *out = NULL;
+    memset(error, 0, sizeof(*error));
+    if (parser->failure.message != NULL) {
+        *error = parser->failure;
+        return parser->failure_result;
+    }
+    if (parser->eof)
+        return CSH_PARSE_EOF;
+    memset(&frame, 0, sizeof(frame));
+    frame.parser = parser;
+    frame.lexer = parser->lexer;
+    result = skip_newlines(&frame);
+    if (result == 0) {
+        parser->eof = 1;
+        frame_destroy(&frame);
+        return CSH_PARSE_EOF;
+    }
+    if (result > 0)
+        *out = parse_list(&frame, CLOSE_NONE, 0, position(&frame));
+    frame_destroy(&frame);
+    if (*out != NULL)
+        return CSH_PARSE_TREE;
+    csh_lexer_destroy(parser->lexer);
+    parser->lexer = NULL;
+    *error = parser->failure;
+    return parser->failure_result;
+}

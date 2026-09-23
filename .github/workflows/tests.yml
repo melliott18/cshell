@@ -42,19 +42,19 @@ jobs:
           echo "$(brew --prefix flex)/bin" >> "$GITHUB_PATH"
       - name: Build
         run: make -j2
-      - name: Test input/lexer/state/expansion APIs and selected behavior
+      - name: Test input/lexer/parser/state/expansion APIs and selected behavior
         run: make test
       - name: Test terminal startup and exit
         run: make test-pty
       - name: Test harness failure handling
         run: make test-harness
-      - name: Check state and expansion ownership with ASan and UBSan
+      - name: Check parser, state, and expansion ownership with ASan and UBSan
         env:
           ASAN_OPTIONS: halt_on_error=1
           UBSAN_OPTIONS: halt_on_error=1
         run: |
           make clean
-          make test-state test-expand CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+          make test-parser test-state test-expand CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
 
   docker:
     name: Docker (Linux)
@@ -62,7 +62,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
-      - name: Build Linux image and test input/lexer/state/expansion APIs and selected behavior
+      - name: Build Linux image and test input/lexer/parser/state/expansion APIs and selected behavior
         run: make docker-test
       - name: Test terminal startup and exit in Linux image
         run: make docker-test-pty
