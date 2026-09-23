@@ -109,3 +109,5 @@ without closing [CSH-011](CSH-011-signals-and-job-control.md).
   passed native Ubuntu/GCC, native macOS/Clang, and Docker Linux for implementation
   commit `d1eda9a`.
 - CSH-033 is complete. CSH-011 remains open for the CSH-034/035 shell behavior work.
+- [Merge CI run 35922002437](https://github.com/melliott18/cshell/actions/runs/35922002437)
+  passed native Ubuntu/GCC, native macOS/Clang, and Docker Linux at `a7c4e8b`.
