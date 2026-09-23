@@ -1,6 +1,6 @@
 # CSH-022: Define shell variable and parameter storage
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-007
@@ -114,7 +114,7 @@ unprivileged UID 10001.
   Markdown file links and `git diff --check` passed; diagrams are unchanged.
 
 These results establish the CSH-022 storage API, not end-to-end shell behavior
-or general POSIX conformance. The ticket remains in review until integration.
+or general POSIX conformance. Integration is recorded below.
 
 
 Hosted CI for implementation commit `c35b80f` passed all three branch jobs and
@@ -139,3 +139,14 @@ and all 50 harness self-tests. `make docker-test DOCKER_IMAGE=cshell-test:csh-02
 and `docker run --rm --init cshell-test:csh-022-merge make test-pty test-harness`
 passed the same combined coverage on Linux aarch64. No integration failures
 occurred. The state code remains the previously sanitizer-validated version.
+
+
+Integrated into `main` through [pull request #46](https://github.com/melliott18/cshell/pull/46)
+on 2026-09-23. Implementation commit: `c35b80f`; validated integration head:
+`fe7b33d`; merge commit: `866c701`.
+
+Both [pull-request CI](https://github.com/melliott18/cshell/actions/runs/35922185830)
+and [branch CI](https://github.com/melliott18/cshell/actions/runs/35922181447)
+passed all three jobs for the integration head: Ubuntu/GCC, macOS/Clang, and
+Docker Linux, including the new PTY coverage and native state sanitizers.
+CSH-007 remains open until CSH-023 and its other completion gates are satisfied.
