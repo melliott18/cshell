@@ -17,8 +17,13 @@ and context information needed by later expansion stages.
 
 - Define expansion inputs, outputs, errors, and ownership using structured words
   and the shell-state API; distinguish argument, assignment, and pattern contexts.
+- Decode the lexer's preserved dollar-single-quote escapes before word expansion,
+  retaining quoted empty values and recording Issue 8 locale/unspecified choices.
 - Implement parameter operators, positional parameters, and quoted `$@`/`$*`,
   including empty-field provenance; implement tilde and arithmetic expansion.
+- Coordinate arithmetic grammar with CSH-005 for the Issue 8 arithmetic-first
+  `$((` ambiguity and command-substitution fallback; CSH-004 only tracks the
+  initial arithmetic context and delimiters.
 - Expose explicit deferred substitution inputs for CSH-026. Field splitting,
   pathname expansion, and final quote removal belong to CSH-025.
 
@@ -28,6 +33,8 @@ and context information needed by later expansion stages.
   forms produce specified values and state changes in controlled fixtures.
 - [ ] Quoted and unquoted values retain distinguishable provenance, including
   empty values and positional parameters, across the public expansion interface.
+- [ ] Dollar-single-quote decoding follows Issue 8 before expansion, including
+  embedded NUL handling and continued adjacent fragments.
 - [ ] Tilde expansion obeys its supported syntactic contexts and variable state.
 - [ ] Arithmetic follows the selected POSIX integer model and rejects invalid
   expressions without undefined C behavior or partial resource leaks.

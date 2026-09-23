@@ -1,0 +1,107 @@
+#ifndef CSHELL_LEXER_H
+#define CSHELL_LEXER_H
+
+#include "cshell/input.h"
+
+enum csh_token_kind {
+    CSH_TOKEN_WORD, CSH_TOKEN_NEWLINE,
+    CSH_TOKEN_AND_IF, CSH_TOKEN_OR_IF, CSH_TOKEN_DSEMI, CSH_TOKEN_SEMI_AND,
+    CSH_TOKEN_DLESS, CSH_TOKEN_DGREAT, CSH_TOKEN_LESS_AND,
+    CSH_TOKEN_GREAT_AND, CSH_TOKEN_LESS_GREAT, CSH_TOKEN_DLESS_DASH,
+    CSH_TOKEN_CLOBBER, CSH_TOKEN_PIPE, CSH_TOKEN_AMPERSAND,
+    CSH_TOKEN_SEMI, CSH_TOKEN_LPAREN, CSH_TOKEN_RPAREN,
+    CSH_TOKEN_LESS, CSH_TOKEN_GREAT
+};
+
+enum csh_quote {
+    CSH_QUOTE_NONE, CSH_QUOTE_SINGLE, CSH_QUOTE_DOUBLE, CSH_QUOTE_DOLLAR_SINGLE
+};
+
+enum csh_fragment_kind {
+    CSH_FRAGMENT_TEXT, CSH_FRAGMENT_QUOTED, CSH_FRAGMENT_ESCAPE,
+    CSH_FRAGMENT_CONTINUATION, CSH_FRAGMENT_PARAMETER,
+    CSH_FRAGMENT_COMMAND, CSH_FRAGMENT_ARITHMETIC, CSH_FRAGMENT_BACKQUOTE
+};
+
+/* Fragments are a flat, preorder tree. parent == CSH_FRAGMENT_ROOT means a
+ * direct child of the word. begin/end index token.raw, including delimiters.
+ * Text inside a command substitution is retained by its COMMAND fragment;
+ * its grammar is supplied by the parser, not duplicated in this tree. */
+#define CSH_FRAGMENT_ROOT ((size_t)-1)
+struct csh_fragment {
+    enum csh_fragment_kind kind;
+    enum csh_quote quote;
+    size_t parent;
+    size_t begin;
+    size_t end;
+    struct csh_position start;
+    struct csh_position finish;
+};
+
+struct csh_token {
+    enum csh_token_kind kind;
+    char *source_name;
+    unsigned char *raw;
+    size_t length;
+    struct csh_position start;
+    struct csh_position end;
+    struct csh_fragment *fragments;
+    size_t fragment_count;
+};
+
+struct csh_lexer;
+enum csh_lex_result {
+    CSH_LEX_ERROR = -1, CSH_LEX_EOF = 0, CSH_LEX_TOKEN = 1,
+    CSH_LEX_MORE = 2, CSH_LEX_COMMAND = 3
+};
+
+/* Constructors copy the name; *out is NULL on failure. The lexer owns fed
+ * bytes. No input acquisition, expansion, diagnostics or execution occurs. */
+int csh_lexer_create(struct csh_lexer **out, const char *source_name,
+    struct csh_error *error);
+/* Destroy the root, including unfinished child frames. Child frames are
+ * released by command_end; callers must not destroy them separately. */
+void csh_lexer_destroy(struct csh_lexer *lexer);
+/* Append bytes to the shared source; final marks EOF, including an empty feed.
+ * Feed one physical line at a time to preserve parser/executor read boundaries.
+ * All frames use the same stream. No feed is allowed after final or failure. */
+int csh_lexer_feed(struct csh_lexer *lexer, const void *bytes, size_t length,
+    int final, struct csh_error *error);
+/* TOKEN transfers ownership to an empty destination. All other results clear
+ * it. Errors are sticky and release unpublished token storage. MORE preserves
+ * state until another feed; COMMAND requests grammar-assisted $(...) parsing.
+ * Call only on the active (deepest) frame. */
+enum csh_lex_result csh_lexer_next(struct csh_lexer *lexer,
+    struct csh_token *token, struct csh_error *error);
+void csh_token_destroy(struct csh_token *token);
+const char *csh_token_kind_name(enum csh_token_kind kind);
+const char *csh_fragment_kind_name(enum csh_fragment_kind kind);
+const char *csh_quote_name(enum csh_quote quote);
+
+/* On MORE, returns 1 and the innermost opening context if a word is unfinished,
+ * or 0 at an ordinary input boundary. Strings are static. */
+int csh_lexer_context(const struct csh_lexer *lexer, const char **context,
+    struct csh_position *opening);
+
+/* After COMMAND, begin creates a child sharing the cursor just after $(.
+ * The parser owns grammar decisions, including case patterns and here-docs.
+ * When it accepts the matching RPAREN, end verifies that token is the last
+ * consumed token of child, destroys child, and resumes the parent's word.
+ * Parent owns child lifetime; on failure destroy only the root. No aliases or
+ * grammar are implemented here. Nested COMMAND requests use the same protocol. */
+int csh_lexer_command_begin(struct csh_lexer *parent, struct csh_lexer **child,
+    struct csh_error *error);
+int csh_lexer_command_end(struct csh_lexer *parent, struct csh_lexer *child,
+    const struct csh_token *closing, struct csh_error *error);
+
+/* Here-document handoff: after NEWLINE, the parser can inspect pending raw
+ * bytes and consume body/delimiter bytes without tokenization. skip_raw is
+ * allowed only at a token boundary in the active frame. Feed more physical
+ * lines as needed; normal tokenization resumes at the updated position.
+ * The view is borrowed until feed, next, skip, command operations or destroy. */
+const unsigned char *csh_lexer_pending(const struct csh_lexer *lexer,
+    size_t *length, struct csh_position *position, int *final);
+int csh_lexer_skip_raw(struct csh_lexer *lexer, size_t length,
+    struct csh_error *error);
+
+#endif

@@ -26,8 +26,9 @@ OBJECTS = build/main.o build/legacy/execute.o build/legacy/lexer.o
 INPUT_OBJECTS = build/input.o build/invocation.o
 INPUT_HEADERS = include/cshell/input.h include/cshell/invocation.h
 INPUT_FAULT_OBJECTS = build/tests/fault-input.o build/tests/fault-invocation.o
+LEXER_HEADERS = include/cshell/lexer.h include/cshell/input.h
 
-.PHONY: all test test-input test-harness docker-build docker-test docker-shell clean
+.PHONY: all test test-input test-lexer test-harness docker-build docker-test docker-shell clean
 
 all: cshell
 
@@ -64,7 +65,26 @@ build/tests/input_faults: tests/input_faults.c tests/input_faults.h $(INPUT_FAUL
 test-input: build/tests/input_fixture build/tests/input_faults
 	$(PYTHON) tests/input.py build/tests/input_fixture --fault-binary build/tests/input_faults
 
-test: $(TEST_TARGET) test-input
+build/lexer.o: src/lexer.c $(LEXER_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+build/tests/lexer_fixture: tests/lexer_fixture.c build/lexer.o $(LEXER_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/lexer_fixture.c build/lexer.o $(LDLIBS)
+
+build/tests/fault-lexer.o: src/lexer.c $(LEXER_HEADERS) tests/lexer_faults.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/lexer_faults.h -c $< -o $@
+
+build/tests/lexer_faults: tests/lexer_faults.c tests/lexer_faults.h build/tests/fault-lexer.o $(LEXER_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/lexer_faults.c build/tests/fault-lexer.o $(LDLIBS)
+
+test-lexer: build/tests/lexer_fixture build/tests/lexer_faults
+	$(PYTHON) tests/lexer.py build/tests/lexer_fixture --fault-binary build/tests/lexer_faults
+
+test: $(TEST_TARGET) test-input test-lexer
 	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
 

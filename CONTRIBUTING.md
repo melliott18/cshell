@@ -94,11 +94,13 @@ make test-harness
 ```
 
 The tests require Python 3.9 or newer. `make test` runs the replacement
-input/invocation API checks and the selected behavioral fixtures; its default
-suite checks the prototype's startup, explicit exit, and simple external
+input/invocation and lexer API checks and the selected behavioral fixtures; its
+default suite checks the prototype's startup, explicit exit, and simple external
 commands. `make test-input` builds and checks only the replacement input modules,
-without Flex or legacy dependencies. `make test-harness` checks the runner's own
-assertions, resource limits, and descendant cleanup, including deliberately
+without Flex or legacy dependencies. `make test-lexer` independently builds and
+checks replacement tokens, fragments, and parser handoffs. `make test-harness`
+checks the runner's own assertions, resource limits, and descendant cleanup,
+including deliberately
 failing cases. These checks do not establish shell correctness or POSIX
 compliance.
 

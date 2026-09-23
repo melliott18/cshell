@@ -17,6 +17,17 @@ and descriptor cleanup after every run. It injects read errors before, within,
 and after physical lines, checks that partial lines never escape, and verifies
 EINTR retries. Production objects contain no fault-injection hooks.
 
+CSH-004 adds independent lexer fixtures through `make test-lexer`. They compile
+only `src/lexer.c` and the lexer/input type headers, with no scanner, input
+implementation, or executor. [`tests/lexer.py`](../tests/lexer.py) checks token
+kinds, physical source spans, quote/escape fragments, and identical results from
+whole-input, physical-line, and one-byte feeds. The C fixture checks owned-token
+lifetimes, incomplete contexts, grammar-selected command-substitution endings,
+and raw here-document collection. Its tiny command recognizer is a test adapter,
+not the CSH-005 parser. `tests/lexer_faults.c` injects each lexer allocation failure
+and verifies sticky errors, cleared outputs, and zero live allocations after
+cleanup. The Python driver bounds subprocess time and captured output.
+
 `tests/smoke.py` is a bounded fixture runner for a selected executable. The default
 `tests/fixtures/prototype.json` suite checks the current prototype's startup,
 explicit exit, external command execution, successive commands, and filesystem
@@ -50,7 +61,7 @@ make test
 make test-harness
 ```
 
-`make test` builds `TEST_TARGET`, runs the input API checks, and runs the
+`make test` builds `TEST_TARGET`, runs the input and lexer API checks, and runs the
 selected behavioral suite.
 `make test-harness` runs Python unit tests against helper executables and
 self-fixtures. Some helpers intentionally produce wrong output, nonzero statuses,
@@ -71,7 +82,7 @@ The same runner is used by native tests, Docker, and CI. Test selection is expli
 
 | Make variable | Default | Meaning |
 | --- | --- | --- |
-| `TEST_TARGET` | `cshell` | Behavioral candidate target to build; set empty for an already built executable. Input API fixtures still build and run. |
+| `TEST_TARGET` | `cshell` | Behavioral candidate target to build; set empty for an already built executable. Input and lexer API fixtures still build and run. |
 | `TEST_BINARY` | `./cshell` | Candidate executable. |
 | `TEST_SUITE` | `tests/fixtures/prototype.json` | JSON fixture suite. |
 | `TEST_TIMEOUT` | `5` | Maximum wall-clock seconds per case. |

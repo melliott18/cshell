@@ -40,7 +40,8 @@ in the replacement modules.
 
 ## Current replacement modules
 
-CSH-016 adds standalone input and invocation APIs. They have no dependency on
+CSH-016 adds standalone input and invocation APIs; CSH-004 adds the lexer and
+structured token/word API. They have no dependency on
 the legacy header, scanner, or executor, and the default executable does not
 call them yet.
 
@@ -48,16 +49,20 @@ call them yet.
 | --- | --- |
 | `src/input.c` / `include/cshell/input.h` | Owned string, script, and descriptor sources; physical lines, byte positions, explicit EOF, and sticky errors |
 | `src/invocation.c` / `include/cshell/invocation.h` | Supported invocation options, owned `$0` and positional operands, interactive detection, and prompt selection |
+| `src/lexer.c` / `include/cshell/lexer.h` | Owned tokens and fragment trees, incremental quote/substitution contexts, shared-cursor nested command lexers, and raw here-document handoff |
 
 See [Input and invocation](input-and-invocation.md) for the concrete ownership,
 descriptor, position, and error contracts. Physical input lines do not establish
 command completeness; that remains the lexer/parser's responsibility. CSH-018
 integrates replacement-runtime fixtures and CSH-039 switches the executable.
+See [Lexer and words](lexer-and-words.md) for the feed contract and the parser
+handshake: the parser decides which `)` closes a command substitution; the lexer
+preserves its raw source and surrounding word context.
 
 ## Target module boundaries
 
-The input and invocation modules above exist; add the remaining modules when
-their implementation tickets start. This table defines target responsibilities
+The input, invocation, and lexer modules above exist; add the remaining modules
+when their implementation tickets start. This table defines target responsibilities
 and does not claim that every listed module is implemented.
 
 | Module | Owns | Must not own |

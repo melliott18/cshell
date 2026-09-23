@@ -30,13 +30,14 @@ make CC=clang  # Select a compiler
 ## Test
 
 ```sh
-make test          # Input API and selected behavioral fixtures; Python 3.9+
+make test          # Input/lexer APIs and selected behavioral fixtures; Python 3.9+
 make test-input    # Replacement input/invocation API checks only
+make test-lexer    # Replacement lexer/token API checks only
 make test-harness  # Test the runner's failure detection and cleanup
 make docker-test   # Build and run the selected fixtures in a Linux container
 ```
 
-`make test` includes independent input/invocation API checks. Its default
+`make test` includes independent input/invocation and lexer API checks. Its default
 behavioral suite records the current prototype's stdin behavior and explicit
 prompt allowance. Replacement shell and module tests select their executable and
 fixture suite separately; passing prototype tests does not establish replacement
@@ -57,6 +58,7 @@ resource limits, direct Docker commands, and troubleshooting.
 | Run native or Docker tests | [Testing](docs/testing.md) |
 | Understand the code and planned modules | [Architecture](docs/architecture.md) |
 | Use replacement input and invocation APIs | [Input and invocation](docs/input-and-invocation.md) |
+| Use replacement tokens, words, and parser handoffs | [Lexer and words](docs/lexer-and-words.md) |
 | Check the POSIX target and known gaps | [POSIX tracking](docs/posix.md) |
 | Browse all project documentation | [Documentation index](docs/README.md) |
 | Find project context as an agent | [Agent entry point](AGENTS.md) |
@@ -68,9 +70,10 @@ include/cshell/   Internal module interfaces
 src/main.c       Program entry point and current input loop
 src/input.c      Replacement physical-line input sources
 src/invocation.c Replacement invocation and operand mapping
+src/lexer.c      Replacement tokens, word fragments, and parser handoffs
 src/legacy/      Transitional lexer and executor
 docs/            Architecture, POSIX tracking, and implementation tickets
-tests/           Input API fixtures, behavioral runner, and harness self-tests
+tests/           Input/lexer API fixtures, behavioral runner, and harness self-tests
 build/           Generated scanner and object files (ignored by Git)
 ```
 
