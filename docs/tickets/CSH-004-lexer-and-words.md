@@ -127,3 +127,12 @@ lexer and PTY targets. No lexer source or interface changed. A clean native
 build followed by `make test test-pty test-harness` passed all 61 lexer checks,
 63 input checks, four prototype pipe fixtures, one prototype PTY fixture, and
 50 combined harness self-tests.
+
+
+Subsequently integrated CSH-022 shell-state storage and its completion records
+from `main` (`8cca8b4`). Resolved shared build/documentation additions while
+retaining all input, lexer, state, and PTY targets and the existing CSH-040
+macOS harness follow-up. `make test test-pty test-harness` passed again: 61 lexer
+checks, 63 input checks, both state suites, four prototype pipe fixtures,
+one prototype PTY fixture, and all 50 harness self-tests. The lexer sources and
+fixtures remain identical to the sanitizer-validated implementation.

@@ -1,0 +1,165 @@
+# Shell state API
+
+[CSH-022](tickets/CSH-022-shell-state-storage.md) provides owned variable and
+parameter storage in [`src/state.c`](../src/state.c), with the interface in
+[`cshell/state.h`](../include/cshell/state.h). It builds independently of the
+legacy scanner and executor. The default executable does not use this state
+yet. Assignment execution, parameter expansion, and builtins consume the API
+through their own implementation tickets.
+
+## Construction and ownership
+
+`csh_state_create()` copies the invocation's `$0`, positional arguments,
+source mode, and interactive flag, and imports a caller-supplied environment
+vector. It captures the shell process ID once, starts the last status at zero,
+and records no background process. It neither retains nor consumes the
+invocation's input source. The caller can release or change the invocation and
+environment strings after construction.
+
+The state is opaque and owns its retained strings. Release it with
+`csh_state_destroy()`, which also accepts NULL. Constructors, clones, and
+saves require output pointers that do not already own an object and set those
+outputs to NULL on failure. Environment snapshots have their own destruction
+function. State objects are not thread-safe; callers must serialize access and
+pass valid live objects.
+
+`csh_state_get_variable()` and `csh_state_parameter()` return borrowed
+strings. Their lifetime ends at the next successful mutation, restoration, or
+destruction of that state. Copy a string if it must survive that boundary.
+Parameter replacement accepts elements that alias the state's current variable
+or parameter strings; it copies them before releasing the old parameter
+vector.
+
+## Variables and environment import
+
+Names use `[A-Za-z_][A-Za-z0-9_]*`, independently of the locale. Values are
+NUL-terminated byte strings; embedded NUL bytes cannot be represented. Lookups
+distinguish unset values from empty values:
+
+| Stored state | Lookup value | Attributes |
+| --- | --- | --- |
+| Missing name | NULL | Zero |
+| Declared but unset | NULL | Retained attributes, if any |
+| Set to an empty value | `""` | Preserved independently of the value |
+| Set to a nonempty value | Borrowed value string | Preserved independently of the value |
+
+`csh_state_set_variable()` assigns a non-NULL value. A new variable starts
+unexported; replacement preserves existing attributes.
+`csh_state_unset_variable()` removes both value and attributes, and succeeds
+without a change for a missing name. Neither operation can modify a readonly
+variable, including an assignment of its existing value.
+
+`csh_state_update_attributes()` sets and clears attribute masks. The masks
+must be disjoint and contain only `CSH_VAR_EXPORT` and `CSH_VAR_READONLY`.
+Marking a missing name exported or readonly declares an unset variable without
+assigning an empty value. Readonly cannot subsequently be cleared. The export
+attribute can still change on a readonly variable.
+
+Environment import accepts NULL as an empty environment. Entries must contain
+`=` and a valid shell name before the first `=`; malformed entries and invalid
+names are ignored. The remainder is the value, including an empty string or
+additional `=` bytes. Imported variables are marked exported. If a valid name
+occurs more than once, the last entry wins. This is a deterministic storage
+policy for input whose duplicate-name consequences are undefined by the [POSIX
+environment
+definition](https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap08.html).
+Valid-name import and export marking follow [POSIX shell
+variables](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_05_03).
+
+No state operation reads or changes `environ`, calls `getenv()` or `setenv()`,
+or synchronizes the host process environment. Special startup initialization
+of `IFS`, `PPID`, and `PWD` remains
+[CSH-029](tickets/CSH-029-state-builtins.md) work. In particular, raw import
+does not perform the required invocation-time reset of `IFS` to space, tab,
+and newline. Future runtime initialization must apply those rules separately.
+
+## Child environment snapshots
+
+`csh_state_environment()` allocates a NULL-terminated `name=value` vector for
+exported variables whose values are set. Exported empty values appear as
+`name=`; exported but unset declarations are omitted. Snapshot ordering is
+unspecified. Even an empty snapshot is a valid vector with a terminating NULL.
+
+The snapshot owns its vector and every string. It remains valid after any
+mutation or destruction of the source state. Release it with
+`csh_state_environment_destroy()`; the function also accepts NULL. The
+snapshot is suitable for an executor's explicit environment argument, but this
+API does not launch a process or apply command-prefix assignment rules.
+
+## Parameters and metadata
+
+`csh_state_parameter(state, 0)` returns `$0`. Indices one through the argument
+count return positional parameters; an out-of-range index returns NULL. Empty
+arguments remain empty strings. `csh_state_set_parameters()` copies a counted
+array, without requiring a final NULL. A zero count clears the positionals and
+allows a NULL array. Replacing positional parameters never changes `$0`.
+
+`csh_state_get_info()` copies the following metadata into a caller-owned
+record:
+
+| Field | Consumer meaning |
+| --- | --- |
+| `argument_count` | `$#`, excluding `$0` |
+| `last_status` | `$?`, initially zero |
+| `shell_pid` | `$$`, captured at construction and preserved by clones |
+| `background_pid` | `$!`; zero means no background command has been recorded |
+| `mode` | Original stdin, string, or file invocation selection |
+| `options` | Stored shell option bits; initially only the invocation's interactive flag |
+
+`csh_state_set_status()` stores any nonnegative `int`, including values
+greater than 255. It does not convert a `waitpid()` status or choose shell
+error behavior. `csh_state_set_background()` records a nonnegative background
+process ID; zero clears the recorded ID. The executor and job modules own
+producers of these values; the expansion engine owns their textual parameter
+expansions. Preserving the original shell PID through a copy supports the
+[POSIX special-parameter
+rules](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_05_02).
+
+`csh_state_update_options()` changes disjoint set/clear masks of the declared
+`CSH_OPT_*` flags. These are storage bits only. Setting `allexport` does not
+automatically mark variables exported, and storing `errexit`, `nounset`, or
+`pipefail` does not implement those behaviors. Invocation parsing and option
+effects remain [CSH-032](tickets/CSH-032-shell-options.md) and the relevant
+runtime tickets. The expansion layer also owns the `$-` representation.
+
+## Copying, checkpoints, and restoration
+
+`csh_state_clone()` makes an independently mutable deep copy of every
+variable, attribute, parameter, and metadata field. `csh_state_save()` makes
+an independent full-state checkpoint. Later source mutations cannot change
+either copy.
+
+`csh_state_restore()` replaces the entire destination state with the
+checkpoint contents without allocating. A successful restore consumes the
+checkpoint and sets the caller's checkpoint pointer to NULL. This internal
+rollback can undo new readonly attributes; it is not a shell assignment.
+Unused checkpoints can be released with `csh_state_checkpoint_destroy()`. A
+checkpoint is restored or discarded exactly once, and callers control the
+order of nested restoration.
+
+Checkpoints cover only this module's data. They do not capture working
+directories, file descriptors, traps, functions, or job resources. A
+full-state rollback also restores status and positional parameters and
+discards every intervening variable change. It must not be used as a
+substitute for selective temporary-assignment restoration around a builtin
+that can change unrelated state.
+[CSH-023](tickets/CSH-023-assignment-environments.md) owns category-aware
+assignment lifetimes and that selective restoration policy; function parameter
+lifetimes remain [CSH-028](tickets/CSH-028-control-flow-and-functions.md)
+work.
+
+## Failure and validation
+
+Operations return `CSH_STATE_OK`, `CSH_STATE_INVALID`, `CSH_STATE_NOMEM`, or
+`CSH_STATE_READONLY`. They do not print diagnostics, exit the process, or set
+the stored shell status on error. Failed mutations leave the state unchanged.
+The caller translates a result into the execution context's diagnostic and
+status.
+
+Run `make test-state` for focused C fixtures, including controlled allocation
+failures, without building the executor or scanner. See
+[Testing](testing.md#shell-state-api-and-sanitizer-checks) for sanitizer and
+Docker commands and the [ticket](tickets/CSH-022-shell-state-storage.md) for
+the validation record. These tests establish storage and ownership behavior;
+end-to-end expansion, assignments, startup variables, and builtin behavior
+remain separate evidence.

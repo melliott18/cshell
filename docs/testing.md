@@ -28,6 +28,15 @@ not the CSH-005 parser. `tests/lexer_faults.c` injects each lexer allocation fai
 and verifies sticky errors, cleared outputs, and zero live allocations after
 cleanup. The Python driver bounds subprocess time and captured output.
 
+CSH-022 adds independent shell-state fixtures. `make test-state` builds the
+state module, input/invocation modules, and its C fixtures, without Flex or the
+executor. The normal fixture covers environment import, unset versus empty
+values, attributes, parameter replacement, snapshot lifetimes, copying, and
+checkpoint restoration.
+The fault fixture compiles a separate state object with test-only allocator
+wrappers and checks failed allocations for leaks and unchanged state. Both
+executables use module suites through the existing bounded smoke runner.
+
 `tests/smoke.py` is a bounded fixture runner for a selected executable. The default
 `tests/fixtures/prototype.json` suite checks the current prototype's startup,
 explicit exit, external command execution, successive commands, and filesystem
@@ -69,12 +78,12 @@ make test-pty
 make test-harness
 ```
 
-`make test` builds `TEST_TARGET`, runs the input and lexer API checks, and runs the
-selected behavioral suite.
+`make test` builds `TEST_TARGET`, runs the input, lexer, and state API checks,
+and runs the selected behavioral suite.
 `make test-pty` builds `PTY_TEST_TARGET` and runs its independently selected
-terminal suite. It does not run the input or lexer API tests. Keeping separate
-selection variables means choosing a module for `make test` does not silently run that
-module against prototype terminal expectations.
+terminal suite. It does not run the input, lexer, or state API tests. Keeping
+separate selection variables means choosing a module for `make test` does not
+silently run that module against prototype terminal expectations.
 `make test-harness` runs Python unit tests against helper executables and
 self-fixtures. Some helpers intentionally produce wrong output, nonzero statuses,
 filesystem mismatches, hangs, descendants in multiple terminal process groups,
@@ -95,7 +104,7 @@ The same runner is used by native tests, Docker, and CI. Test selection is expli
 
 | Make variable | Default | Meaning |
 | --- | --- | --- |
-| `TEST_TARGET` | `cshell` | Behavioral candidate target to build; set empty for an already built executable. Input and lexer API fixtures still build and run. |
+| `TEST_TARGET` | `cshell` | Behavioral candidate target to build; set empty for an already built executable. Input, lexer, and state API fixtures still build and run. |
 | `TEST_BINARY` | `./cshell` | Candidate executable. |
 | `TEST_SUITE` | `tests/fixtures/prototype.json` | JSON fixture suite. |
 | `TEST_TIMEOUT` | `5` | Maximum wall-clock seconds per case. |
@@ -153,6 +162,36 @@ Run sanitizer checks against this target: the prototype has known memory defects
 that are outside CSH-016. Allocation counters work on both macOS and Linux;
 Linux ASan also checks leaks. See the [input contract](input-and-invocation.md)
 and [ticket evidence](tickets/CSH-016-input-and-invocation.md).
+
+## Shell-state API and sanitizer checks
+
+For the replacement state module and controlled allocation failures:
+
+```sh
+make clean
+make test-state
+make clean
+make test-state CC=clang CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+```
+
+The normal executable is built from `tests/state_fixture.c`; the
+allocation-fault executable is built from `tests/state_faults.c`. The fault
+wrappers are used only for the separate test object. The target verifies storage
+independently of command execution, including readonly failures and restoring
+saved state after later mutations. Allocation counters complement ASan/UBSan;
+Linux ASan also checks leaks. See the [state contract](shell-state.md) and
+[ticket evidence](tickets/CSH-022-shell-state-storage.md).
+
+To build and run only the focused target in Docker:
+
+```sh
+make docker-build TEST_TARGET=test-state
+docker run --rm --init cshell-test:local make test-state
+```
+
+The image build runs the selected target using the Linux toolchain, and the
+second command runs it again in the built image. When setting a custom
+`DOCKER_IMAGE` on the build command, use the same image name for `docker run`.
 
 ## Authoring fixtures
 
@@ -303,6 +342,12 @@ PTY session discovery uses `/proc` on Linux and `/bin/ps` plus process-session
 queries on macOS. These must be available for reliable cleanup. A discovery or
 teardown error fails the case, including after an otherwise successful exit.
 
+Known limitation: repeated process-group cleanup can intermittently report
+`Operation not permitted` on macOS after a candidate exits. The failure and a
+focused investigation are tracked in
+[CSH-040](tickets/CSH-040-macos-harness-cleanup.md). Passing retries do not resolve
+that issue, and the harness continues to report permission errors as failures.
+
 The candidate also receives POSIX resource limits: CPU time is limited to at most
 the effective timeout rounded up plus one second, each file is limited to the larger
 of 1 MiB or the output limit, open file descriptors are limited to 64, and core
@@ -329,8 +374,8 @@ make docker-test
 make docker-test-pty
 ```
 
-This builds the test image from the current source files and runs the input and
-lexer API checks and selected behavioral suite inside it. `TEST_TARGET`,
+This builds the test image from the current source files and runs the input,
+lexer, and state API checks and selected behavioral suite inside it. `TEST_TARGET`,
 `TEST_BINARY`, `TEST_SUITE`, `TEST_TIMEOUT`,
 `TEST_OUTPUT_LIMIT`, and `TEST_CASE` select the same tests as the native target.
 The build target is compiled using the container's Linux toolchain. Candidate
@@ -345,9 +390,9 @@ The harness allocates its own controlling PTY inside the container: the
 `devpts` mount at `/dev/pts`, as provided by the normal Docker environment. If
 container restrictions prevent PTY allocation or acquiring a controlling
 terminal, the affected PTY cases report capability-specific skips. This does not
-skip unrelated pipe, input, or lexer API tests, and an entirely skipped selected
-suite still fails. Investigate container device/mount restrictions instead of adding
-platform skips for ordinary test failures.
+skip unrelated pipe, input, lexer, or state API tests, and an entirely skipped
+selected suite still fails. Investigate container device/mount restrictions
+instead of adding platform skips for ordinary test failures.
 
 The image uses Debian Bookworm, GCC, GNU Make, Flex, and Python 3. Source is copied
 into the image, so a host executable or host object files cannot affect the Linux
@@ -392,9 +437,10 @@ test failures propagate through `make docker-test` as a nonzero exit status.
 ## Continuous integration
 
 [`.github/workflows/tests.yml`](../.github/workflows/tests.yml) builds and runs the
-input and lexer API checks, default prototype pipe and PTY suites, and harness
-self-tests on Ubuntu 24.04 with GCC and macOS 15 with Clang. A separate Ubuntu job builds and
-runs the Docker Linux path and runs the same harness self-tests in the image.
+input, lexer, and state API checks, default prototype pipe and PTY suites, and
+harness self-tests on Ubuntu 24.04 with GCC and macOS 15 with Clang. Both native
+jobs also run the state fixtures under ASan/UBSan. A separate Ubuntu job builds
+and runs the Docker Linux path and runs the same harness self-tests in the image.
 Failing builds, fixtures, or self-tests fail their jobs.
 
 Hosted CI results establish only the checks actually run for that revision.
@@ -410,7 +456,8 @@ expectations, environment capture, allowed alternatives and reference comparison
 The [smoke evidence map](posix-evidence.md#existing-smoke-evidence) records the
 observations from its pinned prototype baseline; planned fixture IDs are not
 passing tests. The current prototype suite also includes the filesystem case
-added by CSH-017, and the input API checks have their own linked ticket evidence.
+added by CSH-017, and the input, lexer, and state API checks have their own linked
+ticket evidence.
 CSH-017 and CSH-033 own behavioral harness formats and adapters. Planned shell
 fixtures must select a runtime that supports their invocation modes.
 

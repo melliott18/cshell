@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "name": "shell-state-api",
+  "kind": "module",
+  "cases": [
+    {
+      "name": "owned variables, parameters, snapshots, and checkpoints",
+      "stdin": "",
+      "expect": {"stdout": "state fixtures passed\n", "stderr": "", "status": 0}
+    }
+  ]
+}
