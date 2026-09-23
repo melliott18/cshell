@@ -1,6 +1,6 @@
 # CSH-038: Remove legacy constraints from the implementation roadmap
 
-- Status: in-progress
+- Status: review
 - Type: docs
 - Kind: implementation
 - Parent: None
@@ -31,7 +31,7 @@ an explicit, testable delivery step without requiring disposable legacy repairs.
   temporary migration drivers, with native and Docker verification criteria.
 - [x] Safety obligations retain explicit replacement owners and validation.
 - [x] Documentation links and diagrams agree with an acyclic dependency graph.
-- [ ] GitHub Issues reflect the revised scope, statuses, and parent relationships.
+- [x] GitHub Issues reflect the revised scope, statuses, and parent relationships.
 
 ## Validation
 
@@ -56,3 +56,8 @@ were checked against ticket metadata. Rendered the changed Mermaid block with
 Mermaid CLI 11.17.0/headless Chrome and inspected the result; independent review
 resolved candidate/default test-target wording and cutover sequencing.
 No shell code changed, so unrelated behavior tests were not rerun.
+
+Verified all 39 GitHub issue bodies and states against the ticket files (allowing
+source links to retain published revision snapshots), all 25 native parent/child
+relationships, and `not_planned` closure reasons for CSH-002/014/015. CSH-039
+remains open; retirement is future implementation work, not a completed result.
