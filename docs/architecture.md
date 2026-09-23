@@ -40,25 +40,33 @@ in the replacement modules.
 
 ## Current replacement modules
 
-CSH-016 adds standalone input and invocation APIs. They have no dependency on
-the legacy header, scanner, or executor, and the default executable does not
-call them yet.
+CSH-016 adds standalone input and invocation APIs, and CSH-022 adds shell-state
+storage. They have no dependency on the legacy header, scanner, or executor,
+and the default executable does not call them yet.
 
 | Path | Responsibility |
 | --- | --- |
 | `src/input.c` / `include/cshell/input.h` | Owned string, script, and descriptor sources; physical lines, byte positions, explicit EOF, and sticky errors |
 | `src/invocation.c` / `include/cshell/invocation.h` | Supported invocation options, owned `$0` and positional operands, interactive detection, and prompt selection |
+| `src/state.c` / `include/cshell/state.h` | Owned variables and attributes, copied invocation parameters, option/status metadata, environment snapshots, and full-state copying/restoration |
 
 See [Input and invocation](input-and-invocation.md) for the concrete ownership,
 descriptor, position, and error contracts. Physical input lines do not establish
 command completeness; that remains the lexer/parser's responsibility. CSH-018
 integrates replacement-runtime fixtures and CSH-039 switches the executable.
 
+See [Shell state](shell-state.md) for variable ownership, readonly errors, and
+allocation-free checkpoint restoration. State stores option bits without
+implementing their runtime behavior, and leaves special startup variable
+initialization to CSH-029. Full-state checkpoints do not implement selective
+temporary assignments; CSH-023 owns their execution-category rules. The state
+module neither reads nor modifies the process environment.
+
 ## Target module boundaries
 
-The input and invocation modules above exist; add the remaining modules when
-their implementation tickets start. This table defines target responsibilities
-and does not claim that every listed module is implemented.
+The input, invocation, and state modules above exist; add the remaining modules
+when their implementation tickets start. This table defines target
+responsibilities and does not claim that every listed module is implemented.
 
 | Module | Owns | Must not own |
 | --- | --- | --- |

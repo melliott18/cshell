@@ -30,17 +30,18 @@ make CC=clang  # Select a compiler
 ## Test
 
 ```sh
-make test          # Input API and selected behavioral fixtures; Python 3.9+
+make test          # Module API and selected behavioral fixtures; Python 3.9+
 make test-input    # Replacement input/invocation API checks only
+make test-state    # Replacement shell-state API checks only
 make test-harness  # Test the runner's failure detection and cleanup
 make docker-test   # Build and run the selected fixtures in a Linux container
 ```
 
-`make test` includes independent input/invocation API checks. Its default
-behavioral suite records the current prototype's stdin behavior and explicit
-prompt allowance. Replacement shell and module tests select their executable and
-fixture suite separately; passing prototype tests does not establish replacement
-behavior or POSIX compliance.
+`make test` includes independent input/invocation and shell-state API checks.
+Its default behavioral suite records the current prototype's stdin behavior
+and explicit prompt allowance. Replacement shell and module tests select their
+executable and fixture suite separately; passing prototype tests does not
+establish replacement behavior or POSIX compliance.
 
 The Docker path requires Docker with a running Linux engine and uses its own
 compiler, Flex, and Python. Native Linux, native macOS, and Docker checks also run
@@ -57,6 +58,7 @@ resource limits, direct Docker commands, and troubleshooting.
 | Run native or Docker tests | [Testing](docs/testing.md) |
 | Understand the code and planned modules | [Architecture](docs/architecture.md) |
 | Use replacement input and invocation APIs | [Input and invocation](docs/input-and-invocation.md) |
+| Use owned shell variables and parameters | [Shell state](docs/shell-state.md) |
 | Check the POSIX target and known gaps | [POSIX tracking](docs/posix.md) |
 | Browse all project documentation | [Documentation index](docs/README.md) |
 | Find project context as an agent | [Agent entry point](AGENTS.md) |
@@ -68,9 +70,10 @@ include/cshell/   Internal module interfaces
 src/main.c       Program entry point and current input loop
 src/input.c      Replacement physical-line input sources
 src/invocation.c Replacement invocation and operand mapping
+src/state.c      Replacement variable, parameter, and state storage
 src/legacy/      Transitional lexer and executor
 docs/            Architecture, POSIX tracking, and implementation tickets
-tests/           Input API fixtures, behavioral runner, and harness self-tests
+tests/           Module fixtures, behavioral runner, and harness self-tests
 build/           Generated scanner and object files (ignored by Git)
 ```
 

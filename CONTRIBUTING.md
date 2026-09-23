@@ -94,13 +94,19 @@ make test-harness
 ```
 
 The tests require Python 3.9 or newer. `make test` runs the replacement
-input/invocation API checks and the selected behavioral fixtures; its default
-suite checks the prototype's startup, explicit exit, and simple external
-commands. `make test-input` builds and checks only the replacement input modules,
-without Flex or legacy dependencies. `make test-harness` checks the runner's own
-assertions, resource limits, and descendant cleanup, including deliberately
-failing cases. These checks do not establish shell correctness or POSIX
-compliance.
+input/invocation and shell-state API checks and the selected behavioral
+fixtures; its default suite checks the prototype's startup, explicit exit, and
+simple external commands. `make test-input` checks only the replacement input
+modules, without Flex or legacy dependencies. `make test-harness` checks the
+runner's own assertions, resource limits, and descendant cleanup, including
+deliberately failing cases. These checks do not establish shell correctness
+or POSIX compliance.
+
+`make test-state` checks the replacement shell-state API, including controlled
+allocation failures. It also needs no Flex or legacy dependencies. See
+[Shell state](docs/shell-state.md) for its ownership and restoration contracts,
+and [Testing](docs/testing.md#shell-state-api-and-sanitizer-checks)
+for focused sanitizer and Docker commands.
 
 Keep prototype expectations in a `prototype` suite. Add replacement shell or
 module expectations in a separate `replacement` or `module` suite and select both
