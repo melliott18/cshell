@@ -1,6 +1,6 @@
 # CSH-040: Make repeated macOS harness cleanup reliable
 
-- Status: review
+- Status: done
 - Type: fix
 - Kind: implementation
 - Parent: None
@@ -92,4 +92,8 @@ all EPERM errors. No harness behavior was changed in CSH-022.
   implementation commit `19cfc44`. The jobs include all harness self-tests,
   module and behavioral fixtures, PTY smoke checks, and native state sanitizer
   checks. The corresponding push CI run also passed all three environments.
-  The ticket remains in review until integration into `main`.
+  The ticket remained in review until integration into `main`.
+
+Integrated into `main` through [pull request #50](https://github.com/melliott18/cshell/pull/50)
+on 2026-09-23. Implementation commits: `19cfc44` and `3db9c6a`; merge commit:
+`b30adb9`. GitHub closed issue #48 when the pull request merged.
