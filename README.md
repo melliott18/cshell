@@ -33,6 +33,7 @@ make CC=clang  # Select a compiler
 make test          # Module API and selected behavioral fixtures; Python 3.9+
 make test-input    # Replacement input/invocation API checks only
 make test-lexer    # Replacement lexer/token API checks only
+make test-parser   # Replacement parser/AST API checks only
 make test-state    # Replacement shell-state API checks only
 make test-pty      # Controlling-terminal startup and explicit-exit fixture
 make test-harness  # Test the runner's failure detection and cleanup
@@ -40,8 +41,8 @@ make docker-test   # Build and run the selected fixtures in a Linux container
 make docker-test-pty # Build and run the selected terminal fixtures in Linux
 ```
 
-`make test` includes independent input/invocation, lexer, and shell-state API
-checks. Its default behavioral suite records the current prototype's stdin
+`make test` includes independent input/invocation, lexer, parser/AST, and
+shell-state API checks. Its default behavioral suite records the current prototype's stdin
 behavior and explicit prompt allowance. Replacement shell and module tests
 select their executable and fixture suite separately; passing prototype tests
 does not establish replacement behavior or POSIX compliance.
@@ -68,6 +69,7 @@ resource limits, direct Docker commands, and troubleshooting.
 | Understand the code and planned modules | [Architecture](docs/architecture.md) |
 | Use replacement input and invocation APIs | [Input and invocation](docs/input-and-invocation.md) |
 | Use replacement tokens, words, and parser handoffs | [Lexer and words](docs/lexer-and-words.md) |
+| Parse complete commands and inspect owned trees | [Parser and AST](docs/parser-and-ast.md) |
 | Use owned shell variables and parameters | [Shell state](docs/shell-state.md) |
 | Check the POSIX target and known gaps | [POSIX tracking](docs/posix.md) |
 | Browse all project documentation | [Documentation index](docs/README.md) |
@@ -81,6 +83,9 @@ src/main.c       Program entry point and current input loop
 src/input.c      Replacement physical-line input sources
 src/invocation.c Replacement invocation and operand mapping
 src/lexer.c      Replacement tokens, word fragments, and parser handoffs
+src/parser.c     Replacement complete-command parser and here-documents
+src/ast.c        Owned syntax trees and cleanup
+src/quote.c      Shared dollar-single-quote decoding
 src/state.c      Replacement variable, parameter, and state storage
 src/legacy/      Transitional lexer and executor
 docs/            Architecture, POSIX tracking, and implementation tickets

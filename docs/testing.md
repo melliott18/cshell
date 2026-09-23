@@ -28,6 +28,14 @@ not the CSH-005 parser. `tests/lexer_faults.c` injects each lexer allocation fai
 and verifies sticky errors, cleared outputs, and zero live allocations after
 cleanup. The Python driver bounds subprocess time and captured output.
 
+CSH-005 adds parser/AST fixtures through `make test-parser`, linking only the
+replacement input, lexer, quote, AST, and parser modules. Structural checks cover
+precedence, groups, assignments, descriptor adjacency, ordered redirections,
+command substitutions, and here-document collection. Error checks distinguish
+invalid syntax, incomplete final input, and clean EOF. Separate wrapped objects
+inject allocation failures across the entire parsing stack. The parser does
+not execute any fixture command.
+
 CSH-022 adds independent shell-state fixtures. `make test-state` builds the
 state module, input/invocation modules, and its C fixtures, without Flex or the
 executor. The normal fixture covers environment import, unset versus empty
@@ -78,10 +86,10 @@ make test-pty
 make test-harness
 ```
 
-`make test` builds `TEST_TARGET`, runs the input, lexer, and state API checks,
+`make test` builds `TEST_TARGET`, runs the input, lexer, parser, and state API checks,
 and runs the selected behavioral suite.
 `make test-pty` builds `PTY_TEST_TARGET` and runs its independently selected
-terminal suite. It does not run the input, lexer, or state API tests. Keeping
+terminal suite. It does not run the input, lexer, parser, or state API tests. Keeping
 separate selection variables means choosing a module for `make test` does not
 silently run that module against prototype terminal expectations.
 `make test-harness` runs Python unit tests against helper executables and
@@ -104,7 +112,7 @@ The same runner is used by native tests, Docker, and CI. Test selection is expli
 
 | Make variable | Default | Meaning |
 | --- | --- | --- |
-| `TEST_TARGET` | `cshell` | Behavioral candidate target to build; set empty for an already built executable. Input, lexer, and state API fixtures still build and run. |
+| `TEST_TARGET` | `cshell` | Behavioral candidate target to build; set empty for an already built executable. Input, lexer, parser, and state API fixtures still build and run. |
 | `TEST_BINARY` | `./cshell` | Candidate executable. |
 | `TEST_SUITE` | `tests/fixtures/prototype.json` | JSON fixture suite. |
 | `TEST_TIMEOUT` | `5` | Maximum wall-clock seconds per case. |
@@ -162,6 +170,27 @@ Run sanitizer checks against this target: the prototype has known memory defects
 that are outside CSH-016. Allocation counters work on both macOS and Linux;
 Linux ASan also checks leaks. See the [input contract](input-and-invocation.md)
 and [ticket evidence](tickets/CSH-016-input-and-invocation.md).
+
+## Parser/AST API and sanitizer checks
+
+```sh
+make clean
+make test-parser
+make clean
+make test-parser CC=clang CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+```
+
+The parser fixtures preserve ownership assertions under `-DNDEBUG`. Allocation
+counters cover failed construction, partially built trees, queued here-documents,
+and nested command substitutions. See [Parser and AST](parser-and-ast.md) and
+the [ticket evidence](tickets/CSH-005-parser-and-ast.md).
+
+For the focused Linux suite:
+
+```sh
+make docker-build TEST_TARGET=test-parser DOCKER_IMAGE=cshell-test:csh-005
+docker run --rm --init cshell-test:csh-005 make test-parser
+```
 
 ## Shell-state API and sanitizer checks
 
@@ -375,7 +404,7 @@ make docker-test-pty
 ```
 
 This builds the test image from the current source files and runs the input,
-lexer, and state API checks and selected behavioral suite inside it. `TEST_TARGET`,
+lexer, parser, and state API checks and selected behavioral suite inside it. `TEST_TARGET`,
 `TEST_BINARY`, `TEST_SUITE`, `TEST_TIMEOUT`,
 `TEST_OUTPUT_LIMIT`, and `TEST_CASE` select the same tests as the native target.
 The build target is compiled using the container's Linux toolchain. Candidate
@@ -390,7 +419,7 @@ The harness allocates its own controlling PTY inside the container: the
 `devpts` mount at `/dev/pts`, as provided by the normal Docker environment. If
 container restrictions prevent PTY allocation or acquiring a controlling
 terminal, the affected PTY cases report capability-specific skips. This does not
-skip unrelated pipe, input, lexer, or state API tests, and an entirely skipped
+skip unrelated pipe, input, lexer, parser, or state API tests, and an entirely skipped
 selected suite still fails. Investigate container device/mount restrictions
 instead of adding platform skips for ordinary test failures.
 
@@ -437,9 +466,9 @@ test failures propagate through `make docker-test` as a nonzero exit status.
 ## Continuous integration
 
 [`.github/workflows/tests.yml`](../.github/workflows/tests.yml) builds and runs the
-input, lexer, and state API checks, default prototype pipe and PTY suites, and
+input, lexer, parser, and state API checks, default prototype pipe and PTY suites, and
 harness self-tests on Ubuntu 24.04 with GCC and macOS 15 with Clang. Both native
-jobs also run the state fixtures under ASan/UBSan. A separate Ubuntu job builds
+jobs also run the parser and state fixtures under ASan/UBSan. A separate Ubuntu job builds
 and runs the Docker Linux path and runs the same harness self-tests in the image.
 Failing builds, fixtures, or self-tests fail their jobs.
 
@@ -456,7 +485,7 @@ expectations, environment capture, allowed alternatives and reference comparison
 The [smoke evidence map](posix-evidence.md#existing-smoke-evidence) records the
 observations from its pinned prototype baseline; planned fixture IDs are not
 passing tests. The current prototype suite also includes the filesystem case
-added by CSH-017, and the input, lexer, and state API checks have their own linked
+added by CSH-017, and the input, lexer, parser, and state API checks have their own linked
 ticket evidence.
 CSH-017 and CSH-033 own behavioral harness formats and adapters. Planned shell
 fixtures must select a runtime that supports their invocation modes.

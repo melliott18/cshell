@@ -36,7 +36,7 @@ Fixture names below are **planned logical IDs**, not links to existing files or
 a new harness format. CSH-017/033 own the behavioral/PTY adapters; implementation
 tickets add actual fixture paths and case IDs when available. All runtime
 families remain open: prototype observations and the bounded CSH-016, CSH-004,
-and CSH-022 API evidence below do not establish complete replacement-runtime
+CSH-005, and CSH-022 API evidence below do not establish complete replacement-runtime
 behavior. `implemented` requires a linked implementation; `verified` additionally
 requires passing,
 revision-qualified results for the scoped cases. `inapplicable` requires a
@@ -74,11 +74,26 @@ The [lexer contract](lexer-and-words.md), [`src/lexer.c`](../src/lexer.c), and
 [`tests/lexer.py`](../tests/lexer.py) implement and test lexical token kinds,
 physical spans, quote/escape provenance, incremental nesting, and parser handoffs.
 The [validation record](tickets/CSH-004-lexer-and-words.md#validation-evidence-2026-09-23)
-details native, sanitizer, and Linux checks. Command-substitution grammar and
-here-document queue/delimiter processing remain with CSH-005; aliases remain
-with CSH-030. Dollar-single-quote escapes remain raw until CSH-024 decodes them
+details native, sanitizer, and Linux checks. CSH-005 supplies the supported
+command-substitution grammar and here-document queue/delimiter processing;
+aliases remain with CSH-030. Dollar-single-quote escapes remain raw until CSH-024 decodes them
 before expansion. Locale-sensitive multibyte lexical interpretation remains
 open in ENV-004/CSH-037. These module checks do not establish runtime conformance.
+
+<a id="csh-005-api-evidence"></a>
+
+### CSH-005 API evidence
+
+The [parser and AST contract](parser-and-ast.md) is implemented in
+[`src/parser.c`](../src/parser.c) and [`src/ast.c`](../src/ast.c).
+[`tests/parser.py`](../tests/parser.py) checks structural precedence, contextual
+words, grouping, source-order redirections, nested substitutions, here-documents,
+and source diagnostics. Independent C fixtures cover input boundaries, owned
+tree lifetimes, AST transfers, and allocation failures. See the
+[ticket validation record](tickets/CSH-005-parser-and-ast.md) for commands and
+platform evidence. These checks do not execute commands. CSH-027 compound
+syntax, CSH-030 aliases, arithmetic-first ambiguity fallback, recursive nesting
+beyond the documented guard, and replacement-runtime evidence remain open.
 
 <a id="csh-022-api-evidence"></a>
 
@@ -121,11 +136,11 @@ tickets; the broader families below remain `missing`.
 | <a id="lex-004"></a>LEX-004 | Preserve double-quote context for dollar/backquote/backslash and parameter/substitution nesting. | [2.2.3](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_02_03) | required; undefined/unspecified nested edge cases kept out of exact oracles | [CSH-004](tickets/CSH-004-lexer-and-words.md), [CSH-024](tickets/CSH-024-value-expansions.md), [CSH-026](tickets/CSH-026-substitution-and-heredoc-integration.md) | `lexer/double-quotes` | [API evidence](#csh-004-api-evidence); runtime and remaining grammar/expansion cases open |
 | <a id="lex-005"></a>LEX-005 | Decode Issue 8 dollar-single-quote escapes and retain resulting quoting. | [2.2.4](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_02_04) | required; unspecified escape cases and implementation-defined locale encoding, D-003 | [CSH-004](tickets/CSH-004-lexer-and-words.md), [CSH-024](tickets/CSH-024-value-expansions.md) | `lexer/dollar-single-quotes` | missing decoding; [API evidence](#csh-004-api-evidence) preserves dollar-single quote boundaries and raw escapes |
 | <a id="lex-006"></a>LEX-006 | Substitute eligible aliases recursively with recursion prevention and correct token/parse timing. | [2.3.1](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_03_01) | required; alias/reserved-word and parse timing choices, D-004 | [CSH-030](tickets/CSH-030-alias-substitution.md), [CSH-004](tickets/CSH-004-lexer-and-words.md), [CSH-005](tickets/CSH-005-parser-and-ast.md) | `lexer/alias-boundaries` | missing |
-| <a id="gram-001"></a>GRAM-001 | Recognize reserved words only in their grammatical positions; preserve names and assignment words. | [2.4; 2.10.1](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_04) | required; extra reserved words have specified/unspecified cases | [CSH-005](tickets/CSH-005-parser-and-ast.md), [CSH-027](tickets/CSH-027-compound-syntax.md) | `parser/reserved-assignments` | missing |
-| <a id="gram-002"></a>GRAM-002 | Parse pipelines, lists, groups, redirections and complete commands with specified precedence. | [2.10.2](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_10_02) | required; optional IO_LOCATION tracked D-002 | [CSH-005](tickets/CSH-005-parser-and-ast.md) | `parser/precedence-complete-command` | missing |
-| <a id="gram-003"></a>GRAM-003 | Collect multiple here-documents in order; preserve delimiter quoting, `<<-`, and incomplete-input state. | [2.3; 2.7.4](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_07_04) | required; source-specified unspecified nested cases excluded | [CSH-005](tickets/CSH-005-parser-and-ast.md), [CSH-004](tickets/CSH-004-lexer-and-words.md) | `parser/heredoc-queue` | missing |
+| <a id="gram-001"></a>GRAM-001 | Recognize reserved words only in their grammatical positions; preserve names and assignment words. | [2.4; 2.10.1](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_04) | required; extra reserved words have specified/unspecified cases | [CSH-005](tickets/CSH-005-parser-and-ast.md), [CSH-027](tickets/CSH-027-compound-syntax.md) | `parser/reserved-assignments` | [API evidence](#csh-005-api-evidence); supported command positions and assignment classification; later compound syntax/runtime open |
+| <a id="gram-002"></a>GRAM-002 | Parse pipelines, lists, groups, redirections and complete commands with specified precedence. | [2.10.2](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_10_02) | required; optional IO_LOCATION tracked D-002 | [CSH-005](tickets/CSH-005-parser-and-ast.md) | `parser/precedence-complete-command` | [API evidence](#csh-005-api-evidence); structural subset implemented, runtime evidence open |
+| <a id="gram-003"></a>GRAM-003 | Collect multiple here-documents in order; preserve delimiter quoting, `<<-`, and incomplete-input state. | [2.3; 2.7.4](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_07_04) | required; source-specified unspecified nested cases excluded | [CSH-005](tickets/CSH-005-parser-and-ast.md), [CSH-004](tickets/CSH-004-lexer-and-words.md) | `parser/heredoc-queue` | [API evidence](#csh-005-api-evidence); collection and delimiter interpretation implemented, expansion/runtime open |
 | <a id="gram-004"></a>GRAM-004 | Parse every compound command and function definition, including Issue 8 case fall-through `;&`. | [2.9.4; 2.9.5](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_09_04) | required | [CSH-027](tickets/CSH-027-compound-syntax.md) | `parser/compounds-functions` | missing |
-| <a id="gram-005"></a>GRAM-005 | Distinguish syntax errors from incomplete input; execute only valid complete commands, without arbitrary command-size limits. | [2.8.1; 2.9; 2.10](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_08_01) | required | [CSH-005](tickets/CSH-005-parser-and-ast.md), [CSH-016](tickets/CSH-016-input-and-invocation.md), [CSH-018](tickets/CSH-018-status-and-cli-integration.md) | `parser/errors-incomplete-large` | missing; [API evidence](#csh-016-api-evidence): preserves multiline syntax bytes and 200 KB physical lines, discarding partial lines after read/allocation failure; syntax completeness, command-size behavior, and execution remain open |
+| <a id="gram-005"></a>GRAM-005 | Distinguish syntax errors from incomplete input; execute only valid complete commands, without arbitrary command-size limits. | [2.8.1; 2.9; 2.10](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_08_01) | required | [CSH-005](tickets/CSH-005-parser-and-ast.md), [CSH-016](tickets/CSH-016-input-and-invocation.md), [CSH-018](tickets/CSH-018-status-and-cli-integration.md) | `parser/errors-incomplete-large` | [Input API evidence](#csh-016-api-evidence) and [parser API evidence](#csh-005-api-evidence); invalid/incomplete/EOF and growing sequences implemented; recursive nesting guard and runtime execution remain open |
 
 ## Variables and expansion
 

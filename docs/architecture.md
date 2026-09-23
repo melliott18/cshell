@@ -41,15 +41,18 @@ in the replacement modules.
 ## Current replacement modules
 
 CSH-016 adds standalone input and invocation APIs, CSH-004 adds the lexer and
-structured token/word API, and CSH-022 adds shell-state storage. They have no
-dependency on the legacy header, scanner, or executor, and the default
-executable does not call them yet.
+structured token/word API, CSH-005 adds parser/AST ownership, and CSH-022 adds
+shell-state storage. They have no dependency on the legacy header, scanner, or
+executor, and the default executable does not call them yet.
 
 | Path | Responsibility |
 | --- | --- |
 | `src/input.c` / `include/cshell/input.h` | Owned string, script, and descriptor sources; physical lines, byte positions, explicit EOF, and sticky errors |
 | `src/invocation.c` / `include/cshell/invocation.h` | Supported invocation options, owned `$0` and positional operands, interactive detection, and prompt selection |
 | `src/lexer.c` / `include/cshell/lexer.h` | Owned tokens and fragment trees, incremental quote/substitution contexts, shared-cursor nested command lexers, and raw here-document handoff |
+| `src/parser.c` / `include/cshell/parser.h` | Complete-command grammar, contextual words, nested command parsing, ordered here-document collection, and source diagnostics |
+| `src/ast.c` / `include/cshell/ast.h` | Owned syntax nodes, words, substitutions, and ordered redirections with allocation-safe cleanup |
+| `src/quote.c` / `include/cshell/quote.h` | Shared dollar-single-quote byte decoding for delimiter quote removal and later expansion |
 | `src/state.c` / `include/cshell/state.h` | Owned variables and attributes, copied invocation parameters, option/status metadata, environment snapshots, and full-state copying/restoration |
 
 See [Input and invocation](input-and-invocation.md) for the concrete ownership,
@@ -60,6 +63,10 @@ See [Lexer and words](lexer-and-words.md) for the feed contract and the parser
 handshake: the parser decides which `)` closes a command substitution; the lexer
 preserves its raw source and surrounding word context.
 
+See [Parser and AST](parser-and-ast.md) for complete-command read boundaries,
+error results, and tree ownership. This parser does not execute commands or
+expand words.
+
 See [Shell state](shell-state.md) for variable ownership, readonly errors, and
 allocation-free checkpoint restoration. State stores option bits without
 implementing their runtime behavior, and leaves special startup variable
@@ -69,8 +76,8 @@ module neither reads nor modifies the process environment.
 
 ## Target module boundaries
 
-The input, invocation, lexer, and state modules above exist; add the remaining modules
-when their implementation tickets start. This table defines target
+The input, invocation, lexer, parser/AST, quote, and state modules above exist.
+Add the remaining modules when their implementation tickets start. This table defines target
 responsibilities and does not claim that every listed module is implemented.
 
 | Module | Owns | Must not own |

@@ -1,0 +1,29 @@
+#ifndef CSHELL_PARSER_H
+#define CSHELL_PARSER_H
+
+#include "cshell/ast.h"
+
+struct csh_parser;
+enum csh_parse_result {
+    CSH_PARSE_ERROR = -1, CSH_PARSE_EOF = 0, CSH_PARSE_TREE = 1,
+    CSH_PARSE_INCOMPLETE = 2
+};
+
+/* The parser borrows input, which must be unread and outlive it, and owns its
+ * lexer. It reads
+ * physical lines only as grammar requires. next returns one complete command
+ * list at a newline boundary (including its here-documents), or a final list
+ * at EOF. Empty lines are skipped. No expansion or execution occurs. */
+int csh_parser_create(struct csh_parser **out, struct csh_input *input,
+    struct csh_error *error);
+void csh_parser_destroy(struct csh_parser *parser);
+const char *csh_parser_source_name(const struct csh_parser *parser);
+/* TREE transfers a fully owned tree; every other result sets *out to NULL.
+ * INCOMPLETE means final EOF within unfinished syntax. ERROR means invalid
+ * syntax, acquisition, allocation or an explicit nesting-limit failure.
+ * EOF and failures are sticky. error is cleared on TREE/EOF. Diagnostics use
+ * the input source name and byte positions; this module never prints them. */
+enum csh_parse_result csh_parser_next(struct csh_parser *parser,
+    struct csh_ast **out, struct csh_error *error);
+
+#endif

@@ -12,7 +12,8 @@ The lexical contract follows POSIX.1-2024
 [quoting](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_02)
 and
 [token recognition](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_03).
-Grammar, expansion, and alias implementation remain separate work. Passing
+The [parser](parser-and-ast.md) implements the initial command grammar;
+expansion, aliases, and later compound syntax remain separate work. Passing
 module fixtures does not establish runtime behavior or complete conformance.
 
 ## Feeding and reading
@@ -163,8 +164,9 @@ does not affect the lexer preserving ordinary arithmetic expansion syntax.
 
 ## Here-document collection
 
-CSH-005 owns the ordered queue of pending here-documents, their delimiter
-interpretation, and their attachment to redirections. The raw-input handoff
+The [CSH-005 parser](parser-and-ast.md) implements the ordered queue of pending
+here-documents, their delimiter interpretation, and their attachment to
+redirections. The raw-input handoff
 supports collection without running ordinary token recognition on body text.
 
 After the parser reaches the newline that starts pending bodies, it uses
