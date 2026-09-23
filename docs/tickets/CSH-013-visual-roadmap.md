@@ -1,6 +1,6 @@
 # CSH-013: Document visual architecture and parallel implementation work
 
-- Status: review
+- Status: done
 - Type: docs
 - Kind: implementation
 - Parent: None
@@ -55,5 +55,9 @@ CSH-031 now depends on CSH-030 and CSH-032 on CSH-031, with explicit final check
 GitHub publication was verified: all 37 issue bodies and states match the ticket
 records, and all 24 native parent/child relationships match the completion gates.
 Issue source links point to the published documentation revision. The original
-foundation issue remains closed; all new implementation work remains open.
+foundation issue remains closed; shell implementation child tickets remain open.
 No shell code changed, so unrelated shell behavior tests were not rerun.
+
+Integrated into `main` through [PR #39](https://github.com/melliott18/cshell/pull/39)
+on 2026-09-23 (merge commit `ac13c7fb3929d818591e28f8f9c656e54d5ef07a`).
+The documentation and ticket checks passed again before merging.
