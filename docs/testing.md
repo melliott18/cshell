@@ -255,6 +255,17 @@ Hosted CI results establish only the checks actually run for that revision.
 Keep native macOS validation alongside Docker: Linux containers do not validate
 Darwin-specific terminal, signal, or library behavior.
 
+## Conformance fixture planning
+
+Before adding a behavioral case, find its stable requirement ID in the
+[requirements matrix](posix-matrix.md) or [utility and option map](posix-utilities.md).
+Follow the [evidence conventions](posix-evidence.md) for specification-derived
+expectations, environment capture, allowed alternatives and reference comparisons.
+The [smoke evidence map](posix-evidence.md#existing-smoke-evidence) records exactly
+what today's three cases observe; planned fixture IDs are not passing tests.
+CSH-017 and CSH-033 own harness formats and adapters, so this documentation adds
+no new runner or required unsupported invocation mode.
+
 ## Growing the suite
 
 - [CSH-002](tickets/CSH-002-legacy-safety.md) tracks regression cases for memory,

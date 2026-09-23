@@ -9,6 +9,10 @@ Start with the [project README](../README.md) for installation and current statu
 | [Visual implementation plan](implementation-plan.md) | Dependencies, parallel tasks, and milestone completion |
 | [Testing](testing.md) | Native and Docker commands, smoke coverage, and troubleshooting |
 | [POSIX tracking](posix.md) | Specification target, gaps, and conformance evidence |
+| [Requirements matrix](posix-matrix.md) | Language and invocation requirements, sources, owners, and planned evidence |
+| [Utilities and options](posix-utilities.md) | Required shell utilities, host boundary, options, and profile decisions |
+| [Evidence conventions](posix-evidence.md) | Fixture provenance, smoke limits, and differential example |
+| [Requirements by ticket](posix-owners.md) | Reverse lookup from implementation tickets to requirements |
 | [Ticket index](tickets/README.md) | Implementation order and dependencies |
 | [Ticket template](tickets/TEMPLATE.md) | Format for new implementation work |
 | [Agent entry point](../AGENTS.md) | Project navigation for agents |
