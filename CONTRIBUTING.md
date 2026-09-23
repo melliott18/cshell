@@ -46,8 +46,13 @@ It is a documented convention, not an installed Git hook or server-side rule.
    Mark the ticket `done` when acceptance criteria are met and the change is
    integrated into `main`.
 
-Allowed statuses are `backlog`, `ready`, `in-progress`, `blocked`, `review`, and
-`done`. `ready` means dependencies are complete and the ticket is actionable.
+Allowed statuses are `backlog`, `ready`, `in-progress`, `blocked`, `review`,
+`done`, and `superseded`. `ready` means dependencies are complete and the ticket
+is actionable.
+`superseded` means the planned work was replaced, not implemented: retain the
+historical scope, name its replacement owners, and close the GitHub issue as
+`not planned`. Remove or replace incoming dependencies before superseding a
+ticket; this status never satisfies a dependency as if the work were done.
 For `blocked`, describe the actual blocker and what resolves it. Keep status in
 the ticket itself; the index provides navigation and dependency order.
 
@@ -66,6 +71,16 @@ the Markdown child checklists synchronized.
 See the [visual implementation plan](docs/implementation-plan.md) for the first
 parallel tasks and shared-interface boundaries. A milestone is not a second
 implementation branch; changes happen through its child tickets.
+
+## Replacing the prototype
+
+The legacy code is a starting reference, not a compatibility target. New modules
+must use the documented replacement contracts without importing `legacy.h`,
+wrapping the old dispatcher, or preserving prototype quirks. CSH-039 owns the
+complete runtime cutover and deletion; its prerequisites do not include legacy
+hardening. Safety regressions belong to the replacement module tickets. Create
+a narrow containment ticket only for a demonstrated blocker while the prototype
+is still used. See the [replacement strategy](docs/architecture.md#replacement-strategy).
 
 ## Build and validation
 

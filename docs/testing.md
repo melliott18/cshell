@@ -100,13 +100,23 @@ through `make docker-test` as a nonzero exit status.
 
 ## Growing the suite
 
-- [CSH-002](tickets/CSH-002-legacy-safety.md) adds regression cases for memory,
-  process, descriptor, and EOF defects, including sanitizer runs.
+- [CSH-016](tickets/CSH-016-input-and-invocation.md) and
+  [CSH-004](tickets/CSH-004-lexer-and-words.md) cover replacement input/EOF and
+  allocation safety; [CSH-019](tickets/CSH-019-simple-command-redirections.md)
+  and [CSH-020](tickets/CSH-020-pipeline-lifecycle.md) cover child/descriptor
+  failures and high-volume pipelines. The superseded legacy repair tickets
+  remain defect history, not required implementation work.
 - [CSH-003](tickets/CSH-003-invocation-and-test-harness.md) extends the runner to
   script and `-c` modes, strict output/status checks, filesystem effects, and CI.
 - [CSH-011](tickets/CSH-011-signals-and-job-control.md) adds pseudo-terminal tests.
 - [CSH-012](tickets/CSH-012-conformance-and-portability.md) audits coverage and
   supported environments, including compiler/libc versions.
+
+CSH-018 runs strict fixtures against an explicitly selected replacement runtime
+before the default executable changes. Legacy quirks are not golden outputs.
+[CSH-039](tickets/CSH-039-legacy-retirement.md) moves both standard test targets
+to the replacement `cshell`, removes prototype-only allowances and temporary
+drivers, and validates clean builds with no legacy sources or objects.
 
 Keep native macOS validation alongside Docker. Linux containers do not validate
 Darwin-specific terminal, signal, or library behavior.

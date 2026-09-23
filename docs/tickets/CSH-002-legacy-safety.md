@@ -1,6 +1,6 @@
 # CSH-002: Contain memory and process defects in the legacy shell
 
-- Status: backlog
+- Status: superseded
 - Type: fix
 - Kind: milestone
 - Parent: None
@@ -9,12 +9,27 @@
 - Branch: Assigned when work starts
 - Issue: [#3](https://github.com/melliott18/cshell/issues/3)
 
-## Goal
+## Disposition
+
+Superseded by the replacement implementation plan in CSH-038. The prototype is
+only a starting reference; investing in a separate legacy rewrite is no longer
+planned. This ticket is closed as **not planned**, not as implemented or safe.
+The former scope and acceptance criteria below are retained as defect history.
+
+Required safety coverage transfers to [CSH-016](CSH-016-input-and-invocation.md)
+and [CSH-004](CSH-004-lexer-and-words.md) for input, EOF, and allocation ownership;
+[CSH-019](CSH-019-simple-command-redirections.md) for child and descriptor cleanup;
+and [CSH-020](CSH-020-pipeline-lifecycle.md) for pipeline failures and deadlocks.
+[CSH-039](CSH-039-legacy-retirement.md) deletes the prototype and its build paths.
+No replacement ticket depends on completing this legacy hardening work. A narrow
+containment fix requires a demonstrated blocker and its own ticket.
+
+## Historical goal
 
 Make the existing implementation safe to exercise while its language front end
 and executor are replaced.
 
-## Scope
+## Historical scope
 
 - Replace unchecked lexer buffer writes with owned, bounds-checked storage and
   report allocation and input-limit failures without partial command execution.
@@ -25,7 +40,7 @@ and executor are replaced.
 - Close unused descriptors, check system-call results, and reap owned children.
 - Distinguish EOF from an empty command and end the input loop at EOF.
 
-## Acceptance criteria
+## Historical acceptance criteria
 
 - [ ] Long tokens, many arguments, blank lines, and repeated commands do not
   overflow buffers, use invalid memory, or execute stale arguments.
@@ -55,7 +70,7 @@ CSH-001 resets the argument count on each input iteration and removes the unused
 series helper. The remaining active pipeline allocation and scanner defects are
 still in scope here.
 
-## Completion gate
+## Historical completion gate
 
 - [ ] [CSH-014: Input and memory safety](CSH-014-input-memory-safety.md) is done.
 - [ ] [CSH-015: Process and pipe safety](CSH-015-process-pipe-safety.md) is done.

@@ -36,10 +36,13 @@ without pipe deadlocks, leaked descriptors, or lost child statuses.
 
 ## Validation
 
-Run `make test` and `make docker-test` with large-output, early-consumer-exit,
+Run native and Docker pipeline fixtures against the replacement runtime with
+large-output, early-consumer-exit,
 missing-command, builtin-stage, and status/negation fixtures. Run bounded resource
 failure fixtures at each stage boundary and check ownership with deterministic
 hooks or available platform facilities. Use sanitizer builds for cleanup paths.
+Record the candidate target used before CSH-039 switches `make test` and
+`make docker-test` to the replacement executable by default.
 
 ## Implementation notes/evidence
 

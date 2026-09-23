@@ -59,8 +59,17 @@ tests/           Bounded smoke checks
 build/           Generated scanner and object files (ignored by Git)
 ```
 
-The current lexer and executor are isolated under `src/legacy/` so their
-replacements can be delivered in bounded tickets. Future module responsibilities
-and ownership rules are described in the architecture document.
+The original code is a starting point for understanding the problem. Its APIs,
+implementation choices, and behavior do not constrain the replacement. New
+modules follow the POSIX specification and explicit ownership contracts; they
+must not depend on the legacy interface.
+
+[CSH-039](docs/tickets/CSH-039-legacy-retirement.md) will switch `cshell` to the
+replacement runtime and delete the legacy sources, headers, build rules, and
+compatibility paths. That cutover follows the input, lexer, parser, command, and
+pipeline work; it does not wait for every POSIX feature. Git history and
+historical tickets remain as records. See [Architecture](docs/architecture.md)
+for the removal criteria and [Implementation plan](docs/implementation-plan.md)
+for the revised sequence.
 
 Originally authored by Mitchell Elliott.

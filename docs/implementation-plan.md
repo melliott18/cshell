@@ -4,53 +4,74 @@
 
 Ticket numbers are stable identifiers, not a required execution order. The
 [ticket index](tickets/README.md) distinguishes implementation tickets from
-milestones. A milestone preserves the original scope and acceptance criteria;
-its smaller child tickets are the units of implementation and review.
+milestones. An active milestone groups the scope and acceptance criteria of its
+smaller child tickets, which are the units of implementation and review.
 
 An implementation ticket can start when its own `Depends on` entries are done.
 Its parent's prerequisites are completion gates for that milestone and are not
 implicitly added to every child. A parent stays open until all children, its
-prerequisites, and its original acceptance criteria are complete. This permits
+prerequisites, and its acceptance criteria are complete. This permits
 early independent work without relaxing the final integration requirements.
+
+The prototype is only a starting point. CSH-002, CSH-014, and CSH-015 are
+superseded historical tickets, closed as not planned rather than completed. No
+active ticket depends on them. Their defect evidence informs safety tests in
+the replacement; it does not require a rewrite of the disposable implementation.
+CSH-038 records this roadmap revision.
 
 ## First parallel work
 
-The following graph shows the first dependency paths. Solid arrows mean that
-the source must complete before the destination can start. Dotted arrows roll
-child completion into a milestone. CSH-013 maintains this plan and is separate
-from the shell implementation paths.
+The following graph shows the path to replacement and deletion of the original
+runtime. Each arrow means that the source must complete before the destination
+can start. Redundant transitive edges, milestone completion gates, and later
+feature work are omitted; each ticket remains the source for its exact prerequisites.
+CSH-036 can start independently and is outside the runtime cutover path shown.
 
 ```mermaid
 flowchart TD
     foundation["CSH-001<br/>Foundation complete"]
-    memory["CSH-014<br/>Input memory and EOF"]
-    processes["CSH-015<br/>Process and pipe safety"]
-    safety["CSH-002<br/>Safety milestone"]
     harness["CSH-017<br/>Test harness and CI"]
-    coverage["CSH-036<br/>Requirements matrix"]
-    input["CSH-016<br/>Input and invocation"]
-    status["CSH-018<br/>Status and CLI"]
+    input["CSH-016<br/>Input and invocation APIs"]
     lexer["CSH-004<br/>Lexer and words"]
+    parser["CSH-005<br/>Parser and AST"]
     state["CSH-022<br/>Shell state storage"]
-    foundation --> memory
-    foundation --> processes
+    execute["CSH-019<br/>Commands and redirections"]
+    status["CSH-018<br/>Candidate runtime and statuses"]
+    pipelines["CSH-020<br/>Pipelines"]
+    cutover["CSH-039<br/>Switch cshell; delete legacy"]
+    foundation --> input
     foundation --> harness
-    foundation --> coverage
-    memory -.-> safety
-    processes -.-> safety
-    safety --> input
-    input --> status
-    harness --> status
     input --> lexer
     harness --> lexer
     input --> state
+    lexer --> parser
+    parser --> execute
+    state --> execute
+    execute --> status
+    execute --> pipelines
+    status --> cutover
+    pipelines --> cutover
 ```
 
-The initial independent implementation tasks are CSH-014, CSH-015, CSH-017, and
-CSH-036. Input/EOF work owns changes to the input loop; process-safety work owns
-the legacy executor. Coordinate interface changes between those two tasks.
-CSH-016 starts once the safety milestone is complete. The lexer and core state
-store can then progress separately instead of waiting for the whole executor.
+The first parallel tasks are CSH-016, CSH-017, and CSH-036: input APIs, testing
+infrastructure, and the POSIX requirements matrix. After the input contract is
+available, the lexer/parser and state store can progress separately. The new
+executor joins those interfaces; runtime/status integration and pipeline work
+can then proceed in parallel before CSH-039.
+
+CSH-016, CSH-004, and CSH-005 use API fixtures instead of adapters to the old
+dispatcher. CSH-018 tests a candidate replacement runtime; CSH-039 switches the
+default executable and deletes the legacy implementation. This cutover verifies
+external commands, `cd`, `exit`, redirections, and pipelines through all supported
+input modes in native and Docker tests. It does not wait for lists, compound
+commands, complete expansion, or all later builtin semantics. Unsupported
+constructs fail safely without falling back to the prototype.
+
+The [architecture removal criteria](architecture.md#replacement-strategy)
+include legacy source, headers, build rules, objects, symbols, compatibility
+paths, and prototype-specific test allowances. Historical tickets and Git
+history remain available; copied legacy code under new module names would not
+satisfy the cutover.
 
 ## Later parallel work
 
@@ -61,6 +82,7 @@ It is not permission to start work before those prerequisites are satisfied.
 | --- | --- | --- |
 | Language front end | CSH-004 lexer, CSH-005 parser, CSH-027 compound syntax | Agree word provenance, AST ownership, alias hooks, and here-document collection before parallel changes |
 | Execution | CSH-019 simple commands/redirections, CSH-020 pipelines, CSH-021 lists and environments | One owner for child IDs, descriptor closure, waiting, and execution-result contracts |
+| Runtime cutover | CSH-018 candidate runtime/status integration and CSH-039 legacy retirement | CSH-039 follows CSH-018 and CSH-020, switches the default executable, and leaves one runtime path |
 | Shell state | CSH-022 storage and CSH-023 assignment environments | Storage can proceed beside the front end; command-category assignment rules need execution integration |
 | Expansion | CSH-024 values, CSH-025 fields/pathnames, CSH-026 substitutions and here-documents | Pure expansion components start before the complete executor; command substitution waits for it |
 | Compound programs | CSH-027 syntax and CSH-028 control flow/functions | Parser fixtures can run early; executable compounds wait for state, execution, and expansion |
@@ -106,5 +128,8 @@ either representation. Source links in issues may point to the exact
 commit under review so newly introduced ticket files remain accessible before
 the documentation pull request reaches `main`.
 
-Do not close a milestone merely because it was split. CSH-001 remains the
-completed foundation ticket; the new implementation work remains open.
+Do not close a milestone merely because it was split. Completed tickets require
+acceptance and integration evidence. Superseded tickets retain their historical
+scope and the reason work was replaced; close their GitHub issues as not planned.
+Never mark them done or silently treat supersession as a satisfied dependency.
+Remove or redirect incoming dependencies as part of the replacement plan.

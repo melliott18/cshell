@@ -1,6 +1,6 @@
 # CSH-015: Contain legacy child and pipe failures
 
-- Status: ready
+- Status: superseded
 - Type: fix
 - Kind: implementation
 - Parent: CSH-002
@@ -8,12 +8,27 @@
 - Branch: Assigned when work starts
 - Issue: [#16](https://github.com/melliott18/cshell/issues/16)
 
-## Goal
+## Disposition
+
+Superseded by the replacement implementation plan in CSH-038. The prototype is
+only a starting reference; investing in a separate legacy rewrite is no longer
+planned. This ticket is closed as **not planned**, not as implemented or safe.
+The former scope and acceptance criteria below are retained as defect history.
+
+Required safety coverage transfers to [CSH-016](CSH-016-input-and-invocation.md)
+and [CSH-004](CSH-004-lexer-and-words.md) for input, EOF, and allocation ownership;
+[CSH-019](CSH-019-simple-command-redirections.md) for child and descriptor cleanup;
+and [CSH-020](CSH-020-pipeline-lifecycle.md) for pipeline failures and deadlocks.
+[CSH-039](CSH-039-legacy-retirement.md) deletes the prototype and its build paths.
+No replacement ticket depends on completing this legacy hardening work. A narrow
+containment fix requires a demonstrated blocker and its own ticket.
+
+## Historical goal
 
 Make the retained legacy execution paths terminate predictably and release their
 children and descriptors before the AST executor replaces them.
 
-## Scope
+## Historical scope
 
 - Correct command-array sizing and invalid accesses to pipe descriptors.
 - Make child exec/redirection failures exit the child rather than return to input.
@@ -21,7 +36,7 @@ children and descriptors before the AST executor replaces them.
 - Check fork, pipe, wait, and redirection results; close unused descriptors.
 - Keep scanner/input storage in CSH-014 and coordinate the main-loop interface.
 
-## Acceptance criteria
+## Historical acceptance criteria
 
 - [ ] Missing commands and failed redirections cannot spawn a second input loop;
   a following command runs once in bounded regression fixtures.

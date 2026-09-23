@@ -11,7 +11,7 @@
 ## Goal
 
 Complete AST composition around pipelines with explicit current-shell, subshell,
-and asynchronous execution contexts, replacing the remaining legacy dispatcher.
+and asynchronous execution contexts in the replacement runtime.
 
 ## Scope
 
@@ -19,7 +19,8 @@ and asynchronous execution contexts, replacing the remaining legacy dispatcher.
 - Define context ownership for state, descriptors, children, and last status.
 - Isolate subshell state and preserve current-shell mutations where required.
 - Register background children and expose the last background identifier.
-- Remove the legacy executor after all retained behavior uses the AST path.
+- Build on the new executor without a legacy fallback; CSH-039 independently
+  owns the default-binary cutover and complete legacy deletion.
 
 ## Acceptance criteria
 
@@ -31,8 +32,8 @@ and asynchronous execution contexts, replacing the remaining legacy dispatcher.
   applicable background identifier, and eventually reap their owned children.
 - [ ] Nested contexts and failed redirections preserve parent state/descriptors;
   cleanup tests include background children and interrupted waits.
-- [ ] The legacy executor is removed, existing behavior uses the shared executor,
-  and architecture docs describe context ownership and remaining limitations.
+- [ ] All list/group behavior uses the shared replacement executor; architecture
+  docs describe context ownership and remaining limitations.
 
 ## Validation
 
@@ -40,7 +41,9 @@ Run native and Docker fixtures for nested groups, filesystem/state effects,
 short-circuiting, list statuses, and asynchronous completion under timeouts.
 Use helper synchronization instead of sleep-only assertions for background
 behavior and child reaping. Run the retained regression suite and sanitizer
-checks after removal of the legacy path.
+checks against the replacement runtime, recording whether CSH-039 has already
+switched the default executable. Coordinate changes to build/entry-point files
+with CSH-039 if these tickets proceed in parallel.
 
 ## Implementation notes/evidence
 

@@ -20,6 +20,8 @@ that runs natively, in Docker, and in continuous integration.
 - Bound output/resource use and provide actionable per-case failure diagnostics.
 - Add supported-platform native jobs and the Docker Linux test path to CI.
 - Use current stdin invocation; allow later modes without requiring CSH-016.
+- Provide explicit native/Docker selection of a candidate executable or module
+  fixture target; keep prototype smoke results distinct from replacement results.
 
 ## Acceptance criteria
 
@@ -45,6 +47,8 @@ Keep harness self-fixtures separate from passing shell-behavior expectations.
 ## Implementation notes/evidence
 
 This work is independently actionable against the CSH-001 stdin interface.
-The current prompt allowance remains explicit until CSH-018 installs tests for
-all invocation modes and removes it from non-interactive cases. Use adapters or
+The current prototype prompt allowance remains isolated from strict replacement
+fixtures introduced by CSH-018; CSH-039 deletes it entirely at cutover. Allow an
+explicit candidate executable target so new modules do not require legacy
+compatibility. Use adapters or
 fixture metadata for future invocation modes, not mandatory unsupported flags.

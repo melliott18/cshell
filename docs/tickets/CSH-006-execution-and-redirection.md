@@ -5,7 +5,7 @@
 - Kind: milestone
 - Parent: None
 - Depends on: CSH-005
-- Children: CSH-019, CSH-020, CSH-021
+- Children: CSH-019, CSH-020, CSH-021, CSH-039
 - Branch: Assigned when work starts
 - Issue: [#7](https://github.com/melliott18/cshell/issues/7)
 
@@ -23,7 +23,9 @@ descriptors, execution environments, and command statuses.
   here-document input delivery; connect context-aware expansion in CSH-008.
 - Define parent execution for state-changing builtins and temporary descriptor
   restoration, plus isolated environments for subshells.
-- Remove the legacy executor when all retained behavior uses the new path.
+- Switch the default executable to replacement modules and delete all legacy
+  code/build paths in CSH-039 after bootstrap commands and pipelines pass.
+  Prototype quirks and extensions are not compatibility requirements.
 
 ## Acceptance criteria
 
@@ -59,9 +61,12 @@ process groups and terminal ownership are completed in CSH-011.
 - [ ] [CSH-020: Pipeline lifecycle](CSH-020-pipeline-lifecycle.md) is done.
 - [ ] [CSH-021: Lists and execution contexts](CSH-021-lists-and-execution-contexts.md)
   is done.
-- [ ] The original acceptance criteria above pass together through the new
+- [ ] [CSH-039: Complete legacy retirement](CSH-039-legacy-retirement.md) is done.
+- [ ] The acceptance criteria above pass together through the new
   executor, the legacy executor is removed, and resource-ownership evidence is
   recorded here.
 
-The execution children are sequential. CSH-019 also consumes the state-storage
+CSH-019, CSH-020, and CSH-021 form the execution sequence. CSH-039 joins
+CSH-020 pipeline evidence with CSH-018 invocation evidence and need not wait for
+CSH-021 lists/groups. CSH-019 also consumes the state-storage
 API from CSH-022, which can be built independently of the parser.

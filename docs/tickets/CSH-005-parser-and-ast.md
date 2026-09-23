@@ -30,7 +30,8 @@ Represent command structure independently of argument expansion and execution.
 - [ ] Multiple redirections retain their source order and exact operator kind.
 - [ ] Incomplete input is distinguishable from invalid syntax and clean EOF.
 - [ ] Syntax errors prevent execution of the invalid construct and free its tree.
-- [ ] AST ownership and parser error behavior are documented.
+- [ ] AST ownership and parser error behavior are documented; parser fixtures
+  build without legacy sources, headers, or command-array adapters.
 
 ## Validation
 
