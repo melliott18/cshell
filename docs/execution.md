@@ -19,19 +19,20 @@ redirections.
 
 This is the handoff for CSH-008 expansion integration. Argument strings and file
 paths are already prepared; `csh_execute_command()` does not expand them. The
-assignment array reserves the CSH-023 assignment-lifetime boundary. A nonempty
-assignment array currently fails before redirection or dispatch.
+assignment array contains final name/value pairs in source order. CSH-023 applies
+these pairs according to the resolved execution category.
 
 `csh_command_from_ast()` borrows an AST and creates an owned command. Its output
 must be empty on entry and remains empty on failure. The temporary adapter
 accepts a simple-command node or the parser's singleton foreground list around
 one simple command. It removes literal quotes and escapes while preserving
 quoted empty arguments; dollar-single-quoted words use the shared
-[quote decoder](value-expansions.md). It rejects assignments, expansions, any
+[quote decoder](value-expansions.md). It rejects expansions, any
 unquoted `*`, `?`, `[`, or `~` byte, pipelines, compound commands, and unsupported
 lists
 before executing any part of that construct. Quoting an otherwise special
-character permits its literal value.
+character permits its literal value. Literal assignment prefixes, including quoted
+empty values, pass through this adapter; general expansion remains CSH-008 work.
 
 The adapter is deliberately separate from the existing value-expansion module.
 Parsing a construct successfully does not mean this execution subset supports
@@ -45,7 +46,7 @@ pipeline execution.
 Both initialize `struct csh_execution` and update the state's last status. The
 result records the execution category, numeric status, and an `exit_requested`
 flag. The category distinguishes empty commands, external commands, regular
-builtins, and special builtins for later assignment rules.
+builtins, special builtins, and functions for assignment handling.
 
 The API return value and shell status have different meanings:
 
@@ -92,6 +93,61 @@ These are the initial handlers needed for runtime cutover;
 CSH-018 owns complete exit/status integration and CSH-029 owns full state-builtin
 semantics.
 
+## Assignment categories and resolved dispatch
+
+CSH-023 implements the category boundary described by POSIX
+[variable assignments](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_09_01_02).
+The selected policies are:
+
+| Category | Prefix lifetime and export attributes |
+| --- | --- |
+| No command name | Persist values, preserving existing attributes. |
+| External command | Export prefixes to the child; restore the shell values and attributes. Prefix `PATH` controls this command's lookup. |
+| Regular builtin | Export prefixes while the handler runs; restore only prefixed names afterward. |
+| Special builtin | Persist prefixes and further handler changes; preserve existing export attributes. |
+| Function | Export prefixes while the handler runs; restore only prefixed names afterward. This is the project's choice where POSIX leaves lifetime/export unspecified. |
+
+When `CSH_OPT_ALLEXPORT` is set, this assignment boundary also marks persistent
+prefix assignments exported. This does not implement all `set -a` effects in
+other modules. Repeated names apply in order; the last value wins. Empty values
+are distinct from missing values. Exported but unset declarations revert to
+unset after temporary use. Unexported variables without a prefix remain absent
+from the child environment.
+
+`csh_execute_resolved()` is the CSH-009/CSH-010 consumer entry point. The resolver
+passes the category, a handler, and an opaque context. Parent builtin/function
+categories require a handler; empty/external categories require NULL. A standard
+utility implemented as a function must use the regular-builtin category. The
+handler returns 0 with `status` and `exit_requested`, or -1 with `error` populated.
+It must return normally, retain no borrowed inputs, and leave `category` unchanged.
+Function parameter frames, lookup precedence, and complete builtin semantics
+remain with their owning tickets. `csh_execute_command()` uses this same entry
+point for bootstrap `cd`, `exit`, and external commands.
+
+All names and readonly attributes are checked before assignments, redirections,
+or dispatch. A readonly prefix returns -1, status 1, and the static diagnostic
+`cannot assign to readonly variable`. It requests exit when the state is
+noninteractive; an interactive caller can continue. The caller prints the
+returned diagnostic once and honors `exit_requested` even on -1. A subshell or
+copied execution context must apply that request to its own context only.
+Malformed prepared names or NULL values return status 2 without requesting exit.
+
+Selective saves stage the original values and attributes before the first write.
+Allocation failures during saving or applying a batch roll back every prefix.
+Temporary saves are restored on handler success, handler failure, redirection
+failure, and launch failure, without allocating. Even readonly attributes added
+by a handler are undone for prefixed names. Unrelated variables, option changes,
+and parameters survive; the final command status is stored after restoration.
+Nested invocations restore scopes in reverse order. These operations are
+serialized along with descriptor mutation.
+
+Persistent batches commit before redirections (an allowed ordering for empty
+and special-builtin commands), so a later redirection or handler failure does
+not undo them. External launch preparation copies the prefixed `PATH` and
+exported environment, then restores shell variables before forking. No path
+changes the host process environment. Command values must be independently
+owned as required by `struct csh_command`, not borrowed from mutable shell state.
+
 ## Ordered redirection boundary
 
 Each `struct csh_redirect` has a destination descriptor and one operation. File
@@ -133,7 +189,7 @@ boundary on both success and failure.
 
 ## Scope and validation
 
-The supported subset has no assignment lifetime, general expansion, compound
+The supported subset has no general expansion, compound
 command, pipeline, job-control, noclobber option behavior, or full builtin
 semantics.
 Both `>` and `>|` currently create or truncate output files. The AST front end

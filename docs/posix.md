@@ -81,9 +81,12 @@ runtime baseline; standalone API fixtures do not establish shell conformance.
 CSH-019 adds [module-level simple-command execution](execution.md), with
 lookup/status conversion, owned children, ordered file/descriptor/here-document
 redirections, and parent builtin restoration. Its literal adapter rejects
-pending expansion and compound syntax before dispatch. Assignment lifetime,
-pipelines, full builtin semantics, and runtime integration remain separate
-tickets; the prototype table above remains the runtime baseline.
+pending expansion and compound syntax before dispatch. CSH-023 adds prefix
+assignment categories, selective restoration, and readonly error handling, with
+real external environment probes and resolved builtin/function dispatch fixtures.
+Pipelines, full builtin/function semantics, expansion integration, and runtime
+integration remain separate tickets; the prototype table above remains the
+runtime baseline.
 
 ## Replacement alias evidence
 
