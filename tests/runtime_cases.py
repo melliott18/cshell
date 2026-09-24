@@ -79,20 +79,48 @@ def cases(helper):
                            "setup": {"script": script} if mode == "file" else {}, "stdin": "",
                            "expect": {"stdout": "[continued]\n", "stderr": f"cshell: exit: {message}\n",
                                       "status": 9}})
+    cross("pipeline output", f"{helper} args pipeline | {helper} copy\n",
+          stdout="[pipeline]\n")
+    cross("pipeline uses final status", f"{helper} status 7 | {helper} status 0\n")
+    cross("pipeline final failure", f"{helper} status 0 | {helper} status 9\n", status=9)
+    cross("negated pipeline", f"! {helper} status 0 | {helper} status 9\n")
+    cross("pipeline builtin state is isolated",
+          f"cd nested | {helper} copy\n{helper} args parent >proof\n",
+          setup={"nested/seed": ""},
+          files={"proof": {"type": "file", "content": "[parent]\n"}})
+    cross("external prefix assignment", f"CSHELL_RUNTIME_VALUE=stage {helper} environment CSHELL_RUNTIME_VALUE\n",
+          stdout="CSHELL_RUNTIME_VALUE=stage\n")
+    cross("special builtin assignment persists",
+          f"CSHELL_RUNTIME_VALUE=stage export CSHELL_RUNTIME_VALUE\n{helper} environment CSHELL_RUNTIME_VALUE\n",
+          stdout="CSHELL_RUNTIME_VALUE=stage\n")
+    cross("pipeline builtin assignment is isolated",
+          f"export CSHELL_RUNTIME_PIPE=value | {helper} copy\n{helper} environment CSHELL_RUNTIME_PIPE\n",
+          stdout="CSHELL_RUNTIME_PIPE=<unset>\n")
+    cross("special builtin error stops script", f"export 1bad\n{helper} args never\n",
+          status=1, stderr="cshell: export: invalid operand\n")
+    cross("pipeline special builtin error is isolated",
+          f"export 1bad | {helper} copy\n{helper} args alive\n",
+          stdout="[alive]\n", stderr="cshell: export: invalid operand\n")
+    for mode in ("string", "file"):
+        script = f"export 1bad\n{helper} args continued\nexit\n"
+        result.append({"name": f"interactive special builtin error ({mode})",
+                       "args": ["-ic", script] if mode == "string" else ["-i", "script"],
+                       "setup": {"script": script} if mode == "file" else {}, "stdin": "",
+                       "expect": {"stdout": "[continued]\n",
+                                  "stderr": "cshell: export: invalid operand\n",
+                                  "status": 0}})
     absent = {"effect": {"type": "absent"}}
-    for syntax in (f"{helper} args a | {helper} copy", f"{helper} args a && {helper} args b",
+    for syntax in (f"{helper} args a && {helper} args b",
                    f"{helper} args a || {helper} args b", f"{helper} args a; {helper} args b",
                    f"{helper} args a &", f"({helper} args compound)",
                    f"{{ {helper} args compound; }}", "if true; then true; fi", "f() { true; }"):
         cross(f"unsupported construct {syntax}", f"{syntax} >effect\n{helper} args never\n", status=2,
-              stderr="cshell: only a single foreground simple command is supported\n", files=absent)
+              stderr="cshell: only a foreground simple command or pipeline is supported\n", files=absent)
     for word in ("$HOME", "$((1+2))", "*", "~", "$(>nested)", "`>nested`"):
         message = ("command substitution is not supported by literal execution"
                    if word.startswith("$(>") else "expansion is not supported by literal execution")
         cross(f"unsupported expansion {word}", f"{helper} args >effect {word}\n", status=2,
               stderr=f"cshell: {message}\n", files={**absent, "nested": {"type": "absent"}})
-    cross("unsupported assignment", f"NAME=value {helper} args >effect\n", status=2,
-          stderr="cshell: assignment execution requires assignment integration\n", files=absent)
     cross("ordered redirections", f"{helper} both >captured 2>&1\n{helper} args restored\n",
           stdout="[restored]\n", files={"captured": {"type": "file", "content": "out\nerr\n"}})
     cross("parent redirection restoration", f"cd . >captured\n{helper} both\n",

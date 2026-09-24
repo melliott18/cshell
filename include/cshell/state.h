@@ -7,6 +7,7 @@
 
 struct csh_state;
 struct csh_state_checkpoint;
+struct csh_variable_save;
 
 enum csh_state_result {
     CSH_STATE_OK,
@@ -79,11 +80,25 @@ enum csh_state_result csh_state_update_attributes(struct csh_state *state,
 enum csh_state_result csh_state_unset_variable(struct csh_state *state,
     const char *name);
 
+/* Owned NULL-terminated snapshot of all declared variable names, in unspecified
+ * order. Survives state changes/destruction; free with environment_destroy. */
+enum csh_state_result csh_state_names(const struct csh_state *state, char ***out);
+
 /* Owned NULL-terminated name=value vector, including exported set values only.
  * Ordering is unspecified. Snapshot survives every state mutation/destruction. */
 enum csh_state_result csh_state_environment(const struct csh_state *state,
     char ***out);
 void csh_state_environment_destroy(char **environment); /* NULL accepted */
+
+/* Selective rollback: copy the named variables (duplicates allowed), including
+ * absence and attributes. Restore consumes *save without allocating, bypasses
+ * readonly, and preserves all unrelated variables and metadata. Nested scopes
+ * on one state must be restored in reverse order. Output must be empty. */
+enum csh_state_result csh_state_save_variables(const struct csh_state *state,
+    size_t count, const char *const names[], struct csh_variable_save **out);
+enum csh_state_result csh_state_restore_variables(struct csh_state *state,
+    struct csh_variable_save **save);
+void csh_state_variable_save_destroy(struct csh_variable_save *save);
 
 /* Index 0 is $0; indices 1..$# are positional parameters. NULL indicates an
  * out-of-range index or NULL state. Replacing positionals never changes $0.

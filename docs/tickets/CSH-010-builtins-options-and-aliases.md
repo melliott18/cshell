@@ -48,7 +48,7 @@ single shell's behavior.
 
 ## Completion gate
 
-- [ ] [CSH-029: State builtins and inventory](CSH-029-state-builtins.md) is done.
+- [x] [CSH-029: State builtins and inventory](CSH-029-state-builtins.md) is done.
 - [x] [CSH-030: Alias substitution](CSH-030-alias-substitution.md) is done.
 - [ ] [CSH-031: Evaluation and remaining utility builtins](CSH-031-evaluation-builtins.md) is done.
 - [ ] [CSH-032: Shell options](CSH-032-shell-options.md) is done.

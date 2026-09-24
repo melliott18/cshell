@@ -32,3 +32,5 @@ for acceptance evidence in a completed ticket.
 The architecture, implementation plan, and testing documents contain Mermaid
 diagrams. GitHub renders these diagrams; each is accompanied by text or tables
 so the information remains accessible in a plain Markdown reader.
+
+- [State builtins](state-builtins.md): variables, positionals, directories, and special-builtin integration.

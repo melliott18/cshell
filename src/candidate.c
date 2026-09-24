@@ -59,8 +59,8 @@ int main(int argc, char **argv)
     csh_parser_set_read_hook(parser, prompt, &invocation);
     for (;;) {
         struct csh_ast *tree = NULL;
-        struct csh_command command;
         struct csh_execution execution;
+        int executed;
         enum csh_parse_result parsed = csh_parser_next(parser, &tree, &error);
         if (parsed == CSH_PARSE_EOF) break;
         if (parsed != CSH_PARSE_TREE) {
@@ -68,18 +68,14 @@ int main(int argc, char **argv)
             csh_state_set_status(state, error.status);
             break; /* Parser errors are sticky; recovery belongs to CSH-011. */
         }
-        if (csh_command_from_ast(tree, &command, &error) == -1) {
-            csh_ast_destroy(tree);
-            diagnose(&error, NULL);
-            csh_state_set_status(state, error.status);
-            if (!invocation.interactive) break;
-            continue;
-        }
+        executed = csh_execute_ast(state, tree, &execution, &error);
         csh_ast_destroy(tree);
-        if (csh_execute_command(state, &command, &execution, &error) == -1)
+        if (executed == -1)
             diagnose(&error, NULL);
-        csh_command_destroy(&command);
-        if (execution.exit_requested) break;
+        if (execution.exit_requested ||
+            (execution.special_builtin_error && !invocation.interactive)) break;
+        if (executed == -1 && !invocation.interactive &&
+            execution.category == CSH_EXEC_PIPELINE) break;
     }
 done:
     if (state != NULL) {

@@ -81,9 +81,20 @@ runtime baseline; standalone API fixtures do not establish shell conformance.
 CSH-019 adds [module-level simple-command execution](execution.md), with
 lookup/status conversion, owned children, ordered file/descriptor/here-document
 redirections, and parent builtin restoration. Its literal adapter rejects
-pending expansion and compound syntax before dispatch. Assignment lifetime,
-pipelines, full builtin semantics, and runtime integration remain separate
-tickets; the prototype table above remains the runtime baseline.
+pending expansion and compound syntax before dispatch. CSH-023 adds prefix
+assignment categories, selective restoration, and readonly error handling, with
+real external environment probes and resolved builtin/function dispatch fixtures.
+CSH-029 adds the state builtin family and utility inventory. Remaining builtin
+and function semantics, expansion integration, and runtime integration remain
+separate tickets; the prototype table above remains the runtime baseline.
+
+CSH-020 adds replacement pipeline API evidence through `make test-pipeline`:
+concurrent multi-stage execution, default last-stage status and negation,
+builtin subshell isolation, explicit redirection precedence, and partial-launch
+child/descriptor cleanup. Every stage's raw and converted status is retained.
+These checks use `build/tests/execute_fixture`, not the prototype executable.
+`pipefail`, process groups, job control, compound stages, and runtime integration
+remain with CSH-010, CSH-011, CSH-021, and CSH-018/CSH-039 respectively.
 
 ## Replacement alias evidence
 

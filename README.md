@@ -38,8 +38,10 @@ make test-parser   # Replacement parser/AST API checks only
 make test-alias    # Alias storage, handlers, and token/AST substitution
 make test-expand   # Replacement value/field expansion, arithmetic, and quote APIs
 make test-fields   # IFS splitting, pathname expansion, and cleanup checks
+make test-builtins # Replacement state builtins and executor integration
 make test-state    # Replacement shell-state API checks only
-make test-execute  # Replacement simple-command and redirection API checks
+make test-execute  # Replacement command, assignment, and redirection API checks
+make test-pipeline # Concurrent pipeline, stage-status, and failure-cleanup checks
 make test-runtime  # Candidate cross-mode invocation/status behavior
 make test-runtime-pty # Candidate prompts, EOF, and exit errors on a terminal
 make test-pty      # Controlling-terminal startup and explicit-exit fixture
@@ -49,8 +51,8 @@ make docker-test-pty # Build and run the selected terminal fixtures in Linux
 ```
 
 `make test` includes independent input/invocation, lexer, parser/AST, alias,
-shell-state, value/field-expansion, and simple-command execution API checks,
-plus the candidate's cross-mode runtime fixtures. Its
+shell-state, value/field-expansion, command/pipeline execution API checks, and
+the candidate's cross-mode runtime fixtures. Its
 default behavioral suite records the current prototype's stdin
 behavior and explicit prompt allowance. Replacement shell and module tests
 select their executable and fixture suite separately; passing prototype tests
@@ -107,7 +109,8 @@ src/fields.c     Final field splitting and quote removal
 src/pathname.c   Component-wise filename generation
 src/arithmetic.c Checked signed-long arithmetic evaluation
 src/quote.c      Shared dollar-single-quote escape decoding
-src/execute.c    Replacement simple-command adapter, lookup, and dispatch
+src/builtin.c    Replacement state builtin handlers
+src/execute.c    Replacement command adapter, assignment scopes, dispatch, and pipelines
 src/redirect.c   Ordered descriptor operations and restoration
 src/legacy/      Transitional lexer and executor
 docs/            Architecture, POSIX tracking, and implementation tickets

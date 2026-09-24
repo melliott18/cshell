@@ -58,7 +58,7 @@ process groups and terminal ownership are completed in CSH-011.
 
 - [x] [CSH-019: Simple commands and redirections](CSH-019-simple-command-redirections.md)
   is done.
-- [ ] [CSH-020: Pipeline lifecycle](CSH-020-pipeline-lifecycle.md) is done.
+- [x] [CSH-020: Pipeline lifecycle](CSH-020-pipeline-lifecycle.md) is done.
 - [ ] [CSH-021: Lists and execution contexts](CSH-021-lists-and-execution-contexts.md)
   is done.
 - [ ] [CSH-039: Complete legacy retirement](CSH-039-legacy-retirement.md) is done.

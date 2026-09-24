@@ -597,7 +597,12 @@ fixtures. The driver parses complete commands, invokes the literal adapter, and
 honors `exit_requested`; it is test infrastructure rather than the replacement
 shell runtime. The checks cover command lookup and failure statuses, ordered
 redirections, here-document delivery, parent builtin effects and descriptor
-restoration, unsupported constructs, and owned-child waiting.
+restoration, assignment environments, unsupported constructs, and owned-child waiting.
+`tests/assignment_fixture.c` exercises resolved regular/special-builtin and function
+handlers, nested temporary prefixes, unrelated state retention, copied states,
+readonly errors in interactive/noninteractive contexts, and persistent versus
+temporary assignment behavior on failure. These are dispatch contracts; the full
+function and builtin implementations remain separate work.
 
 ```sh
 make test-execute
@@ -616,14 +621,54 @@ child. The Python runner also checks large and multiple ordered here-documents,
 exported environment snapshots, executable-format fallback, and rejection before
 side effects.
 
-`tests/execute_faults.c` compiles separate execution/redirection objects with
-test-only wrappers. It sweeps adapter, parent-dispatch, and external-launch allocation failures,
+`tests/execute_faults.c` compiles separate execution/redirection/state objects with
+test-only wrappers. Assignment sweeps fail each allocation during selective saves,
+batch application, and external environment preparation, checking atomic rollback
+and cleanup. State fault fixtures also verify allocation-free selective restoration. It sweeps adapter, parent-dispatch, and external-launch allocation failures,
 injects open, duplication, saved-descriptor, temporary-file, and fork failures,
 and verifies interrupted waits retry the owned positive PID. Native CI includes
 the focused execution target in its AddressSanitizer/UndefinedBehaviorSanitizer
 matrix. Fixture assertions remain enabled with `-DNDEBUG`. See
 [Simple-command execution](execution.md) for the bounded syntax and prepared-input
 contracts.
+
+## Pipeline API and sanitizer checks
+
+`make test-pipeline` uses `build/tests/execute_fixture` with `tests/pipeline.py`,
+plus `build/tests/pipeline_fixture` for ownership/status assertions and
+`build/tests/execute_faults --pipeline` for deterministic failures. All candidates
+link replacement modules only. The runner enforces process-group cleanup,
+10-second behavior deadlines, 25-second API/fault deadlines, bounded output,
+and a 64-descriptor resource limit. These checks join `make test`, Docker, and
+native sanitizer CI without switching the default shell executable.
+
+Coverage includes a 48-stage pipeline, an 8 MiB stream through four stages,
+early consumer exit, missing/unexecutable commands, executable-format fallback,
+ordered redirection overriding pipes, here-documents, closed stdin/stdout/stderr,
+private-fd closure in every stage, default status/negation, and `cd`/`exit`
+isolation. Unsupported later stages must reject the whole construct before
+creating a file or launching a child.
+
+The API fixture checks repeated execution, raw signal/exit statuses, categories,
+last-status updates, and an unrelated exited child left for its owner. Fault
+wrappers sweep preparation allocations and every pipe/fork/fcntl setup boundary,
+including failure after long-lived stages launch. Each owned PID is verified
+reaped and descriptor/allocation counts return to baseline. Child connection,
+redirection open/duplication/save, here-document, and allocation failures are
+injected at every stage; wait interruption and errors exercise retry/cancellation.
+
+```sh
+make test-execute test-pipeline
+make clean
+ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 make test-execute test-pipeline CC=clang LEX=false CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -DNDEBUG -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+make docker-test DOCKER_IMAGE=cshell-test:csh-020
+```
+
+The external descriptor-observer helper remains uninstrumented for the same
+macOS sanitizer-startup reason as the simple-command checks. Executor, state,
+parser, API fixtures, and fault objects remain instrumented. See
+[Pipeline lifecycle](execution.md#pipeline-lifecycle-and-stage-results) for the
+synchronous ownership contract and the boundaries reserved for options/job control.
 
 ## Value-expansion API and sanitizer checks
 
@@ -663,3 +708,11 @@ interrupts at successive callback points, including while a directory is open.
 It checks cleared output, unchanged borrowed input/state, and zero outstanding
 tracked allocations/streams. The same sanitizer command above includes these
 checks; use `test-fields` alone for a focused run.
+
+## State builtin checks
+
+`make test-builtins` runs `tests/builtin_fixture.c` (state/status tables and prepared
+special assignments) and `tests/builtins.py` (24 replacement execution cases).
+It is included in `make test` and `make docker-test`. For sanitizer validation,
+clean first and run `make test-builtins test-execute test-state` with the Clang
+AddressSanitizer/UndefinedBehaviorSanitizer flags documented above.

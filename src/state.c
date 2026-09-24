@@ -29,6 +29,12 @@ struct csh_state_checkpoint {
     struct csh_state *saved;
 };
 
+struct csh_variable_save {
+    struct variable *variable;
+    int present;
+    struct csh_variable_save *next;
+};
+
 static int name_start(unsigned char byte)
 {
     return (byte >= 'a' && byte <= 'z') || (byte >= 'A' && byte <= 'Z') ||
@@ -213,6 +219,73 @@ enum csh_state_result csh_state_unset_variable(struct csh_state *state,
         *link = variable->next;
         destroy_variable(variable);
         break;
+    }
+    return CSH_STATE_OK;
+}
+
+void csh_state_variable_save_destroy(struct csh_variable_save *save)
+{
+    while (save != NULL) {
+        struct csh_variable_save *next = save->next;
+        destroy_variable(save->variable);
+        free(save);
+        save = next;
+    }
+}
+
+enum csh_state_result csh_state_save_variables(const struct csh_state *state,
+    size_t count, const char *const names[], struct csh_variable_save **out)
+{
+    size_t i;
+    if (out != NULL) *out = NULL;
+    if (state == NULL || out == NULL || (count != 0 && names == NULL))
+        return CSH_STATE_INVALID;
+    for (i = 0; i < count; ++i)
+        if (names[i] == NULL || !valid_name(names[i], strlen(names[i])))
+            return CSH_STATE_INVALID;
+    for (i = 0; i < count; ++i) {
+        struct csh_variable_save *entry;
+        struct variable *original;
+        for (entry = *out; entry != NULL; entry = entry->next)
+            if (strcmp(entry->variable->name, names[i]) == 0) break;
+        if (entry != NULL) continue;
+        original = find_variable(state, names[i]);
+        entry = malloc(sizeof(*entry));
+        if (entry == NULL) goto nomem;
+        entry->variable = new_variable(names[i], original ? original->value : NULL,
+            original ? original->attributes : 0);
+        if (entry->variable == NULL) { free(entry); goto nomem; }
+        entry->present = original != NULL;
+        entry->next = *out;
+        *out = entry;
+    }
+    return CSH_STATE_OK;
+nomem:
+    csh_state_variable_save_destroy(*out);
+    *out = NULL;
+    return CSH_STATE_NOMEM;
+}
+
+enum csh_state_result csh_state_restore_variables(struct csh_state *state,
+    struct csh_variable_save **save)
+{
+    if (state == NULL || save == NULL) return CSH_STATE_INVALID;
+    while (*save != NULL) {
+        struct csh_variable_save *entry = *save;
+        struct variable **link;
+        for (link = &state->variables; *link != NULL; link = &(*link)->next) {
+            struct variable *current = *link;
+            if (strcmp(current->name, entry->variable->name) != 0) continue;
+            *link = current->next;
+            destroy_variable(current);
+            break;
+        }
+        if (entry->present) {
+            entry->variable->next = state->variables;
+            state->variables = entry->variable;
+        } else destroy_variable(entry->variable);
+        *save = entry->next;
+        free(entry);
     }
     return CSH_STATE_OK;
 }
@@ -476,5 +549,27 @@ enum csh_state_result csh_state_restore(struct csh_state *state,
     *(*checkpoint)->saved = discarded;
     csh_state_checkpoint_destroy(*checkpoint);
     *checkpoint = NULL;
+    return CSH_STATE_OK;
+}
+
+
+enum csh_state_result csh_state_names(const struct csh_state *state, char ***out)
+{
+    struct variable *v;
+    size_t count = 0, i = 0;
+    char **names;
+    if (out == NULL) return CSH_STATE_INVALID;
+    *out = NULL;
+    if (state == NULL) return CSH_STATE_INVALID;
+    for (v = state->variables; v; v = v->next) ++count;
+    if (count >= SIZE_MAX / sizeof(*names)) return CSH_STATE_NOMEM;
+    names = malloc((count + 1) * sizeof(*names));
+    if (!names) return CSH_STATE_NOMEM;
+    memset(names, 0, (count + 1) * sizeof(*names));
+    for (v = state->variables; v; v = v->next) {
+        names[i] = copy_bytes(v->name, strlen(v->name));
+        if (!names[i++]) { csh_state_environment_destroy(names); return CSH_STATE_NOMEM; }
+    }
+    *out = names;
     return CSH_STATE_OK;
 }
