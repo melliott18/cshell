@@ -1,6 +1,6 @@
 # CSH-026: Integrate substitutions and context-sensitive expansion
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-008
@@ -41,6 +41,15 @@ fixture, temporary files, nested substitutions, and failing redirection/expansio
 cases. Record stdout, stderr, status, state effects, and sanitizer results.
 
 ## Implementation notes/evidence
+
+### Integration record — 2026-09-23
+
+- Implementation commit: `a55e1ad`.
+- Final validation record: `da0bd24`.
+- Merged by [PR #65](https://github.com/melliott18/cshell/pull/65) as
+  `227b408`; all six hosted native and Docker checks passed.
+- [Issue #27](https://github.com/melliott18/cshell/issues/27) closed when the
+  implementation merged to `main`.
 
 `src/prepare.c` replaces the literal adapter with phased value/field expansion:
 arguments, ordered redirection expansion/application, then prefix assignments.
