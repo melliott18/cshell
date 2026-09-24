@@ -1,6 +1,6 @@
 # CSH-031: Complete evaluation, lookup, and remaining utility builtins
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-010
@@ -79,7 +79,9 @@ parser and job-manager relocations cannot expose each other's descriptors.
 ## Validation record (2026-09-24)
 
 - Separate worktree from `main` at `ee10314`, branch
-  `feature/CSH-031-evaluation-builtins`; [PR #70](https://github.com/melliott18/cshell/pull/70).
+  `feature/CSH-031-evaluation-builtins`.
+- Merged by [PR #70](https://github.com/melliott18/cshell/pull/70) as
+  `d7f1ba9`; [issue #32](https://github.com/melliott18/cshell/issues/32) closed.
 - Native macOS arm64, Apple Clang 15: `make -j4 test test-pty` passed during
   implementation. The final full ASan/UBSan run below passed all module/API and
   allocation-failure suites, 979 runtime fixtures (including 304 evaluation
@@ -89,7 +91,9 @@ parser and job-manager relocations cannot expose each other's descriptors.
 - [Ubuntu/GCC PR CI](https://github.com/melliott18/cshell/actions/runs/36033620095/job/107748206011)
   and [Docker PR CI](https://github.com/melliott18/cshell/actions/runs/36033620095/job/107748205709)
   passed the full native, PTY, harness, and ASan/UBSan suites on implementation
-  commit `cc3d2f1`. CI re-runs on the documentation-only evidence update.
+  commit `cc3d2f1`. Both hosted workflows on the documentation-only evidence
+  update passed on Ubuntu, macOS, and Docker after retrying transient macOS
+  sanitizer timeouts in unchanged context/job fixtures.
 - An earlier push-triggered run timed out in existing Ubuntu stop/resume and
   macOS job API fixtures. The separate PR Linux runs and the full local macOS
   sanitizer run passed those checks without weakening their expectations.
@@ -103,5 +107,5 @@ make -j4 test test-pty \
   LDFLAGS='-fsanitize=address,undefined'
 ```
 
-The ticket stays in `review` until integration into `main`. Full shell options,
-traps/signals, and locale/profile conformance retain their existing owners.
+Full shell options, traps/signals, and locale/profile conformance retain their
+existing owners and do not block this completed ticket.
