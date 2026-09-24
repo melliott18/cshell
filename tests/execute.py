@@ -5,11 +5,10 @@ import os
 from pathlib import Path
 import shlex
 import shutil
-import signal
 import subprocess
 import tempfile
 
-from smoke import child_limits
+from smoke import child_limits, kill_group
 
 
 OUTPUT_LIMIT = 2 * 1024 * 1024
@@ -28,7 +27,7 @@ def bounded_run(arguments, *, cwd, env, timeout):
             raise AssertionError(f"fixture exceeded {timeout}s") from None
         finally:
             try:
-                os.killpg(process.pid, signal.SIGKILL)
+                kill_group(process)
             except ProcessLookupError:
                 pass
             process.wait(timeout=1)

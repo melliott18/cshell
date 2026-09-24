@@ -69,11 +69,18 @@ Validation on 2026-09-24:
   statuses, diagnostics, output and filesystem effects, including concurrent
   noclobber creation, FIFOs, symlinks, loop activation of noexec, nested errexit,
   eval/dot/aliases, invocation monitor overrides and background pipefail snapshots.
-- `make test-harness` passed all 62 harness tests.
+- `make test-harness` passed all 64 harness tests, including the two
+  CSH-040 cleanup-adapter regressions described below.
 - `make docker-build DOCKER_IMAGE=cshell-test:csh-032`, then
   `docker run --rm --init cshell-test:csh-032 make -j4 test test-pty` passed the
   same complete suites on Linux aarch64, Debian GCC 12.2.0 and Python 3.11.2.
-- Linux AddressSanitizer/UndefinedBehaviorSanitizer validation: pending final run.
+- Full Linux AddressSanitizer/UndefinedBehaviorSanitizer validation passed in
+  [native Ubuntu CI](https://github.com/melliott18/cshell/actions/runs/36043745794/job/107782024114)
+  and [Docker CI](https://github.com/melliott18/cshell/actions/runs/36043745794/job/107782023667),
+  with `ASAN_OPTIONS=halt_on_error=1`, `UBSAN_OPTIONS=halt_on_error=1`,
+  `-Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer`.
+  The duplicate local Linux sanitizer run was stopped after CI completed the
+  same full coverage; it had passed all modules/PTY tests and the option cases.
   The first run caught a glibc `dprintf` allocation leak on closed stdout in the
   new option report. Reports, traces and state-builtin diagnostics now use
   allocation-free checked writes. Regression cases cover closed trace stderr
@@ -86,3 +93,14 @@ statuses and ordinary function/eval/dot call statuses; fixtures encode the
 standard's simple-command/compound-command distinction explicitly. Job-specific
 signal/trap integration remains CSH-034/035. This ticket alone does not establish
 whole-shell POSIX compliance.
+
+### macOS CI cleanup follow-up
+
+The first PR macOS sanitizer job failed in unchanged `tests/execute.py` cleanup:
+Darwin returned EPERM for a group after its leader exited. This is the same
+zombie-group transition addressed by [CSH-040](CSH-040-macos-harness-cleanup.md),
+but the executor fixture helper still called `os.killpg` directly. It now uses
+the existing verified `smoke.kill_group` adapter. Controlled regressions cover
+both an empty group accepted after a fresh snapshot and a live group whose
+permission error must remain visible. No shell behavior or permission policy
+was changed for this follow-up.
