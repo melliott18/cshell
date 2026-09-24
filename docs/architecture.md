@@ -42,8 +42,8 @@ in the replacement modules.
 
 CSH-016 adds standalone input and invocation APIs, CSH-004 adds the lexer and
 structured token/word API, CSH-005 adds parser/AST ownership, CSH-022 adds
-shell-state storage, and CSH-024 adds value expansion. They have no
-dependency on the legacy header, scanner, or executor, and the default
+shell-state storage, CSH-024 adds value expansion, and CSH-025 adds final field
+generation. They have no dependency on the legacy header, scanner, or executor, and the default
 executable does not call them yet.
 
 | Path | Responsibility |
@@ -54,6 +54,7 @@ executable does not call them yet.
 | `src/parser.c` / `include/cshell/parser.h` | Complete-command grammar, contextual words, nested command parsing, ordered here-document collection, and source diagnostics |
 | `src/ast.c` / `include/cshell/ast.h` | Owned syntax nodes, words, substitutions, and ordered redirections with allocation-safe cleanup |
 | `src/expand.c` / `include/cshell/expand.h` | Structured value expansion, quote/empty provenance, context restrictions, and lazy substitution handoff |
+| `src/fields.c` / `src/pathname.c` | IFS field splitting, protected filename matching, owned final fields, and cooperative interruption |
 | `src/arithmetic.c` / `include/cshell/arithmetic.h` | Checked signed-long arithmetic and grammar-only parser probe |
 | `src/quote.c` / `include/cshell/quote.h` | Reusable dollar-single-quote decoding before expansion or delimiter quote removal |
 | `src/state.c` / `include/cshell/state.h` | Owned variables and attributes, copied invocation parameters, option/status metadata, environment snapshots, and full-state copying/restoration |
@@ -79,7 +80,8 @@ module neither reads nor modifies the process environment.
 
 See [Value expansion](value-expansions.md) for intermediate fields, quoted empty
 values, transactional expansion errors, arithmetic limits, and the parser/executor
-handoffs. Field splitting and pathname expansion remain CSH-025 work.
+handoffs, final IFS fields, pathname generation, and interruption cleanup.
+Execution and here-document integration remain CSH-026 work.
 
 ## Target module boundaries
 

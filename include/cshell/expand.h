@@ -5,14 +5,16 @@
 #include "cshell/state.h"
 
 /* ASSIGNMENT takes the value word, without NAME=. PATTERN is an operand with
- * splitting/globbing suppressed. This is an intermediate, not an argv API. */
+ * splitting/globbing suppressed. csh_expand_word returns intermediate fields;
+ * csh_expand_fields finalizes them for arguments, assignment, or matching. */
 enum csh_expand_context { CSH_EXPAND_ARGUMENT, CSH_EXPAND_ASSIGNMENT,
     CSH_EXPAND_PATTERN };
 enum csh_expand_origin { CSH_EXPAND_LITERAL, CSH_EXPAND_TILDE,
     CSH_EXPAND_PARAMETER, CSH_EXPAND_ARITHMETIC, CSH_EXPAND_SUBSTITUTION };
 enum csh_expand_result { CSH_EXPAND_OK, CSH_EXPAND_INVALID, CSH_EXPAND_NOMEM,
     CSH_EXPAND_UNSET, CSH_EXPAND_READONLY, CSH_EXPAND_ARITHMETIC_ERROR,
-    CSH_EXPAND_DEFERRED, CSH_EXPAND_LIMIT };
+    CSH_EXPAND_DEFERRED, CSH_EXPAND_LIMIT, CSH_EXPAND_IO,
+    CSH_EXPAND_INTERRUPTED };
 
 struct csh_expand_span {
     char *text;                 /* owned, NUL-terminated; length excludes NUL */
@@ -62,5 +64,34 @@ enum csh_expand_result csh_expand_word(struct csh_state *state,
     const struct csh_token *word, const struct csh_expand_options *options,
     struct csh_expansion *out, struct csh_expand_error *error);
 void csh_expansion_destroy(struct csh_expansion *expansion);
+
+/* Final argument/assignment strings, or matcher-ready PATTERN strings.
+ * values[count] is NULL when values is allocated; zero fields may use NULL.
+ * Every string and the vector are owned independently of the input/state. */
+struct csh_fields {
+    char **values;
+    size_t count;
+};
+struct csh_field_options {
+    /* Optional cooperative cancellation, called from ordinary execution (not
+     * a signal handler). Nonzero aborts with INTERRUPTED. Must not mutate the
+     * borrowed state, expansion, locale, or working directory. */
+    int (*interrupted)(void *user);
+    void *user;
+};
+
+/* Borrows a successful intermediate expansion. ARGUMENT performs IFS splitting
+ * and pathname expansion (unless NOGLOB); ASSIGNMENT suppresses both; PATTERN
+ * suppresses both and encodes quote protection as fnmatch-compatible escapes.
+ * Uses the caller's current directory/locale and IFS/options from state.
+ * out must not own a previous result. Errors clear all output; input and state
+ * are unchanged. This separate stage cannot roll back earlier value-expansion
+ * side effects: an integrating executor can checkpoint the whole operation.
+ * Errors are not fragment-local (fragment is CSH_FRAGMENT_ROOT). No printing,
+ * execution, signal handling, or status mutation occurs here. */
+enum csh_expand_result csh_expand_fields(const struct csh_state *state,
+    const struct csh_expansion *expansion, const struct csh_field_options *options,
+    struct csh_fields *out, struct csh_expand_error *error);
+void csh_fields_destroy(struct csh_fields *fields);
 
 #endif

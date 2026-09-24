@@ -118,7 +118,9 @@ and [Testing](docs/testing.md#shell-state-api-and-sanitizer-checks)
 for focused sanitizer and Docker commands.
 
 `make test-expand` checks value expansion, arithmetic, the shared quote decoder,
-and allocation failures without the legacy scanner or executor. See
+and allocation failures without the legacy scanner or executor. It also runs
+`make test-fields` for IFS splitting, pathname generation, restricted contexts,
+and allocation/I/O/interruption cleanup. See
 [Value expansion](docs/value-expansions.md) for the intermediate output contract.
 
 Keep prototype expectations in a `prototype` suite. Add replacement shell or
