@@ -72,7 +72,9 @@ def main():
         run(f"{helper} status 0 | {helper} copy 0<&-\n", status=81)
         run(f"{helper} closed 1 1>&- | {helper} count\n", output=b"0\n")
         run(f"{helper} private-fds | {helper} private-fds | {helper} private-fds\n")
-        for descriptor in range(3, 10):
+        # Sanitizer runtimes may reserve low descriptors before main. Exercise
+        # closed-source failures in a range outside their runtime bookkeeping.
+        for descriptor in range(40, 47):
             run(f"{helper} status 0 | {helper} status 0 1>&{descriptor}\n",
                 status=1, diagnostic=True)
         (cwd / "nested").mkdir()
