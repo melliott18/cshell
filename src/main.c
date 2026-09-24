@@ -1,6 +1,8 @@
 /* Shell invocation, complete-command execution, and final status. */
 #include "cshell/execute.h"
 #include "cshell/parser.h"
+#include "cshell/jobs.h"
+#include <errno.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -22,9 +24,17 @@ static void diagnose(const struct csh_error *error, const char *source)
     fputc('\n', stderr);
 }
 
+struct prompt_context {
+    struct csh_invocation *invocation;
+    struct csh_jobs *jobs;
+};
+
 static void prompt(void *context, int continuation)
 {
-    const struct csh_invocation *invocation = context;
+    struct prompt_context *prompt_data = context;
+    const struct csh_invocation *invocation = prompt_data->invocation;
+    csh_jobs_poll(prompt_data->jobs);
+    csh_jobs_notify(prompt_data->jobs);
     const char *text = csh_invocation_prompt(invocation, continuation, "$ ", "> ");
     if (text != NULL) {
         fputs(text, stderr);
@@ -41,6 +51,7 @@ int main(int argc, char **argv)
     struct csh_error error;
     struct csh_state_info info;
     int status = 0;
+    struct prompt_context prompt_data;
 
     if (csh_invocation_parse(&invocation, argc, argv, STDIN_FILENO,
             STDERR_FILENO, &error) == -1) {
@@ -58,7 +69,16 @@ int main(int argc, char **argv)
         goto done;
     }
     context.state = state;
-    csh_parser_set_read_hook(parser, prompt, &invocation);
+    if (csh_jobs_create(&context.jobs, state,
+        invocation.interactive ? STDIN_FILENO : -1) == -1) {
+        fprintf(stderr, "cshell: cannot initialize jobs: %s\n", strerror(errno));
+        csh_state_set_status(state, 1);
+        goto done;
+    }
+    prompt_data.invocation = &invocation;
+    prompt_data.jobs = context.jobs;
+    csh_input_set_wait_hook(invocation.input, csh_jobs_read_ready, context.jobs);
+    csh_parser_set_read_hook(parser, prompt, &prompt_data);
     for (;;) {
         struct csh_ast *tree = NULL;
         struct csh_execution execution;

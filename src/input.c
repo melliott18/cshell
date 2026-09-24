@@ -19,6 +19,8 @@ struct csh_input {
     struct csh_position position;
     int ended;
     struct csh_error failure;
+    int (*wait_hook)(void *, int);
+    void *wait_context;
 };
 
 static void clear_error(struct csh_error *error)
@@ -228,6 +230,13 @@ static int reserve(struct csh_input *input, size_t needed)
     return 0;
 }
 
+void csh_input_set_wait_hook(struct csh_input *input,
+    int (*hook)(void *context, int fd), void *context)
+{
+    input->wait_hook = hook;
+    input->wait_context = context;
+}
+
 static int next_byte(struct csh_input *input, unsigned char *byte)
 {
     ssize_t count;
@@ -239,6 +248,8 @@ static int next_byte(struct csh_input *input, unsigned char *byte)
         return 1;
     }
     do {
+        if (input->wait_hook != NULL &&
+            input->wait_hook(input->wait_context, input->fd) == -1) return -1;
         count = read(input->fd, byte, 1);
     } while (count == -1 && errno == EINTR);
     return (int)count;

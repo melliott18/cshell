@@ -201,9 +201,9 @@ that were not launched if setup failed:
 
 All valid PIDs are historical after return: callers must not signal or wait for
 them again. CSH-010 can derive `pipefail` from the ordered, unnegated statuses.
-CSH-011 must extend the launch/wait boundary for process groups, terminal control,
-and suspended jobs; this synchronous API does not transfer live children or
-pretend that stopped children have completed. Callers must serialize descriptor
+CSH-034 adds process groups and suspended jobs through an optional runtime
+context manager (see [Job control](job-control.md)); this synchronous API does
+not transfer live children or pretend that stopped children have completed. Callers must serialize descriptor
 mutation, refrain from reaping executor children elsewhere, and leave SIGCHLD
 waitable (no ignored SIGCHLD or `SA_NOCLDWAIT`).
 
@@ -269,15 +269,17 @@ cannot make an otherwise closed nested duplication operand valid.
 Without job control, asynchronous execution ignores SIGINT/SIGQUIT and initially
 connects stdin to `/dev/null` (only the first stage for a pipeline). Explicit
 redirections override this input. The parent retains its own descriptors and
-signal dispositions. No process groups, terminal transfer, jobs/wait builtins,
-or shell signal/trap policy are implemented here.
+signal dispositions. Contexts without a job manager provide no terminal transfer
+or jobs/wait builtins; the runtime attaches the CSH-034 manager described below.
 
 `csh_execution_context_reap(context, wait, error)` polls with `wait=0` or waits
 for all registered children with `wait=1`. Both use positive owned PIDs, retry
 EINTR, preserve last status and the last background identifier, and leave
 unreaped records owned on error for retry. Execution polls at command boundaries;
-there is no SIGCHLD handler, and idle hosts must call the reaper themselves.
-Completed status history for a future `wait` builtin belongs to job management.
+contexts without a manager install no SIGCHLD handler, and idle library hosts
+must call their reaper themselves. The CSH-034 runtime manager also reaps during
+idle input, retains completed statuses for `wait`, and returns from blocking
+reaping when a monitored job stops.
 
 Destroying a context polls once and releases its registry, detaching any still
 running children. This lets shell exit avoid waiting for background jobs; a
@@ -288,8 +290,8 @@ are owned by the context that launched them until that context exits.
 
 Pipe/fork/wait failures during partial pipeline launch close private descriptors,
 kill and reap direct children, and free pending records. This direct-child
-boundary does not provide process-group cancellation of descendants executing
-inside a group or external program; CSH-011 owns that extension. Failed group
+boundary is extended to process-group cancellation when the context has an
+attached CSH-034 manager and monitor mode is enabled. Failed group
 redirections restore parent descriptors and do not execute the body; files
 already opened/truncated remain filesystem effects.
 
@@ -348,7 +350,17 @@ fixtures and public-runtime context behavior. See
 and Docker commands. These fixtures establish this module contract and its
 runtime integration; they do not establish that the project is POSIX-compliant.
 
-## Private descriptors during expansion
+### Runtime job manager
+
+CSH-034 attaches an owned `csh_jobs` manager to the persistent runtime context.
+The context launcher transfers direct PIDs to that manager; its registry replaces
+the context's older `children` list for those launches. Prepared-command API
+callers and contexts without a manager retain their synchronous/nonterminal
+contracts. `csh_execution_context_destroy` destroys an attached manager and
+restores its saved signal dispositions. See [Job control](job-control.md) for
+terminal handoff, status retention, builtin dispatch, and the input wait hook.
+
+### Private descriptors during expansion
 
 Descriptor saves are registered for their lifetime under the existing serialized
 mutation contract. Before applying a new redirection, any enclosing backup that

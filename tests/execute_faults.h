@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <termios.h>
 
 void *csh_execute_fault_malloc(size_t size);
 void *csh_execute_fault_calloc(size_t count, size_t size);
@@ -17,6 +18,9 @@ int csh_execute_fault_dup2(int old_fd, int new_fd);
 int csh_execute_fault_fcntl(int fd, int operation, ...);
 int csh_execute_fault_pipe(int ends[2]);
 pid_t csh_execute_fault_fork(void);
+int csh_execute_fault_setpgid(pid_t pid, pid_t group);
+int csh_execute_fault_tcsetpgrp(int fd, pid_t group);
+int csh_execute_fault_tcsetattr(int fd, int action, const struct termios *modes);
 ssize_t csh_execute_fault_read(int fd, void *bytes, size_t length);
 pid_t csh_execute_fault_waitpid(pid_t pid, int *status, int options);
 
@@ -30,6 +34,9 @@ pid_t csh_execute_fault_waitpid(pid_t pid, int *status, int options);
 #define dup2 csh_execute_fault_dup2
 #define fcntl csh_execute_fault_fcntl
 #define pipe csh_execute_fault_pipe
+#define setpgid csh_execute_fault_setpgid
+#define tcsetpgrp csh_execute_fault_tcsetpgrp
+#define tcsetattr csh_execute_fault_tcsetattr
 #define fork csh_execute_fault_fork
 #define read csh_execute_fault_read
 #define waitpid csh_execute_fault_waitpid

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "name": "job terminal failure cleanup",
+  "kind": "module",
+  "cases": [{
+    "name": "process group and terminal handoff restoration failures",
+    "transport": "pty",
+    "args": ["--jobs-terminal"],
+    "steps": [],
+    "expect": {"output": "terminal job failure cleanup passed\n", "status": 0}
+  }]
+}

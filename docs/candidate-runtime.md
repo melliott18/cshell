@@ -44,10 +44,11 @@ skipped branches and unselected parameter operands have no expansion effects.
 There is no unsupported-AST fallback. The executor's existing `ENOEXEC` handling
 of external text executables still uses `/bin/sh`.
 
-The runtime keeps one execution context across parser reads. It polls registered
-background PIDs at execution boundaries and releases the registry at exit,
-without waiting for running jobs. Idle input has no SIGCHLD wakeup yet; a
-completed child can remain waitable until the next command or shell exit.
+The runtime keeps one execution context and [job manager](job-control.md) across
+parser reads. It reaps owned children at execution boundaries and during idle
+input, retains results for `wait`, and supports `jobs`, `fg`, `bg`, and `kill`.
+Interactive terminals enable monitor mode, foreground process groups, and saved
+terminal settings. Shell exit releases the registry without waiting for jobs.
 
 Syntax and incomplete-EOF errors include source, line, and column. Invocation
 errors identify an offending argument when available. Command diagnostics are
@@ -100,7 +101,7 @@ and the context distinction for special-builtin errors in
 [shell errors](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_08_01).
 Signed operands, modulo reduction outside 0–255, and numeric overflow diagnosis
 are explicit project choices in otherwise unspecified operand cases. This
-runtime does not implement traps or job control.
+runtime does not implement traps.
 
 ## Interactive boundary
 
@@ -109,7 +110,7 @@ The invocation API recognizes a terminal on both stdin and stderr, or explicit
 fixed `$ ` primary prompt or `> ` continuation prompt on stderr, once per
 physical read. Blank/comment lines restart the primary prompt; quoted multiline
 words and here-document lines retain the continuation prompt. Prompt expansion,
-startup files, job control, signal handling for the shell itself, and parser
+startup files, full trap/signal semantics, and parser
 syntax-error recovery remain outside this runtime. Parser failures are sticky
 and terminate even an interactive shell; execution or expansion errors can continue
 because its parser remains usable. `-i` with a string or file selects interactive

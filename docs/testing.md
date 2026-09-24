@@ -118,7 +118,7 @@ from `tests/runtime_cases.py` using the current platform's helper and errno text
 
 CSH-033 supplies the controlling pseudo-terminal (PTY) transport. Harness
 self-tests use helper programs for signals, stop/continue, foreground transfers,
-and cleanup; these do not claim shell signal or job-control support.
+and cleanup; these are separate from the CSH-034 shell job-control suites.
 
 Each suite declares one of three kinds:
 
@@ -736,8 +736,26 @@ make docker-test
 
 These checks target the public executable after the CSH-039 cutover. They
 establish list and process-context behavior. The CSH-026 suites below add
-expansion integration; job control, retained `wait` statuses, and full POSIX
-verification remain separate work.
+expansion integration, and CSH-034 adds job-control coverage. Full POSIX
+verification remains separate work.
+
+## Job-control checks
+
+`make test-jobs` exercises runtime job ownership, retained statuses, idle
+SIGCHLD reaping, interrupted waits, rapid pipeline exits, and controlled launch
+failures. It also runs job builtins through command strings, files, and stdin.
+`make test-jobs-pty` drives actual cshell jobs using the CSH-033 transport:
+foreground signals, stopped pipelines, bg/fg, background terminal reads,
+selectors, monitor changes, descriptor collisions, and saved terminal settings.
+A second PTY fixture injects process-group, terminal-transfer, mode-restoration,
+and wait errors and checks the recovered shell group and resource ownership.
+
+Both targets are included in the default native, Docker, and sanitizer paths.
+The job helper has no sanitizer instrumentation so its terminal/descriptor
+observations measure the launched process rather than sanitizer startup.
+See [Job control](job-control.md) for implemented behavior and remaining CSH-035
+signal policy. Harness timeouts bound all interactive scenarios; no job-control
+claim follows from a helper-only test.
 
 ## Integrated substitutions and here-documents
 

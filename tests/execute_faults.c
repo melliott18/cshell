@@ -2,6 +2,7 @@
 #include "execute_faults.h"
 #include "cshell/execute.h"
 #include "cshell/parser.h"
+#include "cshell/jobs.h"
 #ifdef NDEBUG
 #undef NDEBUG
 #endif
@@ -18,6 +19,8 @@ static int fail_open, fail_dup, fail_dup2, fail_temp, fail_fork, interrupt_wait;
 static unsigned wait_calls;
 static int fail_pipe, fail_wait, fail_setfd, fork_calls, fail_read, interrupt_read;
 static int target_stage, child_fault;
+static int fail_group, fail_terminal, fail_modes, launch_signal;
+static pid_t fault_owner;
 static pid_t launched[16];
 static size_t launched_count;
 static size_t pipeline_baseline;
@@ -158,16 +161,23 @@ pid_t csh_execute_fault_fork(void)
          * explicitly selected failure point below. */
         fail_allocation = 0;
         fail_wait = interrupt_wait = fail_read = interrupt_read = 0;
-        if (fork_calls != target_stage) return child;
-        int null_fd = open("/dev/null", O_WRONLY);
-        assert(null_fd >= 0 && dup2(null_fd, 2) == 2);
-        close(null_fd);
-        if (child_fault == 1) fail_open = 1;
-        if (child_fault == 2) fail_dup2 = 1;
-        if (child_fault == 3) fail_dup = 1;
-        if (child_fault == 4) fail_temp = 1;
-        if (child_fault == 5) fail_allocation = allocation_calls + 1;
-        if (child_fault == 6) fail_dup2 = (fork_calls == 1 || fork_calls == 5 ? 1 : 2) + 1;
+        if (fork_calls == target_stage) {
+            int null_fd = open("/dev/null", O_WRONLY);
+            assert(null_fd >= 0 && dup2(null_fd, 2) == 2);
+            close(null_fd);
+            if (child_fault == 1) fail_open = 1;
+            if (child_fault == 2) fail_dup2 = 1;
+            if (child_fault == 3) fail_dup = 1;
+            if (child_fault == 4) fail_temp = 1;
+            if (child_fault == 5) fail_allocation = allocation_calls + 1;
+            if (child_fault == 6)
+                fail_dup2 = (fork_calls == 1 || fork_calls == 5 ? 1 : 2) + 1;
+        }
+    }
+    if (child == 0 && launch_signal) {
+        /* Join the new, non-orphaned job group before generating TSTP. */
+        assert(setpgid(0, 0) == 0);
+        raise(launch_signal);
     }
     return child;
 }
@@ -188,9 +198,29 @@ pid_t csh_execute_fault_waitpid(pid_t pid, int *status, int options)
     return waitpid(pid, status, options);
 }
 
+int csh_execute_fault_setpgid(pid_t pid, pid_t group)
+{
+    if (getpid() == fault_owner && fail_group && --fail_group == 0) { errno = EIO; return -1; }
+    return setpgid(pid, group);
+}
+
+int csh_execute_fault_tcsetpgrp(int fd, pid_t group)
+{
+    if (fail_terminal && --fail_terminal == 0) { errno = EIO; return -1; }
+    return tcsetpgrp(fd, group);
+}
+
+int csh_execute_fault_tcsetattr(int fd, int action, const struct termios *modes)
+{
+    if (fail_modes && --fail_modes == 0) { errno = EIO; return -1; }
+    return tcsetattr(fd, action, modes);
+}
+
 static void arm(size_t allocation)
 {
     allocation_calls = 0;
+    fault_owner = getpid();
+    fail_group = fail_terminal = fail_modes = launch_signal = 0;
     fail_allocation = allocation;
     fail_open = fail_dup = fail_dup2 = fail_temp = fail_fork = interrupt_wait = 0;
     wait_calls = 0;
@@ -774,12 +804,143 @@ static void context_faults(struct csh_state *state)
     assert(waitpid(-1, &status, WNOHANG) == -1 && errno == ECHILD);
 }
 
+static void job_faults(struct csh_state *state)
+{
+    struct csh_execution_context context = {0};
+    struct csh_execution result;
+    struct csh_error error;
+    struct csh_ast *tree;
+    size_t baseline = live, point, i;
+    int before = fd_count(), status;
+    context.state = state;
+    alarm(20);
+    tree = parse("/bin/echo unsafe >/dev/null | /bin/cat | /bin/cat\n");
+    /* Preparation and registration fail before releasing the launch barrier.
+     * Each launched direct child must be dead/reaped after every failed fork,
+     * pipe, allocation or wait. No descriptor or registered job leaks. */
+    for (int kind = 0; kind < 4; ++kind) {
+        for (point = 1; point < (kind == 0 ? 512u : 5u); ++point) {
+            int rc;
+            size_t calls;
+            arm(0);
+            assert(csh_jobs_create(&context.jobs, state, -1) == 0);
+            arm(kind == 0 ? point : 0);
+            if (kind == 1) fail_fork = (int)point;
+            if (kind == 2) fail_pipe = (int)point;
+            if (kind == 3) fail_wait = (int)point;
+            rc = csh_execute_context_ast(&context, tree, &result, &error);
+            calls = allocation_calls;
+            assert(rc == 0 || rc == -1);
+            fail_allocation = 0;
+            fail_fork = fail_pipe = fail_wait = 0;
+            csh_jobs_destroy(context.jobs);
+            context.jobs = NULL;
+            for (i = 0; i < launched_count; ++i)
+                assert(waitpid(launched[i], &status, WNOHANG) == -1 && errno == ECHILD);
+            assert(waitpid(-1, &status, WNOHANG) == -1 && errno == ECHILD);
+            assert(live == baseline && fd_count() == before);
+            if (kind == 0 && calls < point) break;
+        }
+    }
+    csh_ast_destroy(tree);
+    arm(0);
+    csh_execution_context_destroy(&context);
+    assert(live == baseline && fd_count() == before);
+}
+
+static void terminal_job_faults(struct csh_state *state)
+{
+    struct csh_execution_context context = {0};
+    struct csh_execution result;
+    struct csh_error error;
+    struct csh_ast *tree;
+    struct termios original, after;
+    size_t baseline = live;
+    int before = fd_count(), status;
+    context.state = state;
+    alarm(10);
+    assert(tcgetattr(0, &original) == 0);
+    tree = parse("/bin/echo unsafe >/dev/null | /bin/cat | /bin/cat\n");
+    for (int kind = 0; kind < 4; ++kind) {
+        for (int point = 1; point <= (kind == 0 ? 3 : kind == 1 ? 2 : kind == 2 ? 1 : 3); ++point) {
+            arm(0);
+            assert(csh_jobs_create(&context.jobs, state, 0) == 0);
+            assert(csh_jobs_monitor(context.jobs));
+            arm(0);
+            if (kind == 0) fail_group = point;
+            if (kind == 1) fail_terminal = point;
+            if (kind == 2) fail_modes = point;
+            if (kind == 3) fail_wait = point;
+            assert(csh_execute_context_ast(&context, tree, &result, &error) == -1);
+            assert(tcgetpgrp(0) == getpgrp());
+            assert(tcgetattr(0, &after) == 0);
+            assert(original.c_lflag == after.c_lflag);
+            assert(waitpid(-1, &status, WNOHANG) == -1 && errno == ECHILD);
+            arm(0);
+            csh_jobs_destroy(context.jobs);
+            context.jobs = NULL;
+            assert(live == baseline && fd_count() == before);
+        }
+    }
+    csh_ast_destroy(tree);
+    tree = parse("/usr/bin/true\n");
+    /* Deliver terminal signals inside the fork wrapper, before the child can
+     * reset inherited shell handlers. They must remain pending until reset. */
+    for (int i = 0; i < 2; ++i) {
+        sigset_t original_mask, after_mask;
+        int sent = i == 0 ? SIGINT : SIGTSTP;
+        arm(0);
+        assert(csh_jobs_create(&context.jobs, state, 0) == 0);
+        assert(sigprocmask(SIG_SETMASK, NULL, &original_mask) == 0);
+        launch_signal = sent;
+        assert(csh_execute_context_ast(&context, tree, &result, &error) == 0);
+        if (result.status != 128 + sent)
+            fprintf(stderr, "launch signal %d returned %d\n", sent, result.status);
+        assert(result.status == 128 + sent);
+        assert(tcgetpgrp(0) == getpgrp());
+        assert(sigprocmask(SIG_SETMASK, NULL, &after_mask) == 0);
+        assert(sigismember(&original_mask, sent) == sigismember(&after_mask, sent));
+        if (sent == SIGTSTP) {
+            char *kill_args[] = {"kill", "-KILL", "%1", NULL};
+            char *wait_args[] = {"wait", NULL};
+            struct csh_command kill_command = {0}, wait_command = {0};
+            kill_command.argc = 3; kill_command.argv = kill_args;
+            wait_command.argc = 1; wait_command.argv = wait_args;
+            assert(csh_jobs_builtin(context.jobs, &kill_command) == 0);
+            assert(csh_jobs_builtin(context.jobs, &wait_command) == 0);
+        }
+        arm(0);
+        csh_jobs_destroy(context.jobs);
+        context.jobs = NULL;
+        assert(waitpid(-1, &status, WNOHANG) == -1 && errno == ECHILD);
+        assert(live == baseline && fd_count() == before);
+    }
+    csh_ast_destroy(tree);
+    puts("terminal job failure cleanup passed");
+}
+
 int main(int argc, char **argv)
 {
     struct csh_invocation invocation = {0};
     struct csh_state *state = NULL;
     invocation.mode = CSH_MODE_STRING;
     invocation.arg0 = "execute-faults";
+    if (argc == 2 && strcmp(argv[1], "--jobs-terminal") == 0) {
+        invocation.interactive = 1;
+        assert(csh_state_create(&state, &invocation, NULL) == CSH_STATE_OK);
+        terminal_job_faults(state);
+        csh_state_destroy(state);
+        assert(live == 0);
+        return 0;
+    }
+    if (argc == 2 && strcmp(argv[1], "--jobs") == 0) {
+        assert(csh_state_create(&state, &invocation, NULL) == CSH_STATE_OK);
+        job_faults(state);
+        csh_state_destroy(state);
+        assert(live == 0);
+        puts("job launch and ownership fault checks passed");
+        return 0;
+    }
     if (argc == 2 && strcmp(argv[1], "--substitution") == 0) {
         assert(csh_state_create(&state, &invocation, NULL) == CSH_STATE_OK);
         substitution_faults(state);

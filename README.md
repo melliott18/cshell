@@ -23,8 +23,10 @@ expanded simple commands, external lookup, state builtins including `cd` and
 `exit`, lists, groups, ordered redirections, and concurrent pipelines through
 command strings, script files, and stdin. Command substitutions and expanded
 here-documents use the same parser and executor. Non-interactive execution prints
-no prompt or banner. Control-flow commands, functions, runtime aliases, full
-shell options, and job control remain incomplete; unsupported syntax is
+no prompt or banner. Background jobs and interactive
+[job control](docs/job-control.md) are supported. Control-flow commands,
+functions, runtime aliases, full shell options, and traps remain incomplete;
+unsupported syntax is
 diagnosed before that construct executes.
 See [Runtime behavior](docs/candidate-runtime.md) for the exact subset and statuses.
 
@@ -49,6 +51,8 @@ make test-state    # Replacement shell-state API checks only
 make test-execute  # Replacement command, assignment, and redirection API checks
 make test-pipeline # Concurrent pipeline, stage-status, and failure-cleanup checks
 make test-context  # Lists, groups, background ownership, and cleanup checks
+make test-jobs     # Job builtins, retained statuses, idle reaping, and failure checks
+make test-jobs-pty # Process groups, terminal signals, stop/resume, and restoration
 make test-runtime  # Cross-mode invocation/status behavior
 make test-runtime-pty # Shell prompts, EOF, and exit errors on a terminal
 make test-pty      # Shell terminal behavior, prompts, EOF, and exit errors
@@ -61,9 +65,8 @@ make docker-test-pty # Build and run the selected terminal fixtures in Linux
 runtime fixtures against `./cshell` in all three input modes. `make test-pty`
 runs the terminal suite. The focused `test-runtime` and `test-runtime-pty`
 targets select the same public executable. Alternate executables and suites can
-be selected with `TEST_*` and `PTY_TEST_*` variables. Harness self-tests exercise
-terminal signals and foreground ownership with helper programs; they do not
-claim that cshell implements signals or job control.
+be selected with `TEST_*` and `PTY_TEST_*` variables. The job suite exercises terminal signals and foreground ownership through cshell;
+harness self-tests separately validate the runner with helper programs.
 
 The Docker path requires Docker with a running Linux engine and uses its own
 compiler and Python. Native Linux, native macOS, and Docker checks also run
@@ -87,6 +90,7 @@ resource limits, direct Docker commands, and troubleshooting.
 | Use owned shell variables and parameters | [Shell state](docs/shell-state.md) |
 | Expand structured words with quote provenance | [Value expansion](docs/value-expansions.md) |
 | Execute prepared commands and restore redirections | [Simple-command execution](docs/execution.md) |
+| Use interactive jobs and job builtins | [Job control](docs/job-control.md) |
 | Check the POSIX target and known gaps | [POSIX tracking](docs/posix.md) |
 | Browse all project documentation | [Documentation index](docs/README.md) |
 | Find project context as an agent | [Agent entry point](AGENTS.md) |
@@ -112,6 +116,7 @@ src/builtin.c    Replacement state builtin handlers
 src/prepare.c    Context-sensitive command preparation and lazy substitution handoff
 src/execute.c    Execution contexts, assignment scopes, dispatch, capture, and pipelines
 src/redirect.c   Ordered descriptor operations and restoration
+src/jobs.c       Process groups, terminal ownership, job statuses, and builtins
 docs/            Architecture, POSIX tracking, and implementation tickets
 tests/           Module fixtures, pipe/PTY behavioral runner, and self-tests
 build/           Object files and generated test fixtures (ignored by Git)
