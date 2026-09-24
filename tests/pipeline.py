@@ -72,6 +72,10 @@ def main():
         run(f"{helper} status 0 | {helper} copy 0<&-\n", status=81)
         run(f"{helper} closed 1 1>&- | {helper} count\n", output=b"0\n")
         run(f"{helper} private-fds | {helper} private-fds | {helper} private-fds\n")
+        run(f"PIPELINE_VALUE=stage {helper} environment PIPELINE_VALUE | {helper} copy\n",
+            output=b"PIPELINE_VALUE=stage\n")
+        run(f"export PIPELINE_VALUE=stage | {helper} environment PIPELINE_VALUE\n",
+            output=b"PIPELINE_VALUE=<unset>\n")
         # Sanitizer runtimes may reserve low descriptors before main. Exercise
         # closed-source failures in a range outside their runtime bookkeeping.
         for descriptor in range(40, 47):
@@ -91,7 +95,7 @@ def main():
         run(f">empty | {helper} count\n", output=b"0\n")
         assert (cwd / "empty").read_bytes() == b""
         for unsupported in (f"{helper} args $HOME", "cd . && cd .", "(cd .)",
-                            "{ cd .; }", "NAME=value cd .", "cd . >$HOME"):
+                            "{ cd .; }", "cd . >$HOME"):
             run(f"{helper} args effect >forbidden | {unsupported}\n", status=2, diagnostic=True)
             assert not (cwd / "forbidden").exists()
         run(f"{helper} args effect >forbidden | cd . &\n", status=2, diagnostic=True)

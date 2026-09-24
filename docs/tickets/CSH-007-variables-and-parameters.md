@@ -49,7 +49,7 @@ variables and variable attributes require separate state.
 ## Completion gate
 
 - [x] [CSH-022: Shell state storage](CSH-022-shell-state-storage.md) is done.
-- [ ] [CSH-023: Assignment environments](CSH-023-assignment-environments.md) is
+- [x] [CSH-023: Assignment environments](CSH-023-assignment-environments.md) is
   done.
 - [ ] The original acceptance criteria above pass at the state/execution API
   boundary, including command-category fixtures, and CSH-003 and CSH-006 are done.

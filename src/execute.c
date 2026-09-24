@@ -1,5 +1,6 @@
 #include "cshell/execute.h"
 #include "cshell/quote.h"
+#include "cshell/builtin.h"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -210,22 +211,37 @@ int csh_command_from_ast(const struct csh_ast *tree, struct csh_command *out,
         tree = tree->data.list.items[0].command;
     if (tree == NULL || tree->kind != CSH_AST_SIMPLE)
         return fail(error, "only a single foreground simple command is supported", 0, 2);
-    for (i = 0; i < tree->data.simple.word_count; ++i)
-        if (tree->data.simple.words[i].assignment)
-            return fail(error, "assignment execution requires assignment integration", 0, 2);
     if (tree->data.simple.word_count >= SIZE_MAX / sizeof(*out->argv) ||
-        tree->redirection_count > SIZE_MAX / sizeof(*out->redirections))
+        tree->redirection_count > SIZE_MAX / sizeof(*out->redirections) ||
+        tree->data.simple.word_count > SIZE_MAX / sizeof(*out->assignments))
         return fail(error, "command is too large", ENOMEM, 1);
     if (tree->data.simple.word_count != 0) {
         out->argv = calloc(tree->data.simple.word_count + 1, sizeof(*out->argv));
         if (out->argv == NULL) goto nomem;
+        out->assignments = calloc(tree->data.simple.word_count, sizeof(*out->assignments));
+        if (out->assignments == NULL) goto nomem;
     }
     for (i = 0; i < tree->data.simple.word_count; ++i) {
-        if (literal(&tree->data.simple.words[i].word, &out->argv[i], error) == -1) {
+        char *text = NULL;
+        if (literal(&tree->data.simple.words[i].word, &text, error) == -1) {
             error->position = tree->data.simple.words[i].word.token.start;
             goto failure;
         }
-        ++out->argc;
+        if (tree->data.simple.words[i].assignment) {
+            char *equals = strchr(text, '=');
+            struct csh_assignment *assignment;
+            if (equals == NULL) {
+                free(text);
+                fail(error, "invalid literal assignment", 0, 2);
+                goto failure;
+            }
+            assignment = &out->assignments[out->assignment_count++];
+            assignment->name = text;
+            assignment->value = malloc(strlen(equals + 1) + 1);
+            if (assignment->value != NULL) strcpy(assignment->value, equals + 1);
+            *equals = '\0';
+            if (assignment->value == NULL) goto nomem;
+        } else out->argv[out->argc++] = text;
     }
     if (tree->redirection_count != 0) {
         out->redirections = calloc(tree->redirection_count, sizeof(*out->redirections));
@@ -358,34 +374,6 @@ static void launch_child(const struct csh_command *command, struct launch *launc
     _exit(remembered ? 126 : 127);
 }
 
-static void builtin_cd(struct csh_state *state, const struct csh_command *command,
-    struct csh_execution *result)
-{
-    struct csh_variable_view home;
-    size_t first = 1;
-    const char *directory;
-    if (first < command->argc && strcmp(command->argv[first], "--") == 0) ++first;
-    if (command->argc - first > 1 ||
-        (first == 1 && first < command->argc && command->argv[first][0] == '-')) {
-        diagnose("cd", "expected at most one directory (options are not yet supported)", 0);
-        result->status = 2;
-        return;
-    }
-    if (first == command->argc) {
-        csh_state_get_variable(state, "HOME", &home);
-        directory = home.value;
-        if (directory == NULL || directory[0] == '\0') {
-            diagnose("cd", "HOME is not set or is empty", 0);
-            result->status = 1;
-            return;
-        }
-    } else directory = command->argv[first];
-    if (chdir(directory) == -1) {
-        diagnose("cd", directory, errno);
-        result->status = 1;
-    }
-}
-
 static void builtin_exit(struct csh_state *state, const struct csh_command *command,
     struct csh_execution *result)
 {
@@ -412,37 +400,90 @@ static void builtin_exit(struct csh_state *state, const struct csh_command *comm
     result->exit_requested = 1;
 }
 
+/* Validate the entire prefix before any mutations or filesystem effects.
+ * The selective save also makes allocation failures during a batch atomic. */
+static int assignments_apply(struct csh_state *state,
+    const struct csh_command *command, enum csh_execution_category category,
+    struct csh_variable_save **save, struct csh_execution *result,
+    struct csh_error *error)
+{
+    struct csh_state_info info;
+    const char **names;
+    size_t i;
+    int temporary = category == CSH_EXEC_EXTERNAL ||
+        category == CSH_EXEC_REGULAR_BUILTIN || category == CSH_EXEC_FUNCTION;
+    enum csh_state_result status;
+    if (command->assignment_count == 0) return 0;
+    if (command->assignments == NULL)
+        return fail(error, "invalid assignment vector", 0, 2);
+    csh_state_get_info(state, &info);
+    for (i = 0; i < command->assignment_count; ++i) {
+        struct csh_variable_view view;
+        const struct csh_assignment *assignment = &command->assignments[i];
+        if (assignment->value == NULL || csh_state_get_variable(state,
+            assignment->name, &view) != CSH_STATE_OK)
+            return fail(error, "invalid assignment name or value", 0, 2);
+        if (view.attributes & CSH_VAR_READONLY) {
+            result->exit_requested = !(info.options & CSH_OPT_INTERACTIVE);
+            return fail(error, "cannot assign to readonly variable", 0, 1);
+        }
+    }
+    if (command->assignment_count > SIZE_MAX / sizeof(*names))
+        return fail(error, "too many assignments", ENOMEM, 1);
+    names = malloc(command->assignment_count * sizeof(*names));
+    if (names == NULL) return fail(error, "cannot save assignment variables", ENOMEM, 1);
+    for (i = 0; i < command->assignment_count; ++i)
+        names[i] = command->assignments[i].name;
+    status = csh_state_save_variables(state, command->assignment_count, names, save);
+    free(names);
+    if (status != CSH_STATE_OK)
+        return fail(error, "cannot save assignment variables", ENOMEM, 1);
+    for (i = 0; i < command->assignment_count; ++i) {
+        const struct csh_assignment *assignment = &command->assignments[i];
+        status = csh_state_set_variable(state, assignment->name, assignment->value);
+        if (status == CSH_STATE_OK && (temporary || (info.options & CSH_OPT_ALLEXPORT)))
+            status = csh_state_update_attributes(state, assignment->name, CSH_VAR_EXPORT, 0);
+        if (status != CSH_STATE_OK) {
+            csh_state_restore_variables(state, save);
+            return fail(error, "cannot apply assignment variables", ENOMEM, 1);
+        }
+    }
+    if (!temporary) {
+        csh_state_variable_save_destroy(*save);
+        *save = NULL;
+    }
+    return 0;
+}
+
 static int command_validate(struct csh_state *state,
     const struct csh_command *command, enum csh_execution_category *category,
     struct csh_error *error)
 {
     size_t i;
-    if (state == NULL || command == NULL) {
-        fail(error, "invalid execution input", 0, 2);
-        return -1;
-    }
-    if (command->assignment_count != 0) {
-        fail(error, "assignment execution requires assignment integration", 0, 2);
-        return -1;
-    }
-    if (command->argc != 0 && command->argv == NULL) {
-        fail(error, "invalid command argument vector", 0, 2);
-        return -1;
-    }
+    if (state == NULL || command == NULL)
+        return fail(error, "invalid execution input", 0, 2);
+    if (command->argc != 0 && command->argv == NULL)
+        return fail(error, "invalid command argument vector", 0, 2);
     for (i = 0; i < command->argc; ++i)
-        if (command->argv[i] == NULL) {
-            fail(error, "invalid command argument", 0, 2);
-            return -1;
-        }
-    if (command->argc != 0 && command->argv[command->argc] != NULL) {
-        fail(error, "command argument vector is not terminated", 0, 2);
-        return -1;
+        if (command->argv[i] == NULL)
+            return fail(error, "invalid command argument", 0, 2);
+    if (command->argc != 0 && command->argv[command->argc] != NULL)
+        return fail(error, "command argument vector is not terminated", 0, 2);
+    if (command->assignment_count != 0 && command->assignments == NULL)
+        return fail(error, "invalid assignment vector", 0, 2);
+    for (i = 0; i < command->assignment_count; ++i) {
+        struct csh_variable_view view;
+        if (command->assignments[i].value == NULL ||
+            csh_state_get_variable(state, command->assignments[i].name,
+                &view) != CSH_STATE_OK)
+            return fail(error, "invalid assignment name or value", 0, 2);
     }
-    if (csh_redirect_validate(command->redirections, command->redirection_count, error) == -1) return -1;
+    if (csh_redirect_validate(command->redirections,
+        command->redirection_count, error) == -1) return -1;
     if (command->argc == 0) *category = CSH_EXEC_EMPTY;
-    else if (strcmp(command->argv[0], "cd") == 0) *category = CSH_EXEC_REGULAR_BUILTIN;
-    else if (strcmp(command->argv[0], "exit") == 0) *category = CSH_EXEC_SPECIAL_BUILTIN;
-    else *category = CSH_EXEC_EXTERNAL;
+    else if (strcmp(command->argv[0], "exit") == 0)
+        *category = CSH_EXEC_SPECIAL_BUILTIN;
+    else *category = csh_state_builtin_category(command->argv[0]);
     return 0;
 }
 
@@ -452,20 +493,52 @@ static int child_status(int status)
         WIFSIGNALED(status) ? 128 + WTERMSIG(status) : 1;
 }
 
-static int execute_command(struct csh_state *state, const struct csh_command *command,
-    struct csh_execution *result, struct csh_pipeline_stage *stage,
-    struct csh_error *error)
+static int execute_resolved(struct csh_state *state,
+    const struct csh_command *command,
+    enum csh_execution_category category, csh_command_handler handler,
+    void *context, struct csh_execution *result,
+    struct csh_pipeline_stage *stage, struct csh_error *error)
 {
     struct csh_redirect_save *save = NULL;
+    struct csh_variable_save *variables = NULL;
+    size_t i;
     int rc = -1;
     memset(result, 0, sizeof(*result));
     memset(error, 0, sizeof(*error));
-    if (command_validate(state, command, &result->category, error) == -1) goto done;
+    if (state == NULL || command == NULL) {
+        fail(error, "invalid execution input", 0, 2);
+        goto done;
+    }
+    if (command->argc != 0 && command->argv == NULL) {
+        fail(error, "invalid command argument vector", 0, 2);
+        goto done;
+    }
+    for (i = 0; i < command->argc; ++i)
+        if (command->argv[i] == NULL) {
+            fail(error, "invalid command argument", 0, 2);
+            goto done;
+        }
+    if (command->argc != 0 && command->argv[command->argc] != NULL) {
+        fail(error, "command argument vector is not terminated", 0, 2);
+        goto done;
+    }
+    if (csh_redirect_validate(command->redirections, command->redirection_count, error) == -1) goto done;
+    if (category < CSH_EXEC_EMPTY || category > CSH_EXEC_FUNCTION ||
+        (category == CSH_EXEC_EMPTY) != (command->argc == 0) ||
+        ((category == CSH_EXEC_EMPTY || category == CSH_EXEC_EXTERNAL) ?
+            handler != NULL : handler == NULL)) {
+        fail(error, "invalid resolved command category or handler", 0, 2);
+        goto done;
+    }
+    result->category = category;
+    if (assignments_apply(state, command, category, &variables, result, error) == -1)
+        goto done;
     if (result->category == CSH_EXEC_EXTERNAL) {
         struct launch launch;
         pid_t child, waited;
         int status;
         if (launch_prepare(state, command, &launch, error) == -1) goto done;
+        csh_state_restore_variables(state, &variables);
         child = fork();
         if (child == -1) {
             int number = errno;
@@ -490,25 +563,62 @@ static int execute_command(struct csh_state *state, const struct csh_command *co
         }
         rc = 0;
     } else {
+        struct csh_error restore_error;
         if (csh_redirect_apply(command->redirections, command->redirection_count, &save, error) == -1) goto done;
-        if (result->category == CSH_EXEC_REGULAR_BUILTIN) builtin_cd(state, command, result);
-        else if (result->category == CSH_EXEC_SPECIAL_BUILTIN) builtin_exit(state, command, result);
-        if (csh_redirect_restore(&save, error) == -1) {
+        rc = handler == NULL ? 0 : handler(state, command, result, error, context);
+        if (csh_redirect_restore(&save, &restore_error) == -1) {
+            *error = restore_error;
+            rc = -1;
             result->exit_requested = 0;
             goto done;
         }
-        rc = 0;
     }
 done:
+    csh_state_restore_variables(state, &variables);
     if (rc == -1) result->status = error->status;
+    if (result->category == CSH_EXEC_SPECIAL_BUILTIN && result->status != 0 && !result->exit_requested)
+        result->special_builtin_error = 1;
     if (state != NULL) csh_state_set_status(state, result->status);
     return rc;
+}
+
+int csh_execute_resolved(struct csh_state *state,
+    const struct csh_command *command,
+    enum csh_execution_category category, csh_command_handler handler,
+    void *context, struct csh_execution *result, struct csh_error *error)
+{
+    return execute_resolved(state, command, category, handler, context,
+        result, NULL, error);
+}
+
+static int bootstrap_handler(struct csh_state *state,
+    const struct csh_command *command, struct csh_execution *result,
+    struct csh_error *error, void *context)
+{
+    (void)error;
+    (void)context;
+    if (strcmp(command->argv[0], "exit") == 0)
+        builtin_exit(state, command, result);
+    else
+        result->status = csh_state_builtin_run(state, command->argc,
+            command->argv);
+    return 0;
 }
 
 int csh_execute_command(struct csh_state *state, const struct csh_command *command,
     struct csh_execution *result, struct csh_error *error)
 {
-    return execute_command(state, command, result, NULL, error);
+    enum csh_execution_category category = CSH_EXEC_EMPTY;
+    csh_command_handler handler = NULL;
+    if (command != NULL && command->argc != 0 && command->argv != NULL &&
+        command->argv[0] != NULL) {
+        if (strcmp(command->argv[0], "exit") == 0)
+            category = CSH_EXEC_SPECIAL_BUILTIN;
+        else category = csh_state_builtin_category(command->argv[0]);
+        if (category != CSH_EXEC_EXTERNAL) handler = bootstrap_handler;
+    }
+    return execute_resolved(state, command, category, handler, NULL,
+        result, NULL, error);
 }
 
 void csh_pipeline_result_destroy(struct csh_pipeline_result *result)
@@ -614,6 +724,20 @@ static void pipeline_child(struct csh_state *state,
     _exit(result.status);
 }
 
+static int pipeline_launch_prepare(struct csh_state *state,
+    const struct csh_command *command, struct launch *launch,
+    struct csh_error *error)
+{
+    struct csh_variable_save *variables = NULL;
+    struct csh_execution result = {0};
+    int rc;
+    if (assignments_apply(state, command, CSH_EXEC_EXTERNAL, &variables,
+        &result, error) == -1) return -1;
+    rc = launch_prepare(state, command, launch, error);
+    csh_state_restore_variables(state, &variables);
+    return rc;
+}
+
 int csh_execute_pipeline(struct csh_state *state,
     const struct csh_command *commands, size_t count, int negated,
     struct csh_pipeline_result *out, struct csh_error *error)
@@ -643,7 +767,11 @@ int csh_execute_pipeline(struct csh_state *state,
         if (command_validate(state, &commands[i], &out->stages[i].category, error) == -1)
             goto done;
     if (count == 1) {
-        rc = execute_command(state, commands, &out->execution, out->stages, error);
+        enum csh_execution_category category = out->stages[0].category;
+        csh_command_handler handler = category == CSH_EXEC_EMPTY ||
+            category == CSH_EXEC_EXTERNAL ? NULL : bootstrap_handler;
+        rc = execute_resolved(state, commands, category, handler, NULL,
+            &out->execution, out->stages, error);
         out->stages[0].status = out->execution.status;
         out->stages[0].completed = rc == 0;
         if (rc == -1) pipeline_cancel(out);
@@ -657,7 +785,8 @@ int csh_execute_pipeline(struct csh_state *state,
     /* All preparation completes before the first child or filesystem effect. */
     for (i = 0; i < count; ++i) {
         if (out->stages[i].category == CSH_EXEC_EXTERNAL &&
-            launch_prepare(state, &commands[i], &launches[i], error) == -1) {
+            pipeline_launch_prepare(state, &commands[i], &launches[i],
+                error) == -1) {
             /* launch_prepare already destroyed the failed entry. */
             memset(&launches[i], 0, sizeof(launches[i]));
             goto done;

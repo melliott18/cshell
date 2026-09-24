@@ -60,8 +60,9 @@ executable does not call them yet.
 | `src/fields.c` / `src/pathname.c` | IFS field splitting, protected filename matching, owned final fields, and cooperative interruption |
 | `src/arithmetic.c` / `include/cshell/arithmetic.h` | Checked signed-long arithmetic and grammar-only parser probe |
 | `src/quote.c` / `include/cshell/quote.h` | Reusable dollar-single-quote decoding before expansion or delimiter quote removal |
-| `src/state.c` / `include/cshell/state.h` | Owned variables and attributes, copied invocation parameters, option/status metadata, environment snapshots, and full-state copying/restoration |
-| `src/execute.c` / `include/cshell/execute.h` | Owned prepared-command boundary, bounded literal AST adapter, command lookup, owned child execution, concurrent pipelines with per-stage results, and bootstrap parent builtins |
+| `src/state.c` / `include/cshell/state.h` | Owned variables and attributes, copied invocation parameters, option/status metadata, environment snapshots, and full-state and selective variable copying/restoration |
+| `src/builtin.c` / `include/cshell/builtin.h` | State builtin lookup and handlers over replacement shell state |
+| `src/execute.c` / `include/cshell/execute.h` | Owned prepared-command boundary, bounded literal AST adapter, command lookup, owned child execution, assignment categories, parent builtin dispatch, concurrent pipelines, and per-stage results |
 | `src/redirect.c` / `include/cshell/redirect.h` | Ordered file, descriptor, and prepared here-document operations with descriptor restoration |
 
 See [Input and invocation](input-and-invocation.md) for the concrete ownership,
@@ -79,9 +80,10 @@ expand words.
 See [Shell state](shell-state.md) for variable ownership, readonly errors, and
 allocation-free checkpoint restoration. State stores option bits without
 implementing their runtime behavior, and leaves special startup variable
-initialization to CSH-029. Full-state checkpoints do not implement selective
-temporary assignments; CSH-023 owns their execution-category rules. The state
-module neither reads nor modifies the process environment.
+initialization to CSH-029. CSH-023 uses selective variable saves for temporary
+prefixes, preserving unrelated handler changes. Full-state checkpoints remain
+available for complete rollback. The state module neither reads nor modifies
+the process environment.
 
 See [Value expansion](value-expansions.md) for intermediate fields, quoted empty
 values, transactional expansion errors, arithmetic limits, and the parser/executor
@@ -91,8 +93,9 @@ Execution and here-document integration remain CSH-026 work.
 See [Simple-command execution](execution.md) for command ownership, execution
 categories, status and exit requests, child ownership, and descriptor restoration.
 The literal adapter executes one simple command and rejects unsupported syntax
-or expansion before dispatch. CSH-008 integrates expansion, CSH-023 supplies
-assignment lifetime, and CSH-029 completes the bootstrap builtins.
+or expansion before dispatch. Literal prefixes use CSH-023 assignment categories;
+resolved dispatch supplies the boundary for future function/builtin handlers.
+CSH-008 integrates expansion, and CSH-029 supplies [state builtins](state-builtins.md).
 
 ## Target module boundaries
 

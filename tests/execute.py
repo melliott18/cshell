@@ -45,6 +45,7 @@ def main():
     parser.add_argument("binary")
     parser.add_argument("--helper", required=True)
     parser.add_argument("--fault-binary", required=True)
+    parser.add_argument("--assignment-binary", required=True)
     args = parser.parse_args()
     binary = str(Path(args.binary).resolve())
     helper_path = str(Path(args.helper).resolve())
@@ -114,6 +115,17 @@ def main():
         run("probe environment PATH PRIVATE VISIBLE\n",
             stdout=b"PATH=<unset>\nPRIVATE=<unset>\nVISIBLE=from-state\n",
             flags=("--state-path", "path-two"))
+        run(f"PRIVATE=local VISIBLE=overwritten\n{helper} environment PRIVATE VISIBLE\n"
+            f"PRIVATE='' VISIBLE=first VISIBLE='last=one' {helper} environment PRIVATE VISIBLE\n"
+            f"{helper} environment PRIVATE VISIBLE\n",
+            stdout=b"PRIVATE=<unset>\nVISIBLE=overwritten\nPRIVATE=\nVISIBLE=last=one\nPRIVATE=<unset>\nVISIBLE=overwritten\n",
+            flags=("--state-path", "path-two"))
+        run(f"PATH=path-two probe environment PATH\n{helper} environment PATH\n",
+            stdout=b"PATH=path-two\nPATH=<unset>\n", flags=("--state-path", "absent"))
+        run(f"PRIVATE=temporary ./missing-command\n{helper} environment PRIVATE\n",
+            stdout=b"PRIVATE=<unset>\n", stderr=None)
+        run(f"PRIVATE=temporary {helper} args never <missing-assignment-input\n"
+            f"{helper} environment PRIVATE\n", stdout=b"PRIVATE=<unset>\n", stderr=None)
         run(f"{helper} both 2>&1 >order-one\n", stdout=b"err\n")
         contents("order-one", b"out\n")
         run(f"{helper} both >order-two 2>&1\n")
@@ -147,6 +159,8 @@ def main():
         large = "x" * (96 * 1024) + "\n"
         run(f"{helper} copy <<'EOF'\n{large}EOF\n", stdout=large.encode())
         (cwd / "nested").mkdir()
+        run(f"HOME=nested cd\n{helper} environment HOME\n{helper} pwd\n",
+            stdout=("HOME=" + temporary + "\n" + str(cwd / "nested") + "\n").encode())
         run(f"cd nested\n{helper} pwd\n", stdout=(str(cwd / "nested") + "\n").encode())
         run(f"cd\n{helper} pwd\n", stdout=(str(cwd) + "\n").encode())
         run(">empty-command-output\n")
@@ -164,7 +178,7 @@ def main():
             f"{helper} args $HOME", f"{helper} args $((1+2))",
             f"{helper} args $(touch substitution-effect)",
             f"{helper} args `touch backtick-effect`", f"{helper} args *",
-            f"{helper} args ~", f"NAME=value {helper} args assignment",
+            f"{helper} args ~", f"NAME=$HOME {helper} args assignment",
             f"{helper} args a && {helper} args b",
             f"{helper} args a || {helper} args b", f"{helper} args a; {helper} args b",
             f"{helper} args a &", f"({helper} args compound)",
@@ -187,6 +201,10 @@ def main():
         assert result.returncode == 0, result
         assert result.stdout == b"execution API checks passed\n", result
         assert b"cd" in result.stderr, result
+        result = bounded_run([str(Path(args.assignment_binary).resolve())], cwd=cwd, env=env, timeout=15)
+        assert result.returncode == 0, result
+        assert result.stdout == b"assignment dispatch checks passed\n", result
+        assert result.stderr == b"", result
         result = bounded_run([fault_binary], cwd=cwd, env=env, timeout=15)
         assert result.returncode == 0, result
         assert result.stdout == b"execution fault checks passed\n", result

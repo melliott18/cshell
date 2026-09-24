@@ -20,6 +20,7 @@ static int fail_pipe, fail_wait, fail_setfd, fork_calls;
 static int target_stage, child_fault;
 static pid_t launched[16];
 static size_t launched_count;
+static size_t pipeline_baseline;
 
 static size_t slot(void *pointer)
 {
@@ -212,7 +213,7 @@ static void adapter_faults(void)
 {
     const char *scripts[] = {
         "cd 'two words' '' \\\" $'line\\n' >target 3<&0 4>&-\n",
-        "cd . <<'ONE' <<'TWO'\nfirst\nONE\nsecond\nTWO\n"
+        "A=one B='' A=two cd . <<'ONE' <<'TWO'\nfirst\nONE\nsecond\nTWO\n"
     };
     size_t variant;
     for (variant = 0; variant < sizeof(scripts) / sizeof(scripts[0]); ++variant) {
@@ -245,14 +246,36 @@ static void adapter_faults(void)
     arm(0);
 }
 
+static void check_temporary_variables(struct csh_state *state)
+{
+    struct csh_variable_view view;
+    assert(csh_state_get_variable(state, "TEMP", &view) == CSH_STATE_OK);
+    assert(view.value == NULL && view.attributes == 0);
+    assert(csh_state_get_variable(state, "UNSET", &view) == CSH_STATE_OK);
+    assert(view.value == NULL && view.attributes == 0);
+}
+
+static int successful_handler(struct csh_state *state,
+    const struct csh_command *command, struct csh_execution *result,
+    struct csh_error *error, void *context)
+{
+    (void)state;
+    (void)command;
+    (void)error;
+    (void)context;
+    result->status = 0;
+    return 0;
+}
+
 static void dispatch_faults(struct csh_state *state)
 {
     struct csh_command command = {0};
     struct csh_redirect redirs[2] = {{0}};
     struct csh_execution result;
     struct csh_error error;
-    char *arguments[] = {"cd", ".", NULL};
-    size_t point;
+    char *arguments[] = {"test-regular", NULL};
+    size_t point, baseline = live;
+    struct csh_assignment prefix[] = {{"TEMP", "one"}, {"TEMP", "two"}, {"UNSET", ""}};
     int before, original = open("/dev/null", O_RDWR), variant;
     assert(original >= 0 && dup2(original, 40) == 40);
     assert(fcntl(40, F_SETFD, FD_CLOEXEC) == 0);
@@ -265,21 +288,30 @@ static void dispatch_faults(struct csh_state *state)
     redirs[1].fd = 41;
     redirs[1].path = "fault-output-two";
     command.argv = arguments;
-    command.argc = 2;
+    command.argc = 1;
+    command.assignments = prefix;
+    command.assignment_count = 3;
     command.redirections = redirs;
     command.redirection_count = 2;
     for (point = 1; point < 256; ++point) {
         int returned;
         arm(point);
-        returned = csh_execute_command(state, &command, &result, &error);
+        returned = csh_execute_resolved(state, &command,
+            CSH_EXEC_REGULAR_BUILTIN, successful_handler, NULL, &result,
+            &error);
         if (returned < 0) {
             assert(error.message != NULL && allocation_calls >= point);
             assert(result.status != 0);
-        } else assert(returned == 0 && result.status == 0 && allocation_calls < point);
-        assert(live == 0 && fd_count() == before);
+        } else {
+            assert(returned == 0);
+            if (result.status == 0) assert(allocation_calls < point);
+            else assert(allocation_calls >= point);
+        }
+        assert(live == baseline && fd_count() == before);
+        check_temporary_variables(state);
         assert(fcntl(40, F_GETFD) == FD_CLOEXEC);
         assert(fcntl(41, F_GETFD) == -1 && errno == EBADF);
-        if (returned == 0) break;
+        if (returned == 0 && result.status == 0) break;
     }
     assert(point < 256);
     for (variant = 0; variant < 6; ++variant) {
@@ -296,9 +328,12 @@ static void dispatch_faults(struct csh_state *state)
             redirs[0].data = (unsigned char *)"body\n";
             redirs[0].length = 5;
         }
-        assert(csh_execute_command(state, &command, &result, &error) == -1);
+        assert(csh_execute_resolved(state, &command,
+            CSH_EXEC_REGULAR_BUILTIN, successful_handler, NULL, &result,
+            &error) == -1);
         assert(result.status != 0 && !result.exit_requested && error.message != NULL);
-        assert(live == 0 && fd_count() == before);
+        assert(live == baseline && fd_count() == before);
+        check_temporary_variables(state);
         assert(fcntl(40, F_GETFD) == FD_CLOEXEC);
         assert(fcntl(41, F_GETFD) == -1 && errno == EBADF);
     }
@@ -315,12 +350,18 @@ static void process_faults(struct csh_state *state)
     char *arguments[] = {"/bin/sh", "-c", "exit 7", NULL};
     int before = fd_count();
     unsigned variant;
+    size_t baseline;
+    struct csh_assignment prefix[] = {{"TEMP", "one"}, {"PATH", "/bin:/usr/bin"}};
     command.argv = arguments;
     command.argc = 3;
+    command.assignments = prefix;
+    command.assignment_count = 2;
     for (variant = 0; variant < 2; ++variant) {
         size_t point;
         arguments[0] = variant == 0 ? "/bin/sh" : "sh";
+        arm(0);
         assert(csh_state_set_variable(state, "PATH", "absent::/bin:/usr/bin") == CSH_STATE_OK);
+        baseline = live;
         for (point = 1; point < 256; ++point) {
             int returned;
             arm(point);
@@ -333,7 +374,8 @@ static void process_faults(struct csh_state *state)
                 assert(returned == 0 && allocation_calls < point);
                 assert(result.status == 7 && error.message == NULL);
             }
-            assert(live == 0 && fd_count() == before);
+            assert(live == baseline && fd_count() == before);
+            check_temporary_variables(state);
             if (returned == 0) break;
         }
         assert(point < 256);
@@ -342,13 +384,73 @@ static void process_faults(struct csh_state *state)
     fail_fork = 1;
     assert(csh_execute_command(state, &command, &result, &error) == -1);
     assert(result.status != 0 && error.message != NULL && wait_calls == 0);
-    assert(live == 0 && fd_count() == before);
+    assert(live == baseline && fd_count() == before);
+    check_temporary_variables(state);
     arm(0);
     interrupt_wait = 1;
     assert(csh_execute_command(state, &command, &result, &error) == 0);
     assert(result.status == 7 && result.category == CSH_EXEC_EXTERNAL);
     assert(wait_calls >= 2 && error.message == NULL);
-    assert(live == 0 && fd_count() == before);
+    assert(live == baseline && fd_count() == before);
+    check_temporary_variables(state);
+}
+
+static void assignment_batch_faults(void)
+{
+    int category;
+    for (category = CSH_EXEC_EMPTY; category <= CSH_EXEC_SPECIAL_BUILTIN; ++category) {
+        size_t point;
+        for (point = 1; point < 256; ++point) {
+            struct csh_invocation invocation = {0};
+            struct csh_state *state = NULL;
+            struct csh_assignment prefixes[] = {{"OLD", "changed"}, {"NEW", ""}, {"OLD", "last"}};
+            struct csh_command command = {0};
+            struct csh_execution result;
+            struct csh_error error;
+            struct csh_variable_view view;
+            char *args[] = {category == CSH_EXEC_SPECIAL_BUILTIN ? "exit" :
+                category == CSH_EXEC_REGULAR_BUILTIN ? "test-regular" : "/bin/sh",
+                category == CSH_EXEC_SPECIAL_BUILTIN ? "0" :
+                category == CSH_EXEC_REGULAR_BUILTIN ? NULL : "-c", "exit 0", NULL};
+            int rc;
+            arm(0);
+            invocation.mode = CSH_MODE_STRING;
+            invocation.arg0 = "batch-faults";
+            assert(csh_state_create(&state, &invocation, NULL) == CSH_STATE_OK);
+            assert(csh_state_set_variable(state, "OLD", "original") == CSH_STATE_OK);
+            command.assignments = prefixes;
+            command.assignment_count = 3;
+            if (category != CSH_EXEC_EMPTY) {
+                command.argv = args;
+                command.argc = category == CSH_EXEC_EXTERNAL ? 3 :
+                    category == CSH_EXEC_REGULAR_BUILTIN ? 1 : 2;
+                args[command.argc] = NULL;
+            }
+            arm(point);
+            rc = category == CSH_EXEC_REGULAR_BUILTIN ?
+                csh_execute_resolved(state, &command,
+                    CSH_EXEC_REGULAR_BUILTIN, successful_handler, NULL,
+                    &result, &error) :
+                csh_execute_command(state, &command, &result, &error);
+            assert(csh_state_get_variable(state, "OLD", &view) == CSH_STATE_OK);
+            if (rc == -1 || category == CSH_EXEC_EXTERNAL || category == CSH_EXEC_REGULAR_BUILTIN) {
+                assert(strcmp(view.value, "original") == 0 && view.attributes == 0);
+                assert(csh_state_get_variable(state, "NEW", &view) == CSH_STATE_OK);
+                assert(view.value == NULL && view.attributes == 0);
+            } else assert(strcmp(view.value, "last") == 0 && view.attributes == 0);
+            if (rc == -1)
+                assert(error.system_errno == ENOMEM && allocation_calls >= point);
+            else if (result.status != 0)
+                assert(allocation_calls >= point);
+            else
+                assert(allocation_calls < point);
+            csh_state_destroy(state);
+            assert(live == 0);
+            if (rc == 0 && result.status == 0) break;
+        }
+        assert(point < 256);
+    }
+    arm(0);
 }
 
 static void pipeline_clean(struct csh_pipeline_result *result, int before)
@@ -362,14 +464,14 @@ static void pipeline_clean(struct csh_pipeline_result *result, int before)
     }
     csh_pipeline_result_destroy(result);
     csh_pipeline_result_destroy(result);
-    assert(live == 0 && fd_count() == before);
+    assert(live == pipeline_baseline && fd_count() == before);
 }
 
 static void pipeline_faults(struct csh_state *state)
 {
     struct csh_pipeline_result result = {0};
     struct csh_error error;
-    struct csh_ast *tree = parse("/usr/bin/true | cd . | /usr/bin/true | exit 3 | /usr/bin/true\n");
+    struct csh_ast *tree = parse("/usr/bin/true | : | /usr/bin/true | exit 3 | /usr/bin/true\n");
     struct csh_command commands[5] = {{0}};
     struct csh_redirect input = {0};
     char *sleep_args[] = {"/bin/sleep", "30", NULL};
@@ -380,6 +482,7 @@ static void pipeline_faults(struct csh_state *state)
     int kind, before = fd_count(), status;
     pid_t unrelated = fork();
     siginfo_t child_info;
+    pipeline_baseline = live;
     assert(unrelated >= 0);
     if (unrelated == 0) _exit(37);
     assert(waitid(P_PID, (id_t)unrelated, &child_info, WEXITED | WNOWAIT) == 0);
@@ -473,6 +576,8 @@ static void pipeline_faults(struct csh_state *state)
         }
     }
     {
+        input.kind = CSH_REDIRECT_READ;
+        input.path = "/dev/null";
         for (i = 0; i < 5; ++i) { commands[i].argv = cd_args; commands[i].argc = 2; }
         for (point = 1; point <= 5; ++point) {
             arm(0);
@@ -504,8 +609,8 @@ int main(int argc, char **argv)
     struct csh_state *state = NULL;
     invocation.mode = CSH_MODE_STRING;
     invocation.arg0 = "execute-faults";
-    assert(csh_state_create(&state, &invocation, NULL) == CSH_STATE_OK);
     if (argc == 2 && strcmp(argv[1], "--pipeline") == 0) {
+        assert(csh_state_create(&state, &invocation, NULL) == CSH_STATE_OK);
         pipeline_faults(state);
         csh_state_destroy(state);
         assert(live == 0);
@@ -514,10 +619,12 @@ int main(int argc, char **argv)
     }
     assert(argc == 1);
     adapter_faults();
+    assert(csh_state_create(&state, &invocation, NULL) == CSH_STATE_OK);
     dispatch_faults(state);
     process_faults(state);
     csh_state_destroy(state);
     assert(live == 0);
+    assignment_batch_faults();
     puts("execution fault checks passed");
     return 0;
 }

@@ -10,8 +10,7 @@ struct csh_assignment { char *name; char *value; };
 
 /* All pointers are owned; argv is NULL-terminated when argc > 0. Counts
  * describe initialized entries. Zero initialization is an empty command.
- * CSH-008 will supply expansion; CSH-023 will implement assignment lifetime.
- * Nonempty assignments currently fail before redirection/dispatch. */
+ * CSH-008 supplies expanded assignment values; this module owns lifetime. */
 struct csh_command {
     char **argv;
     size_t argc;
@@ -23,11 +22,12 @@ struct csh_command {
 
 enum csh_execution_category {
     CSH_EXEC_EMPTY, CSH_EXEC_EXTERNAL, CSH_EXEC_REGULAR_BUILTIN,
-    CSH_EXEC_SPECIAL_BUILTIN, CSH_EXEC_PIPELINE
+    CSH_EXEC_SPECIAL_BUILTIN, CSH_EXEC_FUNCTION, CSH_EXEC_PIPELINE
 };
 
 struct csh_execution {
     int status;
+    int special_builtin_error; /* Runtime applies context-dependent error policy. */
     int exit_requested; /* Caller leaves its input loop; library never exits. */
     enum csh_execution_category category;
 };
@@ -74,11 +74,11 @@ int csh_execute_pipeline_ast(struct csh_state *state, const struct csh_ast *tree
 void csh_command_destroy(struct csh_command *command);
 /* Borrow AST; produce an owned command or leave out empty on error. Accepts
  * only simple nodes (or a singleton foreground parser list). Quotes and
- * escaped literals are removed. Assignments, expansions, unquoted glob/tilde
- * syntax, compound/list/pipeline syntax are rejected before dispatch. */
+ * escaped literals are removed. Literal assignments are accepted; expansions,
+ * unquoted glob/tilde syntax, compound/list/pipeline syntax are rejected. */
 int csh_command_from_ast(const struct csh_ast *tree, struct csh_command *out,
     struct csh_error *error);
-/* Borrow command/state. Runs cd and exit in parent with reversible fds;
+/* Borrow command/state. Runs state builtins and exit in parent with reversible fds;
  * external execution owns exactly one forked child and waitpid targets it.
  * Return 0 when dispatch completed, including command failure statuses and
  * child redirection/exec errors; -1 for preparation, parent redirection,
@@ -89,6 +89,22 @@ int csh_command_from_ast(const struct csh_ast *tree, struct csh_command *out,
  * mutation; exec uses the state's exported environment and PATH variable. */
 int csh_execute_command(struct csh_state *state, const struct csh_command *command,
     struct csh_execution *result, struct csh_error *error);
+/* Resolved parent dispatch for builtin/function consumers. Handler borrows all
+ * inputs, returns 0 with status/exit_requested or -1 with an error. It must
+ * return normally so descriptors and temporary variables can be restored.
+ * EMPTY/EXTERNAL require a NULL handler; parent categories require a handler.
+ * Regular builtin/function prefixes are exported temporarily and selectively
+ * restored, including attributes. Special prefixes persist, preserving export
+ * attributes unless allexport is enabled. Unrelated handler mutations persist.
+ * Readonly prefixes fail before side effects, status 1, with exit_requested in
+ * noninteractive contexts; caller prints error once and honors that flag even
+ * on -1. A copied/subshell context must honor it only within that context. */
+typedef int (*csh_command_handler)(struct csh_state *state,
+    const struct csh_command *command, struct csh_execution *result,
+    struct csh_error *error, void *context);
+int csh_execute_resolved(struct csh_state *state, const struct csh_command *command,
+    enum csh_execution_category category, csh_command_handler handler,
+    void *context, struct csh_execution *result, struct csh_error *error);
 /* Simple command or foreground pipeline; discards stage details. Use
  * csh_execute_pipeline_ast when the caller needs the full stage vector. */
 int csh_execute_ast(struct csh_state *state, const struct csh_ast *tree,
