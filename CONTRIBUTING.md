@@ -93,6 +93,7 @@ make test
 make test-pty
 make test-expand
 make test-execute
+make test-alias
 make test-harness
 ```
 
@@ -119,13 +120,19 @@ and [Testing](docs/testing.md#shell-state-api-and-sanitizer-checks)
 for focused sanitizer and Docker commands.
 
 `make test-expand` checks value expansion, arithmetic, the shared quote decoder,
-and allocation failures without the legacy scanner or executor. See
+and allocation failures without the legacy scanner or executor. It also runs
+`make test-fields` for IFS splitting, pathname generation, restricted contexts,
+and allocation/I/O/interruption cleanup. See
 [Value expansion](docs/value-expansions.md) for the intermediate output contract.
 
 `make test-execute` checks simple-command lookup, owned children, ordered
 redirections, bootstrap builtins, and failure cleanup without legacy objects or
 Flex. See [Simple-command execution](docs/execution.md) for the prepared-command
 contract and the temporary literal adapter's limits.
+
+`make test-alias` checks alias storage, direct builtin handlers, parser
+substitution, and allocation failures without invoking the prototype. See
+[Aliases](docs/aliases.md) for parsing boundaries and the deferred dispatcher work.
 
 Keep prototype expectations in a `prototype` suite. Add replacement shell or
 module expectations in a separate `replacement` or `module` suite and select both

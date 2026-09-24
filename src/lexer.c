@@ -5,13 +5,24 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* A root and its suspended command frames share one physical byte stream.
- * Retain the outer word until it is published; child tokens own copies. */
+/* All command frames share one source tape. Alias values are inserted at the
+ * cursor, with a stack restoring the physical input position on return. Each
+ * pending word captures its own raw spelling so an alias inside $(...) does
+ * not rewrite the outer word's physical spelling. */
+struct alias_source {
+    char *name, *source_name, *invocation_source;
+    struct csh_position invocation, resume;
+    size_t end, owner_depth;
+    int trailing_blank;
+};
 struct source {
     char *name;
     unsigned char *data;
     size_t length, capacity, cursor;
     struct csh_position position;
+    struct alias_source *aliases;
+    size_t alias_count, alias_capacity, sequence;
+    int alias_eligible;
     /* At most three logical characters are needed. Cache skipped continuation
      * runs across feeds so a split opener cannot cause quadratic rescanning. */
     size_t look_offset, look_count, look_scan, look_positions[3];
@@ -31,7 +42,12 @@ struct frame {
 struct csh_lexer {
     struct source *source;
     struct csh_lexer *root, *parent, *child;
-    struct csh_position start;
+    struct csh_position start, spelling_position;
+    unsigned char *raw;
+    size_t raw_length, raw_capacity, depth;
+    char *token_name, *alias_name, *invocation_source;
+    struct csh_position invocation;
+    int alias_eligible;
     struct csh_fragment *fragments;
     size_t fragment_count, fragment_capacity;
     struct frame *frames;
@@ -43,6 +59,7 @@ struct csh_lexer {
     enum csh_token_kind last_kind;
     struct csh_position last_start, last_end;
     int has_last;
+    size_t last_sequence;
 };
 
 struct operator { const char *text; enum csh_token_kind kind; };
@@ -73,8 +90,32 @@ static int plain_error(struct csh_error *error, const char *message, int number)
     return -1;
 }
 
+static void release_alias(struct alias_source *alias)
+{
+    free(alias->name);
+    free(alias->source_name);
+    free(alias->invocation_source);
+    memset(alias, 0, sizeof(*alias));
+}
+
+static void release_aliases(struct source *source)
+{
+    while (source->alias_count != 0)
+        release_alias(&source->aliases[--source->alias_count]);
+    free(source->aliases);
+    source->aliases = NULL;
+    source->alias_capacity = 0;
+}
+
 static void release_work(struct csh_lexer *lexer)
 {
+    free(lexer->raw);
+    free(lexer->token_name);
+    free(lexer->alias_name);
+    free(lexer->invocation_source);
+    lexer->raw = NULL;
+    lexer->raw_length = lexer->raw_capacity = 0;
+    lexer->token_name = lexer->alias_name = lexer->invocation_source = NULL;
     free(lexer->fragments);
     free(lexer->frames);
     lexer->fragments = NULL;
@@ -84,6 +125,17 @@ static void release_work(struct csh_lexer *lexer)
     lexer->active = lexer->command = lexer->comment = 0;
 }
 
+struct csh_position csh_lexer_diagnostic_position(const struct csh_lexer *lexer,
+    struct csh_position position)
+{
+    const struct source *source = lexer->source;
+    if (source->alias_count != 0)
+        return source->aliases[source->alias_count - 1].invocation;
+    if (lexer->invocation_source != NULL)
+        return lexer->invocation;
+    return position;
+}
+
 static int fail_at(struct csh_lexer *lexer, struct csh_error *error,
     const char *message, int number, struct csh_position position)
 {
@@ -91,9 +143,12 @@ static int fail_at(struct csh_lexer *lexer, struct csh_error *error,
     struct csh_lexer *cursor;
     if (source->failure.message == NULL) {
         plain_error(&source->failure, message, number);
-        source->failure.position = position;
+        /* Public parser diagnostics name the physical input; generated token
+         * positions remain available separately with alias provenance. */
+        source->failure.position = csh_lexer_diagnostic_position(lexer, position);
         for (cursor = lexer->root; cursor != NULL; cursor = cursor->child)
             release_work(cursor);
+        release_aliases(source);
         free(source->data);
         source->data = NULL;
         source->length = source->capacity = source->cursor = 0;
@@ -185,6 +240,7 @@ void csh_lexer_destroy(struct csh_lexer *lexer)
         lexer = child;
     }
     if (owns_source) {
+        release_aliases(source);
         free(source->name);
         free(source->data);
         free(source);
@@ -202,16 +258,17 @@ int csh_lexer_feed(struct csh_lexer *lexer, const void *bytes, size_t length,
     }
     if (source->final || (length != 0 && bytes == NULL))
         return fail(lexer, error, "invalid lexer feed", EINVAL);
-    /* No active outer word needs the consumed prefix. */
-    if (!lexer->root->active && source->cursor != 0) {
+    /* Words capture raw bytes independently of the shared input tape. */
+    if (source->cursor != 0) {
+        size_t index;
+        for (index = 0; index < source->alias_count; ++index)
+            source->aliases[index].end -= source->cursor;
         memmove(source->data, source->data + source->cursor,
                 source->length - source->cursor);
         source->length -= source->cursor;
         source->cursor = 0;
     }
-    if (length > SIZE_MAX - source->length ||
-        length > SIZE_MAX - source->position.offset -
-            (source->length - source->cursor))
+    if (length > SIZE_MAX - source->length)
         return fail(lexer, error, "lexer source is too large", EOVERFLOW);
     if (reserve((void **)&source->data, &source->capacity,
                 source->length + length, 1) == -1)
@@ -227,6 +284,8 @@ void csh_token_destroy(struct csh_token *token)
 {
     if (token == NULL)
         return;
+    free(token->alias_name);
+    free(token->invocation_source);
     free(token->source_name);
     free(token->raw);
     free(token->fragments);
@@ -237,13 +296,39 @@ static int consume(struct csh_lexer *lexer, size_t count, struct csh_error *erro
 {
     struct source *source = lexer->source;
     size_t index;
+    source->look_valid = 0;
     for (index = 0; index < count; ++index) {
+        struct csh_lexer *capture;
         unsigned char byte = source->data[source->cursor];
         if (byte == 0)
             return fail(lexer, error, "NUL byte in shell input", 0);
-        if (source->position.offset == SIZE_MAX ||
+        if (source->sequence == SIZE_MAX || source->position.offset == SIZE_MAX ||
             (byte == '\n' ? source->position.line : source->position.column) == SIZE_MAX)
             return fail(lexer, error, "lexer position overflow", EOVERFLOW);
+        for (capture = lexer->root; capture != NULL; capture = capture->child) {
+            if (!capture->active || (capture != lexer &&
+                source->alias_count != 0 &&
+                source->aliases[source->alias_count - 1].owner_depth > capture->depth))
+                continue;
+            if (capture->raw_length == SIZE_MAX - 1)
+                return fail(lexer, error, "token spelling is too large", EOVERFLOW);
+            if (capture->spelling_position.offset == SIZE_MAX ||
+                (byte == '\n' ? capture->spelling_position.line :
+                    capture->spelling_position.column) == SIZE_MAX)
+                return fail(lexer, error, "token position overflow", EOVERFLOW);
+            if (reserve((void **)&capture->raw, &capture->raw_capacity,
+                    capture->raw_length + 2, 1) == -1)
+                return fail(lexer, error, "cannot grow token spelling", errno);
+            capture->raw[capture->raw_length++] = byte;
+            ++capture->spelling_position.offset;
+            if (byte == '\n') {
+                ++capture->spelling_position.line;
+                capture->spelling_position.column = 1;
+            } else {
+                ++capture->spelling_position.column;
+            }
+        }
+        ++source->sequence;
         ++source->position.offset;
         if (byte == '\n') {
             ++source->position.line;
@@ -252,7 +337,44 @@ static int consume(struct csh_lexer *lexer, size_t count, struct csh_error *erro
             ++source->position.column;
         }
         ++source->cursor;
+        while (source->alias_count != 0 &&
+            source->cursor == source->aliases[source->alias_count - 1].end) {
+            struct alias_source *alias = &source->aliases[source->alias_count - 1];
+            source->position = alias->resume;
+            source->alias_eligible |= alias->trailing_blank;
+            release_alias(alias);
+            --source->alias_count;
+        }
     }
+    return 0;
+}
+
+static char *copy_string(const char *value)
+{
+    char *copy = malloc(strlen(value) + 1);
+    if (copy != NULL)
+        strcpy(copy, value);
+    return copy;
+}
+
+static int start_token(struct csh_lexer *lexer, struct csh_error *error)
+{
+    struct source *source = lexer->source;
+    const struct alias_source *alias = source->alias_count == 0 ? NULL :
+        &source->aliases[source->alias_count - 1];
+    lexer->token_name = copy_string(alias == NULL ? source->name : alias->source_name);
+    if (alias != NULL) {
+        lexer->alias_name = copy_string(alias->name);
+        lexer->invocation_source = copy_string(alias->invocation_source);
+        lexer->invocation = alias->invocation;
+    }
+    if (lexer->token_name == NULL || (alias != NULL &&
+        (lexer->alias_name == NULL || lexer->invocation_source == NULL)))
+        return fail(lexer, error, "cannot allocate token source", ENOMEM);
+    lexer->active = 1;
+    lexer->start = lexer->spelling_position = source->position;
+    lexer->alias_eligible = source->alias_eligible;
+    source->alias_eligible = 0;
     return 0;
 }
 
@@ -275,16 +397,16 @@ static int add_fragment(struct csh_lexer *lexer, enum csh_fragment_kind kind,
     fragment->kind = kind;
     fragment->quote = quote;
     fragment->parent = parent_fragment(lexer);
-    fragment->begin = lexer->source->position.offset - lexer->start.offset;
+    fragment->begin = lexer->raw_length;
     fragment->end = fragment->begin;
-    fragment->start = fragment->finish = lexer->source->position;
+    fragment->start = fragment->finish = lexer->spelling_position;
     return 0;
 }
 
 static void finish_fragment(struct csh_lexer *lexer, size_t index)
 {
-    lexer->fragments[index].end = lexer->source->position.offset - lexer->start.offset;
-    lexer->fragments[index].finish = lexer->source->position;
+    lexer->fragments[index].end = lexer->raw_length;
+    lexer->fragments[index].finish = lexer->spelling_position;
 }
 
 static int piece(struct csh_lexer *lexer, enum csh_fragment_kind kind,
@@ -295,7 +417,7 @@ static int piece(struct csh_lexer *lexer, enum csh_fragment_kind kind,
         struct csh_fragment *last = &lexer->fragments[lexer->fragment_count - 1];
         if (last->kind == kind && last->quote == quote &&
             last->parent == parent_fragment(lexer) &&
-            last->finish.offset == lexer->source->position.offset) {
+            last->end == lexer->raw_length) {
             index = lexer->fragment_count - 1;
             if (consume(lexer, count, error) == -1)
                 return -1;
@@ -430,7 +552,7 @@ int csh_lexer_context(const struct csh_lexer *lexer, const char **context,
         source->data[source->cursor] == '\\' &&
         source->length - source->cursor == 1) {
         *context = "escape";
-        *opening = source->position;
+        *opening = lexer->active ? lexer->spelling_position : source->position;
         return 1;
     }
     if (lexer->frame_count != 0) {
@@ -448,29 +570,24 @@ static int publish(struct csh_lexer *lexer, struct csh_token *token,
     struct csh_error *error)
 {
     struct source *source = lexer->source;
-    size_t length = source->position.offset - lexer->start.offset;
-    unsigned char *raw;
-    char *name;
-    if (length == SIZE_MAX)
-        return fail(lexer, error, "token is too large", EOVERFLOW);
-    raw = malloc(length + 1);
-    name = malloc(strlen(source->name) + 1);
-    if (raw == NULL || name == NULL) {
-        free(raw);
-        free(name);
-        return fail(lexer, error, "cannot allocate token", ENOMEM);
-    }
-    memcpy(raw, source->data + source->cursor - length, length);
-    raw[length] = 0;
-    strcpy(name, source->name);
+    (void)error;
+    lexer->raw[lexer->raw_length] = 0;
     token->kind = lexer->kind;
-    token->raw = raw;
-    token->length = length;
-    token->source_name = name;
+    token->raw = lexer->raw;
+    token->length = lexer->raw_length;
+    token->source_name = lexer->token_name;
+    token->alias_name = lexer->alias_name;
+    token->invocation_source = lexer->invocation_source;
+    token->invocation = lexer->invocation;
+    token->alias_eligible = lexer->alias_eligible;
     token->start = lexer->start;
-    token->end = source->position;
+    token->end = lexer->spelling_position;
     token->fragments = lexer->fragments;
     token->fragment_count = lexer->fragment_count;
+    lexer->raw = NULL;
+    lexer->raw_length = lexer->raw_capacity = 0;
+    lexer->token_name = lexer->alias_name = lexer->invocation_source = NULL;
+    memset(&lexer->invocation, 0, sizeof(lexer->invocation));
     lexer->fragments = NULL;
     lexer->fragment_count = lexer->fragment_capacity = 0;
     lexer->active = 0;
@@ -478,6 +595,7 @@ static int publish(struct csh_lexer *lexer, struct csh_token *token,
     lexer->last_kind = token->kind;
     lexer->last_start = token->start;
     lexer->last_end = token->end;
+    lexer->last_sequence = source->sequence;
     lexer->has_last = 1;
     return CSH_LEX_TOKEN;
 }
@@ -573,7 +691,9 @@ static int eof(struct csh_lexer *lexer, struct csh_token *token,
         return publish(lexer, token, error);
     if (lexer->parent != NULL) {
         struct csh_lexer *parent = lexer->parent;
-        return fail_at(lexer, error, "unterminated command substitution", 0,
+        /* The opening belongs to the suspended parent word. Its alias source
+         * may be exhausted even though the child is still awaiting ')'. */
+        return fail_at(parent, error, "unterminated command substitution", 0,
             parent->fragments[parent->frames[parent->frame_count - 1].fragment].start);
     }
     return CSH_LEX_EOF;
@@ -738,9 +858,9 @@ enum csh_lex_result csh_lexer_next(struct csh_lexer *lexer,
                  (next == '"' && !(frame != NULL && frame->kind == ARITHMETIC)) ||
                  (frame != NULL && frame->kind == PARAMETER && next == '}'))) {
                 if (!lexer->active) {
-                    lexer->active = 1;
+                    if (start_token(lexer, error) == -1)
+                        return CSH_LEX_ERROR;
                     lexer->kind = CSH_TOKEN_WORD;
-                    lexer->start = source->position;
                 }
                 if (piece(lexer, CSH_FRAGMENT_ESCAPE, quote, 2, error) == -1)
                     return CSH_LEX_ERROR;
@@ -763,8 +883,8 @@ enum csh_lex_result csh_lexer_next(struct csh_lexer *lexer,
                     return CSH_LEX_ERROR;
                 continue;
             }
-            lexer->active = 1;
-            lexer->start = source->position;
+            if (start_token(lexer, error) == -1)
+                return CSH_LEX_ERROR;
             if (byte == '\n') {
                 lexer->kind = CSH_TOKEN_NEWLINE;
                 if (consume(lexer, 1, error) == -1)
@@ -789,9 +909,9 @@ enum csh_lex_result csh_lexer_next(struct csh_lexer *lexer,
             continue;
         }
         if (!lexer->active) {
-            lexer->active = 1;
+            if (start_token(lexer, error) == -1)
+                return CSH_LEX_ERROR;
             lexer->kind = CSH_TOKEN_WORD;
-            lexer->start = source->position;
         }
         if (byte == '"' && !(frame != NULL && frame->kind == ARITHMETIC)) {
             if (frame != NULL && frame->kind == DOUBLE) {
@@ -827,6 +947,12 @@ enum csh_lex_result csh_lexer_next(struct csh_lexer *lexer,
     }
 }
 
+size_t csh_lexer_command_fragment(const struct csh_lexer *lexer)
+{
+    return lexer->command && lexer->frame_count != 0 ?
+        lexer->frames[lexer->frame_count - 1].fragment : CSH_FRAGMENT_ROOT;
+}
+
 int csh_lexer_command_begin(struct csh_lexer *parent, struct csh_lexer **child,
     struct csh_error *error)
 {
@@ -846,6 +972,7 @@ int csh_lexer_command_begin(struct csh_lexer *parent, struct csh_lexer **child,
     created->source = parent->source;
     created->root = parent->root;
     created->parent = parent;
+    created->depth = parent->depth + 1;
     parent->child = created;
     *child = created;
     return 0;
@@ -864,11 +991,93 @@ int csh_lexer_command_end(struct csh_lexer *parent, struct csh_lexer *child,
         closing->kind != CSH_TOKEN_RPAREN || child->last_kind != CSH_TOKEN_RPAREN ||
         closing->start.offset != child->last_start.offset ||
         closing->end.offset != child->last_end.offset ||
-        closing->end.offset != parent->source->position.offset)
+        child->last_sequence != parent->source->sequence)
         return fail(parent, error, "invalid command-substitution boundary", EINVAL);
     csh_lexer_destroy(child);
     parent->command = 0;
     return pop(parent, 0, error);
+}
+
+int csh_lexer_alias_active(const struct csh_lexer *lexer, const char *name)
+{
+    size_t index;
+    if (name == NULL)
+        return 0;
+    for (index = 0; index < lexer->source->alias_count; ++index)
+        if (strcmp(lexer->source->aliases[index].name, name) == 0)
+            return 1;
+    return 0;
+}
+
+int csh_lexer_follows_redirection(struct csh_lexer *lexer)
+{
+    size_t physical = 0;
+    int byte = peek(lexer, 0, &physical);
+    return byte == '<' || byte == '>';
+}
+
+int csh_lexer_alias_push(struct csh_lexer *lexer, const struct csh_token *token,
+    const char *name, const char *value, struct csh_error *error)
+{
+    struct source *source = lexer->source;
+    struct alias_source alias;
+    size_t length, added, index, name_length;
+    clear_error(error);
+    if (source->failure.message != NULL) {
+        *error = source->failure;
+        return -1;
+    }
+    if (token == NULL || name == NULL || value == NULL || *name == 0 ||
+        lexer->child != NULL || lexer->active || !lexer->has_last ||
+        token->kind != CSH_TOKEN_WORD || lexer->last_kind != CSH_TOKEN_WORD ||
+        token->start.offset != lexer->last_start.offset ||
+        token->end.offset != lexer->last_end.offset ||
+        lexer->last_sequence != source->sequence || csh_lexer_alias_active(lexer, name))
+        return fail(lexer, error, "invalid alias substitution boundary", EINVAL);
+    length = strlen(value);
+    name_length = strlen(name);
+    if (length == SIZE_MAX || source->length > SIZE_MAX - length - 1 ||
+        source->alias_count == SIZE_MAX || name_length > SIZE_MAX - 7)
+        return fail(lexer, error, "alias source is too large", EOVERFLOW);
+    added = length + 1;
+    memset(&alias, 0, sizeof(alias));
+    alias.name = copy_string(name);
+    alias.source_name = malloc(name_length + 7);
+    alias.invocation_source = copy_string(token->invocation_source != NULL ?
+        token->invocation_source : token->source_name);
+    if (alias.name == NULL || alias.source_name == NULL || alias.invocation_source == NULL) {
+        release_alias(&alias);
+        return fail(lexer, error, "cannot allocate alias source", ENOMEM);
+    }
+    memcpy(alias.source_name, "alias:", 6);
+    memcpy(alias.source_name + 6, name, name_length + 1);
+    alias.invocation = token->invocation_source != NULL ? token->invocation : token->start;
+    alias.resume = source->position;
+    alias.end = source->cursor + added;
+    alias.owner_depth = lexer->depth;
+    alias.trailing_blank = length != 0 &&
+        (value[length - 1] == ' ' || value[length - 1] == '\t');
+    if (reserve((void **)&source->aliases, &source->alias_capacity,
+            source->alias_count + 1, sizeof(*source->aliases)) == -1 ||
+        reserve((void **)&source->data, &source->capacity,
+            source->length + added, 1) == -1) {
+        int number = errno;
+        release_alias(&alias);
+        return fail(lexer, error, "cannot grow alias input", number);
+    }
+    memmove(source->data + source->cursor + added, source->data + source->cursor,
+        source->length - source->cursor);
+    memcpy(source->data + source->cursor, value, length);
+    source->data[source->cursor + length] = ' ';
+    source->length += added;
+    for (index = 0; index < source->alias_count; ++index)
+        source->aliases[index].end += added;
+    source->aliases[source->alias_count++] = alias;
+    source->position = (struct csh_position){0, 1, 1};
+    source->alias_eligible = length != 0 && token->alias_eligible;
+    source->look_valid = 0;
+    lexer->has_last = 0;
+    return 0;
 }
 
 const unsigned char *csh_lexer_pending(const struct csh_lexer *lexer,

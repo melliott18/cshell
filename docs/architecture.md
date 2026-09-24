@@ -42,9 +42,11 @@ in the replacement modules.
 
 CSH-016 adds standalone input and invocation APIs, CSH-004 adds the lexer and
 structured token/word API, CSH-005 adds parser/AST ownership, CSH-022 adds
-shell-state storage, CSH-024 adds value expansion, and CSH-019 adds simple-command
-execution and redirections. They have no
-dependency on the legacy header, scanner, or executor, and the default
+shell-state storage, CSH-024 adds value expansion, CSH-025 adds final field
+generation, and CSH-027 extends the parser with compound commands and function
+definitions. CSH-030 adds alias substitution, and CSH-019 adds simple-command
+execution and redirections. These modules have no dependency on the legacy
+header, scanner, or executor, and the default
 executable does not call them yet.
 
 | Path | Responsibility |
@@ -55,6 +57,7 @@ executable does not call them yet.
 | `src/parser.c` / `include/cshell/parser.h` | Complete-command grammar, contextual words, nested command parsing, ordered here-document collection, and source diagnostics |
 | `src/ast.c` / `include/cshell/ast.h` | Owned syntax nodes, words, substitutions, and ordered redirections with allocation-safe cleanup |
 | `src/expand.c` / `include/cshell/expand.h` | Structured value expansion, quote/empty provenance, context restrictions, and lazy substitution handoff |
+| `src/fields.c` / `src/pathname.c` | IFS field splitting, protected filename matching, owned final fields, and cooperative interruption |
 | `src/arithmetic.c` / `include/cshell/arithmetic.h` | Checked signed-long arithmetic and grammar-only parser probe |
 | `src/quote.c` / `include/cshell/quote.h` | Reusable dollar-single-quote decoding before expansion or delimiter quote removal |
 | `src/state.c` / `include/cshell/state.h` | Owned variables and attributes, copied invocation parameters, option/status metadata, environment snapshots, and full-state copying/restoration |
@@ -82,7 +85,8 @@ module neither reads nor modifies the process environment.
 
 See [Value expansion](value-expansions.md) for intermediate fields, quoted empty
 values, transactional expansion errors, arithmetic limits, and the parser/executor
-handoffs. Field splitting and pathname expansion remain CSH-025 work.
+handoffs, final IFS fields, pathname generation, and interruption cleanup.
+Execution and here-document integration remain CSH-026 work.
 
 See [Simple-command execution](execution.md) for command ownership, execution
 categories, status and exit requests, child ownership, and descriptor restoration.
@@ -92,8 +96,8 @@ assignment lifetime, and CSH-029 completes the bootstrap builtins.
 
 ## Target module boundaries
 
-The input, invocation, lexer, parser/AST, quote, state, value-expansion,
-simple-command execution, and redirection
+The input, invocation, lexer, parser/AST, alias, quote, state, value-expansion,
+field-generation, simple-command execution, and redirection
 modules above exist. Add the remaining modules when their implementation
 tickets start. This table defines target
 responsibilities and does not claim that every listed module is implemented.
@@ -104,6 +108,7 @@ responsibilities and does not claim that every listed module is implemented.
 | `invocation` | Input-mode and option selection, operand mapping, interactive detection, prompt selection | Parameter expansion, prompt output, or execution |
 | `lexer` | Tokens and word fragments with quote/escape provenance | Expansion into final argument strings |
 | `parser` / `ast` | Grammar, syntax errors, command trees, ordered redirections, deferred here-documents | Forks or global shell mutation |
+| `alias` | Owned alias table and direct alias/unalias handlers; lexer/parser cooperate on substitution | Executing commands or reading descriptors |
 | `variables` / `state` | Shell variables and attributes, positional parameters, options, last status | Scanning input |
 | `expand` | Context-sensitive word expansion and field generation | Pipeline process management |
 | `execute` | Tree evaluation, execution environments, command lookup, pipeline lifecycle and status | Parsing strings by searching for operators |

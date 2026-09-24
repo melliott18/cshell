@@ -58,12 +58,22 @@ contracts from the standard. [CSH-039](tickets/CSH-039-legacy-retirement.md)
 removes the old runtime without waiting for full POSIX coverage; unsupported
 constructs must fail explicitly until their implementation tickets are complete.
 
+## Replacement compound-syntax evidence
+
+CSH-027 extends the [parser/AST API](parser-and-ast.md) to conditionals, loops,
+case clauses (including POSIX.1-2024 `;&`), and function definitions. Structural
+fixtures preserve words, redirections, source positions, and nested here-documents;
+allocation-failure checks cover partial compound trees. Control flow, function
+storage/invocation, and expansion/execution integration remain CSH-028 work.
+This is grammar evidence only; the prototype runtime table above is unchanged.
+
 ## Replacement value-expansion evidence
 
 CSH-024 adds [module-level value expansion](value-expansions.md), with checked
 parameter/tilde/arithmetic behavior, quote provenance, and dollar-single-quote
-decoding. Field splitting, pathname expansion, real substitutions, and arithmetic
-ambiguity replay remain integration gaps. The prototype table above remains a
+decoding. CSH-025 adds IFS field splitting, pathname generation, protected empty
+fields, and explicit failure/interruption cleanup at the module level. Real
+substitutions and arithmetic ambiguity replay remain integration gaps. The prototype table above remains a
 runtime baseline; standalone API fixtures do not establish shell conformance.
 
 ## Replacement execution evidence
@@ -74,6 +84,13 @@ redirections, and parent builtin restoration. Its literal adapter rejects
 pending expansion and compound syntax before dispatch. Assignment lifetime,
 pipelines, full builtin semantics, and runtime integration remain separate
 tickets; the prototype table above remains the runtime baseline.
+
+## Replacement alias evidence
+
+CSH-030 adds [alias storage, direct handlers, and token/AST substitution](aliases.md),
+including recursive suppression and complete-command timing fixtures. CSH-031
+still owns executed-script validation through the dispatcher; the prototype
+runtime baseline above is unchanged.
 
 ## Evidence required
 

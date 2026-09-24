@@ -19,7 +19,7 @@ static int fail(struct csh_error *error, const char *message, int number)
 
 static int implemented_kind(enum csh_ast_kind kind)
 {
-    return kind >= CSH_AST_SIMPLE && kind <= CSH_AST_BRACE;
+    return kind >= CSH_AST_SIMPLE && kind <= CSH_AST_FUNCTION;
 }
 
 /* A failed reserve never changes the vector or capacity. */
@@ -101,6 +101,24 @@ static void destroy_redirection(struct csh_ast_redirection *redirection,
     free(redirection);
 }
 
+static void destroy_word_vector(struct csh_ast_word_vector *vector,
+    struct csh_ast **pending)
+{
+    size_t index;
+    for (index = 0; index < vector->count; ++index)
+        destroy_word(&vector->items[index], pending);
+    free(vector->items);
+    *vector = (struct csh_ast_word_vector){0};
+}
+
+static void destroy_case_item(struct csh_ast_case_item *item,
+    struct csh_ast **pending)
+{
+    destroy_word_vector(&item->patterns, pending);
+    enqueue(pending, item->body);
+    *item = (struct csh_ast_case_item){0};
+}
+
 static void destroy_pending(struct csh_ast *pending)
 {
     while (pending != NULL) {
@@ -135,6 +153,34 @@ static void destroy_pending(struct csh_ast *pending)
         case CSH_AST_BRACE:
             enqueue(&pending, node->data.group.body);
             break;
+        case CSH_AST_IF:
+            for (index = 0; index < node->data.if_clause.branch_count; ++index) {
+                enqueue(&pending, node->data.if_clause.branches[index].condition);
+                enqueue(&pending, node->data.if_clause.branches[index].body);
+            }
+            free(node->data.if_clause.branches);
+            enqueue(&pending, node->data.if_clause.else_body);
+            break;
+        case CSH_AST_FOR:
+            destroy_word(&node->data.for_clause.name, &pending);
+            destroy_word_vector(&node->data.for_clause.words, &pending);
+            enqueue(&pending, node->data.for_clause.body);
+            break;
+        case CSH_AST_WHILE:
+        case CSH_AST_UNTIL:
+            enqueue(&pending, node->data.loop.condition);
+            enqueue(&pending, node->data.loop.body);
+            break;
+        case CSH_AST_CASE:
+            destroy_word(&node->data.case_clause.word, &pending);
+            for (index = 0; index < node->data.case_clause.item_count; ++index)
+                destroy_case_item(&node->data.case_clause.items[index], &pending);
+            free(node->data.case_clause.items);
+            break;
+        case CSH_AST_FUNCTION:
+            destroy_word(&node->data.function.name, &pending);
+            enqueue(&pending, node->data.function.body);
+            break;
         default:
             break;
         }
@@ -162,6 +208,15 @@ void csh_ast_redirection_destroy(struct csh_ast_redirection *redirection)
 {
     struct csh_ast *pending = NULL;
     destroy_redirection(redirection, &pending);
+    destroy_pending(pending);
+}
+
+void csh_ast_case_item_destroy(struct csh_ast_case_item *item)
+{
+    struct csh_ast *pending = NULL;
+    if (item == NULL)
+        return;
+    destroy_case_item(item, &pending);
     destroy_pending(pending);
 }
 
@@ -289,6 +344,66 @@ int csh_ast_list_add(struct csh_ast *node, struct csh_ast_list_item *item,
     node->data.list.items = vector;
     node->data.list.items[node->data.list.item_count++] = *item;
     *item = (struct csh_ast_list_item){0};
+    return 0;
+}
+
+int csh_ast_if_add(struct csh_ast *node, struct csh_ast_if_branch *branch,
+    struct csh_error *error)
+{
+    void *vector;
+    clear_error(error);
+    if (node == NULL || node->kind != CSH_AST_IF || branch == NULL ||
+        branch->condition == NULL || branch->body == NULL ||
+        branch->condition == node || branch->body == node ||
+        branch->condition == branch->body)
+        return fail(error, "invalid AST if branch", EINVAL);
+    vector = node->data.if_clause.branches;
+    if (reserve(&vector, &node->data.if_clause.branch_capacity,
+                node->data.if_clause.branch_count,
+                sizeof(*node->data.if_clause.branches), error) == -1)
+        return -1;
+    node->data.if_clause.branches = vector;
+    node->data.if_clause.branches[node->data.if_clause.branch_count++] = *branch;
+    *branch = (struct csh_ast_if_branch){0};
+    return 0;
+}
+
+int csh_ast_word_vector_add(struct csh_ast_word_vector *words,
+    struct csh_ast_word *word, struct csh_error *error)
+{
+    void *vector;
+    clear_error(error);
+    if (words == NULL || word == NULL)
+        return fail(error, "invalid AST word vector entry", EINVAL);
+    vector = words->items;
+    if (reserve(&vector, &words->capacity, words->count,
+                sizeof(*words->items), error) == -1)
+        return -1;
+    words->items = vector;
+    words->items[words->count++] = *word;
+    *word = (struct csh_ast_word){0};
+    return 0;
+}
+
+int csh_ast_case_add(struct csh_ast *node, struct csh_ast_case_item *item,
+    struct csh_error *error)
+{
+    void *vector;
+    clear_error(error);
+    if (node == NULL || node->kind != CSH_AST_CASE || item == NULL ||
+        item->patterns.count == 0 || item->body == NULL ||
+        item->body == node || item->body->kind != CSH_AST_LIST ||
+        item->terminator < CSH_AST_CASE_END ||
+        item->terminator > CSH_AST_CASE_FALLTHROUGH)
+        return fail(error, "invalid AST case item", EINVAL);
+    vector = node->data.case_clause.items;
+    if (reserve(&vector, &node->data.case_clause.item_capacity,
+                node->data.case_clause.item_count,
+                sizeof(*node->data.case_clause.items), error) == -1)
+        return -1;
+    node->data.case_clause.items = vector;
+    node->data.case_clause.items[node->data.case_clause.item_count++] = *item;
+    *item = (struct csh_ast_case_item){0};
     return 0;
 }
 

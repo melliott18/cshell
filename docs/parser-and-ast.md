@@ -3,7 +3,7 @@
 [CSH-005](tickets/CSH-005-parser-and-ast.md) adds
 [`cshell/parser.h`](../include/cshell/parser.h) and
 [`cshell/ast.h`](../include/cshell/ast.h). These modules build with the replacement
-input, lexer, and quote modules, independently of the prototype. They never
+input, lexer, alias, and quote modules, independently of the prototype. They never
 execute commands, expand arguments, open redirection targets, or mutate shell
 state. Runtime integration remains with CSH-018 and CSH-039.
 
@@ -21,8 +21,8 @@ may consume that input while parsing. `csh_parser_next()` synchronously acquires
 physical lines only as required by the current command. It returns at a complete
 command's newline, after collecting any pending here-documents. It does not read
 the next command line. Semicolon-separated commands on the same line belong to
-one returned list. Groups, pipeline continuations, and command substitutions can
-require further physical lines. Blank and comment-only lines are skipped.
+one returned list. Compound commands, function definitions, pipeline continuations,
+and command substitutions can require further physical lines. Blank and comment-only lines are skipped.
 
 | Result | Output and caller action |
 | --- | --- |
@@ -67,10 +67,37 @@ expansion contexts remain the expansion/execution owner's responsibility.
 Reserved-word recognition uses unquoted logical spelling, removing recognized
 backslash-newline continuations. Quoted words retain their ordinary-word role.
 Classification depends on grammar position: a reserved spelling can be an
-argument or a command name after assignment/redirection prefixes. Unsupported
-compound syntax is diagnosed when recognized in a reserved-word position.
-The enum reserves compound/function node kinds for CSH-009; constructors reject
-those kinds until their payload and ownership contracts are implemented.
+argument or a command name after assignment/redirection prefixes. CSH-027
+recognizes compound and function syntax at command starts. Loop variable names,
+case subjects, for-list words, and case patterns have their own grammar contexts:
+`for if in then fi; do echo "$if"; done` retains all those words. An initial
+unparenthesized `esac` ends a case command; `(esac)` and `a|esac)` retain it as a
+pattern. A closer immediately after an unredirected compound delimiter can omit
+a separator, as in `if (test) then (yes) else (no) fi`. A redirected compound
+requires a separator before a reserved-word closer.
+
+### Compound and function payloads
+
+All payloads are owned and preserve lexical words without expansion. CSH-028
+owns their later execution and function storage; parsing these nodes does not
+install definitions or run control flow.
+
+| Kind / payload | Contract for execution |
+| --- | --- |
+| `IF` / `data.if_clause` | Ordered `branches` contain condition and body lists for `if` then each `elif`; nullable `else_body` is a list. Conditions and selected bodies remain separate. |
+| `FOR` / `data.for_clause` | `name` retains an unquoted shell name; `words` retains ordered structured words; `has_in` distinguishes an explicit empty list from the omitted list that uses positional parameters; `body` is a list. |
+| `WHILE`, `UNTIL` / `data.loop` | Separate condition and body lists; the node kind selects the future continuation predicate. |
+| `CASE` / `data.case_clause` | One subject `word` and ordered `items`, each with ordered `patterns`, a body list (possibly empty), and a terminator. `CASE_BREAK` means `;;`, `CASE_FALLTHROUGH` means POSIX.1-2024 `;&`, and `CASE_END` means an omitted terminator before `esac`. Explicit terminators retain their source spans; omitted spans are zero. |
+| `FUNCTION` / `data.function` | Original unquoted name word and a compound body node. Any supported compound can be a body; an ordinary simple command cannot. Trailing redirections belong to the function node for invocation-time application, not the body or definition-time execution. |
+
+All other compound redirections use the node's common ordered redirection vector.
+`if`/loop bodies and conditions must be nonempty. Case commands can have no items,
+and case item bodies can be empty. The `elif` and case item vectors grow without
+a fixed count limit. Function names must be unquoted shell names and cannot be
+reserved words in function-name position. This syntax API does not enforce the
+application restriction on special-builtin names; CSH-028 owns definition-time
+runtime validation. Extensions such as `function name`, arithmetic `for`, and
+`;;&` are not implemented.
 
 Words own their original lexer tokens, including physical spelling, positions,
 and fragment provenance. Parsed `$(...)` substitutions own body trees associated
@@ -78,12 +105,13 @@ with the matching command fragment index and byte range in that token. The
 parser uses the lexer's shared-cursor child handshake, so parentheses in groups
 and raw here-document bodies do not prematurely terminate substitutions.
 Backquote and arithmetic fragments remain syntax for their expansion owners.
-No parse-time substitution or filesystem expansion occurs.
+Alias substitution is applied during token reading; no parameter, command, or
+filesystem expansion occurs.
 
 ## Redirections and here-documents
 
-Each simple or group node owns an ordered redirection vector. Entries are
-separately allocated so pending here-document references remain stable as the
+Each simple, compound, or function node owns an ordered redirection vector.
+Entries are separately allocated so pending here-document references remain stable as the
 vector grows. The exact operator enum, operand word, source span, and optional
 IO_NUMBER token are retained. Only an unquoted digit word immediately adjacent
 to a redirection operator is an IO_NUMBER; `2>out`, `2 >out`, and `'2'>out` have
@@ -123,14 +151,18 @@ CSH-026 owns eventual body expansion and execution integration.
 AST pointers have one owner and must form an acyclic tree. Constructors create
 empty initialized objects. Append helpers move inputs only on success, clearing
 the moved word, redirection pointer, or child pointer. Failure leaves the inputs
-with their original owners. Counts cover initialized entries; capacities belong
-to the helpers. A node's `destroy_next` field is reserved for cleanup and must
+with their original owners. `csh_ast_if_add`, `csh_ast_case_add`, and
+`csh_ast_word_vector_add` follow the same rule. Direct child and word assignment
+into fresh payloads also transfers ownership; zero the previous owner.
+`csh_ast_case_item_destroy` releases an unattached, partially built case item.
+Counts cover initialized entries; capacities belong to the helpers. A node's `destroy_next` field is reserved for cleanup and must
 remain NULL during ordinary use.
 
 Destruction iteratively walks owned children without allocation, including
-substitution trees and long AND/OR chains. Words, pipelines, lists, redirections,
-and here-document bodies grow dynamically with overflow checks. Recursive
-group and substitution parsing has a 128-context guard that reports a diagnostic
+substitution trees, compound payloads, and long AND/OR chains. Words, pipelines,
+lists, conditional branches, case items/patterns, redirections, and here-document
+bodies grow dynamically with overflow checks. Recursive compound, function-body,
+and substitution parsing has a 128-context guard that reports a diagnostic
 instead of exhausting the C stack. This implementation limit remains an open
 part of the broader unrestricted-command-size requirement; ordinary sequence
 length and word/body size have no fixed parser cap.
@@ -141,5 +173,8 @@ CSH-024 and CSH-026: a syntax probe alone cannot recover bytes already consumed
 by the lexer; shared-cursor checkpoint/replay must preserve here-documents and
 fragment positions. Use explicitly separated `$( (command); )` for the supported
 subshell form. The parser does not claim the ambiguous form is implemented.
-Aliases remain CSH-030 work; bounded lookahead and complete-command boundaries
-leave that extension point available.
+Attach a borrowed alias table with `csh_parser_set_aliases()` to enable
+[CSH-030 alias substitution](aliases.md). Leave it NULL to retain ordinary
+parsing. Change the table only between `csh_parser_next()` calls; the next
+complete command sees the new definitions. Alias checks happen before
+consuming later tokens, using grammar position and lexer provenance.

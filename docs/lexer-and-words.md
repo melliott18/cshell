@@ -13,7 +13,8 @@ The lexical contract follows POSIX.1-2024
 and
 [token recognition](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_03).
 The [parser](parser-and-ast.md) implements the initial command grammar;
-expansion, aliases, and later compound syntax remain separate work. Passing
+expansion and later compound syntax remain separate work.
+[CSH-030](aliases.md) adds alias storage and parser-controlled substitution. Passing
 module fixtures does not establish runtime behavior or complete conformance.
 
 ## Feeding and reading
@@ -189,28 +190,44 @@ enclosing command fragment. The parser is responsible for distinguishing
 quoted delimiters, `<<-` tab handling, and the order of multiple pending bodies.
 CSH-026 owns eventual body expansion and execution integration.
 
-## Alias extension contract
+## Alias substitution handoff
 
-Aliases are not implemented by this module. CSH-030, the alias child of
-CSH-010, will extend the lexer/parser boundary after CSH-005 supplies grammar
-context. Ordinary `feed()` appends input and must not be mistaken for an alias
-replacement operation.
+[CSH-030](aliases.md) implements the handoff. After a delimited word, the parser
+checks command position, quoting, alias lookup, and IO_NUMBER classification
+before reading another token. `csh_lexer_follows_redirection()` inspects the
+immediate logical delimiter without consuming input. Use
+`csh_lexer_alias_active()` to suppress recursive names, then
+`csh_lexer_alias_push()` to copy replacement text into the source at the current
+cursor. Ordinary `feed()` continues to append physical input.
 
-The planned handoff is a delimited word plus parser eligibility before later
-tokens are consumed. The alias owner supplies replacement source for immediate
-retokenization at that point, tracks active alias names through nested
-replacement, and communicates trailing-blank eligibility to the parser.
-Replacement provenance must preserve both an alias-source identity and the
-original invocation location for diagnostics. This requires a source insertion
-or stacked-source API in CSH-030, together with its own ownership and cleanup
-tests; the current shared-source command frames do not provide alias insertion.
+Replacement bytes undergo ordinary token recognition, including operators,
+quotes, nested command frames, and raw here-document collection. A synthetic
+space separates each replacement from remaining input. A value ending in space
+or tab makes the next token's `alias_eligible` flag true, including the permitted
+quoted-blank case. Operators and newlines consume the flag as well as words.
+Active alias names survive nested substitution and are released when their
+replacement input ends, or on failure/destruction.
 
-Keep parser lookahead bounded at complete-command boundaries so later alias
-changes can take effect at the required parse boundary. Preserve quoting and
-continuation metadata rather than testing an expanded argument string for
-alias eligibility. The eventual implementation must document the choices
-permitted by
-[Issue 8 alias substitution](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_03_01).
+Tokens produced from replacements own `alias_name`, `source_name` (prefixed
+`alias:`), and `invocation_source`. `invocation` records the outermost physical
+call site. Alias-local positions do not advance the original input position;
+ordinary input positions resume after injected text. A token crossing a source
+boundary retains its starting source identity and extends its coordinates over
+the captured spelling. Token and fragment ranges therefore stay monotonic even
+when quoting or command substitution crosses a replacement boundary. Lexer
+errors in replacement text report the physical invocation position;
+`csh_lexer_diagnostic_position()` provides the same mapping for parser contexts.
+
+Pending enclosing words capture their original bytes independently. In
+`$(short)`, the parent retains that spelling while the child AST sees the alias
+replacement. `csh_lexer_command_fragment()` supplies the stable pending fragment
+index; use the published fragment's byte ranges instead of subtracting absolute
+positions across different sources.
+
+The parser borrows an optional alias table and respects complete-command
+boundaries. The [alias contract](aliases.md) records timing, ownership, and
+choices allowed by Issue 8. None of these APIs execute alias definitions or
+other commands.
 
 ## Ownership and failure handling
 
