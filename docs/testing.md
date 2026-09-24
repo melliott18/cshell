@@ -716,3 +716,33 @@ special assignments) and `tests/builtins.py` (24 replacement execution cases).
 It is included in `make test` and `make docker-test`. For sanitizer validation,
 clean first and run `make test-builtins test-execute test-state` with the Clang
 AddressSanitizer/UndefinedBehaviorSanitizer flags documented above.
+
+
+## List, group, and background execution checks
+
+`make test-context` runs `tests/contexts.py` against the replacement candidate,
+`context_fixture` for owned PID/state/descriptor assertions, and
+`execute_faults --context` for deterministic allocation, pipe, fork and wait
+failures. It is included in `make test`, Docker tests and native sanitizer CI.
+
+The behavioral suite covers list precedence/statuses, short-circuiting, state
+and cwd isolation, nested redirection lifetimes, group pipeline stages carrying
+8 MiB, background stdin overrides, and private descriptor exclusions. FIFO
+rendezvous keep the candidate alive until background output has been observed.
+The API fixture uses pipe gates rather than timing assumptions to prove
+asynchronous return, compares the helper's actual PID with the published
+background identifier (including pipeline final stages), checks unrelated-child
+ownership, and verifies reaping without changing shell status. Fault injection
+checks EINTR retry, retained ownership after failed reaping, and partial-launch
+cleanup for foreground and background group pipelines.
+
+```sh
+make test-context
+make clean
+ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 make test-context CC=clang CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+make docker-test
+```
+
+These checks target the candidate; CSH-039 has not switched the default executable.
+They establish context behavior within literal execution, not general expansion,
+job control, retained `wait` statuses, or full POSIX compliance.

@@ -1,11 +1,11 @@
 # CSH-021: Execute lists, groups, and background contexts
 
-- Status: backlog
+- Status: review
 - Type: feat
 - Kind: implementation
 - Parent: CSH-006
 - Depends on: CSH-020
-- Branch: Assigned when work starts
+- Branch: feature/CSH-021-lists-and-execution-contexts
 - Issue: [#22](https://github.com/melliott18/cshell/issues/22)
 
 ## Goal
@@ -24,15 +24,15 @@ and asynchronous execution contexts in the replacement runtime.
 
 ## Acceptance criteria
 
-- [ ] Sequential and AND/OR lists run only required commands, preserving specified
+- [x] Sequential and AND/OR lists run only required commands, preserving specified
   precedence, short-circuiting, and final statuses in behavioral fixtures.
-- [ ] Brace-group mutations persist in the current shell, while parenthesized
+- [x] Brace-group mutations persist in the current shell, while parenthesized
   subshell mutations remain isolated; group redirections have correct lifetimes.
-- [ ] Asynchronous lists return without waiting for completion, publish the
+- [x] Asynchronous lists return without waiting for completion, publish the
   applicable background identifier, and eventually reap their owned children.
-- [ ] Nested contexts and failed redirections preserve parent state/descriptors;
+- [x] Nested contexts and failed redirections preserve parent state/descriptors;
   cleanup tests include background children and interrupted waits.
-- [ ] All list/group behavior uses the shared replacement executor; architecture
+- [x] All list/group behavior uses the shared replacement executor; architecture
   docs describe context ownership and remaining limitations.
 
 ## Validation
@@ -51,3 +51,57 @@ This ticket supplies execution contexts consumed by later compound commands and
 functions; their syntax and full behavior remain CSH-009. Background execution
 here does not establish interactive job control. Coordinate stored background
 identifiers and status fields through the CSH-022 state interface.
+
+
+### Implementation
+
+`csh_execute_context_ast()` prepares an owned literal execution plan and
+composes sequential/AND/OR lists, braces, subshells and asynchronous items through
+the replacement command/pipeline engines. Group stages are supported in
+pipelines. Brace state/cwd changes persist; forked contexts isolate them.
+Redirection backups exclude operands throughout nested bodies, and restoration
+covers failures and exit requests. Ordinary redirection errors participate in
+short-circuiting; special-builtin error policy stays context-dependent.
+
+A persistent execution context owns registered background PIDs independently of
+shell-state snapshots. Asynchronous pipelines register every stage and publish
+the final PID through CSH-022; simple external background commands exec directly
+in their published process. Explicit polling/blocking reaping retries EINTR and
+never consumes unrelated children or overwrites last status/background identity.
+The candidate polls at execution boundaries and detaches unfinished jobs on
+exit. Idle SIGCHLD wakeups, retained wait statuses, process-group cancellation,
+and interactive job control remain CSH-011 work. General expansion, including
+command spelling of `$!`, remains CSH-008 work. CSH-039 has **not** switched the
+default executable; `cshell` remains the prototype.
+
+### Validation evidence (2026-09-23)
+
+Environment: native macOS arm64, Darwin 23.6.0, Apple Clang 15.0.0;
+Linux/GCC through Docker Engine 24.0.6 using image `cshell-test:csh-021`.
+
+- `make -j4 test test-pty test-harness`: passed the retained native suite,
+  candidate terminal cases and all 61 harness self-tests.
+- Final `make -j4 test-context test-runtime test-runtime-pty`: passed 60 context
+  behavior cases plus API/fault checks, 270 cross-mode runtime cases, and nine
+  candidate terminal cases.
+- `make docker-test DOCKER_IMAGE=cshell-test:csh-021`: passed the full Linux suite,
+  including all 60 context cases, 73 simple execution cases, 55 pipeline cases,
+  their API/fault checks and 270 cross-mode cases.
+- `docker run --rm --init cshell-test:csh-021 make test-pty test-harness`: passed
+  candidate/prototype terminal suites and all 61 Linux harness self-tests.
+- Clean native ASan/UBSan build with `-Werror`, `-g -O1`,
+  `-fsanitize=address,undefined`, and `-fno-omit-frame-pointer` passed
+  `test-lexer test-parser test-alias test-state test-expand test-builtins
+  test-execute test-pipeline test-context test-runtime test-runtime-pty`.
+  `ASAN_OPTIONS=halt_on_error=1`, `UBSAN_OPTIONS=halt_on_error=1` and
+  `MallocNanoZone=0` were set; no sanitizer findings.
+- `git diff --check`: passed.
+
+Background fixtures use pipe/FIFO synchronization, assert the actual helper PID
+against the stored background PID (also for a pipeline's final stage), prove
+return before gate release, verify unrelated children stay waitable, and confirm
+owned PIDs are no longer waitable after reaping. Fault checks sweep preparation
+and registry allocations, inject pipe/fork/wait failures in foreground and
+background group pipelines, retry interrupted waits, and retain background
+ownership across failed polling. Documentation describes the direct-child
+cleanup boundary and limitations; these checks do not claim full POSIX support.

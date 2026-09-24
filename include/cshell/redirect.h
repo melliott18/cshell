@@ -40,6 +40,11 @@ int csh_redirect_validate(const struct csh_redirect *items, size_t count,
     struct csh_error *error);
 int csh_redirect_apply(const struct csh_redirect *items, size_t count,
     struct csh_redirect_save **save, struct csh_error *error);
+/* Group bodies can refer to descriptors beyond the group's own operands.
+ * Exclude those descriptors from private backups for the group's lifetime. */
+int csh_redirect_apply_reserved(const struct csh_redirect *items, size_t count,
+    const int *reserved, size_t reserved_count,
+    struct csh_redirect_save **save, struct csh_error *error);
 int csh_redirect_restore(struct csh_redirect_save **save,
     struct csh_error *error);
 

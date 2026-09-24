@@ -603,12 +603,116 @@ static void pipeline_faults(struct csh_state *state)
     arm(0);
 }
 
+static void context_faults(struct csh_state *state)
+{
+    struct csh_execution_context context = {0};
+    struct csh_execution result;
+    struct csh_error error;
+    struct csh_ast *tree;
+    size_t baseline = live, point, i;
+    int before = fd_count(), status, descriptors[2];
+    char script[256];
+    context.state = state;
+    /* Sweep plan construction, nested redirect saves and ordinary dispatch.
+     * Every allocation failure leaves all parent descriptors recoverable. */
+    tree = parse("{ :; { :; } >context-fault-output; } >context-fault-outer\n");
+    for (point = 1; point < 512; ++point) {
+        int rc;
+        arm(point);
+        rc = csh_execute_context_ast(&context, tree, &result, &error);
+        assert(rc == -1 || rc == 0);
+        assert(live == baseline && fd_count() == before);
+        if (allocation_calls < point) { assert(rc == 0 && result.status == 0); break; }
+        assert(result.status == 1);
+    }
+    assert(point < 512);
+    csh_ast_destroy(tree);
+    tree = parse("exit 0 &\n");
+    for (point = 1; point < 512; ++point) {
+        int rc;
+        size_t calls;
+        arm(point);
+        rc = csh_execute_context_ast(&context, tree, &result, &error);
+        calls = allocation_calls;
+        assert(rc == 0 || (error.system_errno == ENOMEM && launched_count == 0));
+        assert(csh_execution_context_reap(&context, 1, &error) == 0);
+        for (i = 0; i < launched_count; ++i)
+            assert(waitpid(launched[i], &status, WNOHANG) == -1 && errno == ECHILD);
+        assert(context.child_count == 0 && live == baseline && fd_count() == before);
+        if (calls < point) break;
+    }
+    assert(point < 512);
+    arm(0);
+    fail_fork = 1;
+    assert(csh_execute_context_ast(&context, tree, &result, &error) == -1);
+    assert(context.child_count == 0 && live == baseline && fd_count() == before);
+    csh_ast_destroy(tree);
+
+    /* No timing assumption: head cannot exit until its parent writes a byte. */
+    assert(pipe(descriptors) == 0);
+    snprintf(script, sizeof(script), "/usr/bin/head -c 1 <&%d >/dev/null &\n", descriptors[0]);
+    tree = parse(script);
+    arm(0);
+    assert(csh_execute_context_ast(&context, tree, &result, &error) == 0);
+    assert(context.child_count == 1);
+    fail_wait = 1;
+    assert(csh_execution_context_reap(&context, 0, &error) == -1 && error.system_errno == EIO);
+    assert(context.child_count == 1); /* Error retains ownership for retry. */
+    interrupt_wait = 1;
+    assert(write(descriptors[1], "x", 1) == 1);
+    assert(csh_execution_context_reap(&context, 1, &error) == 0);
+    assert(context.child_count == 0);
+    assert(waitpid(launched[0], &status, WNOHANG) == -1 && errno == ECHILD);
+    close(descriptors[0]); close(descriptors[1]);
+    csh_ast_destroy(tree);
+
+    tree = parse("(:)\n");
+    arm(0);
+    interrupt_wait = 1;
+    assert(csh_execute_context_ast(&context, tree, &result, &error) == 0);
+    assert(wait_calls >= 2 && result.status == 0);
+    arm(0);
+    fail_wait = 1;
+    assert(csh_execute_context_ast(&context, tree, &result, &error) == -1);
+    assert(waitpid(launched[0], &status, WNOHANG) == -1 && errno == ECHILD);
+    csh_ast_destroy(tree);
+    for (int asynchronous = 0; asynchronous < 2; ++asynchronous) {
+    tree = parse(asynchronous ? "{ :; } | { :; } | { :; } &\n" : "{ :; } | { :; } | { :; }\n");
+    for (int kind = 0; kind < 3; ++kind) {
+        for (point = 1; point <= (kind == 0 ? 2u : 3u); ++point) {
+            arm(0);
+            if (kind == 0) fail_pipe = (int)point;
+            if (kind == 1) fail_fork = (int)point;
+            if (kind == 2) fail_wait = (int)point;
+            assert(csh_execute_context_ast(&context, tree, &result, &error) == -1);
+            assert(csh_execution_context_reap(&context, 1, &error) == 0);
+            for (i = 0; i < launched_count; ++i)
+                assert(waitpid(launched[i], &status, WNOHANG) == -1 && errno == ECHILD);
+            assert(fd_count() == before && live == baseline);
+        }
+    }
+    csh_ast_destroy(tree);
+    }
+    arm(0);
+    csh_execution_context_destroy(&context);
+    assert(fd_count() == before && live == baseline);
+    assert(waitpid(-1, &status, WNOHANG) == -1 && errno == ECHILD);
+}
+
 int main(int argc, char **argv)
 {
     struct csh_invocation invocation = {0};
     struct csh_state *state = NULL;
     invocation.mode = CSH_MODE_STRING;
     invocation.arg0 = "execute-faults";
+    if (argc == 2 && strcmp(argv[1], "--context") == 0) {
+        assert(csh_state_create(&state, &invocation, NULL) == CSH_STATE_OK);
+        context_faults(state);
+        csh_state_destroy(state);
+        assert(live == 0);
+        puts("context fault checks passed");
+        return 0;
+    }
     if (argc == 2 && strcmp(argv[1], "--pipeline") == 0) {
         assert(csh_state_create(&state, &invocation, NULL) == CSH_STATE_OK);
         pipeline_faults(state);

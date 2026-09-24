@@ -130,15 +130,19 @@ static int is_operand(int fd, const struct csh_redirect *items, size_t count)
 /* A closed source operand must stay closed: merely using a conventional high
  * descriptor range would make, for example, 1>&10 accidentally succeed. */
 static int save_descriptor(int fd, const struct csh_redirect *items,
-    size_t count)
+    size_t count, const int *reserved, size_t reserved_count)
 {
     int minimum = 3;
     for (;;) {
         int result;
+        size_t index;
         do {
             result = fcntl(fd, F_DUPFD_CLOEXEC, minimum);
         } while (result == -1 && errno == EINTR);
-        if (result == -1 || !is_operand(result, items, count))
+        if (result == -1) return -1;
+        for (index = 0; index < reserved_count; ++index)
+            if (reserved[index] == result) break;
+        if (index == reserved_count && !is_operand(result, items, count))
             return result;
         if (close_descriptor(result) == -1)
             return -1;
@@ -316,6 +320,13 @@ static int apply_one(const struct csh_redirect *item)
 int csh_redirect_apply(const struct csh_redirect *items, size_t count,
     struct csh_redirect_save **save, struct csh_error *error)
 {
+    return csh_redirect_apply_reserved(items, count, NULL, 0, save, error);
+}
+
+int csh_redirect_apply_reserved(const struct csh_redirect *items, size_t count,
+    const int *reserved, size_t reserved_count,
+    struct csh_redirect_save **save, struct csh_error *error)
+{
     struct csh_redirect_save *saved;
     size_t index;
     *error = (struct csh_error){0};
@@ -350,7 +361,7 @@ int csh_redirect_apply(const struct csh_redirect *items, size_t count,
             if (errno != EBADF)
                 goto save_failure;
         } else {
-            entry.backup = save_descriptor(entry.target, items, count);
+            entry.backup = save_descriptor(entry.target, items, count, reserved, reserved_count);
             if (entry.backup == -1)
                 goto save_failure;
         }

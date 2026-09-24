@@ -46,7 +46,7 @@ FIELDS_HEADERS = $(EXPAND_HEADERS) src/field_internal.h
 FIELDS_OBJECTS = build/fields.o build/pathname.o
 FIELDS_FAULT_OBJECTS = build/tests/fields-fault-fields.o build/tests/fields-fault-pathname.o
 
-.PHONY: all test test-input test-lexer test-parser test-alias test-state test-expand test-fields test-execute test-pipeline test-runtime test-runtime-pty test-pty test-harness docker-build docker-test docker-test-pty docker-shell clean
+.PHONY: all test test-input test-lexer test-parser test-alias test-state test-expand test-fields test-execute test-pipeline test-context test-runtime test-runtime-pty test-pty test-harness docker-build docker-test docker-test-pty docker-shell clean
 
 all: cshell
 
@@ -286,6 +286,13 @@ build/tests/pipeline_fixture: tests/pipeline_fixture.c $(EXECUTE_OBJECTS) $(EXEC
 test-pipeline: build/tests/execute_fixture build/tests/execute_helper build/tests/pipeline_fixture build/tests/execute_faults
 	$(PYTHON) tests/pipeline.py build/tests/execute_fixture --helper build/tests/execute_helper --api-binary build/tests/pipeline_fixture --fault-binary build/tests/execute_faults
 
+build/tests/context_fixture: tests/context_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(EXECUTE_OBJECTS) $(LDLIBS)
+
+test-context: build/cshell-candidate build/tests/context_fixture build/tests/execute_helper build/tests/execute_faults
+	$(PYTHON) tests/contexts.py build/cshell-candidate --helper build/tests/execute_helper --api-binary build/tests/context_fixture --fault-binary build/tests/execute_faults
+
 test-execute: build/tests/execute_fixture build/tests/execute_helper build/tests/execute_faults build/tests/assignment_fixture
 	$(PYTHON) tests/execute.py build/tests/execute_fixture --helper build/tests/execute_helper --fault-binary build/tests/execute_faults --assignment-binary build/tests/assignment_fixture
 
@@ -298,7 +305,7 @@ test-builtins: build/tests/builtin_fixture build/tests/execute_fixture
 	./build/tests/builtin_fixture
 	$(PYTHON) tests/builtins.py build/tests/execute_fixture
 
-test: test-builtins $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline test-runtime
+test: test-builtins $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline test-context test-runtime
 	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
 

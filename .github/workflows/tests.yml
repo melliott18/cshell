@@ -55,7 +55,7 @@ jobs:
           UBSAN_OPTIONS: halt_on_error=1
         run: |
           make clean
-          make test-lexer test-parser test-alias test-state test-expand test-builtins test-execute test-pipeline test-runtime test-runtime-pty CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+          make test-lexer test-parser test-alias test-state test-expand test-builtins test-execute test-pipeline test-context test-runtime test-runtime-pty CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
 
   docker:
     name: Docker (Linux)
