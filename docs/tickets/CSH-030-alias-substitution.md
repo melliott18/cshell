@@ -1,6 +1,6 @@
 # CSH-030: Implement alias storage and token substitution
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-010
@@ -95,3 +95,9 @@ adjacency after an alias-generated compound command. The combined native
 `make test test-pty test-harness` run passed 223 parser checks, all alias and
 field-expansion suites, one PTY fixture, four prototype fixtures, and all 61
 harness self-tests.
+
+Integrated into `main` through [pull request #55](https://github.com/melliott18/cshell/pull/55)
+on 2026-09-23. Implementation commit: `81c5a72`; integration commit after
+CSH-025 and CSH-027: `1221b6f`; merge commit: `b1ddd91`. GitHub closed issue
+#31 when the pull request merged. Both hosted workflows passed Ubuntu/GCC,
+macOS/Clang, and Docker Linux.
