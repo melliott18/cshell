@@ -1,6 +1,6 @@
 # CSH-009: Add compound commands and shell functions
 
-- Status: backlog
+- Status: in-progress
 - Type: feat
 - Kind: milestone
 - Parent: None
@@ -26,13 +26,13 @@ selection, and reusable functions.
 
 ## Acceptance criteria
 
-- [ ] Nested conditionals, loops, and case patterns follow POSIX grammar and
+- [x] Nested conditionals, loops, and case patterns follow POSIX grammar and
   expansion rules.
-- [ ] Loop control handles operands, nesting levels, and invalid contexts.
-- [ ] Function calls establish and restore positional parameters.
-- [ ] Function and compound-command redirections have the required lifetime.
-- [ ] Subshell state changes do not escape into the parent shell.
-- [ ] Syntax and runtime errors unwind AST, expansion, and redirection resources.
+- [x] Loop control handles operands, nesting levels, and invalid contexts.
+- [x] Function calls establish and restore positional parameters.
+- [x] Function and compound-command redirections have the required lifetime.
+- [x] Subshell state changes do not escape into the parent shell.
+- [x] Syntax and runtime errors unwind AST, expansion, and redirection resources.
 
 ## Validation
 
@@ -56,3 +56,12 @@ Completing one child does not establish the milestone or POSIX compliance.
 
 CSH-010 completes the required builtin inventory and options; control-flow
 builtins are implemented here because their semantics depend on this executor.
+
+
+### CSH-028 acceptance review — 2026-09-24
+
+CSH-027 supplies grammar and parser failure coverage. CSH-028 now supplies the
+cross-feature runtime and fault evidence for all six original criteria; see its
+[validation record](CSH-028-control-flow-and-functions.md#validation-record--2026-09-24)
+and [behavior/ownership contract](../control-flow.md). CSH-028 is at `review`,
+so its integration gate above remains open and this milestone is not yet done.

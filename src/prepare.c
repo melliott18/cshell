@@ -172,6 +172,13 @@ done:
     return rc;
 }
 
+int csh_prepare_word(struct csh_state *state, const struct csh_ast_word *word,
+    enum csh_expand_context mode, struct csh_fields *out, struct csh_error *error)
+{
+    struct csh_command command = {0};
+    return expand(state, word, 0, mode, &command, out, error);
+}
+
 static int scalar(struct csh_state *state, const struct csh_ast_word *word,
     size_t offset, enum csh_expand_context mode, struct csh_command *command,
     char **out, struct csh_error *error)

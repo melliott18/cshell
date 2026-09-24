@@ -18,7 +18,14 @@ struct variable {
     struct variable *next;
 };
 
+struct function_entry {
+    char *name;
+    struct csh_function *value;
+    struct function_entry *next;
+};
+
 struct csh_state {
+    struct function_entry *functions;
     struct variable *variables;
     char *arg0;
     char **arguments;
@@ -131,6 +138,13 @@ void csh_state_destroy(struct csh_state *state)
     }
     free(state->arg0);
     csh_state_environment_destroy(state->arguments);
+    while (state->functions != NULL) {
+        struct function_entry *entry = state->functions;
+        state->functions = entry->next;
+        csh_function_release(entry->value);
+        free(entry->name);
+        free(entry);
+    }
     free(state);
 }
 
@@ -501,6 +515,12 @@ enum csh_state_result csh_state_clone(const struct csh_state *state,
             goto failure;
         tail = &(*tail)->next;
     }
+    {
+        struct function_entry *entry;
+        for (entry = state->functions; entry != NULL; entry = entry->next)
+            if (csh_state_set_function(copy, entry->name, entry->value) != CSH_STATE_OK)
+                goto failure;
+    }
     copy->info = state->info;
     *out = copy;
     return CSH_STATE_OK;
@@ -572,4 +592,82 @@ enum csh_state_result csh_state_names(const struct csh_state *state, char ***out
     }
     *out = names;
     return CSH_STATE_OK;
+}
+
+void csh_function_retain(struct csh_function *function)
+{
+    if (function != NULL) ++function->references;
+}
+
+void csh_function_release(struct csh_function *function)
+{
+    if (function != NULL && --function->references == 0) function->destroy(function);
+}
+
+struct csh_function *csh_state_function(const struct csh_state *state, const char *name)
+{
+    struct function_entry *entry;
+    if (state == NULL || name == NULL) return NULL;
+    for (entry = state->functions; entry != NULL; entry = entry->next)
+        if (strcmp(entry->name, name) == 0) return entry->value;
+    return NULL;
+}
+
+enum csh_state_result csh_state_set_function(struct csh_state *state,
+    const char *name, struct csh_function *function)
+{
+    struct function_entry **link, *entry;
+    if (state == NULL || name == NULL || !valid_name(name, strlen(name)))
+        return CSH_STATE_INVALID;
+    for (link = &state->functions; *link != NULL; link = &(*link)->next)
+        if (strcmp((*link)->name, name) == 0) break;
+    entry = *link;
+    if (function == NULL) {
+        if (entry != NULL) {
+            *link = entry->next;
+            csh_function_release(entry->value);
+            free(entry->name);
+            free(entry);
+        }
+        return CSH_STATE_OK;
+    }
+    if (entry == NULL) {
+        entry = calloc(1, sizeof(*entry));
+        if (entry == NULL) return CSH_STATE_NOMEM;
+        entry->name = copy_bytes(name, strlen(name));
+        if (entry->name == NULL) { free(entry); return CSH_STATE_NOMEM; }
+        *link = entry;
+    }
+    csh_function_retain(function);
+    csh_function_release(entry->value);
+    entry->value = function;
+    return CSH_STATE_OK;
+}
+
+enum csh_state_result csh_state_push_parameters(struct csh_state *state,
+    size_t count, const char *const arguments[], struct csh_parameter_save *save)
+{
+    struct csh_state temporary = {0};
+    enum csh_state_result rc;
+    if (state == NULL || save == NULL) return CSH_STATE_INVALID;
+    rc = csh_state_set_parameters(&temporary, count, arguments);
+    if (rc != CSH_STATE_OK) return rc;
+    save->arguments = state->arguments;
+    save->count = state->info.argument_count;
+    state->arguments = temporary.arguments;
+    state->info.argument_count = count;
+    return CSH_STATE_OK;
+}
+
+void csh_state_pop_parameters(struct csh_state *state, struct csh_parameter_save *save)
+{
+    csh_state_environment_destroy(state->arguments);
+    state->arguments = save->arguments;
+    state->info.argument_count = save->count;
+    *save = (struct csh_parameter_save){0};
+}
+
+void csh_state_set_function_depth(struct csh_state *state, unsigned depth)
+{
+    state->info.function_depth = depth;
 }

@@ -22,7 +22,7 @@ with tempfile.TemporaryDirectory() as tmp:
     assert pathlib.Path('listing').read_text() == tmp+'\n'
     run('pwd 1>&-\n', status=1, error=True)
     run('set -x\n', status=1, error=True)
-    run('unset -f name\n', status=1, error=True)
+    run('unset -f name\n')
     run('cd\n', status=1, error=True)
     pathlib.Path('real/child').mkdir(parents=True)
     pathlib.Path('link').symlink_to('real/child', target_is_directory=True)

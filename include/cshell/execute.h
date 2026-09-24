@@ -26,7 +26,12 @@ enum csh_execution_category {
     CSH_EXEC_SPECIAL_BUILTIN, CSH_EXEC_FUNCTION, CSH_EXEC_PIPELINE, CSH_EXEC_UNRESOLVED
 };
 
+enum csh_control_transfer { CSH_CONTROL_NONE, CSH_CONTROL_BREAK,
+    CSH_CONTROL_CONTINUE, CSH_CONTROL_RETURN };
+
 struct csh_execution {
+    enum csh_control_transfer control;
+    unsigned levels; /* Remaining loop boundaries to unwind. */
     int status;
     int redirection_failed; /* Parent command could not apply redirections. */
     int special_builtin_error; /* Runtime applies context-dependent error policy. */
@@ -69,7 +74,7 @@ void csh_pipeline_result_destroy(struct csh_pipeline_result *result);
 int csh_execute_pipeline(struct csh_state *state,
     const struct csh_command *commands, size_t count, int negated,
     struct csh_pipeline_result *out, struct csh_error *error);
-/* Foreground simple command or pipeline, including group stages. Preflight
+/* Foreground simple command or pipeline, including compound stages. Preflight
  * syntax, then expand each stage in its execution environment. */
 int csh_execute_pipeline_ast(struct csh_state *state, const struct csh_ast *tree,
     struct csh_pipeline_result *out, struct csh_error *error);
@@ -126,11 +131,12 @@ struct csh_jobs;
  * PIDs elsewhere. Destroy before state. Without jobs, no signal handler is installed. */
 struct csh_execution_context {
     struct csh_state *state;
+    unsigned loop_depth;
     struct csh_background_child *children; /* Private owned registry. */
     size_t child_count;
     struct csh_jobs *jobs; /* Optional owned runtime job manager; see jobs.h. */
 };
-/* Lists, AND/OR, brace/subshell groups, and pipelines with group stages.
+/* Lists, AND/OR, compounds, functions, and pipelines with compound stages.
  * Preflight supported syntax before effects; expand only commands reached.
  * Background items return status 0 after registration and publish $!.
  * Reap completed background children at execution boundaries. */

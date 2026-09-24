@@ -5,6 +5,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <fnmatch.h>
 #include <limits.h>
 #include <signal.h>
 #include <stdint.h>
@@ -243,6 +244,35 @@ static int assignments_apply(struct csh_state *state,
     return 0;
 }
 
+static int control_name(const char *name)
+{
+    return !strcmp(name, "break") || !strcmp(name, "continue") || !strcmp(name, "return");
+}
+
+static int special_name(const char *name)
+{
+    static const char *const names[] = {":", ".", "break", "continue", "eval",
+        "exec", "exit", "export", "readonly", "return", "set", "shift",
+        "times", "trap", "unset"};
+    size_t i;
+    for (i = 0; i < sizeof(names) / sizeof(names[0]); ++i)
+        if (!strcmp(name, names[i])) return 1;
+    return 0;
+}
+
+static enum csh_execution_category command_category(struct csh_state *state,
+    const char *name)
+{
+    enum csh_execution_category category = csh_state_builtin_category(name);
+    if (!strcmp(name, "exit") || control_name(name)) return CSH_EXEC_SPECIAL_BUILTIN;
+    if (category != CSH_EXEC_SPECIAL_BUILTIN && csh_state_function(state, name) != NULL)
+        return CSH_EXEC_FUNCTION;
+    return category;
+}
+
+static int flow_handler(struct csh_state *state, const struct csh_command *command,
+    struct csh_execution *result, struct csh_error *error, void *context);
+
 static int command_validate(struct csh_state *state,
     const struct csh_command *command, enum csh_execution_category *category,
     struct csh_error *error)
@@ -269,9 +299,7 @@ static int command_validate(struct csh_state *state,
     if (csh_redirect_validate(command->redirections,
         command->redirection_count, error) == -1) return -1;
     if (command->argc == 0) *category = CSH_EXEC_EMPTY;
-    else if (strcmp(command->argv[0], "exit") == 0)
-        *category = CSH_EXEC_SPECIAL_BUILTIN;
-    else *category = csh_state_builtin_category(command->argv[0]);
+    else *category = command_category(state, command->argv[0]);
     return 0;
 }
 
@@ -378,7 +406,8 @@ static int execute_resolved(struct csh_state *state,
 done:
     csh_state_restore_variables(state, &variables);
     if (rc == -1) result->status = error->status;
-    if (result->category == CSH_EXEC_SPECIAL_BUILTIN && result->status != 0 && !result->exit_requested)
+    if (result->category == CSH_EXEC_SPECIAL_BUILTIN && result->status != 0 && !result->exit_requested &&
+        result->control == CSH_CONTROL_NONE)
         result->special_builtin_error = 1;
     if (state != NULL) csh_state_set_status(state, result->status);
     return rc;
@@ -397,8 +426,8 @@ static int bootstrap_handler(struct csh_state *state,
     const struct csh_command *command, struct csh_execution *result,
     struct csh_error *error, void *context)
 {
-    (void)error;
-    (void)context;
+    if (control_name(command->argv[0]) || result->category == CSH_EXEC_FUNCTION)
+        return flow_handler(state, command, result, error, context);
     if (strcmp(command->argv[0], "exit") == 0)
         builtin_exit(state, command, result);
     else
@@ -414,9 +443,7 @@ int csh_execute_command(struct csh_state *state, const struct csh_command *comma
     csh_command_handler handler = NULL;
     if (command != NULL && command->argc != 0 && command->argv != NULL &&
         command->argv[0] != NULL) {
-        if (strcmp(command->argv[0], "exit") == 0)
-            category = CSH_EXEC_SPECIAL_BUILTIN;
-        else category = csh_state_builtin_category(command->argv[0]);
+        category = command_category(state, command->argv[0]);
         if (category != CSH_EXEC_EXTERNAL) handler = bootstrap_handler;
     }
     return execute_resolved(state, command, category, handler, NULL,
@@ -635,7 +662,7 @@ done:
         free(launches);
     }
     if (rc == -1) out->execution.status = error->status;
-    else if (negated && !out->execution.exit_requested)
+    else if (negated && !out->execution.exit_requested && out->execution.control == CSH_CONTROL_NONE)
         out->execution.status = out->execution.status == 0 ? 1 : 0;
     if (state != NULL) csh_state_set_status(state, out->execution.status);
     return rc;
@@ -692,6 +719,12 @@ static int plan_prepare(const struct csh_ast *tree, struct execution_plan *plan,
     switch (tree->kind) {
     case CSH_AST_SIMPLE:
         break;
+    case CSH_AST_IF:
+        count = tree->data.if_clause.branch_count * 2 + (tree->data.if_clause.else_body != NULL);
+        break;
+    case CSH_AST_FOR: case CSH_AST_FUNCTION: count = 1; break;
+    case CSH_AST_WHILE: case CSH_AST_UNTIL: count = 2; break;
+    case CSH_AST_CASE: count = tree->data.case_clause.item_count; break;
     case CSH_AST_LIST: count = tree->data.list.item_count; break;
     case CSH_AST_AND: case CSH_AST_OR: count = 2; break;
     case CSH_AST_BRACE: case CSH_AST_SUBSHELL:
@@ -706,7 +739,8 @@ static int plan_prepare(const struct csh_ast *tree, struct execution_plan *plan,
         return fail(error, "unsupported compound command", 0, 2);
     }
     if (tree->redirection_count && tree->kind != CSH_AST_SIMPLE &&
-        tree->kind != CSH_AST_BRACE && tree->kind != CSH_AST_SUBSHELL)
+        tree->kind != CSH_AST_BRACE && tree->kind != CSH_AST_SUBSHELL &&
+        tree->kind < CSH_AST_IF)
         return fail(error, "invalid compound redirections", 0, 2);
     for (i = 0; i < tree->redirection_count; ++i) {
         const struct csh_ast_redirection *r = tree->redirections[i];
@@ -741,6 +775,16 @@ static int plan_prepare(const struct csh_ast *tree, struct execution_plan *plan,
         case CSH_AST_AND: case CSH_AST_OR:
             child = i == 0 ? tree->data.binary.left : tree->data.binary.right;
             break;
+        case CSH_AST_IF:
+            child = i == tree->data.if_clause.branch_count * 2 ? tree->data.if_clause.else_body :
+                i % 2 ? tree->data.if_clause.branches[i / 2].body :
+                tree->data.if_clause.branches[i / 2].condition;
+            break;
+        case CSH_AST_FOR: child = tree->data.for_clause.body; break;
+        case CSH_AST_FUNCTION: child = tree->data.function.body; break;
+        case CSH_AST_WHILE: case CSH_AST_UNTIL:
+            child = i == 0 ? tree->data.loop.condition : tree->data.loop.body; break;
+        case CSH_AST_CASE: child = tree->data.case_clause.items[i].body; break;
         default: child = tree->data.group.body; break;
         }
         if (plan_prepare(child, &plan->children[i], reserved, depth + 1, error) == -1)
@@ -873,7 +917,7 @@ static int runtime_simple(struct csh_execution_context *context,
     struct csh_state *redirect_state = NULL;
     enum csh_execution_category category;
     csh_command_handler handler;
-    void *handler_context = NULL;
+    void *handler_context = context;
     int rc = -1;
     memset(result, 0, sizeof(*result));
     if (csh_command_arguments(state, tree, &command, error) == -1) {
@@ -896,7 +940,7 @@ static int runtime_simple(struct csh_execution_context *context,
     handler = category == CSH_EXEC_EMPTY || category == CSH_EXEC_EXTERNAL ?
         NULL : bootstrap_handler;
     if (context->jobs != NULL && command.argc != 0 &&
-        csh_jobs_is_builtin(command.argv[0]) &&
+        category != CSH_EXEC_FUNCTION && csh_jobs_is_builtin(command.argv[0]) &&
         (strcmp(command.argv[0], "set") != 0 ||
             (command.argc > 1 && strcmp(command.argv[1], "--") != 0))) {
         category = strcmp(command.argv[0], "set") == 0 ?
@@ -936,7 +980,7 @@ static int context_stopped(struct csh_execution_context *context,
 {
     struct csh_state_info info;
     csh_state_get_info(context->state, &info);
-    return result->exit_requested || (result->special_builtin_error &&
+    return result->control != CSH_CONTROL_NONE || result->exit_requested || (result->special_builtin_error &&
         !(info.options & CSH_OPT_INTERACTIVE));
 }
 
@@ -1202,7 +1246,7 @@ static int context_pipeline(struct csh_execution_context *context,
     int rc = -1, previous = -1, ends[2] = {-1, -1};
     if (plan->count == 1) {
         rc = execute_plan(context, &plan->children[0], reserved, result, error);
-        if (rc == 0 && plan->negated && !result->exit_requested)
+        if (rc == 0 && plan->negated && !result->exit_requested && result->control == CSH_CONTROL_NONE)
             result->status = !result->status;
         return rc;
     }
@@ -1298,6 +1342,281 @@ done:
     return rc;
 }
 
+struct shell_function {
+    struct csh_function base;
+    const struct csh_ast *tree;
+};
+
+static void function_destroy(struct csh_function *base)
+{
+    struct shell_function *function = (struct shell_function *)base;
+    csh_ast_destroy((struct csh_ast *)function->tree);
+    free(function);
+}
+
+static int define_function(struct csh_state *state, const struct csh_ast *tree,
+    struct csh_error *error)
+{
+    struct csh_fields name = {0};
+    struct shell_function *function;
+    enum csh_state_result saved;
+    if (csh_prepare_word(state, &tree->data.function.name, CSH_EXPAND_REDIRECTION,
+        &name, error) == -1) return -1;
+    if (name.count != 1 || special_name(name.values[0])) {
+        csh_fields_destroy(&name);
+        return fail(error, "invalid function name: special builtin names are reserved", 0, 2);
+    }
+    function = calloc(1, sizeof(*function));
+    if (function == NULL) {
+        csh_fields_destroy(&name);
+        return fail(error, "cannot allocate function definition", ENOMEM, 1);
+    }
+    function->base.references = 1;
+    function->base.destroy = function_destroy;
+    function->tree = tree;
+    csh_ast_retain(tree);
+    saved = csh_state_set_function(state, name.values[0], &function->base);
+    csh_function_release(&function->base);
+    csh_fields_destroy(&name);
+    if (saved != CSH_STATE_OK)
+        return fail(error, "cannot store function definition", saved == CSH_STATE_NOMEM ? ENOMEM : 0, 1);
+    return 0;
+}
+
+static int flow_handler(struct csh_state *state, const struct csh_command *command,
+    struct csh_execution *result, struct csh_error *error, void *user)
+{
+    struct csh_execution_context local = {0}, *context = user;
+    const char *name = command->argv[0];
+    if (context == NULL) { local.state = state; context = &local; }
+    if (control_name(name)) {
+        struct csh_state_info info;
+        size_t first = 1;
+        unsigned long value = 1;
+        int returning = !strcmp(name, "return");
+        csh_state_get_info(state, &info);
+        if (first < command->argc && !strcmp(command->argv[first], "--")) ++first;
+        if (command->argc - first > 1) {
+            diagnose(name, "too many arguments", 0);
+            result->status = 2;
+            return 0;
+        }
+        if (first < command->argc) {
+            const char *operand = command->argv[first], *digits = operand;
+            char *end;
+            long number;
+            if (*digits == '+' || *digits == '-') ++digits;
+            if (!*digits) goto invalid_operand;
+            while (*digits >= '0' && *digits <= '9') ++digits;
+            errno = 0;
+            number = strtol(operand, &end, 10);
+            if (*digits || *end || errno == ERANGE || (!returning && number <= 0))
+                goto invalid_operand;
+            value = (unsigned long)number;
+        } else if (returning) value = (unsigned long)info.last_status;
+        if ((returning && info.function_depth == 0) ||
+            (!returning && context->loop_depth == 0)) {
+            diagnose(name, returning ? "not in a function" : "not in a loop", 0);
+            result->status = 2;
+            return 0;
+        }
+        result->control = returning ? CSH_CONTROL_RETURN :
+            !strcmp(name, "break") ? CSH_CONTROL_BREAK : CSH_CONTROL_CONTINUE;
+        result->levels = returning ? 0 : value > context->loop_depth ?
+            context->loop_depth : (unsigned)value;
+        result->status = returning ? (int)(value & 255u) : 0;
+        return 0;
+invalid_operand:
+        diagnose(name, returning ? "numeric status required" : "positive loop count required", 0);
+        result->status = 2;
+        return 0;
+    } else {
+        struct shell_function *function = (struct shell_function *)csh_state_function(state, name);
+        struct csh_parameter_save parameters = {0};
+        struct execution_plan plan = {0};
+        struct descriptor_reservations reserved = {0};
+        struct csh_state_info info;
+        unsigned loops = context->loop_depth;
+        int rc = -1;
+        if (function == NULL) return fail(error, "missing function definition", 0, 1);
+        csh_state_get_info(state, &info);
+        if (info.function_depth >= 128)
+            return fail(error, "function nesting limit exceeded", 0, 2);
+        csh_function_retain(&function->base);
+        if (plan_prepare(function->tree, &plan, &reserved, 0, error) == -1) goto done;
+        if (context->jobs != NULL && csh_jobs_reserve(context->jobs,
+            reserved.items, reserved.count) == -1) {
+            fail(error, "cannot reserve function descriptors", errno, 1);
+            goto done;
+        }
+        if (csh_state_push_parameters(state, command->argc - 1,
+            (const char *const *)(command->argv + 1), &parameters) != CSH_STATE_OK) {
+            fail(error, "cannot save function parameters", ENOMEM, 1);
+            goto done;
+        }
+        csh_state_set_function_depth(state, info.function_depth + 1);
+        context->loop_depth = 0;
+        /* Definition redirects are evaluated on each invocation, after the
+         * call's parameters and assignment environment have been established. */
+        plan.kind = CSH_AST_BRACE;
+        rc = execute_plan(context, &plan, &reserved, result, error);
+        csh_state_set_function_depth(state, info.function_depth);
+        context->loop_depth = loops;
+        csh_state_pop_parameters(state, &parameters);
+        if (result->control == CSH_CONTROL_RETURN) {
+            result->control = CSH_CONTROL_NONE;
+            result->levels = 0;
+        }
+done:
+        result->category = CSH_EXEC_FUNCTION;
+        plan_destroy(&plan);
+        free(reserved.items);
+        csh_function_release(&function->base);
+        if (context == &local) csh_execution_context_destroy(&local);
+        return rc;
+    }
+}
+
+/* Consume exactly this loop's boundary. Return 1 for break/unwind, 2 for a
+ * local continue, and 0 for ordinary completion. */
+static int loop_transfer(struct csh_execution *result)
+{
+    enum csh_control_transfer control = result->control;
+    if (control != CSH_CONTROL_BREAK && control != CSH_CONTROL_CONTINUE) return 0;
+    if (--result->levels != 0) return 1;
+    result->control = CSH_CONTROL_NONE;
+    return control == CSH_CONTROL_CONTINUE ? 2 : 1;
+}
+
+static int compound_body(struct csh_execution_context *context,
+    const struct execution_plan *plan, const struct descriptor_reservations *reserved,
+    struct csh_execution *result, struct csh_error *error)
+{
+    const struct csh_ast *tree = plan->tree;
+    size_t i, j;
+    int rc = 0;
+    switch (plan->kind) {
+    case CSH_AST_IF:
+        for (i = 0; i < tree->data.if_clause.branch_count; ++i) {
+            rc = execute_plan(context, &plan->children[i * 2], reserved, result, error);
+            if (rc == -1 || context_stopped(context, result)) return rc;
+            if (result->status == 0)
+                return execute_plan(context, &plan->children[i * 2 + 1], reserved, result, error);
+        }
+        if (tree->data.if_clause.else_body != NULL)
+            return execute_plan(context, &plan->children[plan->count - 1], reserved, result, error);
+        result->status = 0;
+        return 0;
+    case CSH_AST_WHILE: case CSH_AST_UNTIL: {
+        int last = 0;
+        ++context->loop_depth;
+        for (;;) {
+            int transfer;
+            rc = execute_plan(context, &plan->children[0], reserved, result, error);
+            transfer = loop_transfer(result);
+            if (rc == -1 || transfer == 1 || context_stopped(context, result)) break;
+            if (transfer == 2) continue;
+            if ((result->status == 0) != (plan->kind == CSH_AST_WHILE)) {
+                result->status = last;
+                break;
+            }
+            rc = execute_plan(context, &plan->children[1], reserved, result, error);
+            last = result->status;
+            transfer = loop_transfer(result);
+            if (rc == -1 || transfer == 1 || context_stopped(context, result)) break;
+        }
+        --context->loop_depth;
+        return rc;
+    }
+    case CSH_AST_FOR: {
+        struct csh_fields name = {0};
+        struct csh_command words = {0};
+        if (csh_prepare_word(context->state, &tree->data.for_clause.name,
+            CSH_EXPAND_REDIRECTION, &name, error) == -1) return -1;
+        if (name.count != 1) { csh_fields_destroy(&name); return fail(error, "invalid loop name", 0, 2); }
+        if (tree->data.for_clause.has_in) {
+            for (i = 0; i < tree->data.for_clause.words.count; ++i) {
+                struct csh_fields fields = {0};
+                char **grown;
+                if (csh_prepare_word(context->state, &tree->data.for_clause.words.items[i],
+                    CSH_EXPAND_ARGUMENT, &fields, error) == -1) { rc = -1; goto for_done; }
+                if (fields.count >= SIZE_MAX / sizeof(char *) - words.argc ||
+                    (grown = realloc(words.argv, (words.argc + fields.count + 1) * sizeof(char *))) == NULL) {
+                    csh_fields_destroy(&fields);
+                    rc = fail(error, "cannot allocate loop words", ENOMEM, 1);
+                    goto for_done;
+                }
+                words.argv = grown;
+                for (j = 0; j < fields.count; ++j) words.argv[words.argc++] = fields.values[j];
+                words.argv[words.argc] = NULL;
+                free(fields.values);
+            }
+        } else {
+            struct csh_state_info info;
+            csh_state_get_info(context->state, &info);
+            words.argv = calloc(info.argument_count + 1, sizeof(char *));
+            if (words.argv == NULL) { rc = fail(error, "cannot allocate loop words", ENOMEM, 1); goto for_done; }
+            for (i = 1; i <= info.argument_count; ++i) {
+                const char *parameter = csh_state_parameter(context->state, i);
+                char *word = malloc(strlen(parameter) + 1);
+                if (word == NULL) { rc = fail(error, "cannot copy loop word", ENOMEM, 1); goto for_done; }
+                strcpy(word, parameter);
+                words.argv[words.argc++] = word;
+            }
+        }
+        ++context->loop_depth;
+        for (i = 0; i < words.argc; ++i) {
+            enum csh_state_result assigned = csh_state_set_variable(context->state, name.values[0], words.argv[i]);
+            struct csh_state_info info;
+            int transfer;
+            csh_state_get_info(context->state, &info);
+            if (assigned == CSH_STATE_OK && (info.options & CSH_OPT_ALLEXPORT))
+                assigned = csh_state_update_attributes(context->state, name.values[0], CSH_VAR_EXPORT, 0);
+            if (assigned != CSH_STATE_OK) {
+                rc = fail(error, "cannot assign loop variable", assigned == CSH_STATE_NOMEM ? ENOMEM : 0, 1);
+                break;
+            }
+            rc = execute_plan(context, &plan->children[0], reserved, result, error);
+            transfer = loop_transfer(result);
+            if (rc == -1 || transfer == 1 || context_stopped(context, result)) break;
+        }
+        --context->loop_depth;
+for_done:
+        csh_fields_destroy(&name);
+        csh_command_destroy(&words);
+        return rc;
+    }
+    case CSH_AST_CASE: {
+        struct csh_fields word = {0};
+        int fallthrough = 0;
+        if (csh_prepare_word(context->state, &tree->data.case_clause.word,
+            CSH_EXPAND_REDIRECTION, &word, error) == -1) return -1;
+        for (i = 0; i < tree->data.case_clause.item_count; ++i) {
+            const struct csh_ast_case_item *item = &tree->data.case_clause.items[i];
+            int match = fallthrough;
+            for (j = 0; !match && j < item->patterns.count; ++j) {
+                struct csh_fields pattern = {0};
+                rc = csh_prepare_word(context->state, &item->patterns.items[j],
+                    CSH_EXPAND_PATTERN, &pattern, error);
+                if (rc == -1) break;
+                match = fnmatch(pattern.count ? pattern.values[0] : "",
+                    word.count ? word.values[0] : "", 0) == 0;
+                csh_fields_destroy(&pattern);
+            }
+            if (rc == -1) break;
+            if (!match) continue;
+            if (plan->children[i].count != 0)
+                rc = execute_plan(context, &plan->children[i], reserved, result, error);
+            if (rc == -1 || context_stopped(context, result) || item->terminator != CSH_AST_CASE_FALLTHROUGH) break;
+            fallthrough = 1;
+        }
+        csh_fields_destroy(&word);
+        return rc;
+    }
+    default: return fail(error, "invalid compound command", 0, 2);
+    }
+}
+
 static int execute_plan(struct csh_execution_context *context,
     const struct execution_plan *plan, const struct descriptor_reservations *reserved,
     struct csh_execution *result, struct csh_error *error)
@@ -1334,12 +1653,24 @@ static int execute_plan(struct csh_execution_context *context,
         rc = context_fork(context, &group, reserved, 0, result, error);
         break;
     }
+    case CSH_AST_FUNCTION:
+        rc = define_function(context->state, plan->tree, error);
+        if (rc == -1) expansion_failed(context->state, result);
+        break;
+    case CSH_AST_IF: case CSH_AST_FOR: case CSH_AST_WHILE:
+    case CSH_AST_UNTIL: case CSH_AST_CASE:
     case CSH_AST_BRACE: {
         struct csh_redirect_save **saves = NULL;
         struct csh_command command = {0};
         rc = runtime_redirects(context->state, plan->tree, reserved, &command, &saves, result, error);
         if (rc == 0) {
-            rc = execute_plan(context, &plan->children[0], reserved, result, error);
+            rc = plan->kind == CSH_AST_BRACE ?
+                execute_plan(context, &plan->children[0], reserved, result, error) :
+                compound_body(context, plan, reserved, result, error);
+            if (rc == -1) {
+                expansion_failed(context->state, result);
+                report_error(error);
+            }
             if (restore_redirects(&saves, plan->tree->redirection_count, error) == -1) rc = -1;
         }
         break;
@@ -1536,7 +1867,7 @@ int csh_execute_pipeline_ast(struct csh_state *state, const struct csh_ast *tree
         if (!out->stages[0].reaped) out->stages[0].status = out->execution.status;
         out->stages[0].completed = out->stages[0].reaped || rc == 0;
     }
-    if (rc == 0 && plan.negated && !out->execution.exit_requested)
+    if (rc == 0 && plan.negated && !out->execution.exit_requested && out->execution.control == CSH_CONTROL_NONE)
         out->execution.status = !out->execution.status;
 done:
     if (rc == -1 && out->execution.redirection_failed &&

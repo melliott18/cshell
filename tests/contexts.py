@@ -85,8 +85,8 @@ def main():
             output=b'VALUE=parent\n')
         for fd in range(3, 24):
             run(f'{{ : 1>&{fd}; }} >private-test', status=1, diagnostic=True)
-        run(f'{{ >forbidden; if true; then true; fi; }}', status=2, diagnostic=True)
-        assert not (cwd / 'forbidden').exists()
+        run('{ >compound-output; if true; then true; fi; }')
+        assert (cwd / 'compound-output').read_bytes() == b''
         result = bounded_run([api, helper_path], cwd=cwd, env=env, timeout=20)
         assert result.returncode == 0 and result.stdout == b'context API checks passed\n', result
         assert result.stderr.count(b'cannot apply redirection') == 7, result
