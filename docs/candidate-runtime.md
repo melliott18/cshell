@@ -25,17 +25,25 @@ environment. The runtime calls the parser at complete-command boundaries;
 commands that read stdin receive the bytes after their command line. Script
 files and command strings leave stdin available independently.
 
-Each complete command must satisfy the existing [literal adapter](execution.md):
-one foreground simple command or simple-command pipeline, literal quoting,
-assignment prefixes, external lookup, state builtins, `exit`, and ordered
-redirections including literal here-documents. Separate physical command lines
-execute sequentially. Pipeline stages use child execution environments, while a
-singleton state builtin can update the parent. Parameter/command/arithmetic
-expansion, globbing, AND/OR lists, multi-command semicolon lists, background
-commands, compound commands, and function definitions are rejected before any
-part of that complete construct executes. Earlier complete commands may already
-have executed. There is no unsupported-AST fallback. The executor's existing
-`ENOEXEC` handling of external text executables still uses `/bin/sh`.
+Each complete command uses the [execution context API](execution.md#lists-groups-and-background-contexts):
+simple commands, pipelines (including group stages), sequential lists, AND/OR
+lists, brace groups, parenthesized subshells, and asynchronous lists. Literal
+quoting, assignment prefixes, external lookup, state builtins, `exit`, and
+ordered redirections including literal here-documents are supported. Brace
+mutations persist; subshell, background, and multi-stage pipeline mutations
+remain isolated. Background execution publishes an identifier in shell state;
+parameter expansion, including spelling `$!` in a command, still awaits CSH-008.
+
+Parameter/command/arithmetic expansion, globbing, conditionals, loops, case
+commands, and function definitions are rejected before any part of that complete
+construct executes. Earlier complete commands may already have executed.
+There is no unsupported-AST fallback. The executor's existing `ENOEXEC` handling
+of external text executables still uses `/bin/sh`.
+
+The runtime keeps one execution context across parser reads. It polls registered
+background PIDs at execution boundaries and releases the registry at exit,
+without waiting for running jobs. Idle input has no SIGCHLD wakeup yet; a
+completed child can remain waitable until the next command or shell exit.
 
 Syntax and incomplete-EOF errors include source, line, and column. Invocation
 errors identify an offending argument when available. Command diagnostics are
@@ -78,7 +86,7 @@ and the context distinction for special-builtin errors in
 [shell errors](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_08_01).
 Signed operands, modulo reduction outside 0–255, and numeric overflow diagnosis
 are explicit project choices in otherwise unspecified operand cases. This
-runtime does not implement traps, job control, or compound subshell syntax.
+runtime does not implement traps or job control.
 
 ## Interactive boundary
 

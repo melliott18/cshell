@@ -120,12 +120,20 @@ def cases(helper):
                                   "stderr": "cshell: export: invalid operand\n",
                                   "status": 0}})
     absent = {"effect": {"type": "absent"}}
-    for syntax in (f"{helper} args a && {helper} args b",
-                   f"{helper} args a || {helper} args b", f"{helper} args a; {helper} args b",
-                   f"{helper} args a &", f"({helper} args compound)",
-                   f"{{ {helper} args compound; }}", "if true; then true; fi", "f() { true; }"):
+    for syntax in ("if true; then true; fi", "f() { true; }"):
         cross(f"unsupported construct {syntax}", f"{syntax} >effect\n{helper} args never\n", status=2,
-              stderr="cshell: only a foreground simple command or pipeline is supported\n", files=absent)
+              stderr="cshell: unsupported compound command\n", files=absent)
+    cross("AND OR equal precedence", f"{helper} status 0 || {helper} args skipped && {helper} args yes\n",
+          stdout="[yes]\n")
+    cross("list final status", f"{helper} status 0; {helper} status 19\n", status=19)
+    cross("brace state persists", f"{{ export CSH_GROUP=brace; }}; {helper} environment CSH_GROUP\n",
+          stdout="CSH_GROUP=brace\n")
+    cross("subshell state isolated", f"(export CSH_GROUP=child); {helper} environment CSH_GROUP\n",
+          stdout="CSH_GROUP=<unset>\n")
+    cross("subshell exit isolated", f"(exit 7); {helper} args alive\n", stdout="[alive]\n")
+    cross("brace exit stops list", f"{{ exit 7; }}; {helper} args never\n", status=7)
+    cross("compound pipeline", f"{{ {helper} args grouped; }} | ({helper} copy)\n",
+          stdout="[grouped]\n")
     for word in ("$HOME", "$((1+2))", "*", "~", "$(>nested)", "`>nested`"):
         message = ("command substitution is not supported by literal execution"
                    if word.startswith("$(>") else "expansion is not supported by literal execution")

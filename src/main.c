@@ -36,6 +36,7 @@ int main(int argc, char **argv)
 {
     struct csh_invocation invocation = {0};
     struct csh_state *state = NULL;
+    struct csh_execution_context context = {0};
     struct csh_parser *parser = NULL;
     struct csh_error error;
     struct csh_state_info info;
@@ -56,6 +57,7 @@ int main(int argc, char **argv)
         csh_state_set_status(state, error.status);
         goto done;
     }
+    context.state = state;
     csh_parser_set_read_hook(parser, prompt, &invocation);
     for (;;) {
         struct csh_ast *tree = NULL;
@@ -68,7 +70,7 @@ int main(int argc, char **argv)
             csh_state_set_status(state, error.status);
             break; /* Parser errors are sticky; recovery belongs to CSH-011. */
         }
-        executed = csh_execute_ast(state, tree, &execution, &error);
+        executed = csh_execute_context_ast(&context, tree, &execution, &error);
         csh_ast_destroy(tree);
         if (executed == -1)
             diagnose(&error, NULL);
@@ -82,6 +84,7 @@ done:
         csh_state_get_info(state, &info);
         status = info.last_status;
     }
+    csh_execution_context_destroy(&context);
     csh_parser_destroy(parser);
     csh_state_destroy(state);
     csh_invocation_destroy(&invocation);

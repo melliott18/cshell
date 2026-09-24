@@ -95,7 +95,18 @@ builtin subshell isolation, explicit redirection precedence, and partial-launch
 child/descriptor cleanup. Every stage's raw and converted status is retained.
 These API checks use `build/tests/execute_fixture`; CSH-018/CSH-039 also test
 pipelines through the public `cshell` in all input modes. `pipefail`, process
-groups, job control, and compound stages remain with CSH-010, CSH-011, and CSH-021.
+groups, and job control remain with CSH-010 and CSH-011. CSH-021 adds compound
+stages as described below.
+
+## Replacement context evidence
+
+CSH-021 adds public-runtime and API evidence through `make test-context` for sequential and
+AND/OR lists, brace/subshell state isolation, group redirection lifetimes,
+compound pipeline stages, asynchronous return and background PID ownership.
+Synchronization-based reaping checks and allocation/pipe/fork/wait injection
+cover cleanup. Background PID storage is implemented; general `$!` expansion,
+retained wait status, idle SIGCHLD handling and job control remain outside this
+subset. See [Execution contexts](execution.md#lists-groups-and-background-contexts).
 
 ## Replacement alias evidence
 
