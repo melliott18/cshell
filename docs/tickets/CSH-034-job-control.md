@@ -1,6 +1,6 @@
 # CSH-034: Implement process groups and terminal job control
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-011
@@ -77,3 +77,12 @@ Output-error fixtures also check closed descriptors without leaking libc stream
 buffers. Full trap/input recovery, signal inheritance review, exit/hangup policy,
 and the integrated CSH-011 acceptance review remain CSH-035 work; general option
 and invocation parsing remains CSH-032. No full POSIX/UP/XSI claim is made.
+
+## Integration record
+
+- Implementation commits: `cdcb359` and `9887f8b`.
+- CSH-026 integration merge: `a131847`.
+- Merged by [PR #66](https://github.com/melliott18/cshell/pull/66) as
+  `045a6fa`; [issue #35](https://github.com/melliott18/cshell/issues/35) closed.
+- Both hosted workflow runs passed on Ubuntu, macOS, and Docker after rerunning
+  one transient Ubuntu PTY timeout in the duplicate run.
