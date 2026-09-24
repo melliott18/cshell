@@ -1,6 +1,6 @@
 # CSH-018: Integrate invocation modes with command and shell exit statuses
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-003
@@ -108,7 +108,15 @@ POSIX.1-2024 specification decisions.
   Harness timeout, output limit, and cleanup implementations are unchanged.
 - `make test` and `make test-pty` include the candidate pipe and terminal suites
   respectively, so existing native and Docker CI paths run them. Native
-  ASan/UBSan CI also explicitly runs both candidate suites. Hosted CI results
-  remain to be recorded after the branch is pushed.
+  ASan/UBSan CI also explicitly runs both candidate suites.
 
-The ticket remains in review until integration into `main`.
+Before merge, the candidate was integrated with assignment environments, state
+builtins, and pipeline execution. The final cross-mode suite passed **267 pipe
+cases** and **9 PTY cases**; full native, harness, and strict ASan/UBSan suites
+also passed locally. Both hosted workflows passed Ubuntu/GCC, macOS/Clang, and
+Docker Linux.
+
+Integrated into `main` through [pull request #58](https://github.com/melliott18/cshell/pull/58)
+on 2026-09-23. Implementation commit: `937fdec`; sanitizer fixes: `df33160` and
+`74e1418`; cross-feature integration commit: `32bedc1`; merge commit: `0cd580c`.
+GitHub closed issue #19 when the pull request merged.
