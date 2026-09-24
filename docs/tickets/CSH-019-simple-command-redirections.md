@@ -125,3 +125,8 @@ semantics, and default-executable integration remain with their existing owners.
 - `make test-execute` joins `make test`, Docker, and native CI; CI's strict
   ASan/UBSan run now includes it. These are replacement module checks, not a
   default-runtime cutover or a complete POSIX conformance claim.
+- The external descriptor-observer helper is intentionally built without
+  sanitizer runtime linkage. On macOS 15, AddressSanitizer can reopen an
+  intentionally closed standard descriptor before the helper reaches `main`,
+  masking the post-`exec` state being tested. Executor, parser, state, and
+  fault-injection objects remain instrumented in sanitizer runs.

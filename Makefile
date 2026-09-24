@@ -195,7 +195,10 @@ build/tests/execute_fixture: tests/execute_fixture.c $(EXECUTE_OBJECTS) $(EXECUT
 
 build/tests/execute_helper: tests/execute_helper.c
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+	# The helper observes descriptors after exec; sanitizer startup can reopen
+	# intentionally closed standard descriptors before main on macOS.
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(filter-out -fsanitize=%,$(CFLAGS)) \
+		$(filter-out -fsanitize=%,$(LDFLAGS)) -o $@ $< $(LDLIBS)
 
 $(EXECUTE_FAULT_OBJECTS): build/tests/execute-fault-%.o: src/%.c $(EXECUTE_HEADERS) tests/execute_faults.h
 	mkdir -p $(dir $@)
