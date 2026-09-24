@@ -1,6 +1,6 @@
 # CSH-003: Define invocation, input lifecycle, and behavioral testing
 
-- Status: backlog
+- Status: done
 - Type: feat
 - Kind: milestone
 - Parent: None
@@ -33,11 +33,11 @@ standard input, with correct prompting and observable exit statuses.
 
 ## Acceptance criteria
 
-- [ ] Each input mode runs commands and exits on exhausted input.
-- [ ] Non-interactive execution emits no prompt or startup banner.
-- [ ] File-open and usage errors produce diagnostics and failure statuses.
-- [ ] Child termination and command-not-found statuses are retained in shell state.
-- [ ] `exit` with and without an operand has defined, tested behavior.
+- [x] Each input mode runs commands and exits on exhausted input.
+- [x] Non-interactive execution emits no prompt or startup banner.
+- [x] File-open and usage errors produce diagnostics and failure statuses.
+- [x] Child termination and command-not-found statuses are retained in shell state.
+- [x] `exit` with and without an operand has defined, tested behavior.
 - [x] Tests assert stdout, stderr, status, and relevant filesystem effects.
 - [x] The runner reports hangs as failures and cleans up spawned process groups.
 - [x] Tests and CI instructions are linked from the contributor documentation.
@@ -59,9 +59,9 @@ Interactive terminal behavior receives full pseudo-terminal coverage in CSH-011.
 
 - [x] [CSH-016: Input and invocation](CSH-016-input-and-invocation.md) is done.
 - [x] [CSH-017: Test harness and CI](CSH-017-test-harness-and-ci.md) is done.
-- [ ] [CSH-018: Status and CLI integration](CSH-018-status-and-cli-integration.md)
+- [x] [CSH-018: Status and CLI integration](CSH-018-status-and-cli-integration.md)
   is done.
-- [ ] The original acceptance criteria above pass across all three invocation
+- [x] The original acceptance criteria above pass across all three invocation
   modes through the native and Docker entry points, with CI evidence recorded.
 
 CSH-016 and CSH-017 start independently after CSH-001. CSH-016 defines input
@@ -70,3 +70,9 @@ CSH-019 executor, and harness in a testable candidate runtime. CSH-039 switches
 the default executable after pipeline validation; this milestone can complete
 on the candidate, with the tested target recorded explicitly. Legacy repairs
 are not prerequisites for either path.
+
+All three child tickets are complete. CSH-018's final candidate suite exercised
+267 pipe cases across `-c`, script-file, and redirected-stdin modes plus 9 PTY
+cases. Full native, harness, strict ASan/UBSan, Ubuntu/GCC, macOS/Clang, and
+Docker Linux checks passed before the final child merged through pull request
+#58 on 2026-09-23.
