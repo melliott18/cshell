@@ -1,6 +1,6 @@
 # CSH-019: Execute simple commands with ordered redirections
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-006
@@ -130,3 +130,9 @@ semantics, and default-executable integration remain with their existing owners.
   intentionally closed standard descriptor before the helper reaches `main`,
   masking the post-`exec` state being tested. Executor, parser, state, and
   fault-injection objects remain instrumented in sanitizer runs.
+
+Integrated into `main` through [pull request #54](https://github.com/melliott18/cshell/pull/54)
+on 2026-09-23. Implementation commit: `5d427b9`; sanitizer-fixture commits:
+`eff0bae` and `130d030`; integration commit after CSH-025, CSH-027, and CSH-030:
+`dc36799`; merge commit: `9026c0e`. GitHub closed issue #20 when the pull request
+merged. Both hosted workflows passed Ubuntu/GCC, macOS/Clang, and Docker Linux.
