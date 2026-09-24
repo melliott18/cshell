@@ -133,3 +133,11 @@ acceptance and integration evidence. Superseded tickets retain their historical
 scope and the reason work was replaced; close their GitHub issues as not planned.
 Never mark them done or silently treat supersession as a satisfied dependency.
 Remove or redirect incoming dependencies as part of the replacement plan.
+
+### Arithmetic-first replay follow-up
+
+[CSH-041](tickets/CSH-041-arithmetic-substitution-replay.md) is an additional
+CSH-008 child depending on CSH-005 and CSH-024. It closes the lexer/parser
+checkpoint/replay gap recorded during those implementations; CSH-026's runtime
+integration does not resolve that ambiguity or close the expansion milestone.
+The original dependency diagrams above retain their initial split layout.

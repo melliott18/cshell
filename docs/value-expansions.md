@@ -2,8 +2,9 @@
 
 [CSH-024](tickets/CSH-024-value-expansions.md) adds independent value expansion
 in [`expand.h`](../include/cshell/expand.h) and [`expand.c`](../src/expand.c).
-It consumes the lexer's owned WORD tokens and shell-state storage. The default
-`cshell` executable uses a bounded literal adapter pending CSH-008 integration. The value API does not execute commands or discard quote metadata.
+It consumes the lexer's owned WORD tokens and shell-state storage. CSH-026
+connects this API to the public executable through `src/prepare.c`.
+The value API delegates command execution and retains quote metadata.
 [CSH-025](tickets/CSH-025-field-and-pathname-expansion.md) adds the separate
 `csh_expand_fields()` stage in [`fields.c`](../src/fields.c) and
 [`pathname.c`](../src/pathname.c) to produce final fields.
@@ -21,6 +22,8 @@ are independently owned: neither the token nor state must remain alive.
 | `CSH_EXPAND_ARGUMENT` | One lexical command/argument word; preserves positional field boundaries and marks unquoted expansion bytes for later IFS splitting |
 | `CSH_EXPAND_ASSIGNMENT` | The value word only, excluding `NAME=`; permits tilde after syntactic unquoted colons and suppresses splitting/globbing |
 | `CSH_EXPAND_PATTERN` | One pattern operand; suppresses splitting/globbing while preserving quoted pattern characters |
+| `CSH_EXPAND_REDIRECTION` | One scalar file/descriptor operand; no splitting or pathname generation, even interactively |
+| `CSH_EXPAND_HEREDOC` | A body-mode token; no root tilde, splitting, or pathname generation |
 
 The parser/assignment owner must provide a structured value word for assignment
 context. Relocate fragment byte offsets when constructing a value-only token;
@@ -144,7 +147,7 @@ also needs lexer input checkpoint/replay to reinterpret an invalid arithmetic
 candidate as command substitution. This was coordinated with concurrent
 CSH-005 work: this ticket supplies the probe; the existing lexer still reserves
 `$((` for arithmetic and cannot replay a failed candidate. The parser/lexer
-checkpoint/replay integration remains an explicit CSH-005/CSH-026 follow-up.
+checkpoint/replay integration is tracked by [CSH-041](tickets/CSH-041-arithmetic-substitution-replay.md).
 `$((echo hi); )` is still diagnosed as incomplete arithmetic; the explicit
 `$( (echo hi); )` form uses the existing command-parser handshake. No full
 ambiguity-resolution claim is made by these module tests.
@@ -152,9 +155,10 @@ ambiguity-resolution claim is made by these module tests.
 ## Deferred substitutions and integration
 
 `csh_expand_options.substitute` is a lazy callback receiving state, the borrowed
-token, and the command/backquote fragment index. CSH-026 can associate that
-index with the parser-owned command AST, execute it in the proper isolated
-environment, capture output/status, and remove trailing newlines. The callback
+token, and the command/backquote fragment index. CSH-026 associates that
+index with the parser-owned command AST and executes it in a forked environment,
+capturing output/status and removing trailing newlines. Selected backquotes are
+decoded once and parsed through the ordinary parser. The callback
 returns borrowed, already-normalized bytes valid until its next invocation;
 expansion copies them immediately and rejects embedded NULs. The callback must
 report failures through the expansion result/error contract.
@@ -162,8 +166,8 @@ report failures through the expansion result/error contract.
 Without a callback, an encountered command/backquote returns `DEFERRED` with
 its fragment index and no partial output or state mutation. Unselected operands
 never request substitution. This is an explicit integration boundary, not a
-command parser or an executor. CSH-026 owns real execution order, capture,
-substitution status, here-document context, and end-to-end scripts; CSH-025 owns
+command parser or an executor. CSH-026 implements execution order, capture,
+substitution status, here-document context, and end-to-end scripts; CSH-025 implements
 IFS splitting, filename generation, and final metadata removal described below.
 
 Run `make test-expand` for bounded API, arithmetic, decoder, and allocation-fault
@@ -226,9 +230,9 @@ A quoted byte within a POSIX bracket subexpression (class, collating element,
 or equivalence class) makes that subexpression literal. Reference shells differ
 on quoted class names; fixtures assert this protection policy directly.
 These escapes encode matching semantics, not shell syntax, and must not be
-re-lexed or used as ordinary argument strings. Existing parameter-removal
-operators continue using the value engine's internal pattern consumer; its
-quoted POSIX class-name protection remains a recorded CSH-026 integration gap.
+re-lexed or used as ordinary argument strings. CSH-026 routes parameter-removal
+operands through this same final pattern
+encoder, including protection for quoted POSIX class names and empty patterns.
 
 The optional `csh_field_options.interrupted` callback is polled during splitting,
 traversal, and output copying. It runs in ordinary execution and must not mutate
@@ -242,6 +246,56 @@ failures and filesystem `ENOMEM` return `NOMEM`; other filesystem failures
 
 This finalization stage cannot reverse earlier successful value-expansion side
 effects. An executor requiring an atomic whole-word operation should checkpoint
-state around both calls. CSH-026 still owns command execution/capture,
-here-document and redirection policies, and integration with the execution
-runtime. The public executable does not yet call these expansion APIs.
+state around both calls. CSH-026 takes a checkpoint around both stages in
+command preparation.
+The public executable uses these APIs for all command words and expanded
+redirection operands.
+
+## Integrated execution and capture
+
+`src/prepare.c` expands command arguments first, applying declaration context to
+assignment-shaped operands of resolved `export` and `readonly` commands. It then
+expands and applies each redirection in source order, followed by prefix values.
+Assignment slices retain fragment identities and rebase byte offsets so nested
+substitutions continue to use the parser's ASTs. Later prefix values see earlier
+prefix assignments; final persistence/export still depends on command category.
+Arguments see the prior environment. Redirections of commands with no command
+name expand against a copied state. Redirection and here-document `$@`/`$*` join
+with the first IFS character, the same documented scalar-context choice as
+assignment operands.
+
+Substitutions fork copied state and cwd, use a fresh execution context, and
+capture stdout through a close-on-exec pipe. The parent drains output before
+waiting for its exact child PID. This handles output larger than pipe capacity
+and leaves unrelated children waitable. Every trailing newline byte is removed;
+interior newlines and other non-NUL bytes survive. A capture allocation failure
+drains and discards remaining output before reaping. Embedded NUL output is a
+diagnosed expansion error. `exit` and expansion errors terminate only the
+substitution environment; its status becomes the substitution status.
+The last obtained substitution status becomes the final status when no command
+name remains. While expanding a command, `$?` retains the prior pipeline status
+from the current environment, as specified by Issue 8 section 2.5.2; older host
+shells can differ here. A substitution starts with that status in its copied state.
+
+`csh_parser_document()` uses a dedicated lexer body mode, without wrapping body
+bytes in synthetic shell quotes. Literal single/double quotes, whitespace,
+operators and tilde survive; parameter, arithmetic and command/backquote
+expansions remain active. Backslash only protects dollar, backquote, backslash
+and newline at body level. Nested commands use the ordinary command lexer and
+parser, including their own here-documents. Parsing/expansion of the body is
+lazy; a skipped command never interprets its collected body.
+
+Expansion failures use `csh_error_message()` for the owned diagnostic and
+`error.reported` to avoid duplicate output when the executor reports under active
+redirections. Noninteractive contexts request exit; interactive contexts return
+to the next parser boundary. A failing word restores state across value and
+field expansion; completed earlier words, substitutions and filesystem effects
+are not rolled back. Pipeline stage expansion occurs after connecting that
+stage's pipes and inside the stage's isolated environment.
+
+`make test-runtime test-runtime-pty test-substitution` covers these boundaries,
+including large captures, status, state, exact output, private descriptor
+relocation, initially closed standard descriptors, and injected resource
+failures. The [CSH-026 ticket](tickets/CSH-026-substitution-and-heredoc-integration.md)
+records validation. These checks do not close the CSH-008 milestone or establish
+full POSIX compliance.

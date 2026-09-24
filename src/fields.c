@@ -180,7 +180,8 @@ static enum csh_expand_result emit(const char *raw,
     const struct csh_field_options *options, struct csh_fields *out)
 {
     enum csh_expand_result result;
-    if (context == CSH_EXPAND_ASSIGNMENT ||
+    if (context == CSH_EXPAND_ASSIGNMENT || context == CSH_EXPAND_REDIRECTION ||
+        context == CSH_EXPAND_HEREDOC ||
         (context == CSH_EXPAND_ARGUMENT && (shell_options & CSH_OPT_NOGLOB)))
         return csh_fields_append(out, raw, length);
     result = make_pattern(raw, protection, length, pattern, context, options);
@@ -295,7 +296,7 @@ enum csh_expand_result csh_expand_fields(const struct csh_state *state,
         error->fragment = CSH_FRAGMENT_ROOT;
     }
     if (state == NULL || expansion == NULL || out == NULL ||
-        expansion->context < CSH_EXPAND_ARGUMENT || expansion->context > CSH_EXPAND_PATTERN ||
+        expansion->context < CSH_EXPAND_ARGUMENT || expansion->context > CSH_EXPAND_HEREDOC ||
         (expansion->field_count != 0 && expansion->fields == NULL)) goto done;
     if (csh_state_get_variable(state, "IFS", &view) != CSH_STATE_OK ||
         csh_state_get_info(state, &info) != CSH_STATE_OK) goto done;

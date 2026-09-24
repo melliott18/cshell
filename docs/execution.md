@@ -18,29 +18,29 @@ initialization represents an empty command. `csh_command_destroy()` releases all
 owned entries and resets the command. An empty command may still carry
 redirections.
 
-This is the handoff for CSH-008 expansion integration. Argument strings and file
-paths are already prepared; `csh_execute_command()` does not expand them. The
-assignment array contains final name/value pairs in source order. CSH-023 applies
-these pairs according to the resolved execution category.
+Argument strings, assignment values and file paths are already prepared;
+`csh_execute_command()` does not expand them. CSH-023 applies the final assignment
+pairs according to the resolved execution category. `substitution_status` holds
+the last substitution status (zero when none ran), used by empty commands.
 
-`csh_command_from_ast()` borrows an AST and creates an owned command. Its output
-must be empty on entry and remains empty on failure. The temporary adapter
-accepts a simple-command node or the parser's singleton foreground list around
-one simple command. It removes literal quotes and escapes while preserving
-quoted empty arguments; dollar-single-quoted words use the shared
-[quote decoder](value-expansions.md). It rejects expansions, any
-unquoted `*`, `?`, `[`, or `~` byte, pipelines, compound commands, and unsupported
-lists
-before executing any part of that construct. Quoting an otherwise special
-character permits its literal value. Literal assignment prefixes, including quoted
-empty values, pass through this adapter; general expansion remains CSH-008 work.
+`csh_command_from_ast(state, tree, out, error)` materializes a simple command or
+singleton foreground list. It performs value and field expansion, can execute
+selected substitutions, and leaves output empty on failure. It does not apply
+redirections while preparing values. Library callers choosing this helper own
+that preparation boundary and any completed expansion effects.
 
-The adapter is deliberately separate from the existing value-expansion module.
-Parsing a construct successfully does not mean this execution subset supports
-it. CSH-008 replaces the adapter with expansion integration.
-`csh_execute_pipeline_ast()` prepares every simple stage of one foreground
-pipeline through this adapter, rejecting the entire construct if any stage is
-unsupported. `csh_execute_ast()` accepts the same subset and discards stage details.
+Runtime AST execution uses the phased preparation in `src/prepare.c`: arguments,
+then expansion/application of each redirection, then prefix values and dispatch.
+Consequently assignment substitutions see the command's redirected descriptors.
+Every reached word uses current state. Skipped list branches and parameter
+operands remain unevaluated. Argument fields retain quote provenance through IFS
+splitting and pathname expansion. Assignment, redirection, pattern, and
+here-document contexts have separate policies; see [Value expansion](value-expansions.md).
+
+`csh_execute_pipeline_ast()` and `csh_execute_ast()` accept a foreground simple
+command or pipeline, including group stages. They preflight supported syntax,
+then expand stages in their actual execution environments after pipe connection.
+The latter API discards stage details.
 
 ## Dispatch, ownership, and results
 
@@ -57,15 +57,15 @@ The API return value and shell status have different meanings:
 | Return | Meaning |
 | --- | --- |
 | `0` | Dispatch completed, including a nonzero command status or a child redirection/exec failure. |
-| `-1` | Preparation, parent redirection, fork, wait, or another internal operation failed; `error` contains a static diagnostic. |
+| `-1` | Preparation, parent redirection, fork, wait, or another internal operation failed; `error` contains a diagnostic selected by `csh_error_message()`. |
 
 The executor owns exactly the child it forks for an external command and waits
 with `waitpid()` for that PID. A child that cannot execute reports its error
 once and terminates; it never resumes the caller's input loop. A signal-terminated
 child produces `128 + signal_number`. The library does not exit the parent;
 the caller must honor `exit_requested` after descriptor restoration.
-For errors returned to the caller, print the returned diagnostic once after the
-API returns. Child failures already print in the child under its active
+For errors returned to the caller, print `csh_error_message(error)` once after
+the API returns unless `error.reported` is set. Child failures already print in the child under its active
 redirections; a child redirection failure has status 1.
 
 External lookup uses the state's `PATH` variable and execution uses its exported
@@ -142,9 +142,11 @@ and parameters survive; the final command status is stored after restoration.
 Nested invocations restore scopes in reverse order. These operations are
 serialized along with descriptor mutation.
 
-Persistent batches commit before redirections (an allowed ordering for empty
-and special-builtin commands), so a later redirection or handler failure does
-not undo them. External launch preparation copies the prefixed `PATH` and
+Prepared-command dispatch commits persistent batches before its redirections
+(an allowed ordering for empty and special-builtin commands). Runtime AST
+execution expands/applies redirections before prefix values; later prefix values
+see earlier ones through a temporary selective save, before dispatch commits
+the category-specific batch. Unrelated expansion side effects persist. External launch preparation copies the prefixed `PATH` and
 exported environment, then restores shell variables before forking. No path
 changes the host process environment. Command values must be independently
 owned as required by `struct csh_command`, not borrowed from mutable shell state.
@@ -153,9 +155,9 @@ owned as required by `struct csh_command`, not borrowed from mutable shell state
 
 `csh_execute_pipeline()` borrows an array of prepared commands, a nonzero count,
 a negation flag, and shell state. `csh_execute_pipeline_ast()` accepts a simple
-command or one foreground pipeline (including `!`) and prepares all stages
-before dispatch. Neither API accepts compound stages, background execution, or
-AND/OR/sequential lists; use `csh_execute_context_ast()` for those contexts. Both APIs initialize an
+command or one foreground pipeline (including `!` and group stages), expanding
+each stage in its child. The prepared API accepts only final simple commands.
+Use `csh_execute_context_ast()` for background execution and AND/OR/sequential lists. Both APIs initialize an
 empty `csh_pipeline_result`; the caller must call
 `csh_pipeline_result_destroy()` after success **or failure**, before reusing it.
 The destructor is safe on a zeroed or already destroyed result.
@@ -193,7 +195,7 @@ that were not launched if setup failed:
 | Field | Meaning |
 | --- | --- |
 | `pid` | Owned direct child identity, or zero for an unlaunched stage or singleton parent builtin. |
-| `category` | Empty, external, regular builtin, or special builtin command. |
+| `category` | Resolved category for prepared commands and singleton simple ASTs; `CSH_EXEC_UNRESOLVED` for AST multi-stage pipelines, whose command names resolve in children. |
 | `completed`, `status` | `status` is valid when `completed` is set; it is never negated. |
 | `reaped`, `wait_status` | Raw `waitpid` result is valid when `reaped` is set; inspect with `WIFEXITED`/`WIFSIGNALED` and related macros. |
 
@@ -233,11 +235,13 @@ policy remain separate work.
 records; state stores variables, options, parameters, last status and the last
 background identifier. Do not copy a context or reap its children elsewhere.
 The older `csh_execute_ast()` and `csh_execute_pipeline_ast()` remain synchronous
-simple-command/pipeline convenience APIs with their original subset contract.
+foreground simple-command/pipeline convenience APIs.
 
-Preparation builds an owned literal execution plan before dispatch. Unsupported
-syntax or expansion anywhere in the complete tree is rejected before effects,
-even in a branch that would be skipped. A maximum nesting depth of 256 bounds
+Preparation builds a structural execution plan borrowing the AST. Unsupported
+compound syntax anywhere in that tree is rejected before effects, even in a
+branch that would be skipped. Words and here-document bodies expand only when
+execution reaches their command, and lazy substitution bodies are preflighted
+when selected. A maximum nesting depth of 256 bounds
 recursive preparation/execution. Preparation does not resolve future commands
 against current state: earlier `cd`, assignment, and export operations can still
 change later command lookup and environments. The plan is freed after dispatch;
@@ -332,16 +336,13 @@ boundary on both success and failure.
 
 ## Scope and validation
 
-The supported subset has no general expansion, conditional/loop/function execution, job-control,
-pipefail/noclobber option behavior, or full builtin
-semantics.
-Both `>` and `>|` currently create or truncate output files. The AST front end
-collects here-documents; CSH-008 owns their general expansion. Direct API clients
-can supply prepared byte data independently of the literal adapter's limits.
-The adapter accepts quoted-delimiter bodies literally and rejects any unquoted
-body containing `$`, a backquote, or a backslash. Bodies without those bytes pass
-through unchanged. Large bodies use temporary-file input rather than requiring
-a pipe reader to run while the parent writes them.
+Conditional/loop/function execution, job control, pipefail/noclobber option
+behavior, and full builtin semantics remain incomplete. Both `>` and `>|`
+currently create or truncate output files. The AST front end collects
+here-documents; CSH-026 expands unquoted bodies when reached and preserves
+quoted-delimiter bodies literally. Direct API clients can supply prepared byte
+data. Large bodies use temporary-file input rather than requiring a pipe reader
+to run while the parent writes them.
 
 Run `make test-execute test-pipeline test-context` for the replacement execution
 fixtures and public-runtime context behavior. See
@@ -358,3 +359,13 @@ callers and contexts without a manager retain their synchronous/nonterminal
 contracts. `csh_execution_context_destroy` destroys an attached manager and
 restores its saved signal dispositions. See [Job control](job-control.md) for
 terminal handoff, status retention, builtin dispatch, and the input wait hook.
+
+### Private descriptors during expansion
+
+Descriptor saves are registered for their lifetime under the existing serialized
+mutation contract. Before applying a new redirection, any enclosing backup that
+collides with a newly expanded operand is relocated, leaving the original
+private descriptor closed. This preserves errors for `1>&$fd` when `$fd` names a
+closed user descriptor. After fork, a fresh shell context closes inherited
+backups; the parent retains its own restoration tokens. Saves restore in reverse
+order on execution, expansion, assignment and redirection failure.

@@ -21,6 +21,7 @@ pid_t csh_execute_fault_fork(void);
 int csh_execute_fault_setpgid(pid_t pid, pid_t group);
 int csh_execute_fault_tcsetpgrp(int fd, pid_t group);
 int csh_execute_fault_tcsetattr(int fd, int action, const struct termios *modes);
+ssize_t csh_execute_fault_read(int fd, void *bytes, size_t length);
 pid_t csh_execute_fault_waitpid(pid_t pid, int *status, int options);
 
 #ifndef CSHELL_EXECUTE_FAULT_IMPLEMENTATION
@@ -37,6 +38,7 @@ pid_t csh_execute_fault_waitpid(pid_t pid, int *status, int options);
 #define tcsetpgrp csh_execute_fault_tcsetpgrp
 #define tcsetattr csh_execute_fault_tcsetattr
 #define fork csh_execute_fault_fork
+#define read csh_execute_fault_read
 #define waitpid csh_execute_fault_waitpid
 #endif
 #endif

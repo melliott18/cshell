@@ -19,12 +19,15 @@ printf 'exit 23\n' | ./cshell
 ```
 
 Enter `exit` or send EOF to quit. The [runtime](docs/candidate-runtime.md) supports
-literal simple commands, external lookup, state builtins including `cd` and
-`exit`, ordered redirections, and concurrent pipelines through command strings,
-script files, and stdin. Non-interactive execution prints no prompt or banner.
-Lists, groups, background jobs, and interactive [job control](docs/job-control.md)
-are supported. Expansion, remaining compound execution, aliases, and traps remain incomplete;
-unsupported syntax or expansion is diagnosed before that construct executes.
+expanded simple commands, external lookup, state builtins including `cd` and
+`exit`, lists, groups, ordered redirections, and concurrent pipelines through
+command strings, script files, and stdin. Command substitutions and expanded
+here-documents use the same parser and executor. Non-interactive execution prints
+no prompt or banner. Background jobs and interactive
+[job control](docs/job-control.md) are supported. Control-flow commands,
+functions, runtime aliases, full shell options, and traps remain incomplete;
+unsupported syntax is
+diagnosed before that construct executes.
 See [Runtime behavior](docs/candidate-runtime.md) for the exact subset and statuses.
 
 ```sh
@@ -41,6 +44,7 @@ make test-lexer    # Replacement lexer/token API checks only
 make test-parser   # Replacement parser/AST API checks only
 make test-alias    # Alias storage, handlers, and token/AST substitution
 make test-expand   # Replacement value/field expansion, arithmetic, and quote APIs
+make test-substitution # Integrated expansion, child ownership, and capture failures
 make test-fields   # IFS splitting, pathname expansion, and cleanup checks
 make test-builtins # Replacement state builtins and executor integration
 make test-state    # Replacement shell-state API checks only
@@ -109,7 +113,8 @@ src/pathname.c   Component-wise filename generation
 src/arithmetic.c Checked signed-long arithmetic evaluation
 src/quote.c      Shared dollar-single-quote escape decoding
 src/builtin.c    Replacement state builtin handlers
-src/execute.c    Replacement command adapter, assignment scopes, dispatch, and pipelines
+src/prepare.c    Context-sensitive command preparation and lazy substitution handoff
+src/execute.c    Execution contexts, assignment scopes, dispatch, capture, and pipelines
 src/redirect.c   Ordered descriptor operations and restoration
 src/jobs.c       Process groups, terminal ownership, job statuses, and builtins
 docs/            Architecture, POSIX tracking, and implementation tickets
@@ -121,7 +126,8 @@ build/           Object files and generated test fixtures (ignored by Git)
 the only `cshell` implementation. The legacy sources, scanner build rules,
 internal candidate executable, and prototype test allowances are removed.
 Historical tickets and Git history retain the previous implementation record.
-The bounded literal-word adapter remains until CSH-008 integrates expansion;
-new modules follow POSIX requirements and explicit ownership contracts.
+CSH-026 replaces the bounded literal adapter with context-sensitive expansion.
+The arithmetic-first lexer replay follow-up is tracked in CSH-041; new modules
+follow POSIX requirements and explicit ownership contracts.
 
 Originally authored by Mitchell Elliott.

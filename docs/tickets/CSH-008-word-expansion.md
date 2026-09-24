@@ -5,7 +5,7 @@
 - Kind: milestone
 - Parent: None
 - Depends on: CSH-004, CSH-006, CSH-007
-- Children: CSH-024, CSH-025, CSH-026
+- Children: CSH-024, CSH-025, CSH-026, CSH-041
 - Branch: Assigned when work starts
 - Issue: [#9](https://github.com/melliott18/cshell/issues/9)
 
@@ -50,6 +50,7 @@ substitution statuses, redirection operands, and here-document expansion.
 - [x] [CSH-024: Value expansions](CSH-024-value-expansions.md) is done.
 - [x] [CSH-025: Field and pathname expansion](CSH-025-field-and-pathname-expansion.md) is done.
 - [ ] [CSH-026: Substitution and here-document integration](CSH-026-substitution-and-heredoc-integration.md) is done.
+- [ ] [CSH-041: Arithmetic-first replay](CSH-041-arithmetic-substitution-replay.md) resolves the recorded lexer/parser ambiguity.
 - [ ] The original acceptance criteria above pass together, with recorded
   cross-feature evidence and all completion prerequisites satisfied.
 
@@ -61,3 +62,8 @@ Completing one child does not establish the milestone or POSIX compliance.
 
 Keep expansion provenance until field splitting and quote removal are complete.
 A single string-to-argv helper cannot implement every expansion context.
+
+CSH-026 integrates the value and field APIs with execution, but its validation
+must not close this milestone while the arithmetic-first ambiguity in CSH-041
+remains. Case/function consumers and full option/signal semantics retain their
+own tickets; the integrated tests describe the supported execution contexts.

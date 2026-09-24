@@ -55,6 +55,8 @@ Validation on 2026-09-23:
 - Native macOS 14.8.7 arm64, Apple Clang 15.0.0, Python 3.12.2: normal build,
   `make test test-pty test-harness`, and a full final ASan/UBSan
   `make test test-pty` with `-Wall -Wextra -Wpedantic -Wshadow -Werror` passed.
+  The sanitizer job suite passed twice consecutively after integration with
+  CSH-026, including its bounded ownership fixture.
 - Debian bookworm Linux Docker, native arm64: full normal `make test test-pty`
   passed. The job target also passed with ASan/UBSan and leak detection enabled.
 - `make test-jobs`: 115 builtin cases across command strings, files and stdin;
@@ -65,7 +67,7 @@ Validation on 2026-09-23:
   covering group assignment, terminal handoff/restoration, wait errors, and
   SIGINT/SIGTSTP delivered before child signal reset. No PTY capability skips.
 - Existing runtime, execution, pipeline and context regressions remain passing:
-  279 cross-mode runtime cases, 9 baseline PTY cases, and 73/55/60 respective
+  429 cross-mode runtime cases, 10 baseline PTY cases, and 61/52/60 respective
   behavior cases with their API/fault checks.
 
 The signal tests cover Ctrl-C/Ctrl-Z, grouped pipelines, bg/fg, background

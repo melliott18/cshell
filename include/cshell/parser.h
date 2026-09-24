@@ -40,4 +40,9 @@ const char *csh_parser_source_name(const struct csh_parser *parser);
 enum csh_parse_result csh_parser_next(struct csh_parser *parser,
     struct csh_ast **out, struct csh_error *error);
 
+/* Tokenize an unquoted here-document body using body-specific rules and the
+ * normal nested-command parser. Output owns the word and substitution ASTs. */
+int csh_parser_document(const void *bytes, size_t length,
+    struct csh_ast_word *out, struct csh_error *error);
+
 #endif

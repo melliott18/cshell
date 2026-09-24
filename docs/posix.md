@@ -73,21 +73,24 @@ This is grammar evidence only; runtime compound execution remains unsupported.
 CSH-024 adds [module-level value expansion](value-expansions.md), with checked
 parameter/tilde/arithmetic behavior, quote provenance, and dollar-single-quote
 decoding. CSH-025 adds IFS field splitting, pathname generation, protected empty
-fields, and explicit failure/interruption cleanup at the module level. Real
-substitutions and arithmetic ambiguity replay remain integration gaps. The table above remains the
-runtime baseline; standalone API fixtures do not establish shell conformance.
+fields, and explicit failure/interruption cleanup at the module level. CSH-026
+integrates these APIs with substitutions, context-sensitive command preparation
+and here-documents; [its evidence](tickets/CSH-026-substitution-and-heredoc-integration.md)
+covers public runtime behavior and resource cleanup. Arithmetic ambiguity replay
+remains CSH-041. Standalone API fixtures and selected integration cases do not
+establish shell conformance.
 
 ## Replacement execution evidence
 
 CSH-019 adds [module-level simple-command execution](execution.md), with
 lookup/status conversion, owned children, ordered file/descriptor/here-document
-redirections, and parent builtin restoration. Its literal adapter rejects
-pending expansion and compound syntax before dispatch. CSH-023 adds prefix
+redirections, and parent builtin restoration. CSH-026 replaces its initial literal
+adapter with context-sensitive preparation. CSH-023 adds prefix
 assignment categories, selective restoration, and readonly error handling, with
 real external environment probes and resolved builtin/function dispatch fixtures.
 CSH-029 adds the state builtin family and utility inventory. Remaining builtin
-and function semantics and expansion integration remain separate tickets.
-The public runtime uses the literal adapter and state builtins.
+and function semantics remain separate tickets.
+The public runtime uses integrated expansion and state builtins.
 
 CSH-020 adds replacement pipeline API evidence through `make test-pipeline`:
 concurrent multi-stage execution, default last-stage status and negation,

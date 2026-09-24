@@ -1450,3 +1450,36 @@ enum csh_parse_result csh_parser_next(struct csh_parser *parser,
     *error = parser->failure;
     return parser->failure_result;
 }
+
+int csh_parser_document(const void *bytes, size_t length,
+    struct csh_ast_word *out, struct csh_error *error)
+{
+    struct csh_parser parser = {0};
+    struct parse_frame frame = {0};
+    int rc = -1, read;
+    memset(out, 0, sizeof(*out));
+    memset(error, 0, sizeof(*error));
+    if (csh_lexer_create(&parser.lexer, "here-document", error) == -1) return -1;
+    parser.final = 1;
+    frame.parser = &parser;
+    frame.lexer = parser.lexer;
+    csh_lexer_document(parser.lexer);
+    if (csh_lexer_feed(parser.lexer, bytes, length, 1, error) == -1) goto done;
+    read = peek_raw(&frame);
+    if (read == -1) { *error = parser.failure; goto done; }
+    if (read == 0) {
+        out->token.kind = CSH_TOKEN_WORD;
+        out->token.raw = calloc(1, 1);
+        if (out->token.raw == NULL) {
+            error->message = "cannot allocate here-document word";
+            error->system_errno = ENOMEM;
+            error->status = 1;
+            goto done;
+        }
+    } else take(&frame, out);
+    rc = 0;
+done:
+    frame_destroy(&frame);
+    csh_lexer_destroy(parser.lexer);
+    return rc;
+}

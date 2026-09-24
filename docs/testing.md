@@ -103,8 +103,8 @@ executables use module suites through the existing bounded smoke runner.
 
 CSH-019 adds replacement simple-command execution and redirection checks through
 `make test-execute`. Its fixtures link the replacement parser, AST, state, and
-execution modules without legacy objects or Flex. They exercise the bounded
-literal adapter and prepared-command API; successful module checks do not
+execution modules without legacy objects or Flex. They exercise AST execution
+and the prepared-command API; successful module checks do not
 extend the public executable's supported syntax. See
 [Simple-command execution](execution.md) for the supported subset and ownership
 contracts.
@@ -584,7 +584,7 @@ module check into a language-conformance claim.
 ## Execution API and sanitizer checks
 
 `make test-execute` builds a replacement execution driver and focused API
-fixtures. The driver parses complete commands, invokes the literal adapter, and
+fixtures. The driver parses complete commands, invokes the AST execution API, and
 honors `exit_requested`; it is test infrastructure rather than the replacement
 shell runtime. The checks cover command lookup and failure statuses, ordered
 redirections, here-document delivery, parent builtin effects and descriptor
@@ -735,9 +735,9 @@ make docker-test
 ```
 
 These checks target the public executable after the CSH-039 cutover. They
-establish context behavior within literal execution, not general expansion, job
-control or retained `wait` statuses without the optional CSH-034 manager,
-or full POSIX compliance.
+establish list and process-context behavior. The CSH-026 suites below add
+expansion integration, and CSH-034 adds job-control coverage. Full POSIX
+verification remains separate work.
 
 ## Job-control checks
 
@@ -756,3 +756,39 @@ observations measure the launched process rather than sanitizer startup.
 See [Job control](job-control.md) for implemented behavior and remaining CSH-035
 signal policy. Harness timeouts bound all interactive scenarios; no job-control
 claim follows from a helper-only test.
+
+## Integrated substitutions and here-documents
+
+CSH-026 adds `tests/substitution_cases.py` to the generated runtime suites.
+`make test-runtime test-runtime-pty` checks exact output, diagnostics, status and
+files across command strings, script files, stdin and terminal recovery. Cases
+include nested dollar/backquote substitutions, captures up to 1 MiB (larger than
+pipe capacity), an expanded 512 KiB here-document, trailing-newline removal,
+IFS/globbing, scalar assignments/redirections, declaration operands, shared
+parameter-pattern encoding, state/cwd isolation and failure timing.
+
+`make test-substitution` runs `tests/substitution_fixture.c` and the execution
+fault binary through a bounded Python runner in temporary directories. It checks
+unrelated child ownership, repeated captures, all initially closed standard-fd
+combinations, word rollback, API-supplied nounset/noglob/interactive options,
+parent descriptor counts, and injected allocation/pipe/fcntl/fork/read/wait
+failures. Capture failures drain or close output and reap the owned child.
+The option flags exercise existing state APIs; runtime `set -u`/`set -f` parsing
+still belongs to CSH-032.
+
+Both suites are in `make test`, so the normal native, Docker and sanitizer CI
+paths cover them. For a focused sanitizer run:
+
+```sh
+make clean
+ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 make -j2 \
+  test-substitution test-runtime test-runtime-pty test-expand test-pipeline \
+  CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' \
+  LDFLAGS='-fsanitize=address,undefined'
+```
+
+The runtime harness's file-size limit is at least 1 MiB; generated here-document
+fixtures stay below it because the redirection implementation uses an unlinked
+temporary file. The 1 MiB substitution cases inspect the captured length instead
+of passing the entire value as an external argument or printing it to the
+bounded output file.
