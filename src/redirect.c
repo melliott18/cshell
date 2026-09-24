@@ -425,3 +425,13 @@ void csh_redirect_child(void)
         discard_save(saved);
     }
 }
+
+void csh_redirect_commit(struct csh_redirect_save **save)
+{
+    struct csh_redirect_save **link = &active_saves, *saved = *save;
+    if (!saved) return;
+    while (*link && *link != saved) link = &(*link)->next;
+    if (*link) *link = saved->next;
+    *save = NULL;
+    discard_save(saved);
+}

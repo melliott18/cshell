@@ -63,4 +63,6 @@ void csh_jobs_notify(struct csh_jobs *jobs);
 int csh_jobs_read_ready(void *jobs, int fd);
 int csh_jobs_is_builtin(const char *name);
 int csh_jobs_builtin(struct csh_jobs *jobs, const struct csh_command *command);
+/* Temporarily restore inherited signal actions around exec; recover on failure. */
+void csh_jobs_exec_signals(struct csh_jobs *jobs, int recover);
 #endif

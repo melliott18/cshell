@@ -30,7 +30,7 @@ simple commands, pipelines (including group stages), sequential lists, AND/OR
 lists, brace groups, parenthesized subshells, and asynchronous lists. Arguments
 support tilde, parameter, arithmetic and command expansion, IFS splitting,
 pathname generation, and quote removal. Assignment values and declaration
-operands (`export`/`readonly`) use scalar expansion. Redirection operands omit
+operands (`export`/`readonly`, including through `command`) use scalar expansion. Redirection operands omit
 splitting and pathname generation, including in interactive mode. Quoted
 here-document delimiters suppress expansion; unquoted bodies use body-specific
 quoting and substitution rules. See [Value expansion](value-expansions.md).
@@ -43,6 +43,9 @@ results and invocation-time function redirections. Expansion is deferred until a
 skipped branches and unselected parameter operands have no expansion effects.
 There is no unsupported-AST fallback. The executor's existing `ENOEXEC` handling
 of external text executables still uses `/bin/sh`.
+
+[Evaluation and utility builtins](evaluation-builtins.md) add dot/eval, exec,
+command lookup, runtime aliases, read/getopts, hash, umask, times and ulimit.
 
 The runtime keeps one execution context and [job manager](job-control.md) across
 parser reads. It reaps owned children at execution boundaries and during idle
@@ -136,7 +139,6 @@ public executable and module suites.
 [CSH-041](tickets/CSH-041-arithmetic-substitution-replay.md) adds arithmetic-first
 checkpoint/replay: `$((echo hi); )` and `$( (echo hi); )` both capture `hi`.
 Grammar-valid arithmetic takes precedence, so `$((1/0))` remains an arithmetic
-expansion error. Classification never evaluates nested expansions. Alias runtime
-integration, `set` option parsing, traps, locale startup, and case/function
-execution remain with their existing tickets. NUL output in command substitution
+expansion error. Classification never evaluates nested expansions. Full `set`
+option parsing, traps, and locale startup remain with their existing tickets. NUL output in command substitution
 is diagnosed as an expansion error, an explicit choice for unspecified input.

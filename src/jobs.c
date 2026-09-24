@@ -25,6 +25,7 @@ struct csh_jobs {
     int interactive;
     size_t installed;
     struct sigaction saved[SIGNAL_COUNT];
+    struct sigaction exec_saved[SIGNAL_COUNT];
     struct termios shell_modes;
     int modes_valid;
 };
@@ -436,12 +437,12 @@ int csh_jobs_reserve(struct csh_jobs *jobs, const int *fds, size_t count)
     int copy, minimum = 10;
     if (jobs->tty < 0) return 0;
     for (i = 0; i < count && fds[i] != jobs->tty; ++i) {}
-    if (i == count) return 0;
+    if (i == count && !csh_input_descriptor_reserved(jobs->tty)) return 0;
     for (;;) {
         copy = fcntl(jobs->tty, F_DUPFD_CLOEXEC, minimum);
         if (copy == -1) return -1;
         for (i = 0; i < count && fds[i] != copy; ++i) {}
-        if (i == count) break;
+        if (i == count && !csh_input_descriptor_reserved(copy)) break;
         close(copy);
         if (copy == INT_MAX) { errno = EMFILE; return -1; }
         minimum = copy + 1;
@@ -805,4 +806,18 @@ int csh_jobs_builtin(struct csh_jobs *jobs, const struct csh_command *command)
         ++i;
     } while (i < argc);
     return rc;
+}
+
+void csh_jobs_exec_signals(struct csh_jobs *jobs, int recover)
+{
+    size_t i;
+    if (!jobs) return;
+    for (i = 0; i < jobs->installed; ++i) {
+        if (recover) sigaction(signals[i], &jobs->exec_saved[i], NULL);
+        else {
+            struct sigaction action = jobs->saved[i];
+            if (i != 0 && jobs->interactive) action.sa_handler = SIG_DFL;
+            sigaction(signals[i], &action, &jobs->exec_saved[i]);
+        }
+    }
 }

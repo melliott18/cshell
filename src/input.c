@@ -2,6 +2,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <limits.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,6 +10,7 @@
 #include <unistd.h>
 
 struct csh_input {
+    struct csh_input *next;
     char *name;
     unsigned char *text;
     size_t text_length;
@@ -22,6 +24,8 @@ struct csh_input {
     int (*wait_hook)(void *, int);
     void *wait_context;
 };
+
+static struct csh_input *active_inputs;
 
 static void clear_error(struct csh_error *error)
 {
@@ -62,6 +66,7 @@ static struct csh_input *allocate_input(const char *name,
         return NULL;
     }
     memcpy(input->name, name, length + 1);
+    input->next = active_inputs; active_inputs = input;
     return input;
 }
 
@@ -190,6 +195,11 @@ void csh_input_destroy(struct csh_input *input)
 {
     if (input == NULL)
         return;
+    {
+        struct csh_input **link = &active_inputs;
+        while (*link && *link != input) link = &(*link)->next;
+        if (*link) *link = input->next;
+    }
     if (input->fd != -1)
         close(input->fd);
     free(input->buffer);
@@ -316,4 +326,44 @@ enum csh_input_result csh_input_read_line(struct csh_input *input,
     line->start = start;
     line->end = input->position;
     return CSH_INPUT_LINE;
+}
+
+/* Nested dot/eval can name descriptors that belong to any enclosing parser. */
+static struct csh_input_reservation *reservations;
+int csh_input_descriptor_reserved(int fd)
+{
+    const struct csh_input_reservation *scope;
+    size_t i;
+    for (scope = reservations; scope; scope = scope->previous)
+        for (i = 0; i < scope->count; ++i)
+            if (scope->fds[i] == fd) return 1;
+    return 0;
+}
+int csh_input_reserve_begin(struct csh_input_reservation *reservation,
+    const int *fds, size_t count, struct csh_error *error)
+{
+    struct csh_input *input;
+    reservation->fds = fds; reservation->count = count;
+    reservation->previous = reservations; reservation->active = 1;
+    reservations = reservation;
+    for (input = active_inputs; input; input = input->next) {
+        int fd, minimum = 10;
+        if (input->fd < 0 || !csh_input_descriptor_reserved(input->fd)) continue;
+        for (;;) {
+            do { fd = fcntl(input->fd, F_DUPFD_CLOEXEC, minimum); } while (fd < 0 && errno == EINTR);
+            if (fd < 0) return fail(error, "cannot reserve input descriptor", errno, 1);
+            if (!csh_input_descriptor_reserved(fd)) break;
+            close(fd);
+            if (fd == INT_MAX) return fail(error, "cannot reserve input descriptor", EMFILE, 1);
+            minimum = fd + 1;
+        }
+        close(input->fd); input->fd = fd;
+    }
+    return 0;
+}
+void csh_input_reserve_end(struct csh_input_reservation *reservation)
+{
+    if (!reservation->active) return;
+    reservations = reservation->previous;
+    reservation->active = 0;
 }

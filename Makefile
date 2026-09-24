@@ -24,18 +24,18 @@ INPUT_OBJECTS = build/input.o build/invocation.o
 INPUT_HEADERS = include/cshell/input.h include/cshell/invocation.h
 INPUT_FAULT_OBJECTS = build/tests/fault-input.o build/tests/fault-invocation.o
 LEXER_HEADERS = include/cshell/lexer.h include/cshell/input.h include/cshell/arithmetic.h
-LEXER_SUPPORT_OBJECTS = build/arithmetic.o build/state.o
+LEXER_SUPPORT_OBJECTS = build/arithmetic.o build/state.o build/alias.o
 ALIAS_HEADERS = include/cshell/alias.h include/cshell/input.h
 PARSER_HEADERS = $(ALIAS_HEADERS) include/cshell/parser.h include/cshell/ast.h include/cshell/quote.h $(LEXER_HEADERS)
-PARSER_OBJECTS = build/alias.o build/parser.o build/ast.o build/lexer.o build/input.o build/quote.o
+PARSER_OBJECTS = build/parser.o build/ast.o build/lexer.o build/input.o build/quote.o
 PARSER_FAULT_OBJECTS = build/tests/parser-fault-alias.o build/tests/parser-fault-parser.o build/tests/parser-fault-ast.o \
 	build/tests/parser-fault-lexer.o build/tests/parser-fault-input.o build/tests/parser-fault-quote.o
 STATE_HEADERS = include/cshell/state.h $(INPUT_HEADERS)
 EXPAND_HEADERS = include/cshell/expand.h include/cshell/arithmetic.h include/cshell/quote.h $(LEXER_HEADERS) $(STATE_HEADERS)
 EXPAND_OBJECTS = build/expand.o build/quote.o build/arithmetic.o
 EXECUTE_HEADERS = src/prepare.h $(EXPAND_HEADERS) include/cshell/jobs.h include/cshell/builtin.h include/cshell/execute.h include/cshell/redirect.h $(PARSER_HEADERS) $(STATE_HEADERS)
-EXECUTE_OBJECTS = build/jobs.o build/builtin.o build/execute.o build/prepare.o build/redirect.o $(PARSER_OBJECTS) build/state.o build/expand.o build/arithmetic.o $(FIELDS_OBJECTS)
-EXECUTE_FAULT_OBJECTS = build/tests/execute-fault-jobs.o build/tests/execute-fault-prepare.o build/tests/execute-fault-expand.o build/tests/execute-fault-fields.o build/tests/execute-fault-pathname.o build/tests/execute-fault-arithmetic.o build/tests/execute-fault-execute.o build/tests/execute-fault-redirect.o build/tests/execute-fault-state.o
+EXECUTE_OBJECTS = build/jobs.o build/builtin.o build/utility.o build/execute.o build/prepare.o build/redirect.o $(PARSER_OBJECTS) build/state.o build/alias.o build/expand.o build/arithmetic.o $(FIELDS_OBJECTS)
+EXECUTE_FAULT_OBJECTS = build/tests/execute-fault-utility.o build/tests/execute-fault-jobs.o build/tests/execute-fault-prepare.o build/tests/execute-fault-expand.o build/tests/execute-fault-fields.o build/tests/execute-fault-pathname.o build/tests/execute-fault-arithmetic.o build/tests/execute-fault-execute.o build/tests/execute-fault-redirect.o build/tests/execute-fault-state.o
 FIELDS_HEADERS = $(EXPAND_HEADERS) src/field_internal.h
 FIELDS_OBJECTS = build/fields.o build/pathname.o
 FIELDS_FAULT_OBJECTS = build/tests/fields-fault-fields.o build/tests/fields-fault-pathname.o
@@ -111,7 +111,7 @@ $(PARSER_FAULT_OBJECTS): build/tests/parser-fault-%.o: src/%.c $(PARSER_HEADERS)
 
 build/tests/parser_faults: tests/parser_faults.c tests/parser_faults.h $(PARSER_FAULT_OBJECTS) $(PARSER_HEADERS) $(LEXER_SUPPORT_OBJECTS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/parser_faults.c $(PARSER_FAULT_OBJECTS) $(LEXER_SUPPORT_OBJECTS) $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/parser_faults.c $(PARSER_FAULT_OBJECTS) $(filter-out build/alias.o,$(LEXER_SUPPORT_OBJECTS)) $(LDLIBS)
 
 test-parser: build/tests/parser_fixture build/tests/parser_faults build/tests/ast_fixture
 	$(PYTHON) tests/parser.py build/tests/parser_fixture --fault-binary build/tests/parser_faults
@@ -151,17 +151,17 @@ build/state.o: src/state.c $(STATE_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-build/tests/state_fixture: tests/state_fixture.c build/state.o $(INPUT_OBJECTS) $(STATE_HEADERS)
+build/tests/state_fixture: tests/state_fixture.c build/state.o build/alias.o $(INPUT_OBJECTS) $(STATE_HEADERS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/state_fixture.c build/state.o $(INPUT_OBJECTS) $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/state_fixture.c build/state.o build/alias.o $(INPUT_OBJECTS) $(LDLIBS)
 
 build/tests/fault-state.o: src/state.c $(STATE_HEADERS) tests/state_faults.h
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/state_faults.h -c $< -o $@
 
-build/tests/state_faults: tests/state_faults.c tests/state_faults.h build/tests/fault-state.o $(STATE_HEADERS)
+build/tests/state_faults: tests/state_faults.c tests/state_faults.h build/tests/fault-state.o build/alias.o $(STATE_HEADERS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/state_faults.c build/tests/fault-state.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/state_faults.c build/tests/fault-state.o build/alias.o $(LDLIBS)
 
 test-state: build/tests/state_fixture build/tests/state_faults
 	$(PYTHON) tests/smoke.py ./build/tests/state_fixture --suite tests/fixtures/state.json
@@ -171,21 +171,21 @@ build/expand.o build/arithmetic.o: build/%.o: src/%.c $(EXPAND_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-build/tests/expand_fixture: tests/expand_fixture.c $(EXPAND_OBJECTS) $(FIELDS_OBJECTS) build/state.o build/lexer.o $(EXPAND_HEADERS)
+build/tests/expand_fixture: tests/expand_fixture.c $(EXPAND_OBJECTS) $(FIELDS_OBJECTS) build/state.o build/alias.o build/lexer.o $(EXPAND_HEADERS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/expand_fixture.c $(EXPAND_OBJECTS) $(FIELDS_OBJECTS) build/state.o build/lexer.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/expand_fixture.c $(EXPAND_OBJECTS) $(FIELDS_OBJECTS) build/state.o build/alias.o build/lexer.o $(LDLIBS)
 
 build/tests/fault-expand.o build/tests/fault-quote.o build/tests/fault-fields.o build/tests/fault-pathname.o: build/tests/fault-%.o: src/%.c $(EXPAND_HEADERS) tests/expand_faults.h
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/expand_faults.h -c $< -o $@
 
-build/tests/expand_faults: tests/expand_faults.c tests/expand_faults.h build/tests/fault-expand.o build/tests/fault-quote.o build/arithmetic.o build/tests/fault-fields.o build/tests/fault-pathname.o build/state.o build/lexer.o $(EXPAND_HEADERS)
+build/tests/expand_faults: tests/expand_faults.c tests/expand_faults.h build/tests/fault-expand.o build/tests/fault-quote.o build/arithmetic.o build/tests/fault-fields.o build/tests/fault-pathname.o build/state.o build/alias.o build/lexer.o $(EXPAND_HEADERS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/expand_faults.c build/tests/fault-expand.o build/tests/fault-quote.o build/arithmetic.o build/tests/fault-fields.o build/tests/fault-pathname.o build/state.o build/lexer.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/expand_faults.c build/tests/fault-expand.o build/tests/fault-quote.o build/arithmetic.o build/tests/fault-fields.o build/tests/fault-pathname.o build/state.o build/alias.o build/lexer.o $(LDLIBS)
 
-build/tests/arithmetic_fixture: tests/arithmetic_fixture.c build/arithmetic.o build/state.o $(EXPAND_HEADERS)
+build/tests/arithmetic_fixture: tests/arithmetic_fixture.c build/arithmetic.o build/state.o build/alias.o $(EXPAND_HEADERS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/arithmetic_fixture.c build/arithmetic.o build/state.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/arithmetic_fixture.c build/arithmetic.o build/state.o build/alias.o $(LDLIBS)
 
 build/tests/quote_fixture: tests/quote_fixture.c build/quote.o include/cshell/quote.h
 	mkdir -p $(dir $@)
@@ -195,25 +195,25 @@ build/tests/arith-fault-arithmetic.o build/tests/arith-fault-state.o: build/test
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/arithmetic_faults.h -c $< -o $@
 
-build/tests/arithmetic_faults: tests/arithmetic_faults.c tests/arithmetic_faults.h build/tests/arith-fault-arithmetic.o build/tests/arith-fault-state.o $(EXPAND_HEADERS)
+build/tests/arithmetic_faults: tests/arithmetic_faults.c tests/arithmetic_faults.h build/tests/arith-fault-arithmetic.o build/tests/arith-fault-state.o build/alias.o $(EXPAND_HEADERS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/arithmetic_faults.c build/tests/arith-fault-arithmetic.o build/tests/arith-fault-state.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/arithmetic_faults.c build/tests/arith-fault-arithmetic.o build/tests/arith-fault-state.o build/alias.o $(LDLIBS)
 
 $(FIELDS_OBJECTS): build/%.o: src/%.c $(FIELDS_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-build/tests/fields_fixture: tests/fields_fixture.c $(FIELDS_OBJECTS) $(EXPAND_OBJECTS) build/state.o build/lexer.o $(FIELDS_HEADERS)
+build/tests/fields_fixture: tests/fields_fixture.c $(FIELDS_OBJECTS) $(EXPAND_OBJECTS) build/state.o build/alias.o build/lexer.o $(FIELDS_HEADERS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/fields_fixture.c $(FIELDS_OBJECTS) $(EXPAND_OBJECTS) build/state.o build/lexer.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/fields_fixture.c $(FIELDS_OBJECTS) $(EXPAND_OBJECTS) build/state.o build/alias.o build/lexer.o $(LDLIBS)
 
 $(FIELDS_FAULT_OBJECTS): build/tests/fields-fault-%.o: src/%.c $(FIELDS_HEADERS) tests/fields_faults.h
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/fields_faults.h -c $< -o $@
 
-build/tests/fields_faults: tests/fields_faults.c tests/fields_faults.h $(FIELDS_FAULT_OBJECTS) build/state.o $(FIELDS_HEADERS)
+build/tests/fields_faults: tests/fields_faults.c tests/fields_faults.h $(FIELDS_FAULT_OBJECTS) build/state.o build/alias.o $(FIELDS_HEADERS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/fields_faults.c $(FIELDS_FAULT_OBJECTS) build/state.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/fields_faults.c $(FIELDS_FAULT_OBJECTS) build/state.o build/alias.o $(LDLIBS)
 
 test-fields: build/tests/fields_fixture build/tests/fields_faults
 	$(PYTHON) tests/fields.py build/tests/fields_fixture --fault-binary build/tests/fields_faults
@@ -225,7 +225,7 @@ test-expand: test-fields build/tests/arithmetic_faults build/tests/expand_fixtur
 	$(PYTHON) tests/smoke.py ./build/tests/quote_fixture --suite tests/fixtures/quote.json
 	$(PYTHON) tests/smoke.py ./build/tests/arithmetic_faults --suite tests/fixtures/arithmetic-faults.json
 
-build/execute.o build/prepare.o build/redirect.o build/builtin.o: build/%.o: src/%.c $(EXECUTE_HEADERS)
+build/execute.o build/prepare.o build/redirect.o build/builtin.o build/utility.o: build/%.o: src/%.c $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
@@ -244,15 +244,15 @@ $(EXECUTE_FAULT_OBJECTS): build/tests/execute-fault-%.o: src/%.c $(EXECUTE_HEADE
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/execute_faults.h -c $< -o $@
 
-build/tests/execute_faults: tests/execute_faults.c tests/execute_faults.h $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/builtin.o $(EXECUTE_HEADERS)
+build/tests/execute_faults: tests/execute_faults.c tests/execute_faults.h $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/alias.o build/builtin.o $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/execute_faults.c $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/builtin.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/execute_faults.c $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/alias.o build/builtin.o $(LDLIBS)
 
 build/tests/assignment_fixture: tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(LDLIBS)
 
-build/tests/runtime.json build/tests/runtime-pty.json build/tests/control-flow.json: tests/runtime_cases.py tests/substitution_cases.py tests/control_flow_cases.py build/tests/execute_helper
+build/tests/runtime.json build/tests/runtime-pty.json build/tests/control-flow.json build/tests/evaluation.json: tests/runtime_cases.py tests/substitution_cases.py tests/control_flow_cases.py tests/evaluation_cases.py build/tests/execute_helper
 	$(PYTHON) tests/runtime_cases.py --helper build/tests/execute_helper --output $@
 
 .PHONY: test-control
@@ -359,3 +359,7 @@ build/tests/substitution_fixture: tests/substitution_fixture.c $(EXECUTE_OBJECTS
 .PHONY: test-substitution
 test-substitution: build/tests/substitution_fixture build/tests/execute_faults
 	$(PYTHON) tests/substitution.py build/tests/substitution_fixture build/tests/execute_faults
+
+.PHONY: test-evaluation
+test-evaluation: cshell build/tests/evaluation.json
+	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/evaluation.json

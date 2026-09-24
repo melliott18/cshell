@@ -47,11 +47,10 @@ redirection/builtin failure; earlier assignments persist if a later one fails.
 `special_builtin_error` reports a failure under special classification, separate
 from the existing explicit `exit_requested` field. The runtime must interpret
 this together with the command and execution context; it is not an unconditional
-request to exit (for example, shift errors may continue). CSH-031 owns final
+request to exit (for example, shift errors may continue). [CSH-031](evaluation-builtins.md) supplies final
 interactive/noninteractive policy and `command` suppression. CSH-023 still owns
 assignment syntax, regular-command temporary environments and declaration-word
-expansion; CSH-032 owns option effects. The literal AST adapter rejects leading
-assignments while direct prepared commands can exercise this contract.
+expansion; CSH-032 owns option effects. CSH-026 connects assignment syntax and expansion to the runtime dispatcher.
 
 `make test-builtins` runs table-driven state/status checks and 24 behavioral
 cases through the replacement executor. It includes quoting/listing, logical

@@ -51,5 +51,7 @@ int csh_redirect_restore(struct csh_redirect_save **save,
 /* After fork, before any child shell work: close inherited private backups.
  * The parent retains its own restoration tokens. */
 void csh_redirect_child(void);
+/* Consume backups without restoring targets (exec without a command). */
+void csh_redirect_commit(struct csh_redirect_save **save);
 
 #endif

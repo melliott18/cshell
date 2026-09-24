@@ -2,6 +2,8 @@
 #include "prepare.h"
 #include "cshell/builtin.h"
 #include "cshell/jobs.h"
+#include "cshell/parser.h"
+#include "cshell/alias.h"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -66,11 +68,17 @@ static int launch_prepare(struct csh_state *state, const struct csh_command *com
 {
     struct csh_variable_view variable;
     const char *path, *start;
+    char *standard = NULL;
     size_t count = 1, i, name_length = strlen(command->argv[0]);
     int direct = strchr(command->argv[0], '/') != NULL;
     memset(launch, 0, sizeof(*launch));
     csh_state_get_variable(state, "PATH", &variable);
-    path = variable.value != NULL ? variable.value : "/bin:/usr/bin";
+    if (command->default_path) {
+        size_t length = confstr(_CS_PATH, NULL, 0);
+        if (!length || !(standard = malloc(length))) goto nomem;
+        if (!confstr(_CS_PATH, standard, length)) goto nomem;
+    }
+    path = standard ? standard : variable.value != NULL ? variable.value : "/bin:/usr/bin";
     if (!direct)
         for (start = path; *start; ++start) if (*start == ':') ++count;
     if (count > SIZE_MAX / sizeof(*launch->paths) ||
@@ -106,8 +114,20 @@ static int launch_prepare(struct csh_state *state, const struct csh_command *com
         launch->paths[launch->count++] = candidate;
         if (end != NULL) start = end + 1;
     }
+    if (!direct && !command->default_path) {
+        const char *cached = csh_state_hash_get(state, command->argv[0]);
+        struct stat st;
+        if (cached && stat(cached, &st) == 0 && S_ISREG(st.st_mode) && access(cached, X_OK) == 0) {
+            char *copy = strdup(cached);
+            if (!copy) goto nomem;
+            for (i = 0; i < launch->count; ++i) free(launch->paths[i]);
+            launch->paths[0] = copy; launch->count = 1;
+        }
+    }
+    free(standard);
     return 0;
 nomem:
+    free(standard);
     launch_destroy(launch);
     return fail(error, "cannot prepare external command", ENOMEM, 1);
 }
@@ -118,21 +138,14 @@ static void diagnose(const char *name, const char *message, int number)
     else dprintf(STDERR_FILENO, "cshell: %s: %s\n", name, message);
 }
 
-/* This routine is called only after fork. Every route terminates with exec
- * or _exit, never by returning to the caller's input loop. */
-static void launch_child(const struct csh_command *command, struct launch *launch)
+/* Return only when every exec attempt failed; caller decides whether to exit. */
+static int launch_replace(const struct csh_command *command, struct launch *launch)
 {
-    struct csh_redirect_save *save = NULL;
-    struct csh_error error;
     size_t i;
     int remembered = 0;
-    if (csh_redirect_apply(command->redirections, command->redirection_count, &save, &error) == -1) {
-        diagnose(command->argv[0], error.message, error.system_errno);
-        _exit(error.status);
-    }
     if (command->argv[0][0] == '\0') {
         diagnose("", "command not found", 0);
-        _exit(127);
+        return 127;
     }
     for (i = 0; i < launch->count; ++i) {
         int number;
@@ -142,7 +155,7 @@ static void launch_child(const struct csh_command *command, struct launch *launc
             launch->fallback[1] = launch->paths[i];
             execve("/bin/sh", launch->fallback, launch->environment);
             diagnose(command->argv[0], "cannot execute command interpreter", errno);
-            _exit(126);
+            return 126;
         }
         if (number != ENOENT && number != ENOTDIR) remembered = number;
         else {
@@ -153,7 +166,18 @@ static void launch_child(const struct csh_command *command, struct launch *launc
         }
     }
     diagnose(command->argv[0], remembered ? "cannot execute" : "command not found", remembered);
-    _exit(remembered ? 126 : 127);
+    return remembered ? 126 : 127;
+}
+
+static void launch_child(const struct csh_command *command, struct launch *launch)
+{
+    struct csh_redirect_save *save = NULL;
+    struct csh_error error;
+    if (csh_redirect_apply(command->redirections, command->redirection_count, &save, &error) == -1) {
+        diagnose(command->argv[0], error.message, error.system_errno);
+        _exit(error.status);
+    }
+    _exit(launch_replace(command, launch));
 }
 
 static void builtin_exit(struct csh_state *state, const struct csh_command *command,
@@ -260,15 +284,36 @@ static int special_name(const char *name)
     return 0;
 }
 
+static char *lookup_path(struct csh_state *state, const char *name, int defaults,
+    int readable, struct csh_error *error);
+
+static enum csh_execution_category path_builtin_category(struct csh_state *state,
+    const char *name, int defaults)
+{
+    enum csh_execution_category category = csh_state_builtin_category(name);
+    if (!strcmp(name, "pwd")) {
+        struct csh_error error;
+        char *path = lookup_path(state, name, defaults, 0, &error);
+        if (!path || (strcmp(path, "/bin/pwd") && strcmp(path, "/usr/bin/pwd"))) category = CSH_EXEC_EXTERNAL;
+        free(path);
+    }
+    return category;
+}
+
 static enum csh_execution_category command_category(struct csh_state *state,
     const char *name)
 {
-    enum csh_execution_category category = csh_state_builtin_category(name);
+    enum csh_execution_category category = path_builtin_category(state, name, 0);
     if (!strcmp(name, "exit") || control_name(name)) return CSH_EXEC_SPECIAL_BUILTIN;
     if (category != CSH_EXEC_SPECIAL_BUILTIN && csh_state_function(state, name) != NULL)
         return CSH_EXEC_FUNCTION;
     return category;
 }
+
+static void report_error(struct csh_error *error);
+
+static int evaluation_handler(struct csh_state *state, const struct csh_command *command,
+    struct csh_execution *result, struct csh_error *error, void *context);
 
 static int flow_handler(struct csh_state *state, const struct csh_command *command,
     struct csh_execution *result, struct csh_error *error, void *context);
@@ -396,6 +441,7 @@ static int execute_resolved(struct csh_state *state,
         }
         if (handler == NULL) result->status = command->substitution_status;
         rc = handler == NULL ? 0 : handler(state, command, result, error, context);
+        if (result->retain_redirects) csh_redirect_commit(&save);
         if (csh_redirect_restore(&save, &restore_error) == -1) {
             *error = restore_error;
             rc = -1;
@@ -407,7 +453,8 @@ done:
     csh_state_restore_variables(state, &variables);
     if (rc == -1) result->status = error->status;
     if (result->category == CSH_EXEC_SPECIAL_BUILTIN && result->status != 0 && !result->exit_requested &&
-        result->control == CSH_CONTROL_NONE)
+        result->control == CSH_CONTROL_NONE &&
+        (rc == -1 || (strcmp(command->argv[0], "eval") && strcmp(command->argv[0], "."))))
         result->special_builtin_error = 1;
     if (state != NULL) csh_state_set_status(state, result->status);
     return rc;
@@ -428,6 +475,26 @@ static int bootstrap_handler(struct csh_state *state,
 {
     if (control_name(command->argv[0]) || result->category == CSH_EXEC_FUNCTION)
         return flow_handler(state, command, result, error, context);
+    if (!strcmp(command->argv[0], ".") || !strcmp(command->argv[0], "eval") ||
+        !strcmp(command->argv[0], "exec") || !strcmp(command->argv[0], "command") ||
+        !strcmp(command->argv[0], "type") || !strcmp(command->argv[0], "hash") ||
+        !strcmp(command->argv[0], "alias") || !strcmp(command->argv[0], "unalias"))
+    {
+        int rc = evaluation_handler(state, command, result, error, context);
+        if (rc == -1) {
+            result->status = error->status;
+            if (!error->reported) report_error(error);
+            if (result->category == CSH_EXEC_SPECIAL_BUILTIN) result->special_builtin_error = 1;
+            return 0;
+        }
+        return rc;
+    }
+    if (!strcmp(command->argv[0], "read") || !strcmp(command->argv[0], "getopts") ||
+        !strcmp(command->argv[0], "umask") || !strcmp(command->argv[0], "ulimit") ||
+        !strcmp(command->argv[0], "times")) {
+        result->status = csh_utility_run(state, command->argc, command->argv);
+        return 0;
+    }
     if (strcmp(command->argv[0], "exit") == 0)
         builtin_exit(state, command, result);
     else
@@ -874,7 +941,7 @@ static int restore_redirects(struct csh_redirect_save ***saves, size_t count,
     return rc;
 }
 
-static int runtime_redirects(struct csh_state *state, const struct csh_ast *tree,
+static int runtime_redirects(struct csh_state *state, struct csh_jobs *jobs, const struct csh_ast *tree,
     const struct descriptor_reservations *reserved, struct csh_command *command,
     struct csh_redirect_save ***saves, struct csh_execution *result,
     struct csh_error *error)
@@ -890,8 +957,16 @@ static int runtime_redirects(struct csh_state *state, const struct csh_ast *tree
         if (rc == -1) expansion_failed(state, result);
         else if (rc == -2) { result->redirection_failed = 1; rc = -1; }
         else {
-            rc = csh_redirect_apply_reserved(&redirect, 1, reserved->items,
+            struct csh_input_reservation input_scope = {0};
+            int fds[2] = {redirect.fd, redirect.source_fd};
+            size_t count = redirect.kind == CSH_REDIRECT_DUP_READ ||
+                redirect.kind == CSH_REDIRECT_DUP_WRITE ? 2 : 1;
+            rc = csh_input_reserve_begin(&input_scope, fds, count, error);
+            if (rc == 0 && jobs != NULL && csh_jobs_reserve(jobs, fds, count) == -1)
+                rc = fail(error, "cannot reserve job descriptors", errno, 1);
+            if (rc == 0) rc = csh_redirect_apply_reserved(&redirect, 1, reserved->items,
                 reserved->count, &(*saves)[i], error);
+            csh_input_reserve_end(&input_scope);
             if (rc == -1) result->redirection_failed = 1;
         }
         free(redirect.path);
@@ -931,7 +1006,7 @@ static int runtime_simple(struct csh_execution_context *context,
         fail(error, "cannot copy redirection environment", ENOMEM, 1);
         goto done;
     }
-    if (runtime_redirects(redirect_state != NULL ? redirect_state : state,
+    if (runtime_redirects(redirect_state != NULL ? redirect_state : state, context->jobs,
         tree, reserved, &command, &saves, result, error) == -1) goto done;
     if (csh_command_assignments(state, tree, &command, error) == -1) {
         expansion_failed(state, result);
@@ -961,6 +1036,11 @@ static int runtime_simple(struct csh_execution_context *context,
     }
 done:
     if (rc == -1 && saves != NULL) report_error(error);
+    if (result->retain_redirects && saves != NULL) {
+        size_t i;
+        for (i = 0; i < tree->redirection_count; ++i) csh_redirect_commit(&saves[i]);
+    }
+    result->retain_redirects = 0;
     if (saves != NULL && restore_redirects(&saves, tree->redirection_count, error) == -1) rc = -1;
     if (rc == -1) result->status = error->status;
     if (result->redirection_failed && result->category == CSH_EXEC_SPECIAL_BUILTIN)
@@ -982,6 +1062,273 @@ static int context_stopped(struct csh_execution_context *context,
     csh_state_get_info(context->state, &info);
     return result->control != CSH_CONTROL_NONE || result->exit_requested || (result->special_builtin_error &&
         !(info.options & CSH_OPT_INTERACTIVE));
+}
+
+/* Lookup uses the same PATH candidate construction as execution. */
+static char *lookup_path(struct csh_state *state, const char *name, int defaults,
+    int readable, struct csh_error *error)
+{
+    char *argv[] = {(char *)name, NULL}, *path = NULL;
+    struct csh_command command = {0};
+    struct launch launch;
+    size_t i;
+    command.argc = 1; command.argv = argv; command.default_path = defaults;
+    if (launch_prepare(state, &command, &launch, error) == -1) return NULL;
+    for (i = 0; i < launch.count; ++i) {
+        struct stat st;
+        if (stat(launch.paths[i], &st) == 0 &&
+            (readable ? !S_ISDIR(st.st_mode) : S_ISREG(st.st_mode)) &&
+            access(launch.paths[i], readable ? R_OK : X_OK) == 0) {
+            path = strdup(launch.paths[i]);
+            if (!path) fail(error, "cannot allocate command path", ENOMEM, 1);
+            break;
+        }
+    }
+    launch_destroy(&launch);
+    if (path && path[0] != '/') {
+        size_t capacity = 256;
+        char *directory = NULL, *absolute;
+        for (;;) {
+            directory = malloc(capacity);
+            if (!directory) break;
+            if (getcwd(directory, capacity)) break;
+            free(directory); directory = NULL;
+            if (errno != ERANGE || capacity > SIZE_MAX / 2) break;
+            capacity *= 2;
+        }
+        if (!directory) { free(path); fail(error, "cannot resolve command directory", errno, 1); return NULL; }
+        absolute = malloc(strlen(directory) + strlen(path) + 2);
+        if (absolute) sprintf(absolute, "%s/%s", directory, path);
+        free(directory); free(path); path = absolute;
+        if (!path) fail(error, "cannot allocate command path", ENOMEM, 1);
+    }
+    return path;
+}
+static int lookup_report(struct csh_state *state, const char *name, int verbose,
+    int defaults, struct csh_error *error)
+{
+    const char *alias = csh_aliases_get(csh_state_aliases(state), name);
+    enum csh_execution_category category = command_category(state, name);
+    static const char *const reserved[] = {"!", "{", "}", "case", "do", "done", "elif",
+        "else", "esac", "fi", "for", "if", "in", "then", "until", "while"};
+    size_t i;
+    if (alias) {
+        const char *argv[] = {"alias", name};
+        if (verbose && printf("%s is an alias: ", name) < 0) return 1;
+        if (!verbose && printf("alias ") < 0) return 1;
+        return csh_builtin_alias(csh_state_aliases(state), 2, argv, stdout, stderr) || fflush(stdout) == EOF;
+    }
+    for (i = 0; i < sizeof(reserved)/sizeof(*reserved); ++i)
+        if (!strcmp(name, reserved[i])) return dprintf(1, verbose ? "%s is a reserved word\n" : "%s\n", name) < 0;
+    if ((category != CSH_EXEC_EXTERNAL || csh_jobs_is_builtin(name)) &&
+        (strcmp(name, "pwd") || category == CSH_EXEC_FUNCTION)) {
+        return dprintf(1, verbose ? "%s is a %s\n" : "%s\n", name,
+            category == CSH_EXEC_FUNCTION ? "function" : "shell builtin") < 0;
+    }
+    { char *path = lookup_path(state, name, defaults, 0, error);
+      int rc;
+      if (!path) {
+          if (verbose) diagnose(name, "not found", 0);
+          return 1;
+      }
+      rc = (verbose ? dprintf(1, "%s is %s\n", name, path) : dprintf(1, "%s\n", path)) < 0;
+      free(path); return rc;
+    }
+}
+
+static int evaluate_input(struct csh_execution_context *context, struct csh_input *input,
+    struct csh_execution *result, struct csh_error *error)
+{
+    struct csh_parser *parser = NULL;
+    int rc = 0;
+    enum csh_execution_category category = result->category;
+    if (context->evaluation_depth >= 128) return fail(error, "evaluation nesting limit exceeded", 0, 2);
+    if (csh_parser_create(&parser, input, error) == -1) return -1;
+    if (csh_state_aliases(context->state) == NULL) {
+        csh_parser_destroy(parser); return fail(error, "cannot allocate aliases", ENOMEM, 1);
+    }
+    csh_parser_set_aliases(parser, csh_state_aliases(context->state));
+    ++context->evaluation_depth;
+    result->status = 0;
+    for (;;) {
+        struct csh_ast *tree = NULL;
+        enum csh_parse_result parsed;
+        csh_parser_set_aliases(parser, csh_state_aliases(context->state));
+        parsed = csh_parser_next(parser, &tree, error);
+        if (parsed == CSH_PARSE_EOF) break;
+        if (parsed != CSH_PARSE_TREE) {
+            struct csh_state_info info;
+            csh_state_get_info(context->state, &info);
+            result->exit_requested = !(info.options & CSH_OPT_INTERACTIVE);
+            rc = -1; break;
+        }
+        rc = csh_execute_context_ast(context, tree, result, error);
+        csh_ast_destroy(tree);
+        if (context_stopped(context, result)) break;
+        if (rc == -1) {
+            report_error(error);
+            /* A command status is not an error in eval/dot itself. */
+            rc = 0;
+        }
+    }
+    --context->evaluation_depth;
+    csh_parser_destroy(parser);
+    result->category = category;
+    return rc;
+}
+
+static int evaluation_handler(struct csh_state *state, const struct csh_command *command,
+    struct csh_execution *result, struct csh_error *error, void *user)
+{
+    struct csh_execution_context local = {0}, *context = user;
+    const char *name = command->argv[0];
+    size_t first = 1, i;
+    int rc = 0;
+    if (!context) { local.state = state; context = &local; }
+    if (!strcmp(name, "alias") || !strcmp(name, "unalias")) {
+        struct csh_aliases *aliases = csh_state_aliases(state);
+        if (!aliases) return fail(error, "cannot allocate aliases", ENOMEM, 1);
+        result->status = !strcmp(name, "alias") ?
+            csh_builtin_alias(aliases, (int)command->argc, (const char *const *)command->argv, stdout, stderr) :
+            csh_builtin_unalias(aliases, (int)command->argc, (const char *const *)command->argv, stdout, stderr);
+        if (fflush(stdout) == EOF) result->status = 1;
+    } else if (!strcmp(name, "eval") || !strcmp(name, ".")) {
+        struct csh_input *input = NULL;
+        struct csh_parameter_save parameters = {0};
+        int sourced = !strcmp(name, "."), pushed = 0;
+        char *text = NULL;
+        if (sourced) {
+            if (first < command->argc && !strcmp(command->argv[first], "--")) ++first;
+            if (first == command->argc) return fail(error, "dot requires a file", 0, 2);
+            text = lookup_path(state, command->argv[first++], 0, 1, error);
+            if (!text) return fail(error, "cannot find readable dot file", error->system_errno, 1);
+            rc = csh_input_from_file(&input, text, error);
+            if (rc == 0 && first < command->argc) {
+                if (csh_state_push_parameters(state, command->argc - first,
+                    (const char *const *)(command->argv + first), &parameters) != CSH_STATE_OK)
+                    rc = fail(error, "cannot save dot parameters", ENOMEM, 1);
+                else pushed = 1;
+            }
+        } else {
+            size_t length = 1, used = 0;
+            for (i = first; i < command->argc; ++i) {
+                size_t n = strlen(command->argv[i]);
+                if (n >= SIZE_MAX - length) return fail(error, "eval input too large", ENOMEM, 1);
+                length += n + 1;
+            }
+            text = malloc(length);
+            if (!text) return fail(error, "cannot allocate eval input", ENOMEM, 1);
+            for (i = first; i < command->argc; ++i) {
+                size_t n = strlen(command->argv[i]);
+                if (i != first) text[used++] = ' ';
+                memcpy(text + used, command->argv[i], n); used += n;
+            }
+            text[used] = 0;
+            rc = csh_input_from_string(&input, text, "eval", error);
+        }
+        free(text);
+        if (rc == 0) {
+            struct csh_state_info info;
+            csh_state_get_info(state, &info);
+            if (sourced) csh_state_set_source_depth(state, info.source_depth + 1);
+            rc = evaluate_input(context, input, result, error);
+            if (sourced) {
+                csh_state_set_source_depth(state, info.source_depth);
+                if (result->control == CSH_CONTROL_RETURN) result->control = CSH_CONTROL_NONE;
+            }
+        }
+        if (pushed) csh_state_pop_parameters(state, &parameters);
+        csh_input_destroy(input);
+    } else if (!strcmp(name, "exec")) {
+        struct csh_command target = *command;
+        struct launch launch;
+        struct csh_state_info info;
+        if (first < command->argc && !strcmp(command->argv[first], "--")) ++first;
+        if (first == command->argc) { result->retain_redirects = 1; result->status = 0; return 0; }
+        if (first == 1 && command->argv[first][0] == '-') return fail(error, "invalid exec option", 0, 2);
+        target.argv += first; target.argc -= first;
+        target.redirections = NULL; target.redirection_count = 0;
+        /* Build the replacement environment with exported prefixes, then
+         * restore attributes so a failed interactive exec retains ordinary
+         * special-builtin assignment semantics. */
+        {
+            struct csh_variable_save *save = NULL;
+            int prepared = assignments_apply(state, command, CSH_EXEC_EXTERNAL,
+                &save, result, error);
+            if (prepared == 0) prepared = launch_prepare(state, &target, &launch, error);
+            csh_state_restore_variables(state, &save);
+            if (prepared == -1) return -1;
+        }
+        csh_jobs_exec_signals(context->jobs, 0);
+        result->status = launch_replace(&target, &launch);
+        csh_jobs_exec_signals(context->jobs, 1);
+        launch_destroy(&launch);
+        csh_state_get_info(state, &info);
+        result->exit_requested = !(info.options & CSH_OPT_INTERACTIVE);
+    } else if (!strcmp(name, "command") || !strcmp(name, "type")) {
+        int verbose = !strcmp(name, "type"), report = verbose, defaults = command->default_path;
+        while (first < command->argc && command->argv[first][0] == '-' && command->argv[first][1]) {
+            const char *p = command->argv[first++] + 1;
+            if (!strcmp(p, "-")) break;
+            for (; *p; ++p) {
+                if (*p == 'p' && !strcmp(name, "command")) defaults = 1;
+                else if ((*p == 'v' || *p == 'V') && !strcmp(name, "command")) { report = 1; verbose = *p == 'V'; }
+                else { diagnose(name, "invalid option", 0); result->status = 2; return 0; }
+            }
+        }
+        result->status = 0;
+        if (report) {
+            for (i = first; i < command->argc; ++i)
+                if (lookup_report(state, command->argv[i], verbose, defaults, error)) result->status = 1;
+        } else if (first < command->argc) {
+            struct csh_command target = *command;
+            enum csh_execution_category category;
+            target.argv += first; target.argc -= first;
+            target.assignments = NULL; target.assignment_count = 0;
+            target.redirections = NULL; target.redirection_count = 0;
+            target.default_path = defaults;
+            category = path_builtin_category(state, target.argv[0], defaults);
+            if (!strcmp(target.argv[0], "exit") || control_name(target.argv[0])) category = CSH_EXEC_SPECIAL_BUILTIN;
+            if (category == CSH_EXEC_SPECIAL_BUILTIN) category = CSH_EXEC_REGULAR_BUILTIN;
+            if (context->evaluation_depth >= 128) return fail(error, "evaluation nesting limit exceeded", 0, 2);
+            ++context->evaluation_depth;
+            if (context->jobs && csh_jobs_is_builtin(target.argv[0]) &&
+                (strcmp(target.argv[0], "set") ||
+                    (target.argc > 1 && strcmp(target.argv[1], "--"))))
+                result->status = csh_jobs_builtin(context->jobs, &target);
+            else if (context->jobs && category == CSH_EXEC_EXTERNAL)
+                rc = context_job(context, NULL, NULL, &target, 0, result, error);
+            else rc = execute_resolved(state, &target, category,
+                category == CSH_EXEC_EXTERNAL ? NULL : bootstrap_handler, context, result, NULL, error);
+            --context->evaluation_depth;
+            result->category = CSH_EXEC_REGULAR_BUILTIN;
+        }
+    } else { /* hash */
+        int reset = 0;
+        if (first < command->argc && !strcmp(command->argv[first], "-r")) { csh_state_hash_clear(state); reset = 1; ++first; }
+        if (first < command->argc && !strcmp(command->argv[first], "--")) ++first;
+        if (first < command->argc && command->argv[first][0] == '-') { diagnose(name, "invalid option", 0); result->status = 2; return 0; }
+        result->status = 0;
+        if (first == command->argc && !reset) {
+            char **names;
+            if (csh_state_hash_names(state, &names) != CSH_STATE_OK) return fail(error, "cannot list command cache", ENOMEM, 1);
+            for (i = 0; names[i]; ++i)
+                if (command_category(state, names[i]) == CSH_EXEC_EXTERNAL &&
+                    dprintf(1, "%s\n", csh_state_hash_get(state, names[i])) < 0) result->status = 1;
+            csh_state_environment_destroy(names);
+        }
+        for (i = first; i < command->argc; ++i) {
+            char *path;
+            const char *operand = command->argv[i];
+            if (command_category(state, operand) != CSH_EXEC_EXTERNAL || csh_jobs_is_builtin(operand)) continue;
+            path = lookup_path(state, operand, 0, 0, error);
+            if (!path) { diagnose(operand, "command not found", 0); result->status = 1; }
+            else if (!strchr(operand, '/') && csh_state_hash_set(state, operand, path) != CSH_STATE_OK) result->status = 1;
+            free(path);
+        }
+    }
+    if (context == &local) csh_execution_context_destroy(&local);
+    return rc;
 }
 
 static int context_pipeline(struct csh_execution_context *context,
@@ -1064,7 +1411,7 @@ static int context_job(struct csh_execution_context *context,
     const struct csh_command *prepared, int asynchronous,
     struct csh_execution *result, struct csh_error *error)
 {
-    int is_pipeline = plan->kind == CSH_AST_PIPELINE;
+    int is_pipeline = plan != NULL && plan->kind == CSH_AST_PIPELINE;
     size_t count = is_pipeline ? plan->count : 1, i;
     struct csh_job *job = NULL;
     struct launch *launches = NULL;
@@ -1092,7 +1439,8 @@ static int context_job(struct csh_execution_context *context,
     }
     stream = open_memstream(&text, &text_size);
     if (stream == NULL) { fail(error, "cannot allocate job text", errno, 1); goto done; }
-    plan_text(stream, plan);
+    if (plan != NULL) plan_text(stream, plan);
+    else for (i = 0; i < prepared->argc; ++i) fprintf(stream, "%s%s", i ? " " : "", prepared->argv[i]);
     if (fclose(stream) == EOF) {
         stream = NULL;
         fail(error, "cannot format job text", errno, 1);
@@ -1414,7 +1762,7 @@ static int flow_handler(struct csh_state *state, const struct csh_command *comma
                 goto invalid_operand;
             value = (unsigned long)number;
         } else if (returning) value = (unsigned long)info.last_status;
-        if ((returning && info.function_depth == 0) ||
+        if ((returning && info.function_depth == 0 && info.source_depth == 0) ||
             (!returning && context->loop_depth == 0)) {
             diagnose(name, returning ? "not in a function" : "not in a loop", 0);
             result->status = 2;
@@ -1436,6 +1784,7 @@ invalid_operand:
         struct execution_plan plan = {0};
         struct descriptor_reservations reserved = {0};
         struct csh_state_info info;
+        struct csh_input_reservation input_scope = {0};
         unsigned loops = context->loop_depth;
         int rc = -1;
         if (function == NULL) return fail(error, "missing function definition", 0, 1);
@@ -1444,6 +1793,7 @@ invalid_operand:
             return fail(error, "function nesting limit exceeded", 0, 2);
         csh_function_retain(&function->base);
         if (plan_prepare(function->tree, &plan, &reserved, 0, error) == -1) goto done;
+        if (csh_input_reserve_begin(&input_scope, reserved.items, reserved.count, error) == -1) goto done;
         if (context->jobs != NULL && csh_jobs_reserve(context->jobs,
             reserved.items, reserved.count) == -1) {
             fail(error, "cannot reserve function descriptors", errno, 1);
@@ -1468,6 +1818,7 @@ invalid_operand:
             result->levels = 0;
         }
 done:
+        csh_input_reserve_end(&input_scope);
         result->category = CSH_EXEC_FUNCTION;
         plan_destroy(&plan);
         free(reserved.items);
@@ -1662,7 +2013,7 @@ static int execute_plan(struct csh_execution_context *context,
     case CSH_AST_BRACE: {
         struct csh_redirect_save **saves = NULL;
         struct csh_command command = {0};
-        rc = runtime_redirects(context->state, plan->tree, reserved, &command, &saves, result, error);
+        rc = runtime_redirects(context->state, context->jobs, plan->tree, reserved, &command, &saves, result, error);
         if (rc == 0) {
             rc = plan->kind == CSH_AST_BRACE ?
                 execute_plan(context, &plan->children[0], reserved, result, error) :
@@ -1697,6 +2048,7 @@ int csh_execute_context_ast(struct csh_execution_context *context,
     const struct csh_ast *tree, struct csh_execution *result, struct csh_error *error)
 {
     struct execution_plan plan = {0};
+    struct csh_input_reservation input_scope = {0};
     struct descriptor_reservations reserved = {0};
     int rc = -1;
     memset(result, 0, sizeof(*result));
@@ -1709,6 +2061,7 @@ int csh_execute_context_ast(struct csh_execution_context *context,
     }
     if (csh_execution_context_reap(context, 0, error) == -1 ||
         plan_prepare(tree, &plan, &reserved, 0, error) == -1) goto done;
+    if (csh_input_reserve_begin(&input_scope, reserved.items, reserved.count, error) == -1) goto done;
     if (context->jobs != NULL && csh_jobs_reserve(context->jobs,
         reserved.items, reserved.count) == -1) {
         fail(error, "cannot reserve job descriptors", errno, 1);
@@ -1716,6 +2069,7 @@ int csh_execute_context_ast(struct csh_execution_context *context,
     }
     rc = execute_plan(context, &plan, &reserved, result, error);
 done:
+    csh_input_reserve_end(&input_scope);
     plan_destroy(&plan);
     free(reserved.items);
     if (rc == -1) result->status = error->status;

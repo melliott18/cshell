@@ -801,3 +801,13 @@ and stdin modes, plus allocation-failure sweeps through function calls, retained
 definitions, loops, case, and nested redirects. It is included in `make test`,
 Docker tests, and sanitizer CI. See [Control flow and functions](control-flow.md)
 for observable behavior and ownership checks.
+
+## Evaluation and utility builtin checks
+
+`make test-evaluation` selects CSH-031 cross-mode and interactive invocation
+fixtures. `make test` includes them in the full runtime suite. `make test-control`
+also sweeps allocation failures in nested eval/dot, read, getopts and hash, with
+parameter, descriptor and allocation restoration assertions. The terminal suite
+adds read continuation prompts, eval error recovery and `command` foreground
+interruption. See [Evaluation builtins](evaluation-builtins.md) for supported
+behavior, explicit host dependencies and profile boundaries.

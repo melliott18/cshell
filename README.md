@@ -25,8 +25,8 @@ command strings, script files, and stdin. Command substitutions and expanded
 here-documents use the same parser and executor. Non-interactive execution prints
 no prompt or banner. Background jobs and interactive
 [job control](docs/job-control.md) are supported. [Control flow and functions](docs/control-flow.md) include conditionals,
-loops, case selection, and explicit control transfer. Runtime aliases, full shell
-options, and traps remain incomplete;
+loops, case selection, and explicit control transfer. [Evaluation, lookup, aliases, and stateful utilities](docs/evaluation-builtins.md)
+are supported. Full shell options and traps remain incomplete;
 unsupported syntax is
 diagnosed before that construct executes.
 See [Runtime behavior](docs/candidate-runtime.md) for the exact subset and statuses.
@@ -47,6 +47,7 @@ make test-alias    # Alias storage, handlers, and token/AST substitution
 make test-expand   # Replacement value/field expansion, arithmetic, and quote APIs
 make test-substitution # Integrated expansion, child ownership, and capture failures
 make test-fields   # IFS splitting, pathname expansion, and cleanup checks
+make test-evaluation # Evaluation, lookup, aliases, and remaining utilities
 make test-builtins # Replacement state builtins and executor integration
 make test-state    # Replacement shell-state API checks only
 make test-execute  # Replacement command, assignment, and redirection API checks
@@ -93,6 +94,7 @@ resource limits, direct Docker commands, and troubleshooting.
 | Expand structured words with quote provenance | [Value expansion](docs/value-expansions.md) |
 | Execute prepared commands and restore redirections | [Simple-command execution](docs/execution.md) |
 | Execute loops, conditionals, and functions | [Control flow](docs/control-flow.md) |
+| Use evaluation and utility builtins | [Evaluation builtins](docs/evaluation-builtins.md) |
 | Use interactive jobs and job builtins | [Job control](docs/job-control.md) |
 | Check the POSIX target and known gaps | [POSIX tracking](docs/posix.md) |
 | Browse all project documentation | [Documentation index](docs/README.md) |
@@ -116,6 +118,7 @@ src/pathname.c   Component-wise filename generation
 src/arithmetic.c Checked signed-long arithmetic evaluation
 src/quote.c      Shared dollar-single-quote escape decoding
 src/builtin.c    Replacement state builtin handlers
+src/utility.c    Read, getopts, umask, times, and resource-limit handlers
 src/prepare.c    Context-sensitive command preparation and lazy substitution handoff
 src/execute.c    Execution contexts, assignment scopes, dispatch, capture, and pipelines
 src/redirect.c   Ordered descriptor operations and restoration

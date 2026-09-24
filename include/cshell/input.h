@@ -43,6 +43,19 @@ int csh_input_from_file(struct csh_input **out, const char *path,
  * file description, as required for shell stdin. Other flags are preserved. */
 int csh_input_from_fd(struct csh_input **out, int fd, const char *name,
                       struct csh_error *error);
+/* Stack token borrows descriptor operands until end. Nested calls exclude all
+ * enclosing operands when relocating parser descriptors. Initialize with {0}. */
+struct csh_input_reservation {
+    const int *fds;
+    size_t count;
+    struct csh_input_reservation *previous;
+    int active;
+};
+int csh_input_reserve_begin(struct csh_input_reservation *reservation,
+    const int *fds, size_t count, struct csh_error *error);
+/* Shared with other private descriptor owners during nested execution. */
+int csh_input_descriptor_reserved(int fd);
+void csh_input_reserve_end(struct csh_input_reservation *reservation);
 void csh_input_destroy(struct csh_input *input);
 /* Optional borrowed event-loop hook, called before each descriptor read.
  * Return 0 when ready or -1 with errno. String sources do not call it. */
