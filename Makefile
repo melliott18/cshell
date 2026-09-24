@@ -41,7 +41,7 @@ EXPAND_HEADERS = include/cshell/expand.h include/cshell/arithmetic.h include/csh
 EXPAND_OBJECTS = build/expand.o build/quote.o build/arithmetic.o
 EXECUTE_HEADERS = include/cshell/builtin.h include/cshell/execute.h include/cshell/redirect.h $(PARSER_HEADERS) $(STATE_HEADERS)
 EXECUTE_OBJECTS = build/builtin.o build/execute.o build/redirect.o $(PARSER_OBJECTS) build/state.o
-EXECUTE_FAULT_OBJECTS = build/tests/execute-fault-execute.o build/tests/execute-fault-redirect.o
+EXECUTE_FAULT_OBJECTS = build/tests/execute-fault-execute.o build/tests/execute-fault-redirect.o build/tests/execute-fault-state.o
 FIELDS_HEADERS = $(EXPAND_HEADERS) src/field_internal.h
 FIELDS_OBJECTS = build/fields.o build/pathname.o
 FIELDS_FAULT_OBJECTS = build/tests/fields-fault-fields.o build/tests/fields-fault-pathname.o
@@ -257,12 +257,16 @@ $(EXECUTE_FAULT_OBJECTS): build/tests/execute-fault-%.o: src/%.c $(EXECUTE_HEADE
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/execute_faults.h -c $< -o $@
 
-build/tests/execute_faults: tests/execute_faults.c tests/execute_faults.h $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/state.o build/builtin.o $(EXECUTE_HEADERS)
+build/tests/execute_faults: tests/execute_faults.c tests/execute_faults.h $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/builtin.o $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/execute_faults.c $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/state.o build/builtin.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/execute_faults.c $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/builtin.o $(LDLIBS)
 
-test-execute: build/tests/execute_fixture build/tests/execute_helper build/tests/execute_faults
-	$(PYTHON) tests/execute.py build/tests/execute_fixture --helper build/tests/execute_helper --fault-binary build/tests/execute_faults
+build/tests/assignment_fixture: tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(LDLIBS)
+
+test-execute: build/tests/execute_fixture build/tests/execute_helper build/tests/execute_faults build/tests/assignment_fixture
+	$(PYTHON) tests/execute.py build/tests/execute_fixture --helper build/tests/execute_helper --fault-binary build/tests/execute_faults --assignment-binary build/tests/assignment_fixture
 
 build/tests/builtin_fixture: tests/builtin_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)

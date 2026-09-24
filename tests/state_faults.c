@@ -531,8 +531,45 @@ static void check_allocation_free_restore(void)
     assert(allocation_calls == 0 && live_allocations == 0);
 }
 
+static void check_selective_save_failures(void)
+{
+    size_t point;
+    const char *names[] = {"KEEP", "NEW", "PENDING", "KEEP"};
+    for (point = 1; point < SWEEP_LIMIT; ++point) {
+        struct csh_state *state;
+        struct csh_variable_save *save = NULL;
+        enum csh_state_result rc;
+        size_t before;
+        reset_faults();
+        state = make_baseline();
+        before = live_allocations;
+        arm_fault(point);
+        rc = csh_state_save_variables(state, 4, names, &save);
+        if (rc == CSH_STATE_NOMEM) {
+            assert(save == NULL && live_allocations == before);
+            check_baseline(state);
+        } else {
+            assert(rc == CSH_STATE_OK && allocation_calls < point);
+            arm_fault(0);
+            assert(csh_state_unset_variable(state, "KEEP") == CSH_STATE_OK);
+            assert(csh_state_set_variable(state, "NEW", "temporary") == CSH_STATE_OK);
+            assert(csh_state_update_attributes(state, "NEW", CSH_VAR_READONLY, 0) == CSH_STATE_OK);
+            assert(csh_state_set_variable(state, "PENDING", "") == CSH_STATE_OK);
+            arm_fault(1);
+            assert(csh_state_restore_variables(state, &save) == CSH_STATE_OK);
+            assert(save == NULL && allocation_calls == 0);
+            check_baseline(state);
+        }
+        csh_state_destroy(state);
+        assert(live_allocations == 0);
+        if (rc == CSH_STATE_OK) break;
+    }
+    assert(point < SWEEP_LIMIT);
+}
+
 int main(void)
 {
+    check_selective_save_failures();
     check_create_failures();
     check_mutation_failures();
     check_environment_failures();

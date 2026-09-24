@@ -77,7 +77,7 @@ static void api_checks(struct csh_state *state)
     struct csh_error error;
     struct csh_execution result;
     struct csh_command command = {0};
-    struct csh_assignment assignment = {"NAME", "value"};
+    struct csh_assignment assignment = {"9NAME", "value"};
     struct csh_redirect redirs[3] = {{0}};
     struct csh_redirect_save *save = NULL;
     char *cd_args[] = {"cd", ".", NULL};
