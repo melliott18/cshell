@@ -559,7 +559,12 @@ fixtures. The driver parses complete commands, invokes the literal adapter, and
 honors `exit_requested`; it is test infrastructure rather than the replacement
 shell runtime. The checks cover command lookup and failure statuses, ordered
 redirections, here-document delivery, parent builtin effects and descriptor
-restoration, unsupported constructs, and owned-child waiting.
+restoration, assignment environments, unsupported constructs, and owned-child waiting.
+`tests/assignment_fixture.c` exercises resolved regular/special-builtin and function
+handlers, nested temporary prefixes, unrelated state retention, copied states,
+readonly errors in interactive/noninteractive contexts, and persistent versus
+temporary assignment behavior on failure. These are dispatch contracts; the full
+function and builtin implementations remain separate work.
 
 ```sh
 make test-execute
@@ -578,8 +583,10 @@ child. The Python runner also checks large and multiple ordered here-documents,
 exported environment snapshots, executable-format fallback, and rejection before
 side effects.
 
-`tests/execute_faults.c` compiles separate execution/redirection objects with
-test-only wrappers. It sweeps adapter, parent-dispatch, and external-launch allocation failures,
+`tests/execute_faults.c` compiles separate execution/redirection/state objects with
+test-only wrappers. Assignment sweeps fail each allocation during selective saves,
+batch application, and external environment preparation, checking atomic rollback
+and cleanup. State fault fixtures also verify allocation-free selective restoration. It sweeps adapter, parent-dispatch, and external-launch allocation failures,
 injects open, duplication, saved-descriptor, temporary-file, and fork failures,
 and verifies interrupted waits retry the owned positive PID. Native CI includes
 the focused execution target in its AddressSanitizer/UndefinedBehaviorSanitizer

@@ -4,8 +4,8 @@
 parameter storage in [`src/state.c`](../src/state.c), with the interface in
 [`cshell/state.h`](../include/cshell/state.h). It builds independently of the
 legacy scanner and executor. The default executable does not use this state
-yet. Assignment execution, parameter expansion, and builtins consume the API
-through their own implementation tickets.
+yet. Assignment dispatch and parameter expansion consume this API; complete builtins
+and the replacement runtime remain separate work.
 
 ## Construction and ownership
 
@@ -143,9 +143,21 @@ full-state rollback also restores status and positional parameters and
 discards every intervening variable change. It must not be used as a
 substitute for selective temporary-assignment restoration around a builtin
 that can change unrelated state.
-[CSH-023](tickets/CSH-023-assignment-environments.md) owns category-aware
-assignment lifetimes and that selective restoration policy; function parameter
-lifetimes remain [CSH-028](tickets/CSH-028-control-flow-and-functions.md)
+[CSH-023](tickets/CSH-023-assignment-environments.md) supplies category-aware
+assignment lifetimes through a separate selective save:
+
+- `csh_state_save_variables()` copies a counted list of variable names, including
+  missing names and unset declarations. Duplicate names are saved once. A zero
+  count produces a NULL save. Invalid names or allocation failure leave state
+  unchanged and the output NULL.
+- `csh_state_restore_variables()` consumes the save without allocating, replacing
+  only the saved names and their attributes. It bypasses readonly for rollback,
+  preserves unrelated variables and all metadata, and accepts a NULL save.
+- `csh_state_variable_save_destroy()` discards an unused save (NULL is accepted).
+  Saves own their contents independently of the source state. Restore nested
+  scopes on the same state in reverse order. Borrowed views expire on restore.
+
+Function parameter lifetimes remain [CSH-028](tickets/CSH-028-control-flow-and-functions.md)
 work.
 
 ## Failure and validation
