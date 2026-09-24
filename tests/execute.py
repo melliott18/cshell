@@ -179,7 +179,7 @@ def main():
             f"{helper} args $(touch substitution-effect)",
             f"{helper} args `touch backtick-effect`", f"{helper} args *",
             f"{helper} args ~", f"NAME=$HOME {helper} args assignment",
-            f"{helper} args a | {helper} copy", f"{helper} args a && {helper} args b",
+            f"{helper} args a && {helper} args b",
             f"{helper} args a || {helper} args b", f"{helper} args a; {helper} args b",
             f"{helper} args a &", f"({helper} args compound)",
             f"{{ {helper} args compound; }}",

@@ -93,6 +93,7 @@ make test
 make test-pty
 make test-expand
 make test-execute
+make test-pipeline
 make test-alias
 make test-harness
 ```
@@ -128,7 +129,9 @@ and allocation/I/O/interruption cleanup. See
 `make test-execute` checks simple-command lookup, owned children, ordered
 redirections, bootstrap builtins, and failure cleanup without legacy objects or
 Flex. See [Simple-command execution](docs/execution.md) for the prepared-command
-contract and the temporary literal adapter's limits.
+contract and the temporary literal adapter's limits. `make test-pipeline` adds
+concurrent pipeline behavior, ordered stage results, builtin isolation, and
+partial-launch cleanup. It is also included in `make test` and sanitizer CI.
 
 `make test-alias` checks alias storage, direct builtin handlers, parser
 substitution, and allocation failures without invoking the prototype. See

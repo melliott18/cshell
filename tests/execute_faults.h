@@ -15,6 +15,7 @@ int csh_execute_fault_open(const char *path, int flags, ...);
 int csh_execute_fault_mkstemp(char *template_name);
 int csh_execute_fault_dup2(int old_fd, int new_fd);
 int csh_execute_fault_fcntl(int fd, int operation, ...);
+int csh_execute_fault_pipe(int ends[2]);
 pid_t csh_execute_fault_fork(void);
 pid_t csh_execute_fault_waitpid(pid_t pid, int *status, int options);
 
@@ -27,6 +28,7 @@ pid_t csh_execute_fault_waitpid(pid_t pid, int *status, int options);
 #define mkstemp csh_execute_fault_mkstemp
 #define dup2 csh_execute_fault_dup2
 #define fcntl csh_execute_fault_fcntl
+#define pipe csh_execute_fault_pipe
 #define fork csh_execute_fault_fork
 #define waitpid csh_execute_fault_waitpid
 #endif

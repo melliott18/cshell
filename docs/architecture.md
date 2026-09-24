@@ -62,7 +62,7 @@ executable does not call them yet.
 | `src/quote.c` / `include/cshell/quote.h` | Reusable dollar-single-quote decoding before expansion or delimiter quote removal |
 | `src/state.c` / `include/cshell/state.h` | Owned variables and attributes, copied invocation parameters, option/status metadata, environment snapshots, and full-state and selective variable copying/restoration |
 | `src/builtin.c` / `include/cshell/builtin.h` | State builtin lookup and handlers over replacement shell state |
-| `src/execute.c` / `include/cshell/execute.h` | Owned prepared-command boundary, bounded literal AST adapter, command lookup, owned child execution, assignment categories, and parent builtin dispatch |
+| `src/execute.c` / `include/cshell/execute.h` | Owned prepared-command boundary, bounded literal AST adapter, command lookup, owned child execution, assignment categories, parent builtin dispatch, concurrent pipelines, and per-stage results |
 | `src/redirect.c` / `include/cshell/redirect.h` | Ordered file, descriptor, and prepared here-document operations with descriptor restoration |
 
 See [Input and invocation](input-and-invocation.md) for the concrete ownership,

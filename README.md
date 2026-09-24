@@ -40,6 +40,7 @@ make test-fields   # IFS splitting, pathname expansion, and cleanup checks
 make test-builtins # Replacement state builtins and executor integration
 make test-state    # Replacement shell-state API checks only
 make test-execute  # Replacement command, assignment, and redirection API checks
+make test-pipeline # Concurrent pipeline, stage-status, and failure-cleanup checks
 make test-pty      # Controlling-terminal startup and explicit-exit fixture
 make test-harness  # Test the runner's failure detection and cleanup
 make docker-test   # Build and run the selected fixtures in a Linux container
@@ -47,7 +48,7 @@ make docker-test-pty # Build and run the selected terminal fixtures in Linux
 ```
 
 `make test` includes independent input/invocation, lexer, parser/AST, alias,
-shell-state, value/field-expansion, and simple-command execution API checks. Its
+shell-state, value/field-expansion, and command/pipeline execution API checks. Its
 default behavioral suite records the current prototype's stdin
 behavior and explicit prompt allowance. Replacement shell and module tests
 select their executable and fixture suite separately; passing prototype tests
@@ -102,7 +103,7 @@ src/pathname.c   Component-wise filename generation
 src/arithmetic.c Checked signed-long arithmetic evaluation
 src/quote.c      Shared dollar-single-quote escape decoding
 src/builtin.c    Replacement state builtin handlers
-src/execute.c    Replacement simple-command adapter, assignment scopes, and dispatch
+src/execute.c    Replacement command adapter, assignment scopes, dispatch, and pipelines
 src/redirect.c   Ordered descriptor operations and restoration
 src/legacy/      Transitional lexer and executor
 docs/            Architecture, POSIX tracking, and implementation tickets

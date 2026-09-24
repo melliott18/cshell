@@ -3,7 +3,9 @@
 #include "cshell/builtin.h"
 
 #include <errno.h>
+#include <fcntl.h>
 #include <limits.h>
+#include <signal.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -453,9 +455,49 @@ static int assignments_apply(struct csh_state *state,
     return 0;
 }
 
-int csh_execute_resolved(struct csh_state *state, const struct csh_command *command,
+static int command_validate(struct csh_state *state,
+    const struct csh_command *command, enum csh_execution_category *category,
+    struct csh_error *error)
+{
+    size_t i;
+    if (state == NULL || command == NULL)
+        return fail(error, "invalid execution input", 0, 2);
+    if (command->argc != 0 && command->argv == NULL)
+        return fail(error, "invalid command argument vector", 0, 2);
+    for (i = 0; i < command->argc; ++i)
+        if (command->argv[i] == NULL)
+            return fail(error, "invalid command argument", 0, 2);
+    if (command->argc != 0 && command->argv[command->argc] != NULL)
+        return fail(error, "command argument vector is not terminated", 0, 2);
+    if (command->assignment_count != 0 && command->assignments == NULL)
+        return fail(error, "invalid assignment vector", 0, 2);
+    for (i = 0; i < command->assignment_count; ++i) {
+        struct csh_variable_view view;
+        if (command->assignments[i].value == NULL ||
+            csh_state_get_variable(state, command->assignments[i].name,
+                &view) != CSH_STATE_OK)
+            return fail(error, "invalid assignment name or value", 0, 2);
+    }
+    if (csh_redirect_validate(command->redirections,
+        command->redirection_count, error) == -1) return -1;
+    if (command->argc == 0) *category = CSH_EXEC_EMPTY;
+    else if (strcmp(command->argv[0], "exit") == 0)
+        *category = CSH_EXEC_SPECIAL_BUILTIN;
+    else *category = csh_state_builtin_category(command->argv[0]);
+    return 0;
+}
+
+static int child_status(int status)
+{
+    return WIFEXITED(status) ? WEXITSTATUS(status) :
+        WIFSIGNALED(status) ? 128 + WTERMSIG(status) : 1;
+}
+
+static int execute_resolved(struct csh_state *state,
+    const struct csh_command *command,
     enum csh_execution_category category, csh_command_handler handler,
-    void *context, struct csh_execution *result, struct csh_error *error)
+    void *context, struct csh_execution *result,
+    struct csh_pipeline_stage *stage, struct csh_error *error)
 {
     struct csh_redirect_save *save = NULL;
     struct csh_variable_save *variables = NULL;
@@ -505,6 +547,7 @@ int csh_execute_resolved(struct csh_state *state, const struct csh_command *comm
             goto done;
         }
         if (child == 0) launch_child(command, &launch);
+        if (stage != NULL) stage->pid = child;
         do { waited = waitpid(child, &status, 0); } while (waited == -1 && errno == EINTR);
         if (waited == -1) {
             int number = errno;
@@ -513,8 +556,11 @@ int csh_execute_resolved(struct csh_state *state, const struct csh_command *comm
             goto done;
         }
         launch_destroy(&launch);
-        result->status = WIFEXITED(status) ? WEXITSTATUS(status) :
-            WIFSIGNALED(status) ? 128 + WTERMSIG(status) : 1;
+        result->status = child_status(status);
+        if (stage != NULL) {
+            stage->reaped = 1;
+            stage->wait_status = status;
+        }
         rc = 0;
     } else {
         struct csh_error restore_error;
@@ -536,6 +582,15 @@ done:
     return rc;
 }
 
+int csh_execute_resolved(struct csh_state *state,
+    const struct csh_command *command,
+    enum csh_execution_category category, csh_command_handler handler,
+    void *context, struct csh_execution *result, struct csh_error *error)
+{
+    return execute_resolved(state, command, category, handler, context,
+        result, NULL, error);
+}
+
 static int bootstrap_handler(struct csh_state *state,
     const struct csh_command *command, struct csh_execution *result,
     struct csh_error *error, void *context)
@@ -555,30 +610,292 @@ int csh_execute_command(struct csh_state *state, const struct csh_command *comma
 {
     enum csh_execution_category category = CSH_EXEC_EMPTY;
     csh_command_handler handler = NULL;
-    if (command != NULL && command->argc != 0) {
-        if (command->argv != NULL && command->argv[0] != NULL) {
-            if (strcmp(command->argv[0], "exit") == 0)
-                category = CSH_EXEC_SPECIAL_BUILTIN;
-            else
-                category = csh_state_builtin_category(command->argv[0]);
-            if (category != CSH_EXEC_EXTERNAL) handler = bootstrap_handler;
+    if (command != NULL && command->argc != 0 && command->argv != NULL &&
+        command->argv[0] != NULL) {
+        if (strcmp(command->argv[0], "exit") == 0)
+            category = CSH_EXEC_SPECIAL_BUILTIN;
+        else category = csh_state_builtin_category(command->argv[0]);
+        if (category != CSH_EXEC_EXTERNAL) handler = bootstrap_handler;
+    }
+    return execute_resolved(state, command, category, handler, NULL,
+        result, NULL, error);
+}
+
+void csh_pipeline_result_destroy(struct csh_pipeline_result *result)
+{
+    if (result == NULL) return;
+    free(result->stages);
+    memset(result, 0, sizeof(*result));
+}
+
+/* Like redirection close, this requires serialized descriptor mutation. */
+static void pipe_close(int fd)
+{
+    if (fd >= 0) while (close(fd) == -1 && errno == EINTR) {}
+}
+
+/* Keep pipes off standard descriptors even when those descriptors were closed
+ * by the caller. Children close every private end before applying redirects,
+ * so a closed user dup operand can never refer to a private pipe. */
+static int pipeline_pipe(int ends[2])
+{
+    int i, number;
+    if (pipe(ends) == -1) return -1;
+    for (i = 0; i < 2; ++i) {
+        int moved;
+        if (ends[i] < 3) {
+            do { moved = fcntl(ends[i], F_DUPFD_CLOEXEC, 3); }
+            while (moved == -1 && errno == EINTR);
+            if (moved == -1) goto failure;
+            pipe_close(ends[i]);
+            ends[i] = moved;
+        } else {
+            do { moved = fcntl(ends[i], F_SETFD, FD_CLOEXEC); }
+            while (moved == -1 && errno == EINTR);
+            if (moved == -1) goto failure;
         }
     }
-    return csh_execute_resolved(state, command, category, handler, NULL, result, error);
+    return 0;
+failure:
+    number = errno;
+    pipe_close(ends[0]);
+    pipe_close(ends[1]);
+    ends[0] = ends[1] = -1;
+    errno = number;
+    return -1;
+}
+
+static int pipeline_connect(int source, int target)
+{
+    int rc;
+    if (source < 0) return 0;
+    do { rc = dup2(source, target); } while (rc == -1 && errno == EINTR);
+    return rc;
+}
+
+static int stage_wait(struct csh_pipeline_stage *stage)
+{
+    pid_t waited;
+    int status;
+    do { waited = waitpid(stage->pid, &status, 0); }
+    while (waited == -1 && errno == EINTR);
+    if (waited == -1) return -1;
+    stage->wait_status = status;
+    stage->status = child_status(status);
+    stage->reaped = stage->completed = 1;
+    return 0;
+}
+
+static void pipeline_cancel(struct csh_pipeline_result *result)
+{
+    size_t i;
+    /* Close parent pipes before this call; kill all before waiting for any.
+     * SIGKILL bounds cleanup even when a stage ignores TERM or never uses its
+     * pipe. These are our direct, unreaped children, never process groups. */
+    for (i = 0; i < result->count; ++i) {
+        struct csh_pipeline_stage *stage = &result->stages[i];
+        if (stage->pid > 0 && !stage->reaped) kill(stage->pid, SIGKILL);
+    }
+    for (i = 0; i < result->count; ++i) {
+        struct csh_pipeline_stage *stage = &result->stages[i];
+        if (stage->pid > 0 && !stage->reaped) stage_wait(stage);
+    }
+}
+
+static void pipeline_child(struct csh_state *state,
+    const struct csh_command *command, struct launch *launch,
+    enum csh_execution_category category, int previous, int ends[2])
+{
+    struct csh_execution result;
+    struct csh_error error;
+    if (pipeline_connect(previous, STDIN_FILENO) == -1 ||
+        pipeline_connect(ends[1], STDOUT_FILENO) == -1) {
+        diagnose("pipeline", "cannot connect pipe", errno);
+        _exit(1);
+    }
+    pipe_close(previous);
+    pipe_close(ends[0]);
+    pipe_close(ends[1]);
+    /* Explicit redirections override the pipe connections. External commands
+     * exec directly in this child; no wrapper/grandchild obscures ownership. */
+    if (category == CSH_EXEC_EXTERNAL) launch_child(command, launch);
+    if (csh_execute_command(state, command, &result, &error) == -1)
+        diagnose("pipeline", error.message, error.system_errno);
+    _exit(result.status);
+}
+
+static int pipeline_launch_prepare(struct csh_state *state,
+    const struct csh_command *command, struct launch *launch,
+    struct csh_error *error)
+{
+    struct csh_variable_save *variables = NULL;
+    struct csh_execution result = {0};
+    int rc;
+    if (assignments_apply(state, command, CSH_EXEC_EXTERNAL, &variables,
+        &result, error) == -1) return -1;
+    rc = launch_prepare(state, command, launch, error);
+    csh_state_restore_variables(state, &variables);
+    return rc;
+}
+
+int csh_execute_pipeline(struct csh_state *state,
+    const struct csh_command *commands, size_t count, int negated,
+    struct csh_pipeline_result *out, struct csh_error *error)
+{
+    struct launch *launches = NULL;
+    size_t i;
+    int previous = -1, ends[2] = {-1, -1}, rc = -1;
+    memset(out, 0, sizeof(*out));
+    memset(error, 0, sizeof(*error));
+    out->execution.category = CSH_EXEC_PIPELINE;
+    if (state == NULL || commands == NULL || count == 0) {
+        fail(error, "invalid pipeline input", 0, 2);
+        goto done;
+    }
+    if (count > SIZE_MAX / sizeof(*out->stages) ||
+        count > SIZE_MAX / sizeof(*launches)) {
+        fail(error, "pipeline is too large", ENOMEM, 1);
+        goto done;
+    }
+    out->stages = calloc(count, sizeof(*out->stages));
+    if (out->stages == NULL) {
+        fail(error, "cannot allocate pipeline stages", ENOMEM, 1);
+        goto done;
+    }
+    out->count = count;
+    for (i = 0; i < count; ++i)
+        if (command_validate(state, &commands[i], &out->stages[i].category, error) == -1)
+            goto done;
+    if (count == 1) {
+        enum csh_execution_category category = out->stages[0].category;
+        csh_command_handler handler = category == CSH_EXEC_EMPTY ||
+            category == CSH_EXEC_EXTERNAL ? NULL : bootstrap_handler;
+        rc = execute_resolved(state, commands, category, handler, NULL,
+            &out->execution, out->stages, error);
+        out->stages[0].status = out->execution.status;
+        out->stages[0].completed = rc == 0;
+        if (rc == -1) pipeline_cancel(out);
+        goto done;
+    }
+    launches = calloc(count, sizeof(*launches));
+    if (launches == NULL) {
+        fail(error, "cannot allocate pipeline launches", ENOMEM, 1);
+        goto done;
+    }
+    /* All preparation completes before the first child or filesystem effect. */
+    for (i = 0; i < count; ++i) {
+        if (out->stages[i].category == CSH_EXEC_EXTERNAL &&
+            pipeline_launch_prepare(state, &commands[i], &launches[i],
+                error) == -1) {
+            /* launch_prepare already destroyed the failed entry. */
+            memset(&launches[i], 0, sizeof(launches[i]));
+            goto done;
+        }
+    }
+    for (i = 0; i < count; ++i) {
+        pid_t child;
+        if (i + 1 < count && pipeline_pipe(ends) == -1) {
+            fail(error, "cannot create pipeline pipe", errno, 1);
+            goto cancel;
+        }
+        child = fork();
+        if (child == -1) {
+            fail(error, "cannot fork pipeline stage", errno, 1);
+            goto cancel;
+        }
+        if (child == 0)
+            pipeline_child(state, &commands[i], &launches[i],
+                out->stages[i].category, previous, ends);
+        out->stages[i].pid = child;
+        pipe_close(previous);
+        pipe_close(ends[1]);
+        previous = ends[0];
+        ends[0] = ends[1] = -1;
+    }
+    /* The last launch closes previous, leaving no pipe end in the parent. */
+    for (i = 0; i < count; ++i) {
+        if (stage_wait(&out->stages[i]) == -1) {
+            fail(error, "cannot wait for pipeline stage", errno, 1);
+            goto cancel;
+        }
+    }
+    out->execution.status = out->stages[count - 1].status;
+    rc = 0;
+    goto done;
+cancel:
+    pipe_close(previous);
+    pipe_close(ends[0]);
+    pipe_close(ends[1]);
+    pipeline_cancel(out);
+done:
+    if (launches != NULL) {
+        for (i = 0; i < count; ++i) launch_destroy(&launches[i]);
+        free(launches);
+    }
+    if (rc == -1) out->execution.status = error->status;
+    else if (negated && !out->execution.exit_requested)
+        out->execution.status = out->execution.status == 0 ? 1 : 0;
+    if (state != NULL) csh_state_set_status(state, out->execution.status);
+    return rc;
+}
+
+int csh_execute_pipeline_ast(struct csh_state *state, const struct csh_ast *tree,
+    struct csh_pipeline_result *out, struct csh_error *error)
+{
+    struct csh_command *commands = NULL;
+    size_t i, count = 1;
+    int negated = 0, rc = -1;
+    memset(out, 0, sizeof(*out));
+    memset(error, 0, sizeof(*error));
+    if (tree != NULL && tree->kind == CSH_AST_LIST && tree->redirection_count == 0 &&
+        tree->data.list.item_count == 1 &&
+        tree->data.list.items[0].separator != CSH_AST_AMPERSAND)
+        tree = tree->data.list.items[0].command;
+    if (tree != NULL && tree->kind == CSH_AST_PIPELINE && tree->redirection_count == 0) {
+        count = tree->data.pipeline.command_count;
+        negated = tree->data.pipeline.negated;
+        if (count == 0 || tree->data.pipeline.commands == NULL) {
+            fail(error, "invalid pipeline AST", 0, 2);
+            goto done;
+        }
+    } else if (tree == NULL || tree->kind != CSH_AST_SIMPLE) {
+        fail(error, "only a foreground simple command or pipeline is supported", 0, 2);
+        goto done;
+    }
+    if (count > SIZE_MAX / sizeof(*commands) ||
+        (commands = calloc(count, sizeof(*commands))) == NULL) {
+        fail(error, "cannot allocate pipeline commands", ENOMEM, 1);
+        goto done;
+    }
+    for (i = 0; i < count; ++i) {
+        const struct csh_ast *stage = tree->kind == CSH_AST_PIPELINE ?
+            tree->data.pipeline.commands[i] : tree;
+        /* No nested compound/list adapter shortcuts inside a stage. */
+        if (stage == NULL || stage->kind != CSH_AST_SIMPLE) {
+            fail(error, "only simple pipeline stages are supported", 0, 2);
+            goto done;
+        }
+        if (csh_command_from_ast(stage, &commands[i], error) == -1) goto done;
+    }
+    rc = csh_execute_pipeline(state, commands, count, negated, out, error);
+done:
+    if (commands != NULL) {
+        for (i = 0; i < count; ++i) csh_command_destroy(&commands[i]);
+        free(commands);
+    }
+    if (rc == -1) {
+        out->execution.status = error->status;
+        if (state != NULL) csh_state_set_status(state, out->execution.status);
+    }
+    return rc;
 }
 
 int csh_execute_ast(struct csh_state *state, const struct csh_ast *tree,
     struct csh_execution *result, struct csh_error *error)
 {
-    struct csh_command command;
-    int rc;
-    if (csh_command_from_ast(tree, &command, error) == -1) {
-        memset(result, 0, sizeof(*result));
-        result->status = error->status;
-        if (state != NULL) csh_state_set_status(state, result->status);
-        return -1;
-    }
-    rc = csh_execute_command(state, &command, result, error);
-    csh_command_destroy(&command);
+    struct csh_pipeline_result pipeline = {0};
+    int rc = csh_execute_pipeline_ast(state, tree, &pipeline, error);
+    *result = pipeline.execution;
+    csh_pipeline_result_destroy(&pipeline);
     return rc;
 }
