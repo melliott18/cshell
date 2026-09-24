@@ -1,6 +1,6 @@
 # CSH-027: Parse compound commands and function definitions
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-009
@@ -118,3 +118,10 @@ GNU Make 4.3, Python 3.11.2, Docker Engine 24.0.6, UID 10001.
 - Changed Markdown links resolve and `git diff --check` passes. No Mermaid
   diagrams changed. These results establish parser/API behavior only; CSH-028
   and later runtime integration still own executable compound semantics.
+
+Integrated into `main` through [pull request #53](https://github.com/melliott18/cshell/pull/53)
+on 2026-09-23. Implementation commit: `ee04c9c`; integration commit after
+CSH-025: `3b11fad`; merge commit: `0a90665`. GitHub closed issue #28 when the
+pull request merged. The combined native run passed all 61 harness checks; a
+single hosted macOS startup-timing failure passed on its focused rerun, and both
+hosted workflows passed Ubuntu/GCC, macOS/Clang, and Docker Linux.
