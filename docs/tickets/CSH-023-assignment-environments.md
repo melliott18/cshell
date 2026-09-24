@@ -1,6 +1,6 @@
 # CSH-023: Apply assignment prefixes by execution category
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-007
@@ -100,4 +100,9 @@ Docker: Debian Bookworm Linux aarch64, GCC 12.2.0, Docker Engine 24.0.6.
 
 Builtin/function fixtures use resolved handlers; they do not claim complete
 builtin/function or public-runtime integration. The default `cshell` executable
-still uses the prototype. This ticket remains `review` until integration.
+still uses the prototype.
+
+Integrated into `main` through [pull request #59](https://github.com/melliott18/cshell/pull/59)
+on 2026-09-23. Implementation commit: `777e27f`; merge commit: `f37915c`.
+GitHub closed issue #24 when the pull request merged. Both hosted workflows
+passed Ubuntu/GCC, macOS/Clang, and Docker Linux.
