@@ -19,8 +19,8 @@ redirections.
 
 This is the handoff for CSH-008 expansion integration. Argument strings and file
 paths are already prepared; `csh_execute_command()` does not expand them. The
-assignment array reserves the CSH-023 assignment-lifetime boundary. A nonempty
-assignment array currently fails before redirection or dispatch.
+assignment array reserves the CSH-023 assignment-lifetime boundary. Prepared special-builtin assignments persist, including after later failure.
+Other nonempty assignment arrays still fail before redirection or dispatch.
 
 `csh_command_from_ast()` borrows an AST and creates an owned command. Its output
 must be empty on entry and remains empty on failure. The temporary adapter
@@ -77,20 +77,12 @@ such a script use the host shell's language. It does not route unsupported AST
 constructs to the host shell. That fallback remains a host dependency until the
 replacement runtime can interpret scripts itself.
 
-Bootstrap `cd` runs in the parent and changes its working directory once, without
-falling through to external execution. Bootstrap `exit` requests that the caller
-leave its input loop. Their present operand rules are:
-
-- `cd [--] [directory]` uses the supplied directory, or a nonempty `HOME` when
-  omitted. It calls `chdir()` directly. Options, `cd -`, `CDPATH`, logical-path
-  processing, and `PWD`/`OLDPWD` updates are pending.
-- `exit [status]` uses the previous status if omitted, or the low eight bits of a
-  decimal value representable by `long`. Invalid or excess operands return
-  status 2 without requesting exit.
-
-These are the initial handlers needed for runtime cutover;
-CSH-018 owns complete exit/status integration and CSH-029 owns full state-builtin
-semantics.
+[State builtins](state-builtins.md) run in the parent under reversible descriptors.
+The existing `exit [status]` handler uses the previous status if omitted, or the
+low eight bits of a decimal value representable by `long`. Invalid/excess
+operands return status 2 without requesting exit. CSH-018 owns full exit/status
+integration. `special_builtin_error` reports special-category failures for the
+future runtime's context-dependent policy; it does not itself request exit.
 
 ## Ordered redirection boundary
 
@@ -133,7 +125,7 @@ boundary on both success and failure.
 
 ## Scope and validation
 
-The supported subset has no assignment lifetime, general expansion, compound
+The supported subset has no regular-command assignment lifetime, general expansion, compound
 command, pipeline, job-control, noclobber option behavior, or full builtin
 semantics.
 Both `>` and `>|` currently create or truncate output files. The AST front end

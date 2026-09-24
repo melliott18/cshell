@@ -478,3 +478,25 @@ enum csh_state_result csh_state_restore(struct csh_state *state,
     *checkpoint = NULL;
     return CSH_STATE_OK;
 }
+
+
+enum csh_state_result csh_state_names(const struct csh_state *state, char ***out)
+{
+    struct variable *v;
+    size_t count = 0, i = 0;
+    char **names;
+    if (out == NULL) return CSH_STATE_INVALID;
+    *out = NULL;
+    if (state == NULL) return CSH_STATE_INVALID;
+    for (v = state->variables; v; v = v->next) ++count;
+    if (count >= SIZE_MAX / sizeof(*names)) return CSH_STATE_NOMEM;
+    names = malloc((count + 1) * sizeof(*names));
+    if (!names) return CSH_STATE_NOMEM;
+    memset(names, 0, (count + 1) * sizeof(*names));
+    for (v = state->variables; v; v = v->next) {
+        names[i] = copy_bytes(v->name, strlen(v->name));
+        if (!names[i++]) { csh_state_environment_destroy(names); return CSH_STATE_NOMEM; }
+    }
+    *out = names;
+    return CSH_STATE_OK;
+}

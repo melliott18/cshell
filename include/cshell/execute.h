@@ -10,7 +10,8 @@ struct csh_assignment { char *name; char *value; };
 /* All pointers are owned; argv is NULL-terminated when argc > 0. Counts
  * describe initialized entries. Zero initialization is an empty command.
  * CSH-008 will supply expansion; CSH-023 will implement assignment lifetime.
- * Nonempty assignments currently fail before redirection/dispatch. */
+ * Prepared special-builtin assignments persist (also on later failure).
+ * Other nonempty assignments fail before redirection/dispatch. */
 struct csh_command {
     char **argv;
     size_t argc;
@@ -27,6 +28,7 @@ enum csh_execution_category {
 
 struct csh_execution {
     int status;
+    int special_builtin_error; /* Runtime applies context-dependent error policy. */
     int exit_requested; /* Caller leaves its input loop; library never exits. */
     enum csh_execution_category category;
 };
@@ -38,7 +40,7 @@ void csh_command_destroy(struct csh_command *command);
  * syntax, compound/list/pipeline syntax are rejected before dispatch. */
 int csh_command_from_ast(const struct csh_ast *tree, struct csh_command *out,
     struct csh_error *error);
-/* Borrow command/state. Runs cd and exit in parent with reversible fds;
+/* Borrow command/state. Runs state builtins and exit in parent with reversible fds;
  * external execution owns exactly one forked child and waitpid targets it.
  * Return 0 when dispatch completed, including command failure statuses and
  * child redirection/exec errors; -1 for preparation, parent redirection,

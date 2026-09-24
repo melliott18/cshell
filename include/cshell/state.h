@@ -79,6 +79,10 @@ enum csh_state_result csh_state_update_attributes(struct csh_state *state,
 enum csh_state_result csh_state_unset_variable(struct csh_state *state,
     const char *name);
 
+/* Owned NULL-terminated snapshot of all declared variable names, in unspecified
+ * order. Survives state changes/destruction; free with environment_destroy. */
+enum csh_state_result csh_state_names(const struct csh_state *state, char ***out);
+
 /* Owned NULL-terminated name=value vector, including exported set values only.
  * Ordering is unspecified. Snapshot survives every state mutation/destruction. */
 enum csh_state_result csh_state_environment(const struct csh_state *state,

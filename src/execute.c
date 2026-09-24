@@ -1,5 +1,6 @@
 #include "cshell/execute.h"
 #include "cshell/quote.h"
+#include "cshell/builtin.h"
 
 #include <errno.h>
 #include <limits.h>
@@ -356,34 +357,6 @@ static void launch_child(const struct csh_command *command, struct launch *launc
     _exit(remembered ? 126 : 127);
 }
 
-static void builtin_cd(struct csh_state *state, const struct csh_command *command,
-    struct csh_execution *result)
-{
-    struct csh_variable_view home;
-    size_t first = 1;
-    const char *directory;
-    if (first < command->argc && strcmp(command->argv[first], "--") == 0) ++first;
-    if (command->argc - first > 1 ||
-        (first == 1 && first < command->argc && command->argv[first][0] == '-')) {
-        diagnose("cd", "expected at most one directory (options are not yet supported)", 0);
-        result->status = 2;
-        return;
-    }
-    if (first == command->argc) {
-        csh_state_get_variable(state, "HOME", &home);
-        directory = home.value;
-        if (directory == NULL || directory[0] == '\0') {
-            diagnose("cd", "HOME is not set or is empty", 0);
-            result->status = 1;
-            return;
-        }
-    } else directory = command->argv[first];
-    if (chdir(directory) == -1) {
-        diagnose("cd", directory, errno);
-        result->status = 1;
-    }
-}
-
 static void builtin_exit(struct csh_state *state, const struct csh_command *command,
     struct csh_execution *result)
 {
@@ -422,10 +395,6 @@ int csh_execute_command(struct csh_state *state, const struct csh_command *comma
         fail(error, "invalid execution input", 0, 2);
         goto done;
     }
-    if (command->assignment_count != 0) {
-        fail(error, "assignment execution requires assignment integration", 0, 2);
-        goto done;
-    }
     if (command->argc != 0 && command->argv == NULL) {
         fail(error, "invalid command argument vector", 0, 2);
         goto done;
@@ -439,11 +408,22 @@ int csh_execute_command(struct csh_state *state, const struct csh_command *comma
         fail(error, "command argument vector is not terminated", 0, 2);
         goto done;
     }
-    if (csh_redirect_validate(command->redirections, command->redirection_count, error) == -1) goto done;
     if (command->argc == 0) result->category = CSH_EXEC_EMPTY;
-    else if (strcmp(command->argv[0], "cd") == 0) result->category = CSH_EXEC_REGULAR_BUILTIN;
     else if (strcmp(command->argv[0], "exit") == 0) result->category = CSH_EXEC_SPECIAL_BUILTIN;
-    else result->category = CSH_EXEC_EXTERNAL;
+    else result->category = csh_state_builtin_category(command->argv[0]);
+    if (csh_redirect_validate(command->redirections, command->redirection_count, error) == -1) goto done;
+    if (command->assignment_count && result->category != CSH_EXEC_SPECIAL_BUILTIN) {
+        fail(error, "assignment execution requires assignment integration", 0, 2);
+        goto done;
+    }
+    for (i = 0; i < command->assignment_count; ++i) {
+        if (!command->assignments || !command->assignments[i].value ||
+            csh_state_set_variable(state, command->assignments[i].name, command->assignments[i].value) != CSH_STATE_OK) {
+            result->special_builtin_error = 1;
+            fail(error, "cannot apply special-builtin assignment", 0, 1);
+            goto done;
+        }
+    }
     if (result->category == CSH_EXEC_EXTERNAL) {
         struct launch launch;
         pid_t child, waited;
@@ -470,8 +450,8 @@ int csh_execute_command(struct csh_state *state, const struct csh_command *comma
         rc = 0;
     } else {
         if (csh_redirect_apply(command->redirections, command->redirection_count, &save, error) == -1) goto done;
-        if (result->category == CSH_EXEC_REGULAR_BUILTIN) builtin_cd(state, command, result);
-        else if (result->category == CSH_EXEC_SPECIAL_BUILTIN) builtin_exit(state, command, result);
+        if (command->argc && !strcmp(command->argv[0], "exit")) builtin_exit(state, command, result);
+        else if (command->argc) result->status = csh_state_builtin_run(state, command->argc, command->argv);
         if (csh_redirect_restore(&save, error) == -1) {
             result->exit_requested = 0;
             goto done;
@@ -480,6 +460,8 @@ int csh_execute_command(struct csh_state *state, const struct csh_command *comma
     }
 done:
     if (rc == -1) result->status = error->status;
+    if (result->category == CSH_EXEC_SPECIAL_BUILTIN && result->status != 0 && !result->exit_requested)
+        result->special_builtin_error = 1;
     if (state != NULL) csh_state_set_status(state, result->status);
     return rc;
 }
