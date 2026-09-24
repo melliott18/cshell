@@ -38,8 +38,11 @@ PARSER_FAULT_OBJECTS = build/tests/parser-fault-parser.o build/tests/parser-faul
 STATE_HEADERS = include/cshell/state.h $(INPUT_HEADERS)
 EXPAND_HEADERS = include/cshell/expand.h include/cshell/arithmetic.h include/cshell/quote.h $(LEXER_HEADERS) $(STATE_HEADERS)
 EXPAND_OBJECTS = build/expand.o build/quote.o build/arithmetic.o
+EXECUTE_HEADERS = include/cshell/execute.h include/cshell/redirect.h $(PARSER_HEADERS) $(STATE_HEADERS)
+EXECUTE_OBJECTS = build/execute.o build/redirect.o $(PARSER_OBJECTS) build/state.o
+EXECUTE_FAULT_OBJECTS = build/tests/execute-fault-execute.o build/tests/execute-fault-redirect.o
 
-.PHONY: all test test-input test-lexer test-parser test-state test-expand test-pty test-harness docker-build docker-test docker-test-pty docker-shell clean
+.PHONY: all test test-input test-lexer test-parser test-state test-expand test-execute test-pty test-harness docker-build docker-test docker-test-pty docker-shell clean
 
 all: cshell
 
@@ -182,7 +185,30 @@ test-expand: build/tests/arithmetic_faults build/tests/expand_fixture build/test
 	$(PYTHON) tests/smoke.py ./build/tests/quote_fixture --suite tests/fixtures/quote.json
 	$(PYTHON) tests/smoke.py ./build/tests/arithmetic_faults --suite tests/fixtures/arithmetic-faults.json
 
-test: $(TEST_TARGET) test-input test-lexer test-parser test-state test-expand
+build/execute.o build/redirect.o: build/%.o: src/%.c $(EXECUTE_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+build/tests/execute_fixture: tests/execute_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/execute_fixture.c $(EXECUTE_OBJECTS) $(LDLIBS)
+
+build/tests/execute_helper: tests/execute_helper.c
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+$(EXECUTE_FAULT_OBJECTS): build/tests/execute-fault-%.o: src/%.c $(EXECUTE_HEADERS) tests/execute_faults.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/execute_faults.h -c $< -o $@
+
+build/tests/execute_faults: tests/execute_faults.c tests/execute_faults.h $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/state.o $(EXECUTE_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/execute_faults.c $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/state.o $(LDLIBS)
+
+test-execute: build/tests/execute_fixture build/tests/execute_helper build/tests/execute_faults
+	$(PYTHON) tests/execute.py build/tests/execute_fixture --helper build/tests/execute_helper --fault-binary build/tests/execute_faults
+
+test: $(TEST_TARGET) test-input test-lexer test-parser test-state test-expand test-execute
 	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
 

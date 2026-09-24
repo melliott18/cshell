@@ -42,7 +42,8 @@ in the replacement modules.
 
 CSH-016 adds standalone input and invocation APIs, CSH-004 adds the lexer and
 structured token/word API, CSH-005 adds parser/AST ownership, CSH-022 adds
-shell-state storage, and CSH-024 adds value expansion. They have no
+shell-state storage, CSH-024 adds value expansion, and CSH-019 adds simple-command
+execution and redirections. They have no
 dependency on the legacy header, scanner, or executor, and the default
 executable does not call them yet.
 
@@ -57,6 +58,8 @@ executable does not call them yet.
 | `src/arithmetic.c` / `include/cshell/arithmetic.h` | Checked signed-long arithmetic and grammar-only parser probe |
 | `src/quote.c` / `include/cshell/quote.h` | Reusable dollar-single-quote decoding before expansion or delimiter quote removal |
 | `src/state.c` / `include/cshell/state.h` | Owned variables and attributes, copied invocation parameters, option/status metadata, environment snapshots, and full-state copying/restoration |
+| `src/execute.c` / `include/cshell/execute.h` | Owned prepared-command boundary, bounded literal AST adapter, command lookup, owned child execution, and bootstrap parent builtins |
+| `src/redirect.c` / `include/cshell/redirect.h` | Ordered file, descriptor, and prepared here-document operations with descriptor restoration |
 
 See [Input and invocation](input-and-invocation.md) for the concrete ownership,
 descriptor, position, and error contracts. Physical input lines do not establish
@@ -81,9 +84,16 @@ See [Value expansion](value-expansions.md) for intermediate fields, quoted empty
 values, transactional expansion errors, arithmetic limits, and the parser/executor
 handoffs. Field splitting and pathname expansion remain CSH-025 work.
 
+See [Simple-command execution](execution.md) for command ownership, execution
+categories, status and exit requests, child ownership, and descriptor restoration.
+The literal adapter executes one simple command and rejects unsupported syntax
+or expansion before dispatch. CSH-008 integrates expansion, CSH-023 supplies
+assignment lifetime, and CSH-029 completes the bootstrap builtins.
+
 ## Target module boundaries
 
-The input, invocation, lexer, parser/AST, quote, state, and value-expansion
+The input, invocation, lexer, parser/AST, quote, state, value-expansion,
+simple-command execution, and redirection
 modules above exist. Add the remaining modules when their implementation
 tickets start. This table defines target
 responsibilities and does not claim that every listed module is implemented.

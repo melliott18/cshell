@@ -11,6 +11,7 @@ Start with the [project README](../README.md) for installation and current statu
 | [Parser and AST](parser-and-ast.md) | Complete-command parsing, owned syntax trees, ordered here-documents, and diagnostics |
 | [Shell state](shell-state.md) | Owned variables, parameters, attributes, environment snapshots, copying, and restoration |
 | [Value expansion](value-expansions.md) | Structured expansion contexts, parameters, tilde, arithmetic, decoding, and deferred substitutions |
+| [Simple-command execution](execution.md) | Owned prepared commands, literal AST adaptation, lookup, child ownership, bootstrap builtins, and reversible redirections |
 | [Visual implementation plan](implementation-plan.md) | Dependencies, parallel tasks, and milestone completion |
 | [Testing](testing.md) | Native and Docker commands, smoke coverage, and troubleshooting |
 | [POSIX tracking](posix.md) | Specification target, gaps, and conformance evidence |

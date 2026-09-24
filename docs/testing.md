@@ -45,6 +45,14 @@ The fault fixture compiles a separate state object with test-only allocator
 wrappers and checks failed allocations for leaks and unchanged state. Both
 executables use module suites through the existing bounded smoke runner.
 
+CSH-019 adds replacement simple-command execution and redirection checks through
+`make test-execute`. Its fixtures link the replacement parser, AST, state, and
+execution modules without legacy objects or Flex. They exercise the bounded
+literal adapter and prepared-command API; successful module checks do not
+change the prototype executable's supported syntax. See
+[Simple-command execution](execution.md) for the supported subset and ownership
+contracts.
+
 `tests/smoke.py` is a bounded fixture runner for a selected executable. The default
 `tests/fixtures/prototype.json` suite checks the current prototype's startup,
 explicit exit, external command execution, successive commands, and filesystem
@@ -86,12 +94,13 @@ make test-pty
 make test-harness
 ```
 
-`make test` builds `TEST_TARGET`, runs the input, lexer, parser, state, and
-value-expansion API checks,
+`make test` builds `TEST_TARGET`, runs the input, lexer, parser, state,
+value-expansion, and execution API checks,
 and runs the selected behavioral suite.
 `make test-pty` builds `PTY_TEST_TARGET` and runs its independently selected
-terminal suite. It does not run the input, lexer, parser, state, or
-value-expansion API tests. Keeping separate selection variables means choosing
+terminal suite. It does not run the input, lexer, parser, state,
+value-expansion, or execution API tests. Keeping separate selection variables
+means choosing
 a module for `make test` does not silently run that module against prototype
 terminal expectations.
 `make test-harness` runs Python unit tests against helper executables and
@@ -114,7 +123,7 @@ The same runner is used by native tests, Docker, and CI. Test selection is expli
 
 | Make variable | Default | Meaning |
 | --- | --- | --- |
-| `TEST_TARGET` | `cshell` | Behavioral candidate target to build; set empty for an already built executable. Input, lexer, parser, state, and value-expansion API fixtures still build and run. |
+| `TEST_TARGET` | `cshell` | Behavioral candidate target to build; set empty for an already built executable. Input, lexer, parser, state, value-expansion, and execution API fixtures still build and run. |
 | `TEST_BINARY` | `./cshell` | Candidate executable. |
 | `TEST_SUITE` | `tests/fixtures/prototype.json` | JSON fixture suite. |
 | `TEST_TIMEOUT` | `5` | Maximum wall-clock seconds per case. |
@@ -521,6 +530,41 @@ drivers, and validates clean builds with no legacy sources or objects.
 Add a fixture when a behavior is implemented and record which executable and
 suite supplied the evidence. Do not turn a passing harness self-test or a
 prototype allowance into a language-conformance claim.
+
+## Execution API and sanitizer checks
+
+`make test-execute` builds a replacement execution driver and focused API
+fixtures. The driver parses complete commands, invokes the literal adapter, and
+honors `exit_requested`; it is test infrastructure rather than the replacement
+shell runtime. The checks cover command lookup and failure statuses, ordered
+redirections, here-document delivery, parent builtin effects and descriptor
+restoration, unsupported constructs, and owned-child waiting.
+
+```sh
+make test-execute
+make clean
+ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 make test-execute CC=clang CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -DNDEBUG -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+make docker-build TEST_TARGET=test-execute DOCKER_IMAGE=cshell-test:csh-019
+docker run --rm --init cshell-test:csh-019 make test-execute
+```
+
+`make test` includes these checks on native and Docker paths. The test driver
+links no legacy objects and needs no Flex. Parent API checks verify restoration
+of descriptor flags and initially closed descriptors, including failure after
+an earlier redirection succeeded. Prepared here-document checks cover embedded
+NUL bytes. An unrelated child verifies that execution waits only for its own
+child. The Python runner also checks large and multiple ordered here-documents,
+exported environment snapshots, executable-format fallback, and rejection before
+side effects.
+
+`tests/execute_faults.c` compiles separate execution/redirection objects with
+test-only wrappers. It sweeps adapter, parent-dispatch, and external-launch allocation failures,
+injects open, duplication, saved-descriptor, temporary-file, and fork failures,
+and verifies interrupted waits retry the owned positive PID. Native CI includes
+the focused execution target in its AddressSanitizer/UndefinedBehaviorSanitizer
+matrix. Fixture assertions remain enabled with `-DNDEBUG`. See
+[Simple-command execution](execution.md) for the bounded syntax and prepared-input
+contracts.
 
 ## Value-expansion API and sanitizer checks
 

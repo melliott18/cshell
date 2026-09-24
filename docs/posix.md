@@ -66,6 +66,15 @@ decoding. Field splitting, pathname expansion, real substitutions, and arithmeti
 ambiguity replay remain integration gaps. The prototype table above remains a
 runtime baseline; standalone API fixtures do not establish shell conformance.
 
+## Replacement execution evidence
+
+CSH-019 adds [module-level simple-command execution](execution.md), with
+lookup/status conversion, owned children, ordered file/descriptor/here-document
+redirections, and parent builtin restoration. Its literal adapter rejects
+pending expansion and compound syntax before dispatch. Assignment lifetime,
+pipelines, full builtin semantics, and runtime integration remain separate
+tickets; the prototype table above remains the runtime baseline.
+
 ## Evidence required
 
 As a feature is implemented, link its specific specification section and tests
