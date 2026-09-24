@@ -10,15 +10,24 @@ struct csh_position {
     size_t column;
 };
 
-/* No allocated members. message is static; argument_index is zero if unknown.
+/* No allocated members. message is static; detail is an optional owned message.
+ * csh_error_message selects the diagnostic; reported prevents duplicate output.
+ * argument_index is zero if unknown.
  * status is a suggested shell failure status, not a request to exit. */
 struct csh_error {
     const char *message;
+    char detail[256]; /* Optional owned expansion diagnostic; survives struct copies. */
+    int reported; /* Diagnostic already emitted under active redirections. */
     int system_errno;
     int status;
     size_t argument_index;
     struct csh_position position;
 };
+
+static inline const char *csh_error_message(const struct csh_error *error)
+{
+    return error->detail[0] ? error->detail : error->message;
+}
 
 struct csh_input;
 

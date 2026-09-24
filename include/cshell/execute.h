@@ -10,7 +10,7 @@ struct csh_assignment { char *name; char *value; };
 
 /* All pointers are owned; argv is NULL-terminated when argc > 0. Counts
  * describe initialized entries. Zero initialization is an empty command.
- * CSH-008 supplies expanded assignment values; this module owns lifetime. */
+ * Values are already expanded; this module owns lifetime. */
 struct csh_command {
     char **argv;
     size_t argc;
@@ -18,11 +18,12 @@ struct csh_command {
     size_t assignment_count;
     struct csh_redirect *redirections;
     size_t redirection_count;
+    int substitution_status; /* Last substitution, or zero if none occurred. */
 };
 
 enum csh_execution_category {
     CSH_EXEC_EMPTY, CSH_EXEC_EXTERNAL, CSH_EXEC_REGULAR_BUILTIN,
-    CSH_EXEC_SPECIAL_BUILTIN, CSH_EXEC_FUNCTION, CSH_EXEC_PIPELINE
+    CSH_EXEC_SPECIAL_BUILTIN, CSH_EXEC_FUNCTION, CSH_EXEC_PIPELINE, CSH_EXEC_UNRESOLVED
 };
 
 struct csh_execution {
@@ -36,7 +37,8 @@ struct csh_execution {
 /* One entry per stage in source order. pid is zero for an unlaunched stage or
  * a singleton parent builtin. completed makes status valid; reaped makes the
  * raw wait_status valid. Positive PIDs are historical identities after return,
- * never permission to signal/wait again. category describes the simple command. */
+ * never permission to signal/wait again. Prepared APIs report resolved category;
+ * AST multi-stage pipelines use UNRESOLVED because resolution occurs in children. */
 struct csh_pipeline_stage {
     pid_t pid;
     int status;
@@ -67,17 +69,18 @@ void csh_pipeline_result_destroy(struct csh_pipeline_result *result);
 int csh_execute_pipeline(struct csh_state *state,
     const struct csh_command *commands, size_t count, int negated,
     struct csh_pipeline_result *out, struct csh_error *error);
-/* Literal simple commands or one foreground pipeline only. Prepare every
- * stage before any dispatch; unsupported stages reject the whole construct. */
+/* Foreground simple command or pipeline, including group stages. Preflight
+ * syntax, then expand each stage in its execution environment. */
 int csh_execute_pipeline_ast(struct csh_state *state, const struct csh_ast *tree,
     struct csh_pipeline_result *out, struct csh_error *error);
 
 void csh_command_destroy(struct csh_command *command);
-/* Borrow AST; produce an owned command or leave out empty on error. Accepts
- * only simple nodes (or a singleton foreground parser list). Quotes and
- * escaped literals are removed. Literal assignments are accepted; expansions,
- * unquoted glob/tilde syntax, compound/list/pipeline syntax are rejected. */
-int csh_command_from_ast(const struct csh_ast *tree, struct csh_command *out,
+/* Materialize one simple AST in the supplied environment. Expand arguments,
+ * redirect operands and assignment values without applying descriptors or
+ * dispatching the command. Output is owned and empty on failure. Substitution
+ * callbacks can execute. Runtime AST APIs use phased preparation instead, so
+ * redirects are active during subsequent redirection/assignment expansion. */
+int csh_command_from_ast(struct csh_state *state, const struct csh_ast *tree, struct csh_command *out,
     struct csh_error *error);
 /* Borrow command/state. Runs state builtins and exit in parent with reversible fds;
  * external execution owns exactly one forked child and waitpid targets it.
@@ -85,7 +88,8 @@ int csh_command_from_ast(const struct csh_ast *tree, struct csh_command *out,
  * child redirection/exec errors; -1 for preparation, parent redirection,
  * fork/wait/internal errors.
  * Always initialize result and update state's last_status. error contains a
- * static diagnostic only on -1; child failures print once in the child.
+ * diagnostic only on -1; use csh_error_message and print unless reported.
+ * Child failures print once in the child.
  * Signal termination maps to 128 + signal number. No process-global environ
  * mutation; exec uses the state's exported environment and PATH variable.
  * exit [--] [status] preserves last_status when omitted; otherwise accepts a
@@ -125,8 +129,8 @@ struct csh_execution_context {
     size_t child_count;
 };
 /* Lists, AND/OR, brace/subshell groups, and pipelines with group stages.
- * Preflight the complete tree before effects. Literal expansion limits still
- * apply. Background items return status 0 after registration and publish $!.
+ * Preflight supported syntax before effects; expand only commands reached.
+ * Background items return status 0 after registration and publish $!.
  * Reap completed background children at execution boundaries. */
 int csh_execute_context_ast(struct csh_execution_context *context,
     const struct csh_ast *tree, struct csh_execution *result,

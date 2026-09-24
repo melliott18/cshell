@@ -57,3 +57,8 @@ covered by an existing ticket.
 Open implementation choices D-001–D-008 are linked to affected requirements and
 owners in the [choice register](posix-matrix.md#open-implementation-choices).
 Option-profile/utility choices are rows in the utility map and appear above.
+
+CSH-026 runtime evidence is recorded in [its ticket](tickets/CSH-026-substitution-and-heredoc-integration.md).
+[CSH-041](tickets/CSH-041-arithmetic-substitution-replay.md) additionally owns the
+arithmetic-first replay portion of EXP-005 and EXP-006. CSH-035 retains trap and
+signal policy for SIG-003; copied substitution environments alone do not close it.

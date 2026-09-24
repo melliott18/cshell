@@ -16,9 +16,14 @@ struct saved_descriptor {
 };
 
 struct csh_redirect_save {
+    struct csh_redirect_save *next;
     size_t count;
     struct saved_descriptor entries[];
 };
+
+/* Descriptor operations are serialized. Track private backups across nested
+ * apply calls so newly expanded operands cannot see or overwrite them. */
+static struct csh_redirect_save *active_saves;
 
 static int fail(struct csh_error *error, const char *message, int number,
     size_t index)
@@ -175,8 +180,12 @@ int csh_redirect_restore(struct csh_redirect_save **save,
         return fail(error, "missing redirection save", EINVAL, 0);
     saved = *save;
     *save = NULL;
-    if (saved == NULL)
-        return 0;
+    if (saved == NULL) return 0;
+    {
+        struct csh_redirect_save **link = &active_saves;
+        while (*link != NULL && *link != saved) link = &(*link)->next;
+        if (*link == saved) *link = saved->next;
+    }
     for (index = 0; index < saved->count; ++index) {
         const struct saved_descriptor *entry = &saved->entries[index];
         int restored;
@@ -341,6 +350,24 @@ int csh_redirect_apply_reserved(const struct csh_redirect *items, size_t count,
     if (saved == NULL)
         return fail(error, "cannot allocate redirection save", ENOMEM, 0);
     saved->count = 0;
+    saved->next = NULL;
+    {
+        struct csh_redirect_save *outer;
+        for (outer = active_saves; outer != NULL; outer = outer->next) {
+            for (index = 0; index < outer->count; ++index) {
+                int old = outer->entries[index].backup, moved;
+                if (old < 0 || !is_operand(old, items, count)) continue;
+                moved = save_descriptor(old, items, count, reserved, reserved_count);
+                if (moved == -1) {
+                    int number = errno;
+                    free(saved);
+                    return fail(error, "cannot relocate private descriptor", number, 0);
+                }
+                close_descriptor(old);
+                outer->entries[index].backup = moved;
+            }
+        }
+    }
     /* Take the complete snapshot first. An allocation or descriptor-save
      * failure therefore cannot leave any target partially redirected. */
     for (index = 0; index < count; ++index) {
@@ -373,6 +400,8 @@ save_failure:
         return fail(error, "cannot save redirection descriptor", number,
             index + 1);
     }
+    saved->next = active_saves;
+    active_saves = saved;
     *save = saved;
     for (index = 0; index < count; ++index) {
         if (apply_one(&items[index]) == -1) {
@@ -386,4 +415,13 @@ save_failure:
         }
     }
     return 0;
+}
+
+void csh_redirect_child(void)
+{
+    while (active_saves != NULL) {
+        struct csh_redirect_save *saved = active_saves;
+        active_saves = saved->next;
+        discard_save(saved);
+    }
 }

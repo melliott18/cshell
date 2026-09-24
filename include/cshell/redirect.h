@@ -48,4 +48,8 @@ int csh_redirect_apply_reserved(const struct csh_redirect *items, size_t count,
 int csh_redirect_restore(struct csh_redirect_save **save,
     struct csh_error *error);
 
+/* After fork, before any child shell work: close inherited private backups.
+ * The parent retains its own restoration tokens. */
+void csh_redirect_child(void);
+
 #endif

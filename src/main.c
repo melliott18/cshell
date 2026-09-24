@@ -16,7 +16,7 @@ static void diagnose(const struct csh_error *error, const char *source)
         if (error->position.line != 0)
             fprintf(stderr, "%zu:%zu: ", error->position.line, error->position.column);
     }
-    fputs(error->message, stderr);
+    fputs(csh_error_message(error), stderr);
     if (error->system_errno != 0)
         fprintf(stderr, ": %s", strerror(error->system_errno));
     fputc('\n', stderr);
@@ -72,7 +72,7 @@ int main(int argc, char **argv)
         }
         executed = csh_execute_context_ast(&context, tree, &execution, &error);
         csh_ast_destroy(tree);
-        if (executed == -1)
+        if (executed == -1 && !error.reported)
             diagnose(&error, NULL);
         if (execution.exit_requested ||
             (execution.special_builtin_error && !invocation.interactive)) break;

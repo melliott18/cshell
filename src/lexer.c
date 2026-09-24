@@ -52,7 +52,7 @@ struct csh_lexer {
     size_t fragment_count, fragment_capacity;
     struct frame *frames;
     size_t frame_count, frame_capacity;
-    int active, comment, command;
+    int active, comment, command, document;
     enum csh_token_kind kind;
     char operator_text[4];
     size_t operator_length;
@@ -753,7 +753,8 @@ enum csh_lex_result csh_lexer_next(struct csh_lexer *lexer,
     for (;;) {
         struct frame *frame = lexer->frame_count == 0 ? NULL :
             &lexer->frames[lexer->frame_count - 1];
-        enum csh_quote quote = frame == NULL ? CSH_QUOTE_NONE : frame->quote;
+        enum csh_quote quote = frame == NULL ?
+            (lexer->document ? CSH_QUOTE_DOUBLE : CSH_QUOTE_NONE) : frame->quote;
         int byte, next;
         size_t physical = 0;
         if (lexer->active && lexer->kind != CSH_TOKEN_WORD)
@@ -855,7 +856,8 @@ enum csh_lex_result csh_lexer_next(struct csh_lexer *lexer,
                  (quote == CSH_QUOTE_DOUBLE && next == '"')) :
                 (quote != CSH_QUOTE_DOUBLE ||
                  strchr("$`\\", next) != NULL ||
-                 (next == '"' && !(frame != NULL && frame->kind == ARITHMETIC)) ||
+                 (next == '"' && !(frame != NULL && frame->kind == ARITHMETIC) &&
+                  !(lexer->document && frame == NULL)) ||
                  (frame != NULL && frame->kind == PARAMETER && next == '}'))) {
                 if (!lexer->active) {
                     if (start_token(lexer, error) == -1)
@@ -875,7 +877,7 @@ enum csh_lex_result csh_lexer_next(struct csh_lexer *lexer,
                 return CSH_LEX_ERROR;
             continue;
         }
-        if (frame == NULL && (byte == ' ' || byte == '\t' || byte == '\n' || operator_char(byte))) {
+        if (!lexer->document && frame == NULL && (byte == ' ' || byte == '\t' || byte == '\n' || operator_char(byte))) {
             if (lexer->active)
                 return publish(lexer, token, error);
             if (byte == ' ' || byte == '\t') {
@@ -904,7 +906,7 @@ enum csh_lex_result csh_lexer_next(struct csh_lexer *lexer,
                 return CSH_LEX_ERROR;
             continue;
         }
-        if (!lexer->active && byte == '#') {
+        if (!lexer->document && !lexer->active && byte == '#') {
             lexer->comment = 1;
             continue;
         }
@@ -913,7 +915,8 @@ enum csh_lex_result csh_lexer_next(struct csh_lexer *lexer,
                 return CSH_LEX_ERROR;
             lexer->kind = CSH_TOKEN_WORD;
         }
-        if (byte == '"' && !(frame != NULL && frame->kind == ARITHMETIC)) {
+        if (byte == '"' && !(frame != NULL && frame->kind == ARITHMETIC) &&
+            !(lexer->document && frame == NULL)) {
             if (frame != NULL && frame->kind == DOUBLE) {
                 if (pop(lexer, 1, error) == -1)
                     return CSH_LEX_ERROR;
@@ -1123,4 +1126,9 @@ const char *csh_quote_name(enum csh_quote quote)
 {
     static const char *const names[] = {"NONE", "SINGLE", "DOUBLE", "DOLLAR_SINGLE"};
     return (unsigned)quote < sizeof(names) / sizeof(names[0]) ? names[quote] : "UNKNOWN";
+}
+
+void csh_lexer_document(struct csh_lexer *lexer)
+{
+    lexer->document = 1;
 }

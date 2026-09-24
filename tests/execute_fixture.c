@@ -48,7 +48,7 @@ static int run_script(struct csh_state *state, const char *text)
         status = result.status;
         if (dispatched < 0) {
             assert(error.message != NULL);
-            fprintf(stderr, "execute-fixture: %s\n", error.message);
+            if (!error.reported) fprintf(stderr, "execute-fixture: %s\n", csh_error_message(&error));
             break;
         }
         assert(error.message == NULL);

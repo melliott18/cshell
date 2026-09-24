@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import shlex
 import signal
+from substitution_cases import add_cases
 
 
 def cases(helper):
@@ -35,6 +36,7 @@ def cases(helper):
             result.append({"name": f"{name} ({mode})", "args": args, "stdin": stdin,
                            "setup": contents, "expect": expect})
 
+    add_cases(cross, helper)
     cross("empty input", "")
     cross("blank and comment input", "\n# comment\n\n")
     cross("successful output", f"{helper} both\n", stdout="out\n", stderr="err\n")
@@ -87,10 +89,9 @@ def cases(helper):
     cross("pipeline failed child is reaped",
           f"no-such-cshell-stage | {helper} count\n{helper} args alive\n",
           stdout="0\n[alive]\n", stderr="cshell: no-such-cshell-stage: command not found\n")
-    cross("pipeline expansion rejected before any stage executes",
-          f"{helper} args never >effect | {helper} args $HOME\n",
-          status=2, stderr="cshell: expansion is not supported by literal execution\n",
-          files={"effect": {"type": "absent"}})
+    cross("pipeline expands arguments in stage",
+          f'{helper} args "$(printf pipeline)" | {helper} copy\n',
+          stdout="[pipeline]\n")
     cross("pipeline uses final status", f"{helper} status 7 | {helper} status 0\n")
     cross("pipeline final failure", f"{helper} status 0 | {helper} status 9\n", status=9)
     cross("negated pipeline", f"! {helper} status 0 | {helper} status 9\n")
@@ -134,11 +135,6 @@ def cases(helper):
     cross("brace exit stops list", f"{{ exit 7; }}; {helper} args never\n", status=7)
     cross("compound pipeline", f"{{ {helper} args grouped; }} | ({helper} copy)\n",
           stdout="[grouped]\n")
-    for word in ("$HOME", "$((1+2))", "*", "~", "$(>nested)", "`>nested`"):
-        message = ("command substitution is not supported by literal execution"
-                   if word.startswith("$(>") else "expansion is not supported by literal execution")
-        cross(f"unsupported expansion {word}", f"{helper} args >effect {word}\n", status=2,
-              stderr=f"cshell: {message}\n", files={**absent, "nested": {"type": "absent"}})
     cross("ordered redirections", f"{helper} both >captured 2>&1\n{helper} args restored\n",
           stdout="[restored]\n", files={"captured": {"type": "file", "content": "out\nerr\n"}})
     cross("parent redirection restoration", f"cd . >captured\n{helper} both\n",
@@ -155,15 +151,15 @@ def cases(helper):
           stderr="cshell: @SOURCE@: 1:1: expected command\n")
     cross("incomplete final quote", 'echo "', status=2,
           stderr="cshell: @SOURCE@: 1:6: unterminated double quote\n")
-    cross("complete command before rejection", f"{helper} args first\n{helper} args $HOME\n",
-          status=2, stdout="[first]\n", stderr="cshell: expansion is not supported by literal execution\n")
+    cross("complete command before rejection", f"{helper} args first\n{helper} args ${{missing:?stop}}\n",
+          status=2, stdout="[first]\n", stderr="cshell: stop\n")
     redirection_error = f"cannot apply redirection: {os.strerror(errno.ENOENT)}\n"
     cross("exit redirection failure stops script", f"exit >missing/path\n{helper} args never\n",
           status=1, stderr="cshell: " + redirection_error)
     cross("regular builtin redirection failure continues", f"cd . >missing/path\n{helper} args once\n",
           stdout="[once]\n", stderr="cshell: " + redirection_error)
     cross("external redirection failure continues", f"{helper} args never >missing/path\n{helper} args once\n",
-          stdout="[once]\n", stderr=f"cshell: {shlex.split(helper)[0]}: " + redirection_error)
+          stdout="[once]\n", stderr="cshell: " + redirection_error)
     # A command reading shared stdin must receive the bytes after its own line.
     result.append({"name": "stdin has no command read-ahead", "stdin": f"{helper} copy\npayload\n",
                    "expect": {"stdout": "payload\n", "stderr": "", "status": 0}})
@@ -220,6 +216,12 @@ def terminal_cases(helper):
     terminal("terminal heredoc prompts", [{"expect": "$ "}, {"send": f"{helper} copy <<'END'\n"},
              {"expect": "> "}, {"send": "body\n"}, {"expect": "> "}, {"send": "END\n"},
              {"expect": "body\n$ "}, {"send": "exit\n"}], "$ > > body\n$ ", 0)
+    diagnostic = "cshell: required\n"
+    terminal("terminal expansion error recovers", [
+        {"expect": "$ "}, {"send": f'{helper} args "${{missing:?required}}" >effect\n'},
+        {"expect": diagnostic + "$ "}, {"send": f'{helper} args "$?" "$(printf okay)"\n'},
+        {"expect": "[2]\n[okay]\n$ "}, {"send": "exit\n"}],
+        "$ " + diagnostic + "$ [2]\n[okay]\n$ ", 0)
     return result
 
 
