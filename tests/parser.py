@@ -53,6 +53,34 @@ def validate(trees, data):
             nodes += [item["command"] for item in node["items"]]
         elif kind in ("brace", "subshell"):
             nodes.append(node["body"])
+        elif kind == "if":
+            assert node["branches"], node
+            for branch in node["branches"]:
+                nodes += [branch["condition"], branch["body"]]
+            nodes.append(node["else_body"])
+        elif kind == "for":
+            words += [node["name"], *node["words"]]
+            assert node["has_in"] or not node["words"], node
+            nodes.append(node["body"])
+        elif kind in ("while", "until"):
+            nodes += [node["condition"], node["body"]]
+        elif kind == "case":
+            words.append(node["word"])
+            for item in node["items"]:
+                assert item["patterns"], item
+                words += item["patterns"]
+                assert name(item["body"]["kind"]) == "list", item
+                nodes.append(item["body"])
+                assert item["terminator"] in ("end", "break", "fallthrough"), item
+                if item["terminator"] != "end":
+                    for field in ("terminator_start", "terminator_end"):
+                        assert item[field] in at, item
+                    start, end = item["terminator_start"][0], item["terminator_end"][0]
+                    assert data[start:end] == {"break": b";;", "fallthrough": b";&"}[item["terminator"]], item
+        elif kind == "function":
+            words.append(node["name"])
+            assert name(node["body"]["kind"]) in ("brace", "subshell", "if", "for", "while", "until", "case"), node
+            nodes.append(node["body"])
         else:
             assert False, f"unsupported published node {kind}"
         for redir in node["redirections"]:
@@ -113,11 +141,230 @@ def shape(node):
         return ("pipeline", node["negated"], tuple(shape(child) for child in node["commands"]))
     if kind == "list":
         return ("list", tuple((shape(item["command"]), item["separator"]) for item in node["items"]))
+    if kind == "if":
+        return (kind, tuple((shape(branch["condition"]), shape(branch["body"])) for branch in node["branches"]),
+                shape(node["else_body"]) if node["else_body"] is not None else None)
+    if kind == "for":
+        return (kind, node["name"]["token"]["raw"], node["has_in"],
+                tuple(word["token"]["raw"] for word in node["words"]), shape(node["body"]))
+    if kind in ("while", "until"):
+        return (kind, shape(node["condition"]), shape(node["body"]))
+    if kind == "case":
+        return (kind, node["word"]["token"]["raw"], tuple(
+            (tuple(word["token"]["raw"] for word in item["patterns"]), shape(item["body"]), item["terminator"])
+            for item in node["items"]))
+    if kind == "function":
+        return (kind, node["name"]["token"]["raw"], shape(node["body"]))
     return (kind, shape(node["body"]))
 
 
 def expect(condition, message):
     assert condition, message
+
+
+def compound_cases(fixture):
+    def conditional():
+        data = b"if a && b; then one; two & elif c\nthen three\nelif d; then four; else five; six; fi\n"
+        node = one(fixture, data)
+        assert name(node["kind"]) == "if", node
+        assert len(node["branches"]) == 3, node
+        assert shape(node["branches"][0]["condition"]) == ("list", ((("and", ("a",), ("b",)), "semi"),)), node
+        assert shape(node["branches"][0]["body"]) == ("list", ((("one",), "semi"), (("two",), "ampersand"))), node
+        assert [raw_words(command(branch["condition"])) for branch in node["branches"][1:]] == [[("c", False)], [("d", False)]], node
+        assert shape(node["else_body"]) == ("list", ((("five",), "semi"), (("six",), "semi"))), node
+        assert node["start"] == positions(data)[0] and node["end"] == positions(data)[len(data) - 1], node
+    yield "if elif else preserve conditions and ordered bodies", conditional
+
+    for data in (b"if true; then yes; fi", b"if\ntrue\nthen\nyes\nfi\n", b"i\\\nf true; then yes; f\\\ni"):
+        def if_without_else(data=data):
+            node = one(fixture, data)
+            assert name(node["kind"]) == "if" and len(node["branches"]) == 1 and node["else_body"] is None, node
+            assert raw_words(command(node["branches"][0]["body"])) == [("yes", False)], node
+        yield f"if without else {data!r}", if_without_else
+
+    for data, has_in, words in (
+        (b"for item; do echo item; done", False, []),
+        (b"for item\ndo echo item\ndone", False, []),
+        (b"for item in; do echo item; done", True, []),
+        (b"for item in\ndo echo item\ndone", True, []),
+        (b"for item in a 'b c' \"$x\"; do echo item; done", True, ["a", "'b c'", '"$x"']),
+        (b"for item\nin a b\ndo echo item\ndone", True, ["a", "b"]),
+        (b"for item in if then else elif fi do done in case esac for while until; do echo item; done", True,
+         ["if", "then", "else", "elif", "fi", "do", "done", "in", "case", "esac", "for", "while", "until"]),
+    ):
+        def for_loop(data=data, has_in=has_in, words=words):
+            node = one(fixture, data)
+            assert name(node["kind"]) == "for" and node["name"]["token"]["raw"] == "item", node
+            assert node["has_in"] is has_in, node
+            assert [word["token"]["raw"] for word in node["words"]] == words, node
+            assert raw_words(command(node["body"])) == [("echo", False), ("item", False)], node
+        yield f"for loop iteration words {data!r}", for_loop
+
+    for keyword in (b"while", b"until"):
+        def condition_loop(keyword=keyword):
+            node = one(fixture, keyword + b" first; second && third\ndo fourth | fifth; sixth & done")
+            assert name(node["kind"]) == keyword.decode(), node
+            assert shape(node["condition"]) == ("list", ((("first",), "semi"), (("and", ("second",), ("third",)), "newline"))), node
+            assert shape(node["body"]) == ("list", ((("pipeline", False, (("fourth",), ("fifth",))), "semi"), (("sixth",), "ampersand"))), node
+        yield f"{keyword.decode()} preserves condition and body lists", condition_loop
+
+    def case_items():
+        data = b"case \"$value\" in\n(a|'b c') first; second ;;\nthen|do) third ;&\n*) fourth;\nesac\n"
+        node = one(fixture, data)
+        assert name(node["kind"]) == "case" and node["word"]["token"]["raw"] == '"$value"', node
+        assert [tuple(word["token"]["raw"] for word in item["patterns"]) for item in node["items"]] == [("a", "'b c'"), ("then", "do"), ("*",)], node
+        assert [item["terminator"] for item in node["items"]] == ["break", "fallthrough", "end"], node
+        assert [raw_words(item["body"]["items"][0]["command"])[0][0] for item in node["items"]] == ["first", "third", "fourth"], node
+        assert len(node["items"][0]["body"]["items"]) == 2, node
+    yield "case patterns ordered arms and POSIX terminators", case_items
+
+    for data, count in ((b"case x in esac", 0), (b"case x\nin\nesac", 0),
+                        (b"case x in a) ;; b) ;& c) esac", 3),
+                        (b"case x in (esac) ;; (in|if|then|do) ;; esac", 2),
+                        (b"case x in a|esac) ;; esac", 1)):
+        def empty_case(data=data, count=count):
+            node = one(fixture, data)
+            assert name(node["kind"]) == "case" and len(node["items"]) == count, node
+            assert all(item["body"]["items"] == [] for item in node["items"]), node
+        yield f"case empty bodies and reserved patterns {data!r}", empty_case
+
+    for data, expected in ((b"for in in a; do echo in; done", "in"),
+                           (b"for if; do echo if; done", "if"),
+                           (b"for x do echo x; done", "x")):
+        yield f"for variable context and optional separator {data!r}", lambda data=data, expected=expected: expect(
+            one(fixture, data)["name"]["token"]["raw"] == expected, "for variable or optional separator")
+
+    function_bodies = (
+        (b"{ echo x; }", "brace"), (b"(echo x)", "subshell"),
+        (b"if true; then echo x; fi", "if"), (b"for x in a; do echo x; done", "for"),
+        (b"while true; do echo x; done", "while"), (b"until true; do echo x; done", "until"),
+        (b"case x in x) echo x ;; esac", "case"),
+    )
+    for body, kind in function_bodies:
+        def function(body=body, kind=kind):
+            data = b"my_function ()\n" + body + b" 3>out <in\n"
+            node = one(fixture, data)
+            assert name(node["kind"]) == "function" and node["name"]["token"]["raw"] == "my_function", node
+            assert name(node["body"]["kind"]) == kind and node["body"]["redirections"] == [], node
+            assert [redir["operand"]["token"]["raw"] for redir in node["redirections"]] == ["out", "in"], node
+            assert node["redirections"][0]["io_number"]["raw"] == "3", node
+            assert node["end"] == positions(data)[len(data) - 1], node
+        yield f"function definition with {kind} body and attached redirections", function
+
+    yield "special builtin name remains syntactically valid function name", lambda: expect(
+        one(fixture, b"export() { echo x; }")["name"]["token"]["raw"] == "export", "syntax applied runtime function restriction")
+
+    for data in (b"if (a) then (b) else (c) fi", b"{ f() { echo x; } }",
+                 b"if a | (b) then c; fi", b"while a && (b) do c; done",
+                 b"case x in x) (echo x) esac"):
+        yield f"compound closing word after self-delimited command {data!r}", lambda data=data: one(fixture, data)
+
+    for data, expected in (
+        (b"echo if then elif else fi for in do done while until case esac", "echo if then elif else fi for in do done while until case esac".split()),
+        (b"'if' then;", ["'if'", "then"]),
+        (b"\\while do done", ["\\while", "do", "done"]),
+        (b'"case" in esac', ['"case"', "in", "esac"]),
+        (b"function name", ["function", "name"]),
+    ):
+        yield f"compound reserved words retain ordinary contexts {data!r}", lambda data=data, expected=expected: expect(
+            [word for word, _ in raw_words(one(fixture, data))] == expected, "ordinary reserved word changed grammar")
+
+    def nested_compounds():
+        data = b"outer() { for x in one two; do if ready; then while more; do case x in one) (echo x) ;; *) until done_yet; do echo x; done ;; esac; done; else fallback() { echo no; }; fi; done; }\n"
+        outer = one(fixture, data)
+        loop = command(outer["body"]["body"])
+        conditional = command(loop["body"])
+        while_loop = command(conditional["branches"][0]["body"])
+        case = command(while_loop["body"])
+        until_loop = command(case["items"][1]["body"])
+        fallback = command(conditional["else_body"])
+        assert [name(node["kind"]) for node in (outer, loop, conditional, while_loop, case, until_loop, fallback)] == [
+            "function", "for", "if", "while", "case", "until", "function"], outer
+        assert name(command(case["items"][0]["body"])["kind"]) == "subshell", case
+    yield "nested functions and every compound production", nested_compounds
+
+    for source, kind in function_bodies[2:]:
+        def compound_redirects(source=source, kind=kind):
+            node = one(fixture, source + b" <first 2>second >>third")
+            assert name(node["kind"]) == kind, node
+            assert [redir["operand"]["token"]["raw"] for redir in node["redirections"]] == ["first", "second", "third"], node
+        yield f"{kind} attached redirections remain ordered", compound_redirects
+
+    def substitutions():
+        data = b"for x in $(if a; then b; fi) $(case x in x) echo yes ;; esac); do case $(echo x) in $(echo pattern)) echo $(until ready; do wait; done) ;; esac; done"
+        node = one(fixture, data)
+        assert [name(command(word["substitutions"][0]["body"])["kind"]) for word in node["words"]] == ["if", "case"], node
+        case = command(node["body"])
+        assert raw_words(command(case["word"]["substitutions"][0]["body"])) == [("echo", False), ("x", False)], case
+        pattern = case["items"][0]["patterns"][0]
+        assert raw_words(command(pattern["substitutions"][0]["body"])) == [("echo", False), ("pattern", False)], pattern
+        echo = command(case["items"][0]["body"])
+        assert name(command(echo["words"][1]["word"]["substitutions"][0]["body"])["kind"]) == "until", echo
+    yield "structured substitutions in loop words case subjects patterns and bodies", substitutions
+    for data in (b"echo $(case x in (x) echo yes ;; esac)",
+                 b"echo $(case x in x) case y in y) echo nested ;; esac ;; esac)",
+                 b"echo $(f() (case x in x) echo yes ;; esac); f)"):
+        yield f"case and function parentheses inside command substitution {data!r}", lambda data=data: one(fixture, data)
+
+    def compound_heredocs():
+        data = b"f() { if cat <<IF\ncondition\nIF\nthen for x in a; do cat <<BODY\nloop\nBODY\ndone; fi; } <<FUNCTION\nfunction\nFUNCTION\n"
+        node = one(fixture, data)
+        conditional = command(node["body"]["body"])
+        condition = command(conditional["branches"][0]["condition"])
+        loop = command(conditional["branches"][0]["body"])
+        body = command(loop["body"])
+        assert [part["redirections"][0]["body"] for part in (condition, body, node)] == ["condition\n", "loop\n", "function\n"], node
+    yield "heredoc queues across nested compounds and function redirections", compound_heredocs
+
+    def complete_boundaries():
+        result = fixture.parse(b"if a\nthen b\nfi\nfor x in a b\ndo echo x\ndone\nf()\n{ echo x; }\nlast\n")
+        assert [name(command(tree)["kind"]) for tree in result["trees"]] == ["if", "for", "function", "simple"], result
+    yield "multiline compounds publish only complete top-level commands", complete_boundaries
+
+    invalid = (
+        (b"if ; then a; fi", b";"), (b"if a; then ; fi", b"; fi"),
+        (b"if a; then b; else fi", b"fi"), (b"if a; then b; elif ; fi", b"; fi"),
+        (b"if a; do b; fi", b"do"), (b"while a; then b; done", b"then"),
+        (b"while ; do b; done", b";"), (b"until a; do ; done", b"; done"),
+        (b"for 1x in a; do b; done", b"1x"), (b"for 'x' in a; do b; done", b"'x'"),
+        (b"for x in a; then b; done", b"then"), (b"for x; do ; done", b"; done"),
+        (b"case x nope a) b ;; esac", b"nope"), (b"case x in |a) b ;; esac", b"|"),
+        (b"case x in a|) b ;; esac", b")"), (b"case x in a) b ;;& esac", b"&"),
+        (b"f(arg) { a; }", b"arg"), (b"f() echo x", b"echo"),
+        (b"'f'() { a; }", b"'f'"), (b"1f() { a; }", b"1f"),
+        (b"if (a) >x then b; fi", b"then"), (b"{ (a) >x }", b"}"),
+        (b"case x in a) (b) >x esac", b"esac"),
+    )
+    for data, bad in invalid:
+        def invalid_compound(data=data, bad=bad):
+            result = fixture.parse(data, "error")
+            assert result["trees"] == [], result
+            assert result["error"]["position"] == positions(data)[data.index(bad)], result
+        yield f"terminal compound diagnostic {data!r}", invalid_compound
+
+    incomplete = (
+        b"if", b"if true", b"i\\\nf true", b"if true;", b"if true; then", b"if true; then x;",
+        b"if true; then x; elif", b"if true; then x; elif y; then", b"if true; then x; else",
+        b"for", b"for x", b"for x in", b"for x in a;", b"for x; do", b"for x; do y;",
+        b"while", b"while true;", b"while true; do", b"while true; do x;",
+        b"until", b"until true; do x;", b"case", b"case x", b"case x in", b"case x in a|",
+        b"case x in a)", b"case x in a) x ;;", b"case x in a) x ;&", b"f(", b"f()", b"f()\n{ x;",
+        b"f() { if x; then cat <<EOF\nbody\n", b"if x; then y; fi >",
+    )
+    for data in incomplete:
+        yield f"incomplete compound {data!r}", lambda data=data: expect(
+            fixture.parse(data, "incomplete")["trees"] == [], "incomplete compound tree was published")
+
+    def growth():
+        branches = one(fixture, b"if x; then y; " + b"elif x; then y; " * 80 + b"fi")
+        assert len(branches["branches"]) == 81, branches
+        loop = one(fixture, b"for x in " + b"word " * 600 + b"; do x; done")
+        assert len(loop["words"]) == 600, loop
+        case = one(fixture, b"case x in " + b"a|b|c|d|e|f|g|h|i|j) echo x ;; " * 100 + b"esac")
+        assert len(case["items"]) == 100 and all(len(item["patterns"]) == 10 for item in case["items"]), case
+    yield "compound branch word arm and pattern vector growth", growth
+    yield "32 nested conditional bodies", lambda: one(fixture, b"if x; then " * 32 + b"y; " + b"fi; " * 32)
+    yield "compound nesting limit is a structured error", lambda: fixture.parse(b"if x; then " * 200 + b"y; " + b"fi; " * 200, "error")
 
 
 def cases(fixture):
@@ -281,11 +528,13 @@ def cases(fixture):
             if b"&&" in data else
             one(fixture, data)["commands"][0]["redirections"][0]["body"] == "body\n", "continuation heredoc")
 
+    yield from compound_cases(fixture)
+
     invalid = (
         (b";", 0), (b"&", 0), (b"| echo", 0), (b"echo && || next", 8),
         (b"echo >;", 6), (b"echo | ;", 7), (b")", 0),
         (b"()", 1), (b"{ ; }", 2), (b"(echo) trailing", 7),
-        (b"echo ;; next", 5), (b"if true", 0), (b"i\\\nf true", 0),
+        (b"echo ;; next", 5),
         (b"echo\x00bad", 4), (b"echo\n  ;", 7),
         (b"echo $(cat <<EOF) tail\nEOF\n", 16),
     )

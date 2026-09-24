@@ -42,7 +42,8 @@ in the replacement modules.
 
 CSH-016 adds standalone input and invocation APIs, CSH-004 adds the lexer and
 structured token/word API, CSH-005 adds parser/AST ownership, CSH-022 adds
-shell-state storage, and CSH-024 adds value expansion. They have no
+shell-state storage, CSH-024 adds value expansion, and CSH-027 extends the parser
+with compound commands and function definitions. They have no
 dependency on the legacy header, scanner, or executor, and the default
 executable does not call them yet.
 

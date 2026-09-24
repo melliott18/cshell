@@ -181,6 +181,18 @@ int main(void)
     sweep("cat <<A <<-'B'\none\nA\n\t$two\n\tB\n", 1);
     sweep("cat <<$'E\\x4eD' <<$'END\\0discarded'X\nfirst\nEND\nsecond\nENDX\n", 1);
     sweep("cat <<${x:-\"EOF\"} <<$(echo \"EOF\") <<$(ec\\\nho)\none\n${x:-EOF}\ntwo\n$(echo EOF)\nthree\n$(echo)\n", 1);
+    sweep("if first; then a; elif second; then b; elif third; then c; else d; fi <in >out\n", 1);
+    sweep("for in in a 'b c' $(case x in x) echo yes ;; esac); do while ready; do until finished; do next; done; done; done\n", 1);
+    sweep("for implicit; do x; done; for empty in; do y; done\n", 1);
+    sweep("case $(echo subject) in (a|b|$(echo pattern)) one ;& (esac) ;; *) last; esac 2>out\n", 1);
+    sweep("case x in a) ;; b) ;& c) esac; case x in esac\n", 1);
+    sweep("outer() { if ready; then inner() (echo x); else fallback; fi; } <in >>out\n", 1);
+    sweep("f() if x; then y; fi; g() for x in a; do y; done; h() case x in a) y ;; esac\n", 1);
+    sweep("f() { if cat <<IF\ncondition\nIF\nthen for x in a; do cat <<BODY\nloop\nBODY\ndone; fi; } <<FUNCTION\nfunction\nFUNCTION\n", 1);
+    sweep("case x in a) cat <<A ;; b) cat <<B ;& c) cat <<C ;; esac\none\nA\ntwo\nB\nthree\nC\n", 1);
+    /* Force each new growable vector past its initial allocation. */
+    sweep("if a; then b; elif a; then b; elif a; then b; elif a; then b; elif a; then b; elif a; then b; elif a; then b; elif a; then b; elif a; then b; fi", 1);
+    sweep("for x in a b c d e f g h i; do x; done; case x in a|b|c|d|e|f|g|h|i) ;; a) ;; b) ;; c) ;; d) ;; e) ;; f) ;; g) ;; h) ;; esac", 1);
     sweep(large, 1);
     memcpy(large, "cat <<E\n", 8);
     memset(large + 8, 'x', 32766);
@@ -201,7 +213,18 @@ int main(void)
     sweep("cat <<A\nbody\n", 0);
     sweep("cat <<$'E\\nD'\nbody\n", 0);
     sweep("{ echo >; }\n", 0);
+    sweep("if a; then b; elif c; then d; else", 0);
+    sweep("if a; then b; elif c; then d; else ; fi", 0);
+    sweep("for x in $(echo a) b; do if c; then d;", 0);
+    sweep("for x in a b; do while c; do ; done; done", 0);
+    sweep("case $(echo x) in a|$(echo b)) c ;; d|", 0);
+    sweep("case x in a) b ;; c) d ;& e|) f ;; esac", 0);
+    sweep("outer() { inner() { if a; then b; fi; };", 0);
+    sweep("outer() { inner() { cat <<E\nbody\nE\n}; if a; then ; fi; }", 0);
+    sweep("f() { if cat <<IF\ncondition\nIF\nthen cat <<BODY\nunclosed body\n", 0);
+    sweep("case x in a) cat <<A ;; b) cat <<B ;; esac\none\nA\nmissing second delimiter\n", 0);
+    sweep("f() { x; } <<FUNCTION\nmissing delimiter\n", 0);
     free(large);
-    puts("PASS: every allocation failure, nested trees, heredoc queues, partial errors, sticky results, cleanup");
+    puts("PASS: every allocation failure, compound/function trees, heredoc queues, partial errors, sticky results, cleanup");
     return 0;
 }

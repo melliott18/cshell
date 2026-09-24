@@ -142,6 +142,28 @@ static const char *separator_name(enum csh_ast_separator separator)
     return "invalid";
 }
 
+static const char *case_terminator_name(enum csh_ast_case_terminator terminator)
+{
+    switch (terminator) {
+    case CSH_AST_CASE_END: return "end";
+    case CSH_AST_CASE_BREAK: return "break";
+    case CSH_AST_CASE_FALLTHROUGH: return "fallthrough";
+    }
+    return "invalid";
+}
+
+static void json_word_vector(const struct csh_ast_word_vector *words)
+{
+    size_t index;
+    putchar('[');
+    for (index = 0; index < words->count; ++index) {
+        if (index != 0)
+            putchar(',');
+        json_word(&words->items[index]);
+    }
+    putchar(']');
+}
+
 static void json_tree(const struct csh_ast *tree)
 {
     size_t index;
@@ -213,6 +235,64 @@ static void json_tree(const struct csh_ast *tree)
     case CSH_AST_BRACE:
         fputs(",\"body\":", stdout);
         json_tree(tree->data.group.body);
+        break;
+    case CSH_AST_IF:
+        fputs(",\"branches\":[", stdout);
+        for (index = 0; index < tree->data.if_clause.branch_count; ++index) {
+            const struct csh_ast_if_branch *branch = &tree->data.if_clause.branches[index];
+            if (index != 0)
+                putchar(',');
+            fputs("{\"condition\":", stdout);
+            json_tree(branch->condition);
+            fputs(",\"body\":", stdout);
+            json_tree(branch->body);
+            putchar('}');
+        }
+        fputs("],\"else_body\":", stdout);
+        json_tree(tree->data.if_clause.else_body);
+        break;
+    case CSH_AST_FOR:
+        fputs(",\"name\":", stdout);
+        json_word(&tree->data.for_clause.name);
+        fputs(",\"words\":", stdout);
+        json_word_vector(&tree->data.for_clause.words);
+        printf(",\"has_in\":%s,\"body\":", tree->data.for_clause.has_in ? "true" : "false");
+        json_tree(tree->data.for_clause.body);
+        break;
+    case CSH_AST_WHILE:
+    case CSH_AST_UNTIL:
+        fputs(",\"condition\":", stdout);
+        json_tree(tree->data.loop.condition);
+        fputs(",\"body\":", stdout);
+        json_tree(tree->data.loop.body);
+        break;
+    case CSH_AST_CASE:
+        fputs(",\"word\":", stdout);
+        json_word(&tree->data.case_clause.word);
+        fputs(",\"items\":[", stdout);
+        for (index = 0; index < tree->data.case_clause.item_count; ++index) {
+            const struct csh_ast_case_item *item = &tree->data.case_clause.items[index];
+            if (index != 0)
+                putchar(',');
+            fputs("{\"patterns\":", stdout);
+            json_word_vector(&item->patterns);
+            fputs(",\"body\":", stdout);
+            json_tree(item->body);
+            fputs(",\"terminator\":", stdout);
+            json_string(case_terminator_name(item->terminator));
+            fputs(",\"terminator_start\":", stdout);
+            json_position(item->terminator_start);
+            fputs(",\"terminator_end\":", stdout);
+            json_position(item->terminator_end);
+            putchar('}');
+        }
+        putchar(']');
+        break;
+    case CSH_AST_FUNCTION:
+        fputs(",\"name\":", stdout);
+        json_word(&tree->data.function.name);
+        fputs(",\"body\":", stdout);
+        json_tree(tree->data.function.body);
         break;
     default:
         require(0, "parser published unsupported AST kind");
@@ -316,10 +396,14 @@ static void contracts(void)
     const char *list = "first; second &\nthird\n";
     const char *continued = "first |\nsecond &&\nthird\nfourth\n";
     const char *heredocs = "cat <<A <<-'B'\none\nA\n\t$two\n\tB\ntrailing\n";
+    const char *conditional = "if condition\nthen body\nelse other\nfi\ntrailing\n";
+    const char *function = "worker()\n{ cat <<END\nbody\nEND\n}\ntrailing\n";
     boundary(simple, strlen(simple) - strlen("second\n"));
     boundary(list, strlen(list) - strlen("third\n"));
     boundary(continued, strlen(continued) - strlen("fourth\n"));
     boundary(heredocs, strlen(heredocs) - strlen("trailing\n"));
+    boundary(conditional, strlen(conditional) - strlen("trailing\n"));
+    boundary(function, strlen(function) - strlen("trailing\n"));
     puts("ok");
 }
 

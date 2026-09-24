@@ -34,7 +34,10 @@ precedence, groups, assignments, descriptor adjacency, ordered redirections,
 command substitutions, and here-document collection. Error checks distinguish
 invalid syntax, incomplete final input, and clean EOF. Separate wrapped objects
 inject allocation failures across the entire parsing stack. The parser does
-not execute any fixture command.
+not execute any fixture command. CSH-027 extends these checks to `if`/`elif`,
+`for`, `while`, `until`, `case` (including `;&`), and function definitions,
+including reserved-word contexts, nested here-documents and substitutions,
+source spans, attached redirections, and incomplete/malformed productions.
 
 CSH-022 adds independent shell-state fixtures. `make test-state` builds the
 state module, input/invocation modules, and its C fixtures, without Flex or the
@@ -184,8 +187,11 @@ make test-parser CC=clang CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -We
 
 The parser fixtures preserve ownership assertions under `-DNDEBUG`. Allocation
 counters cover failed construction, partially built trees, queued here-documents,
-and nested command substitutions. See [Parser and AST](parser-and-ast.md) and
-the [ticket evidence](tickets/CSH-005-parser-and-ast.md).
+nested command substitutions, compound branches/pattern vectors, and function
+bodies. Direct AST checks also cover overflow ownership and iterative destruction
+of deep compound trees. See [Parser and AST](parser-and-ast.md), the
+[initial parser evidence](tickets/CSH-005-parser-and-ast.md), and
+[compound syntax evidence](tickets/CSH-027-compound-syntax.md).
 
 For the focused Linux suite:
 
