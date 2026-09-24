@@ -61,7 +61,8 @@ executable does not call them yet.
 | `src/arithmetic.c` / `include/cshell/arithmetic.h` | Checked signed-long arithmetic and grammar-only parser probe |
 | `src/quote.c` / `include/cshell/quote.h` | Reusable dollar-single-quote decoding before expansion or delimiter quote removal |
 | `src/state.c` / `include/cshell/state.h` | Owned variables and attributes, copied invocation parameters, option/status metadata, environment snapshots, and full-state and selective variable copying/restoration |
-| `src/execute.c` / `include/cshell/execute.h` | Owned prepared-command boundary, bounded literal AST adapter, command lookup, owned child execution, assignment categories, and bootstrap parent builtins |
+| `src/builtin.c` / `include/cshell/builtin.h` | State builtin lookup and handlers over replacement shell state |
+| `src/execute.c` / `include/cshell/execute.h` | Owned prepared-command boundary, bounded literal AST adapter, command lookup, owned child execution, assignment categories, and parent builtin dispatch |
 | `src/redirect.c` / `include/cshell/redirect.h` | Ordered file, descriptor, and prepared here-document operations with descriptor restoration |
 
 See [Input and invocation](input-and-invocation.md) for the concrete ownership,
@@ -94,7 +95,7 @@ categories, status and exit requests, child ownership, and descriptor restoratio
 The literal adapter executes one simple command and rejects unsupported syntax
 or expansion before dispatch. Literal prefixes use CSH-023 assignment categories;
 resolved dispatch supplies the boundary for future function/builtin handlers.
-CSH-008 integrates expansion and CSH-029 completes the bootstrap builtins.
+CSH-008 integrates expansion, and CSH-029 supplies [state builtins](state-builtins.md).
 
 ## Target module boundaries
 

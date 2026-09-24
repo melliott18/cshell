@@ -78,20 +78,12 @@ such a script use the host shell's language. It does not route unsupported AST
 constructs to the host shell. That fallback remains a host dependency until the
 replacement runtime can interpret scripts itself.
 
-Bootstrap `cd` runs in the parent and changes its working directory once, without
-falling through to external execution. Bootstrap `exit` requests that the caller
-leave its input loop. Their present operand rules are:
-
-- `cd [--] [directory]` uses the supplied directory, or a nonempty `HOME` when
-  omitted. It calls `chdir()` directly. Options, `cd -`, `CDPATH`, logical-path
-  processing, and `PWD`/`OLDPWD` updates are pending.
-- `exit [status]` uses the previous status if omitted, or the low eight bits of a
-  decimal value representable by `long`. Invalid or excess operands return
-  status 2 without requesting exit.
-
-These are the initial handlers needed for runtime cutover;
-CSH-018 owns complete exit/status integration and CSH-029 owns full state-builtin
-semantics.
+[State builtins](state-builtins.md) run in the parent under reversible descriptors.
+The existing `exit [status]` handler uses the previous status if omitted, or the
+low eight bits of a decimal value representable by `long`. Invalid/excess
+operands return status 2 without requesting exit. CSH-018 owns full exit/status
+integration. `special_builtin_error` reports special-category failures for the
+future runtime's context-dependent policy; it does not itself request exit.
 
 ## Assignment categories and resolved dispatch
 

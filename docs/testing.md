@@ -632,3 +632,11 @@ interrupts at successive callback points, including while a directory is open.
 It checks cleared output, unchanged borrowed input/state, and zero outstanding
 tracked allocations/streams. The same sanitizer command above includes these
 checks; use `test-fields` alone for a focused run.
+
+## State builtin checks
+
+`make test-builtins` runs `tests/builtin_fixture.c` (state/status tables and prepared
+special assignments) and `tests/builtins.py` (24 replacement execution cases).
+It is included in `make test` and `make docker-test`. For sanitizer validation,
+clean first and run `make test-builtins test-execute test-state` with the Clang
+AddressSanitizer/UndefinedBehaviorSanitizer flags documented above.

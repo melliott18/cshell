@@ -48,13 +48,13 @@ jobs:
         run: make test-pty
       - name: Test harness failure handling
         run: make test-harness
-      - name: Check lexer, parser, alias, state, expansion, and execution ownership with ASan and UBSan
+      - name: Check lexer, parser, alias, state, expansion, builtins, and execution ownership with ASan and UBSan
         env:
           ASAN_OPTIONS: halt_on_error=1
           UBSAN_OPTIONS: halt_on_error=1
         run: |
           make clean
-          make test-lexer test-parser test-alias test-state test-expand test-execute CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+          make test-lexer test-parser test-alias test-state test-expand test-builtins test-execute CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
 
   docker:
     name: Docker (Linux)

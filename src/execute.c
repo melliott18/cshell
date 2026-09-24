@@ -1,5 +1,6 @@
 #include "cshell/execute.h"
 #include "cshell/quote.h"
+#include "cshell/builtin.h"
 
 #include <errno.h>
 #include <limits.h>
@@ -371,34 +372,6 @@ static void launch_child(const struct csh_command *command, struct launch *launc
     _exit(remembered ? 126 : 127);
 }
 
-static void builtin_cd(struct csh_state *state, const struct csh_command *command,
-    struct csh_execution *result)
-{
-    struct csh_variable_view home;
-    size_t first = 1;
-    const char *directory;
-    if (first < command->argc && strcmp(command->argv[first], "--") == 0) ++first;
-    if (command->argc - first > 1 ||
-        (first == 1 && first < command->argc && command->argv[first][0] == '-')) {
-        diagnose("cd", "expected at most one directory (options are not yet supported)", 0);
-        result->status = 2;
-        return;
-    }
-    if (first == command->argc) {
-        csh_state_get_variable(state, "HOME", &home);
-        directory = home.value;
-        if (directory == NULL || directory[0] == '\0') {
-            diagnose("cd", "HOME is not set or is empty", 0);
-            result->status = 1;
-            return;
-        }
-    } else directory = command->argv[first];
-    if (chdir(directory) == -1) {
-        diagnose("cd", directory, errno);
-        result->status = 1;
-    }
-}
-
 static void builtin_exit(struct csh_state *state, const struct csh_command *command,
     struct csh_execution *result)
 {
@@ -557,6 +530,8 @@ int csh_execute_resolved(struct csh_state *state, const struct csh_command *comm
 done:
     csh_state_restore_variables(state, &variables);
     if (rc == -1) result->status = error->status;
+    if (result->category == CSH_EXEC_SPECIAL_BUILTIN && result->status != 0 && !result->exit_requested)
+        result->special_builtin_error = 1;
     if (state != NULL) csh_state_set_status(state, result->status);
     return rc;
 }
@@ -567,8 +542,11 @@ static int bootstrap_handler(struct csh_state *state,
 {
     (void)error;
     (void)context;
-    if (result->category == CSH_EXEC_REGULAR_BUILTIN) builtin_cd(state, command, result);
-    else builtin_exit(state, command, result);
+    if (strcmp(command->argv[0], "exit") == 0)
+        builtin_exit(state, command, result);
+    else
+        result->status = csh_state_builtin_run(state, command->argc,
+            command->argv);
     return 0;
 }
 
@@ -578,10 +556,11 @@ int csh_execute_command(struct csh_state *state, const struct csh_command *comma
     enum csh_execution_category category = CSH_EXEC_EMPTY;
     csh_command_handler handler = NULL;
     if (command != NULL && command->argc != 0) {
-        category = CSH_EXEC_EXTERNAL;
         if (command->argv != NULL && command->argv[0] != NULL) {
-            if (strcmp(command->argv[0], "cd") == 0) category = CSH_EXEC_REGULAR_BUILTIN;
-            else if (strcmp(command->argv[0], "exit") == 0) category = CSH_EXEC_SPECIAL_BUILTIN;
+            if (strcmp(command->argv[0], "exit") == 0)
+                category = CSH_EXEC_SPECIAL_BUILTIN;
+            else
+                category = csh_state_builtin_category(command->argv[0]);
             if (category != CSH_EXEC_EXTERNAL) handler = bootstrap_handler;
         }
     }

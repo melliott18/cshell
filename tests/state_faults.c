@@ -400,6 +400,53 @@ static void check_environment_failures(void)
     assert(point < SWEEP_LIMIT);
 }
 
+static void check_names(char *const names[])
+{
+    const char *expected[] = {"KEEP", "DUP", "EMPTY", "READONLY", "HIDDEN",
+        "ALIAS_NAME", "UNSET", "PENDING", "LOCKED"};
+    unsigned seen = 0;
+    size_t i, j;
+    for (i = 0; names[i]; ++i) {
+        for (j = 0; j < 9; ++j) if (!strcmp(names[i], expected[j])) break;
+        assert(j < 9 && !(seen & (1u << j)));
+        seen |= 1u << j;
+    }
+    assert(i == 9 && seen == 511);
+}
+
+static void check_names_failures(void)
+{
+    size_t point;
+    for (point = 1; point < SWEEP_LIMIT; ++point) {
+        struct csh_state *state;
+        char **environment = (char **)&state;
+        enum csh_state_result result;
+        size_t before;
+        reset_faults();
+        state = make_baseline();
+        before = live_allocations;
+        arm_fault(point);
+        result = csh_state_names(state, &environment);
+        if (result == CSH_STATE_NOMEM) {
+            assert(environment == NULL);
+            assert(allocation_calls >= point);
+            assert(live_allocations == before);
+        } else {
+            assert(result == CSH_STATE_OK && allocation_calls < point);
+            check_names(environment);
+        }
+        check_baseline(state);
+        csh_state_destroy(state);
+        if (result == CSH_STATE_OK)
+            check_names(environment);
+        csh_state_environment_destroy(environment);
+        assert(live_allocations == 0);
+        if (result == CSH_STATE_OK)
+            break;
+    }
+    assert(point < SWEEP_LIMIT);
+}
+
 static void check_copy_failures(void)
 {
     unsigned save;
@@ -526,6 +573,7 @@ int main(void)
     check_create_failures();
     check_mutation_failures();
     check_environment_failures();
+    check_names_failures();
     check_copy_failures();
     check_allocation_free_restore();
     puts("state allocation faults passed");
