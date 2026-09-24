@@ -16,6 +16,38 @@ def add_cases(cross, helper):
     args('nested substitutions and embedded newline bytes',
          '@ARGS@ "pre$(printf "%s\\n\\n" "$(printf "a\\nb\\n")")post"\n',
          '[prea\nbpost]\n')
+    args('arithmetic-first command replay',
+         '@ARGS@ "$((echo hi); )" "$((echo hi))" "$((echo hi) )"\n',
+         '[hi]\n[hi]\n[hi]\n')
+    args('arithmetic precedence and nested operands',
+         'v=2; @ARGS@ "$((v))" "$((1${v}))" "$((1 + $(printf 3) + $((2+2))))" "$((v=7))" "$v"\n',
+         '[2]\n[12]\n[8]\n[7]\n[7]\n')
+    args('replay never evaluates arithmetic assignments',
+         'v=0; @ARGS@ "$((echo $((v=7))); )" "$v"\n', '[7]\n[0]\n')
+    args('replayed substitutions execute exactly once',
+         '@ARGS@ "$(printf a >>proof; printf before)$((echo $(printf b >>proof; printf inner)); )$(printf c >>proof; printf after)"\n',
+         '[beforeinnerafter]\n', files={'proof': {'type': 'file', 'content': 'abc'}})
+    args('replay across nested command and parameter quotes',
+         '''@ARGS@ "$(echo "${missing:-$((printf '%s' 'quoted ) hi'); )}")"\n''',
+         '[quoted ) hi]\n')
+    args('replay preserves lazy operands',
+         'v=set; @ARGS@ "${v:-$((echo $(>forbidden)); )}"\n', '[set]\n',
+         files={'forbidden': {'type': 'absent'}})
+    args('replay preserves nested heredoc AST and capture',
+         '@ARGS@ "$((echo $(cat <<END\n$(printf x >>proof; printf body)\nEND\n)); )"\n',
+         '[body]\n', files={'proof': {'type': 'file', 'content': 'x'}})
+    args('replay handles heredoc literal parentheses and quotes',
+         '@ARGS@ "$((cat <<END\nbody ) \" hi\nEND\n))"\n', '[body ) " hi]\n')
+    cross('replay retains outer heredoc queue',
+          "cat $((printf ''); ) <<OUT\nouter\nOUT\n", stdout='outer\n')
+    cross('replay in expanded heredoc body',
+          'cat <<END\n$((echo body); )\nEND\n', stdout='body\n')
+    args('replay across physical continuations',
+         '@ARGS@ "pre$\\\n(\\\n(echo\\\n hi); )post"\n', '[prehipost]\n')
+    for expression in ('1/0', '1<<999', '999999999999999999999999999999999999'):
+        cross('grammar-valid arithmetic error stays arithmetic: ' + expression,
+              f'printf "%s" "$(({expression}))" >forbidden\n', status=2,
+              stderr='cshell: arithmetic expansion failed\n', files={'forbidden': {'type': 'absent'}})
     args('backquote execution and nesting',
          r'@ARGS@ "`printf "%s" \`printf nested\``"' + '\n', '[nested]\n')
     args('empty substitution fields',

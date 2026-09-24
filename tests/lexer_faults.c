@@ -96,6 +96,7 @@ static int run(const char *source, size_t chunk)
     struct csh_lexer *frames[256] = {0};
     struct csh_error error;
     size_t length = strlen(source), fed = 0, depth = 0;
+    size_t parentheses[256] = {0};
     int final = 0;
     int succeeded = 0;
     if (csh_lexer_create(&frames[0], "allocation-fault", &error) != 0) {
@@ -121,7 +122,11 @@ static int run(const char *source, size_t chunk)
                 csh_token_destroy(&token);
                 continue;
             }
-            if (depth != 0 && token.kind == CSH_TOKEN_RPAREN) {
+            if (depth != 0 && token.kind == CSH_TOKEN_LPAREN)
+                ++parentheses[depth];
+            if (depth != 0 && token.kind == CSH_TOKEN_RPAREN && parentheses[depth] != 0)
+                --parentheses[depth];
+            else if (depth != 0 && token.kind == CSH_TOKEN_RPAREN) {
                 if (csh_lexer_command_end(frames[depth - 1], frames[depth], &token,
                     &error) != 0) {
                     csh_token_destroy(&token);
@@ -135,6 +140,9 @@ static int run(const char *source, size_t chunk)
             if (csh_lexer_command_begin(frames[depth], &frames[depth + 1], &error) != 0)
                 break;
             ++depth;
+            parentheses[depth] = 0;
+        } else if (result == CSH_LEX_REPLAY) {
+            continue;
         } else if (result == CSH_LEX_MORE) {
             size_t count = length - fed;
             assert(!final);
@@ -192,6 +200,9 @@ int main(void)
     sweep("", 4096);
     sweep("one a''\"two\" ${x:-${y}} $((1+2)) `echo x` &\\\n& end\n", 4096);
     sweep("first $(echo \"x\" $(echo y)) last", 1);
+    sweep("\"$(echo before)$((echo $(echo inner)); )$(echo after)\"", 1);
+    sweep("$\\\n(\\\n(echo $((1+2))); )", 1);
+    sweep("$((1${n:-2} + $(echo 3)))", 1);
     sweep(large, 4096);
     for (i = 0; i < 40; ++i) {
         memcpy(nested + used, "${x:-", 5);

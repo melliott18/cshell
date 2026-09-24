@@ -512,6 +512,37 @@ def cases(fixture):
         inner = command(sub["body"])
         assert name(inner["kind"]) == "and" and name(inner["right"]["kind"]) == "subshell", inner
     yield "nested substitutions preserve ASTs and fragment identity", substitution
+    replay_cases = (
+        b'echo "$((echo hi); )"',
+        b'echo $((echo $(echo nested)); )',
+        b'echo "$(echo before)$((echo $(echo inner)); )$(echo after)"',
+        b'echo "${x:-$((echo $((echo inner); )); )}"',
+        b'echo "$(echo $((echo $(echo inner)); ))"',
+        b'echo $((case x in x) echo yes;; esac); )',
+        b'echo $((f() { echo yes; }; f); )',
+        b'echo $((cat <<END\nbody ) " ${\nEND\n))',
+        b'echo $((cat <<END\n$(|)\nEND\n))',
+        b'echo $((cat <<END\n${broken\nEND\n))',
+        b'echo $((echo $(cat <<END\ninside\nEND\n)); )',
+        b'cat <<OUT $((echo $(cat <<IN\ninside\nIN\n)); )\noutside\nOUT\n',
+        b'echo $((1 + $(cat <<END\n2\nEND\n)))',
+    )
+    for data in replay_cases:
+        yield f"arithmetic replay retains AST ownership and positions {data!r}", lambda data=data: one(fixture, data)
+
+    def replay_substitutions():
+        node = one(fixture, b'echo "$(echo before)$((echo $(echo inner)); )$(echo after)"')
+        subs = node["words"][1]["word"]["substitutions"]
+        assert len(subs) == 3, subs
+        assert name(command(subs[1]["body"])["kind"]) == "subshell", subs
+        inner = command(command(subs[1]["body"])["body"])
+        assert len(inner["words"][1]["word"]["substitutions"]) == 1, inner
+    yield "replay discards speculative ASTs and preserves preceding substitutions", replay_substitutions
+
+    def arithmetic_limit():
+        result = fixture.parse(b"echo " + b"$((" * 129 + b"1" + b"))" * 129, "error")
+        assert result["error"]["message"] == "arithmetic expansion nesting limit exceeded", result
+    yield "arithmetic checkpoint nesting is bounded", arithmetic_limit
     yield "empty command substitution", lambda: one(fixture, b"echo $()\n")
 
     def nested_heredoc():
@@ -574,6 +605,8 @@ def cases(fixture):
 
     def no_execution():
         one(fixture, b"echo $(touch parser-executed) `touch parser-executed` > parser-created\n")
+        one(fixture, b"echo $((echo $(touch parser-executed)); ) >parser-created\n")
+        fixture.parse(b"echo $((echo $(touch parser-executed)); ) )\n", "error")
         assert not (Path(fixture.directory) / "parser-executed").exists(), "substitution executed"
         assert not (Path(fixture.directory) / "parser-created").exists(), "redirection executed"
     yield "parse never executes substitutions or redirections", no_execution

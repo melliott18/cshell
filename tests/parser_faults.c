@@ -120,7 +120,8 @@ static int run(const char *source, int valid, int use_aliases)
             { "inside", "printf" }, { "pipe", "a | a" },
             { "doc", "cat <<END" }, { "empty", "" },
             { "bad", "echo >" }, { "self", "self argument" },
-            { "loop", "other" }, { "other", "loop" }
+            { "loop", "other" }, { "other", "loop" },
+            { "replay", "echo $((echo $(inside)" }
         };
         size_t index;
         if (csh_aliases_create(&aliases, &error) != 0)
@@ -220,6 +221,17 @@ int main(void)
     /* Force each new growable vector past its initial allocation. */
     sweep("if a; then b; elif a; then b; elif a; then b; elif a; then b; elif a; then b; elif a; then b; elif a; then b; elif a; then b; elif a; then b; fi", 1);
     sweep("for x in a b c d e f g h i; do x; done; case x in a|b|c|d|e|f|g|h|i) ;; a) ;; b) ;; c) ;; d) ;; e) ;; f) ;; g) ;; h) ;; esac", 1);
+    sweep("echo $((echo $(cat <<END\nbody\nEND\n)); )\n", 1);
+    sweep("cat <<OUT $((cat <<END\n$(|)\nEND\n))\nouter\nOUT\n", 1);
+    sweep("echo \"$(echo first)$((echo $((1+2)) $(echo inner)); )$(echo last)\"\n", 1);
+    sweep("echo $((1 + ${n:-$(echo 2)}))\n", 1);
+    sweep("echo $((echo 'unfinished", 0);
+    sweep("echo $((1+2", 0);
+    sweep("echo $((1 + ${unfinished", 0);
+    sweep("echo $((1 + $(unfinished", 0);
+    sweep("echo $((cat <<END\n${unfinished\nEND\n))", 1);
+    sweep_mode("replay); )\n", 1, 1);
+    sweep_mode("echo $((cat <<END\n$(bad)\nEND\n))\n", 1, 1);
     sweep(large, 1);
     memcpy(large, "cat <<E\n", 8);
     memset(large + 8, 'x', 32766);

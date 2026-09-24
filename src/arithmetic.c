@@ -26,6 +26,7 @@ struct parser {
     struct csh_state *state;
     unsigned options;
     unsigned depth;
+    int incomplete;
 };
 
 /* An unresolved variable is an lvalue; reading is delayed until needed so that
@@ -342,9 +343,10 @@ static struct value primary(struct parser *parser, int execute)
         next_token(parser);
         value = expression(parser, 1, execute);
         if (parser->error == CSH_ARITH_OK) {
-            if (parser->token != TOK_RPAREN)
+            if (parser->token != TOK_RPAREN) {
                 parser->error = CSH_ARITH_SYNTAX;
-            else
+                parser->incomplete = parser->token == TOK_END;
+            } else
                 next_token(parser);
         }
     } else if (token == TOK_ADD || token == TOK_SUB || token == TOK_NOT ||
@@ -372,6 +374,7 @@ static struct value primary(struct parser *parser, int execute)
         value.high = 0;
     } else {
         parser->error = CSH_ARITH_SYNTAX;
+        parser->incomplete = parser->token == TOK_END;
     }
     return value;
 }
@@ -409,6 +412,7 @@ static struct value expression(struct parser *parser, int minimum, int execute)
                 break;
             if (parser->token != TOK_COLON) {
                 parser->error = CSH_ARITH_SYNTAX;
+                parser->incomplete = parser->token == TOK_END;
                 break;
             }
             next_token(parser);
@@ -465,6 +469,15 @@ enum csh_arith_result csh_arith_probe(const char *text)
         return CSH_ARITH_SYNTAX;
     parser.next = text;
     return run(&parser, 0, NULL);
+}
+
+int csh_arith_probe_prefix(const char *text)
+{
+    struct parser parser = {0};
+    if (text == NULL)
+        return 0;
+    parser.next = text;
+    return run(&parser, 0, NULL) == CSH_ARITH_OK || parser.incomplete;
 }
 
 enum csh_arith_result csh_arith_eval(struct csh_state *state,

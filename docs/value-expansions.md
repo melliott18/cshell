@@ -143,14 +143,17 @@ syntactically arithmetic. A parser must represent nested shell expansions as
 arithmetic operands while probing: it must not execute them to disambiguate.
 
 The [Issue 8 arithmetic-first rule](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_06_03)
-also needs lexer input checkpoint/replay to reinterpret an invalid arithmetic
-candidate as command substitution. This was coordinated with concurrent
-CSH-005 work: this ticket supplies the probe; the existing lexer still reserves
-`$((` for arithmetic and cannot replay a failed candidate. The parser/lexer
-checkpoint/replay integration is tracked by [CSH-041](tickets/CSH-041-arithmetic-substitution-replay.md).
-`$((echo hi); )` is still diagnosed as incomplete arithmetic; the explicit
-`$( (echo hi); )` form uses the existing command-parser handshake. No full
-ambiguity-resolution claim is made by these module tests.
+is connected to owned lexer checkpoint/replay by
+[CSH-041](tickets/CSH-041-arithmetic-substitution-replay.md). The lexer probes a
+candidate with nested shell expansions represented as operands, without calling
+expansion callbacks or evaluating assignments. Invalid grammar replays as
+command substitution; valid grammar commits to arithmetic, including expressions
+whose evaluation fails. `$((echo hi); )` therefore captures `hi`, while
+`$((1/0))` reports an arithmetic error. EOF in a still-possible arithmetic
+candidate remains an incomplete-input error; `csh_arith_probe_prefix()` checks
+whether an unfinished nested operand has already ruled out arithmetic.
+Checkpoint nesting is limited to 128 across command frames. These selected
+cases do not establish full conformance.
 
 ## Deferred substitutions and integration
 

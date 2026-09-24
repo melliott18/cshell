@@ -159,6 +159,19 @@ static void frame_destroy(struct parse_frame *frame)
     free(frame->documents);
 }
 
+static void discard_replayed_substitutions(struct parse_frame *frame)
+{
+    size_t first = csh_lexer_command_fragment(frame->lexer);
+    while (frame->look.substitution_count != 0) {
+        struct csh_ast_substitution *sub =
+            &frame->look.substitutions[frame->look.substitution_count - 1];
+        if (sub->fragment_index < first)
+            break;
+        csh_ast_destroy(sub->body);
+        --frame->look.substitution_count;
+    }
+}
+
 static int peek_raw(struct parse_frame *frame)
 {
     struct csh_error error;
@@ -180,6 +193,10 @@ static int peek_raw(struct parse_frame *frame)
             frame->eof = 1;
             return 0;
         }
+        if (result == CSH_LEX_REPLAY) {
+            discard_replayed_substitutions(frame);
+            continue;
+        }
         if (result == CSH_LEX_COMMAND) {
             struct parse_frame child;
             struct csh_ast_substitution substitution;
@@ -197,24 +214,19 @@ static int peek_raw(struct parse_frame *frame)
             if (csh_lexer_command_begin(frame->lexer, &child.lexer, &error) == -1)
                 return adopt_error(frame, &error);
             substitution.body = parse_list(&child, CLOSE_PAREN, 1, opening);
-            if (substitution.body == NULL) {
-                frame_destroy(&child);
-                return -1;
-            }
+            if (substitution.body == NULL)
+                goto command_error;
             substitution.fragment_index = csh_lexer_command_fragment(frame->lexer);
             if (child.document_count != 0) {
                 fail_at(&child, CSH_PARSE_ERROR,
                     "command substitution closes before here-document body", 0,
                     token_position(&child.look.token));
-                csh_ast_destroy(substitution.body);
-                frame_destroy(&child);
-                return -1;
+                goto command_error;
             }
             if (csh_lexer_command_end(frame->lexer, child.lexer,
                     &child.look.token, &error) == -1) {
-                csh_ast_destroy(substitution.body);
-                frame_destroy(&child);
-                return adopt_error(frame, &error);
+                adopt_error(frame, &error);
+                goto command_error;
             }
             frame_destroy(&child);
             if (csh_ast_word_add_substitution(&frame->look, &substitution, &error) == -1) {
@@ -222,6 +234,22 @@ static int peek_raw(struct parse_frame *frame)
                 return adopt_error(frame, &error);
             }
             continue;
+
+command_error:
+            csh_ast_destroy(substitution.body);
+            frame_destroy(&child);
+            error = frame->parser->failure;
+            {
+                int replay = csh_lexer_replay_arithmetic(frame->lexer, &error);
+                if (replay != 0) {
+                    memset(&frame->parser->failure, 0, sizeof(frame->parser->failure));
+                    if (replay == -1)
+                        return adopt_error(frame, &error);
+                    discard_replayed_substitutions(frame);
+                    continue;
+                }
+            }
+            return -1;
         }
         {
             size_t i;

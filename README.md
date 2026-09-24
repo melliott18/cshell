@@ -127,7 +127,7 @@ the only `cshell` implementation. The legacy sources, scanner build rules,
 internal candidate executable, and prototype test allowances are removed.
 Historical tickets and Git history retain the previous implementation record.
 CSH-026 replaces the bounded literal adapter with context-sensitive expansion.
-The arithmetic-first lexer replay follow-up is tracked in CSH-041; new modules
-follow POSIX requirements and explicit ownership contracts.
+CSH-041 adds arithmetic-first lexer replay for ambiguous `$((` input; new
+modules follow POSIX requirements and explicit ownership contracts.
 
 Originally authored by Mitchell Elliott.

@@ -701,6 +701,18 @@ static int fragment_syntax(const struct csh_token *word, const struct csh_fragme
     return 0;
 }
 
+static int command_continuation(const struct csh_token *word,
+    const struct csh_fragment *child)
+{
+    const struct csh_fragment *parent = &word->fragments[child->parent];
+    size_t begin = parent->begin;
+    /* Command bodies live in parser-owned ASTs, but the lexer records physical
+     * continuations between '$' and '(' as children of the COMMAND fragment. */
+    return child->kind == CSH_FRAGMENT_CONTINUATION &&
+        logical(word, &begin, parent->end) == '$' &&
+        logical(word, &begin, parent->end) == '(' && child->end <= begin;
+}
+
 /* Validate structure once and cache subtree ends. Inputs originate at the lexer
  * (or parser-preserving copies); rejecting malformed public records avoids
  * accidental out-of-bounds access when integration code supplies bad ranges. */
@@ -745,7 +757,8 @@ static enum csh_expand_result prepare(struct expansion_work *work)
             (word->fragments[f->parent].kind == CSH_FRAGMENT_TEXT ||
              word->fragments[f->parent].kind == CSH_FRAGMENT_ESCAPE ||
              word->fragments[f->parent].kind == CSH_FRAGMENT_CONTINUATION ||
-             word->fragments[f->parent].kind == CSH_FRAGMENT_COMMAND))) {
+             (word->fragments[f->parent].kind == CSH_FRAGMENT_COMMAND &&
+              !command_continuation(word, f))))) {
             free(stack);
             return fail(work, CSH_EXPAND_INVALID, i, "invalid fragment syntax");
         }
