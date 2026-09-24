@@ -45,6 +45,32 @@ int main(int argc, char **argv)
         char buffer[4096];
         if (getcwd(buffer, sizeof(buffer)) == NULL) return 85;
         puts(buffer);
+    } else if (strcmp(argv[1], "generate") == 0) {
+        unsigned char buffer[8192];
+        size_t left = (size_t)strtoul(argv[2], NULL, 10);
+        memset(buffer, 'x', sizeof(buffer));
+        while (left != 0) {
+            size_t amount = left < sizeof(buffer) ? left : sizeof(buffer);
+            ssize_t written = write(1, buffer, amount);
+            if (written < 0) { if (errno == EINTR) continue; return 89; }
+            if (written == 0) return 89;
+            left -= (size_t)written;
+        }
+    } else if (strcmp(argv[1], "count") == 0) {
+        unsigned char buffer[8192];
+        size_t count = 0;
+        ssize_t amount;
+        while ((amount = read(0, buffer, sizeof(buffer))) != 0) {
+            if (amount < 0) { if (errno == EINTR) continue; return 90; }
+            count += (size_t)amount;
+        }
+        printf("%lu\n", (unsigned long)count);
+    } else if (strcmp(argv[1], "one") == 0) {
+        char byte;
+        return read(0, &byte, 1) == 1 ? 0 : 91;
+    } else if (strcmp(argv[1], "private-fds") == 0) {
+        for (index = 3; index < 256; ++index)
+            if (fcntl(index, F_GETFD) != -1 || errno != EBADF) return 92;
     } else if (strcmp(argv[1], "status") == 0) {
         return atoi(argv[2]);
     } else if (strcmp(argv[1], "signal") == 0) {

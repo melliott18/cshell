@@ -1,11 +1,11 @@
 # CSH-020: Execute pipelines with explicit child and descriptor ownership
 
-- Status: backlog
+- Status: review
 - Type: feat
 - Kind: implementation
 - Parent: CSH-006
 - Depends on: CSH-019
-- Branch: Assigned when work starts
+- Branch: feature/CSH-020-pipeline-lifecycle
 - Issue: [#21](https://github.com/melliott18/cshell/issues/21)
 
 ## Goal
@@ -23,15 +23,15 @@ without pipe deadlocks, leaked descriptors, or lost child statuses.
 
 ## Acceptance criteria
 
-- [ ] Three-or-more-stage and high-volume pipelines run concurrently, deliver
+- [x] Three-or-more-stage and high-volume pipelines run concurrently, deliver
   expected output, and terminate under bounded regression timeouts.
-- [ ] Every unused descriptor is closed and owned child is reaped; an unrelated
+- [x] Every unused descriptor is closed and owned child is reaped; an unrelated
   child fixture keeps its status available to its own owner.
-- [ ] Default final-stage status and pipeline negation match specified behavior,
+- [x] Default final-stage status and pipeline negation match specified behavior,
   including a failed earlier stage and a failed final stage.
-- [ ] Injected pipe/fork/redirection failures after some stages have launched
+- [x] Injected pipe/fork/redirection failures after some stages have launched
   unwind the partial pipeline without hangs or leaked children/descriptors.
-- [ ] Pipeline builtin state follows the documented execution-environment choice,
+- [x] Pipeline builtin state follows the documented execution-environment choice,
   and stage status/ownership APIs are documented for CSH-010 and CSH-011.
 
 ## Validation
@@ -50,3 +50,73 @@ Pipe capacity must not determine whether a test succeeds: launch the necessary
 stages before blocking on completion. Retain all stage statuses even though the
 default result uses the final stage. Interactive process groups and terminal
 ownership remain CSH-011 work; this ticket defines their child-lifecycle boundary.
+
+
+### Implemented contract
+
+`execute.c` composes the existing prepared-command, lookup, builtin, and
+redirection interfaces into concurrent foreground pipelines. The literal AST
+path prepares every simple stage before launch and rejects unsupported later
+stages without side effects. Multi-stage builtins execute in children; singleton
+commands retain the current execution environment.
+
+A rolling pipe pair bounds parent descriptor usage independently of stage count.
+Private pipes are CLOEXEC, moved off closed standard descriptors, and closed in
+children before ordered redirections. All stages launch before any wait.
+Partial parent setup failure closes every remaining pipe, kills all unreaped
+owned children, and reaps each by positive PID. Child setup/exec failures are
+ordinary stage statuses. The default result is the final stage's status with
+logical negation for `!`, while every stage's original status remains available.
+
+`csh_execute_pipeline()` accepts prepared commands;
+`csh_execute_pipeline_ast()` adapts one foreground simple-command pipeline;
+`csh_execute_ast()` exposes the summary. The owned result vector records PID,
+command category, completion/reaping flags, raw wait status, and shell status.
+See [Pipeline lifecycle and stage results](../execution.md#pipeline-lifecycle-and-stage-results)
+for cleanup requirements and CSH-010/CSH-011 integration boundaries. Process
+groups, job control, pipefail, compound stages, and the default-runtime switch
+remain with their existing tickets.
+
+
+### Validation evidence (2026-09-23)
+
+- Native macOS arm64 / Apple Clang 15: `make -j4 test test-pty test-harness`
+  passed all replacement suites, four prototype pipe cases, one prototype PTY
+  case, and all 61 harness self-tests. The existing generated legacy scanner
+  retains its signedness warning; replacement handwritten sources are clean.
+- Final focused `make test-execute test-pipeline` checks passed **68 existing
+  simple-command cases** and **54 pipeline behavior cases**, plus API/fault
+  checks. The former unsupported-pipeline case moved from rejection coverage to
+  the new pipeline suite. Candidates are `build/tests/execute_fixture`,
+  `build/tests/pipeline_fixture`, and `build/tests/execute_faults --pipeline`;
+  this is replacement module evidence before CSH-039's default-runtime cutover.
+- Pipeline fixtures include 48 stages under a 64-fd limit, an 8 MiB stream,
+  early consumer exit, statuses/negation, signal status, builtin isolation,
+  redirection precedence, and all seven combinations of closed standard fds.
+  Repeated API runs retain all stage statuses and leave an unrelated exited
+  child available to its owner.
+- Fault checks sweep pipeline/adapter/launch allocations; all four pipe and five
+  fork boundaries in a five-stage pipeline; all eight pipe-flag and eight
+  low-fd relocation boundaries; every wait boundary; and connection, open,
+  duplication, saved-fd, temporary-file, and child-allocation failures at every
+  stage. Partial-launch fixtures use 30-second sleepers under a 25-second
+  fixture deadline and verify every launched PID is already reaped, every
+  acquired parent descriptor is released, and live tracked allocations are zero.
+- A source-only snapshot without `src/legacy`, `src/main.c`, or
+  `include/cshell/legacy.h` passed `make -j4 test-execute test-pipeline CC=clang
+  LEX=false` with `CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror
+  -DNDEBUG -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer'`,
+  `LDFLAGS='-fsanitize=address,undefined'`, and both sanitizers set to
+  `halt_on_error=1`. An initial sanitizer-discovered fixture array lifetime bug
+  was corrected; the final run passed with no diagnostics.
+- `make docker-test DOCKER_IMAGE=cshell-test:csh-020` passed all replacement
+  suites, including the final 54 pipeline cases and ownership/fault checks,
+  plus the four prototype cases under Debian Linux/GCC.
+- A clean Linux/GCC `make -j2 test-execute test-pipeline LEX=false` in that image
+  passed with the same strict sanitizer flags, `-DNDEBUG`,
+  `ASAN_OPTIONS=detect_leaks=1:halt_on_error=1`, and
+  `UBSAN_OPTIONS=halt_on_error=1`, without sanitizer/leak diagnostics.
+- `make test-pipeline` is included in `make test`, Docker, and the native CI
+  ASan/UBSan command. The descriptor-observer helper remains uninstrumented for
+  the previously documented macOS sanitizer startup behavior; executor,
+  parser/state, API fixtures, and fault objects remain instrumented.

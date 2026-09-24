@@ -1,7 +1,8 @@
-# Simple-command execution and redirections
+# Command execution, pipelines, and redirections
 
 [CSH-019](tickets/CSH-019-simple-command-redirections.md) supplies standalone
-replacement execution and redirection modules. Their interfaces are
+replacement execution and redirection modules;
+[CSH-020](tickets/CSH-020-pipeline-lifecycle.md) adds concurrent pipelines. Their interfaces are
 [`execute.h`](../include/cshell/execute.h) and
 [`redirect.h`](../include/cshell/redirect.h). They use the replacement parser,
 AST, and shell state without the legacy scanner or executor. The default
@@ -35,13 +36,16 @@ character permits its literal value.
 
 The adapter is deliberately separate from the existing value-expansion module.
 Parsing a construct successfully does not mean this execution subset supports
-it. CSH-008 replaces the adapter with expansion integration; CSH-020 adds
-pipeline execution.
+it. CSH-008 replaces the adapter with expansion integration.
+`csh_execute_pipeline_ast()` prepares every simple stage of one foreground
+pipeline through this adapter, rejecting the entire construct if any stage is
+unsupported. `csh_execute_ast()` accepts the same subset and discards stage details.
 
 ## Dispatch, ownership, and results
 
 `csh_execute_command()` borrows the command and mutable shell state.
-`csh_execute_ast()` performs adaptation, dispatch, and cleanup as one operation.
+`csh_execute_ast()` performs simple-command or pipeline adaptation, dispatch,
+and cleanup as one operation.
 Both initialize `struct csh_execution` and update the state's last status. The
 result records the execution category, numeric status, and an `exit_requested`
 flag. The category distinguishes empty commands, external commands, regular
@@ -92,6 +96,79 @@ These are the initial handlers needed for runtime cutover;
 CSH-018 owns complete exit/status integration and CSH-029 owns full state-builtin
 semantics.
 
+## Pipeline lifecycle and stage results
+
+`csh_execute_pipeline()` borrows an array of prepared commands, a nonzero count,
+a negation flag, and shell state. `csh_execute_pipeline_ast()` accepts a simple
+command or one foreground pipeline (including `!`) and prepares all stages
+before dispatch. Neither API accepts compound stages, background execution, or
+AND/OR/sequential lists; CSH-021 owns those contexts. Both APIs initialize an
+empty `csh_pipeline_result`; the caller must call
+`csh_pipeline_result_destroy()` after success **or failure**, before reusing it.
+The destructor is safe on a zeroed or already destroyed result.
+
+A multi-stage pipeline runs every stage in its own child. External commands exec
+directly in that child; bootstrap builtins use the same handlers as ordinary
+commands. Consequently `cd directory | command` and `command | cd directory`
+leave the caller's directory unchanged, and a pipeline `exit` cannot request
+that the caller exit. A single stage uses the ordinary execution environment:
+`! cd directory` changes the caller's directory. A singleton `exit` preserves its
+requested exit status and exit request, including under `!`.
+
+The parent keeps only the preceding read end and the next pipe while launching.
+Pipe descriptors are CLOEXEC and relocated above standard descriptors, so
+initially closed stdin/stdout/stderr remain closed in the parent. Each child
+connects stdin/stdout, closes all private pipe ends, and then applies its ordered
+redirections. Explicit redirection therefore overrides a pipe connection, and
+private pipe descriptors cannot accidentally satisfy user duplication operands.
+The parent closes each unused end immediately, launches all stages before its
+first wait, and waits for every owned child using its positive PID with EINTR
+retry. Pipeline length does not require keeping every pipe open at once.
+
+`result.execution` holds the summary. On success its status is the last stage's
+status, logically inverted to 0/1 for `!`; an earlier failure does not implement
+`pipefail`. A signal status is `128 + signal_number`. Multi-stage results have
+category `CSH_EXEC_PIPELINE` and no parent exit request. The state's last status
+is updated to the summary after completion.
+
+`result.stages` contains one entry per command in source order, including stages
+that were not launched if setup failed:
+
+| Field | Meaning |
+| --- | --- |
+| `pid` | Owned direct child identity, or zero for an unlaunched stage or singleton parent builtin. |
+| `category` | Empty, external, regular builtin, or special builtin command. |
+| `completed`, `status` | `status` is valid when `completed` is set; it is never negated. |
+| `reaped`, `wait_status` | Raw `waitpid` result is valid when `reaped` is set; inspect with `WIFEXITED`/`WIFSIGNALED` and related macros. |
+
+All valid PIDs are historical after return: callers must not signal or wait for
+them again. CSH-010 can derive `pipefail` from the ordered, unnegated statuses.
+CSH-011 must extend the launch/wait boundary for process groups, terminal control,
+and suspended jobs; this synchronous API does not transfer live children or
+pretend that stopped children have completed. Callers must serialize descriptor
+mutation, refrain from reaping executor children elsewhere, and leave SIGCHLD
+waitable (no ignored SIGCHLD or `SA_NOCLDWAIT`).
+
+Preparation errors return `-1` before launch. Pipe, descriptor-setup, fork, or
+wait errors in the parent return `-1` with the original diagnostic and status 1,
+without applying negation. After partial launch the parent closes its remaining
+pipes, sends SIGKILL to all unreaped owned children, and reaps them before
+returning. This handles even a stage that sleeps or ignores termination signals;
+it does not roll back files or other effects already performed by a child.
+Descendants created by external programs are outside this direct-child boundary;
+job/process-group lifecycle belongs to CSH-011.
+
+Child connection/redirection failures instead print once in the child and
+produce stage status 1; lookup/exec failures keep statuses 126/127. Other stages
+finish normally, with EOF/SIGPIPE from the closed ends, and their statuses remain
+available. No child can return into the caller's input loop.
+
+These choices follow the POSIX.1-2024
+[pipeline](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_09_02)
+and [execution-environment](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_12)
+boundaries within the supported subset; process groups, options, and signal/trap
+policy remain separate work.
+
 ## Ordered redirection boundary
 
 Each `struct csh_redirect` has a destination descriptor and one operation. File
@@ -134,7 +211,7 @@ boundary on both success and failure.
 ## Scope and validation
 
 The supported subset has no assignment lifetime, general expansion, compound
-command, pipeline, job-control, noclobber option behavior, or full builtin
+command, job-control, pipefail/noclobber option behavior, or full builtin
 semantics.
 Both `>` and `>|` currently create or truncate output files. The AST front end
 collects here-documents; CSH-008 owns their general expansion. Direct API clients
@@ -144,7 +221,7 @@ body containing `$`, a backquote, or a backslash. Bodies without those bytes pas
 through unchanged. Large bodies use temporary-file input rather than requiring
 a pipe reader to run while the parent writes them.
 
-Run `make test-execute` for the replacement execution fixtures, independently of
+Run `make test-execute test-pipeline` for the replacement execution fixtures, independently of
 the prototype. See [Testing](testing.md#execution-api-and-sanitizer-checks) for
 focused sanitizer and Docker commands. The fixtures establish this module
 contract; they do not establish that the default executable implements it or

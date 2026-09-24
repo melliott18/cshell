@@ -587,6 +587,44 @@ matrix. Fixture assertions remain enabled with `-DNDEBUG`. See
 [Simple-command execution](execution.md) for the bounded syntax and prepared-input
 contracts.
 
+## Pipeline API and sanitizer checks
+
+`make test-pipeline` uses `build/tests/execute_fixture` with `tests/pipeline.py`,
+plus `build/tests/pipeline_fixture` for ownership/status assertions and
+`build/tests/execute_faults --pipeline` for deterministic failures. All candidates
+link replacement modules only. The runner enforces process-group cleanup,
+10-second behavior deadlines, 25-second API/fault deadlines, bounded output,
+and a 64-descriptor resource limit. These checks join `make test`, Docker, and
+native sanitizer CI without switching the default shell executable.
+
+Coverage includes a 48-stage pipeline, an 8 MiB stream through four stages,
+early consumer exit, missing/unexecutable commands, executable-format fallback,
+ordered redirection overriding pipes, here-documents, closed stdin/stdout/stderr,
+private-fd closure in every stage, default status/negation, and `cd`/`exit`
+isolation. Unsupported later stages must reject the whole construct before
+creating a file or launching a child.
+
+The API fixture checks repeated execution, raw signal/exit statuses, categories,
+last-status updates, and an unrelated exited child left for its owner. Fault
+wrappers sweep preparation allocations and every pipe/fork/fcntl setup boundary,
+including failure after long-lived stages launch. Each owned PID is verified
+reaped and descriptor/allocation counts return to baseline. Child connection,
+redirection open/duplication/save, here-document, and allocation failures are
+injected at every stage; wait interruption and errors exercise retry/cancellation.
+
+```sh
+make test-execute test-pipeline
+make clean
+ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 make test-execute test-pipeline CC=clang LEX=false CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -DNDEBUG -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+make docker-test DOCKER_IMAGE=cshell-test:csh-020
+```
+
+The external descriptor-observer helper remains uninstrumented for the same
+macOS sanitizer-startup reason as the simple-command checks. Executor, state,
+parser, API fixtures, and fault objects remain instrumented. See
+[Pipeline lifecycle](execution.md#pipeline-lifecycle-and-stage-results) for the
+synchronous ownership contract and the boundaries reserved for options/job control.
+
 ## Value-expansion API and sanitizer checks
 
 `make test-expand` builds independent expansion, arithmetic, and quote-decoder

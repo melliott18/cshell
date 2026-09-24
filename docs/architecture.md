@@ -61,7 +61,7 @@ executable does not call them yet.
 | `src/arithmetic.c` / `include/cshell/arithmetic.h` | Checked signed-long arithmetic and grammar-only parser probe |
 | `src/quote.c` / `include/cshell/quote.h` | Reusable dollar-single-quote decoding before expansion or delimiter quote removal |
 | `src/state.c` / `include/cshell/state.h` | Owned variables and attributes, copied invocation parameters, option/status metadata, environment snapshots, and full-state copying/restoration |
-| `src/execute.c` / `include/cshell/execute.h` | Owned prepared-command boundary, bounded literal AST adapter, command lookup, owned child execution, and bootstrap parent builtins |
+| `src/execute.c` / `include/cshell/execute.h` | Owned prepared-command boundary, bounded literal AST adapter, command lookup, owned child execution, concurrent pipelines with per-stage results, and bootstrap parent builtins |
 | `src/redirect.c` / `include/cshell/redirect.h` | Ordered file, descriptor, and prepared here-document operations with descriptor restoration |
 
 See [Input and invocation](input-and-invocation.md) for the concrete ownership,
