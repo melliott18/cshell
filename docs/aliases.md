@@ -3,8 +3,8 @@
 [CSH-030](tickets/CSH-030-alias-substitution.md) adds
 [`cshell/alias.h`](../include/cshell/alias.h), direct `alias`/`unalias` handlers,
 and substitution in the replacement lexer/parser. These APIs do not execute
-commands. CSH-031 owns dispatcher integration and executed-script evidence;
-the public `cshell` executable does not gain alias support from this change.
+commands. [CSH-031](evaluation-builtins.md) integrates these handlers with the
+public runtime, nested evaluation, functions, and substitutions.
 
 The contract follows POSIX.1-2024
 [alias substitution](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_03_01),
@@ -59,8 +59,7 @@ Each `csh_parser_next()` returns one complete command. Semicolon-separated
 commands on one line and multiline groups are parsed together; an alias change
 after that returned tree does not rewrite it. Definitions and removals are
 visible when the caller requests the next complete command. The parser never
-executes an `alias` command found in the input. The future dispatcher must
-execute each returned complete command before requesting another.
+executes an `alias` command found in the input. The runtime executes each returned complete command before requesting another.
 
 ## Recursive replacement and source ownership
 
@@ -91,10 +90,9 @@ as Issue 8 permits. The next token consumes that eligibility; an intervening
 operator or newline prevents it reaching a later word. Recursive suppression
 applies while the replacement and its nested replacements remain active.
 
-The supported compound grammar remains the CSH-005 subset; aliases do not add
-`if`, `case`, loops, or function definitions. CSH-009 owns those constructs.
-Backquoted substitutions remain syntax for later expansion work. No claim is
-made for dispatcher behavior before CSH-031.
+The compound grammar includes conditionals, loops, case, and functions from
+CSH-027/028. Backquotes use the current alias table during deferred parsing.
+CSH-031 supplies executed-script and cross-feature evidence.
 
 Run `make test-alias` for storage, handlers, and token/AST behavior, and
 `make test-parser` for allocation-failure sweeps through alias injection and the

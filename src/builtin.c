@@ -23,11 +23,14 @@ static int state_result(const char *name, enum csh_state_result result)
 
 enum csh_execution_category csh_state_builtin_category(const char *name)
 {
-    static const char *const special[] = {":", "export", "readonly", "unset", "shift", "set"};
+    static const char *const special[] = {":", "export", "readonly", "unset", "shift", "set", ".", "eval", "exec", "times"};
     size_t i;
     for (i = 0; i < sizeof(special)/sizeof(*special); ++i)
         if (!strcmp(name, special[i])) return CSH_EXEC_SPECIAL_BUILTIN;
-    if (!strcmp(name, "cd") || !strcmp(name, "pwd")) return CSH_EXEC_REGULAR_BUILTIN;
+    if (!strcmp(name, "cd") || !strcmp(name, "pwd") ||
+        !strcmp(name, "command") || !strcmp(name, "type") || !strcmp(name, "hash") ||
+        !strcmp(name, "alias") || !strcmp(name, "unalias") || !strcmp(name, "read") ||
+        !strcmp(name, "getopts") || !strcmp(name, "umask") || !strcmp(name, "ulimit")) return CSH_EXEC_REGULAR_BUILTIN;
     return CSH_EXEC_EXTERNAL;
 }
 
@@ -231,11 +234,15 @@ done:
 
 int csh_state_builtin_run(struct csh_state *state, size_t argc, char *const argv[])
 {
+    if (!strcmp(argv[0], "cd")) csh_state_hash_clear(state);
     const char *name = argv[0];
     size_t i = 1;
     int status = 0;
     if (!strcmp(name, ":")) return 0;
-    if (!strcmp(name, "cd") || !strcmp(name, "pwd")) return directory(state, argc, argv);
+    if (!strcmp(name, "cd") || !strcmp(name, "pwd") ||
+        !strcmp(name, "command") || !strcmp(name, "type") || !strcmp(name, "hash") ||
+        !strcmp(name, "alias") || !strcmp(name, "unalias") || !strcmp(name, "read") ||
+        !strcmp(name, "getopts") || !strcmp(name, "umask") || !strcmp(name, "ulimit")) return directory(state, argc, argv);
     if (!strcmp(name, "set")) {
         if (argc == 1) return listing(state, name, 0);
         if (!strcmp(argv[i], "--")) ++i;

@@ -17,6 +17,8 @@ int csh_alias_name_valid(const char *name);
  * No operation prints, exits, or modifies the process environment.
  * create sets *out to NULL on failure; out must not own an earlier table. */
 int csh_aliases_create(struct csh_aliases **out, struct csh_error *error);
+int csh_aliases_clone(const struct csh_aliases *source, struct csh_aliases **out,
+    struct csh_error *error);
 void csh_aliases_destroy(struct csh_aliases *aliases); /* NULL accepted */
 int csh_aliases_set(struct csh_aliases *aliases, const char *name,
     const char *value, struct csh_error *error);

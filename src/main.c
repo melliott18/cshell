@@ -69,6 +69,11 @@ int main(int argc, char **argv)
         goto done;
     }
     context.state = state;
+    if (csh_state_aliases(state) == NULL) {
+        csh_state_set_status(state, 1); goto done;
+    }
+    csh_parser_set_aliases(parser, csh_state_aliases(state));
+    csh_state_set_variable(state, "OPTIND", "1");
     if (csh_jobs_create(&context.jobs, state,
         invocation.interactive ? STDIN_FILENO : -1) == -1) {
         fprintf(stderr, "cshell: cannot initialize jobs: %s\n", strerror(errno));
@@ -83,7 +88,9 @@ int main(int argc, char **argv)
         struct csh_ast *tree = NULL;
         struct csh_execution execution;
         int executed;
-        enum csh_parse_result parsed = csh_parser_next(parser, &tree, &error);
+        enum csh_parse_result parsed;
+        csh_parser_set_aliases(parser, csh_state_aliases(state));
+        parsed = csh_parser_next(parser, &tree, &error);
         if (parsed == CSH_PARSE_EOF) break;
         if (parsed != CSH_PARSE_TREE) {
             diagnose(&error, csh_parser_source_name(parser));

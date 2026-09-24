@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include "cshell/state.h"
+#include "cshell/alias.h"
 
 #define VARIABLE_ATTRIBUTES (CSH_VAR_EXPORT | CSH_VAR_READONLY)
 #define SHELL_OPTIONS (CSH_OPT_INTERACTIVE | CSH_OPT_ALLEXPORT | CSH_OPT_ERREXIT | \
@@ -25,6 +26,9 @@ struct function_entry {
 };
 
 struct csh_state {
+    struct csh_aliases *aliases;
+    struct variable *hashes;
+    size_t getopts_offset;
     struct function_entry *functions;
     struct variable *variables;
     char *arg0;
@@ -136,6 +140,8 @@ void csh_state_destroy(struct csh_state *state)
         destroy_variable(variable);
         variable = next;
     }
+    csh_aliases_destroy(state->aliases);
+    csh_state_hash_clear(state);
     free(state->arg0);
     csh_state_environment_destroy(state->arguments);
     while (state->functions != NULL) {
@@ -189,6 +195,9 @@ enum csh_state_result csh_state_set_variable(struct csh_state *state,
         variable->next = state->variables;
         state->variables = variable;
     }
+    /* name may borrow the previous value, which assignment just released. */
+    if (!strcmp(variable->name, "PATH")) csh_state_hash_clear(state);
+    if (!strcmp(variable->name, "OPTIND")) state->getopts_offset = 0;
     return CSH_STATE_OK;
 }
 
@@ -231,6 +240,7 @@ enum csh_state_result csh_state_unset_variable(struct csh_state *state,
         if (variable->attributes & CSH_VAR_READONLY)
             return CSH_STATE_READONLY;
         *link = variable->next;
+        if (!strcmp(name, "PATH")) csh_state_hash_clear(state);
         destroy_variable(variable);
         break;
     }
@@ -286,6 +296,7 @@ enum csh_state_result csh_state_restore_variables(struct csh_state *state,
     if (state == NULL || save == NULL) return CSH_STATE_INVALID;
     while (*save != NULL) {
         struct csh_variable_save *entry = *save;
+        if (!strcmp(entry->variable->name, "PATH")) csh_state_hash_clear(state);
         struct variable **link;
         for (link = &state->variables; *link != NULL; link = &(*link)->next) {
             struct variable *current = *link;
@@ -521,6 +532,13 @@ enum csh_state_result csh_state_clone(const struct csh_state *state,
             if (csh_state_set_function(copy, entry->name, entry->value) != CSH_STATE_OK)
                 goto failure;
     }
+    {
+        struct csh_error error;
+        if (csh_aliases_clone(state->aliases, &copy->aliases, &error) == -1) goto failure;
+        for (variable = state->hashes; variable; variable = variable->next)
+            if (csh_state_hash_set(copy, variable->name, variable->value) != CSH_STATE_OK) goto failure;
+    }
+    copy->getopts_offset = state->getopts_offset;
     copy->info = state->info;
     *out = copy;
     return CSH_STATE_OK;
@@ -671,3 +689,54 @@ void csh_state_set_function_depth(struct csh_state *state, unsigned depth)
 {
     state->info.function_depth = depth;
 }
+
+struct csh_aliases *csh_state_aliases(struct csh_state *state)
+{
+    struct csh_error error;
+    if (!state->aliases) csh_aliases_create(&state->aliases, &error);
+    return state->aliases;
+}
+size_t csh_state_getopts_offset(const struct csh_state *state) { return state->getopts_offset; }
+void csh_state_set_getopts_offset(struct csh_state *state, size_t offset) { state->getopts_offset = offset; }
+
+void csh_state_hash_clear(struct csh_state *state)
+{
+    while (state->hashes) {
+        struct variable *entry = state->hashes;
+        state->hashes = entry->next; destroy_variable(entry);
+    }
+}
+const char *csh_state_hash_get(const struct csh_state *state, const char *name)
+{
+    const struct variable *entry;
+    for (entry = state->hashes; entry; entry = entry->next)
+        if (!strcmp(entry->name, name)) return entry->value;
+    return NULL;
+}
+enum csh_state_result csh_state_hash_set(struct csh_state *state, const char *name, const char *path)
+{
+    struct variable **link, *entry = new_variable(name, path, 0);
+    if (!entry) return CSH_STATE_NOMEM;
+    for (link = &state->hashes; *link && strcmp((*link)->name, name); link = &(*link)->next) {}
+    if (*link) { entry->next = (*link)->next; destroy_variable(*link); }
+    *link = entry;
+    return CSH_STATE_OK;
+}
+enum csh_state_result csh_state_hash_names(const struct csh_state *state, char ***out)
+{
+    const struct variable *entry;
+    size_t count = 0, i = 0;
+    char **names;
+    *out = NULL;
+    for (entry = state->hashes; entry; entry = entry->next) ++count;
+    names = calloc(count + 1, sizeof(*names));
+    if (!names) return CSH_STATE_NOMEM;
+    for (entry = state->hashes; entry; entry = entry->next) {
+        names[i] = copy_bytes(entry->name, strlen(entry->name));
+        if (!names[i++]) { csh_state_environment_destroy(names); return CSH_STATE_NOMEM; }
+    }
+    *out = names;
+    return CSH_STATE_OK;
+}
+
+void csh_state_set_source_depth(struct csh_state *state, unsigned depth) { state->info.source_depth = depth; }

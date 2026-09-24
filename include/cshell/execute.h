@@ -14,6 +14,7 @@ struct csh_assignment { char *name; char *value; };
 struct csh_command {
     char **argv;
     size_t argc;
+    int default_path; /* command -p search, without changing the environment. */
     struct csh_assignment *assignments;
     size_t assignment_count;
     struct csh_redirect *redirections;
@@ -33,6 +34,7 @@ struct csh_execution {
     enum csh_control_transfer control;
     unsigned levels; /* Remaining loop boundaries to unwind. */
     int status;
+    int retain_redirects; /* exec without a command commits this command's fds. */
     int redirection_failed; /* Parent command could not apply redirections. */
     int special_builtin_error; /* Runtime applies context-dependent error policy. */
     int exit_requested; /* Caller leaves its input loop; library never exits. */
@@ -92,6 +94,8 @@ int csh_command_from_ast(struct csh_state *state, const struct csh_ast *tree, st
  * Return 0 when dispatch completed, including command failure statuses and
  * child redirection/exec errors; -1 for preparation, parent redirection,
  * fork/wait/internal errors.
+ * The exec builtin replaces the calling process on success; its no-command
+ * form commits descriptors. Other builtins return through this interface.
  * Always initialize result and update state's last_status. error contains a
  * diagnostic only on -1; use csh_error_message and print unless reported.
  * Child failures print once in the child.
@@ -132,6 +136,7 @@ struct csh_jobs;
 struct csh_execution_context {
     struct csh_state *state;
     unsigned loop_depth;
+    unsigned evaluation_depth;
     struct csh_background_child *children; /* Private owned registry. */
     size_t child_count;
     struct csh_jobs *jobs; /* Optional owned runtime job manager; see jobs.h. */

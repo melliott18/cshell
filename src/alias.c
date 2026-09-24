@@ -310,3 +310,18 @@ int csh_builtin_unalias(struct csh_aliases *aliases, int argc,
     }
     return status;
 }
+
+int csh_aliases_clone(const struct csh_aliases *source, struct csh_aliases **out,
+    struct csh_error *error)
+{
+    const struct alias *entry;
+    *out = NULL;
+    memset(error, 0, sizeof(*error));
+    if (source == NULL) return 0;
+    if (csh_aliases_create(out, error) == -1) return -1;
+    for (entry = source->first; entry != NULL; entry = entry->next)
+        if (csh_aliases_set(*out, entry->name, entry->value, error) == -1) {
+            csh_aliases_destroy(*out); *out = NULL; return -1;
+        }
+    return 0;
+}

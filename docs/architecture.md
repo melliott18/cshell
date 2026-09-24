@@ -28,8 +28,8 @@ have no dependency on the deleted legacy implementation.
 
 CSH-018 connected invocation modes and shell statuses; CSH-039 makes that runtime
 `src/main.c` and the default `cshell` executable. CSH-026 connects expansion and
-substitution capture; alias APIs still await
-their runtime integration ticket.
+substitution capture. CSH-031 integrates runtime aliases, nested evaluation,
+command lookup, exec, and stateful utilities.
 
 | Path | Responsibility |
 | --- | --- |
@@ -44,6 +44,7 @@ their runtime integration ticket.
 | `src/quote.c` / `include/cshell/quote.h` | Reusable dollar-single-quote decoding before expansion or delimiter quote removal |
 | `src/state.c` / `include/cshell/state.h` | Owned variables and attributes, copied invocation parameters, option/status metadata, environment snapshots, and full-state and selective variable copying/restoration |
 | `src/builtin.c` / `include/cshell/builtin.h` | State builtin lookup and handlers over replacement shell state |
+| `src/utility.c` | Stateful read/getopts, process umask and resource limits, and CPU-time reporting |
 | `src/prepare.c` / `src/prepare.h` | Phased context-sensitive word/assignment/redirection expansion and lazy substitution AST handoff |
 | `src/execute.c` / `include/cshell/execute.h` | Owned prepared-command boundary, substitution capture, command lookup, owned child execution, assignment categories, parent builtin dispatch, concurrent pipelines, per-stage results, list/group evaluation, and background context ownership |
 | `src/jobs.c` / `include/cshell/jobs.h` | Runtime job records, direct-child collection, process groups, terminal settings, safe signal wakeups, and job builtins |

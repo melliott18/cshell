@@ -924,6 +924,13 @@ static void control_faults(struct csh_state *state)
     const char *parameters[] = {"caller", "second"};
     const char *scripts[] = {
         "f child",
+        "eval 'value=shared; for x in a b; do :; done' >control-output",
+        "command eval 'value=shared; :'; command -p true",
+        "eval '. ./evaluation-source inner' >control-output",
+        "read -r first second <evaluation-source",
+        "getopts ab: option -abvalue",
+        "hash printf; hash -r; :",
+
         "for x; do if :; then case $x in c*) :;; *) :;; esac; fi; done >control-output",
         "for x in a b; do :; done; until :; do :; done; while :; do break; done",
         "f() { f() { :; }; return 7; }; f child",
@@ -938,6 +945,12 @@ static void control_faults(struct csh_state *state)
     int before = fd_count();
     assert(csh_state_set_parameters(state, 2, parameters) == CSH_STATE_OK);
     context.state = state;
+    {
+        FILE *source = fopen("evaluation-source", "w");
+        assert(source != NULL);
+        assert(fputs("value=from_source\nreturn 7\n", source) >= 0);
+        assert(fclose(source) == 0);
+    }
     definition = parse("f() { for x in a b; do case $x in a) continue;; b) return 7;; esac; done; } >control-output");
     assert(csh_execute_context_ast(&context, definition, &result, &error) == 0);
     csh_ast_destroy(definition); /* State must retain the definition. */

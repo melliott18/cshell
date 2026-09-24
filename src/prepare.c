@@ -26,7 +26,7 @@ struct substitution {
 
 /* Backquote source is decoded once, then sent through the same parser as $().
  * Expansion output is never reparsed. Unselected operands never reach here. */
-static int backquote_tree(const struct csh_token *token, size_t fragment,
+static int backquote_tree(struct csh_state *state, const struct csh_token *token, size_t fragment,
     struct csh_ast **out, struct csh_error *error)
 {
     const struct csh_fragment *f = &token->fragments[fragment];
@@ -48,6 +48,8 @@ static int backquote_tree(const struct csh_token *token, size_t fragment,
     if (csh_input_from_string(&input, text, "backquote", error) == -1 ||
         csh_parser_create(&parser, input, error) == -1 ||
         csh_ast_create(out, CSH_AST_LIST, error) == -1) goto done;
+    if (csh_state_aliases(state) == NULL) { fail(error, "cannot allocate aliases", ENOMEM); goto done; }
+    csh_parser_set_aliases(parser, csh_state_aliases(state));
     for (;;) {
         struct csh_ast_list_item item = {0};
         enum csh_parse_result parsed = csh_parser_next(parser, &item.command, error);
@@ -80,7 +82,7 @@ static enum csh_expand_result substitute(void *user, struct csh_state *state,
     free(context->bytes);
     context->bytes = NULL;
     if (token->fragments[fragment].kind == CSH_FRAGMENT_BACKQUOTE) {
-        if (backquote_tree(token, fragment, &owned, &failure) == -1) goto done;
+        if (backquote_tree(state, token, fragment, &owned, &failure) == -1) goto done;
         body = owned;
     } else {
         for (i = 0; i < context->word->substitution_count; ++i)
@@ -260,8 +262,17 @@ int csh_command_arguments(struct csh_state *state, const struct csh_ast *tree,
     for (i = 0; i < tree->data.simple.word_count; ++i) {
         const struct csh_ast_command_word *source = &tree->data.simple.words[i];
         struct csh_fields fields = {0};
-        int declaration = out->argc &&
-            (!strcmp(out->argv[0], "export") || !strcmp(out->argv[0], "readonly"));
+        size_t utility = 0;
+        int declaration;
+        while (utility < out->argc && !strcmp(out->argv[utility], "command")) {
+            ++utility;
+            while (utility < out->argc && out->argv[utility][0] == '-' &&
+                out->argv[utility][1] == 'p' &&
+                strspn(out->argv[utility] + 1, "p") == strlen(out->argv[utility] + 1)) ++utility;
+            if (utility < out->argc && !strcmp(out->argv[utility], "--")) ++utility;
+        }
+        declaration = utility < out->argc &&
+            (!strcmp(out->argv[utility], "export") || !strcmp(out->argv[utility], "readonly"));
         if (source->assignment) {
             struct csh_variable_view view;
             char *name = NULL;

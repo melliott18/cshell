@@ -1,11 +1,11 @@
 # CSH-031: Complete evaluation, lookup, and remaining utility builtins
 
-- Status: backlog
+- Status: in-progress
 - Type: feat
 - Kind: implementation
 - Parent: CSH-010
 - Depends on: CSH-008, CSH-009, CSH-029, CSH-030
-- Branch: Assigned when work starts
+- Branch: `feature/CSH-031-evaluation-builtins`
 - Issue: [#32](https://github.com/melliott18/cshell/issues/32)
 
 ## Goal
@@ -45,5 +45,33 @@ and state effects; review standard requirements when reference shells disagree.
 
 ## Implementation notes/evidence
 
-Record evidence and newly discovered inventory items here. This ticket owns
-alias/evaluation integration; CSH-032 owns the subsequent option interactions.
+The implementation is in `src/execute.c`, `src/utility.c`, and shell state,
+with ownership contracts and profile choices in
+[Evaluation builtins](../evaluation-builtins.md).
+
+- Dot/eval use the complete-command parser in the current environment, restore
+  temporary dot arguments, honor return/loop/exit transfers, and distinguish an
+  evaluated command's nonzero result from a special-builtin error.
+- Runtime, nested evaluation, and backquotes share state-owned aliases;
+  substitutions and subshells isolate mutation. Function definitions retain the
+  aliases applied at parse time.
+- `command` suppresses functions and immediate special-builtin properties,
+  preserves declaration expansion, obtains `-p` search from `_CS_PATH`, and
+  dispatches external targets through the existing job manager. Lookup reports
+  absolute paths; hash caching invalidates on PATH changes and directory changes.
+- Exec replaces the calling PID with exported prefix assignments, or commits
+  descriptors without a command. Failure restores interactive signal actions.
+  Nested parser/job descriptors are relocated away from all enclosing and
+  expanded descriptor operands; outer redirections still restore normally.
+- Read/getopts cover state, EOF, backslashes, IFS, Issue 8 delimiters, option
+  cursors/reset, diagnostics and error statuses. Umask, times and the previously
+  inventoried base ulimit resources are internal; type and CPU-time limits are
+  supported extensions without selecting full XSI.
+- Host utilities and remaining options, traps, job semantics, locale startup,
+  and profile audits retain their named owners in the utility inventory.
+  CSH-032 owns subsequent option interactions; CSH-035 owns signal/trap policy.
+
+The existing state allocation fixture caught a borrowed-name lifetime bug in
+PATH/OPTIND invalidation under ASan; invalidation now uses the variable's owned
+name. The existing private-descriptor PTY fixture also verifies that nested
+parser and job-manager relocations cannot expose each other's descriptors.

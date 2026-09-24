@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 static int copy_fd(int input, int output)
@@ -68,6 +69,10 @@ int main(int argc, char **argv)
     } else if (strcmp(argv[1], "one") == 0) {
         char byte;
         return read(0, &byte, 1) == 1 ? 0 : 91;
+    } else if (strcmp(argv[1], "mode") == 0) {
+        struct stat st;
+        if (argc != 3 || stat(argv[2], &st)) return 95;
+        printf("%03o\n", (unsigned)(st.st_mode & 0777));
     } else if (strcmp(argv[1], "private-fds") == 0) {
         for (index = 3; index < 256; ++index)
             if (fcntl(index, F_GETFD) != -1 || errno != EBADF) return 92;

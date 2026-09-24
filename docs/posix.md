@@ -116,8 +116,8 @@ control through the optional runtime job manager. See [Execution contexts](execu
 
 CSH-030 adds [alias storage, direct handlers, and token/AST substitution](aliases.md),
 including recursive suppression and complete-command timing fixtures. CSH-031
-still owns executed-script validation through the dispatcher; alias integration
-is not part of the public runtime subset.
+adds [executed-script validation](evaluation-builtins.md) through the dispatcher,
+nested dot/eval, functions, command lookup, and substitutions.
 
 ## Evidence required
 

@@ -13,6 +13,7 @@ import shlex
 import signal
 from substitution_cases import add_cases
 from control_flow_cases import add_control_cases
+from evaluation_cases import add_evaluation_cases
 
 
 def cases(helper):
@@ -38,6 +39,7 @@ def cases(helper):
                            "setup": contents, "expect": expect})
 
     add_cases(cross, helper)
+    add_evaluation_cases(cross, helper)
     cross("empty input", "")
     cross("blank and comment input", "\n# comment\n\n")
     cross("successful output", f"{helper} both\n", stdout="out\n", stderr="err\n")
@@ -121,6 +123,15 @@ def cases(helper):
                        "expect": {"stdout": "[continued]\n",
                                   "stderr": "cshell: export: invalid operand\n",
                                   "status": 0}})
+    for name, script, stdout, stderr, status in (
+        ("eval syntax recovery", "eval 'if'\necho after\n", "after\n", "cshell: unterminated command group\n", 0),
+        ("dot missing recovery", ". ./missing\necho after\n", "after\n", "cshell: cannot find readable dot file\n", 0),
+        ("exec failure recovery", "exec no-such-cshell-command\necho after\n", "after\n", "cshell: no-such-cshell-command: command not found\n", 0),
+        ("dot positional error restoration", "set -- old; . ./sourced new; echo \"$1:$?\"\n", "old:2\n", "cshell: return: numeric status required\n", 0),
+    ):
+        result.append({"name": "evaluation: interactive " + name,
+                       "args": ["-ic", script], "stdin": "", "setup": {"sourced": "return bad\n"},
+                       "expect": {"stdout": stdout, "stderr": stderr, "status": status}})
     add_control_cases(cross, helper)
     cross("AND OR equal precedence", f"{helper} status 0 || {helper} args skipped && {helper} args yes\n",
           stdout="[yes]\n")
@@ -230,6 +241,20 @@ def terminal_cases(helper):
         {"expect": "$ "}, {"send": "break 0\n"},
         {"expect": "cshell: break: positive loop count required\n$ "},
         {"send": "exit\n"}], "$ cshell: break: positive loop count required\n$ ", 2)
+    terminal("terminal eval syntax error recovers", [
+        {"expect": "$ "}, {"send": "eval 'if'\n"},
+        {"expect": "cshell: unterminated command group\n$ "},
+        {"send": "echo alive\n"}, {"expect": "alive\n$ "}, {"send": "exit\n"}],
+        "$ cshell: unterminated command group\n$ alive\n$ ", 0)
+    terminal("terminal read continuation prompt", [
+        {"expect": "$ "}, {"send": "read value\n"}, {"send": "one\\\n"},
+        {"expect": "> "}, {"send": "two\n"}, {"expect": "$ "},
+        {"send": "echo \"$value\"\n"}, {"expect": "onetwo\n$ "}, {"send": "exit\n"}],
+        "$ > $ onetwo\n$ ", 0)
+    terminal("terminal command foreground interrupt", [
+        {"expect": "$ "}, { "send": "command /bin/sh -c 'echo ready; exec sleep 20'\n"}, {"expect": "ready\n"},
+        {"control": "C"}, {"expect": "$ "}, {"send": "echo \"$?\"\n"},
+        {"expect": "130\n$ "}, {"send": "exit\n"}], "$ ready\n$ 130\n$ ", 0)
     return result
 
 
@@ -244,6 +269,9 @@ def main():
     if args.output.name == "control-flow.json":
         suite["name"] = "cshell control flow"
         suite["cases"] = [case for case in suite["cases"] if case["name"].startswith("control: ")]
+    if args.output.name == "evaluation.json":
+        suite["name"] = "cshell evaluation builtins"
+        suite["cases"] = [case for case in suite["cases"] if case["name"].startswith("evaluation: ")]
     args.output.write_text(json.dumps(suite, indent=2) + "\n")
 
 

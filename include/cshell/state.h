@@ -6,6 +6,12 @@
 #include "cshell/invocation.h"
 
 struct csh_state;
+struct csh_aliases;
+/* Lazily allocated, state-owned tables; borrowed until state replacement/destruction. */
+struct csh_aliases *csh_state_aliases(struct csh_state *state);
+
+size_t csh_state_getopts_offset(const struct csh_state *state);
+void csh_state_set_getopts_offset(struct csh_state *state, size_t offset);
 struct csh_state_checkpoint;
 /* Executor-owned immutable payload. State owns references, and invokes destroy
  * at the final release, keeping state independent of parser/executor modules.
@@ -28,6 +34,11 @@ enum csh_state_result {
     CSH_STATE_READONLY
 };
 
+/* Command path cache, independently copied with shell state. Names/path are copied. */
+void csh_state_hash_clear(struct csh_state *state);
+const char *csh_state_hash_get(const struct csh_state *state, const char *name);
+enum csh_state_result csh_state_hash_set(struct csh_state *state, const char *name, const char *path);
+enum csh_state_result csh_state_hash_names(const struct csh_state *state, char ***out);
 /* set retains its input; NULL removes a definition. Lookup borrows a value. */
 enum csh_state_result csh_state_set_function(struct csh_state *state,
     const char *name, struct csh_function *function);
@@ -67,6 +78,7 @@ struct csh_variable_view {
 };
 
 struct csh_state_info {
+    unsigned source_depth;      /* Active dot scripts; inherited by subshells. */
     unsigned function_depth;    /* Active calls; inherited by subshell copies. */
     size_t argument_count;       /* $#; excludes $0 */
     int last_status;             /* $?; initially 0, no wait-status conversion */
@@ -140,6 +152,7 @@ enum csh_state_result csh_state_set_background(struct csh_state *state, pid_t pi
 enum csh_state_result csh_state_update_options(struct csh_state *state,
     unsigned set, unsigned clear);
 
+void csh_state_set_source_depth(struct csh_state *state, unsigned depth);
 void csh_state_set_function_depth(struct csh_state *state, unsigned depth);
 
 /* Copies share immutable function payloads with independent name tables.
