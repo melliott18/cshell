@@ -1,6 +1,6 @@
 # CSH-021: Execute lists, groups, and background contexts
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-006
@@ -105,3 +105,9 @@ and registry allocations, inject pipe/fork/wait failures in foreground and
 background group pipelines, retry interrupted waits, and retain background
 ownership across failed polling. Documentation describes the direct-child
 cleanup boundary and limitations; these checks do not claim full POSIX support.
+
+Integrated into `main` through [pull request #62](https://github.com/melliott18/cshell/pull/62)
+on 2026-09-23. Implementation commit: `5f77874`; merge commit: `cbd3d67`.
+Both hosted workflows passed Ubuntu/GCC, macOS/Clang, and Docker Linux after a
+single macOS harness startup-timing retry. GitHub closed issue #22 when the pull
+request merged.
