@@ -138,6 +138,7 @@ Remove or redirect incoming dependencies as part of the replacement plan.
 
 [CSH-041](tickets/CSH-041-arithmetic-substitution-replay.md) is an additional
 CSH-008 child depending on CSH-005 and CSH-024. It closes the lexer/parser
-checkpoint/replay gap recorded during those implementations; CSH-026's runtime
-integration does not resolve that ambiguity or close the expansion milestone.
+checkpoint/replay gap recorded during those implementations. Both CSH-026 and
+CSH-041 are integrated; the [CSH-008 closure record](tickets/CSH-008-word-expansion.md)
+records the completed milestone and its combined validation.
 The original dependency diagrams above retain their initial split layout.
