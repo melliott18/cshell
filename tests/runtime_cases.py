@@ -12,6 +12,7 @@ from pathlib import Path
 import shlex
 import signal
 from substitution_cases import add_cases
+from control_flow_cases import add_control_cases
 
 
 def cases(helper):
@@ -120,10 +121,7 @@ def cases(helper):
                        "expect": {"stdout": "[continued]\n",
                                   "stderr": "cshell: export: invalid operand\n",
                                   "status": 0}})
-    absent = {"effect": {"type": "absent"}}
-    for syntax in ("if true; then true; fi", "f() { true; }"):
-        cross(f"unsupported construct {syntax}", f"{syntax} >effect\n{helper} args never\n", status=2,
-              stderr="cshell: unsupported compound command\n", files=absent)
+    add_control_cases(cross, helper)
     cross("AND OR equal precedence", f"{helper} status 0 || {helper} args skipped && {helper} args yes\n",
           stdout="[yes]\n")
     cross("list final status", f"{helper} status 0; {helper} status 19\n", status=19)
@@ -222,6 +220,16 @@ def terminal_cases(helper):
         {"expect": diagnostic + "$ "}, {"send": f'{helper} args "$?" "$(printf okay)"\n'},
         {"expect": "[2]\n[okay]\n$ "}, {"send": "exit\n"}],
         "$ " + diagnostic + "$ [2]\n[okay]\n$ ", 0)
+    diagnostic = f"cshell: cannot apply redirection: {os.strerror(errno.EBADF)}\n"
+    terminal("terminal function preserves private descriptors", [
+        {"expect": "$ "}, {"send": "f() { :; } 10>/dev/null\n"},
+        {"expect": "$ "}, {"send": "{ f; : <&11; }\n"},
+        {"expect": diagnostic + "$ "}, {"send": "exit 0\n"}],
+        "$ $ " + diagnostic + "$ ", 0)
+    terminal("terminal control operand error recovers", [
+        {"expect": "$ "}, {"send": "break 0\n"},
+        {"expect": "cshell: break: positive loop count required\n$ "},
+        {"send": "exit\n"}], "$ cshell: break: positive loop count required\n$ ", 2)
     return result
 
 
@@ -233,6 +241,9 @@ def main():
     helper = shlex.quote(str(args.helper.resolve()))
     suite = {"version": 1, "name": "cshell runtime", "kind": "replacement",
              "cases": terminal_cases(helper) if args.output.name == "runtime-pty.json" else cases(helper)}
+    if args.output.name == "control-flow.json":
+        suite["name"] = "cshell control flow"
+        suite["cases"] = [case for case in suite["cases"] if case["name"].startswith("control: ")]
     args.output.write_text(json.dumps(suite, indent=2) + "\n")
 
 

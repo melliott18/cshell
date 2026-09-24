@@ -6,6 +6,8 @@
 
 /* Runtime preparation is phased: arguments, ordered redirects, assignments.
  * Callers own the partially built command even when a phase fails. */
+int csh_prepare_word(struct csh_state *state, const struct csh_ast_word *word,
+    enum csh_expand_context mode, struct csh_fields *out, struct csh_error *error);
 int csh_command_arguments(struct csh_state *state, const struct csh_ast *tree,
     struct csh_command *out, struct csh_error *error);
 int csh_command_assignments(struct csh_state *state, const struct csh_ast *tree,

@@ -37,9 +37,9 @@ quoting and substitution rules. See [Value expansion](value-expansions.md).
 
 Brace mutations persist; subshell, substitution, background, and multi-stage
 pipeline mutations remain isolated. Background execution publishes `$!`.
-Conditionals, loops, case commands, and function definitions are rejected before
-any part of that complete construct executes. Earlier complete commands may
-already have executed. Expansion is deferred until a command is reached, so
+[Conditionals, loops, case commands, and shell functions](control-flow.md) execute
+in the current environment, with explicit `break`, `continue`, and `return`
+results and invocation-time function redirections. Expansion is deferred until a command is reached, so
 skipped branches and unselected parameter operands have no expansion effects.
 There is no unsupported-AST fallback. The executor's existing `ENOEXEC` handling
 of external text executables still uses `/bin/sh`.

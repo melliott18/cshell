@@ -1,11 +1,11 @@
 # CSH-028: Execute control flow and shell functions
 
-- Status: backlog
+- Status: review
 - Type: feat
 - Kind: implementation
 - Parent: CSH-009
 - Depends on: CSH-027, CSH-006, CSH-007, CSH-008
-- Branch: Assigned when work starts
+- Branch: feature/CSH-028-control-flow-and-functions
 - Issue: [#29](https://github.com/melliott18/cshell/issues/29)
 
 ## Goal
@@ -23,15 +23,15 @@ transfer, variable/parameter lifetimes, redirections, and exit statuses.
 
 ## Acceptance criteria
 
-- [ ] Nested compounds, zero-iteration loops, and case patterns execute with
+- [x] Nested compounds, zero-iteration loops, and case patterns execute with
   specified expansion behavior, command order, and resulting status.
-- [ ] Loop/function control handles operands and nesting levels without escaping
+- [x] Loop/function control handles operands and nesting levels without escaping
   unrelated execution contexts; invalid uses have tested diagnostics and statuses.
-- [ ] Function calls restore caller positional parameters and release replaced
+- [x] Function calls restore caller positional parameters and release replaced
   definitions while preserving the required function/variable environment.
-- [ ] Function and compound redirections have the required lifetime; subshell
+- [x] Function and compound redirections have the required lifetime; subshell
   state changes do not escape to the parent shell.
-- [ ] Syntax/runtime/expansion failures unwind AST, state, and descriptor resources.
+- [x] Syntax/runtime/expansion failures unwind AST, state, and descriptor resources.
 
 ## Validation
 
@@ -41,8 +41,10 @@ effects. Cover failed redirections and resource cleanup with sanitizer builds.
 
 ## Implementation notes/evidence
 
-Record results and review every original [CSH-009](CSH-009-compounds-and-functions.md)
-criterion before completing the milestone. CSH-031 and CSH-032 subsequently test
+The implementation and project choices are documented in
+[Control flow and functions](../control-flow.md). The original
+[CSH-009](CSH-009-compounds-and-functions.md) criteria are reviewed below.
+CSH-031 and CSH-032 subsequently test
 evaluation builtins and options against these control-transfer semantics.
 
 
@@ -56,4 +58,47 @@ case patterns and bodies with `;;`, `;&`, or an omitted final terminator; and
 function name/body ownership. Function redirections are stored on the function
 node for application at invocation. Definition-time validation (including the
 special-builtin name restriction), retained definition lifetimes, expansions,
-control-transfer results, and all execution behavior remain this ticket's work.
+control-transfer results, and execution are implemented by this ticket.
+
+### Implementation record — 2026-09-24
+
+- The execution planner handles every parsed compound kind. Reached branches
+  expand lazily; for lists snapshot fields/parameters; case patterns retain quote
+  protection and support `;&` without expanding the next clause's patterns.
+- Explicit execution-result transfers propagate through composition and unwind
+  loop levels or the current function. Child contexts isolate transfers. Invalid
+  operands/contexts have status-2 diagnostics; active function depth is bounded.
+- State owns independently copied function-name tables with shared immutable
+  payloads. Retained ASTs survive parser cleanup; active calls survive replacement
+  and `unset -f`. Parameter push/pop restores callers without allocation.
+- Function call redirects precede invocation-time definition redirects. Compound
+  redirects enclose expansion and execution. Prefix assignments keep CSH-023's
+  temporary/exported function policy and selective restoration.
+
+### Validation record — 2026-09-24
+
+- Native: macOS 14.8.7 arm64, Apple Clang 15.0.0, Python 3.12.2.
+- Docker: Docker 24.0.6, Debian bookworm aarch64, GCC 12.2.0, Python 3.11.2.
+- `make -j4 test test-pty`: passed the module/API/fault suites and 675 runtime
+  cases, including 210 control-flow cases (70 scripts in three input modes).
+- `make docker-test docker-test-pty`: passed all suites, including the final 12
+  runtime PTY cases for prompts, recovery, and descriptor isolation.
+- Native clean ASan/UBSan build with `-Werror`: `make -j4 test test-pty` passed.
+  Final ownership/API checks and two new PTY cases also passed with
+  `make -j4 test-control test-state test-runtime-pty` under the same sanitizers.
+- `make test-harness`: all 62 native harness self-tests passed.
+- Allocation sweeps cover retained definitions, replacement/removal during active
+  calls, state copies, parameter push/pop, for-list storage, case expansion, and
+  descriptor restoration. Every iteration checks allocation and descriptor
+  counts, caller parameters, and active loop/function depths.
+- Linux ASan/UBSan validation: pending final runtime/control/PTY run.
+
+### Original CSH-009 acceptance review
+
+All six original criteria have corresponding evidence: nested selection and
+expansion in the cross-mode control fixtures; nested transfer and invalid operands;
+recursive calls and caller-parameter restoration; invocation and compound redirect
+lifetimes; subshell/pipeline/substitution/background isolation; and parser fault
+coverage plus executor allocation/redirection/expansion cleanup. The milestone
+remains unclosed until CSH-028 is integrated. Evaluation builtins, shell options,
+and trap interactions remain with CSH-031, CSH-032, and CSH-035.

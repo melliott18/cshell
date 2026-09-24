@@ -919,12 +919,111 @@ static void terminal_job_faults(struct csh_state *state)
     puts("terminal job failure cleanup passed");
 }
 
+static void control_faults(struct csh_state *state)
+{
+    const char *parameters[] = {"caller", "second"};
+    const char *scripts[] = {
+        "f child",
+        "for x; do if :; then case $x in c*) :;; *) :;; esac; fi; done >control-output",
+        "for x in a b; do :; done; until :; do :; done; while :; do break; done",
+        "f() { f() { :; }; return 7; }; f child",
+        "f() { unset -f f; return 7; }; f child",
+        "f() { case ${missing:?required} in *) :;; esac; }; f child"
+    };
+    struct csh_execution_context context = {0};
+    struct csh_execution result;
+    struct csh_error error;
+    struct csh_ast *definition;
+    size_t baseline, i, point;
+    int before = fd_count();
+    assert(csh_state_set_parameters(state, 2, parameters) == CSH_STATE_OK);
+    context.state = state;
+    definition = parse("f() { for x in a b; do case $x in a) continue;; b) return 7;; esac; done; } >control-output");
+    assert(csh_execute_context_ast(&context, definition, &result, &error) == 0);
+    csh_ast_destroy(definition); /* State must retain the definition. */
+    baseline = live;
+    for (i = 0; i < sizeof(scripts) / sizeof(scripts[0]); ++i) {
+        struct csh_ast *tree = parse(scripts[i]);
+        for (point = 1; point < 4096; ++point) {
+            struct csh_state *copy = NULL;
+            struct csh_state_info info;
+            size_t calls;
+            int rc;
+            arm(0);
+            assert(csh_state_clone(state, &copy) == CSH_STATE_OK);
+            context.state = copy;
+            arm(point);
+            rc = csh_execute_context_ast(&context, tree, &result, &error);
+            calls = allocation_calls;
+            fail_allocation = 0;
+            assert(rc == 0 || rc == -1);
+            assert(strcmp(csh_state_parameter(copy, 1), "caller") == 0);
+            assert(strcmp(csh_state_parameter(copy, 2), "second") == 0);
+            csh_state_get_info(copy, &info);
+            assert(info.argument_count == 2 && info.function_depth == 0);
+            assert(context.loop_depth == 0);
+            csh_execution_context_destroy(&context);
+            csh_state_destroy(copy);
+            assert(live == baseline && fd_count() == before);
+            if (calls < point) break;
+        }
+        assert(point < 4096);
+        csh_ast_destroy(tree);
+    }
+    arm(0);
+    context.state = state;
+    /* Prepared dispatch shares function lookup and parameter restoration. */
+    {
+        char *arguments[] = {"f", "child", NULL};
+        struct csh_command command = {0};
+        struct csh_pipeline_result pipeline = {0};
+        command.argv = arguments;
+        command.argc = 2;
+        assert(csh_execute_command(NULL, &command, &result, &error) == -1);
+        assert(csh_execute_command(state, &command, &result, &error) == 0);
+        assert(result.status == 7 && result.category == CSH_EXEC_FUNCTION);
+        assert(csh_execute_pipeline(state, &command, 1, 0, &pipeline, &error) == 0);
+        assert(pipeline.execution.status == 7);
+        csh_pipeline_result_destroy(&pipeline);
+        assert(strcmp(csh_state_parameter(state, 1), "caller") == 0);
+    }
+    /* A failed definition replacement leaves the old body callable. */
+    definition = parse("f() { return 9; }");
+    for (point = 1; point < 4096; ++point) {
+        struct csh_state *copy = NULL;
+        struct csh_function *old = csh_state_function(state, "f");
+        size_t calls;
+        int rc;
+        arm(0);
+        assert(csh_state_clone(state, &copy) == CSH_STATE_OK);
+        context.state = copy;
+        arm(point);
+        rc = csh_execute_context_ast(&context, definition, &result, &error);
+        calls = allocation_calls;
+        fail_allocation = 0;
+        if (rc == -1) assert(csh_state_function(copy, "f") == old);
+        csh_execution_context_destroy(&context);
+        csh_state_destroy(copy);
+        if (calls < point) break;
+    }
+    csh_ast_destroy(definition);
+    arm(0);
+}
+
 int main(int argc, char **argv)
 {
     struct csh_invocation invocation = {0};
     struct csh_state *state = NULL;
     invocation.mode = CSH_MODE_STRING;
     invocation.arg0 = "execute-faults";
+    if (argc == 2 && strcmp(argv[1], "--control") == 0) {
+        assert(csh_state_create(&state, &invocation, NULL) == CSH_STATE_OK);
+        control_faults(state);
+        csh_state_destroy(state);
+        assert(live == 0);
+        puts("control flow fault checks passed");
+        return 0;
+    }
     if (argc == 2 && strcmp(argv[1], "--jobs-terminal") == 0) {
         invocation.interactive = 1;
         assert(csh_state_create(&state, &invocation, NULL) == CSH_STATE_OK);

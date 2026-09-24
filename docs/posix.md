@@ -48,7 +48,7 @@ standalone module evidence does not establish runtime feature support.
 | Execution and redirections | Literal commands, external lookup/statuses, ordered redirections, concurrent pipelines | [CSH-019](tickets/CSH-019-simple-command-redirections.md), [CSH-020](tickets/CSH-020-pipeline-lifecycle.md) |
 | Variables and execution state | Owned state, environment import, literal assignments, state builtins | [CSH-007](tickets/CSH-007-variables-and-parameters.md) |
 | Word expansion | Integrated value/field expansion, substitutions, here-documents, and arithmetic-first replay; milestone complete | [CSH-008](tickets/CSH-008-word-expansion.md) |
-| Compound commands and functions | Parsing exists; execution pending | [CSH-009](tickets/CSH-009-compounds-and-functions.md) |
+| Compound commands and functions | Parsing and runtime control flow, function lifetimes, and control transfer fixtures | [CSH-009](tickets/CSH-009-compounds-and-functions.md) |
 | Builtins, aliases, and options | State builtins and bootstrap `cd`/`exit`; aliases and remaining utility/option semantics pending | [CSH-010](tickets/CSH-010-builtins-options-and-aliases.md) |
 | Signals, interactive mode, and jobs | Process groups, terminal handoff, job builtins and retained statuses; traps/input recovery/hangup pending | [CSH-034](tickets/CSH-034-job-control.md), [CSH-035](tickets/CSH-035-traps-and-signal-semantics.md) |
 | Conformance evidence and portability | Native/Docker module and runtime fixtures; full conformance suite pending | [CSH-012](tickets/CSH-012-conformance-and-portability.md) |
@@ -64,9 +64,10 @@ constructs must fail explicitly until their implementation tickets are complete.
 CSH-027 extends the [parser/AST API](parser-and-ast.md) to conditionals, loops,
 case clauses (including POSIX.1-2024 `;&`), and function definitions. Structural
 fixtures preserve words, redirections, source positions, and nested here-documents;
-allocation-failure checks cover partial compound trees. Control flow, function
-storage/invocation, and expansion/execution integration remain CSH-028 work.
-This is grammar evidence only; runtime compound execution remains unsupported.
+allocation-failure checks cover partial compound trees. CSH-028 adds
+[execution evidence](control-flow.md) for control flow, function storage and
+invocation, expansion, redirection lifetimes, and error cleanup. Full conformance
+and later dot-script/trap integration remain separate work.
 
 ## Replacement value-expansion evidence
 

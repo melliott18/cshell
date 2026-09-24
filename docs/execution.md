@@ -237,9 +237,9 @@ background identifier. Do not copy a context or reap its children elsewhere.
 The older `csh_execute_ast()` and `csh_execute_pipeline_ast()` remain synchronous
 foreground simple-command/pipeline convenience APIs.
 
-Preparation builds a structural execution plan borrowing the AST. Unsupported
-compound syntax anywhere in that tree is rejected before effects, even in a
-branch that would be skipped. Words and here-document bodies expand only when
+Preparation builds a structural execution plan borrowing the AST and validates
+its structure before effects. All parsed compound kinds are supported; function
+name restrictions are validated only when a definition is reached. Words and here-document bodies expand only when
 execution reaches their command, and lazy substitution bodies are preflighted
 when selected. A maximum nesting depth of 256 bounds
 recursive preparation/execution. Preparation does not resolve future commands
@@ -336,15 +336,15 @@ boundary on both success and failure.
 
 ## Scope and validation
 
-Conditional/loop/function execution, job control, pipefail/noclobber option
-behavior, and full builtin semantics remain incomplete. Both `>` and `>|`
+CSH-028 adds [control flow and functions](control-flow.md). Pipefail/noclobber
+option behavior and full builtin semantics remain incomplete. Both `>` and `>|`
 currently create or truncate output files. The AST front end collects
 here-documents; CSH-026 expands unquoted bodies when reached and preserves
 quoted-delimiter bodies literally. Direct API clients can supply prepared byte
 data. Large bodies use temporary-file input rather than requiring a pipe reader
 to run while the parent writes them.
 
-Run `make test-execute test-pipeline test-context` for the replacement execution
+Run `make test-execute test-pipeline test-context test-control` for the replacement execution
 fixtures and public-runtime context behavior. See
 [Testing](testing.md#execution-api-and-sanitizer-checks) for focused sanitizer
 and Docker commands. These fixtures establish this module contract and its

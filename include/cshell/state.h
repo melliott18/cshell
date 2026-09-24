@@ -7,6 +7,18 @@
 
 struct csh_state;
 struct csh_state_checkpoint;
+/* Executor-owned immutable payload. State owns references, and invokes destroy
+ * at the final release, keeping state independent of parser/executor modules.
+ * Initialize references to 1 and destroy to a non-NULL finalizer. Retain/release
+ * accept NULL. A payload must remain immutable while shared. */
+struct csh_function {
+    size_t references;
+    void (*destroy)(struct csh_function *function);
+};
+void csh_function_retain(struct csh_function *function);
+void csh_function_release(struct csh_function *function);
+struct csh_function *csh_state_function(const struct csh_state *state, const char *name);
+
 struct csh_variable_save;
 
 enum csh_state_result {
@@ -15,6 +27,17 @@ enum csh_state_result {
     CSH_STATE_NOMEM,
     CSH_STATE_READONLY
 };
+
+/* set retains its input; NULL removes a definition. Lookup borrows a value. */
+enum csh_state_result csh_state_set_function(struct csh_state *state,
+    const char *name, struct csh_function *function);
+/* Move caller parameters aside only after new parameters have been copied.
+ * Save must be empty on push; pop consumes a successful push exactly once.
+ * Restore is allocation-free and preserves $0 and unrelated state. */
+struct csh_parameter_save { char **arguments; size_t count; };
+enum csh_state_result csh_state_push_parameters(struct csh_state *state,
+    size_t count, const char *const arguments[], struct csh_parameter_save *save);
+void csh_state_pop_parameters(struct csh_state *state, struct csh_parameter_save *save);
 
 enum csh_variable_attribute {
     CSH_VAR_EXPORT = 1u << 0,
@@ -44,6 +67,7 @@ struct csh_variable_view {
 };
 
 struct csh_state_info {
+    unsigned function_depth;    /* Active calls; inherited by subshell copies. */
     size_t argument_count;       /* $#; excludes $0 */
     int last_status;             /* $?; initially 0, no wait-status conversion */
     pid_t shell_pid;             /* $$; captured once, preserved by copies */
@@ -116,7 +140,10 @@ enum csh_state_result csh_state_set_background(struct csh_state *state, pid_t pi
 enum csh_state_result csh_state_update_options(struct csh_state *state,
     unsigned set, unsigned clear);
 
-/* Deep copies preserve every value, attribute, parameter, and metadata field.
+void csh_state_set_function_depth(struct csh_state *state, unsigned depth);
+
+/* Copies share immutable function payloads with independent name tables.
+ * Deep copies preserve every value, attribute, parameter, and metadata field.
  * Save makes an independent full-state checkpoint. Restore replaces the entire
  * state, consumes *checkpoint and sets it to NULL, without allocating. It is an
  * internal rollback primitive, including for readonly attributes, not a shell

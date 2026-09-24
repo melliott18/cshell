@@ -137,7 +137,8 @@ checkpoint is restored or discarded exactly once, and callers control the
 order of nested restoration.
 
 Checkpoints cover only this module's data. They do not capture working
-directories, file descriptors, traps, functions, or job resources. A
+directories, file descriptors, traps, or job resources. Function name tables
+are copied; immutable definition payloads are retained by reference. A
 full-state rollback also restores status and positional parameters and
 discards every intervening variable change. It must not be used as a
 substitute for selective temporary-assignment restoration around a builtin
@@ -156,8 +157,13 @@ assignment lifetimes through a separate selective save:
   Saves own their contents independently of the source state. Restore nested
   scopes on the same state in reverse order. Borrowed views expire on restore.
 
-Function parameter lifetimes remain [CSH-028](tickets/CSH-028-control-flow-and-functions.md)
-work.
+CSH-028 adds `csh_state_push_parameters()` and `csh_state_pop_parameters()`: new
+arguments are copied before moving aside the caller vector, and restoration
+requires no allocation. `$0` and unrelated state remain intact. The function
+registry retains executor-owned immutable payloads with a final-release callback,
+so state does not depend on parser or executor implementation. Lookup borrows a
+payload; setting retains it, and setting NULL removes its name. See
+[Control flow and functions](control-flow.md) for invocation and ownership.
 
 ## Failure and validation
 

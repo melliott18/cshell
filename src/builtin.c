@@ -266,10 +266,12 @@ int csh_state_builtin_run(struct csh_state *state, size_t argc, char *const argv
         free(args); return status;
     }
     if (!strcmp(name, "unset")) {
-        if (i < argc && !strcmp(argv[i], "-v")) ++i;
+        int functions = i < argc && !strcmp(argv[i], "-f");
+        if (functions || (i < argc && !strcmp(argv[i], "-v"))) ++i;
         if (i < argc && !strcmp(argv[i], "--")) ++i;
-        else if (i < argc && argv[i][0] == '-') return problem(name, "function removal requires CSH-028; invalid option");
-        for (; i < argc; ++i) status |= state_result(name, csh_state_unset_variable(state, argv[i]));
+        else if (i < argc && argv[i][0] == '-') return problem(name, "invalid option");
+        for (; i < argc; ++i) status |= state_result(name, functions ?
+            csh_state_set_function(state, argv[i], NULL) : csh_state_unset_variable(state, argv[i]));
         return status;
     }
     if (!strcmp(name, "export") || !strcmp(name, "readonly")) {

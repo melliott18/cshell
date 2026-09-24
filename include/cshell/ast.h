@@ -94,7 +94,8 @@ struct csh_ast_case_item {
 };
 
 /* Counts describe initialized entries. Capacities are maintained by append
- * helpers. The tree must have one owner per child and contain no cycles.
+ * helpers. The tree must contain no cycles. Each child has one structural owner;
+ * execution may additionally retain immutable subtrees.
  * Redirections are in source order, independently allocated so pending
  * here-document references survive growth of the pointer vector. */
 struct csh_ast {
@@ -156,6 +157,7 @@ struct csh_ast {
             struct csh_ast *body;
         } function;
     } data;
+    size_t retained; /* Extra immutable owners (function definitions/calls). */
     /* Reserved for the allocation-free iterative destructor. */
     struct csh_ast *destroy_next;
 };
@@ -167,6 +169,8 @@ struct csh_ast {
  * Scalar words and children may be moved directly to a freshly created node. */
 int csh_ast_create(struct csh_ast **out, enum csh_ast_kind kind,
     struct csh_error *error);
+/* Retaining freezes the tree until all extra owners release it. */
+void csh_ast_retain(const struct csh_ast *node);
 void csh_ast_destroy(struct csh_ast *node);
 const char *csh_ast_kind_name(enum csh_ast_kind kind);
 void csh_ast_word_destroy(struct csh_ast_word *word);

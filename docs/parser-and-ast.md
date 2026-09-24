@@ -79,14 +79,14 @@ requires a separator before a reserved-word closer.
 ### Compound and function payloads
 
 All payloads are owned and preserve lexical words without expansion. CSH-028
-owns their later execution and function storage; parsing these nodes does not
+implements their execution and retained immutable function storage; parsing these nodes does not
 install definitions or run control flow.
 
 | Kind / payload | Contract for execution |
 | --- | --- |
 | `IF` / `data.if_clause` | Ordered `branches` contain condition and body lists for `if` then each `elif`; nullable `else_body` is a list. Conditions and selected bodies remain separate. |
 | `FOR` / `data.for_clause` | `name` retains an unquoted shell name; `words` retains ordered structured words; `has_in` distinguishes an explicit empty list from the omitted list that uses positional parameters; `body` is a list. |
-| `WHILE`, `UNTIL` / `data.loop` | Separate condition and body lists; the node kind selects the future continuation predicate. |
+| `WHILE`, `UNTIL` / `data.loop` | Separate condition and body lists; the node kind selects the continuation predicate. |
 | `CASE` / `data.case_clause` | One subject `word` and ordered `items`, each with ordered `patterns`, a body list (possibly empty), and a terminator. `CASE_BREAK` means `;;`, `CASE_FALLTHROUGH` means POSIX.1-2024 `;&`, and `CASE_END` means an omitted terminator before `esac`. Explicit terminators retain their source spans; omitted spans are zero. |
 | `FUNCTION` / `data.function` | Original unquoted name word and a compound body node. Any supported compound can be a body; an ordinary simple command cannot. Trailing redirections belong to the function node for invocation-time application, not the body or definition-time execution. |
 
@@ -95,7 +95,7 @@ All other compound redirections use the node's common ordered redirection vector
 and case item bodies can be empty. The `elif` and case item vectors grow without
 a fixed count limit. Function names must be unquoted shell names and cannot be
 reserved words in function-name position. This syntax API does not enforce the
-application restriction on special-builtin names; CSH-028 owns definition-time
+application restriction on special-builtin names; CSH-028 implements definition-time
 runtime validation. Extensions such as `function name`, arithmetic `for`, and
 `;;&` are not implemented.
 

@@ -24,8 +24,9 @@ expanded simple commands, external lookup, state builtins including `cd` and
 command strings, script files, and stdin. Command substitutions and expanded
 here-documents use the same parser and executor. Non-interactive execution prints
 no prompt or banner. Background jobs and interactive
-[job control](docs/job-control.md) are supported. Control-flow commands,
-functions, runtime aliases, full shell options, and traps remain incomplete;
+[job control](docs/job-control.md) are supported. [Control flow and functions](docs/control-flow.md) include conditionals,
+loops, case selection, and explicit control transfer. Runtime aliases, full shell
+options, and traps remain incomplete;
 unsupported syntax is
 diagnosed before that construct executes.
 See [Runtime behavior](docs/candidate-runtime.md) for the exact subset and statuses.
@@ -50,6 +51,7 @@ make test-builtins # Replacement state builtins and executor integration
 make test-state    # Replacement shell-state API checks only
 make test-execute  # Replacement command, assignment, and redirection API checks
 make test-pipeline # Concurrent pipeline, stage-status, and failure-cleanup checks
+make test-control  # Conditionals, loops, case, functions, and failure cleanup
 make test-context  # Lists, groups, background ownership, and cleanup checks
 make test-jobs     # Job builtins, retained statuses, idle reaping, and failure checks
 make test-jobs-pty # Process groups, terminal signals, stop/resume, and restoration
@@ -90,6 +92,7 @@ resource limits, direct Docker commands, and troubleshooting.
 | Use owned shell variables and parameters | [Shell state](docs/shell-state.md) |
 | Expand structured words with quote provenance | [Value expansion](docs/value-expansions.md) |
 | Execute prepared commands and restore redirections | [Simple-command execution](docs/execution.md) |
+| Execute loops, conditionals, and functions | [Control flow](docs/control-flow.md) |
 | Use interactive jobs and job builtins | [Job control](docs/job-control.md) |
 | Check the POSIX target and known gaps | [POSIX tracking](docs/posix.md) |
 | Browse all project documentation | [Documentation index](docs/README.md) |

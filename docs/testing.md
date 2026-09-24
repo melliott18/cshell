@@ -593,7 +593,8 @@ restoration, assignment environments, unsupported constructs, and owned-child wa
 handlers, nested temporary prefixes, unrelated state retention, copied states,
 readonly errors in interactive/noninteractive contexts, and persistent versus
 temporary assignment behavior on failure. These are dispatch contracts; the full
-function and builtin implementations remain separate work.
+CSH-028 supplies function invocation; additional builtin implementations remain
+separate work.
 
 ```sh
 make test-execute
@@ -792,3 +793,11 @@ fixtures stay below it because the redirection implementation uses an unlinked
 temporary file. The 1 MiB substitution cases inspect the captured length instead
 of passing the entire value as an external argument or printing it to the
 bounded output file.
+
+## Control-flow and function execution
+
+`make test-control` runs control-flow fixtures in command-string, script-file,
+and stdin modes, plus allocation-failure sweeps through function calls, retained
+definitions, loops, case, and nested redirects. It is included in `make test`,
+Docker tests, and sanitizer CI. See [Control flow and functions](control-flow.md)
+for observable behavior and ownership checks.

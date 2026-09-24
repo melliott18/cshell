@@ -11,8 +11,8 @@ requires no Flex or generated scanner.
 
 The supported subset includes expanded simple commands, state builtins,
 substitutions, here-documents, lists, groups, concurrent pipelines, and job
-control. Broader control flow, functions, shell options, and traps remain
-integration work.
+control, plus [conditionals, loops, case selection, and functions](control-flow.md).
+Full shell options and traps remain integration work.
 Unsupported complete constructs are
 rejected before execution. See [Runtime behavior](candidate-runtime.md).
 

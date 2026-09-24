@@ -74,6 +74,7 @@ int csh_ast_create(struct csh_ast **out, enum csh_ast_kind kind,
 static void enqueue(struct csh_ast **pending, struct csh_ast *node)
 {
     if (node != NULL) {
+        if (node->retained) { --node->retained; return; }
         node->destroy_next = *pending;
         *pending = node;
     }
@@ -186,6 +187,11 @@ static void destroy_pending(struct csh_ast *pending)
         }
         free(node);
     }
+}
+
+void csh_ast_retain(const struct csh_ast *node)
+{
+    if (node != NULL) ++((struct csh_ast *)node)->retained;
 }
 
 void csh_ast_destroy(struct csh_ast *node)

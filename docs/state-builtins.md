@@ -10,8 +10,8 @@ name=value operands, with atomic value/attribute updates per operand; an error
 leaves that operand unchanged and processing continues. `-p` and no operands
 produce reusable single-quoted declarations, including attribute-only unset
 names. `unset` removes variable values and attributes; `-v` selects variables.
-Readonly values cannot be assigned or unset. Function removal (`-f`) is explicitly
-rejected until CSH-028 supplies a function store.
+Readonly values cannot be assigned or unset. CSH-028 adds function removal with `unset -f`; an absent name succeeds. Plain
+`unset` and `unset -v` select only the variable namespace.
 
 `set` without operands prints set variables in `strcoll` order in the process's
 active locale. `set --` clears positionals; `set -- args` or `set args` replaces
