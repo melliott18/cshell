@@ -50,7 +50,7 @@ standalone module evidence does not establish runtime feature support.
 | Word expansion | Value/field APIs tested separately; runtime rejects expansion | [CSH-008](tickets/CSH-008-word-expansion.md) |
 | Compound commands and functions | Parsing exists; execution pending | [CSH-009](tickets/CSH-009-compounds-and-functions.md) |
 | Builtins, aliases, and options | State builtins and bootstrap `cd`/`exit`; aliases and remaining utility/option semantics pending | [CSH-010](tickets/CSH-010-builtins-options-and-aliases.md) |
-| Signals, interactive mode, and jobs | Fixed prompts and child signal statuses; shell signal and job control pending | [CSH-011](tickets/CSH-011-signals-and-job-control.md) |
+| Signals, interactive mode, and jobs | Process groups, terminal handoff, job builtins and retained statuses; traps/input recovery/hangup pending | [CSH-034](tickets/CSH-034-job-control.md), [CSH-035](tickets/CSH-035-traps-and-signal-semantics.md) |
 | Conformance evidence and portability | Native/Docker module and runtime fixtures; full conformance suite pending | [CSH-012](tickets/CSH-012-conformance-and-portability.md) |
 
 Legacy syntax such as `|&` and `>>&` must not be used as evidence of POSIX
@@ -94,8 +94,7 @@ concurrent multi-stage execution, default last-stage status and negation,
 builtin subshell isolation, explicit redirection precedence, and partial-launch
 child/descriptor cleanup. Every stage's raw and converted status is retained.
 These API checks use `build/tests/execute_fixture`; CSH-018/CSH-039 also test
-pipelines through the public `cshell` in all input modes. `pipefail`, process
-groups, and job control remain with CSH-010 and CSH-011. CSH-021 adds compound
+pipelines through the public `cshell` in all input modes. `pipefail` remains with CSH-010; CSH-034 adds runtime process groups and job control. CSH-021 adds compound
 stages as described below.
 
 ## Replacement context evidence
@@ -104,9 +103,9 @@ CSH-021 adds public-runtime and API evidence through `make test-context` for seq
 AND/OR lists, brace/subshell state isolation, group redirection lifetimes,
 compound pipeline stages, asynchronous return and background PID ownership.
 Synchronization-based reaping checks and allocation/pipe/fork/wait injection
-cover cleanup. Background PID storage is implemented; general `$!` expansion,
-retained wait status, idle SIGCHLD handling and job control remain outside this
-subset. See [Execution contexts](execution.md#lists-groups-and-background-contexts).
+cover cleanup. Background PID storage is implemented; general `$!` expansion remains outside
+this subset. CSH-034 adds retained wait statuses, idle SIGCHLD reaping and job
+control through the optional runtime job manager. See [Execution contexts](execution.md#lists-groups-and-background-contexts).
 
 ## Replacement alias evidence
 
@@ -138,3 +137,11 @@ portability checks, not substitutes for language conformance tests.
 
 See [Testing](testing.md) for the current native and Docker entry points and
 their intentionally limited smoke coverage.
+
+## Job-control evidence
+
+CSH-034 adds [job control](job-control.md) through the persistent runtime context.
+Native and Docker script/PTY checks cover job builtins, process groups, terminal
+signals, stopping/resuming, terminal modes, idle reaping, and failure cleanup.
+Signal/trap inheritance, parser interruption, and exit/hangup policy remain
+CSH-035 work; these tests do not close the CSH-011 signals milestone.

@@ -32,9 +32,9 @@ PARSER_FAULT_OBJECTS = build/tests/parser-fault-alias.o build/tests/parser-fault
 STATE_HEADERS = include/cshell/state.h $(INPUT_HEADERS)
 EXPAND_HEADERS = include/cshell/expand.h include/cshell/arithmetic.h include/cshell/quote.h $(LEXER_HEADERS) $(STATE_HEADERS)
 EXPAND_OBJECTS = build/expand.o build/quote.o build/arithmetic.o
-EXECUTE_HEADERS = include/cshell/builtin.h include/cshell/execute.h include/cshell/redirect.h $(PARSER_HEADERS) $(STATE_HEADERS)
-EXECUTE_OBJECTS = build/builtin.o build/execute.o build/redirect.o $(PARSER_OBJECTS) build/state.o
-EXECUTE_FAULT_OBJECTS = build/tests/execute-fault-execute.o build/tests/execute-fault-redirect.o build/tests/execute-fault-state.o
+EXECUTE_HEADERS = include/cshell/jobs.h include/cshell/builtin.h include/cshell/execute.h include/cshell/redirect.h $(PARSER_HEADERS) $(STATE_HEADERS)
+EXECUTE_OBJECTS = build/jobs.o build/builtin.o build/execute.o build/redirect.o $(PARSER_OBJECTS) build/state.o
+EXECUTE_FAULT_OBJECTS = build/tests/execute-fault-jobs.o build/tests/execute-fault-execute.o build/tests/execute-fault-redirect.o build/tests/execute-fault-state.o
 FIELDS_HEADERS = $(EXPAND_HEADERS) src/field_internal.h
 FIELDS_OBJECTS = build/fields.o build/pathname.o
 FIELDS_FAULT_OBJECTS = build/tests/fields-fault-fields.o build/tests/fields-fault-pathname.o
@@ -288,11 +288,11 @@ test-builtins: build/tests/builtin_fixture build/tests/execute_fixture
 	./build/tests/builtin_fixture
 	$(PYTHON) tests/builtins.py build/tests/execute_fixture
 
-test: test-builtins $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline test-context $(TEST_SUITE)
+test: test-jobs test-builtins $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline test-context $(TEST_SUITE)
 	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
 
-test-pty: $(PTY_TEST_TARGET) $(PTY_TEST_SUITE)
+test-pty: test-jobs-pty $(PTY_TEST_TARGET) $(PTY_TEST_SUITE)
 	$(PYTHON) tests/smoke.py "$(PTY_TEST_BINARY)" --suite "$(PTY_TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(PTY_TEST_CASE)),--case "$(PTY_TEST_CASE)")
 
@@ -320,3 +320,29 @@ docker-shell: docker-build
 
 clean:
 	rm -rf build cshell
+
+build/jobs.o: src/jobs.c $(EXECUTE_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+build/tests/jobs_helper: tests/jobs_helper.c
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(filter-out -fsanitize=%,$(CFLAGS)) $(filter-out -fsanitize=%,$(LDFLAGS)) -o $@ $< $(LDLIBS)
+
+build/tests/jobs-pty.json: tests/jobs_cases.py build/tests/jobs_helper
+	$(PYTHON) tests/jobs_cases.py --helper build/tests/jobs_helper --output $@
+
+.PHONY: test-jobs-pty
+test-jobs-pty: cshell build/tests/jobs-pty.json build/tests/execute_faults
+	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/jobs-pty.json
+	$(PYTHON) tests/smoke.py ./build/tests/execute_faults --suite tests/fixtures/jobs-fault-pty.json
+
+build/tests/jobs_fixture: tests/jobs_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(EXECUTE_OBJECTS) $(LDLIBS)
+
+.PHONY: test-jobs
+test-jobs: cshell build/tests/jobs_fixture build/tests/execute_faults
+	./build/tests/jobs_fixture
+	./build/tests/execute_faults --jobs
+	$(PYTHON) tests/jobs.py ./cshell

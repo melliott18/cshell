@@ -10,7 +10,7 @@ loop, scanner, executor, and internal candidate driver. The handwritten lexer
 requires no Flex or generated scanner.
 
 The supported bootstrap subset includes literal simple commands, state
-builtins, ordered redirections, and concurrent pipelines. Expansion and broader
+builtins, job control, ordered redirections, and concurrent pipelines. Expansion and broader
 control flow remain integration work. Unsupported complete constructs are
 rejected before execution. See [Runtime behavior](candidate-runtime.md).
 
@@ -42,6 +42,7 @@ still tested separately pending their runtime integration tickets.
 | `src/state.c` / `include/cshell/state.h` | Owned variables and attributes, copied invocation parameters, option/status metadata, environment snapshots, and full-state and selective variable copying/restoration |
 | `src/builtin.c` / `include/cshell/builtin.h` | State builtin lookup and handlers over replacement shell state |
 | `src/execute.c` / `include/cshell/execute.h` | Owned prepared-command boundary, bounded literal AST adapter, command lookup, owned child execution, assignment categories, parent builtin dispatch, concurrent pipelines, per-stage results, list/group evaluation, and background context ownership |
+| `src/jobs.c` / `include/cshell/jobs.h` | Runtime job records, direct-child collection, process groups, terminal settings, safe signal wakeups, and job builtins |
 | `src/redirect.c` / `include/cshell/redirect.h` | Ordered file, descriptor, and prepared here-document operations with descriptor restoration |
 
 See [Input and invocation](input-and-invocation.md) for the concrete ownership,
@@ -110,8 +111,8 @@ unsupported operator spellings are not compatibility requirements.
 
 ## Processing model
 
-The following diagram shows the target processing model. Expansion and
-signal/job integration remain planned; the other runtime boundaries exist.
+The following diagram shows the target processing model. Expansion and full
+trap integration remain planned; the other runtime boundaries exist.
 Input, lexer, and parser construct a command tree (AST). The executor
 evaluates that tree and coordinates expansion, shell state, builtins,
 redirections, and child processes. Arrows below the executor show collaborating
@@ -169,11 +170,12 @@ borrows shell state and owns a direct-child registry. Brace groups share the
 current context under reversible descriptors; subshells, pipeline stages and
 asynchronous lists use forked state/cwd/descriptor copies and fresh registries.
 The executor preflights literal syntax before effects, then applies list
-short-circuiting and honors exit requests within the owning context. It polls
-background children at execution boundaries; explicit blocking reaping is
-available to library hosts. Shell exit detaches unfinished jobs. There is no
-SIGCHLD wakeup while idle, retained job-status history, process-group cancellation,
-or interactive job control yet. See [Execution contexts](execution.md#lists-groups-and-background-contexts)
+short-circuiting and honors exit requests within the owning context. Library contexts without a job manager retain direct-child polling and explicit
+blocking reaping. CSH-034 attaches a job manager in the runtime, transferring
+launched PIDs to a retained registry and adding process groups, terminal handoff,
+job builtins, and SIGCHLD wakeups during idle input. Shell exit still detaches
+unfinished jobs; CSH-035 owns exit/hangup and trap policy. See
+[Job control](job-control.md) and [Execution contexts](execution.md#lists-groups-and-background-contexts)
 for lifecycle details and the synchronous convenience APIs.
 
 ## Replacement strategy

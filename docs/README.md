@@ -14,6 +14,7 @@ Start with the [project README](../README.md) for installation and current statu
 | [Shell state](shell-state.md) | Owned variables, parameters, attributes, environment snapshots, copying, and restoration |
 | [Value expansion](value-expansions.md) | Structured value/final-field contexts, IFS, pathname generation, arithmetic, decoding, and deferred substitutions |
 | [Simple-command execution](execution.md) | Owned prepared commands, literal AST adaptation, lookup, child ownership, bootstrap builtins, and reversible redirections |
+| [Job control](job-control.md) | Interactive groups, terminal ownership, job builtins, retained statuses, and signal boundaries |
 | [Visual implementation plan](implementation-plan.md) | Dependencies, parallel tasks, and milestone completion |
 | [Testing](testing.md) | Native and Docker commands, smoke coverage, and troubleshooting |
 | [POSIX tracking](posix.md) | Specification target, gaps, and conformance evidence |

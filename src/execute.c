@@ -1,6 +1,7 @@
 #include "cshell/execute.h"
 #include "cshell/quote.h"
 #include "cshell/builtin.h"
+#include "cshell/jobs.h"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -277,6 +278,7 @@ static void launch_destroy(struct launch *launch)
     free(launch->paths);
     free(launch->fallback);
     csh_state_environment_destroy(launch->environment);
+    memset(launch, 0, sizeof(*launch));
 }
 
 static int launch_prepare(struct csh_state *state, const struct csh_command *command,
@@ -1016,6 +1018,8 @@ int csh_execution_context_reap(struct csh_execution_context *context, int wait,
     struct csh_error *error)
 {
     struct csh_background_child **link = &context->children;
+    if (context->jobs != NULL && csh_jobs_reap(context->jobs, wait) == -1)
+        return fail(error, "cannot collect job status", errno, 1);
     memset(error, 0, sizeof(*error));
     while (*link != NULL) {
         struct csh_background_child *child = *link;
@@ -1045,6 +1049,7 @@ void csh_execution_context_destroy(struct csh_execution_context *context)
         context->children = child->next;
         free(child);
     }
+    csh_jobs_destroy(context->jobs);
     memset(context, 0, sizeof(*context));
 }
 
@@ -1081,12 +1086,16 @@ static void background_setup(int redirect_input)
 }
 
 static void context_child(struct csh_state *state, const struct execution_plan *plan,
-    const struct descriptor_reservations *reserved)
+    const struct descriptor_reservations *reserved, int managed)
 {
     struct csh_execution_context child = {0};
     struct csh_execution result;
     struct csh_error error;
     child.state = state; /* fork isolates state, cwd, options and descriptors. */
+    if (managed && csh_jobs_create(&child.jobs, state, -1) == -1) {
+        diagnose("context", "cannot initialize child jobs", errno);
+        _exit(1);
+    }
     if (plan->kind == CSH_AST_SIMPLE) {
         enum csh_execution_category category;
         struct launch launch;
@@ -1094,7 +1103,8 @@ static void context_child(struct csh_state *state, const struct execution_plan *
             diagnose("context", error.message, error.system_errno);
             _exit(error.status);
         }
-        if (category == CSH_EXEC_EXTERNAL) {
+        if (category == CSH_EXEC_EXTERNAL &&
+            !(managed && csh_jobs_is_builtin(plan->command.argv[0]))) {
             if (pipeline_launch_prepare(state, &plan->command, &launch, &error) == -1) {
                 diagnose("context", error.message, error.system_errno);
                 _exit(error.status);
@@ -1108,12 +1118,186 @@ static void context_child(struct csh_state *state, const struct execution_plan *
     _exit(result.status);
 }
 
+static void plan_text(FILE *stream, const struct execution_plan *plan)
+{
+    size_t i;
+    switch (plan->kind) {
+    case CSH_AST_SIMPLE:
+        for (i = 0; i < plan->command.argc; ++i)
+            fprintf(stream, "%s%s", i ? " " : "", plan->command.argv[i]);
+        break;
+    case CSH_AST_BRACE: case CSH_AST_SUBSHELL:
+        fputs(plan->kind == CSH_AST_BRACE ? "{ " : "( ", stream);
+        plan_text(stream, &plan->children[0]);
+        fputs(plan->kind == CSH_AST_BRACE ? "; }" : " )", stream);
+        break;
+    default:
+        if (plan->negated) fputs("! ", stream);
+        for (i = 0; i < plan->count; ++i) {
+            if (i) fputs(plan->kind == CSH_AST_PIPELINE ? " | " :
+                plan->kind == CSH_AST_AND ? " && " :
+                plan->kind == CSH_AST_OR ? " || " : "; ", stream);
+            plan_text(stream, &plan->children[i]);
+        }
+        break;
+    }
+}
+
+/* Runtime contexts transfer each launched PID to the job manager exactly once.
+ * The synchronous prepared-command APIs retain their existing ownership
+ * contract. A barrier holds every stage until group creation and terminal
+ * transfer succeed, including when the group leader would exit immediately. */
+static int context_job(struct csh_execution_context *context,
+    const struct execution_plan *plan, const struct descriptor_reservations *reserved,
+    int asynchronous, struct csh_execution *result, struct csh_error *error)
+{
+    int is_pipeline = plan->kind == CSH_AST_PIPELINE;
+    size_t count = is_pipeline ? plan->count : 1, i;
+    struct csh_job *job = NULL;
+    struct launch *launches = NULL;
+    enum csh_execution_category *categories = NULL;
+    int gate[2] = {-1, -1}, previous = -1, ends[2] = {-1, -1}, rc = -1;
+    sigset_t launch_signals, prior_mask;
+    int masked = 0;
+    char *text = NULL;
+    size_t text_size = 0;
+    FILE *stream = NULL;
+    launches = calloc(count, sizeof(*launches));
+    categories = calloc(count, sizeof(*categories));
+    if (launches == NULL || categories == NULL) {
+        fail(error, "cannot allocate job launches", ENOMEM, 1);
+        goto done;
+    }
+    result->category = is_pipeline ? CSH_EXEC_PIPELINE : CSH_EXEC_EXTERNAL;
+    for (i = 0; i < count; ++i) {
+        const struct execution_plan *stage = is_pipeline ? &plan->children[i] : plan;
+        if (stage->kind != CSH_AST_SIMPLE) continue;
+        if (command_validate(context->state, &stage->command, &categories[i], error) == -1)
+            goto done;
+        if (stage->command.argc && csh_jobs_is_builtin(stage->command.argv[0]))
+            categories[i] = CSH_EXEC_REGULAR_BUILTIN;
+        if (categories[i] == CSH_EXEC_EXTERNAL) {
+            struct csh_variable_save *save = NULL;
+            /* Preserve singleton readonly-assignment exit policy. */
+            int prepared = assignments_apply(context->state, &stage->command,
+                CSH_EXEC_EXTERNAL, &save, result, error);
+            if (prepared == 0) prepared = launch_prepare(context->state,
+                &stage->command, &launches[i], error);
+            csh_state_restore_variables(context->state, &save);
+            if (prepared == -1) goto done;
+        }
+    }
+    stream = open_memstream(&text, &text_size);
+    if (stream == NULL) { fail(error, "cannot allocate job text", errno, 1); goto done; }
+    plan_text(stream, plan);
+    if (fclose(stream) == EOF) {
+        stream = NULL;
+        fail(error, "cannot format job text", errno, 1);
+        goto done;
+    }
+    stream = NULL;
+    job = csh_jobs_add(context->jobs, count, text, asynchronous,
+        is_pipeline && plan->negated);
+    if (job == NULL) { fail(error, "cannot allocate job", errno, 1); goto done; }
+    if (pipeline_pipe(gate) == -1) { fail(error, "cannot create launch barrier", errno, 1); goto cancel; }
+    /* A terminal signal arriving immediately after handoff must not run the
+     * shell's inherited handler in a child that has not reset it yet. Keep
+     * it pending across fork and the barrier, then restore the caller's mask. */
+    sigemptyset(&launch_signals);
+    sigaddset(&launch_signals, SIGINT);
+    sigaddset(&launch_signals, SIGQUIT);
+    sigaddset(&launch_signals, SIGTSTP);
+    sigaddset(&launch_signals, SIGTTIN);
+    sigaddset(&launch_signals, SIGTTOU);
+    if (sigprocmask(SIG_BLOCK, &launch_signals, &prior_mask) == -1) {
+        fail(error, "cannot block job launch signals", errno, 1); goto cancel;
+    }
+    masked = 1;
+    for (i = 0; i < count; ++i) {
+        pid_t pid;
+        const struct execution_plan *stage = is_pipeline ? &plan->children[i] : plan;
+        if (i + 1 < count && pipeline_pipe(ends) == -1) {
+            fail(error, "cannot create job pipe", errno, 1); goto cancel;
+        }
+        pid = fork();
+        if (pid == -1) { fail(error, "cannot fork job stage", errno, 1); goto cancel; }
+        if (pid == 0) {
+            char byte;
+            ssize_t received;
+            int monitor = job->grouped;
+            close(gate[1]);
+            if (monitor && setpgid(0, job->pgid) == -1) _exit(1);
+            csh_jobs_after_fork(context->jobs, asynchronous);
+            do { received = read(gate[0], &byte, 1); } while (received == -1 && errno == EINTR);
+            close(gate[0]);
+            if (received == -1) _exit(1);
+            if (asynchronous && !monitor) background_setup(i == 0);
+            if (pipeline_connect(previous, STDIN_FILENO) == -1 ||
+                pipeline_connect(ends[1], STDOUT_FILENO) == -1) {
+                diagnose("job", "cannot connect pipe", errno); _exit(1);
+            }
+            pipe_close(previous); pipe_close(ends[0]); pipe_close(ends[1]);
+            sigprocmask(SIG_SETMASK, &prior_mask, NULL);
+            if (stage->kind == CSH_AST_SIMPLE && categories[i] == CSH_EXEC_EXTERNAL)
+                launch_child(&stage->command, &launches[i]);
+            context_child(context->state, stage, reserved, 1);
+        }
+        job->processes[i].pid = pid;
+        if (job->pgid == 0) job->pgid = pid;
+        if (job->grouped && setpgid(pid, job->pgid) == -1) {
+            fail(error, "cannot assign job process group", errno, 1); goto cancel;
+        }
+        pipe_close(previous); pipe_close(ends[1]);
+        previous = ends[0]; ends[0] = ends[1] = -1;
+    }
+    if (!asynchronous && csh_jobs_give_terminal(context->jobs, job, 0) == -1) {
+        fail(error, "cannot give terminal to job", errno, 1); goto cancel;
+    }
+    pipe_close(gate[0]); gate[0] = -1;
+    pipe_close(gate[1]); gate[1] = -1;
+    sigprocmask(SIG_SETMASK, &prior_mask, NULL);
+    masked = 0;
+    if (asynchronous) {
+        csh_state_set_background(context->state, job->processes[count - 1].pid);
+        csh_jobs_announce(context->jobs, job);
+        result->status = 0;
+    } else if (csh_jobs_foreground(context->jobs, job, 0, &result->status) == -1) {
+        fail(error, "cannot wait for foreground job", errno, 1); goto cancel;
+    }
+    rc = 0;
+    goto done;
+cancel:
+    /* Keep the barrier shut until all partially launched children are dead. */
+    pipe_close(previous); previous = -1;
+    pipe_close(ends[0]); ends[0] = -1;
+    pipe_close(ends[1]); ends[1] = -1;
+    csh_jobs_cancel(context->jobs, job);
+done:
+    if (masked) sigprocmask(SIG_SETMASK, &prior_mask, NULL);
+    pipe_close(gate[0]); pipe_close(gate[1]);
+    if (stream != NULL) fclose(stream);
+    free(text);
+    if (launches != NULL) for (i = 0; i < count; ++i) launch_destroy(&launches[i]);
+    free(launches); free(categories);
+    return rc;
+}
+
+static int job_handler(struct csh_state *state, const struct csh_command *command,
+    struct csh_execution *result, struct csh_error *error, void *context)
+{
+    (void)state; (void)error;
+    result->status = csh_jobs_builtin(context, command);
+    return 0;
+}
+
 static int context_fork(struct csh_execution_context *context,
     const struct execution_plan *plan, const struct descriptor_reservations *reserved,
     int asynchronous, struct csh_execution *result, struct csh_error *error)
 {
     struct csh_background_child *entry = NULL;
     struct csh_pipeline_stage stage = {0};
+    if (context->jobs != NULL)
+        return context_job(context, plan, reserved, asynchronous, result, error);
     if (asynchronous && plan->kind == CSH_AST_PIPELINE && plan->count > 1)
         return context_pipeline(context, plan, reserved, 1, result, error);
     if (asynchronous && (entry = malloc(sizeof(*entry))) == NULL)
@@ -1126,7 +1310,7 @@ static int context_fork(struct csh_execution_context *context,
     if (stage.pid == 0) {
         /* Apply the implicit input before any explicit body redirects. */
         if (asynchronous) background_setup(1);
-        context_child(context->state, plan, reserved);
+        context_child(context->state, plan, reserved, 0);
     }
     if (asynchronous) {
         entry->pid = stage.pid;
@@ -1162,6 +1346,8 @@ static int context_pipeline(struct csh_execution_context *context,
             result->status = !result->status;
         return rc;
     }
+    if (context->jobs != NULL)
+        return context_job(context, plan, reserved, asynchronous, result, error);
     /* Reuse the prepared pipeline API for all-simple stages, preserving its
      * pre-launch assignment/lookup checks and direct external child identity. */
     for (i = 0; i < plan->count; ++i)
@@ -1212,7 +1398,7 @@ static int context_pipeline(struct csh_execution_context *context,
             pipe_close(previous);
             pipe_close(ends[0]);
             pipe_close(ends[1]);
-            context_child(context->state, &plan->children[i], reserved);
+            context_child(context->state, &plan->children[i], reserved, 0);
         }
         pipeline.stages[i].pid = pid;
         if (asynchronous) pending->pid = pid;
@@ -1272,6 +1458,21 @@ static int execute_plan(struct csh_execution_context *context,
     switch (plan->kind) {
     case CSH_AST_SIMPLE: {
         struct csh_pipeline_result pipeline = {0};
+        if (context->jobs != NULL && plan->command.argc) {
+            const char *name = plan->command.argv[0];
+            if (csh_jobs_is_builtin(name)) {
+                enum csh_execution_category category = strcmp(name, "set") == 0 ?
+                    CSH_EXEC_SPECIAL_BUILTIN : CSH_EXEC_REGULAR_BUILTIN;
+                rc = csh_execute_resolved(context->state, &plan->command,
+                    category, job_handler, context->jobs, result, error);
+                break;
+            }
+            if (strcmp(name, "exit") != 0 &&
+                csh_state_builtin_category(name) == CSH_EXEC_EXTERNAL) {
+                rc = context_job(context, plan, reserved, 0, result, error);
+                break;
+            }
+        }
         rc = csh_execute_pipeline(context->state, &plan->command, 1, 0, &pipeline, error);
         *result = pipeline.execution;
         csh_pipeline_result_destroy(&pipeline);
@@ -1352,6 +1553,11 @@ int csh_execute_context_ast(struct csh_execution_context *context,
     }
     if (csh_execution_context_reap(context, 0, error) == -1 ||
         plan_prepare(tree, &plan, &reserved, 0, error) == -1) goto done;
+    if (context->jobs != NULL && csh_jobs_reserve(context->jobs,
+        reserved.items, reserved.count) == -1) {
+        fail(error, "cannot reserve job descriptors", errno, 1);
+        goto done;
+    }
     rc = execute_plan(context, &plan, &reserved, result, error);
 done:
     plan_destroy(&plan);

@@ -35,6 +35,10 @@ int csh_input_from_file(struct csh_input **out, const char *path,
 int csh_input_from_fd(struct csh_input **out, int fd, const char *name,
                       struct csh_error *error);
 void csh_input_destroy(struct csh_input *input);
+/* Optional borrowed event-loop hook, called before each descriptor read.
+ * Return 0 when ready or -1 with errno. String sources do not call it. */
+void csh_input_set_wait_hook(struct csh_input *input,
+    int (*hook)(void *context, int fd), void *context);
 
 /* Borrowed name remains valid until destroy. Position is the next unread byte. */
 const char *csh_input_name(const struct csh_input *input);
