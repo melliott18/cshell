@@ -531,23 +531,38 @@ prototype allowance into a language-conformance claim.
 ## Value-expansion API and sanitizer checks
 
 `make test-expand` builds independent expansion, arithmetic, and quote-decoder
-fixtures and runs five bounded module suites. These check structured fields and
+fixtures and runs the value suites plus `make test-fields`. These check structured fields and
 span provenance, state effects, lazy operands, explicit deferred substitutions,
-integer boundaries, and allocation failures. They do not execute shell scripts
-or claim field splitting, pathname expansion, or command-capture behavior.
+integer boundaries, and allocation failures. `test-fields` adds counted, byte-exact
+argument inspection, controlled temporary filename trees, context restrictions,
+selected reference-shell comparisons, and allocation/I/O/interruption sweeps.
+These fixtures do not claim command-capture or runtime integration behavior.
 
 ```sh
 make test-expand
 make clean
 ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 make test-expand CC=clang CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -DNDEBUG -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
-make docker-test DOCKER_IMAGE=cshell-test:csh-024
+make docker-test DOCKER_IMAGE=cshell-test:csh-025
 ```
 
 `make test` includes these suites on native and Docker paths. Native CI also
 runs expansion/state sanitizer checks. Fault-only objects instrument expansion
-and quote allocations together, and arithmetic/state allocations together;
+and quote allocations together, arithmetic/state allocations together, and
+field/pathname allocations and directory I/O together;
 production objects contain no allocator hooks. All fixture checks stay active
 with `-DNDEBUG`. The shared decoder's standalone target is
 `build/tests/quote_fixture`, allowing parser reuse without linking the expansion
 engine. See [Value expansion](value-expansions.md) for supported contexts,
 locale/unspecified choices, ownership, and remaining integration requirements.
+
+
+`make test-fields` builds `build/tests/fields_fixture` and
+`build/tests/fields_faults` without the prototype or Flex. `tests/fields.py`
+creates temporary directory trees with whitespace, wildcard characters, dotfiles,
+and symlinks, fixes the C locale for filename assertions, and inspects counts and
+bytes. Selected UTF-8 API cases run when a UTF-8 locale is available. The fault
+fixture fails each instrumented allocation and filesystem operation and
+interrupts at successive callback points, including while a directory is open.
+It checks cleared output, unchanged borrowed input/state, and zero outstanding
+tracked allocations/streams. The same sanitizer command above includes these
+checks; use `test-fields` alone for a focused run.

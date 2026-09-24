@@ -3,8 +3,10 @@
 [CSH-024](tickets/CSH-024-value-expansions.md) adds independent value expansion
 in [`expand.h`](../include/cshell/expand.h) and [`expand.c`](../src/expand.c).
 It consumes the lexer's owned WORD tokens and shell-state storage. The default
-`cshell` executable still runs the prototype. This API does not execute commands,
-split fields on IFS, expand filenames, or discard the final quote metadata.
+`cshell` executable still runs the prototype. The value API does not execute commands or discard quote metadata.
+[CSH-025](tickets/CSH-025-field-and-pathname-expansion.md) adds the separate
+`csh_expand_fields()` stage in [`fields.c`](../src/fields.c) and
+[`pathname.c`](../src/pathname.c) to produce final fields.
 
 ## Inputs, output, and ownership
 
@@ -23,7 +25,7 @@ are independently owned: neither the token nor state must remain alive.
 The parser/assignment owner must provide a structured value word for assignment
 context. Relocate fragment byte offsets when constructing a value-only token;
 do not pass the whole assignment spelling as a value. Context restrictions
-remain in the result for CSH-025 to honor.
+remain in the result for `csh_expand_fields()` to honor.
 
 Each output field owns a sequence of spans. A span records its bytes, length,
 quote mode, origin (literal, tilde, parameter, arithmetic, substitution), IFS
@@ -32,7 +34,7 @@ and tilde replacements carry single-quote protection. Adjacent spans belong to
 the same field. A quoted `$@` creates separate fields, with surrounding text
 joined to the first/last field; zero positional parameters contribute no fields.
 Empty quoted positionals remain explicit empty spans. An unquoted unset value
-has an empty, unprotected span for CSH-025 to discard when appropriate.
+has an empty, unprotected span for the final stage to discard when appropriate.
 
 For example, with `v='a b'`, `x$v"$v"` is one intermediate field containing:
 
@@ -43,7 +45,7 @@ For example, with `v='a b'`, `x$v"$v"` is one intermediate field containing:
 | `a b` | parameter | double | no |
 
 Quote spelling is interpreted to obtain value bytes, but its protection remains
-in these spans until CSH-025 completes quote removal. Consumers must not flatten
+in these spans until the final stage completes quote removal. Consumers must not flatten
 and re-lex the bytes: expansion results never become new shell syntax.
 
 Failures clear and release all output, return an enum plus source fragment and
@@ -162,8 +164,84 @@ its fragment index and no partial output or state mutation. Unselected operands
 never request substitution. This is an explicit integration boundary, not a
 command parser or an executor. CSH-026 owns real execution order, capture,
 substitution status, here-document context, and end-to-end scripts; CSH-025 owns
-IFS splitting, filename generation, and final metadata removal.
+IFS splitting, filename generation, and final metadata removal described below.
 
 Run `make test-expand` for bounded API, arithmetic, decoder, and allocation-fault
 fixtures without the legacy build. See [Testing](testing.md#value-expansion-api-and-sanitizer-checks)
 for sanitizer and Docker validation.
+
+## Final fields and pathname generation
+
+`csh_expand_fields(state, expansion, options, out, error)` borrows a successful
+intermediate expansion and reads the current shell IFS and `noglob` option.
+Release its independent strings/vector with `csh_fields_destroy()`. The
+`csh_fields.count` records the argument count; an allocated `values` vector has
+an extra NULL terminator. Zero fields may use a NULL vector. Neither state nor
+input is changed, and the result survives their destruction. On failure all
+partial output is released and cleared. Diagnostics use `CSH_FRAGMENT_ROOT`
+because the intermediate fields have no source positions.
+
+Argument context first splits only eligible unquoted expansion spans. Literal
+IFS bytes, protected tilde replacements, escaped bytes, and quoted spans stay
+intact. Unset IFS means space/tab/newline; empty IFS disables delimiter splitting
+but still removes implicit empty values. Whitespace delimiters coalesce;
+non-whitespace delimiters can terminate empty fields. Explicit quoted empty
+spans remain at their original positions, so a quoted empty after a trailing
+separator can retain a final empty argument. Positional field boundaries from
+the value stage remain separate.
+
+The implementation follows the
+[Issue 8 field-splitting algorithm](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_06_05).
+In particular, `x=' a'; set -- ""$x` produces an empty field followed by `a`:
+the explicit empty candidate precedes the separator. Some older reference
+shells discard that candidate, so the fixture asserts the specified result
+without using those shells as an oracle. IFS characters are decoded in the
+caller's locale; only space, tab, and newline count as IFS whitespace. Invalid
+multibyte sequences in IFS are treated as individual bytes. Input bytes need not
+be valid characters, and a multibyte delimiter cannot cross span/result
+boundaries. The supported locale evidence covers C/POSIX and selected UTF-8
+cases; process locale initialization remains CSH-037 work.
+
+After splitting, argument fields undergo pathname generation unless
+`CSH_OPT_NOGLOB` is set. Each pathname component uses POSIX `fnmatch()` with
+leading-dot protection. Unquoted `*`, `?`, and bracket expressions match names;
+quoted pattern characters and protected backslashes remain literal. Unquoted
+expansion-produced backslashes escape the following pattern character outside
+bracket expressions, as specified by section 2.14.1; handling within brackets
+follows the host `fnmatch()` choice. They never introduce new shell syntax. A leading dot must be explicitly matched outside brackets; this API chooses
+not to let a bracket list such as `[.]` introduce a hidden name. Pattern
+components exclude
+`.` and `..`, while literal `./` and `../` remain usable. Slashes separate
+components, repeated slash spelling is preserved, and a trailing slash requires
+a directory. Directory symlinks are followed; dangling symlinks can match the
+final component. Matches for each field are sorted with the active locale's
+collation (byte order breaks ties). An unmatched pattern remains unchanged.
+Matched filenames are never split or expanded again.
+
+Assignment context omits splitting and pathname generation and returns plain
+value bytes, including an empty value. Pattern context also omits both stages,
+but returns matcher-ready strings: quote-protected pattern characters and
+protected backslashes are escaped for `fnmatch()` without `FNM_NOESCAPE`.
+A quoted byte within a POSIX bracket subexpression (class, collating element,
+or equivalence class) makes that subexpression literal. Reference shells differ
+on quoted class names; fixtures assert this protection policy directly.
+These escapes encode matching semantics, not shell syntax, and must not be
+re-lexed or used as ordinary argument strings. Existing parameter-removal
+operators continue using the value engine's internal pattern consumer; its
+quoted POSIX class-name protection remains a recorded CSH-026 integration gap.
+
+The optional `csh_field_options.interrupted` callback is polled during splitting,
+traversal, and output copying. It runs in ordinary execution and must not mutate
+the borrowed state, input, locale, or working directory. A nonzero result or
+filesystem `EINTR` returns `CSH_EXPAND_INTERRUPTED`; all directory streams and
+allocations are released. Path traversal is iterative, keeps at most one
+stream open, and returns `CSH_EXPAND_LIMIT` beyond 4096 components. Missing,
+inaccessible, overlong, and symlink-loop paths are non-matches. Allocation
+failures and filesystem `ENOMEM` return `NOMEM`; other filesystem failures
+(including descriptor exhaustion) return `IO`.
+
+This finalization stage cannot reverse earlier successful value-expansion side
+effects. An executor requiring an atomic whole-word operation should checkpoint
+state around both calls. CSH-026 still owns command execution/capture,
+here-document and redirection policies, and integration with the execution
+runtime. The prototype executable does not call these APIs.

@@ -71,8 +71,9 @@ This is grammar evidence only; the prototype runtime table above is unchanged.
 
 CSH-024 adds [module-level value expansion](value-expansions.md), with checked
 parameter/tilde/arithmetic behavior, quote provenance, and dollar-single-quote
-decoding. Field splitting, pathname expansion, real substitutions, and arithmetic
-ambiguity replay remain integration gaps. The prototype table above remains a
+decoding. CSH-025 adds IFS field splitting, pathname generation, protected empty
+fields, and explicit failure/interruption cleanup at the module level. Real
+substitutions and arithmetic ambiguity replay remain integration gaps. The prototype table above remains a
 runtime baseline; standalone API fixtures do not establish shell conformance.
 
 ## Evidence required
