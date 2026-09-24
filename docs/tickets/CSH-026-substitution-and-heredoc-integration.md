@@ -58,3 +58,15 @@ arithmetic-first command-substitution fallback. Track that joint parser/lexer
 integration explicitly here; module arithmetic tests do not resolve the existing
 `$((echo hi); )` limitation. Verify execution-level expansion errors, callback
 status/isolation, and field handling before closing the CSH-008 milestone.
+
+
+### CSH-025 integration handoff
+
+Call `csh_expand_fields()` after value expansion for counted owned argument
+strings, honoring explicit assignment/pattern contexts and the documented
+whole-word checkpoint boundary. Do not flatten spans before field generation.
+When integrating parameter-removal operators, reuse the final pattern encoder's
+quote-aware POSIX bracket-subexpression handling: the older private `flatten()`
+in `src/expand.c` does not protect quoted class names such as `[[:'alpha':]]`.
+CSH-025's final pattern and pathname APIs have regression coverage for that
+case; the existing parameter-removal consumer still needs the same protection.
