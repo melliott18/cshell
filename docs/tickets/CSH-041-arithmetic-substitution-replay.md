@@ -1,6 +1,6 @@
 # CSH-041: Resolve arithmetic-first command-substitution ambiguity
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-008
@@ -94,3 +94,12 @@ The [CSH-008 milestone](CSH-008-word-expansion.md) remains open pending integrat
 and its original completion gates. Runtime aliases, full shell options, traps,
 and control-flow execution remain with their existing tickets; these selected
 checks do not establish complete POSIX conformance.
+
+## Integration record
+
+- Implementation commit: `63af6f8`.
+- Merged by [PR #67](https://github.com/melliott18/cshell/pull/67) as
+  `4298188`; [issue #64](https://github.com/melliott18/cshell/issues/64) closed.
+- The hosted push workflow passed on Ubuntu, macOS, and Docker. Duplicate
+  pull-request workflows passed the CSH-041 suites but exposed intermittent
+  timeouts in the unchanged macOS sanitizer job-control/context fixtures.
