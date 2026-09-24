@@ -1,6 +1,6 @@
 # CSH-039: Switch cshell to the replacement runtime and delete the legacy code
 
-- Status: review
+- Status: done
 - Type: refactor
 - Kind: implementation
 - Parent: CSH-006
@@ -139,3 +139,9 @@ smoke evidence remain available.
 The original checkout remains unchanged. Hosted CI is configured for native
 Linux/macOS and Docker; its run results are separate from the local evidence
 above. Remaining POSIX gaps are unchanged and documented in the runtime guide.
+
+Integrated into `main` through [pull request #61](https://github.com/melliott18/cshell/pull/61)
+on 2026-09-23. Implementation commit: `458ec68`; CSH-021 integration commit:
+`0786dd9`; merge commit: `190305a`. Both hosted workflows passed Ubuntu/GCC,
+macOS/Clang, and Docker Linux. GitHub closed issue #41 when the pull request
+merged.
