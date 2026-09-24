@@ -35,7 +35,8 @@ make test-input    # Replacement input/invocation API checks only
 make test-lexer    # Replacement lexer/token API checks only
 make test-parser   # Replacement parser/AST API checks only
 make test-alias    # Alias storage, handlers, and token/AST substitution
-make test-expand   # Replacement value-expansion, arithmetic, and quote APIs
+make test-expand   # Replacement value/field expansion, arithmetic, and quote APIs
+make test-fields   # IFS splitting, pathname expansion, and cleanup checks
 make test-state    # Replacement shell-state API checks only
 make test-pty      # Controlling-terminal startup and explicit-exit fixture
 make test-harness  # Test the runner's failure detection and cleanup
@@ -43,9 +44,9 @@ make docker-test   # Build and run the selected fixtures in a Linux container
 make docker-test-pty # Build and run the selected terminal fixtures in Linux
 ```
 
-`make test` includes independent input/invocation, lexer, parser/AST, shell-state,
-alias, and value-expansion API checks. Its default behavioral suite records the
-current prototype's stdin
+`make test` includes independent input/invocation, lexer, parser/AST, alias,
+shell-state, and value/field-expansion API checks. Its default behavioral suite
+records the current prototype's stdin
 behavior and explicit prompt allowance. Replacement shell and module tests
 select their executable and fixture suite separately; passing prototype tests
 does not establish replacement behavior or POSIX compliance.
@@ -93,6 +94,8 @@ src/ast.c        Owned syntax trees and cleanup
 src/alias.c      Alias storage and alias/unalias handlers
 src/state.c      Replacement variable, parameter, and state storage
 src/expand.c     Replacement value expansion with quote provenance
+src/fields.c     Final field splitting and quote removal
+src/pathname.c   Component-wise filename generation
 src/arithmetic.c Checked signed-long arithmetic evaluation
 src/quote.c      Shared dollar-single-quote escape decoding
 src/legacy/      Transitional lexer and executor

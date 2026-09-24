@@ -39,8 +39,11 @@ PARSER_FAULT_OBJECTS = build/tests/parser-fault-alias.o build/tests/parser-fault
 STATE_HEADERS = include/cshell/state.h $(INPUT_HEADERS)
 EXPAND_HEADERS = include/cshell/expand.h include/cshell/arithmetic.h include/cshell/quote.h $(LEXER_HEADERS) $(STATE_HEADERS)
 EXPAND_OBJECTS = build/expand.o build/quote.o build/arithmetic.o
+FIELDS_HEADERS = $(EXPAND_HEADERS) src/field_internal.h
+FIELDS_OBJECTS = build/fields.o build/pathname.o
+FIELDS_FAULT_OBJECTS = build/tests/fields-fault-fields.o build/tests/fields-fault-pathname.o
 
-.PHONY: all test test-input test-lexer test-parser test-alias test-state test-expand test-pty test-harness docker-build docker-test docker-test-pty docker-shell clean
+.PHONY: all test test-input test-lexer test-parser test-alias test-state test-expand test-fields test-pty test-harness docker-build docker-test docker-test-pty docker-shell clean
 
 all: cshell
 
@@ -206,7 +209,26 @@ build/tests/arithmetic_faults: tests/arithmetic_faults.c tests/arithmetic_faults
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/arithmetic_faults.c build/tests/arith-fault-arithmetic.o build/tests/arith-fault-state.o $(LDLIBS)
 
-test-expand: build/tests/arithmetic_faults build/tests/expand_fixture build/tests/expand_faults build/tests/arithmetic_fixture build/tests/quote_fixture
+$(FIELDS_OBJECTS): build/%.o: src/%.c $(FIELDS_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+build/tests/fields_fixture: tests/fields_fixture.c $(FIELDS_OBJECTS) $(EXPAND_OBJECTS) build/state.o build/lexer.o $(FIELDS_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/fields_fixture.c $(FIELDS_OBJECTS) $(EXPAND_OBJECTS) build/state.o build/lexer.o $(LDLIBS)
+
+$(FIELDS_FAULT_OBJECTS): build/tests/fields-fault-%.o: src/%.c $(FIELDS_HEADERS) tests/fields_faults.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/fields_faults.h -c $< -o $@
+
+build/tests/fields_faults: tests/fields_faults.c tests/fields_faults.h $(FIELDS_FAULT_OBJECTS) build/state.o $(FIELDS_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/fields_faults.c $(FIELDS_FAULT_OBJECTS) build/state.o $(LDLIBS)
+
+test-fields: build/tests/fields_fixture build/tests/fields_faults
+	$(PYTHON) tests/fields.py build/tests/fields_fixture --fault-binary build/tests/fields_faults
+
+test-expand: test-fields build/tests/arithmetic_faults build/tests/expand_fixture build/tests/expand_faults build/tests/arithmetic_fixture build/tests/quote_fixture
 	$(PYTHON) tests/smoke.py ./build/tests/expand_fixture --suite tests/fixtures/expand.json
 	$(PYTHON) tests/smoke.py ./build/tests/expand_faults --suite tests/fixtures/expand-faults.json
 	$(PYTHON) tests/smoke.py ./build/tests/arithmetic_fixture --suite tests/fixtures/arithmetic.json

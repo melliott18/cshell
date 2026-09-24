@@ -44,3 +44,16 @@ effects. Cover failed redirections and resource cleanup with sanitizer builds.
 Record results and review every original [CSH-009](CSH-009-compounds-and-functions.md)
 criterion before completing the milestone. CSH-031 and CSH-032 subsequently test
 evaluation builtins and options against these control-transfer semantics.
+
+
+### CSH-027 syntax handoff
+
+The [compound payload contract](../parser-and-ast.md#compound-and-function-payloads)
+and `include/cshell/ast.h` define the execution handoff: ordered condition/body
+branches and optional else; distinct loop condition/body lists; for-list
+`has_in` distinguishing omitted parameters from an explicit empty list; ordered
+case patterns and bodies with `;;`, `;&`, or an omitted final terminator; and
+function name/body ownership. Function redirections are stored on the function
+node for application at invocation. Definition-time validation (including the
+special-builtin name restriction), retained definition lifetimes, expansions,
+control-transfer results, and all execution behavior remain this ticket's work.

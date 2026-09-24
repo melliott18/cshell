@@ -83,5 +83,15 @@ check sticky errors and complete cleanup of injected input and returned trees.
   remain unchanged. The parser never executes definitions encountered in input.
 - CSH-031 still owns dispatcher integration and executed-script checks;
   CSH-010 must demonstrate that behavior before its builtin milestone closes.
-  CSH-009's unsupported compound grammar and deferred backquote execution remain
-  outside this ticket. The prototype executable is unchanged.
+  CSH-028 owns compound-command execution, and CSH-026 owns deferred backquote
+  execution. The prototype executable is unchanged.
+
+### Integration validation
+
+After integrating CSH-025 and CSH-027, the parser retains alias substitution
+through compound commands and function definitions. Focused cases cover an alias
+that introduces an `if` command, an alias inside a function body, and descriptor
+adjacency after an alias-generated compound command. The combined native
+`make test test-pty test-harness` run passed 223 parser checks, all alias and
+field-expansion suites, one PTY fixture, four prototype fixtures, and all 61
+harness self-tests.

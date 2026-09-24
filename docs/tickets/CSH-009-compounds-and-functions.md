@@ -43,7 +43,7 @@ compound syntax.
 
 ## Completion gate
 
-- [ ] [CSH-027: Compound syntax](CSH-027-compound-syntax.md) is done.
+- [x] [CSH-027: Compound syntax](CSH-027-compound-syntax.md) is done.
 - [ ] [CSH-028: Control flow and functions](CSH-028-control-flow-and-functions.md) is done.
 - [ ] The original acceptance criteria above pass together, with recorded
   cross-feature evidence and all completion prerequisites satisfied.

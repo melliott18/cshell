@@ -33,7 +33,10 @@ struct parse_frame {
     size_t document_capacity;
 };
 
-enum closing { CLOSE_NONE, CLOSE_PAREN, CLOSE_BRACE };
+enum closing {
+    CLOSE_NONE, CLOSE_PAREN, CLOSE_BRACE, CLOSE_THEN, CLOSE_IF_BRANCH,
+    CLOSE_FI, CLOSE_DO, CLOSE_DONE, CLOSE_CASE
+};
 struct bytes { unsigned char *data; size_t length, capacity; };
 
 static struct csh_ast *parse_list(struct parse_frame *, enum closing, int,
@@ -308,6 +311,28 @@ static int assignment(const struct csh_token *token)
         }
     }
     return 0;
+}
+
+static int valid_name(const struct csh_token *token)
+{
+    size_t i, count = 0;
+    if (token->kind != CSH_TOKEN_WORD)
+        return 0;
+    for (i = 0; i < token->fragment_count; ++i) {
+        const struct csh_fragment *fragment = &token->fragments[i];
+        size_t j;
+        if (fragment->kind == CSH_FRAGMENT_CONTINUATION)
+            continue;
+        if (fragment->kind != CSH_FRAGMENT_TEXT || fragment->quote != CSH_QUOTE_NONE)
+            return 0;
+        for (j = fragment->begin; j < fragment->end; ++j) {
+            unsigned char c = token->raw[j];
+            if (!(name_start(c) || (count != 0 && c >= '0' && c <= '9')))
+                return 0;
+            ++count;
+        }
+    }
+    return count != 0;
 }
 
 static int reserved(const struct csh_token *token)
@@ -663,11 +688,328 @@ static int skip_newlines(struct parse_frame *frame)
     return result;
 }
 
+/* Expectations distinguish final EOF from a token that cannot complete the
+ * current production. Successful calls leave the expected token in lookahead. */
+static int expect_token(struct parse_frame *frame, enum csh_token_kind kind,
+    const char *spelling, const char *message)
+{
+    int result = peek(frame);
+    if (result < 0)
+        return -1;
+    if (result == 0)
+        return fail_at(frame, CSH_PARSE_INCOMPLETE, message, 0, position(frame));
+    if (frame->look.token.kind != kind ||
+        (spelling != NULL && !plain_equal(&frame->look.token, spelling)))
+        return fail_at(frame, CSH_PARSE_ERROR, message, 0, position(frame));
+    return 0;
+}
+
+static int consume_keyword(struct parse_frame *frame, struct csh_ast *node,
+    const char *spelling)
+{
+    if (expect_token(frame, CSH_TOKEN_WORD, spelling,
+            "expected compound command keyword") == -1)
+        return -1;
+    node->end = frame->look.token.end;
+    discard(frame);
+    return 0;
+}
+
+static int parse_if(struct parse_frame *frame, struct csh_ast *node)
+{
+    struct csh_error error;
+    for (;;) {
+        struct csh_ast_if_branch branch = {0};
+        discard(frame); /* if or elif */
+        branch.condition = parse_list(frame, CLOSE_THEN, 0, node->start);
+        if (branch.condition == NULL)
+            return -1;
+        if (consume_keyword(frame, node, "then") == -1) {
+            csh_ast_destroy(branch.condition);
+            return -1;
+        }
+        branch.body = parse_list(frame, CLOSE_IF_BRANCH, 0, node->start);
+        if (branch.body == NULL || csh_ast_if_add(node, &branch, &error) == -1) {
+            if (branch.body != NULL)
+                adopt_error(frame, &error);
+            csh_ast_destroy(branch.condition);
+            csh_ast_destroy(branch.body);
+            return -1;
+        }
+        if (!plain_equal(&frame->look.token, "elif"))
+            break;
+    }
+    if (plain_equal(&frame->look.token, "else")) {
+        discard(frame);
+        node->data.if_clause.else_body = parse_list(frame, CLOSE_FI, 0, node->start);
+        if (node->data.if_clause.else_body == NULL)
+            return -1;
+    }
+    return consume_keyword(frame, node, "fi");
+}
+
+static int parse_loop(struct parse_frame *frame, struct csh_ast *node)
+{
+    discard(frame);
+    node->data.loop.condition = parse_list(frame, CLOSE_DO, 0, node->start);
+    if (node->data.loop.condition == NULL || consume_keyword(frame, node, "do") == -1)
+        return -1;
+    node->data.loop.body = parse_list(frame, CLOSE_DONE, 0, node->start);
+    if (node->data.loop.body == NULL)
+        return -1;
+    return consume_keyword(frame, node, "done");
+}
+
+static int parse_for(struct parse_frame *frame, struct csh_ast *node)
+{
+    struct csh_error error;
+    int result, semicolon = 0, had_newline;
+    discard(frame);
+    if (expect_token(frame, CSH_TOKEN_WORD, NULL, "expected for variable name") == -1)
+        return -1;
+    if (!valid_name(&frame->look.token))
+        return fail_at(frame, CSH_PARSE_ERROR, "invalid for variable name", 0, position(frame));
+    take(frame, &node->data.for_clause.name);
+    result = peek(frame);
+    if (result < 0)
+        return -1;
+    had_newline = result > 0 && frame->look.token.kind == CSH_TOKEN_NEWLINE;
+    result = skip_newlines(frame);
+    if (result < 0)
+        return -1;
+    if (!had_newline && result > 0 && frame->look.token.kind == CSH_TOKEN_SEMI) {
+        semicolon = 1;
+        discard(frame);
+        if (skip_newlines(frame) < 0)
+            return -1;
+    }
+    if (!semicolon && frame->has_look && plain_equal(&frame->look.token, "in")) {
+        node->data.for_clause.has_in = 1;
+        discard(frame);
+        while ((result = peek(frame)) > 0 && frame->look.token.kind == CSH_TOKEN_WORD) {
+            struct csh_ast_word word = {0};
+            take(frame, &word);
+            if (csh_ast_word_vector_add(&node->data.for_clause.words, &word, &error) == -1) {
+                csh_ast_word_destroy(&word);
+                return adopt_error(frame, &error);
+            }
+        }
+        if (result < 0)
+            return -1;
+        if (result == 0)
+            return fail_at(frame, CSH_PARSE_INCOMPLETE,
+                "expected separator after for words", 0, position(frame));
+        if (frame->look.token.kind == CSH_TOKEN_NEWLINE) {
+            if (newline(frame) == -1)
+                return -1;
+        } else if (frame->look.token.kind == CSH_TOKEN_SEMI)
+            discard(frame);
+        else
+            return fail_at(frame, CSH_PARSE_ERROR,
+                "expected separator after for words", 0, position(frame));
+        if (skip_newlines(frame) < 0)
+            return -1;
+    }
+    if (consume_keyword(frame, node, "do") == -1)
+        return -1;
+    node->data.for_clause.body = parse_list(frame, CLOSE_DONE, 0, node->start);
+    if (node->data.for_clause.body == NULL)
+        return -1;
+    return consume_keyword(frame, node, "done");
+}
+
+static int parse_case(struct parse_frame *frame, struct csh_ast *node)
+{
+    struct csh_error error;
+    int result;
+    discard(frame);
+    if (expect_token(frame, CSH_TOKEN_WORD, NULL, "expected case word") == -1)
+        return -1;
+    take(frame, &node->data.case_clause.word);
+    if (skip_newlines(frame) < 0 || consume_keyword(frame, node, "in") == -1)
+        return -1;
+    for (;;) {
+        struct csh_ast_case_item item = {0};
+        result = skip_newlines(frame);
+        if (result < 0)
+            return -1;
+        if (result == 0)
+            return fail_at(frame, CSH_PARSE_INCOMPLETE, "unterminated case command", 0, node->start);
+        if (plain_equal(&frame->look.token, "esac"))
+            return consume_keyword(frame, node, "esac");
+        if (frame->look.token.kind == CSH_TOKEN_LPAREN)
+            discard(frame);
+        for (;;) {
+            struct csh_ast_word pattern = {0};
+            if (expect_token(frame, CSH_TOKEN_WORD, NULL, "expected case pattern") == -1)
+                goto failed;
+            take(frame, &pattern);
+            if (csh_ast_word_vector_add(&item.patterns, &pattern, &error) == -1) {
+                csh_ast_word_destroy(&pattern);
+                adopt_error(frame, &error);
+                goto failed;
+            }
+            result = peek(frame);
+            if (result < 0)
+                goto failed;
+            if (result == 0 || frame->look.token.kind != CSH_TOKEN_PIPE)
+                break;
+            discard(frame);
+        }
+        if (expect_token(frame, CSH_TOKEN_RPAREN, NULL, "expected ')' after case patterns") == -1)
+            goto failed;
+        discard(frame);
+        item.body = parse_list(frame, CLOSE_CASE, 1, node->start);
+        if (item.body == NULL)
+            goto failed;
+        if (frame->look.token.kind == CSH_TOKEN_DSEMI ||
+            frame->look.token.kind == CSH_TOKEN_SEMI_AND) {
+            item.terminator = frame->look.token.kind == CSH_TOKEN_DSEMI ?
+                CSH_AST_CASE_BREAK : CSH_AST_CASE_FALLTHROUGH;
+            item.terminator_start = frame->look.token.start;
+            item.terminator_end = frame->look.token.end;
+            discard(frame);
+        }
+        if (csh_ast_case_add(node, &item, &error) == -1) {
+            adopt_error(frame, &error);
+            goto failed;
+        }
+        continue;
+    failed:
+        csh_ast_case_item_destroy(&item);
+        return -1;
+    }
+}
+
+static int compound_kind(const struct csh_token *token, enum csh_ast_kind *kind)
+{
+    if (token->kind == CSH_TOKEN_LPAREN) *kind = CSH_AST_SUBSHELL;
+    else if (plain_equal(token, "{")) *kind = CSH_AST_BRACE;
+    else if (plain_equal(token, "if")) *kind = CSH_AST_IF;
+    else if (plain_equal(token, "for")) *kind = CSH_AST_FOR;
+    else if (plain_equal(token, "while")) *kind = CSH_AST_WHILE;
+    else if (plain_equal(token, "until")) *kind = CSH_AST_UNTIL;
+    else if (plain_equal(token, "case")) *kind = CSH_AST_CASE;
+    else return 0;
+    return 1;
+}
+
+/* Trailing redirections belong to the caller: for a function definition they
+ * are saved on the function node, to be applied when invoked by CSH-028. */
+static struct csh_ast *parse_compound(struct parse_frame *frame, enum csh_ast_kind kind)
+{
+    struct csh_ast *node;
+    int result = -1;
+    if (frame->depth >= PARSER_NESTING_LIMIT) {
+        fail_at(frame, CSH_PARSE_ERROR, "parser nesting limit exceeded", 0, position(frame));
+        return NULL;
+    }
+    node = new_node(frame, kind);
+    if (node == NULL)
+        return NULL;
+    node->start = position(frame);
+    ++frame->depth;
+    switch (kind) {
+    case CSH_AST_SUBSHELL:
+    case CSH_AST_BRACE:
+        discard(frame);
+        node->data.group.body = parse_list(frame,
+            kind == CSH_AST_SUBSHELL ? CLOSE_PAREN : CLOSE_BRACE, 0, node->start);
+        if (node->data.group.body != NULL) {
+            node->end = frame->look.token.end;
+            discard(frame);
+            result = 0;
+        }
+        break;
+    case CSH_AST_IF: result = parse_if(frame, node); break;
+    case CSH_AST_FOR: result = parse_for(frame, node); break;
+    case CSH_AST_WHILE:
+    case CSH_AST_UNTIL: result = parse_loop(frame, node); break;
+    case CSH_AST_CASE: result = parse_case(frame, node); break;
+    default: break;
+    }
+    --frame->depth;
+    if (result == -1) {
+        csh_ast_destroy(node);
+        return NULL;
+    }
+    return node;
+}
+
+static int trailing_redirections(struct parse_frame *frame, struct csh_ast *node)
+{
+    int result;
+    while ((result = peek(frame)) > 0) {
+        if (redirection_kind(frame->look.token.kind)) {
+            if (parse_redirection(frame, node, NULL) == -1)
+                return -1;
+        } else if (frame->look.token.kind == CSH_TOKEN_WORD && io_number(&frame->look.token)) {
+            struct csh_ast_word descriptor = {0};
+            int adjacent = csh_lexer_follows_redirection(frame->lexer);
+            take(frame, &descriptor);
+            result = peek(frame);
+            if (adjacent && result > 0 && redirection_kind(frame->look.token.kind)) {
+                result = parse_redirection(frame, node, &descriptor);
+            } else {
+                if (result >= 0)
+                    fail_at(frame, CSH_PARSE_ERROR, "unexpected word after compound command", 0,
+                        token_position(&descriptor.token));
+                result = -1;
+            }
+            csh_ast_word_destroy(&descriptor);
+            if (result < 0)
+                return -1;
+        } else
+            return 0;
+    }
+    return result < 0 ? -1 : 0;
+}
+
+static struct csh_ast *parse_function(struct parse_frame *frame, struct csh_ast_word *name)
+{
+    struct csh_ast *node;
+    enum csh_ast_kind kind;
+    int result;
+    if (!valid_name(&name->token)) {
+        fail_at(frame, CSH_PARSE_ERROR, "invalid function name", 0, name->token.start);
+        return NULL;
+    }
+    node = new_node(frame, CSH_AST_FUNCTION);
+    if (node == NULL)
+        return NULL;
+    node->start = name->token.start;
+    node->data.function.name = *name;
+    *name = (struct csh_ast_word){0};
+    discard(frame); /* '(' */
+    if (expect_token(frame, CSH_TOKEN_RPAREN, NULL, "expected ')' in function definition") == -1)
+        goto failed;
+    discard(frame);
+    result = skip_newlines(frame);
+    if (result < 0)
+        goto failed;
+    if (result == 0 || !compound_kind(&frame->look.token, &kind)) {
+        fail_at(frame, result == 0 ? CSH_PARSE_INCOMPLETE : CSH_PARSE_ERROR,
+            "expected compound function body", 0, position(frame));
+        goto failed;
+    }
+    node->data.function.body = parse_compound(frame, kind);
+    if (node->data.function.body == NULL)
+        goto failed;
+    node->end = node->data.function.body->end;
+    if (trailing_redirections(frame, node) == -1)
+        goto failed;
+    return node;
+failed:
+    csh_ast_destroy(node);
+    return NULL;
+}
+
 static struct csh_ast *parse_command(struct parse_frame *frame)
 {
     struct csh_ast *node = NULL;
     struct csh_error error;
     struct csh_position opening, diagnostic_opening;
+    enum csh_ast_kind kind;
     int result = peek_alias(frame, 1), command_name = 0, prefix = 0;
     if (result <= 0) {
         if (result == 0)
@@ -676,52 +1018,11 @@ static struct csh_ast *parse_command(struct parse_frame *frame)
     }
     opening = frame->look.token.start;
     diagnostic_opening = token_position(&frame->look.token);
-    if (frame->look.token.kind == CSH_TOKEN_LPAREN || plain_equal(&frame->look.token, "{")) {
-        enum closing closing = frame->look.token.kind == CSH_TOKEN_LPAREN ? CLOSE_PAREN : CLOSE_BRACE;
-        if (frame->depth >= PARSER_NESTING_LIMIT) {
-            fail_at(frame, CSH_PARSE_ERROR, "parser nesting limit exceeded", 0, diagnostic_opening);
-            return NULL;
-        }
-        node = new_node(frame, closing == CLOSE_PAREN ? CSH_AST_SUBSHELL : CSH_AST_BRACE);
+    if (compound_kind(&frame->look.token, &kind)) {
+        node = parse_compound(frame, kind);
         if (node == NULL)
             return NULL;
-        node->start = opening;
-        discard(frame);
-        ++frame->depth;
-        node->data.group.body = parse_list(frame, closing, 0, diagnostic_opening);
-        --frame->depth;
-        if (node->data.group.body == NULL)
-            goto failed;
-        node->end = frame->look.token.end;
-        discard(frame);
-        for (;;) {
-            struct csh_ast_word descriptor = {0};
-            result = peek(frame);
-            if (result <= 0)
-                break;
-            if (redirection_kind(frame->look.token.kind)) {
-                if (parse_redirection(frame, node, NULL) == -1)
-                    goto failed;
-            } else if (frame->look.token.kind == CSH_TOKEN_WORD && io_number(&frame->look.token)) {
-                int adjacent = csh_lexer_follows_redirection(frame->lexer);
-                take(frame, &descriptor);
-                result = peek(frame);
-                if (adjacent && result > 0 && redirection_kind(frame->look.token.kind)) {
-                    if (parse_redirection(frame, node, &descriptor) == -1) {
-                        csh_ast_word_destroy(&descriptor);
-                        goto failed;
-                    }
-                    csh_ast_word_destroy(&descriptor);
-                } else {
-                    fail_at(frame, CSH_PARSE_ERROR, "unexpected word after compound command", 0,
-                        token_position(&descriptor.token));
-                    csh_ast_word_destroy(&descriptor);
-                    goto failed;
-                }
-            } else
-                break;
-        }
-        if (result < 0)
+        if (trailing_redirections(frame, node) == -1)
             goto failed;
         return node;
     }
@@ -744,7 +1045,7 @@ static struct csh_ast *parse_command(struct parse_frame *frame)
         if (frame->look.token.kind != CSH_TOKEN_WORD)
             break;
         if (!command_name && !prefix && reserved(&frame->look.token)) {
-            fail_at(frame, CSH_PARSE_ERROR, "unsupported or unexpected reserved word", 0, position(frame));
+            fail_at(frame, CSH_PARSE_ERROR, "unexpected reserved word", 0, position(frame));
             goto failed;
         }
         descriptor_candidate = io_number(&frame->look.token) &&
@@ -754,6 +1055,12 @@ static struct csh_ast *parse_command(struct parse_frame *frame)
         if (result < 0) {
             csh_ast_word_destroy(&word);
             goto failed;
+        }
+        if (!prefix && result > 0 && frame->look.token.kind == CSH_TOKEN_LPAREN) {
+            struct csh_ast *function = parse_function(frame, &word);
+            csh_ast_word_destroy(&word);
+            csh_ast_destroy(node);
+            return function;
         }
         if (descriptor_candidate && result > 0 && redirection_kind(frame->look.token.kind)) {
             if (parse_redirection(frame, node, &word) == -1) {
@@ -896,9 +1203,36 @@ failed:
 
 static int at_close(struct parse_frame *frame, enum closing closing)
 {
-    return frame->has_look &&
-        ((closing == CLOSE_PAREN && frame->look.token.kind == CSH_TOKEN_RPAREN) ||
-         (closing == CLOSE_BRACE && plain_equal(&frame->look.token, "}")));
+    const struct csh_token *token = &frame->look.token;
+    if (!frame->has_look)
+        return 0;
+    switch (closing) {
+    case CLOSE_PAREN: return token->kind == CSH_TOKEN_RPAREN;
+    case CLOSE_BRACE: return plain_equal(token, "}");
+    case CLOSE_THEN: return plain_equal(token, "then");
+    case CLOSE_IF_BRANCH:
+        return plain_equal(token, "elif") || plain_equal(token, "else") || plain_equal(token, "fi");
+    case CLOSE_FI: return plain_equal(token, "fi");
+    case CLOSE_DO: return plain_equal(token, "do");
+    case CLOSE_DONE: return plain_equal(token, "done");
+    case CLOSE_CASE:
+        return token->kind == CSH_TOKEN_DSEMI || token->kind == CSH_TOKEN_SEMI_AND ||
+            plain_equal(token, "esac");
+    case CLOSE_NONE: return 0;
+    }
+    return 0;
+}
+
+/* Reserved closers immediately after a compound delimiter need no separator.
+ * A redirect operand is not such a delimiter (POSIX grammar Rule 1). Operator
+ * closers ')' and ';;'/';&' remain unambiguous after either form. */
+static int ends_with_redirection(const struct csh_ast *node)
+{
+    while (node->kind == CSH_AST_AND || node->kind == CSH_AST_OR)
+        node = node->data.binary.right;
+    if (node->kind == CSH_AST_PIPELINE)
+        node = node->data.pipeline.commands[node->data.pipeline.command_count - 1];
+    return node->redirection_count != 0;
 }
 
 /* A nested list leaves its closing token in lookahead for the group or lexer
@@ -953,7 +1287,8 @@ static struct csh_ast *parse_list(struct parse_frame *frame, enum closing closin
                 item.separator_start = frame->look.token.start;
                 item.separator_end = frame->look.token.end;
                 list->end = item.separator_end;
-            } else if (!at_close(frame, closing)) {
+            } else if (!at_close(frame, closing) ||
+                (kind == CSH_TOKEN_WORD && ends_with_redirection(item.command))) {
                 fail_at(frame, CSH_PARSE_ERROR, "expected command separator", 0, position(frame));
                 csh_ast_destroy(item.command);
                 goto failed;

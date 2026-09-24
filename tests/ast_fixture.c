@@ -205,10 +205,20 @@ static void invalid_and_overflow(void)
     enum csh_ast_kind kind;
 
     for (kind = CSH_AST_IF; kind <= CSH_AST_FUNCTION; ++kind) {
-        struct csh_ast *out = simple;
-        assert(csh_ast_create(&out, kind, &error) == -1 && out == NULL);
-        assert(error.system_errno == EINVAL && error.status == 2);
+        struct csh_ast *out = make_node(kind);
+        struct csh_ast_redirection *redirect = make_redirection(CSH_TOKEN_GREAT);
+        assert(csh_ast_add_redirection(out, &redirect, &error) == 0 && redirect == NULL);
         assert(strcmp(csh_ast_kind_name(kind), "UNKNOWN") != 0);
+        csh_ast_destroy(out);
+    }
+    {
+        struct csh_ast *out = simple;
+        assert(csh_ast_create(&out, (enum csh_ast_kind)-1, &error) == -1 && out == NULL);
+        assert(error.system_errno == EINVAL && error.status == 2);
+        out = simple;
+        assert(csh_ast_create(&out, (enum csh_ast_kind)(CSH_AST_FUNCTION + 1),
+            &error) == -1 && out == NULL);
+        assert(error.system_errno == EINVAL && error.status == 2);
     }
     assert(strcmp(csh_ast_kind_name((enum csh_ast_kind)-1), "UNKNOWN") == 0);
     assert(csh_ast_create(NULL, CSH_AST_SIMPLE, &error) == -1);
@@ -320,6 +330,133 @@ static void growing_vectors(void)
     csh_ast_word_destroy(&nested_word);
 }
 
+static void compound_vectors(void)
+{
+    struct csh_ast *conditional = make_node(CSH_AST_IF);
+    struct csh_ast *loop = make_node(CSH_AST_FOR);
+    struct csh_ast *choice = make_node(CSH_AST_CASE);
+    struct csh_error error;
+    size_t index, pattern;
+    loop->data.for_clause.name = make_word("item");
+    loop->data.for_clause.has_in = 1;
+    loop->data.for_clause.body = make_node(CSH_AST_LIST);
+    choice->data.case_clause.word = make_word("\"$item\"");
+    conditional->data.if_clause.else_body = make_node(CSH_AST_LIST);
+    for (index = 0; index < 41; ++index) {
+        struct csh_ast_if_branch branch = {0};
+        struct csh_ast_case_item item = {0};
+        struct csh_ast_word word = make_word(index % 2 ? "\"quoted\"" : "literal");
+        unsigned char *raw = word.token.raw;
+        branch.condition = make_node(CSH_AST_LIST);
+        branch.condition->start.offset = index;
+        branch.body = make_node(CSH_AST_LIST);
+        assert(csh_ast_if_add(conditional, &branch, &error) == 0);
+        assert(branch.condition == NULL && branch.body == NULL);
+        assert(csh_ast_word_vector_add(&loop->data.for_clause.words, &word, &error) == 0);
+        assert(word.token.raw == NULL && word.substitutions == NULL);
+        assert(loop->data.for_clause.words.items[index].token.raw == raw);
+        item.body = make_node(CSH_AST_LIST);
+        item.terminator = (enum csh_ast_case_terminator)(index % 3);
+        item.terminator_start = (struct csh_position){index * 2, 1, index * 2 + 1};
+        item.terminator_end = (struct csh_position){index * 2 + 2, 1, index * 2 + 3};
+        for (pattern = 0; pattern < 9; ++pattern) {
+            word = make_word(pattern % 2 ? "'quoted*'" : "pattern*");
+            assert(csh_ast_word_vector_add(&item.patterns, &word, &error) == 0);
+        }
+        assert(csh_ast_case_add(choice, &item, &error) == 0);
+        assert(item.body == NULL && item.patterns.items == NULL &&
+            item.patterns.count == 0 && item.patterns.capacity == 0 &&
+            item.terminator == CSH_AST_CASE_END && item.terminator_end.offset == 0);
+    }
+    assert(conditional->data.if_clause.branch_count == 41);
+    assert(loop->data.for_clause.words.count == 41);
+    assert(choice->data.case_clause.item_count == 41);
+    for (index = 0; index < 41; ++index) {
+        const struct csh_ast_case_item *item = &choice->data.case_clause.items[index];
+        assert(conditional->data.if_clause.branches[index].condition->start.offset == index);
+        assert(strcmp((char *)loop->data.for_clause.words.items[index].token.raw,
+            index % 2 ? "\"quoted\"" : "literal") == 0);
+        assert(item->patterns.count == 9 && item->body->kind == CSH_AST_LIST);
+        assert(item->terminator == (enum csh_ast_case_terminator)(index % 3));
+        assert(item->terminator_start.offset == index * 2);
+        assert(item->terminator_end.offset == index * 2 + 2);
+    }
+    csh_ast_destroy(conditional);
+    csh_ast_destroy(loop);
+    csh_ast_destroy(choice);
+}
+
+static void invalid_compound_vectors(void)
+{
+    struct csh_ast *conditional = make_node(CSH_AST_IF);
+    struct csh_ast *choice = make_node(CSH_AST_CASE);
+    struct csh_ast_if_branch branch = {0};
+    struct csh_ast_case_item item = {0};
+    struct csh_ast_word word = make_word("'owned pattern'");
+    struct csh_ast *condition = make_node(CSH_AST_LIST);
+    struct csh_ast *body = make_node(CSH_AST_LIST);
+    unsigned char *raw = word.token.raw;
+    struct csh_error error;
+
+    branch.condition = condition;
+    assert(csh_ast_if_add(conditional, &branch, &error) == -1);
+    assert(error.system_errno == EINVAL && branch.condition == condition);
+    branch.body = body;
+    assert(csh_ast_if_add(NULL, &branch, &error) == -1);
+    assert(csh_ast_if_add(choice, &branch, &error) == -1);
+    assert(csh_ast_if_add(conditional, NULL, &error) == -1);
+    branch.body = condition;
+    assert(csh_ast_if_add(conditional, &branch, &error) == -1);
+    branch.body = conditional;
+    assert(csh_ast_if_add(conditional, &branch, &error) == -1);
+    branch.body = body;
+    conditional->data.if_clause.branch_count = SIZE_MAX;
+    assert(csh_ast_if_add(conditional, &branch, &error) == -1);
+    assert(error.system_errno == EOVERFLOW && error.status == 1);
+    assert(branch.condition == condition && branch.body == body);
+    assert(conditional->data.if_clause.branches == NULL &&
+        conditional->data.if_clause.branch_capacity == 0);
+    conditional->data.if_clause.branch_count = 0;
+    assert(csh_ast_if_add(conditional, &branch, &error) == 0);
+
+    assert(csh_ast_word_vector_add(NULL, &word, &error) == -1);
+    assert(csh_ast_word_vector_add(&item.patterns, NULL, &error) == -1);
+    assert(word.token.raw == raw && error.system_errno == EINVAL);
+    item.patterns.count = SIZE_MAX;
+    assert(csh_ast_word_vector_add(&item.patterns, &word, &error) == -1);
+    assert(error.system_errno == EOVERFLOW && error.status == 1);
+    assert(word.token.raw == raw && item.patterns.items == NULL && item.patterns.capacity == 0);
+    item.patterns.count = 0;
+
+    assert(csh_ast_case_add(choice, &item, &error) == -1);
+    item.body = make_node(CSH_AST_LIST);
+    assert(csh_ast_case_add(choice, &item, &error) == -1);
+    assert(csh_ast_word_vector_add(&item.patterns, &word, &error) == 0);
+    assert(csh_ast_case_add(NULL, &item, &error) == -1);
+    assert(csh_ast_case_add(conditional, &item, &error) == -1);
+    assert(csh_ast_case_add(choice, NULL, &error) == -1);
+    item.body->kind = CSH_AST_SIMPLE;
+    assert(csh_ast_case_add(choice, &item, &error) == -1);
+    item.body->kind = CSH_AST_LIST;
+    item.terminator = (enum csh_ast_case_terminator)-1;
+    assert(csh_ast_case_add(choice, &item, &error) == -1);
+    item.terminator = (enum csh_ast_case_terminator)(CSH_AST_CASE_FALLTHROUGH + 1);
+    assert(csh_ast_case_add(choice, &item, &error) == -1);
+    item.terminator = CSH_AST_CASE_BREAK;
+    choice->data.case_clause.item_count = SIZE_MAX;
+    assert(csh_ast_case_add(choice, &item, &error) == -1);
+    assert(error.system_errno == EOVERFLOW && error.status == 1);
+    assert(item.patterns.items[0].token.raw == raw && item.body != NULL);
+    assert(choice->data.case_clause.items == NULL && choice->data.case_clause.item_capacity == 0);
+    choice->data.case_clause.item_count = 0;
+    csh_ast_case_item_destroy(&item);
+    assert(item.patterns.items == NULL && item.body == NULL);
+    csh_ast_case_item_destroy(&item);
+    csh_ast_case_item_destroy(NULL);
+    csh_ast_destroy(conditional);
+    csh_ast_destroy(choice);
+}
+
 /* Long binary chains and nested owned words must not consume the C stack.
  * Keep the fixture small enough to run in each native and sanitizer suite. */
 static void deep_cleanup(void)
@@ -354,12 +491,88 @@ static void deep_cleanup(void)
     csh_ast_redirection_destroy(NULL);
 }
 
+static void deep_compound_cleanup(void)
+{
+    struct csh_ast *root = make_node(CSH_AST_LIST);
+    struct csh_error error;
+    size_t index;
+    for (index = 0; index < 12000; ++index) {
+        struct csh_ast *node;
+        struct csh_ast_substitution substitution = {0};
+        struct csh_ast_word word = {0};
+        switch (index % 8) {
+        case 0: {
+            struct csh_ast_if_branch branch = {0};
+            node = make_node(CSH_AST_IF);
+            branch.condition = root;
+            branch.body = make_node(CSH_AST_LIST);
+            assert(csh_ast_if_add(node, &branch, &error) == 0);
+            node->data.if_clause.else_body = make_node(CSH_AST_LIST);
+            break;
+        }
+        case 1:
+            node = make_node(CSH_AST_FOR);
+            node->data.for_clause.name = make_word("name");
+            substitution.body = root;
+            assert(csh_ast_word_add_substitution(&word, &substitution, &error) == 0);
+            assert(csh_ast_word_vector_add(&node->data.for_clause.words, &word, &error) == 0);
+            node->data.for_clause.body = make_node(CSH_AST_LIST);
+            break;
+        case 2:
+        case 3:
+            node = make_node(index % 8 == 2 ? CSH_AST_WHILE : CSH_AST_UNTIL);
+            node->data.loop.body = root;
+            node->data.loop.condition = make_node(CSH_AST_LIST);
+            break;
+        case 4: {
+            struct csh_ast_case_item item = {0};
+            struct csh_ast_list_item command = {0};
+            node = make_node(CSH_AST_CASE);
+            node->data.case_clause.word = make_word("selector");
+            item.body = make_node(CSH_AST_LIST);
+            command.command = root;
+            assert(csh_ast_list_add(item.body, &command, &error) == 0);
+            word = make_word("pattern");
+            assert(csh_ast_word_vector_add(&item.patterns, &word, &error) == 0);
+            assert(csh_ast_case_add(node, &item, &error) == 0);
+            break;
+        }
+        case 5: {
+            struct csh_ast_case_item item = {0};
+            node = make_node(CSH_AST_CASE);
+            substitution.body = root;
+            assert(csh_ast_word_add_substitution(&word, &substitution, &error) == 0);
+            assert(csh_ast_word_vector_add(&item.patterns, &word, &error) == 0);
+            item.body = make_node(CSH_AST_LIST);
+            assert(csh_ast_case_add(node, &item, &error) == 0);
+            break;
+        }
+        case 6:
+            node = make_node(CSH_AST_FUNCTION);
+            node->data.function.name = make_word("function_name");
+            node->data.function.body = root;
+            break;
+        default:
+            node = make_node(CSH_AST_CASE);
+            substitution.body = root;
+            assert(csh_ast_word_add_substitution(&node->data.case_clause.word,
+                &substitution, &error) == 0);
+            break;
+        }
+        root = node;
+    }
+    csh_ast_destroy(root);
+}
+
 int main(void)
 {
     source_order();
     invalid_and_overflow();
     growing_vectors();
+    compound_vectors();
+    invalid_compound_vectors();
     deep_cleanup();
-    puts("PASS: AST ownership, source order, overflow, reserved kinds, deep cleanup");
+    deep_compound_cleanup();
+    puts("PASS: AST ownership, source order, overflow, compound payloads, deep cleanup");
     return 0;
 }

@@ -406,6 +406,34 @@ static void grammar(void)
     word(one(item(tree, 0)->data.group.body), 0, "echo");
     word(item(tree, 1), 0, "echo");
     csh_ast_destroy(tree);
+    set(table, "a", "echo");
+    set(table, "b", "printf");
+    set(table, "flow", "if a; then b; else a; fi");
+    tree = parse("flow\n", table);
+    node = one(tree);
+    check(node->kind == CSH_AST_IF && node->data.if_clause.branch_count == 1 &&
+        node->data.if_clause.else_body != NULL,
+        "alias replacement can introduce compound syntax");
+    word(one(node->data.if_clause.branches[0].condition), 0, "echo");
+    word(one(node->data.if_clause.branches[0].body), 0, "printf");
+    word(one(node->data.if_clause.else_body), 0, "echo");
+    csh_ast_destroy(tree);
+    set(table, "body", "echo");
+    tree = parse("f() { body; }\n", table);
+    node = one(tree);
+    check(node->kind == CSH_AST_FUNCTION &&
+        node->data.function.body->kind == CSH_AST_BRACE,
+        "function definition retains compound body");
+    word(one(node->data.function.body->data.group.body), 0, "echo");
+    csh_ast_destroy(tree);
+    set(table, "compound", "{ echo; } 2>out");
+    tree = parse("compound\n", table);
+    node = one(tree);
+    check(node->kind == CSH_AST_BRACE && node->redirection_count == 1 &&
+        node->redirections[0]->has_io_number &&
+        strcmp((const char *)node->redirections[0]->io_number.raw, "2") == 0,
+        "compound descriptor adjacency survives alias injection");
+    csh_ast_destroy(tree);
     csh_aliases_destroy(table);
 }
 
@@ -562,7 +590,8 @@ static void invalid_replacements(void)
         { "echo )", "a\n", CSH_PARSE_ERROR },
         { "(", "a\n", CSH_PARSE_INCOMPLETE },
         { "echo 'unfinished", "a\n", CSH_PARSE_INCOMPLETE },
-        { "", "echo; a; echo\n", CSH_PARSE_ERROR }
+        { "", "echo; a; echo\n", CSH_PARSE_ERROR },
+        { "{ echo; } 2", "a>out\n", CSH_PARSE_ERROR }
     };
     struct csh_aliases *table = aliases();
     size_t index;
