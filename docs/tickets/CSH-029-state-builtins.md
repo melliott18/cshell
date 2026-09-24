@@ -1,6 +1,6 @@
 # CSH-029: Implement state builtins and allocate the utility inventory
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-010
@@ -73,3 +73,9 @@ Validation on macOS (Apple Clang) and Docker Linux (GCC):
 
 These checks exercise replacement modules. They do not make the prototype
 executable a replacement runtime or close the CSH-010 milestone.
+
+Integrated into `main` through [pull request #57](https://github.com/melliott18/cshell/pull/57)
+on 2026-09-23. Implementation commit: `de0d80f`; assignment-environment
+integration commit: `1d830ed`; merge commit: `4a09ff9`. GitHub closed issue
+#30 when the pull request merged. Both hosted workflows passed Ubuntu/GCC,
+macOS/Clang, and Docker Linux.
