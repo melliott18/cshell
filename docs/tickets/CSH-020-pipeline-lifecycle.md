@@ -1,6 +1,6 @@
 # CSH-020: Execute pipelines with explicit child and descriptor ownership
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-006
@@ -120,3 +120,14 @@ remain with their existing tickets.
   ASan/UBSan command. The descriptor-observer helper remains uninstrumented for
   the previously documented macOS sanitizer startup behavior; executor,
   parser/state, API fixtures, and fault objects remain instrumented.
+
+Integrated assignment environments and state builtins before merge. The combined
+pipeline suite passed 55 behavior cases, including exported prefix assignments
+for external stages and isolation of state-builtin mutations between stages and
+the parent. Full native, harness, and strict ASan/UBSan suites passed locally.
+
+Integrated into `main` through [pull request #60](https://github.com/melliott18/cshell/pull/60)
+on 2026-09-23. Implementation commit: `cfe2219`; sanitizer descriptor fix:
+`927b81d`; cross-feature integration commit: `24e8616`; merge commit: `ba3aeb9`.
+GitHub closed issue #21 when the pull request merged. Both hosted workflows
+passed Ubuntu/GCC, macOS/Clang, and Docker Linux.
