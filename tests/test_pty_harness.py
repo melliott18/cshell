@@ -167,14 +167,16 @@ class PtyHarnessTests(unittest.TestCase):
         self.assert_recorded_processes_stopped(marker)
 
     def test_environment_and_resource_limits_match_pipe_transport(self):
-        expected = {"locale": True, "override": True, "host_isolated": True,
+        expected = {"allocator_setting": True, "locale": True,
+                    "override": True, "host_isolated": True,
                     "home_isolated": True, "temporary_isolated": True}
         environment = case("environment", name="environment", env={"CSHELL_FIXTURE_VALUE": "fixture value"},
                            output=json.dumps(expected, sort_keys=True) + "\n")
         limits = case("limits", name="limits", output=json.dumps(
             {"core": True, "cpu": True, "file": True, "descriptors": True}, sort_keys=True) + "\n")
         self.assert_success(self.run_suite([environment, limits],
-                            env=dict(os.environ, CSHELL_HOST_SECRET="must not leak")))
+                            env=dict(os.environ, CSHELL_HOST_SECRET="must not leak",
+                                     MallocNanoZone="0")))
 
     def test_hang_timeout_is_bounded_and_cleans_leader(self):
         marker = self.process_marker()

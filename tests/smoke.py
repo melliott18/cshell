@@ -183,6 +183,8 @@ def capture(binary, case, directory, timeout, output_limit):
         "PATH": os.defpath, "LANG": "C", "LC_ALL": "C",
         "HOME": str(directory / ".home"), "TMPDIR": str(directory / ".tmp"),
     }
+    if "MallocNanoZone" in os.environ:
+        environment["MallocNanoZone"] = os.environ["MallocNanoZone"]
     environment.update(case.get("env", {}))
     for target in (".home", ".tmp"):
         (directory / target).mkdir()

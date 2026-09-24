@@ -89,6 +89,11 @@ operands return status 2 without requesting exit. CSH-018 owns full exit/status
 integration. `special_builtin_error` reports special-category failures for the
 future runtime's context-dependent policy; it does not itself request exit.
 
+The [candidate runtime](candidate-runtime.md) consumes this error classification:
+special-builtin errors end non-interactive input processing but allow an
+interactive candidate to continue. Invalid `exit` operands follow the same
+context rule directly through `exit_requested`.
+
 ## Assignment categories and resolved dispatch
 
 CSH-023 implements the category boundary described by POSIX

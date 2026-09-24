@@ -203,6 +203,7 @@ def main():
     elif mode == "environment":
         cwd = Path.cwd()
         checks = {
+            "allocator_setting": os.environ.get("MallocNanoZone") == "0",
             "locale": os.environ.get("LC_ALL") == "C",
             "override": os.environ.get("CSHELL_FIXTURE_VALUE") == "fixture value",
             "host_isolated": "CSHELL_HOST_SECRET" not in os.environ,

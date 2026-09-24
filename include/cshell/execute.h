@@ -86,7 +86,11 @@ int csh_command_from_ast(const struct csh_ast *tree, struct csh_command *out,
  * Always initialize result and update state's last_status. error contains a
  * static diagnostic only on -1; child failures print once in the child.
  * Signal termination maps to 128 + signal number. No process-global environ
- * mutation; exec uses the state's exported environment and PATH variable. */
+ * mutation; exec uses the state's exported environment and PATH variable.
+ * exit [--] [status] preserves last_status when omitted; otherwise accepts a
+ * signed decimal long and uses its low eight bits. Operand errors set status
+ * 2 and request exit only in non-interactive state, as do special-builtin
+ * redirection errors with their own failure status. */
 int csh_execute_command(struct csh_state *state, const struct csh_command *command,
     struct csh_execution *result, struct csh_error *error);
 /* Resolved parent dispatch for builtin/function consumers. Handler borrows all

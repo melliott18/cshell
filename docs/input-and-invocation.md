@@ -4,7 +4,7 @@
 in [`src/input.c`](../src/input.c) and
 [`src/invocation.c`](../src/invocation.c). They build independently of the legacy
 scanner and executor. The public executable still uses the prototype input
-loop: CSH-018 integrates these APIs in replacement-runtime fixtures, and CSH-039
+loop: CSH-018 integrates these APIs in the [candidate runtime](candidate-runtime.md), and CSH-039
 wires them into `cshell`. The APIs acquire input and describe invocation; they
 do not execute commands, expand parameters, print diagnostics, or exit.
 

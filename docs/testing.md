@@ -1,5 +1,43 @@
 # Testing cshell
 
+## Candidate runtime integration
+
+`make test-runtime` checks `build/cshell-candidate` across `-c`, script-file, and
+stdin modes using shared fixtures. `make test-runtime-pty` checks interactive
+exit errors, child statuses, EOF, primary/continuation prompts, and here-documents
+on a controlling terminal. The build uses only replacement modules and needs
+no Flex. See [Candidate runtime](candidate-runtime.md) for the exact subset,
+status/exit policy, and deferred interactive features.
+
+The source cases in `tests/runtime_cases.py` generate
+`build/tests/runtime.json` and `build/tests/runtime-pty.json`. They use the same
+`tests/smoke.py` runner, per-case directories, process/session cleanup, timeout,
+and output limits as other suites. Every case asserts exact output and status;
+relevant cases also check file effects or their absence. No candidate case
+strips prompts. The compiled `execute_helper` provides exact output, completion,
+and signal behavior without relying on additional shell features.
+
+```sh
+make test-runtime test-runtime-pty
+make docker-test DOCKER_IMAGE=cshell-test:csh-018
+make docker-test-pty DOCKER_IMAGE=cshell-test:csh-018
+# Select a generated case with the existing runner:
+python3 tests/smoke.py ./build/cshell-candidate --suite build/tests/runtime.json --case 'unknown command (stdin)'
+```
+
+The pipe cases join `make test`; the terminal cases join `make test-pty`.
+Consequently both run through existing native and Docker CI entry points.
+Native sanitizer CI includes both candidate suites. For focused sanitizer work,
+use a separate checkout or clean build:
+
+```sh
+make clean
+MallocNanoZone=0 ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 make test-runtime test-runtime-pty CC=clang CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+```
+
+`MallocNanoZone=0` prevents the macOS allocator from writing a compatibility
+notice into the PTY output before the sanitizer-instrumented candidate starts.
+
 ## Coverage and suite selection
 
 CSH-016 adds independent replacement-input API fixtures alongside the behavioral

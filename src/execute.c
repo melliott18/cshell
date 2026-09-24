@@ -378,21 +378,28 @@ static void builtin_exit(struct csh_state *state, const struct csh_command *comm
     struct csh_execution *result)
 {
     struct csh_state_info info;
+    size_t first = 1;
     csh_state_get_info(state, &info);
     result->status = info.last_status;
-    if (command->argc > 2) {
+    if (first < command->argc && strcmp(command->argv[first], "--") == 0) ++first;
+    if (command->argc - first > 1) {
         diagnose("exit", "too many arguments", 0);
         result->status = 2;
+        result->exit_requested = !(info.options & CSH_OPT_INTERACTIVE);
         return;
     }
-    if (command->argc == 2) {
+    if (command->argc > first) {
         char *end;
+        const char *operand = command->argv[first], *digits = operand;
         long value;
+        if (*digits == '+' || *digits == '-') ++digits;
+        while (*digits >= '0' && *digits <= '9') ++digits;
         errno = 0;
-        value = strtol(command->argv[1], &end, 10);
-        if (errno == ERANGE || end == command->argv[1] || *end != '\0') {
+        value = strtol(operand, &end, 10);
+        if (errno == ERANGE || end == operand || *end != '\0' || *digits != '\0') {
             diagnose("exit", "numeric status required", 0);
             result->status = 2;
+            result->exit_requested = !(info.options & CSH_OPT_INTERACTIVE);
             return;
         }
         result->status = (int)((unsigned long)value & 255u);
@@ -847,6 +854,7 @@ int csh_execute_pipeline_ast(struct csh_state *state, const struct csh_ast *tree
     int negated = 0, rc = -1;
     memset(out, 0, sizeof(*out));
     memset(error, 0, sizeof(*error));
+    out->execution.category = CSH_EXEC_PIPELINE;
     if (tree != NULL && tree->kind == CSH_AST_LIST && tree->redirection_count == 0 &&
         tree->data.list.item_count == 1 &&
         tree->data.list.items[0].separator != CSH_AST_AMPERSAND)
