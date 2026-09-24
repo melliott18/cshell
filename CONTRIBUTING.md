@@ -92,12 +92,13 @@ make -j
 make test
 make test-pty
 make test-expand
+make test-execute
 make test-alias
 make test-harness
 ```
 
 The tests require Python 3.9 or newer. `make test` runs the replacement
-input/invocation, lexer, parser/AST, shell-state, and value-expansion API checks
+input/invocation, lexer, parser/AST, shell-state, value-expansion, and execution API checks
 and the selected behavioral fixtures; its default suite checks the prototype's
 startup, explicit exit, and
 simple external commands. `make test-input` checks only the replacement input
@@ -123,6 +124,11 @@ and allocation failures without the legacy scanner or executor. It also runs
 `make test-fields` for IFS splitting, pathname generation, restricted contexts,
 and allocation/I/O/interruption cleanup. See
 [Value expansion](docs/value-expansions.md) for the intermediate output contract.
+
+`make test-execute` checks simple-command lookup, owned children, ordered
+redirections, bootstrap builtins, and failure cleanup without legacy objects or
+Flex. See [Simple-command execution](docs/execution.md) for the prepared-command
+contract and the temporary literal adapter's limits.
 
 `make test-alias` checks alias storage, direct builtin handlers, parser
 substitution, and allocation failures without invoking the prototype. See

@@ -76,6 +76,15 @@ fields, and explicit failure/interruption cleanup at the module level. Real
 substitutions and arithmetic ambiguity replay remain integration gaps. The prototype table above remains a
 runtime baseline; standalone API fixtures do not establish shell conformance.
 
+## Replacement execution evidence
+
+CSH-019 adds [module-level simple-command execution](execution.md), with
+lookup/status conversion, owned children, ordered file/descriptor/here-document
+redirections, and parent builtin restoration. Its literal adapter rejects
+pending expansion and compound syntax before dispatch. Assignment lifetime,
+pipelines, full builtin semantics, and runtime integration remain separate
+tickets; the prototype table above remains the runtime baseline.
+
 ## Replacement alias evidence
 
 CSH-030 adds [alias storage, direct handlers, and token/AST substitution](aliases.md),

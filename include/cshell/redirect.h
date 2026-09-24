@@ -1,0 +1,46 @@
+#ifndef CSHELL_REDIRECT_H
+#define CSHELL_REDIRECT_H
+
+#include "cshell/input.h"
+
+enum csh_redirect_kind {
+    CSH_REDIRECT_READ, CSH_REDIRECT_WRITE, CSH_REDIRECT_APPEND,
+    CSH_REDIRECT_READ_WRITE, CSH_REDIRECT_CLOBBER,
+    CSH_REDIRECT_DUP_READ, CSH_REDIRECT_DUP_WRITE, CSH_REDIRECT_CLOSE,
+    CSH_REDIRECT_HEREDOC
+};
+
+/* Prepared, owned operands. Only path for file operations and data for
+ * HEREDOC are populated; source_fd is used by DUP operations. Here-document
+ * data is already expanded, may contain NUL, and has exactly length bytes. */
+struct csh_redirect {
+    enum csh_redirect_kind kind;
+    int fd;
+    int source_fd;
+    char *path;
+    unsigned char *data;
+    size_t length;
+};
+
+struct csh_redirect_save;
+
+/* Borrow inputs. validate has no descriptor/filesystem side effects. apply
+ * saves each target's original open/closed state and descriptor flags, then
+ * applies operations in order. Private saved fds cannot alias any operand.
+ * On failure apply restores and clears *save. On success the caller MUST
+ * restore, even when command execution fails. Restore consumes *save.
+ * Do not overwrite an outstanding save token with another apply call.
+ * Descriptor mutation must be serialized, including signal handlers.
+ * Restore attempts every target on error and reports the first failure.
+ * Restore cannot undo filesystem creation/truncation or shared file offsets.
+ * All errors are returned without printing. error and save are required.
+ * Callers serialize descriptor mutation, including signal handlers; no
+ * concurrent descriptor acquisition is allowed during interrupted closes. */
+int csh_redirect_validate(const struct csh_redirect *items, size_t count,
+    struct csh_error *error);
+int csh_redirect_apply(const struct csh_redirect *items, size_t count,
+    struct csh_redirect_save **save, struct csh_error *error);
+int csh_redirect_restore(struct csh_redirect_save **save,
+    struct csh_error *error);
+
+#endif
