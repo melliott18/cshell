@@ -62,6 +62,9 @@ control-transfer results, and execution are implemented by this ticket.
 
 ### Implementation record — 2026-09-24
 
+- Implementation commit: `ccff0f9`.
+- Review: [PR #69](https://github.com/melliott18/cshell/pull/69).
+
 - The execution planner handles every parsed compound kind. Reached branches
   expand lazily; for lists snapshot fields/parameters; case patterns retain quote
   protection and support `;&` without expanding the next clause's patterns.
@@ -91,7 +94,9 @@ control-transfer results, and execution are implemented by this ticket.
   calls, state copies, parameter push/pop, for-list storage, case expansion, and
   descriptor restoration. Every iteration checks allocation and descriptor
   counts, caller parameters, and active loop/function depths.
-- Linux ASan/UBSan validation: pending final runtime/control/PTY run.
+- Linux ASan/UBSan with `-Werror`: clean `make -j4 test-control test-runtime
+  test-runtime-pty` passed all 210 control cases, allocation/API checks, 675
+  runtime cases, and 12 runtime PTY cases without sanitizer reports.
 
 ### Original CSH-009 acceptance review
 
