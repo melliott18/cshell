@@ -4,7 +4,7 @@
 [`cshell/alias.h`](../include/cshell/alias.h), direct `alias`/`unalias` handlers,
 and substitution in the replacement lexer/parser. These APIs do not execute
 commands. CSH-031 owns dispatcher integration and executed-script evidence;
-the prototype `cshell` executable does not gain alias support from this change.
+the public `cshell` executable does not gain alias support from this change.
 
 The contract follows POSIX.1-2024
 [alias substitution](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_03_01),

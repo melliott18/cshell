@@ -1,25 +1,27 @@
-# Candidate runtime and exit statuses
+# Runtime behavior and exit statuses
 
-[CSH-018](tickets/CSH-018-status-and-cli-integration.md) connects the replacement
-invocation, input, parser, literal command adapter, executor, and shell state in
-[`src/candidate.c`](../src/candidate.c). Build the internal test executable with:
+[CSH-018](tickets/CSH-018-status-and-cli-integration.md) integrated invocation,
+input, parser, literal command adapter, executor, and shell state.
+[CSH-039](tickets/CSH-039-legacy-retirement.md) promotes that runtime to the only
+public executable, with its entry point in [`src/main.c`](../src/main.c):
 
 ```sh
-make build/cshell-candidate
-./build/cshell-candidate -c 'exit 23'
-./build/cshell-candidate script-file arg1 arg2
-printf 'exit 23\n' | ./build/cshell-candidate
+make
+./cshell -c 'exit 23'
+./cshell script-file arg1 arg2
+printf 'exit 23\n' | ./cshell
 ```
 
-The candidate links no legacy objects and needs no Flex. The default `cshell`
-executable remains the prototype until [CSH-039](tickets/CSH-039-legacy-retirement.md).
-This is a tested bootstrap subset, not a POSIX compliance claim.
+There is no alternate candidate executable or legacy runtime. The handwritten
+lexer needs no Flex. This is a tested bootstrap subset, not a POSIX compliance
+claim. This document retains its original filename so historical ticket links
+remain valid.
 
 ## Supported execution
 
 The [invocation API](input-and-invocation.md) selects `-c`, a script file, or
 stdin, copies `$0` and positional operands into state, and imports the process
-environment. The candidate calls the parser at complete-command boundaries;
+environment. The runtime calls the parser at complete-command boundaries;
 commands that read stdin receive the bytes after their command line. Script
 files and command strings leave stdin available independently.
 
@@ -57,8 +59,8 @@ does not end a continuing parent shell. Lookup uses 127 for not found and 126
 for found but unexecutable. A child killed by a signal produces
 `128 + signal_number`; the parent stores this integer and can continue. On the
 supported macOS/Linux platforms, SIGTERM therefore produces 143. Exiting the
-candidate with this status is an ordinary process exit, not a signal sent to
-the candidate itself.
+shell with this status is an ordinary process exit, not a signal sent to
+the shell itself.
 
 The exit handler supports `exit [--] [status]`:
 
@@ -94,8 +96,8 @@ fixed `$ ` primary prompt or `> ` continuation prompt on stderr, once per
 physical read. Blank/comment lines restart the primary prompt; quoted multiline
 words and here-document lines retain the continuation prompt. Prompt expansion,
 startup files, job control, signal handling for the shell itself, and parser
-syntax-error recovery remain outside this candidate. Parser failures are sticky
-and terminate even an interactive candidate; adapter rejection can continue
+syntax-error recovery remain outside this runtime. Parser failures are sticky
+and terminate even an interactive shell; adapter rejection can continue
 because its parser remains usable. `-i` with a string or file selects interactive
 error behavior without printing stdin prompts.
 
@@ -111,5 +113,5 @@ input modes and resolving the external helper path and platform errno strings.
 Inspect those suites or select a single generated case directly with `smoke.py`.
 
 `make test` includes the pipe cases; `make test-pty` includes the terminal cases.
-The existing native and Docker CI entry points run both, and native sanitizer
-CI includes the candidate suites. Prototype smoke results remain separate.
+Native and Docker CI entry points run both. Their ASan/UBSan checks also run the
+public executable and module suites.

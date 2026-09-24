@@ -3,7 +3,7 @@
 [CSH-024](tickets/CSH-024-value-expansions.md) adds independent value expansion
 in [`expand.h`](../include/cshell/expand.h) and [`expand.c`](../src/expand.c).
 It consumes the lexer's owned WORD tokens and shell-state storage. The default
-`cshell` executable still runs the prototype. The value API does not execute commands or discard quote metadata.
+`cshell` executable uses a bounded literal adapter pending CSH-008 integration. The value API does not execute commands or discard quote metadata.
 [CSH-025](tickets/CSH-025-field-and-pathname-expansion.md) adds the separate
 `csh_expand_fields()` stage in [`fields.c`](../src/fields.c) and
 [`pathname.c`](../src/pathname.c) to produce final fields.
@@ -244,4 +244,4 @@ This finalization stage cannot reverse earlier successful value-expansion side
 effects. An executor requiring an atomic whole-word operation should checkpoint
 state around both calls. CSH-026 still owns command execution/capture,
 here-document and redirection policies, and integration with the execution
-runtime. The prototype executable does not call these APIs.
+runtime. The public executable does not yet call these expansion APIs.

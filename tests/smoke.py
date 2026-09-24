@@ -17,7 +17,7 @@ import time
 import pty_harness
 
 
-DEFAULT_SUITE = Path(__file__).parent / "fixtures" / "prototype.json"
+DEFAULT_SUITE = Path(__file__).resolve().parent.parent / "build" / "tests" / "runtime.json"
 SUITE_LIMIT = 1024 * 1024
 DIAGNOSTIC_LIMIT = 1000
 
@@ -61,14 +61,14 @@ def load_suite(path):
         raise ValueError("suite version must be 1")
     if not isinstance(suite["name"], str) or not suite["name"].strip():
         raise ValueError("suite name must be a nonempty string")
-    if suite["kind"] not in ("prototype", "replacement", "module", "self"):
-        raise ValueError("suite kind must be prototype, replacement, module, or self")
+    if suite["kind"] not in ("replacement", "module", "self"):
+        raise ValueError("suite kind must be replacement, module, or self")
     if not isinstance(suite["cases"], list) or not suite["cases"]:
         raise ValueError("suite cases must be a nonempty array")
     names = set()
     for case in suite["cases"]:
         fields(case, ("name", "expect"),
-               ("stdin", "transport", "steps", "args", "env", "setup", "platforms", "skip_reason", "timeout", "output_limit", "strip_prompt"), "case")
+               ("stdin", "transport", "steps", "args", "env", "setup", "platforms", "skip_reason", "timeout", "output_limit"), "case")
         name = case["name"]
         if not isinstance(name, str) or not name.strip() or name in names:
             raise ValueError("case names must be nonempty unique strings")
@@ -82,8 +82,8 @@ def load_suite(path):
             if "steps" in case:
                 raise ValueError(f"{name}: steps require transport pty")
         else:
-            if "stdin" in case or "strip_prompt" in case:
-                raise ValueError(f"{name}: PTY cases use steps and exact output, not stdin/strip_prompt")
+            if "stdin" in case:
+                raise ValueError(f"{name}: PTY cases use steps and exact output, not stdin")
             validate_steps(case.get("steps"), name)
         args = case.get("args", [])
         if not isinstance(args, list) or any(not isinstance(a, str) or "\0" in a for a in args):
@@ -135,8 +135,6 @@ def load_suite(path):
                 raise ValueError(f"{name}: platform restrictions require skip_reason")
         elif "skip_reason" in case:
             raise ValueError(f"{name}: skip_reason requires platforms")
-        if "strip_prompt" in case and (type(case["strip_prompt"]) is not bool or suite["kind"] != "prototype"):
-            raise ValueError(f"{name}: strip_prompt is only allowed in prototype suites")
     return suite
 
 
@@ -326,8 +324,6 @@ def run_case(binary, case, timeout, output_limit):
             failures.append(f"status: expected {expected['status']}, got {status}")
         for name in output:
             actual = bytes(output[name])
-            if name == "stdout" and case.get("strip_prompt", False):
-                actual = actual.replace(b"Shell> ", b"")
             wanted = expected[name].encode("utf-8")
             if actual != wanted:
                 failures.append(f"{name}: expected {wanted[:DIAGNOSTIC_LIMIT]!r} ({len(wanted)} bytes), got {actual[:DIAGNOSTIC_LIMIT]!r} ({len(actual)} captured bytes)")

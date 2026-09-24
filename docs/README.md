@@ -7,7 +7,7 @@ Start with the [project README](../README.md) for installation and current statu
 | [Contributing](../CONTRIBUTING.md) | Tickets, branch names, validation, and documentation workflow |
 | [Architecture](architecture.md) | Current source layout and target module responsibilities |
 | [Input and invocation](input-and-invocation.md) | Replacement input sources, invocation operands, ownership, positions, and errors |
-| [Candidate runtime](candidate-runtime.md) | Internal replacement executable, cross-mode behavior, exit/status policy, and bootstrap limits |
+| [Runtime behavior](candidate-runtime.md) | Public executable, cross-mode behavior, exit/status policy, and bootstrap limits |
 | [Lexer and words](lexer-and-words.md) | Replacement tokens, quoting provenance, nested parser frames, and raw here-document handoff |
 | [Parser and AST](parser-and-ast.md) | Complete-command parsing, owned syntax trees, ordered here-documents, and diagnostics |
 | [Aliases](aliases.md) | Alias storage, handlers, parser eligibility, injected input, and read timing |
