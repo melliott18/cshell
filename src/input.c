@@ -23,6 +23,10 @@ struct csh_input {
     struct csh_error failure;
     int (*wait_hook)(void *, int);
     void *wait_context;
+    void (*line_hook)(void *, const unsigned char *, size_t);
+    void *line_context;
+    int (*eof_hook)(void *);
+    void *eof_context;
 };
 
 static struct csh_input *active_inputs;
@@ -247,6 +251,19 @@ void csh_input_set_wait_hook(struct csh_input *input,
     input->wait_context = context;
 }
 
+void csh_input_set_line_hook(struct csh_input *input,
+    void (*hook)(void *, const unsigned char *, size_t), void *context)
+{
+    input->line_hook = hook;
+    input->line_context = context;
+}
+
+void csh_input_set_eof_hook(struct csh_input *input, int (*hook)(void *), void *context)
+{
+    input->eof_hook = hook;
+    input->eof_context = context;
+}
+
 static int next_byte(struct csh_input *input, unsigned char *byte)
 {
     ssize_t count;
@@ -306,6 +323,7 @@ enum csh_input_result csh_input_read_line(struct csh_input *input,
         if (result == -1)
             return read_failure(input, error, "cannot read input", errno, 128);
         if (result == 0) {
+            if (length == 0 && input->eof_hook && input->eof_hook(input->eof_context)) continue;
             input->ended = 1;
             if (length == 0)
                 return CSH_INPUT_EOF;
@@ -325,6 +343,7 @@ enum csh_input_result csh_input_read_line(struct csh_input *input,
     line->length = length;
     line->start = start;
     line->end = input->position;
+    if (input->line_hook) input->line_hook(input->line_context, line->data, line->length);
     return CSH_INPUT_LINE;
 }
 

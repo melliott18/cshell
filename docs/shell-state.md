@@ -103,7 +103,7 @@ record:
 | `shell_pid` | `$$`, captured at construction and preserved by clones |
 | `background_pid` | `$!`; zero means no background command has been recorded |
 | `mode` | Original stdin, string, or file invocation selection |
-| `options` | Stored shell option bits; initially only the invocation's interactive flag |
+| `options` | Shared shell option bits initialized from invocation choices |
 
 `csh_state_set_status()` stores any nonnegative `int`, including values
 greater than 255. It does not convert a `waitpid()` status or choose shell
@@ -115,11 +115,12 @@ expansions. Preserving the original shell PID through a copy supports the
 rules](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_05_02).
 
 `csh_state_update_options()` changes disjoint set/clear masks of the declared
-`CSH_OPT_*` flags. These are storage bits only. Setting `allexport` does not
-automatically mark variables exported, and storing `errexit`, `nounset`, or
-`pipefail` does not implement those behaviors. Invocation parsing and option
-effects remain [CSH-032](tickets/CSH-032-shell-options.md) and the relevant
-runtime tickets. The expansion layer also owns the `$-` representation.
+`CSH_OPT_*` flags in the shared `options.h` inventory. Assignments through state
+automatically acquire export when allexport is enabled. The executor, expansion
+and input modules implement other [option effects](shell-options.md).
+`errexit_ignored` records nested tested-command contexts independently of the
+visible option bits; copies/checkpoints preserve it. The expansion layer owns
+the `$-` representation using the same inventory.
 
 ## Copying, checkpoints, and restoration
 

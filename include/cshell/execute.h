@@ -37,6 +37,7 @@ struct csh_execution {
     int retain_redirects; /* exec without a command commits this command's fds. */
     int redirection_failed; /* Parent command could not apply redirections. */
     int special_builtin_error; /* Runtime applies context-dependent error policy. */
+    int errexit_ignored; /* Failure originated in an exempt command context. */
     int exit_requested; /* Caller leaves its input loop; library never exits. */
     enum csh_execution_category category;
 };
@@ -66,18 +67,20 @@ void csh_pipeline_result_destroy(struct csh_pipeline_result *result);
  * the entire pipeline, then launch all stages before waiting for owned PIDs.
  * Multi-stage commands (including builtins) run in separate children. A single
  * stage uses ordinary dispatch in the current environment. All stage statuses
- * are retained; execution.status uses the last stage, logically inverted for !
+ * are retained; execution.status uses the last stage or rightmost nonzero
+ * stage when pipefail was enabled at entry, logically inverted for !
  * unless a singleton exit requests termination (its requested status is kept).
  * Setup failures return -1 without negation, close pipes, kill and reap started
  * children. Child redirection/exec failures are ordinary stage statuses (0 API
- * return). No process groups/job control/pipefail yet. Callers must serialize
+ * return). No process groups/job control in this prepared API. Callers must serialize
  * descriptor mutation and must not reap these children or ignore SIGCHLD.
  * On return no live child ownership is transferred to the caller. */
 int csh_execute_pipeline(struct csh_state *state,
     const struct csh_command *commands, size_t count, int negated,
     struct csh_pipeline_result *out, struct csh_error *error);
 /* Foreground simple command or pipeline, including compound stages. Preflight
- * syntax, then expand each stage in its execution environment. */
+ * syntax, then expand each stage in its execution environment. Honor noexec
+ * (no stages are launched) and contextual errexit, including negation. */
 int csh_execute_pipeline_ast(struct csh_state *state, const struct csh_ast *tree,
     struct csh_pipeline_result *out, struct csh_error *error);
 
@@ -127,6 +130,9 @@ int csh_execute_resolved(struct csh_state *state, const struct csh_command *comm
  * csh_execute_pipeline_ast when the caller needs the full stage vector. */
 int csh_execute_ast(struct csh_state *state, const struct csh_ast *tree,
     struct csh_execution *result, struct csh_error *error);
+
+/* Input observer used by the runtime and eval/dot for verbose mode. */
+void csh_execute_input_line(void *state, const unsigned char *bytes, size_t length);
 
 struct csh_background_child;
 struct csh_jobs;

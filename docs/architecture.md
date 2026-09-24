@@ -12,7 +12,8 @@ requires no Flex or generated scanner.
 The supported subset includes expanded simple commands, state builtins,
 substitutions, here-documents, lists, groups, concurrent pipelines, and job
 control, plus [conditionals, loops, case selection, and functions](control-flow.md).
-Full shell options and traps remain integration work.
+Shell options are integrated by CSH-032; traps remain integration work.
+See [Shell options](shell-options.md) for parsing, state and executor ownership.
 Unsupported complete constructs are
 rejected before execution. See [Runtime behavior](candidate-runtime.md).
 

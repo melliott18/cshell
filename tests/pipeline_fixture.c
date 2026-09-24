@@ -84,6 +84,19 @@ int main(int argc, char **argv)
         check_stages(&result, clean);
         csh_pipeline_result_destroy(&result);
     }
+    assert(csh_state_update_options(state, CSH_OPT_PIPEFAIL, 0) == CSH_STATE_OK);
+    last[1] = "0";
+    expected[2] = 0;
+    for (repeat = 0; repeat < 2; ++repeat) {
+        assert(csh_execute_pipeline(state, commands, 3, repeat, &result, &error) == 0);
+        assert(result.execution.status == (repeat ? 0 : 128 + SIGTERM));
+        check_stages(&result, expected);
+        csh_pipeline_result_destroy(&result);
+        assert(fd_count() == before);
+    }
+    last[1] = "9";
+    expected[2] = 9;
+    assert(csh_state_update_options(state, 0, CSH_OPT_PIPEFAIL) == CSH_STATE_OK);
     assert(waitpid(unrelated, &status, 0) == unrelated);
     assert(WIFEXITED(status) && WEXITSTATUS(status) == 37);
     assert(csh_execute_pipeline(state, commands, 1, 1, &result, &error) == 0);

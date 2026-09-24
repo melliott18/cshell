@@ -25,6 +25,7 @@ struct csh_job {
     int changed;
     int reported;
     int negated;
+    int pipefail; /* Snapshot at pipeline creation, retained across waits. */
     int modes_valid;
     struct termios modes;
 };

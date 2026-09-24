@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/stat.h>
 
 struct saved_descriptor {
     int target;
@@ -95,6 +96,7 @@ int csh_redirect_validate(const struct csh_redirect *items, size_t count,
         case CSH_REDIRECT_APPEND:
         case CSH_REDIRECT_READ_WRITE:
         case CSH_REDIRECT_CLOBBER:
+        case CSH_REDIRECT_NOCLOBBER:
             if (item->path == NULL)
                 return fail(error, "missing redirection path", EINVAL,
                     index + 1);
@@ -263,6 +265,26 @@ failure:
     return -1;
 }
 
+static int open_noclobber(const char *path)
+{
+    struct stat st;
+    int fd, number;
+    do { fd = open(path, O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC, 0666); }
+    while (fd < 0 && errno == EINTR);
+    if (fd >= 0 || errno != EEXIST) return fd;
+    /* Do not create a dangling symlink target or truncate a raced-in file.
+     * fstat checks the actual opened object, not a stale pathname check. */
+    if (stat(path, &st) < 0) return -1;
+    if (S_ISREG(st.st_mode)) { errno = EEXIST; return -1; }
+    do { fd = open(path, O_WRONLY | O_CLOEXEC); } while (fd < 0 && errno == EINTR);
+    if (fd < 0) return -1;
+    if (fstat(fd, &st) == 0 && !S_ISREG(st.st_mode)) return fd;
+    number = S_ISREG(st.st_mode) ? EEXIST : errno;
+    close_descriptor(fd);
+    errno = number;
+    return -1;
+}
+
 static int apply_one(const struct csh_redirect *item)
 {
     int fd;
@@ -289,6 +311,9 @@ static int apply_one(const struct csh_redirect *item)
         /* dup2(fd, fd) is a no-op, but explicit redirection must also make
          * this descriptor available to the command across exec. */
         return set_descriptor_flags(item->fd, 0);
+    case CSH_REDIRECT_NOCLOBBER:
+        fd = open_noclobber(item->path);
+        break;
     case CSH_REDIRECT_HEREDOC:
         fd = here_document(item);
         break;

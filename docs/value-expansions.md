@@ -78,7 +78,8 @@ empty). For assignment/pattern contexts, `$@` and `$*` are joined the same way,
 a documented choice for `$@` in contexts where the standard leaves its behavior
 unspecified. Modified `@`/`*` forms, including their length, are rejected as
 invalid; their results are unspecified by the standard. `$-` uses stable order
-`abCefimnuvx` for the stored letter options; `pipefail` has no letter.
+`abCefhmnuvx`, followed by `i` when interactive, for the shared letter
+options; `pipefail`, `ignoreeof`, and `nolog` have no letter.
 
 A wholly unquoted syntactic tilde-prefix uses shell `HOME` or `getpwnam()` for a
 login name. Missing HOME or an unknown login leaves the prefix unchanged. HOME

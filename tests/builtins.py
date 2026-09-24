@@ -21,7 +21,7 @@ with tempfile.TemporaryDirectory() as tmp:
     run('pwd > listing\n:\n')
     assert pathlib.Path('listing').read_text() == tmp+'\n'
     run('pwd 1>&-\n', status=1, error=True)
-    run('set -x\n', status=1, error=True)
+    run('set -z\n', status=1, error=True)
     run('unset -f name\n')
     run('cd\n', status=1, error=True)
     pathlib.Path('real/child').mkdir(parents=True)

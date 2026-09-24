@@ -21,7 +21,7 @@ PTY_TEST_CASE ?=
 CSHELL_CPPFLAGS = -D_POSIX_C_SOURCE=200809L -Iinclude
 OBJECTS = build/main.o $(EXECUTE_OBJECTS) build/invocation.o
 INPUT_OBJECTS = build/input.o build/invocation.o
-INPUT_HEADERS = include/cshell/input.h include/cshell/invocation.h
+INPUT_HEADERS = include/cshell/input.h include/cshell/invocation.h include/cshell/options.h
 INPUT_FAULT_OBJECTS = build/tests/fault-input.o build/tests/fault-invocation.o
 LEXER_HEADERS = include/cshell/lexer.h include/cshell/input.h include/cshell/arithmetic.h
 LEXER_SUPPORT_OBJECTS = build/arithmetic.o build/state.o build/alias.o
@@ -33,7 +33,7 @@ PARSER_FAULT_OBJECTS = build/tests/parser-fault-alias.o build/tests/parser-fault
 STATE_HEADERS = include/cshell/state.h $(INPUT_HEADERS)
 EXPAND_HEADERS = include/cshell/expand.h include/cshell/arithmetic.h include/cshell/quote.h $(LEXER_HEADERS) $(STATE_HEADERS)
 EXPAND_OBJECTS = build/expand.o build/quote.o build/arithmetic.o
-EXECUTE_HEADERS = src/prepare.h $(EXPAND_HEADERS) include/cshell/jobs.h include/cshell/builtin.h include/cshell/execute.h include/cshell/redirect.h $(PARSER_HEADERS) $(STATE_HEADERS)
+EXECUTE_HEADERS = src/prepare.h include/cshell/output.h $(EXPAND_HEADERS) include/cshell/jobs.h include/cshell/builtin.h include/cshell/execute.h include/cshell/redirect.h $(PARSER_HEADERS) $(STATE_HEADERS)
 EXECUTE_OBJECTS = build/jobs.o build/builtin.o build/utility.o build/execute.o build/prepare.o build/redirect.o $(PARSER_OBJECTS) build/state.o build/alias.o build/expand.o build/arithmetic.o $(FIELDS_OBJECTS)
 EXECUTE_FAULT_OBJECTS = build/tests/execute-fault-utility.o build/tests/execute-fault-jobs.o build/tests/execute-fault-prepare.o build/tests/execute-fault-expand.o build/tests/execute-fault-fields.o build/tests/execute-fault-pathname.o build/tests/execute-fault-arithmetic.o build/tests/execute-fault-execute.o build/tests/execute-fault-redirect.o build/tests/execute-fault-state.o
 FIELDS_HEADERS = $(EXPAND_HEADERS) src/field_internal.h
@@ -252,7 +252,7 @@ build/tests/assignment_fixture: tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(LDLIBS)
 
-build/tests/runtime.json build/tests/runtime-pty.json build/tests/control-flow.json build/tests/evaluation.json: tests/runtime_cases.py tests/substitution_cases.py tests/control_flow_cases.py tests/evaluation_cases.py build/tests/execute_helper
+build/tests/runtime.json build/tests/runtime-pty.json build/tests/control-flow.json build/tests/evaluation.json build/tests/options.json: tests/runtime_cases.py tests/option_cases.py tests/substitution_cases.py tests/control_flow_cases.py tests/evaluation_cases.py build/tests/execute_helper
 	$(PYTHON) tests/runtime_cases.py --helper build/tests/execute_helper --output $@
 
 .PHONY: test-control
@@ -363,3 +363,7 @@ test-substitution: build/tests/substitution_fixture build/tests/execute_faults
 .PHONY: test-evaluation
 test-evaluation: cshell build/tests/evaluation.json
 	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/evaluation.json
+
+.PHONY: test-options
+test-options: cshell build/tests/options.json
+	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/options.json

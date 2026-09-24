@@ -214,6 +214,16 @@ static void api_checks(struct csh_state *state)
     assert(WIFEXITED(status) && WEXITSTATUS(status) == 37);
     close(target);
     free(body);
+    assert(csh_state_update_options(state, CSH_OPT_ERREXIT, 0) == CSH_STATE_OK);
+    assert(run_script(state, "/bin/sh -c 'exit 7'\n: >errexit-effect\n") == 7);
+    assert(access("errexit-effect", F_OK) == -1);
+    assert(run_script(state, "! { /bin/false; :; }\n") == 1);
+    assert(run_script(state, "! /bin/true\n: >negated-effect\n") == 0);
+    assert(access("negated-effect", F_OK) == 0);
+    assert(csh_state_update_options(state, CSH_OPT_NOEXEC, CSH_OPT_ERREXIT) == CSH_STATE_OK);
+    assert(run_script(state, ": >noexec-effect\n") == 0);
+    assert(access("noexec-effect", F_OK) == -1);
+    assert(csh_state_update_options(state, 0, CSH_OPT_NOEXEC) == CSH_STATE_OK);
     puts("execution API checks passed");
 }
 

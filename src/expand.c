@@ -246,14 +246,11 @@ static enum csh_expand_result parameter_value(struct expansion_work *work,
             else snprintf(number, sizeof(number), "%jd", (intmax_t)info.background_pid);
             break;
         case '-': {
-            static const unsigned bits[] = { CSH_OPT_ALLEXPORT, CSH_OPT_NOTIFY,
-                CSH_OPT_NOCLOBBER, CSH_OPT_ERREXIT, CSH_OPT_NOGLOB,
-                CSH_OPT_INTERACTIVE, CSH_OPT_MONITOR, CSH_OPT_NOEXEC,
-                CSH_OPT_NOUNSET, CSH_OPT_VERBOSE, CSH_OPT_XTRACE };
-            static const char letters[] = "abCefimnuvx";
             index = 0;
-            for (i = 0; i < sizeof(bits) / sizeof(bits[0]); ++i)
-                if ((info.options & bits[i]) != 0) number[index++] = letters[i];
+#define FLAG(bit, name, ch) if ((ch) && (info.options & CSH_OPT_##bit)) number[index++] = (ch);
+            CSH_OPTION_LIST(FLAG)
+#undef FLAG
+            if (info.options & CSH_OPT_INTERACTIVE) number[index++] = 'i';
             number[index] = 0;
             break;
         }

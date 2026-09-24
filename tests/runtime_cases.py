@@ -14,6 +14,7 @@ import signal
 from substitution_cases import add_cases
 from control_flow_cases import add_control_cases
 from evaluation_cases import add_evaluation_cases
+from option_cases import add_option_cases, invocation_cases
 
 
 def cases(helper):
@@ -38,6 +39,8 @@ def cases(helper):
             result.append({"name": f"{name} ({mode})", "args": args, "stdin": stdin,
                            "setup": contents, "expect": expect})
 
+    add_option_cases(cross, helper)
+    result.extend(invocation_cases())
     add_cases(cross, helper)
     add_evaluation_cases(cross, helper)
     cross("empty input", "")
@@ -180,7 +183,7 @@ def cases(helper):
                        "expect": {"stdout": "payload\n[after]\n", "stderr": "", "status": 0}})
     for name, args, message, status in (
         ("missing command operand", ["-c"], "-c requires a command string", 2),
-        ("unsupported option", ["-x"], "-x: unsupported shell option", 2),
+        ("unsupported option", ["-z"], "-z: unsupported shell option", 2),
         ("conflicting modes", ["-cs"], "-cs: -c and -s cannot be combined", 2),
         ("missing script", ["missing"], f"missing: 1:1: cannot open script: {os.strerror(errno.ENOENT)}", 127),
         ("directory script", ["."], f".: 1:1: script is a directory: {os.strerror(errno.EISDIR)}", 1),
@@ -201,6 +204,27 @@ def terminal_cases(helper):
     def terminal(name, steps, output, status):
         result.append({"name": name, "transport": "pty", "steps": steps,
                        "expect": {"output": output, "status": status}})
+
+    terminal("options: terminal ignoreeof", [
+        {"expect": "$ "}, {"send": "set -o ignoreeof\n"}, {"expect": "$ "},
+        {"control": "D"}, {"expect": "cshell: use exit to leave the shell\n$ "},
+        {"send": "echo alive\n"}, {"expect": "alive\n$ "}, {"send": "exit 7\n"}],
+        "$ $ cshell: use exit to leave the shell\n$ alive\n$ ", 7)
+    terminal("options: terminal ignoreeof disable", [
+        {"expect": "$ "}, {"send": "set +o ignoreeof\n"}, {"expect": "$ "}, {"control": "D"}], "$ $ ", 0)
+    result[-1]["args"] = ["-o", "ignoreeof"]
+    terminal("options: terminal invocation job defaults", [
+        {"expect": "$ "}, {"send": 'echo "$-"\n'}, {"expect": "bi\n$ "},
+        {"send": "set -m; echo \"$-\"\n"}, {"expect": "bmi\n$ "}, {"send": "exit\n"}],
+        "$ bi\n$ bmi\n$ ", 0)
+    result[-1]["args"] = ["+m", "-b"]
+    terminal("options: terminal nounset recovery", [
+        {"expect": "$ "}, {"send": 'set -u; echo "$csh_missing"\n'},
+        {"expect": "cshell: csh_missing\n$ "}, {"send": "echo alive\n"},
+        {"expect": "alive\n$ "}, {"send": "exit\n"}], "$ cshell: csh_missing\n$ alive\n$ ", 0)
+    terminal("options: terminal noexec honored", [
+        {"expect": "$ "}, {"send": "set -n\n"}, {"expect": "$ "},
+        {"send": "echo never; set +n; exit 8\n"}, {"expect": "$ "}, {"control": "D"}], "$ $ $ ", 0)
 
     terminal("terminal exit status", [{"expect": "$ "}, {"foreground": "leader"}, {"send": "exit 23\n"}], "$ ", 23)
     terminal("terminal EOF initially", [{"expect": "$ "}, {"control": "D"}], "$ ", 0)
@@ -272,6 +296,9 @@ def main():
     if args.output.name == "evaluation.json":
         suite["name"] = "cshell evaluation builtins"
         suite["cases"] = [case for case in suite["cases"] if case["name"].startswith("evaluation: ")]
+    if args.output.name == "options.json":
+        suite["name"] = "cshell options"
+        suite["cases"] = [case for case in suite["cases"] if case["name"].startswith("options: ")]
     args.output.write_text(json.dumps(suite, indent=2) + "\n")
 
 

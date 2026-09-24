@@ -46,6 +46,9 @@ of external text executables still uses `/bin/sh`.
 
 [Evaluation and utility builtins](evaluation-builtins.md) add dot/eval, exec,
 command lookup, runtime aliases, read/getopts, hash, umask, times and ulimit.
+[Shell options](shell-options.md) connect invocation and `set` to expansion,
+redirection, pipeline statuses and contextual error handling. Noexec parses
+without effects; verbose/xtrace expose input and expanded commands.
 
 The runtime keeps one execution context and [job manager](job-control.md) across
 parser reads. It reaps owned children at execution boundaries and during idle
@@ -62,8 +65,10 @@ module error. Non-interactive execution prints no banner or prompt.
 
 State starts at status 0. Each attempted command replaces the last status;
 blank lines and comments do not. EOF returns that status, including EOF after
-failure and after an unterminated final physical line. External command failure
-does not end a continuing parent shell. Lookup uses 127 for not found and 126
+failure and after an unterminated final physical line. With errexit disabled,
+external command failure does not end a continuing parent shell. With errexit
+enabled, the [failure-context rules](shell-options.md#failure-contexts-and-environment-lifetime)
+determine whether the owning environment exits. Lookup uses 127 for not found and 126
 for found but unexecutable. A child killed by a signal produces
 `128 + signal_number`; the parent stores this integer and can continue. On the
 supported macOS/Linux platforms, SIGTERM therefore produces 143. Exiting the

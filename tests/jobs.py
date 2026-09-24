@@ -9,6 +9,7 @@ import sys
 import signal
 import tempfile
 from execute import bounded_run
+from option_cases import report
 
 
 def main():
@@ -38,10 +39,10 @@ def main():
         ('bg %1', 1, '', 'cshell: bg: job control unavailable\n'),
         ('set -m', 1, '', 'cshell: set: job control unavailable\n'),
         ('set -o monitor', 1, '', 'cshell: set: job control unavailable\n'),
-        ('set +m; set -b; set -o', 0, 'monitor off\nnotify on\n', ''),
-        ('set +b; set +o', 0, 'set +m\nset +b\n', ''),
-        ('set -z', 1, '', 'cshell: set: unsupported option: -z\n'),
-        ('set -o unknown', 1, '', 'cshell: set: unsupported option: unknown\n'),
+        ('set +m; set -b; set -o', 0, report('notify'), ''),
+        ('set +b; set +o', 0, report(reusable=True), ''),
+        ('set -z', 1, '', 'cshell: set: invalid option\n'),
+        ('set -o unknown', 1, '', 'cshell: set: invalid option\n'),
         ('jobs -z', 1, '', 'cshell: jobs: no such job: -z\n'),
         ('kill -s UNKNOWN 1', 1, '', 'cshell: kill: invalid signal\n'),
         ('kill -s', 1, '', 'cshell: kill: signal required\n'),
@@ -80,8 +81,8 @@ def main():
             suite['cases'].append(case)
     suite['cases'].append(dict(name="invalid options are atomic", stdin="",
         args=['-ic', 'set +m; set -bz; set -o'],
-        expect=dict(status=0, stdout='monitor off\nnotify off\n',
-                    stderr='cshell: set: unsupported option: -bz\n')))
+        expect=dict(status=0, stdout=report(),
+                    stderr='cshell: set: invalid option\n')))
     with tempfile.TemporaryDirectory(prefix='cshell-jobs-') as temp:
         path = Path(temp) / 'jobs.json'
         path.write_text(json.dumps(suite))

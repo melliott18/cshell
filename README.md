@@ -26,7 +26,8 @@ here-documents use the same parser and executor. Non-interactive execution print
 no prompt or banner. Background jobs and interactive
 [job control](docs/job-control.md) are supported. [Control flow and functions](docs/control-flow.md) include conditionals,
 loops, case selection, and explicit control transfer. [Evaluation, lookup, aliases, and stateful utilities](docs/evaluation-builtins.md)
-are supported. Full shell options and traps remain incomplete;
+are supported. [Shell options](docs/shell-options.md) include errexit, pipefail, nounset,
+noclobber, noglob, tracing and noexec. Traps remain incomplete;
 unsupported syntax is
 diagnosed before that construct executes.
 See [Runtime behavior](docs/candidate-runtime.md) for the exact subset and statuses.
@@ -47,6 +48,7 @@ make test-alias    # Alias storage, handlers, and token/AST substitution
 make test-expand   # Replacement value/field expansion, arithmetic, and quote APIs
 make test-substitution # Integrated expansion, child ownership, and capture failures
 make test-fields   # IFS splitting, pathname expansion, and cleanup checks
+make test-options  # Invocation/set, option effects, and environment interactions
 make test-evaluation # Evaluation, lookup, aliases, and remaining utilities
 make test-builtins # Replacement state builtins and executor integration
 make test-state    # Replacement shell-state API checks only
@@ -95,6 +97,7 @@ resource limits, direct Docker commands, and troubleshooting.
 | Execute prepared commands and restore redirections | [Simple-command execution](docs/execution.md) |
 | Execute loops, conditionals, and functions | [Control flow](docs/control-flow.md) |
 | Use evaluation and utility builtins | [Evaluation builtins](docs/evaluation-builtins.md) |
+| Use invocation and runtime options | [Shell options](docs/shell-options.md) |
 | Use interactive jobs and job builtins | [Job control](docs/job-control.md) |
 | Check the POSIX target and known gaps | [POSIX tracking](docs/posix.md) |
 | Browse all project documentation | [Documentation index](docs/README.md) |

@@ -49,7 +49,7 @@ standalone module evidence does not establish runtime feature support.
 | Variables and execution state | Owned state, environment import, literal assignments, state builtins | [CSH-007](tickets/CSH-007-variables-and-parameters.md) |
 | Word expansion | Integrated value/field expansion, substitutions, here-documents, and arithmetic-first replay; milestone complete | [CSH-008](tickets/CSH-008-word-expansion.md) |
 | Compound commands and functions | Parsing and runtime control flow, function lifetimes, and control transfer fixtures | [CSH-009](tickets/CSH-009-compounds-and-functions.md) |
-| Builtins, aliases, and options | State builtins and bootstrap `cd`/`exit`; aliases and remaining utility/option semantics pending | [CSH-010](tickets/CSH-010-builtins-options-and-aliases.md) |
+| Builtins, aliases, and options | State/evaluation builtins, aliases and [shell options](shell-options.md); full conformance audit remains open | [CSH-010](tickets/CSH-010-builtins-options-and-aliases.md) |
 | Signals, interactive mode, and jobs | Process groups, terminal handoff, job builtins and retained statuses; traps/input recovery/hangup pending | [CSH-034](tickets/CSH-034-job-control.md), [CSH-035](tickets/CSH-035-traps-and-signal-semantics.md) |
 | Conformance evidence and portability | Native/Docker module and runtime fixtures; full conformance suite pending | [CSH-012](tickets/CSH-012-conformance-and-portability.md) |
 

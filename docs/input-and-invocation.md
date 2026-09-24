@@ -40,9 +40,9 @@ options. Use `--` before a first operand beginning with `-` or `+`. POSIX leaves
 combinations of the lone `-` and `--`, and a lone `-` after other operands,
 undefined; callers should avoid those forms.
 
-Combining `-c` and `-s` is diagnosed as invalid usage. Other shell switches,
-including options beginning with `+`, are diagnosed as unsupported; CSH-032
-owns general shell options. Script operands are opened directly from the given
+Combining `-c` and `-s` is diagnosed as invalid usage.
+[Shell options](shell-options.md) support grouped letters and named `-o`/`+o`
+forms for enabling/disabling the shared runtime option inventory. Script operands are opened directly from the given
 path, including relative paths. There is no optional `PATH` search.
 
 ## Ownership
