@@ -300,5 +300,6 @@ stage's pipes and inside the stage's isolated environment.
 including large captures, status, state, exact output, private descriptor
 relocation, initially closed standard descriptors, and injected resource
 failures. The [CSH-026 ticket](tickets/CSH-026-substitution-and-heredoc-integration.md)
-records validation. These checks do not close the CSH-008 milestone or establish
-full POSIX compliance.
+records validation. The [CSH-008 closure record](tickets/CSH-008-word-expansion.md)
+combines this evidence with CSH-041 and the completed prerequisites. These
+selected checks do not establish full POSIX compliance.

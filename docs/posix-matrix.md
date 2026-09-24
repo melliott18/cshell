@@ -320,4 +320,5 @@ sweeps inject failures into snapshot creation, growth, recovery, and destruction
 behavior, including files proving exactly-once execution and no speculative
 assignment effects. Arithmetic evaluation errors retain arithmetic precedence.
 These selected cases retain the signed-long model and do not close the full
-EXP-005/EXP-006 audit or the CSH-008 milestone.
+EXP-005/EXP-006 audit. The [CSH-008 closure record](tickets/CSH-008-word-expansion.md)
+records the completed implementation milestone and combined evidence.

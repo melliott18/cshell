@@ -43,11 +43,11 @@ standalone module evidence does not establish runtime feature support.
 | Build and source organization | One runtime; legacy sources and scanner dependencies removed | [CSH-039](tickets/CSH-039-legacy-retirement.md) |
 | Memory and process safety | Module ownership, allocation failures, descriptor restoration, and child cleanup fixtures | [CSH-016](tickets/CSH-016-input-and-invocation.md), [CSH-019](tickets/CSH-019-simple-command-redirections.md), [CSH-020](tickets/CSH-020-pipeline-lifecycle.md) |
 | Invocation and input | String/script/stdin, EOF, interactive detection, strict output, and final statuses | [CSH-018](tickets/CSH-018-status-and-cli-integration.md), [Runtime behavior](candidate-runtime.md) |
-| Token recognition and quoting | Structured words and literal quoting; expansion integration pending | [CSH-004](tickets/CSH-004-lexer-and-words.md) |
+| Token recognition and quoting | Structured words, quote provenance, and integrated expansion | [CSH-004](tickets/CSH-004-lexer-and-words.md) |
 | Grammar and command composition | AST parsing exists; lists and compound execution rejected | [CSH-005](tickets/CSH-005-parser-and-ast.md), [CSH-021](tickets/CSH-021-lists-and-execution-contexts.md) |
 | Execution and redirections | Literal commands, external lookup/statuses, ordered redirections, concurrent pipelines | [CSH-019](tickets/CSH-019-simple-command-redirections.md), [CSH-020](tickets/CSH-020-pipeline-lifecycle.md) |
 | Variables and execution state | Owned state, environment import, literal assignments, state builtins | [CSH-007](tickets/CSH-007-variables-and-parameters.md) |
-| Word expansion | Value/field APIs tested separately; runtime rejects expansion | [CSH-008](tickets/CSH-008-word-expansion.md) |
+| Word expansion | Integrated value/field expansion, substitutions, here-documents, and arithmetic-first replay; milestone complete | [CSH-008](tickets/CSH-008-word-expansion.md) |
 | Compound commands and functions | Parsing exists; execution pending | [CSH-009](tickets/CSH-009-compounds-and-functions.md) |
 | Builtins, aliases, and options | State builtins and bootstrap `cd`/`exit`; aliases and remaining utility/option semantics pending | [CSH-010](tickets/CSH-010-builtins-options-and-aliases.md) |
 | Signals, interactive mode, and jobs | Process groups, terminal handoff, job builtins and retained statuses; traps/input recovery/hangup pending | [CSH-034](tickets/CSH-034-job-control.md), [CSH-035](tickets/CSH-035-traps-and-signal-semantics.md) |
