@@ -191,6 +191,8 @@ static int scan(const char *mode)
             ++depth;
             ++commands;
             frames[depth].parentheses = 0;
+        } else if (result == CSH_LEX_REPLAY) {
+            continue;
         } else if (result == CSH_LEX_MORE) {
             size_t count = length - fed;
             check_clear(&token);

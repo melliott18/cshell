@@ -663,7 +663,10 @@ static void arithmetic(void)
     failure(state, "$((1 / 0))", NULL, CSH_EXPAND_ARITHMETIC_ERROR);
     failure(state, "$((1 % 0))", NULL, CSH_EXPAND_ARITHMETIC_ERROR);
     failure(state, "$((1 << -1))", NULL, CSH_EXPAND_ARITHMETIC_ERROR);
-    failure(state, "$((1 + ))", NULL, CSH_EXPAND_ARITHMETIC_ERROR);
+    /* Literal grammar errors now replay as command substitutions. An invalid
+     * expanded operand still exercises arithmetic evaluation failure. */
+    STATE(csh_state_set_variable(state, "bad_expression", "1 +"));
+    failure(state, "$(( $bad_expression ))", NULL, CSH_EXPAND_ARITHMETIC_ERROR);
     failure(state, "$((9223372036854775807 + 1))", NULL, CSH_EXPAND_ARITHMETIC_ERROR);
     failure(state, "${new:=yes}$((1 / 0))", NULL, CSH_EXPAND_ARITHMETIC_ERROR);
     variable_is(state, "new", NULL);

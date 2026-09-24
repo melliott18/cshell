@@ -213,6 +213,14 @@ static void boundaries(void)
     CHECK(csh_arith_probe("9999999999999999999999999999999999999") == CSH_ARITH_OK);
     CHECK(csh_arith_probe("1/0") == CSH_ARITH_OK);
     CHECK(csh_arith_probe("missing+=1") == CSH_ARITH_OK);
+    CHECK(csh_arith_probe_prefix("1 + (operand"));
+    CHECK(csh_arith_probe_prefix("flag ? operand"));
+    CHECK(csh_arith_probe_prefix("flag ? operand :"));
+    CHECK(csh_arith_probe_prefix("value +="));
+    CHECK(!csh_arith_probe_prefix("1 ="));
+    CHECK(!csh_arith_probe_prefix("cat << END\noperand"));
+    CHECK(!csh_arith_probe_prefix("1 + )"));
+    CHECK(!csh_arith_probe_prefix(NULL));
     csh_state_destroy(state);
 }
 

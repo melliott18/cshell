@@ -252,6 +252,22 @@ def cases(fixture):
     yield "arithmetic nesting and substitution", lambda: check_scan(fixture,
         b"$((1 + (2 * 3) + ${n:-4}))", [("word", "$((1 + (2 * 3) + ${n:-4}))")],
         fragments=check_fragments({("arithmetic", "none", "$((1 + (2 * 3) + ${n:-4}))")}))
+    for data, commands, kind in (
+        (b"$((echo hi); )", 1, "command"),
+        (b"$((echo hi))", 1, "command"),
+        (b"$((echo $(echo hi)); )", 3, "command"),
+        (b"$((echo $((1+2))); )", 1, "command"),
+        (b"$((1/0))", 0, "arithmetic"),
+        (b"$((n=2, n+1))", 0, "arithmetic"),
+        (b"$((1${n:-2} + ${v}suffix))", 0, "arithmetic"),
+    ):
+        yield f"arithmetic-first replay {data!r}", lambda data=data, commands=commands, kind=kind: check_scan(
+            fixture, data, [("word", data.decode())], commands=commands,
+            fragments=check_fragments({(kind, "none", data.decode())}))
+    yield "replay across quoted physical continuation", lambda: check_scan(fixture,
+        b'"pre$\\\n(\\\n(echo\\\n hi); )post"',
+        [("word", '"pre$\\\n(\\\n(echo\\\n hi); )post"')], commands=1,
+        fragments=without_fragments({("arithmetic", "double", "$((echo hi); )")}))
     yield "command and generic subshell parentheses", lambda: check_scan(fixture,
         b"pre$(echo (one) $(echo two))post", [("word", "pre$(echo (one) $(echo two))post")], commands=2,
         fragments=check_fragments({("command", "none", "$(echo (one) $(echo two))")}))
@@ -281,6 +297,7 @@ def cases(fixture):
     errors = (
         (b"'unterminated", 0), (b'"unterminated', 0), (b"$'unterminated", 0),
         (b"${x:-value", 0), (b"$((1 + 2)", 0), (b"`echo x", 0),
+        (b"$((1 + ${unfinished", 7), (b"$((1 + $(unfinished", 7),
         (b"$(echo x", 0), (b"abc\\", 3), (b"ok\n  'bad", 5),
         (b"'outer ${literal", 0), (b"before\x00after", 6),
     )

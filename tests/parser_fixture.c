@@ -404,6 +404,16 @@ static void contracts(void)
     boundary(heredocs, strlen(heredocs) - strlen("trailing\n"));
     boundary(conditional, strlen(conditional) - strlen("trailing\n"));
     boundary(function, strlen(function) - strlen("trailing\n"));
+    {
+        const char *replay[] = {
+            "echo $((echo hi); )\ntrailing\n",
+            "echo $((echo $(cat <<END\ninside\nEND\n)); )\ntrailing\n",
+            "echo $((cat <<END\n$(|)\nEND\n))\ntrailing\n"
+        };
+        size_t index;
+        for (index = 0; index < sizeof(replay) / sizeof(replay[0]); ++index)
+            boundary(replay[index], strlen(replay[index]) - strlen("trailing\n"));
+    }
     puts("ok");
 }
 

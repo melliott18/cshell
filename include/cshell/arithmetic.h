@@ -36,4 +36,10 @@ enum csh_arith_result csh_arith_eval(struct csh_state *state,
  * grammar even though evaluation fails. Returns OK or SYNTAX; never mutates. */
 enum csh_arith_result csh_arith_probe(const char *expression);
 
+/* Grammar-only prefix check for EOF inside an opaque shell operand. Returns
+ * nonzero if the expression is valid or only lacks trailing operands or
+ * delimiters. This distinguishes an incomplete candidate from one whose
+ * existing grammar already rules out arithmetic. No evaluation or allocation. */
+int csh_arith_probe_prefix(const char *expression);
+
 #endif

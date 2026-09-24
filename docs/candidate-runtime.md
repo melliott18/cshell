@@ -133,10 +133,10 @@ public executable and module suites.
 
 ## Remaining expansion boundaries
 
-[CSH-041](tickets/CSH-041-arithmetic-substitution-replay.md) owns lexer
-checkpoint/replay for arithmetic-first ambiguity. `$((echo hi); )` still reports
-incomplete arithmetic; `$( (echo hi); )` works. This existing grammar limitation
-is not resolved by connecting arithmetic evaluation to execution. Alias runtime
+[CSH-041](tickets/CSH-041-arithmetic-substitution-replay.md) adds arithmetic-first
+checkpoint/replay: `$((echo hi); )` and `$( (echo hi); )` both capture `hi`.
+Grammar-valid arithmetic takes precedence, so `$((1/0))` remains an arithmetic
+expansion error. Classification never evaluates nested expansions. Alias runtime
 integration, `set` option parsing, traps, locale startup, and case/function
 execution remain with their existing tickets. NUL output in command substitution
 is diagnosed as an expansion error, an explicit choice for unspecified input.

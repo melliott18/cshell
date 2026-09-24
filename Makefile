@@ -23,7 +23,8 @@ OBJECTS = build/main.o $(EXECUTE_OBJECTS) build/invocation.o
 INPUT_OBJECTS = build/input.o build/invocation.o
 INPUT_HEADERS = include/cshell/input.h include/cshell/invocation.h
 INPUT_FAULT_OBJECTS = build/tests/fault-input.o build/tests/fault-invocation.o
-LEXER_HEADERS = include/cshell/lexer.h include/cshell/input.h
+LEXER_HEADERS = include/cshell/lexer.h include/cshell/input.h include/cshell/arithmetic.h
+LEXER_SUPPORT_OBJECTS = build/arithmetic.o build/state.o
 ALIAS_HEADERS = include/cshell/alias.h include/cshell/input.h
 PARSER_HEADERS = $(ALIAS_HEADERS) include/cshell/parser.h include/cshell/ast.h include/cshell/quote.h $(LEXER_HEADERS)
 PARSER_OBJECTS = build/alias.o build/parser.o build/ast.o build/lexer.o build/input.o build/quote.o
@@ -73,17 +74,17 @@ build/lexer.o: src/lexer.c $(LEXER_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-build/tests/lexer_fixture: tests/lexer_fixture.c build/lexer.o $(LEXER_HEADERS)
+build/tests/lexer_fixture: tests/lexer_fixture.c build/lexer.o $(LEXER_HEADERS) $(LEXER_SUPPORT_OBJECTS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/lexer_fixture.c build/lexer.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/lexer_fixture.c build/lexer.o $(LEXER_SUPPORT_OBJECTS) $(LDLIBS)
 
 build/tests/fault-lexer.o: src/lexer.c $(LEXER_HEADERS) tests/lexer_faults.h
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/lexer_faults.h -c $< -o $@
 
-build/tests/lexer_faults: tests/lexer_faults.c tests/lexer_faults.h build/tests/fault-lexer.o $(LEXER_HEADERS)
+build/tests/lexer_faults: tests/lexer_faults.c tests/lexer_faults.h build/tests/fault-lexer.o $(LEXER_HEADERS) $(LEXER_SUPPORT_OBJECTS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/lexer_faults.c build/tests/fault-lexer.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/lexer_faults.c build/tests/fault-lexer.o $(LEXER_SUPPORT_OBJECTS) $(LDLIBS)
 
 test-lexer: build/tests/lexer_fixture build/tests/lexer_faults
 	$(PYTHON) tests/lexer.py build/tests/lexer_fixture --fault-binary build/tests/lexer_faults
@@ -96,21 +97,21 @@ build/quote.o: src/quote.c include/cshell/quote.h
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-build/tests/parser_fixture: tests/parser_fixture.c $(PARSER_OBJECTS) $(PARSER_HEADERS)
+build/tests/parser_fixture: tests/parser_fixture.c $(PARSER_OBJECTS) $(PARSER_HEADERS) $(LEXER_SUPPORT_OBJECTS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/parser_fixture.c $(PARSER_OBJECTS) $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/parser_fixture.c $(PARSER_OBJECTS) $(LEXER_SUPPORT_OBJECTS) $(LDLIBS)
 
-build/tests/ast_fixture: tests/ast_fixture.c build/ast.o build/lexer.o $(PARSER_HEADERS)
+build/tests/ast_fixture: tests/ast_fixture.c build/ast.o build/lexer.o $(PARSER_HEADERS) $(LEXER_SUPPORT_OBJECTS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/ast_fixture.c build/ast.o build/lexer.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/ast_fixture.c build/ast.o build/lexer.o $(LEXER_SUPPORT_OBJECTS) $(LDLIBS)
 
 $(PARSER_FAULT_OBJECTS): build/tests/parser-fault-%.o: src/%.c $(PARSER_HEADERS) tests/parser_faults.h
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/parser_faults.h -c $< -o $@
 
-build/tests/parser_faults: tests/parser_faults.c tests/parser_faults.h $(PARSER_FAULT_OBJECTS) $(PARSER_HEADERS)
+build/tests/parser_faults: tests/parser_faults.c tests/parser_faults.h $(PARSER_FAULT_OBJECTS) $(PARSER_HEADERS) $(LEXER_SUPPORT_OBJECTS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/parser_faults.c $(PARSER_FAULT_OBJECTS) $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/parser_faults.c $(PARSER_FAULT_OBJECTS) $(LEXER_SUPPORT_OBJECTS) $(LDLIBS)
 
 test-parser: build/tests/parser_fixture build/tests/parser_faults build/tests/ast_fixture
 	$(PYTHON) tests/parser.py build/tests/parser_fixture --fault-binary build/tests/parser_faults
@@ -124,13 +125,13 @@ build/tests/alias_storage: tests/alias_storage.c build/alias.o $(ALIAS_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/alias_storage.c build/alias.o $(LDLIBS)
 
-build/tests/alias_lexer: tests/alias_lexer.c build/lexer.o $(LEXER_HEADERS)
+build/tests/alias_lexer: tests/alias_lexer.c build/lexer.o $(LEXER_HEADERS) $(LEXER_SUPPORT_OBJECTS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/alias_lexer.c build/lexer.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/alias_lexer.c build/lexer.o $(LEXER_SUPPORT_OBJECTS) $(LDLIBS)
 
-build/tests/alias_parser: tests/alias_parser.c $(PARSER_OBJECTS) $(PARSER_HEADERS)
+build/tests/alias_parser: tests/alias_parser.c $(PARSER_OBJECTS) $(PARSER_HEADERS) $(LEXER_SUPPORT_OBJECTS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/alias_parser.c $(PARSER_OBJECTS) $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/alias_parser.c $(PARSER_OBJECTS) $(LEXER_SUPPORT_OBJECTS) $(LDLIBS)
 
 build/tests/fault-alias.o: src/alias.c $(ALIAS_HEADERS) tests/alias_faults.h
 	mkdir -p $(dir $@)

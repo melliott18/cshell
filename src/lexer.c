@@ -1,4 +1,5 @@
 #include "cshell/lexer.h"
+#include "cshell/arithmetic.h"
 
 #include <errno.h>
 #include <stdint.h>
@@ -31,6 +32,23 @@ struct source {
     struct csh_error failure;
 };
 
+/* A checkpoint owns an unmodified source suffix. Later physical feeds append
+ * to every live snapshot; speculative alias insertions affect only the active
+ * tape. Suspended ancestor words need only their capture cursors restored. */
+struct capture_checkpoint {
+    struct csh_lexer *lexer;
+    size_t length;
+    struct csh_position position;
+};
+struct arithmetic_checkpoint {
+    struct arithmetic_checkpoint *previous;
+    struct source source;
+    size_t fragment_count, frame_count, command_length, body_begin;
+    enum csh_quote quote;
+    size_t capture_count;
+    struct capture_checkpoint captures[];
+};
+
 enum frame_kind { SINGLE, DOUBLE, DOLLAR_SINGLE, PARAMETER, SIMPLE,
                   ARITHMETIC, BACKQUOTE, COMMAND };
 struct frame {
@@ -60,6 +78,7 @@ struct csh_lexer {
     struct csh_position last_start, last_end;
     int has_last;
     size_t last_sequence;
+    struct arithmetic_checkpoint *arithmetic;
 };
 
 struct operator { const char *text; enum csh_token_kind kind; };
@@ -107,8 +126,20 @@ static void release_aliases(struct source *source)
     source->alias_capacity = 0;
 }
 
+static void release_checkpoint(struct arithmetic_checkpoint *checkpoint)
+{
+    release_aliases(&checkpoint->source);
+    free(checkpoint->source.data);
+    free(checkpoint);
+}
+
 static void release_work(struct csh_lexer *lexer)
 {
+    while (lexer->arithmetic != NULL) {
+        struct arithmetic_checkpoint *checkpoint = lexer->arithmetic;
+        lexer->arithmetic = checkpoint->previous;
+        release_checkpoint(checkpoint);
+    }
     free(lexer->raw);
     free(lexer->token_name);
     free(lexer->alias_name);
@@ -146,6 +177,17 @@ static int fail_at(struct csh_lexer *lexer, struct csh_error *error,
         /* Public parser diagnostics name the physical input; generated token
          * positions remain available separately with alias provenance. */
         source->failure.position = csh_lexer_diagnostic_position(lexer, position);
+        /* A nested parser may reject syntax that was only part of an
+         * arithmetic candidate (for example literal here-document text).
+         * Keep it replayable until that parser unwinds. Resource errors never
+         * retry; they retain the ordinary eager cleanup/sticky contract. */
+        if (number == 0) {
+            for (cursor = lexer->root; cursor != NULL; cursor = cursor->child)
+                if (cursor->arithmetic != NULL) {
+                    *error = source->failure;
+                    return -1;
+                }
+        }
         for (cursor = lexer->root; cursor != NULL; cursor = cursor->child)
             release_work(cursor);
         release_aliases(source);
@@ -258,6 +300,25 @@ int csh_lexer_feed(struct csh_lexer *lexer, const void *bytes, size_t length,
     }
     if (source->final || (length != 0 && bytes == NULL))
         return fail(lexer, error, "invalid lexer feed", EINVAL);
+    {
+        struct csh_lexer *owner;
+        for (owner = lexer->root; owner != NULL; owner = owner->child) {
+            struct arithmetic_checkpoint *checkpoint;
+            for (checkpoint = owner->arithmetic; checkpoint != NULL;
+                 checkpoint = checkpoint->previous) {
+                struct source *saved = &checkpoint->source;
+                if (length > SIZE_MAX - saved->length)
+                    return fail(lexer, error, "lexer replay is too large", EOVERFLOW);
+                if (reserve((void **)&saved->data, &saved->capacity,
+                            saved->length + length, 1) == -1)
+                    return fail(lexer, error, "cannot grow lexer replay", errno);
+                if (length != 0)
+                    memcpy(saved->data + saved->length, bytes, length);
+                saved->length += length;
+                saved->final = final != 0;
+            }
+        }
+    }
     /* Words capture raw bytes independently of the shared input tape. */
     if (source->cursor != 0) {
         size_t index;
@@ -514,6 +575,192 @@ static int pop(struct csh_lexer *lexer, size_t count, struct csh_error *error)
     return 0;
 }
 
+static int checkpoint_arithmetic(struct csh_lexer *lexer, size_t command_length,
+    enum csh_quote quote, struct csh_error *error)
+{
+    struct source *source = lexer->source;
+    struct arithmetic_checkpoint *checkpoint;
+    struct csh_lexer *capture;
+    size_t count = 0, index, nesting = 0;
+    for (capture = lexer; capture != NULL; capture = capture->parent) {
+        struct arithmetic_checkpoint *saved;
+        ++count;
+        for (saved = capture->arithmetic; saved != NULL; saved = saved->previous)
+            ++nesting;
+    }
+    if (nesting >= 128)
+        return fail(lexer, error, "arithmetic expansion nesting limit exceeded", 0);
+    if (count > (SIZE_MAX - sizeof(*checkpoint)) / sizeof(*checkpoint->captures))
+        return fail(lexer, error, "lexer checkpoint overflow", EOVERFLOW);
+    checkpoint = malloc(sizeof(*checkpoint) + count * sizeof(*checkpoint->captures));
+    if (checkpoint == NULL)
+        return fail(lexer, error, "cannot allocate lexer checkpoint", ENOMEM);
+    memset(checkpoint, 0, sizeof(*checkpoint));
+    checkpoint->source = *source;
+    checkpoint->source.data = NULL;
+    checkpoint->source.capacity = 0;
+    checkpoint->source.length = source->length - source->cursor;
+    checkpoint->source.cursor = 0;
+    checkpoint->source.look_valid = 0;
+    checkpoint->source.aliases = NULL;
+    checkpoint->source.alias_count = checkpoint->source.alias_capacity = 0;
+    if (reserve((void **)&checkpoint->source.data, &checkpoint->source.capacity,
+                checkpoint->source.length, 1) == -1)
+        goto allocation_error;
+    if (checkpoint->source.length != 0)
+        memcpy(checkpoint->source.data, source->data + source->cursor,
+            checkpoint->source.length);
+    if (reserve((void **)&checkpoint->source.aliases, &checkpoint->source.alias_capacity,
+                source->alias_count, sizeof(*source->aliases)) == -1)
+        goto allocation_error;
+    for (index = 0; index < source->alias_count; ++index) {
+        struct alias_source *alias = &checkpoint->source.aliases[index];
+        *alias = source->aliases[index];
+        alias->name = copy_string(source->aliases[index].name);
+        alias->source_name = copy_string(source->aliases[index].source_name);
+        alias->invocation_source = copy_string(source->aliases[index].invocation_source);
+        alias->end -= source->cursor;
+        ++checkpoint->source.alias_count;
+        if (alias->name == NULL || alias->source_name == NULL || alias->invocation_source == NULL)
+            goto allocation_error;
+    }
+    checkpoint->capture_count = count;
+    for (capture = lexer, index = 0; capture != NULL; capture = capture->parent, ++index) {
+        checkpoint->captures[index].lexer = capture;
+        checkpoint->captures[index].length = capture->raw_length;
+        checkpoint->captures[index].position = capture->spelling_position;
+    }
+    checkpoint->fragment_count = lexer->fragment_count;
+    checkpoint->frame_count = lexer->frame_count;
+    checkpoint->command_length = command_length;
+    checkpoint->quote = quote;
+    checkpoint->previous = lexer->arithmetic;
+    lexer->arithmetic = checkpoint;
+    return 0;
+
+allocation_error:
+    release_checkpoint(checkpoint);
+    return fail(lexer, error, "cannot allocate lexer checkpoint", errno);
+}
+
+static int probe_arithmetic(struct csh_lexer *, int, struct csh_error *);
+
+int csh_lexer_replay_arithmetic(struct csh_lexer *lexer, struct csh_error *error)
+{
+    struct arithmetic_checkpoint *checkpoint = lexer->arithmetic;
+    size_t index, command_length;
+    enum csh_quote quote;
+    if (checkpoint == NULL || error->system_errno != 0 ||
+        lexer->source->failure.system_errno != 0)
+        return 0;
+    if (error->message != NULL &&
+        (strcmp(error->message, "unterminated arithmetic expansion") == 0 ||
+         strstr(error->message, "nesting limit exceeded") != NULL))
+        return 0;
+    if (lexer->source->final && error->message != NULL &&
+        strncmp(error->message, "unterminated ", 13) == 0) {
+        struct csh_error failure = lexer->source->failure;
+        struct csh_error original = *error;
+        int possible;
+        clear_error(&lexer->source->failure);
+        possible = probe_arithmetic(lexer, 1, error);
+        if (possible == -1)
+            return -1;
+        lexer->source->failure = failure;
+        *error = original;
+        if (possible)
+            return 0;
+    }
+    csh_lexer_destroy(lexer->child);
+    release_aliases(lexer->source);
+    free(lexer->source->data);
+    *lexer->source = checkpoint->source;
+    checkpoint->source.data = NULL;
+    checkpoint->source.aliases = NULL;
+    checkpoint->source.alias_count = checkpoint->source.alias_capacity = 0;
+    for (index = 0; index < checkpoint->capture_count; ++index) {
+        struct capture_checkpoint *capture = &checkpoint->captures[index];
+        capture->lexer->raw_length = capture->length;
+        capture->lexer->spelling_position = capture->position;
+    }
+    lexer->fragment_count = checkpoint->fragment_count;
+    lexer->frame_count = checkpoint->frame_count;
+    lexer->command = 0;
+    command_length = checkpoint->command_length;
+    quote = checkpoint->quote;
+    lexer->arithmetic = checkpoint->previous;
+    release_checkpoint(checkpoint);
+    clear_error(error);
+    if (push(lexer, COMMAND, CSH_FRAGMENT_COMMAND, quote, command_length, error) == -1)
+        return -1;
+    lexer->command = 1;
+    return 1;
+}
+
+/* Probe grammar only. Direct nested expansions are opaque operands, including
+ * when concatenated with identifier/number spelling. No expansion callback or
+ * arithmetic evaluator runs while determining the interpretation. */
+static int probe_arithmetic(struct csh_lexer *lexer, int partial,
+    struct csh_error *error)
+{
+    struct arithmetic_checkpoint *checkpoint = lexer->arithmetic;
+    size_t index = checkpoint->fragment_count + 1, at = checkpoint->body_begin;
+    size_t used = 0, read, write;
+    char *expression = malloc(lexer->raw_length - at + 1);
+    int valid;
+    if (expression == NULL)
+        return fail(lexer, error, "cannot allocate arithmetic probe", ENOMEM);
+    while (at < lexer->raw_length) {
+        const struct csh_fragment *fragment = index < lexer->fragment_count ?
+            &lexer->fragments[index] : NULL;
+        if (fragment != NULL && fragment->begin <= at) {
+            ++index;
+            int unfinished = partial && fragment->end == fragment->begin;
+            if ((!unfinished && fragment->end <= at) ||
+                fragment->parent != checkpoint->fragment_count)
+                continue;
+            if (fragment->kind == CSH_FRAGMENT_PARAMETER ||
+                fragment->kind == CSH_FRAGMENT_COMMAND ||
+                fragment->kind == CSH_FRAGMENT_ARITHMETIC ||
+                fragment->kind == CSH_FRAGMENT_BACKQUOTE) {
+                expression[used++] = '@';
+                at = unfinished ? lexer->raw_length : fragment->end;
+                continue;
+            }
+            if (fragment->kind == CSH_FRAGMENT_CONTINUATION) {
+                at = fragment->end;
+                continue;
+            }
+            if (fragment->kind == CSH_FRAGMENT_ESCAPE)
+                ++at;
+        }
+        expression[used++] = (char)lexer->raw[at++];
+    }
+    for (read = write = 0; read < used;) {
+        size_t begin = read;
+        int operand = 0;
+        while (read < used && ((expression[read] >= 'a' && expression[read] <= 'z') ||
+               (expression[read] >= 'A' && expression[read] <= 'Z') ||
+               (expression[read] >= '0' && expression[read] <= '9') ||
+               expression[read] == '_' || expression[read] == '@')) {
+            operand |= expression[read] == '@';
+            ++read;
+        }
+        if (operand)
+            expression[write++] = 'x';
+        else if (begin != read) {
+            memmove(expression + write, expression + begin, read - begin);
+            write += read - begin;
+        } else
+            expression[write++] = expression[read++];
+    }
+    expression[write] = 0;
+    valid = partial ? csh_arith_probe_prefix(expression) :
+        csh_arith_probe(expression) == CSH_ARITH_OK;
+    free(expression);
+    return valid;
+}
+
 static const char *frame_name(enum frame_kind kind)
 {
     switch (kind) {
@@ -714,9 +961,14 @@ static int dollar(struct csh_lexer *lexer, enum csh_quote quote,
         int third = peek(lexer, 2, &third_physical);
         if (third == -2)
             return 2;
-        if (third == '(')
-            return push(lexer, ARITHMETIC, CSH_FRAGMENT_ARITHMETIC, quote,
-                        third_physical, error) == -1 ? -1 : 1;
+        if (third == '(') {
+            if (checkpoint_arithmetic(lexer, physical, quote, error) == -1 ||
+                push(lexer, ARITHMETIC, CSH_FRAGMENT_ARITHMETIC, quote,
+                    third_physical, error) == -1)
+                return -1;
+            lexer->arithmetic->body_begin = lexer->raw_length;
+            return 1;
+        }
         if (push(lexer, COMMAND, CSH_FRAGMENT_COMMAND, quote, physical, error) == -1)
             return -1;
         lexer->command = 1;
@@ -736,7 +988,7 @@ static int dollar(struct csh_lexer *lexer, enum csh_quote quote,
     return 0;
 }
 
-enum csh_lex_result csh_lexer_next(struct csh_lexer *lexer,
+static enum csh_lex_result next_token(struct csh_lexer *lexer,
     struct csh_token *token, struct csh_error *error)
 {
     struct source *source = lexer->source;
@@ -811,6 +1063,13 @@ enum csh_lex_result csh_lexer_next(struct csh_lexer *lexer,
         }
         if (frame != NULL && frame->kind == ARITHMETIC) {
             quote = CSH_QUOTE_DOUBLE;
+            /* These bytes cannot belong to the supported arithmetic grammar.
+             * Retry before treating shell quotes or here-document contents as
+             * arithmetic syntax, or acquiring unrelated physical lines. */
+            if (strchr(";'\"{}#@", byte) != NULL) {
+                return csh_lexer_replay_arithmetic(lexer, error) == 1 ?
+                    CSH_LEX_REPLAY : CSH_LEX_ERROR;
+            }
             if (byte == '(') {
                 if (frame->parentheses == SIZE_MAX)
                     return fail(lexer, error, "arithmetic nesting overflow", EOVERFLOW);
@@ -819,14 +1078,26 @@ enum csh_lex_result csh_lexer_next(struct csh_lexer *lexer,
                 if (frame->parentheses != 0)
                     --frame->parentheses;
                 else {
+                    int valid = probe_arithmetic(lexer, 0, error);
+                    if (valid == -1)
+                        return CSH_LEX_ERROR;
+                    if (!valid)
+                        return csh_lexer_replay_arithmetic(lexer, error) == 1 ?
+                            CSH_LEX_REPLAY : CSH_LEX_ERROR;
                     next = peek(lexer, 1, &physical);
                     if (next == -2)
                         return CSH_LEX_MORE;
                     if (next == ')') {
+                        struct arithmetic_checkpoint *checkpoint = lexer->arithmetic;
                         if (pop(lexer, physical, error) == -1)
                             return CSH_LEX_ERROR;
+                        lexer->arithmetic = checkpoint->previous;
+                        release_checkpoint(checkpoint);
                         continue;
                     }
+                    if (next != -1)
+                        return csh_lexer_replay_arithmetic(lexer, error) == 1 ?
+                            CSH_LEX_REPLAY : CSH_LEX_ERROR;
                 }
             }
         }
@@ -948,6 +1219,21 @@ enum csh_lex_result csh_lexer_next(struct csh_lexer *lexer,
         if (piece(lexer, CSH_FRAGMENT_TEXT, quote, 1, error) == -1)
             return CSH_LEX_ERROR;
     }
+}
+
+enum csh_lex_result csh_lexer_next(struct csh_lexer *lexer,
+    struct csh_token *token, struct csh_error *error)
+{
+    enum csh_lex_result result;
+    if (lexer->source->failure.message != NULL)
+        return next_token(lexer, token, error);
+    result = next_token(lexer, token, error);
+    if (result == CSH_LEX_ERROR && lexer->arithmetic != NULL) {
+        int replay = csh_lexer_replay_arithmetic(lexer, error);
+        if (replay == 1)
+            return CSH_LEX_REPLAY;
+    }
+    return result;
 }
 
 size_t csh_lexer_command_fragment(const struct csh_lexer *lexer)

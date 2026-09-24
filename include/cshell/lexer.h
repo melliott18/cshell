@@ -58,7 +58,7 @@ struct csh_token {
 struct csh_lexer;
 enum csh_lex_result {
     CSH_LEX_ERROR = -1, CSH_LEX_EOF = 0, CSH_LEX_TOKEN = 1,
-    CSH_LEX_MORE = 2, CSH_LEX_COMMAND = 3
+    CSH_LEX_MORE = 2, CSH_LEX_COMMAND = 3, CSH_LEX_REPLAY = 4
 };
 
 /* Constructors copy the name; *out is NULL on failure. The lexer owns fed
@@ -78,8 +78,9 @@ void csh_lexer_document(struct csh_lexer *lexer);
 int csh_lexer_feed(struct csh_lexer *lexer, const void *bytes, size_t length,
     int final, struct csh_error *error);
 /* TOKEN transfers ownership to an empty destination. All other results clear
- * it. Errors are sticky and release unpublished token storage. MORE preserves
- * state until another feed; COMMAND requests grammar-assisted $(...) parsing.
+ * it. Errors are sticky; speculative storage remains owned until replay or
+ * destruction. MORE preserves state until another feed; COMMAND requests
+ * grammar-assisted $(...) parsing. REPLAY discards an arithmetic candidate.
  * Call only on the active (deepest) frame. */
 enum csh_lex_result csh_lexer_next(struct csh_lexer *lexer,
     struct csh_token *token, struct csh_error *error);
@@ -102,6 +103,14 @@ int csh_lexer_context(const struct csh_lexer *lexer, const char **context,
 /* Index of the pending COMMAND fragment, or CSH_FRAGMENT_ROOT. Use this
  * stable index to attach child ASTs; alias sources have independent positions. */
 size_t csh_lexer_command_fragment(const struct csh_lexer *lexer);
+/* REPLAY invalidates speculative substitutions at or after command_fragment()
+ * in the pending word. Discard those ASTs, then resume next() (which requests
+ * COMMAND). Already-fed physical bytes and alias provenance are retained.
+ * After a nested parser syntax error, replay_arithmetic() offers the same
+ * recovery on its parent frame: 1 replayed, 0 no candidate/resource error,
+ * -1 allocation failure. Unwind child parser storage before calling; recovery
+ * destroys child lexers. Pass the original error; success clears it. */
+int csh_lexer_replay_arithmetic(struct csh_lexer *lexer, struct csh_error *error);
 int csh_lexer_command_begin(struct csh_lexer *parent, struct csh_lexer **child,
     struct csh_error *error);
 int csh_lexer_command_end(struct csh_lexer *parent, struct csh_lexer *child,

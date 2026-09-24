@@ -92,8 +92,10 @@ and source diagnostics. Independent C fixtures cover input boundaries, owned
 tree lifetimes, AST transfers, and allocation failures. See the
 [ticket validation record](tickets/CSH-005-parser-and-ast.md) for commands and
 platform evidence. These checks do not execute commands. CSH-027 compound
-syntax, CSH-030 aliases, arithmetic-first ambiguity fallback, recursive nesting
-beyond the documented guard, and replacement-runtime evidence remain open.
+syntax and CSH-030 aliases have their own subsequent evidence records.
+[CSH-041](#csh-041-replay-evidence) adds arithmetic-first ambiguity fallback.
+Recursive nesting beyond the documented guard and the full requirement audit
+remain open.
 
 <a id="csh-022-api-evidence"></a>
 
@@ -299,7 +301,23 @@ Redirection operands omit optional interactive pathname generation. Resolved
 earlier prefix assignments. No-command redirection expansion uses copied state.
 These record D-004/D-006 decisions, not a full conformance result.
 
-[CSH-041](tickets/CSH-041-arithmetic-substitution-replay.md) retains the known
-arithmetic-first replay gap. Signal/trap policies, runtime aliases, shell-option
+[CSH-041](#csh-041-replay-evidence) adds arithmetic-first replay. Signal/trap
+policies, runtime aliases, shell-option
 parsing, locale startup and unimplemented control-flow consumers remain with
 their existing owners. See the ticket for exact validation and remaining limits.
+
+<a id="csh-041-replay-evidence"></a>
+
+### CSH-041 replay evidence
+
+[CSH-041](tickets/CSH-041-arithmetic-substitution-replay.md) adds owned lexer
+checkpoints, grammar-only arithmetic classification, and parser AST cleanup for
+EXP-005/EXP-006. `tests/lexer.py` checks full, physical-line, and byte feeds;
+`tests/parser.py` and `tests/alias_parser.c` check AST identity, here-documents,
+alias provenance, read boundaries, EOF, and nesting guards. Lexer/parser fault
+sweeps inject failures into snapshot creation, growth, recovery, and destruction.
+`tests/substitution_cases.py` checks public command-string, file, and stdin
+behavior, including files proving exactly-once execution and no speculative
+assignment effects. Arithmetic evaluation errors retain arithmetic precedence.
+These selected cases retain the signed-long model and do not close the full
+EXP-005/EXP-006 audit or the CSH-008 milestone.

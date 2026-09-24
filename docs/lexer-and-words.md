@@ -37,6 +37,7 @@ commands may read from the same input descriptor.
 | `CSH_LEX_TOKEN` | Accept the owned token; continue grammar processing. |
 | `CSH_LEX_MORE` | Supply more input when the parser requests it. The lexer retains partial syntax. |
 | `CSH_LEX_COMMAND` | Enter a child lexer so the parser can recognize the nested command substitution. |
+| `CSH_LEX_REPLAY` | Discard speculative ASTs at or after `csh_lexer_command_fragment()` and resume `next()`. |
 | `CSH_LEX_EOF` | Handle clean lexical EOF. The parser still decides whether its grammar is complete. |
 | `CSH_LEX_ERROR` | Read the error, release owned outputs, and destroy the root lexer. |
 
@@ -146,6 +147,25 @@ input available to the entire chain. A parent word retains the raw bytes it
 needs while its child consumes tokens or here-document content. No second
 descriptor reader, copied-script parser, or heuristic parenthesis scanner is
 required. The source may release earlier bytes when no active word needs them.
+
+[CSH-041](tickets/CSH-041-arithmetic-substitution-replay.md) checkpoints each
+ambiguous `$((` opener. A snapshot owns the remaining source tape and alias
+stack, plus the capture lengths and positions of suspended words. Later physical
+feeds append to every live snapshot; speculative alias insertions do not.
+Grammar-valid candidates commit after `csh_arith_probe()` with nested shell
+expansions represented as operands. Invalid candidates restore their snapshots
+and return `CSH_LEX_REPLAY`, followed by the ordinary `CSH_LEX_COMMAND` handshake.
+No descriptor is reread and no shell expansion is evaluated during this process.
+
+If a nested command parser rejects speculative syntax, unwind its AST and
+here-document storage first, then call `csh_lexer_replay_arithmetic()` on its
+parent lexer with the original error. Success destroys child lexer frames,
+clears the diagnostic, and requires the same speculative AST cleanup as REPLAY.
+Failure to allocate never retries. A still-possible arithmetic candidate at EOF
+remains incomplete; prefix probing also permits recovery when an unterminated
+shell operand appeared in text that already rules out arithmetic (such as a
+here-document body). There is a 128-checkpoint nesting guard across command
+frames. Destroying the root releases all outstanding snapshots on any failure.
 
 Backquote fragments retain their raw source for later command parsing and
 escape interpretation. Arithmetic fragments retain syntax for the expansion

@@ -167,12 +167,16 @@ instead of exhausting the C stack. This implementation limit remains an open
 part of the broader unrestricted-command-size requirement; ordinary sequence
 length and word/body size have no fixed parser cap.
 
-The existing lexer reserves `$((` for arithmetic syntax. Arithmetic-first
-classification with command-substitution fallback still needs coordination with
-CSH-024 and CSH-026: a syntax probe alone cannot recover bytes already consumed
-by the lexer; shared-cursor checkpoint/replay must preserve here-documents and
-fragment positions. Use explicitly separated `$( (command); )` for the supported
-subshell form. The parser does not claim the ambiguous form is implemented.
+[CSH-041](tickets/CSH-041-arithmetic-substitution-replay.md) resolves ambiguous
+`$((` input with arithmetic-first checkpoint/replay. On `CSH_LEX_REPLAY`, the
+parser destroys speculative substitution ASTs at or after the pending command
+fragment index and resumes the normal command handshake. Earlier substitutions
+in that word survive. Nested parser syntax failures can unwind to the candidate
+owner and retry through `csh_lexer_replay_arithmetic()`; resource failures and
+nesting-limit errors remain failures. Lexer snapshots preserve physical feeds,
+alias source identities, and ancestor word positions. Here-document queues stay
+with their parser frames and are rebuilt with the replayed command tree.
+
 Attach a borrowed alias table with `csh_parser_set_aliases()` to enable
 [CSH-030 alias substitution](aliases.md). Leave it NULL to retain ordinary
 parsing. Change the table only between `csh_parser_next()` calls; the next

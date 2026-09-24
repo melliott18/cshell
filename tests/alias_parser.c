@@ -550,6 +550,51 @@ static void nested_and_heredocs(void)
     csh_aliases_destroy(table);
 }
 
+static void arithmetic_replay(void)
+{
+    struct csh_aliases *table = aliases();
+    struct csh_ast *tree, *node, *sub;
+    struct csh_ast_word *argument;
+    const struct csh_token *token;
+    current_case = "arithmetic replay restores aliases and physical provenance";
+    set(table, "inside", "printf");
+    set(table, "outer", "echo $((echo $(inside)); )");
+    tree = parse("  outer tail\n", table);
+    node = one(tree);
+    token = word(node, 1, "$((echo $(inside)); )");
+    check(strcmp(token->source_name, "alias:outer") == 0 &&
+        token->invocation.offset == 2, "replayed token keeps alias invocation");
+    argument = &node->data.simple.words[1].word;
+    check(argument->substitution_count == 1, "discard speculative child AST");
+    sub = one(argument->substitutions[0].body);
+    check(sub->kind == CSH_AST_SUBSHELL, "replayed subshell");
+    sub = one(sub->data.group.body);
+    argument = &sub->data.simple.words[1].word;
+    check(argument->substitution_count == 1, "one retained nested substitution");
+    token = word(one(argument->substitutions[0].body), 0, "printf");
+    check(strcmp(token->source_name, "alias:inside") == 0 &&
+        token->invocation.offset == 2, "speculative alias insertion is replayed once");
+    token = word(node, 2, "tail");
+    check(token->start.offset == 8 && token->alias_name == NULL,
+        "original positions resume after replay");
+    csh_ast_destroy(tree);
+
+    set(table, "outer", "echo $((echo $(inside)");
+    tree = parse("outer); ) tail\n", table);
+    word(one(tree), 1, "$((echo $(inside) ); )");
+    word(one(tree), 2, "tail");
+    csh_ast_destroy(tree);
+
+    set(table, "outer", "echo $((echo $(outer)); )");
+    tree = parse("outer\n", table);
+    argument = &one(tree)->data.simple.words[1].word;
+    sub = one(one(argument->substitutions[0].body)->data.group.body);
+    argument = &sub->data.simple.words[1].word;
+    word(one(argument->substitutions[0].body), 0, "outer");
+    csh_ast_destroy(tree);
+    csh_aliases_destroy(table);
+}
+
 static void provenance(void)
 {
     struct csh_aliases *table = aliases();
@@ -626,7 +671,9 @@ static void diagnostic_positions(void)
         { "(", CSH_PARSE_INCOMPLETE },
         { "cat <<END", CSH_PARSE_INCOMPLETE },
         { "echo 'unfinished", CSH_PARSE_INCOMPLETE },
-        { "echo $(", CSH_PARSE_INCOMPLETE }
+        { "echo $(", CSH_PARSE_INCOMPLETE },
+        { "echo $((echo >); )", CSH_PARSE_ERROR },
+        { "echo $((echo 'unfinished", CSH_PARSE_INCOMPLETE }
     };
     struct csh_aliases *table = aliases();
     size_t index;
@@ -667,6 +714,7 @@ int main(void)
     grammar();
     mutation_timing();
     nested_and_heredocs();
+    arithmetic_replay();
     provenance();
     invalid_replacements();
     replacement_boundaries();

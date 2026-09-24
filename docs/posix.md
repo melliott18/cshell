@@ -76,9 +76,10 @@ decoding. CSH-025 adds IFS field splitting, pathname generation, protected empty
 fields, and explicit failure/interruption cleanup at the module level. CSH-026
 integrates these APIs with substitutions, context-sensitive command preparation
 and here-documents; [its evidence](tickets/CSH-026-substitution-and-heredoc-integration.md)
-covers public runtime behavior and resource cleanup. Arithmetic ambiguity replay
-remains CSH-041. Standalone API fixtures and selected integration cases do not
-establish shell conformance.
+covers public runtime behavior and resource cleanup. CSH-041 adds arithmetic
+ambiguity replay with lexer/parser fault sweeps and public cross-mode cases.
+Standalone API fixtures and selected integration cases do not establish shell
+conformance.
 
 ## Replacement execution evidence
 
