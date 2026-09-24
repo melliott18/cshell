@@ -1,6 +1,6 @@
 # CSH-006: Execute syntax trees with explicit resource ownership
 
-- Status: backlog
+- Status: done
 - Type: feat
 - Kind: milestone
 - Parent: None
@@ -29,16 +29,16 @@ descriptors, execution environments, and command statuses.
 
 ## Acceptance criteria
 
-- [ ] Pipeline stages run concurrently and unused descriptors are closed.
-- [ ] The executor tracks and reaps the children it owns without stealing another
+- [x] Pipeline stages run concurrently and unused descriptors are closed.
+- [x] The executor tracks and reaps the children it owns without stealing another
   operation's child status.
-- [ ] Default pipeline/list statuses and short-circuiting follow POSIX rules;
+- [x] Default pipeline/list statuses and short-circuiting follow POSIX rules;
   enabled `pipefail` option semantics are completed in CSH-010.
-- [ ] `2>&1 >file` and `>file 2>&1` have their distinct, specified effects.
-- [ ] Failed command lookup returns 127; found but unexecutable commands return
+- [x] `2>&1 >file` and `>file 2>&1` have their distinct, specified effects.
+- [x] Failed command lookup returns 127; found but unexecutable commands return
   126 where required, including the specified executable-format fallback.
-- [ ] Temporary builtin redirections are restored on success and failure.
-- [ ] Partial pipeline creation and failed redirections leave no child or
+- [x] Temporary builtin redirections are restored on success and failure.
+- [x] Partial pipeline creation and failed redirections leave no child or
   descriptor leaks and do not return a child to the shell input loop.
 
 ## Validation
@@ -59,10 +59,10 @@ process groups and terminal ownership are completed in CSH-011.
 - [x] [CSH-019: Simple commands and redirections](CSH-019-simple-command-redirections.md)
   is done.
 - [x] [CSH-020: Pipeline lifecycle](CSH-020-pipeline-lifecycle.md) is done.
-- [ ] [CSH-021: Lists and execution contexts](CSH-021-lists-and-execution-contexts.md)
+- [x] [CSH-021: Lists and execution contexts](CSH-021-lists-and-execution-contexts.md)
   is done.
-- [ ] [CSH-039: Complete legacy retirement](CSH-039-legacy-retirement.md) is done.
-- [ ] The acceptance criteria above pass together through the new
+- [x] [CSH-039: Complete legacy retirement](CSH-039-legacy-retirement.md) is done.
+- [x] The acceptance criteria above pass together through the new
   executor, the legacy executor is removed, and resource-ownership evidence is
   recorded here.
 
@@ -70,3 +70,10 @@ CSH-019, CSH-020, and CSH-021 form the execution sequence. CSH-039 joins
 CSH-020 pipeline evidence with CSH-018 invocation evidence and need not wait for
 CSH-021 lists/groups. CSH-019 also consumes the state-storage
 API from CSH-022, which can be built independently of the parser.
+
+All four child tickets are complete. The final public runtime passed 73 simple
+execution cases, 55 pipeline cases, 60 context behavior cases, 279 cross-mode
+runtime cases, and 9 PTY cases, including deterministic allocation, descriptor,
+pipe, fork, wait, and child-ownership fault sweeps. Full native and Docker suites,
+their ASan/UBSan variants, and both hosted workflows passed before CSH-039 merged
+through pull request #61 on 2026-09-23. The legacy executor and scanner are gone.
