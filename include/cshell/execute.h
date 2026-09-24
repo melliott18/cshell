@@ -27,6 +27,7 @@ enum csh_execution_category {
 
 struct csh_execution {
     int status;
+    int redirection_failed; /* Parent command could not apply redirections. */
     int special_builtin_error; /* Runtime applies context-dependent error policy. */
     int exit_requested; /* Caller leaves its input loop; library never exits. */
     enum csh_execution_category category;
@@ -113,5 +114,31 @@ int csh_execute_resolved(struct csh_state *state, const struct csh_command *comm
  * csh_execute_pipeline_ast when the caller needs the full stage vector. */
 int csh_execute_ast(struct csh_state *state, const struct csh_ast *tree,
     struct csh_execution *result, struct csh_error *error);
+
+struct csh_background_child;
+/* Initialize with {0}, then set state to a borrowed, live shell state. One
+ * context owns its registered direct children; do not copy it or reap those
+ * PIDs elsewhere. Destroy before state. No signal handler is installed. */
+struct csh_execution_context {
+    struct csh_state *state;
+    struct csh_background_child *children; /* Private owned registry. */
+    size_t child_count;
+};
+/* Lists, AND/OR, brace/subshell groups, and pipelines with group stages.
+ * Preflight the complete tree before effects. Literal expansion limits still
+ * apply. Background items return status 0 after registration and publish $!.
+ * Reap completed background children at execution boundaries. */
+int csh_execute_context_ast(struct csh_execution_context *context,
+    const struct csh_ast *tree, struct csh_execution *result,
+    struct csh_error *error);
+/* wait=0 polls; wait=1 waits for all registered children, retrying EINTR.
+ * Neither changes last status or $!. Errors retain unreaped ownership for a
+ * retry. This does not implement the shell wait builtin or job control. */
+int csh_execution_context_reap(struct csh_execution_context *context, int wait,
+    struct csh_error *error);
+/* Poll then release the registry. Running children are detached, not killed
+ * or waited for: use reap(wait=1) first when a library host must retain/reap
+ * every child. A shell exiting normally must not wait for background jobs. */
+void csh_execution_context_destroy(struct csh_execution_context *context);
 
 #endif

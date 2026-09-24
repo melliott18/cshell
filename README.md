@@ -42,6 +42,7 @@ make test-builtins # Replacement state builtins and executor integration
 make test-state    # Replacement shell-state API checks only
 make test-execute  # Replacement command, assignment, and redirection API checks
 make test-pipeline # Concurrent pipeline, stage-status, and failure-cleanup checks
+make test-context  # Lists, groups, background ownership, and cleanup checks
 make test-runtime  # Candidate cross-mode invocation/status behavior
 make test-runtime-pty # Candidate prompts, EOF, and exit errors on a terminal
 make test-pty      # Controlling-terminal startup and explicit-exit fixture

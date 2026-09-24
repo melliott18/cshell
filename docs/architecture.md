@@ -68,7 +68,7 @@ exit policy. CSH-039 still owns the default executable cutover.
 | `src/quote.c` / `include/cshell/quote.h` | Reusable dollar-single-quote decoding before expansion or delimiter quote removal |
 | `src/state.c` / `include/cshell/state.h` | Owned variables and attributes, copied invocation parameters, option/status metadata, environment snapshots, and full-state and selective variable copying/restoration |
 | `src/builtin.c` / `include/cshell/builtin.h` | State builtin lookup and handlers over replacement shell state |
-| `src/execute.c` / `include/cshell/execute.h` | Owned prepared-command boundary, bounded literal AST adapter, command lookup, owned child execution, assignment categories, parent builtin dispatch, concurrent pipelines, and per-stage results |
+| `src/execute.c` / `include/cshell/execute.h` | Owned prepared-command boundary, bounded literal AST adapter, command lookup, owned child execution, assignment categories, parent builtin dispatch, concurrent pipelines, per-stage results, list/group evaluation, and background context ownership |
 | `src/redirect.c` / `include/cshell/redirect.h` | Ordered file, descriptor, and prepared here-document operations with descriptor restoration |
 
 See [Input and invocation](input-and-invocation.md) for the concrete ownership,
@@ -189,6 +189,18 @@ their tickets:
   status. Internal helpers do not print duplicate errors at every layer.
 - Cleanup after failed allocation, redirection, or process creation is part of
   the module's contract and validation.
+
+CSH-021 implements composition with a persistent `csh_execution_context` that
+borrows shell state and owns a direct-child registry. Brace groups share the
+current context under reversible descriptors; subshells, pipeline stages and
+asynchronous lists use forked state/cwd/descriptor copies and fresh registries.
+The executor preflights literal syntax before effects, then applies list
+short-circuiting and honors exit requests within the owning context. It polls
+background children at execution boundaries; explicit blocking reaping is
+available to library hosts. Shell exit detaches unfinished jobs. There is no
+SIGCHLD wakeup while idle, retained job-status history, process-group cancellation,
+or interactive job control yet. See [Execution contexts](execution.md#lists-groups-and-background-contexts)
+for lifecycle details and the synchronous convenience APIs.
 
 ## Replacement strategy
 

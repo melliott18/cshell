@@ -1,8 +1,9 @@
-# Command execution, pipelines, and redirections
+# Command execution, contexts, pipelines, and redirections
 
 [CSH-019](tickets/CSH-019-simple-command-redirections.md) supplies standalone
 replacement execution and redirection modules;
-[CSH-020](tickets/CSH-020-pipeline-lifecycle.md) adds concurrent pipelines. Their interfaces are
+[CSH-020](tickets/CSH-020-pipeline-lifecycle.md) adds concurrent pipelines, and
+[CSH-021](tickets/CSH-021-lists-and-execution-contexts.md) adds execution contexts. Their interfaces are
 [`execute.h`](../include/cshell/execute.h) and
 [`redirect.h`](../include/cshell/redirect.h). They use the replacement parser,
 AST, and shell state without the legacy scanner or executor. The default
@@ -155,7 +156,7 @@ owned as required by `struct csh_command`, not borrowed from mutable shell state
 a negation flag, and shell state. `csh_execute_pipeline_ast()` accepts a simple
 command or one foreground pipeline (including `!`) and prepares all stages
 before dispatch. Neither API accepts compound stages, background execution, or
-AND/OR/sequential lists; CSH-021 owns those contexts. Both APIs initialize an
+AND/OR/sequential lists; use `csh_execute_context_ast()` for those contexts. Both APIs initialize an
 empty `csh_pipeline_result`; the caller must call
 `csh_pipeline_result_destroy()` after success **or failure**, before reusing it.
 The destructor is safe on a zeroed or already destroyed result.
@@ -225,6 +226,70 @@ and [execution-environment](https://pubs.opengroup.org/onlinepubs/9799919799/uti
 boundaries within the supported subset; process groups, options, and signal/trap
 policy remain separate work.
 
+## Lists, groups, and background contexts
+
+`csh_execute_context_ast()` borrows a parser tree and a persistent
+`csh_execution_context`. Initialize the context with `{0}`, then assign its
+`state` pointer to the shell's live state. The context owns background child
+records; state stores variables, options, parameters, last status and the last
+background identifier. Do not copy a context or reap its children elsewhere.
+The older `csh_execute_ast()` and `csh_execute_pipeline_ast()` remain synchronous
+simple-command/pipeline convenience APIs with their original subset contract.
+
+Preparation builds an owned literal execution plan before dispatch. Unsupported
+syntax or expansion anywhere in the complete tree is rejected before effects,
+even in a branch that would be skipped. A maximum nesting depth of 256 bounds
+recursive preparation/execution. Preparation does not resolve future commands
+against current state: earlier `cd`, assignment, and export operations can still
+change later command lookup and environments. The plan is freed after dispatch;
+background children inherit their own copy through `fork()`.
+
+| Construct | State, descriptors, children and status |
+| --- | --- |
+| Sequential list | Executes in order in the current context; final command status wins. |
+| AND/OR list | Uses the parser's left-associative, equal-precedence tree; runs the right side only when selected by the left status. |
+| Brace group | Shares current state and cwd; applies ordered group redirections for the body and restores them on every return. |
+| Parenthesized group | Forks and waits for its owned context PID; copied state, cwd and descriptors cannot mutate the parent. Exit requests terminate only that child. |
+| Multi-stage pipeline | Launches all stages before waiting; each stage has isolated state. Group stages use the same recursive evaluator. Last-stage status and `!` match ordinary pipelines. |
+| Asynchronous item | Returns status 0 once registered, without waiting for completion. A background pipeline registers every stage and publishes the final stage PID. Other lists/groups publish their context PID; a simple external command execs directly in that process. |
+
+A singleton negated group keeps ordinary group semantics: `! { cd directory; }`
+changes the current directory, while `! (cd directory)` does not. Explicit
+`exit` preserves its requested status under negation. Current-context exit and
+noninteractive special-builtin errors stop enclosing lists; copied contexts do
+not propagate exit requests back to the parent. Ordinary redirection failures
+are diagnosed once and become command statuses, so `group || recovery` can run.
+Other internal errors return -1. Group backup descriptors exclude all
+redirection operands throughout the prepared tree, so private saved descriptors
+cannot make an otherwise closed nested duplication operand valid.
+
+Without job control, asynchronous execution ignores SIGINT/SIGQUIT and initially
+connects stdin to `/dev/null` (only the first stage for a pipeline). Explicit
+redirections override this input. The parent retains its own descriptors and
+signal dispositions. No process groups, terminal transfer, jobs/wait builtins,
+or shell signal/trap policy are implemented here.
+
+`csh_execution_context_reap(context, wait, error)` polls with `wait=0` or waits
+for all registered children with `wait=1`. Both use positive owned PIDs, retry
+EINTR, preserve last status and the last background identifier, and leave
+unreaped records owned on error for retry. Execution polls at command boundaries;
+there is no SIGCHLD handler, and idle hosts must call the reaper themselves.
+Completed status history for a future `wait` builtin belongs to job management.
+
+Destroying a context polls once and releases its registry, detaching any still
+running children. This lets shell exit avoid waiting for background jobs; a
+long-lived library host that requires complete reaping must call the blocking
+reaper before destruction. Forked contexts start with empty ownership registries
+and do not wait for the original parent's children. Nested asynchronous children
+are owned by the context that launched them until that context exits.
+
+Pipe/fork/wait failures during partial pipeline launch close private descriptors,
+kill and reap direct children, and free pending records. This direct-child
+boundary does not provide process-group cancellation of descendants executing
+inside a group or external program; CSH-011 owns that extension. Failed group
+redirections restore parent descriptors and do not execute the body; files
+already opened/truncated remain filesystem effects.
+
 ## Ordered redirection boundary
 
 Each `struct csh_redirect` has a destination descriptor and one operation. File
@@ -266,7 +331,7 @@ boundary on both success and failure.
 
 ## Scope and validation
 
-The supported subset has no general expansion, compound command, job-control,
+The supported subset has no general expansion, conditional/loop/function execution, job-control,
 pipefail/noclobber option behavior, or full builtin
 semantics.
 Both `>` and `>|` currently create or truncate output files. The AST front end
@@ -277,7 +342,7 @@ body containing `$`, a backquote, or a backslash. Bodies without those bytes pas
 through unchanged. Large bodies use temporary-file input rather than requiring
 a pipe reader to run while the parent writes them.
 
-Run `make test-execute test-pipeline` for the replacement execution fixtures, independently of
+Run `make test-execute test-pipeline test-context` for the replacement execution fixtures, independently of
 the prototype. See [Testing](testing.md#execution-api-and-sanitizer-checks) for
 focused sanitizer and Docker commands. The fixtures establish this module
 contract; they do not establish that the default executable implements it or

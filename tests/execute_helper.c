@@ -76,6 +76,11 @@ int main(int argc, char **argv)
     } else if (strcmp(argv[1], "signal") == 0) {
         raise(SIGTERM);
         return 86;
+    } else if (strcmp(argv[1], "gate") == 0) {
+        char byte;
+        pid_t pid = getpid();
+        if (write(atoi(argv[2]), &pid, sizeof(pid)) != sizeof(pid)) return 93;
+        return read(atoi(argv[3]), &byte, 1) == 1 ? 0 : 94;
     } else if (strcmp(argv[1], "fd-write") == 0) {
         return write(atoi(argv[2]), "fd\n", 3) == 3 ? 0 : 87;
     } else return 88;

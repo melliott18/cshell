@@ -571,7 +571,10 @@ static int execute_resolved(struct csh_state *state,
         rc = 0;
     } else {
         struct csh_error restore_error;
-        if (csh_redirect_apply(command->redirections, command->redirection_count, &save, error) == -1) goto done;
+        if (csh_redirect_apply(command->redirections, command->redirection_count, &save, error) == -1) {
+            result->redirection_failed = 1;
+            goto done;
+        }
         rc = handler == NULL ? 0 : handler(state, command, result, error, context);
         if (csh_redirect_restore(&save, &restore_error) == -1) {
             *error = restore_error;
@@ -905,5 +908,456 @@ int csh_execute_ast(struct csh_state *state, const struct csh_ast *tree,
     int rc = csh_execute_pipeline_ast(state, tree, &pipeline, error);
     *result = pipeline.execution;
     csh_pipeline_result_destroy(&pipeline);
+    return rc;
+}
+
+/* The context layer owns composition and asynchronous children; ordinary
+ * commands and simple pipelines retain the same dispatch/assignment engine. */
+struct csh_background_child {
+    pid_t pid;
+    struct csh_background_child *next;
+};
+
+struct execution_plan {
+    enum csh_ast_kind kind;
+    struct csh_command command; /* Simple command, or group redirections. */
+    struct execution_plan *children;
+    size_t count;
+    int negated;
+    int asynchronous;
+};
+
+struct descriptor_reservations {
+    int *items;
+    size_t count;
+};
+
+static void plan_destroy(struct execution_plan *plan)
+{
+    size_t i;
+    for (i = 0; i < plan->count; ++i) plan_destroy(&plan->children[i]);
+    free(plan->children);
+    csh_command_destroy(&plan->command);
+    memset(plan, 0, sizeof(*plan));
+}
+
+static int plan_prepare(const struct csh_ast *tree, struct execution_plan *plan,
+    struct descriptor_reservations *reserved, unsigned depth,
+    struct csh_error *error)
+{
+    size_t i, count = 0;
+    struct csh_ast redirects = {0};
+    if (tree == NULL || depth > 256)
+        return fail(error, "invalid or excessively nested execution tree", 0, 2);
+    plan->kind = tree->kind;
+    switch (tree->kind) {
+    case CSH_AST_SIMPLE:
+        if (csh_command_from_ast(tree, &plan->command, error) == -1) return -1;
+        break;
+    case CSH_AST_LIST: count = tree->data.list.item_count; break;
+    case CSH_AST_AND: case CSH_AST_OR: count = 2; break;
+    case CSH_AST_BRACE: case CSH_AST_SUBSHELL:
+        count = 1;
+        redirects.kind = CSH_AST_SIMPLE;
+        redirects.redirections = tree->redirections;
+        redirects.redirection_count = tree->redirection_count;
+        if (csh_command_from_ast(&redirects, &plan->command, error) == -1) return -1;
+        break;
+    case CSH_AST_PIPELINE:
+        count = tree->data.pipeline.command_count;
+        plan->negated = tree->data.pipeline.negated;
+        if (count == 0) return fail(error, "invalid pipeline AST", 0, 2);
+        break;
+    default:
+        return fail(error, "unsupported compound command", 0, 2);
+    }
+    if (tree->redirection_count && tree->kind != CSH_AST_SIMPLE &&
+        tree->kind != CSH_AST_BRACE && tree->kind != CSH_AST_SUBSHELL)
+        return fail(error, "invalid compound redirections", 0, 2);
+    for (i = 0; i < plan->command.redirection_count; ++i) {
+        const struct csh_redirect *r = &plan->command.redirections[i];
+        int *replacement;
+        if (reserved->count > SIZE_MAX / sizeof(int) - 2)
+            return fail(error, "too many descriptor operands", ENOMEM, 1);
+        replacement = realloc(reserved->items, (reserved->count + 2) * sizeof(int));
+        if (replacement == NULL)
+            return fail(error, "cannot reserve descriptor operands", ENOMEM, 1);
+        reserved->items = replacement;
+        reserved->items[reserved->count++] = r->fd;
+        if (r->kind == CSH_REDIRECT_DUP_READ || r->kind == CSH_REDIRECT_DUP_WRITE)
+            reserved->items[reserved->count++] = r->source_fd;
+    }
+    if (count == 0) return 0;
+    if (count > SIZE_MAX / sizeof(*plan->children) ||
+        (plan->children = calloc(count, sizeof(*plan->children))) == NULL)
+        return fail(error, "cannot allocate execution plan", ENOMEM, 1);
+    plan->count = count;
+    for (i = 0; i < count; ++i) {
+        const struct csh_ast *child;
+        switch (tree->kind) {
+        case CSH_AST_LIST:
+            child = tree->data.list.items[i].command;
+            plan->children[i].asynchronous =
+                tree->data.list.items[i].separator == CSH_AST_AMPERSAND;
+            break;
+        case CSH_AST_PIPELINE: child = tree->data.pipeline.commands[i]; break;
+        case CSH_AST_AND: case CSH_AST_OR:
+            child = i == 0 ? tree->data.binary.left : tree->data.binary.right;
+            break;
+        default: child = tree->data.group.body; break;
+        }
+        if (plan_prepare(child, &plan->children[i], reserved, depth + 1, error) == -1)
+            return -1;
+    }
+    return 0;
+}
+
+int csh_execution_context_reap(struct csh_execution_context *context, int wait,
+    struct csh_error *error)
+{
+    struct csh_background_child **link = &context->children;
+    memset(error, 0, sizeof(*error));
+    while (*link != NULL) {
+        struct csh_background_child *child = *link;
+        int status;
+        pid_t waited;
+        do { waited = waitpid(child->pid, &status, wait ? 0 : WNOHANG); }
+        while (waited == -1 && errno == EINTR);
+        if (waited == -1)
+            return fail(error, "cannot reap background child", errno, 1);
+        if (waited == 0) link = &child->next;
+        else {
+            *link = child->next;
+            free(child);
+            --context->child_count;
+        }
+    }
+    return 0;
+}
+
+void csh_execution_context_destroy(struct csh_execution_context *context)
+{
+    struct csh_error ignored;
+    if (context == NULL) return;
+    csh_execution_context_reap(context, 0, &ignored);
+    while (context->children != NULL) {
+        struct csh_background_child *child = context->children;
+        context->children = child->next;
+        free(child);
+    }
+    memset(context, 0, sizeof(*context));
+}
+
+static int execute_plan(struct csh_execution_context *context,
+    const struct execution_plan *plan, const struct descriptor_reservations *reserved,
+    struct csh_execution *result, struct csh_error *error);
+
+static int context_stopped(struct csh_execution_context *context,
+    const struct csh_execution *result)
+{
+    struct csh_state_info info;
+    csh_state_get_info(context->state, &info);
+    return result->exit_requested || (result->special_builtin_error &&
+        !(info.options & CSH_OPT_INTERACTIVE));
+}
+
+static int context_pipeline(struct csh_execution_context *context,
+    const struct execution_plan *plan, const struct descriptor_reservations *reserved,
+    int asynchronous, struct csh_execution *result, struct csh_error *error);
+
+static void background_setup(int redirect_input)
+{
+    if (redirect_input) {
+        int fd;
+        do { fd = open("/dev/null", O_RDONLY); } while (fd == -1 && errno == EINTR);
+        if (fd == -1 || pipeline_connect(fd, STDIN_FILENO) == -1) {
+            diagnose("context", "cannot redirect background input", errno);
+            _exit(1);
+        }
+        if (fd != STDIN_FILENO) pipe_close(fd);
+    }
+    signal(SIGINT, SIG_IGN);
+    signal(SIGQUIT, SIG_IGN);
+}
+
+static void context_child(struct csh_state *state, const struct execution_plan *plan,
+    const struct descriptor_reservations *reserved)
+{
+    struct csh_execution_context child = {0};
+    struct csh_execution result;
+    struct csh_error error;
+    child.state = state; /* fork isolates state, cwd, options and descriptors. */
+    if (plan->kind == CSH_AST_SIMPLE) {
+        enum csh_execution_category category;
+        struct launch launch;
+        if (command_validate(state, &plan->command, &category, &error) == -1) {
+            diagnose("context", error.message, error.system_errno);
+            _exit(error.status);
+        }
+        if (category == CSH_EXEC_EXTERNAL) {
+            if (pipeline_launch_prepare(state, &plan->command, &launch, &error) == -1) {
+                diagnose("context", error.message, error.system_errno);
+                _exit(error.status);
+            }
+            launch_child(&plan->command, &launch);
+        }
+    }
+    if (execute_plan(&child, plan, reserved, &result, &error) == -1)
+        diagnose("context", error.message, error.system_errno);
+    csh_execution_context_destroy(&child);
+    _exit(result.status);
+}
+
+static int context_fork(struct csh_execution_context *context,
+    const struct execution_plan *plan, const struct descriptor_reservations *reserved,
+    int asynchronous, struct csh_execution *result, struct csh_error *error)
+{
+    struct csh_background_child *entry = NULL;
+    struct csh_pipeline_stage stage = {0};
+    if (asynchronous && plan->kind == CSH_AST_PIPELINE && plan->count > 1)
+        return context_pipeline(context, plan, reserved, 1, result, error);
+    if (asynchronous && (entry = malloc(sizeof(*entry))) == NULL)
+        return fail(error, "cannot allocate background child", ENOMEM, 1);
+    stage.pid = fork();
+    if (stage.pid == -1) {
+        free(entry);
+        return fail(error, "cannot fork execution context", errno, 1);
+    }
+    if (stage.pid == 0) {
+        /* Apply the implicit input before any explicit body redirects. */
+        if (asynchronous) background_setup(1);
+        context_child(context->state, plan, reserved);
+    }
+    if (asynchronous) {
+        entry->pid = stage.pid;
+        entry->next = context->children;
+        context->children = entry;
+        ++context->child_count;
+        csh_state_set_background(context->state, stage.pid);
+        result->status = 0;
+        csh_state_set_status(context->state, 0);
+        return 0;
+    }
+    if (stage_wait(&stage) == -1) {
+        int number = errno;
+        kill(stage.pid, SIGKILL);
+        stage_wait(&stage);
+        return fail(error, "cannot wait for execution context", number, 1);
+    }
+    result->status = stage.status;
+    return 0;
+}
+
+static int context_pipeline(struct csh_execution_context *context,
+    const struct execution_plan *plan, const struct descriptor_reservations *reserved,
+    int asynchronous, struct csh_execution *result, struct csh_error *error)
+{
+    struct csh_pipeline_result pipeline = {0};
+    struct csh_background_child *pending = NULL;
+    size_t i;
+    int rc = -1, previous = -1, ends[2] = {-1, -1};
+    if (plan->count == 1) {
+        rc = execute_plan(context, &plan->children[0], reserved, result, error);
+        if (rc == 0 && plan->negated && !result->exit_requested)
+            result->status = !result->status;
+        return rc;
+    }
+    /* Reuse the prepared pipeline API for all-simple stages, preserving its
+     * pre-launch assignment/lookup checks and direct external child identity. */
+    for (i = 0; i < plan->count; ++i)
+        if (plan->children[i].kind != CSH_AST_SIMPLE) break;
+    if (!asynchronous && i == plan->count) {
+        struct csh_command *commands = calloc(plan->count, sizeof(*commands));
+        if (commands == NULL) return fail(error, "cannot allocate pipeline commands", ENOMEM, 1);
+        for (i = 0; i < plan->count; ++i) commands[i] = plan->children[i].command;
+        rc = csh_execute_pipeline(context->state, commands, plan->count,
+            plan->negated, &pipeline, error);
+        *result = pipeline.execution;
+        free(commands); /* Borrowed command contents. */
+        csh_pipeline_result_destroy(&pipeline);
+        return rc;
+    }
+    pipeline.stages = calloc(plan->count, sizeof(*pipeline.stages));
+    if (pipeline.stages == NULL)
+        return fail(error, "cannot allocate pipeline stages", ENOMEM, 1);
+    pipeline.count = plan->count;
+    for (i = 0; i < plan->count; ++i) {
+        pid_t pid;
+        if (asynchronous) {
+            struct csh_background_child *entry = malloc(sizeof(*entry));
+            if (entry == NULL) {
+                fail(error, "cannot allocate background child", ENOMEM, 1);
+                goto cancel;
+            }
+            entry->pid = 0;
+            entry->next = pending;
+            pending = entry;
+        }
+        if (i + 1 < plan->count && pipeline_pipe(ends) == -1) {
+            fail(error, "cannot create pipeline pipe", errno, 1);
+            goto cancel;
+        }
+        pid = fork();
+        if (pid == -1) {
+            fail(error, "cannot fork pipeline stage", errno, 1);
+            goto cancel;
+        }
+        if (pid == 0) {
+            if (asynchronous) background_setup(i == 0);
+            if (pipeline_connect(previous, STDIN_FILENO) == -1 ||
+                pipeline_connect(ends[1], STDOUT_FILENO) == -1) {
+                diagnose("pipeline", "cannot connect pipe", errno);
+                _exit(1);
+            }
+            pipe_close(previous);
+            pipe_close(ends[0]);
+            pipe_close(ends[1]);
+            context_child(context->state, &plan->children[i], reserved);
+        }
+        pipeline.stages[i].pid = pid;
+        if (asynchronous) pending->pid = pid;
+        pipe_close(previous);
+        pipe_close(ends[1]);
+        previous = ends[0];
+        ends[0] = ends[1] = -1;
+    }
+    if (asynchronous) {
+        csh_state_set_background(context->state, pipeline.stages[plan->count - 1].pid);
+        while (pending != NULL) {
+            struct csh_background_child *entry = pending;
+            pending = entry->next;
+            entry->next = context->children;
+            context->children = entry;
+            ++context->child_count;
+        }
+        result->category = CSH_EXEC_PIPELINE;
+        result->status = 0; /* Even a negated asynchronous pipeline returns 0. */
+        csh_state_set_status(context->state, 0);
+        rc = 0;
+        goto done;
+    }
+    for (i = 0; i < plan->count; ++i)
+        if (stage_wait(&pipeline.stages[i]) == -1) {
+            fail(error, "cannot wait for pipeline stage", errno, 1);
+            goto cancel;
+        }
+    result->category = CSH_EXEC_PIPELINE;
+    result->status = pipeline.stages[plan->count - 1].status;
+    if (plan->negated) result->status = !result->status;
+    rc = 0;
+    goto done;
+cancel:
+    pipe_close(previous);
+    pipe_close(ends[0]);
+    pipe_close(ends[1]);
+    pipeline_cancel(&pipeline);
+done:
+    while (pending != NULL) {
+        struct csh_background_child *entry = pending;
+        pending = entry->next;
+        free(entry);
+    }
+    csh_pipeline_result_destroy(&pipeline);
+    return rc;
+}
+
+static int execute_plan(struct csh_execution_context *context,
+    const struct execution_plan *plan, const struct descriptor_reservations *reserved,
+    struct csh_execution *result, struct csh_error *error)
+{
+    size_t i;
+    int rc = 0;
+    memset(result, 0, sizeof(*result));
+    memset(error, 0, sizeof(*error));
+    switch (plan->kind) {
+    case CSH_AST_SIMPLE: {
+        struct csh_pipeline_result pipeline = {0};
+        rc = csh_execute_pipeline(context->state, &plan->command, 1, 0, &pipeline, error);
+        *result = pipeline.execution;
+        csh_pipeline_result_destroy(&pipeline);
+        break;
+    }
+    case CSH_AST_LIST:
+        for (i = 0; i < plan->count; ++i) {
+            if (plan->children[i].asynchronous) {
+                memset(result, 0, sizeof(*result));
+                rc = context_fork(context, &plan->children[i], reserved, 1, result, error);
+            } else rc = execute_plan(context, &plan->children[i], reserved, result, error);
+            if (rc == -1 || context_stopped(context, result)) break;
+            if (csh_execution_context_reap(context, 0, error) == -1) { rc = -1; break; }
+        }
+        break;
+    case CSH_AST_AND: case CSH_AST_OR:
+        rc = execute_plan(context, &plan->children[0], reserved, result, error);
+        if (rc == 0 && !context_stopped(context, result) &&
+            ((plan->kind == CSH_AST_AND) == (result->status == 0)))
+            rc = execute_plan(context, &plan->children[1], reserved, result, error);
+        break;
+    case CSH_AST_SUBSHELL: {
+        /* Execute redirects inside the fork, with the group wrapper treated
+         * as a brace so it does not fork itself again. */
+        struct execution_plan group = *plan;
+        group.kind = CSH_AST_BRACE;
+        rc = context_fork(context, &group, reserved, 0, result, error);
+        break;
+    }
+    case CSH_AST_BRACE: {
+        struct csh_redirect_save *save = NULL;
+        struct csh_error restored;
+        rc = csh_redirect_apply_reserved(plan->command.redirections,
+            plan->command.redirection_count, reserved->items, reserved->count, &save, error);
+        if (rc == -1) result->redirection_failed = 1;
+        if (rc == 0) {
+            rc = execute_plan(context, &plan->children[0], reserved, result, error);
+            if (csh_redirect_restore(&save, &restored) == -1) {
+                *error = restored;
+                rc = -1;
+            }
+        }
+        break;
+    }
+    case CSH_AST_PIPELINE:
+        rc = context_pipeline(context, plan, reserved, 0, result, error);
+        break;
+    default: rc = fail(error, "unsupported compound command", 0, 2); break;
+    }
+    if (rc == -1) result->status = error->status;
+    if (rc == -1 && result->redirection_failed) {
+        /* A redirection failure is a command status for list composition.
+         * Report it here, while any enclosing group's redirects are active. */
+        dprintf(STDERR_FILENO, "cshell: %s", error->message);
+        if (error->system_errno) dprintf(STDERR_FILENO, ": %s", strerror(error->system_errno));
+        dprintf(STDERR_FILENO, "\n");
+        memset(error, 0, sizeof(*error));
+        result->redirection_failed = 0;
+        rc = 0;
+    }
+    csh_state_set_status(context->state, result->status);
+    return rc;
+}
+
+int csh_execute_context_ast(struct csh_execution_context *context,
+    const struct csh_ast *tree, struct csh_execution *result, struct csh_error *error)
+{
+    struct execution_plan plan = {0};
+    struct descriptor_reservations reserved = {0};
+    int rc = -1;
+    memset(result, 0, sizeof(*result));
+    memset(error, 0, sizeof(*error));
+    /* Preserve the candidate's fatal preflight-error classification. */
+    result->category = CSH_EXEC_PIPELINE;
+    if (context == NULL || context->state == NULL) {
+        fail(error, "invalid execution context", 0, 2);
+        goto done;
+    }
+    if (csh_execution_context_reap(context, 0, error) == -1 ||
+        plan_prepare(tree, &plan, &reserved, 0, error) == -1) goto done;
+    rc = execute_plan(context, &plan, &reserved, result, error);
+done:
+    plan_destroy(&plan);
+    free(reserved.items);
+    if (rc == -1) result->status = error->status;
+    if (context != NULL && context->state != NULL)
+        csh_state_set_status(context->state, result->status);
     return rc;
 }
