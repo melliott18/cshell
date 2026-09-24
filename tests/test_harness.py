@@ -122,11 +122,13 @@ class HarnessTests(unittest.TestCase):
                 self.assert_failure(result, name, *details)
 
     def test_environment_isolated_and_explicit_overrides_applied(self):
-        expected = {"locale": True, "override": True, "host_isolated": True,
+        expected = {"allocator_setting": True, "locale": True,
+                    "override": True, "host_isolated": True,
                     "home_isolated": True, "temporary_isolated": True}
         item = case(mode="environment", env={"CSHELL_FIXTURE_VALUE": "fixture value"})
         item["expect"]["stdout"] = json.dumps(expected, sort_keys=True) + "\n"
-        parent_environment = dict(os.environ, CSHELL_HOST_SECRET="must not leak")
+        parent_environment = dict(os.environ, CSHELL_HOST_SECRET="must not leak",
+                                  MallocNanoZone="0")
         self.assert_success(self.run_suite([item], env=parent_environment))
 
     def test_child_resource_limits_are_bounded(self):
