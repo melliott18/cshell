@@ -8,13 +8,23 @@ import subprocess
 import sys
 import signal
 import tempfile
+from execute import bounded_run
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('binary')
+    parser.add_argument('--api-binary', required=True)
+    parser.add_argument('--fault-binary', required=True)
     args = parser.parse_args()
     binary = str(Path(args.binary).resolve())
+    with tempfile.TemporaryDirectory(prefix='cshell-job-api-') as temp:
+        for executable, arguments in ((args.api_binary, []),
+                                      (args.fault_binary, ['--jobs'])):
+            result = bounded_run([str(Path(executable).resolve()), *arguments],
+                                 cwd=Path(temp), env=os.environ.copy(), timeout=30)
+            assert result.returncode == 0, result
+            print(result.stdout.decode(), end='')
     cases = [
         ('wait', 0, '', ''),
         ('kill -l 143 >&-', 1, '', 'cshell: kill: cannot write output\n'),

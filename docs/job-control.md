@@ -110,7 +110,9 @@ does not claim full POSIX shell signal compliance or implement pipefail.
 `make test-jobs` checks direct-child ownership, retained pipeline statuses,
 150 rapid asynchronous pipelines, reaping during idle input, interactive wait
 interruption, allocation/pipe/fork/wait failures, and builtin behavior in all
-three input modes. `make test-jobs-pty` uses CSH-033's bounded terminal runner
+three input modes. API/fault fixtures use the existing bounded process-group
+runner, so failures/timeouts cannot leave their descendants running.
+`make test-jobs-pty` uses CSH-033's bounded terminal runner
 for Ctrl-C, Ctrl-Z, bg/fg, grouped pipelines, background reads, job selectors,
 monitor toggles, descriptor reservations, and terminal settings. Injected
 process-group, handoff, mode-restoration, and wait failures verify terminal

@@ -343,6 +343,4 @@ build/tests/jobs_fixture: tests/jobs_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEAD
 
 .PHONY: test-jobs
 test-jobs: cshell build/tests/jobs_fixture build/tests/execute_faults
-	./build/tests/jobs_fixture
-	./build/tests/execute_faults --jobs
-	$(PYTHON) tests/jobs.py ./cshell
+	$(PYTHON) tests/jobs.py ./cshell --api-binary build/tests/jobs_fixture --fault-binary build/tests/execute_faults
