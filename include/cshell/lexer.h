@@ -47,6 +47,12 @@ struct csh_token {
     struct csh_position end;
     struct csh_fragment *fragments;
     size_t fragment_count;
+    /* Alias tokens own their replacement source identity and the outermost
+     * invocation provenance. NULL names identify ordinary input tokens. */
+    char *alias_name;
+    char *invocation_source;
+    struct csh_position invocation;
+    int alias_eligible;
 };
 
 struct csh_lexer;
@@ -87,12 +93,39 @@ int csh_lexer_context(const struct csh_lexer *lexer, const char **context,
  * The parser owns grammar decisions, including case patterns and here-docs.
  * When it accepts the matching RPAREN, end verifies that token is the last
  * consumed token of child, destroys child, and resumes the parent's word.
- * Parent owns child lifetime; on failure destroy only the root. No aliases or
- * grammar are implemented here. Nested COMMAND requests use the same protocol. */
+ * Parent owns child lifetime; on failure destroy only the root. The parser
+ * supplies grammar and alias eligibility. Nested COMMAND requests repeat this protocol. */
+/* Index of the pending COMMAND fragment, or CSH_FRAGMENT_ROOT. Use this
+ * stable index to attach child ASTs; alias sources have independent positions. */
+size_t csh_lexer_command_fragment(const struct csh_lexer *lexer);
 int csh_lexer_command_begin(struct csh_lexer *parent, struct csh_lexer **child,
     struct csh_error *error);
 int csh_lexer_command_end(struct csh_lexer *parent, struct csh_lexer *child,
     const struct csh_token *closing, struct csh_error *error);
+
+/* Substitute only the last delimited WORD, before any subsequent read.
+ * Copies name/value; a synthetic space follows every replacement (an Issue 8
+ * permitted choice). Alias names remain active through their replacement,
+ * including nested command frames. The parser decides eligibility and rejects
+ * quoted names. Push fails for an active name; active() lets it suppress such
+ * recursive substitution without producing an error. All failures are sticky.
+ * alias_eligible marks the next token after a value ending in blank, including
+ * the permitted quoted-blank case. Operators/newlines consume that eligibility.
+ * Positions in alias tokens are local to source_name; invocation identifies
+ * the outermost physical call site. Original input positions resume unchanged.
+ * A token spanning an alias boundary retains its starting source identity;
+ * its end and fragment positions advance through its captured raw spelling. */
+int csh_lexer_alias_active(const struct csh_lexer *lexer, const char *name);
+int csh_lexer_alias_push(struct csh_lexer *lexer, const struct csh_token *token,
+    const char *name, const char *value, struct csh_error *error);
+/* True when the just-delimited word immediately precedes < or >. This does
+ * not consume input or request further input; use to classify IO_NUMBER. */
+int csh_lexer_follows_redirection(struct csh_lexer *lexer);
+/* Map a current source/context position to the outer physical invocation when
+ * reading alias input or a pending word that began there. Call while the
+ * corresponding context is active; saved tokens carry their own provenance. */
+struct csh_position csh_lexer_diagnostic_position(const struct csh_lexer *lexer,
+    struct csh_position position);
 
 /* Here-document handoff: after NEWLINE, the parser can inspect pending raw
  * bytes and consume body/delimiter bytes without tokenization. skip_raw is

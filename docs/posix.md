@@ -66,6 +66,13 @@ decoding. Field splitting, pathname expansion, real substitutions, and arithmeti
 ambiguity replay remain integration gaps. The prototype table above remains a
 runtime baseline; standalone API fixtures do not establish shell conformance.
 
+## Replacement alias evidence
+
+CSH-030 adds [alias storage, direct handlers, and token/AST substitution](aliases.md),
+including recursive suppression and complete-command timing fixtures. CSH-031
+still owns executed-script validation through the dispatcher; the prototype
+runtime baseline above is unchanged.
+
 ## Evidence required
 
 As a feature is implemented, link its specific specification section and tests

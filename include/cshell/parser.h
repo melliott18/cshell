@@ -4,6 +4,7 @@
 #include "cshell/ast.h"
 
 struct csh_parser;
+struct csh_aliases;
 enum csh_parse_result {
     CSH_PARSE_ERROR = -1, CSH_PARSE_EOF = 0, CSH_PARSE_TREE = 1,
     CSH_PARSE_INCOMPLETE = 2
@@ -13,9 +14,15 @@ enum csh_parse_result {
  * lexer. It reads
  * physical lines only as grammar requires. next returns one complete command
  * list at a newline boundary (including its here-documents), or a final list
- * at EOF. Empty lines are skipped. No expansion or execution occurs. */
+ * at EOF. Empty lines are skipped. Optional alias substitution occurs during
+ * token reading; no word expansion or execution occurs. */
 int csh_parser_create(struct csh_parser **out, struct csh_input *input,
     struct csh_error *error);
+/* Optional alias table, borrowed until detached or parser destruction. Attach
+ * or mutate only between next calls; changes apply to the next complete command.
+ * The caller owns the table and may detach it with NULL. */
+void csh_parser_set_aliases(struct csh_parser *parser,
+    const struct csh_aliases *aliases);
 void csh_parser_destroy(struct csh_parser *parser);
 const char *csh_parser_source_name(const struct csh_parser *parser);
 /* TREE transfers a fully owned tree; every other result sets *out to NULL.

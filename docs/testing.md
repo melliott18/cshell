@@ -36,6 +36,21 @@ invalid syntax, incomplete final input, and clean EOF. Separate wrapped objects
 inject allocation failures across the entire parsing stack. The parser does
 not execute any fixture command.
 
+CSH-030 adds `make test-alias`, linking alias storage/handlers and the replacement
+parser stack. Bounded module fixtures exercise builtin output/status, quoting,
+recursive substitution, token eligibility, complete-command read boundaries,
+nested substitutions, and here-documents. Storage allocation failures check
+atomicity; `make test-parser` also sweeps failures through alias injection and
+parser cleanup. These fixtures do not execute alias-expanded shell scripts;
+CSH-031 owns dispatcher integration.
+
+For focused sanitizer validation:
+
+```sh
+make clean
+make test-lexer test-parser test-alias CC=clang CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+```
+
 CSH-022 adds independent shell-state fixtures. `make test-state` builds the
 state module, input/invocation modules, and its C fixtures, without Flex or the
 executor. The normal fixture covers environment import, unset versus empty
