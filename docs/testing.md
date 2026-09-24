@@ -1,33 +1,33 @@
 # Testing cshell
 
-## Candidate runtime integration
+## Runtime integration
 
-`make test-runtime` checks `build/cshell-candidate` across `-c`, script-file, and
+`make test-runtime` checks `cshell` across `-c`, script-file, and
 stdin modes using shared fixtures. `make test-runtime-pty` checks interactive
 exit errors, child statuses, EOF, primary/continuation prompts, and here-documents
 on a controlling terminal. The build uses only replacement modules and needs
-no Flex. See [Candidate runtime](candidate-runtime.md) for the exact subset,
+no Flex. See [Runtime behavior](candidate-runtime.md) for the exact subset,
 status/exit policy, and deferred interactive features.
 
 The source cases in `tests/runtime_cases.py` generate
 `build/tests/runtime.json` and `build/tests/runtime-pty.json`. They use the same
 `tests/smoke.py` runner, per-case directories, process/session cleanup, timeout,
 and output limits as other suites. Every case asserts exact output and status;
-relevant cases also check file effects or their absence. No candidate case
+relevant cases also check file effects or their absence. No runtime case
 strips prompts. The compiled `execute_helper` provides exact output, completion,
 and signal behavior without relying on additional shell features.
 
 ```sh
 make test-runtime test-runtime-pty
-make docker-test DOCKER_IMAGE=cshell-test:csh-018
-make docker-test-pty DOCKER_IMAGE=cshell-test:csh-018
+make docker-test DOCKER_IMAGE=cshell-test:csh-039
+make docker-test-pty DOCKER_IMAGE=cshell-test:csh-039
 # Select a generated case with the existing runner:
-python3 tests/smoke.py ./build/cshell-candidate --suite build/tests/runtime.json --case 'unknown command (stdin)'
+python3 tests/smoke.py ./cshell --suite build/tests/runtime.json --case 'unknown command (stdin)'
 ```
 
 The pipe cases join `make test`; the terminal cases join `make test-pty`.
 Consequently both run through existing native and Docker CI entry points.
-Native sanitizer CI includes both candidate suites. For focused sanitizer work,
+Native and Docker sanitizer CI include both runtime suites. For focused sanitizer work,
 use a separate checkout or clean build:
 
 ```sh
@@ -36,7 +36,7 @@ MallocNanoZone=0 ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 make
 ```
 
 `MallocNanoZone=0` prevents the macOS allocator from writing a compatibility
-notice into the PTY output before the sanitizer-instrumented candidate starts.
+notice into the PTY output before the sanitizer-instrumented shell starts.
 
 ## Coverage and suite selection
 
@@ -105,39 +105,32 @@ CSH-019 adds replacement simple-command execution and redirection checks through
 `make test-execute`. Its fixtures link the replacement parser, AST, state, and
 execution modules without legacy objects or Flex. They exercise the bounded
 literal adapter and prepared-command API; successful module checks do not
-change the prototype executable's supported syntax. See
+extend the public executable's supported syntax. See
 [Simple-command execution](execution.md) for the supported subset and ownership
 contracts.
 
-`tests/smoke.py` is a bounded fixture runner for a selected executable. The default
-`tests/fixtures/prototype.json` suite checks the current prototype's startup,
-explicit exit, external command execution, successive commands, and filesystem
-effects from external commands. It sends `exit` because EOF handling is incomplete
-and explicitly allows the prototype's
-`Shell> ` prompt on non-interactive stdout.
+`tests/smoke.py` is a bounded fixture runner for a selected executable. The
+default `build/tests/runtime.json` suite checks the public `cshell` across
+command strings, script files, and stdin with exact stdout, stderr, status, and
+filesystem assertions. `build/tests/runtime-pty.json` checks prompts, EOF, exit
+errors, and continuation on a controlling terminal. Both suites are generated
+from `tests/runtime_cases.py` using the current platform's helper and errno text.
 
-CSH-033 adds a controlling pseudo-terminal (PTY) transport to the same runner.
-`tests/fixtures/prototype-pty.json` waits for the prototype prompt, checks that
-the candidate owns the terminal foreground process group, and sends `exit`.
-The PTY harness self-tests use helper programs for signals, stop/continue,
-foreground transfers, and cleanup. Those helpers demonstrate harness
-capabilities, not implemented cshell signal or job-control behavior.
+CSH-033 supplies the controlling pseudo-terminal (PTY) transport. Harness
+self-tests use helper programs for signals, stop/continue, foreground transfers,
+and cleanup; these do not claim shell signal or job-control support.
 
-Each suite declares one of four kinds:
+Each suite declares one of three kinds:
 
 | Kind | Purpose |
 | --- | --- |
-| `prototype` | Current legacy behavior; pipe cases may request prompt stripping. |
-| `replacement` | Strict behavior expected from a replacement shell executable. |
+| `replacement` | Strict behavior expected from the shell executable. |
 | `module` | Behavior of a separately selected module test executable. |
 | `self` | Runner self-fixtures, including deliberate failures. |
 
-Suite kind does not choose or build an executable. Always select the intended
-candidate and suite together. Replacement and module tests do not inherit
-prototype allowances. Passing the prototype suite does not establish quoting,
-pipelines, redirections, signal behavior, or POSIX compliance. Future script-file
-and `-c` cases can use fixture arguments without requiring these modes from the
-current shell.
+Suite kind does not choose or build an executable. Select the intended executable
+and matching suite together. All output comparisons are exact; prototype suites
+and prompt stripping are no longer accepted.
 
 ## Native tests
 
@@ -157,7 +150,7 @@ and runs the selected behavioral suite.
 terminal suite. It does not run the input, lexer, parser, state,
 value-expansion, or execution API tests. Keeping separate selection variables
 means choosing
-a module for `make test` does not silently run that module against prototype
+a module for `make test` does not silently run that module against shell
 terminal expectations.
 `make test-harness` runs Python unit tests against helper executables and
 self-fixtures. Some helpers intentionally produce wrong output, nonzero statuses,
@@ -181,13 +174,13 @@ The same runner is used by native tests, Docker, and CI. Test selection is expli
 | --- | --- | --- |
 | `TEST_TARGET` | `cshell` | Behavioral candidate target to build; set empty for an already built executable. Input, lexer, parser, state, value-expansion, and execution API fixtures still build and run. |
 | `TEST_BINARY` | `./cshell` | Candidate executable. |
-| `TEST_SUITE` | `tests/fixtures/prototype.json` | JSON fixture suite. |
+| `TEST_SUITE` | `build/tests/runtime.json` | JSON fixture suite. |
 | `TEST_TIMEOUT` | `5` | Maximum wall-clock seconds per case. |
 | `TEST_OUTPUT_LIMIT` | `65536` | Maximum combined stdout/stderr or PTY output bytes per case. |
 | `TEST_CASE` | Empty | Run only the named case. |
 | `PTY_TEST_TARGET` | `cshell` | Target built by `test-pty`; set empty for an already built executable. |
 | `PTY_TEST_BINARY` | `./cshell` | Candidate selected by `test-pty`. |
-| `PTY_TEST_SUITE` | `tests/fixtures/prototype-pty.json` | Suite selected by `test-pty`. |
+| `PTY_TEST_SUITE` | `build/tests/runtime-pty.json` | Suite selected by `test-pty`. |
 | `PTY_TEST_CASE` | Empty | Run only the named case in the PTY suite. |
 | `PYTHON` | `python3` | Host Python command. |
 
@@ -200,18 +193,18 @@ make test-pty PTY_TEST_TARGET= PTY_TEST_BINARY=/absolute/path/to/candidate PTY_T
 
 For a module with a Make target, set `TEST_TARGET` to that target instead. These
 candidate paths and fixture filenames are examples to replace with real ones.
-Do not use the default prototype suite as evidence for replacement behavior.
 Generated candidate and module executables belong under `build/` with their own
 Make targets. Keep `tests/` for source fixtures and helper scripts, not generated
 native executables. Docker excludes `build/` and the host `cshell` executable, then
 rebuilds the selected target from source for Linux.
 
-Direct invocation gives the same controls:
+After `make test-runtime test-runtime-pty` generates the suites, direct invocation
+gives the same controls:
 
 ```sh
-python3 tests/smoke.py ./cshell --suite tests/fixtures/prototype.json --timeout 5 --output-limit 65536
-python3 tests/smoke.py ./cshell --suite tests/fixtures/prototype.json --case exit
-python3 tests/smoke.py ./cshell --suite tests/fixtures/prototype-pty.json
+python3 tests/smoke.py ./cshell --suite build/tests/runtime.json --timeout 5 --output-limit 65536
+python3 tests/smoke.py ./cshell --suite build/tests/runtime.json --case 'exit initially (stdin)'
+python3 tests/smoke.py ./cshell --suite build/tests/runtime-pty.json
 ```
 
 Cases report `PASS`, `FAIL`, or `SKIP`. Failures include the case name and relevant
@@ -233,8 +226,8 @@ make clean
 make test-input CC=clang CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
 ```
 
-Run sanitizer checks against this target: the prototype has known memory defects
-that are outside CSH-016. Allocation counters work on both macOS and Linux;
+The full production runtime can also be checked with `make test test-pty` using
+these sanitizer flags. Allocation counters work on both macOS and Linux;
 Linux ASan also checks leaks. See the [input contract](input-and-invocation.md)
 and [ticket evidence](tickets/CSH-016-input-and-invocation.md).
 
@@ -305,7 +298,7 @@ whitespace and trailing newlines. Strings are compared as UTF-8 bytes.
 
 This example is a strict replacement-shell fixture. It can be saved under
 `tests/fixtures/example.json` and exercised with `/bin/sh` to check the fixture
-itself; it is not an expectation for the current prototype:
+itself; check the runtime subset before selecting it as a cshell expectation:
 
 ```json
 {
@@ -349,7 +342,6 @@ Optional case fields:
 | `skip_reason` | Explanation shown when the current platform is excluded. |
 | `timeout` | Per-case wall-clock limit, capped by the command-line limit. |
 | `output_limit` | Per-case combined stdout/stderr or PTY byte limit, capped by the command-line limit. |
-| `strip_prompt` | Allowed only in a `prototype` pipe case; `true` removes the known `Shell> ` stdout text before comparison. |
 
 Use relative paths within the case directory for setup and filesystem assertions;
 absolute paths, `..` traversal, and the reserved `.home` and `.tmp` trees are
@@ -362,8 +354,8 @@ are bounded, including when an output file is unexpectedly large.
 Restrict platforms only for behavior that actually differs or is unavailable,
 and explain why. For example, `"platforms": ["linux"], "skip_reason": "Requires a
 Linux-specific helper"` runs on Linux and reports a reasoned skip on macOS. Do not
-use platform skips to hide ordinary failures. Keep prototype prompt allowances
-visible in fixtures, and remove each allowance when its behavior is replaced.
+use platform skips to hide ordinary failures. Unexpected prompts fail exact
+output comparison.
 
 ### Terminal fixtures
 
@@ -379,21 +371,21 @@ its terminal settings.
 The terminal combines stdout and stderr into a single byte stream. Final
 `expect` requires exact `output` and integer `status`, with optional `files`
 using the same filesystem assertion contract as pipe cases. There is no prompt
-stripping or output normalization for PTY cases, including prototype cases.
+stripping or output normalization for PTY cases.
 An empty `steps` array simply captures output and waits for the candidate to exit.
 
 The current startup fixture is:
 
 ```json
 {
-  "name": "terminal startup and exit",
+  "name": "terminal exit status",
   "transport": "pty",
   "steps": [
-    {"expect": "Shell> "},
+    {"expect": "$ "},
     {"foreground": "leader"},
-    {"send": "exit\n"}
+    {"send": "exit 23\n"}
   ],
-  "expect": {"output": "Shell> ", "status": 0}
+  "expect": {"output": "$ ", "status": 23}
 }
 ```
 
@@ -413,8 +405,8 @@ an `expect` does not restart it. Final output comparison still includes bytes
 before, between, and after step matches, so unexpected output cannot be hidden by
 a successful intermediate wait. An output limit applies throughout interaction.
 Keep Ctrl-C/Ctrl-Z and foreground/background shell expectations in the tickets
-that implement those shell features; the current prototype case only claims
-startup and explicit exit.
+that implement those shell features; current runtime fixtures cover prompts,
+EOF, exit errors, and command status behavior.
 
 ## Isolation and limits
 
@@ -465,7 +457,7 @@ platform testing.
 
 ## Docker tests
 
-Install Docker with a running Linux container engine. A local C compiler, Flex,
+Install Docker with a running Linux container engine. A local C compiler
 or Python installation is not needed for the Docker path.
 
 From the repository root:
@@ -496,7 +488,7 @@ skip unrelated pipe, input, lexer, parser, state, or value-expansion API tests,
 and an entirely skipped selected suite still fails. Investigate container device/mount restrictions
 instead of adding platform skips for ordinary test failures.
 
-The image uses Debian Bookworm, GCC, GNU Make, Flex, and Python 3. Source is copied
+The image uses Debian Bookworm, GCC, GNU Make, and Python 3. Source is copied
 into the image, so a host executable or host object files cannot affect the Linux
 build. Uncommitted source edits are included. Tests run as a non-root user, and
 the container is removed on exit.
@@ -539,10 +531,11 @@ test failures propagate through `make docker-test` as a nonzero exit status.
 ## Continuous integration
 
 [`.github/workflows/tests.yml`](../.github/workflows/tests.yml) builds and runs the
-input, lexer, parser, and state API checks, default prototype pipe and PTY suites, and
-harness self-tests on Ubuntu 24.04 with GCC and macOS 15 with Clang. Both native
-jobs also run the parser and state fixtures under ASan/UBSan. A separate Ubuntu job builds
-and runs the Docker Linux path and runs the same harness self-tests in the image.
+module API and controlled failure checks, default runtime pipe and PTY suites,
+and harness self-tests on Ubuntu 24.04 with GCC and macOS 15 with Clang. Both native
+jobs also run the full module and runtime suites under ASan/UBSan, including
+input ownership and pipeline failures. A separate Ubuntu job builds and runs the
+Docker Linux path, harness self-tests, and full ASan/UBSan suites in the image.
 Failing builds, fixtures, or self-tests fail their jobs.
 
 Hosted CI results establish only the checks actually run for that revision.
@@ -557,9 +550,8 @@ Follow the [evidence conventions](posix-evidence.md) for specification-derived
 expectations, environment capture, allowed alternatives and reference comparisons.
 The [smoke evidence map](posix-evidence.md#existing-smoke-evidence) records the
 observations from its pinned prototype baseline; planned fixture IDs are not
-passing tests. The current prototype suite also includes the filesystem case
-added by CSH-017, and the input, lexer, parser, and state API checks have their own linked
-ticket evidence.
+passing tests. That historical suite was removed by CSH-039. Current runtime
+and module API checks have their own linked ticket evidence.
 CSH-017 and CSH-033 own behavioral harness formats and adapters. Planned shell
 fixtures must select a runtime that supports their invocation modes.
 
@@ -580,15 +572,14 @@ fixtures must select a runtime that supports their invocation modes.
 - [CSH-012](tickets/CSH-012-conformance-and-portability.md) audits coverage and
   supported environments, including compiler/libc versions.
 
-CSH-018 runs strict fixtures against an explicitly selected replacement runtime
-before the default executable changes. Legacy quirks are not golden outputs.
-[CSH-039](tickets/CSH-039-legacy-retirement.md) moves the native and Docker
-behavioral test targets to the replacement `cshell`, removes prototype-only allowances and temporary
-drivers, and validates clean builds with no legacy sources or objects.
+CSH-018 supplied strict runtime fixtures.
+[CSH-039](tickets/CSH-039-legacy-retirement.md) makes those fixtures the native
+and Docker defaults against `cshell`, removes prototype allowances and the
+temporary runtime driver, and validates clean builds without legacy objects.
 
 Add a fixture when a behavior is implemented and record which executable and
 suite supplied the evidence. Do not turn a passing harness self-test or a
-prototype allowance into a language-conformance claim.
+module check into a language-conformance claim.
 
 ## Execution API and sanitizer checks
 
@@ -660,7 +651,7 @@ injected at every stage; wait interruption and errors exercise retry/cancellatio
 ```sh
 make test-execute test-pipeline
 make clean
-ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 make test-execute test-pipeline CC=clang LEX=false CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -DNDEBUG -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 make test-execute test-pipeline CC=clang CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -DNDEBUG -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
 make docker-test DOCKER_IMAGE=cshell-test:csh-020
 ```
 
@@ -699,7 +690,7 @@ locale/unspecified choices, ownership, and remaining integration requirements.
 
 
 `make test-fields` builds `build/tests/fields_fixture` and
-`build/tests/fields_faults` without the prototype or Flex. `tests/fields.py`
+`build/tests/fields_faults` independently of the runtime entry point. `tests/fields.py`
 creates temporary directory trees with whitespace, wildcard characters, dotfiles,
 and symlinks, fixes the C locale for filename assertions, and inspects counts and
 bytes. Selected UTF-8 API cases run when a UTF-8 locale is available. The fault

@@ -1,27 +1,30 @@
 # cshell
 
 A Unix shell written in C, being developed toward POSIX.1-2024 shell language
-and `sh` behavior. **cshell is currently an early prototype, not a POSIX-compliant
+and `sh` behavior. **cshell is currently a bootstrap implementation, not a POSIX-compliant
 shell.** The executable is named `cshell`; this project implements the Bourne-style
 POSIX language, not the C shell (`csh`) language.
 
 ## Build and run
 
-Requirements: a C99 compiler, GNU Make, and Flex. The build does not require
-`libfl`.
+Requirements: a C99 compiler and GNU Make. The handwritten lexer needs no
+scanner generator or scanner runtime library.
 
 ```sh
 make -j
 ./cshell
+./cshell -c 'printf "%s\n" "hello world"'
+./cshell script-file arg1 arg2
+printf 'exit 23\n' | ./cshell
 ```
 
-Enter `exit` to quit. EOF handling, quoting, pipelines, and redirections still
-have known defects; see the [implementation tickets](docs/tickets/README.md).
-The replacement [input and invocation APIs](docs/input-and-invocation.md)
-support script files, `-c`, and stdin in the internal
-[candidate runtime](docs/candidate-runtime.md). The default `cshell`
-executable still uses the prototype input loop; script-file and `-c` arguments
-remain unavailable until the CSH-039 cutover.
+Enter `exit` or send EOF to quit. The [runtime](docs/candidate-runtime.md) supports
+literal simple commands, external lookup, state builtins including `cd` and
+`exit`, ordered redirections, and concurrent pipelines through command strings,
+script files, and stdin. Non-interactive execution prints no prompt or banner.
+Expansion, lists, compound execution, aliases, and job control remain incomplete;
+unsupported syntax or expansion is diagnosed before that construct executes.
+See [Runtime behavior](docs/candidate-runtime.md) for the exact subset and statuses.
 
 ```sh
 make clean     # Remove the executable and generated build files
@@ -42,31 +45,24 @@ make test-builtins # Replacement state builtins and executor integration
 make test-state    # Replacement shell-state API checks only
 make test-execute  # Replacement command, assignment, and redirection API checks
 make test-pipeline # Concurrent pipeline, stage-status, and failure-cleanup checks
-make test-runtime  # Candidate cross-mode invocation/status behavior
-make test-runtime-pty # Candidate prompts, EOF, and exit errors on a terminal
-make test-pty      # Controlling-terminal startup and explicit-exit fixture
+make test-runtime  # Cross-mode invocation/status behavior
+make test-runtime-pty # Shell prompts, EOF, and exit errors on a terminal
+make test-pty      # Shell terminal behavior, prompts, EOF, and exit errors
 make test-harness  # Test the runner's failure detection and cleanup
 make docker-test   # Build and run the selected fixtures in a Linux container
 make docker-test-pty # Build and run the selected terminal fixtures in Linux
 ```
 
-`make test` includes independent input/invocation, lexer, parser/AST, alias,
-shell-state, value/field-expansion, command/pipeline execution API checks, and
-the candidate's cross-mode runtime fixtures. Its
-default behavioral suite records the current prototype's stdin
-behavior and explicit prompt allowance. Replacement shell and module tests
-select their executable and fixture suite separately; passing prototype tests
-does not establish replacement behavior or POSIX compliance.
-
-`make test-pty` independently selects a candidate and terminal suite with
-`PTY_TEST_TARGET`, `PTY_TEST_BINARY`, and `PTY_TEST_SUITE`. Its default fixture
-checks startup and explicit exit on a controlling pseudo-terminal. It also runs
-the candidate's terminal fixtures through `test-runtime-pty`. Harness
-self-tests exercise terminal signals and foreground ownership with helper
-programs; they do not claim that cshell implements signals or job control.
+`make test` includes module API and controlled failure checks, plus strict
+runtime fixtures against `./cshell` in all three input modes. `make test-pty`
+runs the terminal suite. The focused `test-runtime` and `test-runtime-pty`
+targets select the same public executable. Alternate executables and suites can
+be selected with `TEST_*` and `PTY_TEST_*` variables. Harness self-tests exercise
+terminal signals and foreground ownership with helper programs; they do not
+claim that cshell implements signals or job control.
 
 The Docker path requires Docker with a running Linux engine and uses its own
-compiler, Flex, and Python. Native Linux, native macOS, and Docker checks also run
+compiler and Python. Native Linux, native macOS, and Docker checks also run
 in CI. See [Testing](docs/testing.md) for fixture authoring, executable selection,
 resource limits, direct Docker commands, and troubleshooting.
 
@@ -80,7 +76,7 @@ resource limits, direct Docker commands, and troubleshooting.
 | Run native or Docker tests | [Testing](docs/testing.md) |
 | Understand the code and planned modules | [Architecture](docs/architecture.md) |
 | Use replacement input and invocation APIs | [Input and invocation](docs/input-and-invocation.md) |
-| Run the internal replacement candidate | [Candidate runtime](docs/candidate-runtime.md) |
+| Run the shell and understand its limits | [Runtime behavior](docs/candidate-runtime.md) |
 | Use replacement tokens, words, and parser handoffs | [Lexer and words](docs/lexer-and-words.md) |
 | Parse complete commands and inspect owned trees | [Parser and AST](docs/parser-and-ast.md) |
 | Store aliases and substitute command words | [Aliases](docs/aliases.md) |
@@ -95,8 +91,7 @@ resource limits, direct Docker commands, and troubleshooting.
 
 ```text
 include/cshell/   Internal module interfaces
-src/main.c       Program entry point and current input loop
-src/candidate.c  Internal replacement runtime and invocation/status integration
+src/main.c       Invocation, complete-command loop, prompts, and final status
 src/input.c      Replacement physical-line input sources
 src/invocation.c Replacement invocation and operand mapping
 src/lexer.c      Replacement tokens, word fragments, and parser handoffs
@@ -112,23 +107,16 @@ src/quote.c      Shared dollar-single-quote escape decoding
 src/builtin.c    Replacement state builtin handlers
 src/execute.c    Replacement command adapter, assignment scopes, dispatch, and pipelines
 src/redirect.c   Ordered descriptor operations and restoration
-src/legacy/      Transitional lexer and executor
 docs/            Architecture, POSIX tracking, and implementation tickets
 tests/           Module fixtures, pipe/PTY behavioral runner, and self-tests
-build/           Generated scanner and object files (ignored by Git)
+build/           Object files and generated test fixtures (ignored by Git)
 ```
 
-The original code is a starting point for understanding the problem. Its APIs,
-implementation choices, and behavior do not constrain the replacement. New
-modules follow the POSIX specification and explicit ownership contracts; they
-must not depend on the legacy interface.
-
-[CSH-039](docs/tickets/CSH-039-legacy-retirement.md) will switch `cshell` to the
-replacement runtime and delete the legacy sources, headers, build rules, and
-compatibility paths. That cutover follows the input, lexer, parser, command, and
-pipeline work; it does not wait for every POSIX feature. Git history and
-historical tickets remain as records. See [Architecture](docs/architecture.md)
-for the removal criteria and [Implementation plan](docs/implementation-plan.md)
-for the revised sequence.
+[CSH-039](docs/tickets/CSH-039-legacy-retirement.md) makes the replacement runtime
+the only `cshell` implementation. The legacy sources, scanner build rules,
+internal candidate executable, and prototype test allowances are removed.
+Historical tickets and Git history retain the previous implementation record.
+The bounded literal-word adapter remains until CSH-008 integrates expansion;
+new modules follow POSIX requirements and explicit ownership contracts.
 
 Originally authored by Mitchell Elliott.

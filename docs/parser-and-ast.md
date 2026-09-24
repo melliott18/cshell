@@ -3,7 +3,7 @@
 [CSH-005](tickets/CSH-005-parser-and-ast.md) adds
 [`cshell/parser.h`](../include/cshell/parser.h) and
 [`cshell/ast.h`](../include/cshell/ast.h). These modules build with the replacement
-input, lexer, alias, and quote modules, independently of the prototype. They never
+input, lexer, alias, and quote modules, independently of the runtime entry point. They never
 execute commands, expand arguments, open redirection targets, or mutate shell
 state. Runtime integration remains with CSH-018 and CSH-039.
 

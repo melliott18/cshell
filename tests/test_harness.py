@@ -292,17 +292,19 @@ class HarnessTests(unittest.TestCase):
         item = case(platforms=[other], skip_reason="requires the other platform")
         self.assert_failure(self.run_suite([item]), "no cases ran")
 
-    def test_prototype_prompt_allowance_requires_explicit_opt_in(self):
-        item = case(mode="prompt", strip_prompt=True)
+    def test_unexpected_prompt_fails_exact_output(self):
+        item = case(mode="prompt")
         item["expect"]["stdout"] = "hello\n"
-        self.assert_success(self.run_suite([item], kind="prototype"))
-        del item["strip_prompt"]
-        self.assert_failure(self.run_suite([item], kind="prototype"), "stdout")
+        self.assert_failure(self.run_suite([item], kind="replacement"), "stdout")
 
-    def test_replacement_suite_cannot_tolerate_prototype_prompt(self):
-        item = case(mode="prompt", strip_prompt=True)
-        item["expect"]["stdout"] = "hello\n"
-        self.assert_failure(self.run_suite([item], kind="replacement"), "strip_prompt")
+    def test_removed_prompt_allowance_is_rejected(self):
+        for kind in ("replacement", "module", "self"):
+            with self.subTest(kind=kind):
+                item = case(mode="prompt", strip_prompt=True)
+                self.assert_failure(self.run_suite([item], kind=kind), "strip_prompt")
+
+    def test_removed_prototype_suite_is_rejected(self):
+        self.assert_failure(self.run_suite([case()], kind="prototype"), "suite kind")
 
     def test_case_filter_runs_only_named_case(self):
         items = [case(name="chosen"), case(name="not chosen", mode="hang")]

@@ -5,9 +5,8 @@ replacement execution and redirection modules;
 [CSH-020](tickets/CSH-020-pipeline-lifecycle.md) adds concurrent pipelines. Their interfaces are
 [`execute.h`](../include/cshell/execute.h) and
 [`redirect.h`](../include/cshell/redirect.h). They use the replacement parser,
-AST, and shell state without the legacy scanner or executor. The default
-`cshell` executable still runs the prototype; CSH-018 integrates the replacement
-runtime and CSH-039 switches the executable.
+AST, and shell state. The public `cshell` executable uses these modules through
+the runtime integrated by CSH-018 and promoted by CSH-039.
 
 ## Owned command boundary
 
@@ -89,7 +88,7 @@ operands return status 2 without requesting exit. CSH-018 owns full exit/status
 integration. `special_builtin_error` reports special-category failures for the
 future runtime's context-dependent policy; it does not itself request exit.
 
-The [candidate runtime](candidate-runtime.md) consumes this error classification:
+The [runtime](candidate-runtime.md) consumes this error classification:
 special-builtin errors end non-interactive input processing but allow an
 interactive candidate to continue. Invalid `exit` operands follow the same
 context rule directly through `exit_requested`.
@@ -278,7 +277,7 @@ through unchanged. Large bodies use temporary-file input rather than requiring
 a pipe reader to run while the parent writes them.
 
 Run `make test-execute test-pipeline` for the replacement execution fixtures, independently of
-the prototype. See [Testing](testing.md#execution-api-and-sanitizer-checks) for
+the runtime entry point. See [Testing](testing.md#execution-api-and-sanitizer-checks) for
 focused sanitizer and Docker commands. The fixtures establish this module
 contract; they do not establish that the default executable implements it or
 that the project is POSIX-compliant.

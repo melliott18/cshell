@@ -2,41 +2,17 @@
 
 ## Current implementation
 
-CSH-001 establishes source boundaries and a portable build. It does not complete
-the shell language rewrite.
+`src/main.c` owns invocation parsing, state initialization, the complete-command
+loop, diagnostics, prompts, and final status. It calls the input, lexer/parser,
+AST, state, builtin, executor, and redirection modules described below.
+The public `cshell` is the only runtime; CSH-039 removed the prototype input
+loop, scanner, executor, and internal candidate driver. The handwritten lexer
+requires no Flex or generated scanner.
 
-The input loop asks the legacy scanner for an argument array, then dispatches
-that array to the legacy executor. This is the current path:
-
-```mermaid
-flowchart LR
-    main["src/main.c: input loop"] -->|"read arguments"| lexer["src/legacy/lexer.l: scanner"]
-    lexer -->|"borrowed argument array"| main
-    main -->|"dispatch arguments"| execute["src/legacy/execute.c: executor"]
-```
-
-| Path | Responsibility |
-| --- | --- |
-| `src/main.c` | Entry point, prompt, input loop, and dispatch |
-| `src/legacy/lexer.l` | Existing Flex token splitter |
-| `src/legacy/execute.c` | Existing command execution and redirection helpers |
-| `include/cshell/legacy.h` | Narrow internal interface between the input loop and legacy implementation |
-| `build/` | Generated scanner and object files |
-| `tests/smoke.py` | Bounded checks for the currently supported execution path |
-| `Dockerfile` / `.dockerignore` | Linux build/test environment and source-only build context |
-
-The legacy interface borrows scanner-owned argument storage. It is consumed
-synchronously before the next read, and callers must not free it. Execution
-currently mutates that argument array. This is a transitional contract, not the
-API for the replacement parser.
-
-Existing limitations include fixed scanner storage, incomplete quoting, no
-grammar tree, incomplete descriptor/process management, and missing status and
-EOF semantics. The original implementation is reference material, not a required
-foundation for the replacement. Its safety-repair tickets CSH-002, CSH-014, and
-CSH-015 are superseded; new input and runtime work does not wait for repairs to
-code that will be deleted. These known defects still require regression coverage
-in the replacement modules.
+The supported bootstrap subset includes literal simple commands, state
+builtins, ordered redirections, and concurrent pipelines. Expansion and broader
+control flow remain integration work. Unsupported complete constructs are
+rejected before execution. See [Runtime behavior](candidate-runtime.md).
 
 ## Current replacement modules
 
@@ -45,15 +21,12 @@ structured token/word API, CSH-005 adds parser/AST ownership, CSH-022 adds
 shell-state storage, CSH-024 adds value expansion, CSH-025 adds final field
 generation, and CSH-027 extends the parser with compound commands and function
 definitions. CSH-030 adds alias substitution, and CSH-019 adds simple-command
-execution and redirections. These modules have no dependency on the legacy
-header, scanner, or executor, and the default
-executable does not call them yet.
+execution and redirections. CSH-020 adds concurrent pipelines. These modules
+have no dependency on the deleted legacy implementation.
 
-CSH-018 connects them through `src/candidate.c`, built as
-`build/cshell-candidate`. This internal runtime supports all three invocation
-modes and owns the input loop, diagnostics, prompt output, and final shell
-status. See [Candidate runtime](candidate-runtime.md) for its tested subset and
-exit policy. CSH-039 still owns the default executable cutover.
+CSH-018 connected invocation modes and shell statuses; CSH-039 makes that runtime
+`src/main.c` and the default `cshell` executable. Expansion and alias APIs are
+still tested separately pending their runtime integration tickets.
 
 | Path | Responsibility |
 | --- | --- |
@@ -74,7 +47,7 @@ exit policy. CSH-039 still owns the default executable cutover.
 See [Input and invocation](input-and-invocation.md) for the concrete ownership,
 descriptor, position, and error contracts. Physical input lines do not establish
 command completeness; that remains the lexer/parser's responsibility. CSH-018
-integrates replacement-runtime fixtures and CSH-039 switches the executable.
+integrated runtime fixtures and CSH-039 switched the executable.
 See [Lexer and words](lexer-and-words.md) for the feed contract and the parser
 handshake: the parser decides which `)` closes a command substitution; the lexer
 preserves its raw source and surrounding word context.
@@ -98,7 +71,7 @@ Execution and here-document integration remain CSH-026 work.
 
 See [Simple-command execution](execution.md) for command ownership, execution
 categories, status and exit requests, child ownership, and descriptor restoration.
-The literal adapter executes one simple command and rejects unsupported syntax
+The literal adapter executes a simple command or pipeline and rejects unsupported syntax
 or expansion before dispatch. Literal prefixes use CSH-023 assignment categories;
 resolved dispatch supplies the boundary for future function/builtin handlers.
 CSH-008 integrates expansion, and CSH-029 supplies [state builtins](state-builtins.md).
@@ -137,8 +110,9 @@ unsupported operator spellings are not compatibility requirements.
 
 ## Processing model
 
-The following diagram is the proposed replacement, not the current execution
-path. Input, lexer, and parser construct a command tree (AST). The executor
+The following diagram shows the target processing model. Expansion and
+signal/job integration remain planned; the other runtime boundaries exist.
+Input, lexer, and parser construct a command tree (AST). The executor
 evaluates that tree and coordinates expansion, shell state, builtins,
 redirections, and child processes. Arrows below the executor show collaborating
 modules, not a fixed execution sequence.
@@ -192,29 +166,29 @@ their tickets:
 
 ## Replacement strategy
 
-Build replacement modules independently of the prototype. CSH-016 defines
+Keep module API fixtures independent of the runtime entry point. CSH-016 defines
 input and invocation APIs; CSH-004 and CSH-005 establish tokens, words, and the
 syntax tree. API fixtures validate these modules before the replacement can run
 commands. CSH-019 adds command execution and redirections, and CSH-020 adds
 pipelines. Input, allocation, descriptor, and child-process safety belong to
 those modules from their first implementation.
 
-CSH-018 integrates invocation modes and statuses through a test driver for the
-replacement runtime. This driver is temporary test infrastructure, not another
-public shell mode. The initial literal-word adapter in CSH-019 is a bounded
+CSH-018 integrated invocation modes and statuses through a temporary runtime
+driver. CSH-039 promoted it to the public entry point and removed the alternate
+build target. The initial literal-word adapter in CSH-019 is a bounded
 replacement-module stub pending CSH-008 expansion; it neither calls legacy code
 nor flattens syntax for the old dispatcher. Unsupported syntax or expansion must
 fail before the affected construct produces side effects, with no legacy
 fallback.
 
-[CSH-039](tickets/CSH-039-legacy-retirement.md) owns the explicit cutover after
+[CSH-039](tickets/CSH-039-legacy-retirement.md) implements the cutover after
 CSH-018 and CSH-020. It switches the default `cshell` executable to the new path
 and verifies its documented bootstrap subset through native and Docker tests:
 input modes, external commands, `cd`, `exit`, redirections, and pipelines. This
 is an intermediate shell implementation; full builtin semantics and the
 remaining POSIX features continue in their tickets.
 
-Cutover is complete only when:
+The cutover removes these migration dependencies:
 
 - `src/legacy/`, `include/cshell/legacy.h`, and the old input/dispatch loop are
   deleted from the current source tree.

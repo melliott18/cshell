@@ -72,15 +72,13 @@ See the [visual implementation plan](docs/implementation-plan.md) for the first
 parallel tasks and shared-interface boundaries. A milestone is not a second
 implementation branch; changes happen through its child tickets.
 
-## Replacing the prototype
+## Runtime boundaries
 
-The legacy code is a starting reference, not a compatibility target. New modules
-must use the documented replacement contracts without importing `legacy.h`,
-wrapping the old dispatcher, or preserving prototype quirks. CSH-039 owns the
-complete runtime cutover and deletion; its prerequisites do not include legacy
-hardening. Safety regressions belong to the replacement module tickets. Create
-a narrow containment ticket only for a demonstrated blocker while the prototype
-is still used. See the [replacement strategy](docs/architecture.md#replacement-strategy).
+The replacement is the only runtime. New modules must use the documented
+ownership contracts without restoring the deleted legacy dispatcher or its
+interfaces. The literal-word adapter remains bounded until CSH-008 integrates
+expansion. Unsupported constructs must fail before their side effects.
+See the [replacement strategy](docs/architecture.md#replacement-strategy).
 
 ## Build and validation
 
@@ -101,9 +99,8 @@ make test-harness
 
 The tests require Python 3.9 or newer. `make test` runs the replacement
 input/invocation, lexer, parser/AST, shell-state, value-expansion, and execution API checks
-and the selected behavioral fixtures; its default suite checks the prototype's
-startup, explicit exit, and
-simple external commands. `make test-input` checks only the replacement input
+and the selected behavioral fixtures; its default suite checks `cshell` through
+command strings, script files, and stdin. `make test-input` checks only the replacement input
 modules, without Flex or legacy dependencies. `make test-lexer` independently
 builds and checks replacement tokens, fragments, and parser handoffs.
 `make test-parser` builds independent parser/AST fixtures, including ordered
@@ -112,7 +109,7 @@ See [Parser and AST](docs/parser-and-ast.md) for the ownership contract.
 `make test-harness` checks the runner's own assertions, resource limits, and
 descendant cleanup, including deliberately failing cases and terminal-control
 helpers. `make test-pty` checks the selected candidate on a controlling
-pseudo-terminal; its default prototype fixture checks startup and explicit exit.
+pseudo-terminal; its default suite checks prompts, EOF, and exit/error behavior.
 These checks do not establish shell correctness or POSIX compliance.
 
 `make test-state` checks the replacement shell-state API, including controlled
@@ -135,19 +132,18 @@ concurrent pipeline behavior, ordered stage results, builtin isolation, and
 partial-launch cleanup. It is also included in `make test` and sanitizer CI.
 
 `make test-alias` checks alias storage, direct builtin handlers, parser
-substitution, and allocation failures without invoking the prototype. See
+substitution, and allocation failures independently of the runtime. See
 [Aliases](docs/aliases.md) for parsing boundaries and the deferred dispatcher work.
 
-`make test-runtime` checks the internal replacement candidate through `-c`, script
+`make test-runtime` checks `cshell` through `-c`, script
 files, and stdin. `make test-runtime-pty` checks prompts, EOF, and interactive
 exit errors on controlling terminals. They also run through `make test` and
 `make test-pty`, respectively, including Docker and CI. See
-[Candidate runtime](docs/candidate-runtime.md) for the supported subset and
+[Runtime behavior](docs/candidate-runtime.md) for the supported subset and
 documented status/exit decisions.
 
-Keep prototype expectations in a `prototype` suite. Add replacement shell or
-module expectations in a separate `replacement` or `module` suite and select both
-the executable and suite explicitly. For example, once a module has a build
+Use strict `replacement` suites for shell behavior and `module` suites for API
+fixtures. Select the executable and matching suite together. For example, once a module has a build
 target and fixtures:
 
 ```sh
@@ -157,8 +153,7 @@ make test TEST_TARGET=build/module-test TEST_BINARY=./build/module-test TEST_SUI
 Use `TEST_TARGET=` for an executable that is already built. Fixture authors must
 assert stdout, stderr, and exit status for pipe cases, or exact combined terminal
 output and exit status for PTY cases. Include relevant filesystem effects, and
-explain any platform restriction with `skip_reason`. Prompt stripping is an
-explicit per-case allowance reserved for prototype pipe cases.
+explain any platform restriction with `skip_reason`. Output comparisons are exact; prompt stripping is not supported.
 
 Select a terminal candidate and suite independently with `PTY_TEST_TARGET`,
 `PTY_TEST_BINARY`, `PTY_TEST_SUITE`, and optional `PTY_TEST_CASE`:
@@ -190,9 +185,8 @@ details, direct Docker commands, and troubleshooting. CI runs native Linux and
 macOS checks alongside Docker; a Linux container cannot validate Darwin behavior.
 See each ticket for the validation required by its changes.
 
-The Makefile accepts compiler, preprocessor, compiler flag, linker flag, library,
-and scanner overrides through `CC`, `CPPFLAGS`, `CFLAGS`, `LDFLAGS`, `LDLIBS`,
-and `LEX`. For a diagnostic build with Clang or GCC:
+The Makefile accepts compiler, preprocessor, compiler flag, linker flag, and library
+overrides through `CC`, `CPPFLAGS`, `CFLAGS`, `LDFLAGS`, `LDLIBS`. For a diagnostic build with Clang or GCC:
 
 ```sh
 make clean

@@ -22,7 +22,7 @@ def cases(helper):
             contents = dict(setup or {})
             args, stdin = [], ""
             if mode == "string":
-                args = ["-c", script, "candidate-name", "one", "two"]
+                args = ["-c", script, "shell-name", "one", "two"]
             elif mode == "file":
                 contents["script"] = script
                 args = ["script", "one", "two"]
@@ -81,6 +81,16 @@ def cases(helper):
                                       "status": 9}})
     cross("pipeline output", f"{helper} args pipeline | {helper} copy\n",
           stdout="[pipeline]\n")
+    cross("high volume pipeline",
+          f"{helper} generate 8388608 | {helper} copy | {helper} copy | {helper} count\n",
+          stdout="8388608\n")
+    cross("pipeline failed child is reaped",
+          f"no-such-cshell-stage | {helper} count\n{helper} args alive\n",
+          stdout="0\n[alive]\n", stderr="cshell: no-such-cshell-stage: command not found\n")
+    cross("pipeline expansion rejected before any stage executes",
+          f"{helper} args never >effect | {helper} args $HOME\n",
+          status=2, stderr="cshell: expansion is not supported by literal execution\n",
+          files={"effect": {"type": "absent"}})
     cross("pipeline uses final status", f"{helper} status 7 | {helper} status 0\n")
     cross("pipeline final failure", f"{helper} status 0 | {helper} status 9\n", status=9)
     cross("negated pipeline", f"! {helper} status 0 | {helper} status 9\n")
@@ -179,7 +189,7 @@ def terminal_cases(helper):
         result.append({"name": name, "transport": "pty", "steps": steps,
                        "expect": {"output": output, "status": status}})
 
-    terminal("terminal exit status", [{"expect": "$ "}, {"send": "exit 23\n"}], "$ ", 23)
+    terminal("terminal exit status", [{"expect": "$ "}, {"foreground": "leader"}, {"send": "exit 23\n"}], "$ ", 23)
     terminal("terminal EOF initially", [{"expect": "$ "}, {"control": "D"}], "$ ", 0)
     for operand, message in (("bad", "numeric status required"), ("1 2", "too many arguments")):
         diagnostic = f"cshell: exit: {message}\n"
@@ -211,7 +221,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     helper = shlex.quote(str(args.helper.resolve()))
-    suite = {"version": 1, "name": "CSH-018 candidate runtime", "kind": "replacement",
+    suite = {"version": 1, "name": "cshell runtime", "kind": "replacement",
              "cases": terminal_cases(helper) if args.output.name == "runtime-pty.json" else cases(helper)}
     args.output.write_text(json.dumps(suite, indent=2) + "\n")
 

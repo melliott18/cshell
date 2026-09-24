@@ -2,10 +2,8 @@
 
 [CSH-016](tickets/CSH-016-input-and-invocation.md) provides replacement modules
 in [`src/input.c`](../src/input.c) and
-[`src/invocation.c`](../src/invocation.c). They build independently of the legacy
-scanner and executor. The public executable still uses the prototype input
-loop: CSH-018 integrates these APIs in the [candidate runtime](candidate-runtime.md), and CSH-039
-wires them into `cshell`. The APIs acquire input and describe invocation; they
+[`src/invocation.c`](../src/invocation.c). The public `cshell` entry point uses these APIs through the
+[runtime](candidate-runtime.md), integrated by CSH-018 and promoted by CSH-039. The APIs acquire input and describe invocation; they
 do not execute commands, expand parameters, print diagnostics, or exit.
 
 ## Invocation contract

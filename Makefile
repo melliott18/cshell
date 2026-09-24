@@ -7,26 +7,19 @@ PYTHON ?= python3
 DOCKER ?= docker
 DOCKER_IMAGE ?= cshell-test:local
 TEST_BINARY ?= ./cshell
-TEST_SUITE ?= tests/fixtures/prototype.json
+TEST_SUITE ?= build/tests/runtime.json
 # Clear TEST_TARGET when testing an already available executable, e.g. /bin/sh.
 TEST_TARGET ?= cshell
 TEST_TIMEOUT ?= 5
 TEST_OUTPUT_LIMIT ?= 65536
 TEST_CASE ?=
 PTY_TEST_BINARY ?= ./cshell
-PTY_TEST_SUITE ?= tests/fixtures/prototype-pty.json
+PTY_TEST_SUITE ?= build/tests/runtime-pty.json
 PTY_TEST_TARGET ?= cshell
 PTY_TEST_CASE ?=
 
-# GNU make defines LEX=lex by default; use flex unless explicitly overridden.
-ifeq ($(origin LEX),default)
-LEX = flex
-endif
-LEX ?= flex
-LEXFLAGS ?=
-
 CSHELL_CPPFLAGS = -D_POSIX_C_SOURCE=200809L -Iinclude
-OBJECTS = build/main.o build/legacy/execute.o build/legacy/lexer.o
+OBJECTS = build/main.o $(EXECUTE_OBJECTS) build/invocation.o
 INPUT_OBJECTS = build/input.o build/invocation.o
 INPUT_HEADERS = include/cshell/input.h include/cshell/invocation.h
 INPUT_FAULT_OBJECTS = build/tests/fault-input.o build/tests/fault-invocation.o
@@ -53,15 +46,8 @@ all: cshell
 cshell: $(OBJECTS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LDLIBS)
 
-build/%.o: src/%.c include/cshell/legacy.h
+build/main.o: src/main.c $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
-
-build/legacy/lexer.c: src/legacy/lexer.l
-	mkdir -p $(dir $@)
-	$(LEX) $(LEXFLAGS) -o $@ $<
-
-build/legacy/lexer.o: build/legacy/lexer.c include/cshell/legacy.h
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 $(INPUT_OBJECTS): build/%.o: src/%.c $(INPUT_HEADERS)
@@ -265,18 +251,15 @@ build/tests/assignment_fixture: tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(LDLIBS)
 
-build/cshell-candidate: src/candidate.c $(EXECUTE_OBJECTS) build/invocation.o $(EXECUTE_HEADERS)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ src/candidate.c $(EXECUTE_OBJECTS) build/invocation.o $(LDLIBS)
-
 build/tests/runtime.json build/tests/runtime-pty.json: tests/runtime_cases.py build/tests/execute_helper
 	$(PYTHON) tests/runtime_cases.py --helper build/tests/execute_helper --output $@
 
-test-runtime: build/cshell-candidate build/tests/runtime.json
-	$(PYTHON) tests/smoke.py ./build/cshell-candidate --suite build/tests/runtime.json \
+test-runtime: cshell build/tests/runtime.json
+	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/runtime.json \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)"
 
-test-runtime-pty: build/cshell-candidate build/tests/runtime-pty.json
-	$(PYTHON) tests/smoke.py ./build/cshell-candidate --suite build/tests/runtime-pty.json \
+test-runtime-pty: cshell build/tests/runtime-pty.json
+	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/runtime-pty.json \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)"
 
 build/tests/pipeline_fixture: tests/pipeline_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS)
@@ -298,11 +281,11 @@ test-builtins: build/tests/builtin_fixture build/tests/execute_fixture
 	./build/tests/builtin_fixture
 	$(PYTHON) tests/builtins.py build/tests/execute_fixture
 
-test: test-builtins $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline test-runtime
+test: test-builtins $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline $(TEST_SUITE)
 	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
 
-test-pty: $(PTY_TEST_TARGET) test-runtime-pty
+test-pty: $(PTY_TEST_TARGET) $(PTY_TEST_SUITE)
 	$(PYTHON) tests/smoke.py "$(PTY_TEST_BINARY)" --suite "$(PTY_TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(PTY_TEST_CASE)),--case "$(PTY_TEST_CASE)")
 

@@ -2,10 +2,9 @@
 
 [CSH-022](tickets/CSH-022-shell-state-storage.md) provides owned variable and
 parameter storage in [`src/state.c`](../src/state.c), with the interface in
-[`cshell/state.h`](../include/cshell/state.h). It builds independently of the
-legacy scanner and executor. The default executable does not use this state
-yet. Assignment dispatch and parameter expansion consume this API; complete builtins
-and the replacement runtime remain separate work.
+[`cshell/state.h`](../include/cshell/state.h). The public runtime and assignment/builtin dispatch use this state.
+The separate parameter-expansion API also consumes it; expansion integration
+remains CSH-008 work.
 
 ## Construction and ownership
 

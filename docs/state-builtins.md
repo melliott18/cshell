@@ -3,7 +3,7 @@
 [CSH-029](tickets/CSH-029-state-builtins.md) adds replacement module handlers in
 [`builtin.c`](../src/builtin.c), with the public contract in
 [`builtin.h`](../include/cshell/builtin.h). They are available through the
-replacement executor, not yet the prototype `cshell` executable.
+public `cshell` executable and the standalone executor fixtures.
 
 `:` ignores arguments and succeeds. `export` and `readonly` accept names and
 name=value operands, with atomic value/attribute updates per operand; an error

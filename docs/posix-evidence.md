@@ -99,12 +99,14 @@ ticket. Unresolved interpretation is not a waived test or a passed requirement.
 
 <a id="existing-smoke-evidence"></a>
 
-## Existing smoke witnesses
+## Historical smoke witnesses
 
-The only current cases are the three entries in
-[`tests/smoke.py`](../tests/smoke.py). The following IDs name those existing
-entries for cross-referencing; they do not rename cases in the runner. For every
-case, a pass requires completion within five seconds by default, process status
+The baseline recorded by CSH-036 had three smoke cases. They were later moved
+to a prototype suite and removed by CSH-039 along with prompt normalization.
+The following IDs retain that historical evidence for matrix cross-references;
+they are not current passing fixtures. See [Runtime validation](candidate-runtime.md#validation)
+for the strict public-runtime suites. In the historical runner, for every
+case, a pass required completion within five seconds by default, process status
 0, empty captured stderr, at most 65,536 bytes of stdout, and the expected stdout
 after **every** byte sequence `Shell> ` has been removed. That normalization is
 a prototype allowance, not a standard output rule.

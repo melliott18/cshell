@@ -13,7 +13,7 @@ implicitly added to every child. A parent stays open until all children, its
 prerequisites, and its acceptance criteria are complete. This permits
 early independent work without relaxing the final integration requirements.
 
-The prototype is only a starting point. CSH-002, CSH-014, and CSH-015 are
+The retired prototype was only a starting point. CSH-002, CSH-014, and CSH-015 are
 superseded historical tickets, closed as not planned rather than completed. No
 active ticket depends on them. Their defect evidence informs safety tests in
 the replacement; it does not require a rewrite of the disposable implementation.
@@ -60,7 +60,7 @@ executor joins those interfaces; runtime/status integration and pipeline work
 can then proceed in parallel before CSH-039.
 
 CSH-016, CSH-004, and CSH-005 use API fixtures instead of adapters to the old
-dispatcher. CSH-018 tests a candidate replacement runtime; CSH-039 switches the
+dispatcher. CSH-018 supplied runtime integration; CSH-039 promotes it to the
 default executable and deletes the legacy implementation. This cutover verifies
 external commands, `cd`, `exit`, redirections, and pipelines through all supported
 input modes in native and Docker tests. It does not wait for lists, compound
