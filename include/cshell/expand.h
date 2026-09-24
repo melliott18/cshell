@@ -6,9 +6,10 @@
 
 /* ASSIGNMENT takes the value word, without NAME=. PATTERN is an operand with
  * splitting/globbing suppressed. csh_expand_word returns intermediate fields;
- * csh_expand_fields finalizes them for arguments, assignment, or matching. */
+ * REDIRECTION suppresses splitting/globbing; HEREDOC also omits root tilde.
+ * csh_expand_fields finalizes fields without losing quote provenance. */
 enum csh_expand_context { CSH_EXPAND_ARGUMENT, CSH_EXPAND_ASSIGNMENT,
-    CSH_EXPAND_PATTERN };
+    CSH_EXPAND_PATTERN, CSH_EXPAND_REDIRECTION, CSH_EXPAND_HEREDOC };
 enum csh_expand_origin { CSH_EXPAND_LITERAL, CSH_EXPAND_TILDE,
     CSH_EXPAND_PARAMETER, CSH_EXPAND_ARITHMETIC, CSH_EXPAND_SUBSTITUTION };
 enum csh_expand_result { CSH_EXPAND_OK, CSH_EXPAND_INVALID, CSH_EXPAND_NOMEM,
@@ -40,7 +41,7 @@ struct csh_expand_error {
     char message[256];          /* owned inline; diagnostic may be truncated */
 };
 
-/* CSH-026 supplies command/backquote execution lazily, only for selected
+/* The executor supplies command/backquote execution lazily, only for selected
  * operands. token and fragment are borrowed. On success return borrowed bytes
  * valid until the next callback (copied immediately), with trailing newlines
  * already removed and no NUL bytes. A missing callback returns DEFERRED with
@@ -83,6 +84,7 @@ struct csh_field_options {
 /* Borrows a successful intermediate expansion. ARGUMENT performs IFS splitting
  * and pathname expansion (unless NOGLOB); ASSIGNMENT suppresses both; PATTERN
  * suppresses both and encodes quote protection as fnmatch-compatible escapes.
+ * REDIRECTION and HEREDOC return scalar bytes without splitting/globbing.
  * Uses the caller's current directory/locale and IFS/options from state.
  * out must not own a previous result. Errors clear all output; input and state
  * are unchanged. This separate stage cannot roll back earlier value-expansion

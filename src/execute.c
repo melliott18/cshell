@@ -1,5 +1,5 @@
 #include "cshell/execute.h"
-#include "cshell/quote.h"
+#include "prepare.h"
 #include "cshell/builtin.h"
 
 #include <errno.h>
@@ -40,227 +40,6 @@ void csh_command_destroy(struct csh_command *command)
     }
     free(command->redirections);
     memset(command, 0, sizeof(*command));
-}
-
-/* The adapter intentionally does not call expansion: all active expansion
- * fragments fail here, including those nested within double quotes. Flatten
- * only text/escaped bytes; quote containers themselves contribute no bytes. */
-static int literal(const struct csh_ast_word *word, char **out,
-    struct csh_error *error)
-{
-    const struct csh_token *token = &word->token;
-    size_t i, used = 0;
-    char *text;
-    *out = NULL;
-    if (word->substitution_count != 0)
-        return fail(error, "command substitution is not supported by literal execution", 0, 2);
-    if (token->length == SIZE_MAX || token->raw == NULL ||
-        (token->fragment_count != 0 && token->fragments == NULL) ||
-        memchr(token->raw, 0, token->length) != NULL)
-        return fail(error, "invalid literal word", 0, 2);
-    text = malloc(token->length + 1);
-    if (text == NULL) return fail(error, "cannot allocate literal word", ENOMEM, 1);
-    for (i = 0; i < token->fragment_count; ++i) {
-        const struct csh_fragment *f = &token->fragments[i];
-        size_t begin = f->begin, length;
-        if (f->end > token->length || f->end < begin) goto invalid;
-        length = f->end - begin;
-        switch (f->kind) {
-        case CSH_FRAGMENT_CONTINUATION:
-            continue;
-        case CSH_FRAGMENT_QUOTED:
-            if (f->quote == CSH_QUOTE_DOLLAR_SINGLE) {
-                char *decoded = NULL;
-                size_t decoded_length, opening = begin + 1;
-                enum csh_quote_result decoded_result;
-                /* The lexer permits physical continuations between $ and '. */
-                while (opening + 1 < f->end && token->raw[opening] == '\\' &&
-                       token->raw[opening + 1] == '\n') opening += 2;
-                if (length < 3 || opening + 1 >= f->end ||
-                    token->raw[begin] != '$' || token->raw[opening] != '\'' ||
-                    token->raw[f->end - 1] != '\'') goto invalid;
-                decoded_result = csh_quote_decode(token->raw + opening + 1,
-                    f->end - opening - 2, &decoded, &decoded_length);
-                if (decoded_result != CSH_QUOTE_OK) {
-                    free(text);
-                    return fail(error, "cannot decode quoted literal",
-                        decoded_result == CSH_QUOTE_NOMEM ? ENOMEM : 0,
-                        decoded_result == CSH_QUOTE_NOMEM ? 1 : 2);
-                }
-                if (decoded_length > token->length - used) {
-                    free(decoded);
-                    goto invalid;
-                }
-                memcpy(text + used, decoded, decoded_length);
-                used += decoded_length;
-                free(decoded);
-                while (i + 1 < token->fragment_count &&
-                       token->fragments[i + 1].begin < f->end) ++i;
-            } else if (f->quote != CSH_QUOTE_SINGLE && f->quote != CSH_QUOTE_DOUBLE)
-                goto invalid;
-            continue;
-        case CSH_FRAGMENT_TEXT:
-            if (f->quote == CSH_QUOTE_NONE) {
-                size_t j;
-                for (j = begin; j < f->end; ++j)
-                    if (strchr("*?[~", token->raw[j]) != NULL) goto unsupported;
-            }
-            break;
-        case CSH_FRAGMENT_ESCAPE:
-            if (length != 2 || token->raw[begin] != '\\') goto invalid;
-            ++begin;
-            --length;
-            break;
-        default:
-            goto unsupported;
-        }
-        if (length > token->length - used) goto invalid;
-        memcpy(text + used, token->raw + begin, length);
-        used += length;
-    }
-    text[used] = '\0';
-    *out = text;
-    return 0;
-unsupported:
-    free(text);
-    return fail(error, "expansion is not supported by literal execution", 0, 2);
-invalid:
-    free(text);
-    return fail(error, "invalid literal fragment", 0, 2);
-}
-
-static int descriptor(const unsigned char *text, size_t length, int *out)
-{
-    size_t i;
-    int value = 0, digits = 0;
-    for (i = 0; i < length; ++i) {
-        int digit;
-        if (text[i] == '\\' && i + 1 < length && text[i + 1] == '\n') {
-            ++i;
-            continue;
-        }
-        digit = text[i] - '0';
-        if (digit < 0 || digit > 9 || value > (INT_MAX - digit) / 10) return -1;
-        value = value * 10 + digit;
-        digits = 1;
-    }
-    if (!digits) return -1;
-    *out = value;
-    return 0;
-}
-
-static int prepare_redirect(const struct csh_ast_redirection *source,
-    struct csh_redirect *out, struct csh_error *error)
-{
-    char *operand = NULL;
-    int input = 0;
-    switch (source->operator_kind) {
-    case CSH_TOKEN_LESS: out->kind = CSH_REDIRECT_READ; input = 1; break;
-    case CSH_TOKEN_GREAT: out->kind = CSH_REDIRECT_WRITE; break;
-    case CSH_TOKEN_DGREAT: out->kind = CSH_REDIRECT_APPEND; break;
-    case CSH_TOKEN_LESS_GREAT: out->kind = CSH_REDIRECT_READ_WRITE; input = 1; break;
-    case CSH_TOKEN_CLOBBER: out->kind = CSH_REDIRECT_CLOBBER; break;
-    case CSH_TOKEN_LESS_AND: out->kind = CSH_REDIRECT_DUP_READ; input = 1; break;
-    case CSH_TOKEN_GREAT_AND: out->kind = CSH_REDIRECT_DUP_WRITE; break;
-    case CSH_TOKEN_DLESS:
-    case CSH_TOKEN_DLESS_DASH: out->kind = CSH_REDIRECT_HEREDOC; input = 1; break;
-    default: return fail(error, "unsupported redirection operator", 0, 2);
-    }
-    out->fd = input ? STDIN_FILENO : STDOUT_FILENO;
-    if (source->has_io_number && descriptor(source->io_number.raw,
-        source->io_number.length, &out->fd) == -1)
-        return fail(error, "invalid redirection descriptor", 0, 2);
-    if (out->kind == CSH_REDIRECT_HEREDOC) {
-        size_t i;
-        if (source->body == NULL)
-            return fail(error, "here-document body has not been collected", 0, 2);
-        if (!source->delimiter_quoted)
-            for (i = 0; i < source->body_length; ++i)
-                if (source->body[i] == '$' || source->body[i] == '`' || source->body[i] == '\\')
-                    return fail(error, "here-document expansion is not supported by literal execution", 0, 2);
-        out->data = malloc(source->body_length ? source->body_length : 1);
-        if (out->data == NULL)
-            return fail(error, "cannot allocate here-document body", ENOMEM, 1);
-        memcpy(out->data, source->body, source->body_length);
-        out->length = source->body_length;
-        return 0;
-    }
-    if (literal(&source->operand, &operand, error) == -1) return -1;
-    if (out->kind == CSH_REDIRECT_DUP_READ || out->kind == CSH_REDIRECT_DUP_WRITE) {
-        if (strcmp(operand, "-") == 0) out->kind = CSH_REDIRECT_CLOSE;
-        else if (descriptor((const unsigned char *)operand, strlen(operand), &out->source_fd) == -1) {
-            free(operand);
-            return fail(error, "descriptor operand must be digits or '-'", 0, 2);
-        }
-        free(operand);
-    } else out->path = operand;
-    return 0;
-}
-
-int csh_command_from_ast(const struct csh_ast *tree, struct csh_command *out,
-    struct csh_error *error)
-{
-    size_t i;
-    memset(out, 0, sizeof(*out));
-    memset(error, 0, sizeof(*error));
-    /* The parser wraps even a single command in a list. Do not accidentally
-     * execute a prefix of a compound construct which this adapter cannot run. */
-    if (tree != NULL && tree->kind == CSH_AST_LIST && tree->redirection_count == 0 &&
-        tree->data.list.item_count == 1 &&
-        tree->data.list.items[0].separator != CSH_AST_AMPERSAND)
-        tree = tree->data.list.items[0].command;
-    if (tree == NULL || tree->kind != CSH_AST_SIMPLE)
-        return fail(error, "only a single foreground simple command is supported", 0, 2);
-    if (tree->data.simple.word_count >= SIZE_MAX / sizeof(*out->argv) ||
-        tree->redirection_count > SIZE_MAX / sizeof(*out->redirections) ||
-        tree->data.simple.word_count > SIZE_MAX / sizeof(*out->assignments))
-        return fail(error, "command is too large", ENOMEM, 1);
-    if (tree->data.simple.word_count != 0) {
-        out->argv = calloc(tree->data.simple.word_count + 1, sizeof(*out->argv));
-        if (out->argv == NULL) goto nomem;
-        out->assignments = calloc(tree->data.simple.word_count, sizeof(*out->assignments));
-        if (out->assignments == NULL) goto nomem;
-    }
-    for (i = 0; i < tree->data.simple.word_count; ++i) {
-        char *text = NULL;
-        if (literal(&tree->data.simple.words[i].word, &text, error) == -1) {
-            error->position = tree->data.simple.words[i].word.token.start;
-            goto failure;
-        }
-        if (tree->data.simple.words[i].assignment) {
-            char *equals = strchr(text, '=');
-            struct csh_assignment *assignment;
-            if (equals == NULL) {
-                free(text);
-                fail(error, "invalid literal assignment", 0, 2);
-                goto failure;
-            }
-            assignment = &out->assignments[out->assignment_count++];
-            assignment->name = text;
-            assignment->value = malloc(strlen(equals + 1) + 1);
-            if (assignment->value != NULL) strcpy(assignment->value, equals + 1);
-            *equals = '\0';
-            if (assignment->value == NULL) goto nomem;
-        } else out->argv[out->argc++] = text;
-    }
-    if (tree->redirection_count != 0) {
-        out->redirections = calloc(tree->redirection_count, sizeof(*out->redirections));
-        if (out->redirections == NULL) goto nomem;
-    }
-    for (i = 0; i < tree->redirection_count; ++i) {
-        ++out->redirection_count;
-        if (prepare_redirect(tree->redirections[i], &out->redirections[i], error) == -1) {
-            error->position = tree->redirections[i]->start;
-            goto failure;
-        }
-    }
-    if (csh_redirect_validate(out->redirections, out->redirection_count, error) == -1) goto failure;
-    return 0;
-nomem:
-    fail(error, "cannot allocate command", ENOMEM, 1);
-failure:
-    csh_command_destroy(out);
-    return -1;
 }
 
 struct launch {
@@ -558,6 +337,15 @@ static int execute_resolved(struct csh_state *state,
         do { waited = waitpid(child, &status, 0); } while (waited == -1 && errno == EINTR);
         if (waited == -1) {
             int number = errno;
+            if (number != ECHILD) {
+                kill(child, SIGKILL);
+                do { waited = waitpid(child, &status, 0); } while (waited == -1 && errno == EINTR);
+                if (waited == child && stage != NULL) {
+                    stage->reaped = stage->completed = 1;
+                    stage->status = child_status(status);
+                    stage->wait_status = status;
+                }
+            }
             launch_destroy(&launch);
             fail(error, "cannot wait for command", number, 1);
             goto done;
@@ -565,7 +353,8 @@ static int execute_resolved(struct csh_state *state,
         launch_destroy(&launch);
         result->status = child_status(status);
         if (stage != NULL) {
-            stage->reaped = 1;
+            stage->reaped = stage->completed = 1;
+            stage->status = result->status;
             stage->wait_status = status;
         }
         rc = 0;
@@ -575,6 +364,7 @@ static int execute_resolved(struct csh_state *state,
             result->redirection_failed = 1;
             goto done;
         }
+        if (handler == NULL) result->status = command->substitution_status;
         rc = handler == NULL ? 0 : handler(state, command, result, error, context);
         if (csh_redirect_restore(&save, &restore_error) == -1) {
             *error = restore_error;
@@ -782,8 +572,8 @@ int csh_execute_pipeline(struct csh_state *state,
             category == CSH_EXEC_EXTERNAL ? NULL : bootstrap_handler;
         rc = execute_resolved(state, commands, category, handler, NULL,
             &out->execution, out->stages, error);
-        out->stages[0].status = out->execution.status;
-        out->stages[0].completed = rc == 0;
+        if (!out->stages[0].reaped) out->stages[0].status = out->execution.status;
+        out->stages[0].completed = out->stages[0].reaped || rc == 0;
         if (rc == -1) pipeline_cancel(out);
         goto done;
     }
@@ -849,58 +639,6 @@ done:
     return rc;
 }
 
-int csh_execute_pipeline_ast(struct csh_state *state, const struct csh_ast *tree,
-    struct csh_pipeline_result *out, struct csh_error *error)
-{
-    struct csh_command *commands = NULL;
-    size_t i, count = 1;
-    int negated = 0, rc = -1;
-    memset(out, 0, sizeof(*out));
-    memset(error, 0, sizeof(*error));
-    out->execution.category = CSH_EXEC_PIPELINE;
-    if (tree != NULL && tree->kind == CSH_AST_LIST && tree->redirection_count == 0 &&
-        tree->data.list.item_count == 1 &&
-        tree->data.list.items[0].separator != CSH_AST_AMPERSAND)
-        tree = tree->data.list.items[0].command;
-    if (tree != NULL && tree->kind == CSH_AST_PIPELINE && tree->redirection_count == 0) {
-        count = tree->data.pipeline.command_count;
-        negated = tree->data.pipeline.negated;
-        if (count == 0 || tree->data.pipeline.commands == NULL) {
-            fail(error, "invalid pipeline AST", 0, 2);
-            goto done;
-        }
-    } else if (tree == NULL || tree->kind != CSH_AST_SIMPLE) {
-        fail(error, "only a foreground simple command or pipeline is supported", 0, 2);
-        goto done;
-    }
-    if (count > SIZE_MAX / sizeof(*commands) ||
-        (commands = calloc(count, sizeof(*commands))) == NULL) {
-        fail(error, "cannot allocate pipeline commands", ENOMEM, 1);
-        goto done;
-    }
-    for (i = 0; i < count; ++i) {
-        const struct csh_ast *stage = tree->kind == CSH_AST_PIPELINE ?
-            tree->data.pipeline.commands[i] : tree;
-        /* No nested compound/list adapter shortcuts inside a stage. */
-        if (stage == NULL || stage->kind != CSH_AST_SIMPLE) {
-            fail(error, "only simple pipeline stages are supported", 0, 2);
-            goto done;
-        }
-        if (csh_command_from_ast(stage, &commands[i], error) == -1) goto done;
-    }
-    rc = csh_execute_pipeline(state, commands, count, negated, out, error);
-done:
-    if (commands != NULL) {
-        for (i = 0; i < count; ++i) csh_command_destroy(&commands[i]);
-        free(commands);
-    }
-    if (rc == -1) {
-        out->execution.status = error->status;
-        if (state != NULL) csh_state_set_status(state, out->execution.status);
-    }
-    return rc;
-}
-
 int csh_execute_ast(struct csh_state *state, const struct csh_ast *tree,
     struct csh_execution *result, struct csh_error *error)
 {
@@ -920,7 +658,7 @@ struct csh_background_child {
 
 struct execution_plan {
     enum csh_ast_kind kind;
-    struct csh_command command; /* Simple command, or group redirections. */
+    const struct csh_ast *tree; /* Borrowed; expansion occurs only at execution. */
     struct execution_plan *children;
     size_t count;
     int negated;
@@ -937,7 +675,6 @@ static void plan_destroy(struct execution_plan *plan)
     size_t i;
     for (i = 0; i < plan->count; ++i) plan_destroy(&plan->children[i]);
     free(plan->children);
-    csh_command_destroy(&plan->command);
     memset(plan, 0, sizeof(*plan));
 }
 
@@ -946,22 +683,17 @@ static int plan_prepare(const struct csh_ast *tree, struct execution_plan *plan,
     struct csh_error *error)
 {
     size_t i, count = 0;
-    struct csh_ast redirects = {0};
     if (tree == NULL || depth > 256)
         return fail(error, "invalid or excessively nested execution tree", 0, 2);
     plan->kind = tree->kind;
+    plan->tree = tree;
     switch (tree->kind) {
     case CSH_AST_SIMPLE:
-        if (csh_command_from_ast(tree, &plan->command, error) == -1) return -1;
         break;
     case CSH_AST_LIST: count = tree->data.list.item_count; break;
     case CSH_AST_AND: case CSH_AST_OR: count = 2; break;
     case CSH_AST_BRACE: case CSH_AST_SUBSHELL:
         count = 1;
-        redirects.kind = CSH_AST_SIMPLE;
-        redirects.redirections = tree->redirections;
-        redirects.redirection_count = tree->redirection_count;
-        if (csh_command_from_ast(&redirects, &plan->command, error) == -1) return -1;
         break;
     case CSH_AST_PIPELINE:
         count = tree->data.pipeline.command_count;
@@ -974,18 +706,21 @@ static int plan_prepare(const struct csh_ast *tree, struct execution_plan *plan,
     if (tree->redirection_count && tree->kind != CSH_AST_SIMPLE &&
         tree->kind != CSH_AST_BRACE && tree->kind != CSH_AST_SUBSHELL)
         return fail(error, "invalid compound redirections", 0, 2);
-    for (i = 0; i < plan->command.redirection_count; ++i) {
-        const struct csh_redirect *r = &plan->command.redirections[i];
-        int *replacement;
+    for (i = 0; i < tree->redirection_count; ++i) {
+        const struct csh_ast_redirection *r = tree->redirections[i];
+        int *replacement, fd;
+        if (r->has_io_number && csh_descriptor(r->io_number.raw, r->io_number.length, &fd) == -1)
+            return fail(error, "invalid redirection descriptor", 0, 2);
         if (reserved->count > SIZE_MAX / sizeof(int) - 2)
             return fail(error, "too many descriptor operands", ENOMEM, 1);
         replacement = realloc(reserved->items, (reserved->count + 2) * sizeof(int));
         if (replacement == NULL)
             return fail(error, "cannot reserve descriptor operands", ENOMEM, 1);
         reserved->items = replacement;
-        reserved->items[reserved->count++] = r->fd;
-        if (r->kind == CSH_REDIRECT_DUP_READ || r->kind == CSH_REDIRECT_DUP_WRITE)
-            reserved->items[reserved->count++] = r->source_fd;
+        if (r->has_io_number) reserved->items[reserved->count++] = fd;
+        if ((r->operator_kind == CSH_TOKEN_LESS_AND || r->operator_kind == CSH_TOKEN_GREAT_AND) &&
+            csh_descriptor(r->operand.token.raw, r->operand.token.length, &fd) == 0)
+            reserved->items[reserved->count++] = fd;
     }
     if (count == 0) return 0;
     if (count > SIZE_MAX / sizeof(*plan->children) ||
@@ -1052,6 +787,120 @@ static int execute_plan(struct csh_execution_context *context,
     const struct execution_plan *plan, const struct descriptor_reservations *reserved,
     struct csh_execution *result, struct csh_error *error);
 
+static void report_error(struct csh_error *error)
+{
+    if (error->reported) return;
+    dprintf(STDERR_FILENO, "cshell: %s", csh_error_message(error));
+    if (error->system_errno) dprintf(STDERR_FILENO, ": %s", strerror(error->system_errno));
+    dprintf(STDERR_FILENO, "\n");
+    error->reported = 1;
+}
+
+static void expansion_failed(struct csh_state *state, struct csh_execution *result)
+{
+    struct csh_state_info info;
+    csh_state_get_info(state, &info);
+    result->exit_requested = !(info.options & CSH_OPT_INTERACTIVE);
+}
+
+static int restore_redirects(struct csh_redirect_save ***saves, size_t count,
+    struct csh_error *error)
+{
+    int rc = 0;
+    while (count) {
+        struct csh_error restored;
+        if (csh_redirect_restore(&(*saves)[--count], &restored) == -1) {
+            *error = restored;
+            rc = -1;
+        }
+    }
+    free(*saves);
+    *saves = NULL;
+    return rc;
+}
+
+static int runtime_redirects(struct csh_state *state, const struct csh_ast *tree,
+    const struct descriptor_reservations *reserved, struct csh_command *command,
+    struct csh_redirect_save ***saves, struct csh_execution *result,
+    struct csh_error *error)
+{
+    size_t i;
+    *saves = NULL;
+    if (!tree->redirection_count) return 0;
+    *saves = calloc(tree->redirection_count, sizeof(**saves));
+    if (*saves == NULL) return fail(error, "cannot allocate redirection saves", ENOMEM, 1);
+    for (i = 0; i < tree->redirection_count; ++i) {
+        struct csh_redirect redirect = {0};
+        int rc = csh_command_redirect(state, tree->redirections[i], command, &redirect, error);
+        if (rc == -1) expansion_failed(state, result);
+        else if (rc == -2) { result->redirection_failed = 1; rc = -1; }
+        else {
+            rc = csh_redirect_apply_reserved(&redirect, 1, reserved->items,
+                reserved->count, &(*saves)[i], error);
+            if (rc == -1) result->redirection_failed = 1;
+        }
+        free(redirect.path);
+        free(redirect.data);
+        if (rc == -1) {
+            if (i != 0) report_error(error);
+            restore_redirects(saves, i, error);
+            return -1;
+        }
+    }
+    return 0;
+}
+
+static int runtime_simple(struct csh_state *state, const struct csh_ast *tree,
+    const struct descriptor_reservations *reserved, int direct,
+    struct csh_pipeline_stage *stage, struct csh_execution *result, struct csh_error *error)
+{
+    struct csh_command command = {0};
+    struct csh_redirect_save **saves = NULL;
+    struct csh_state *redirect_state = NULL;
+    enum csh_execution_category category;
+    int rc = -1;
+    memset(result, 0, sizeof(*result));
+    if (csh_command_arguments(state, tree, &command, error) == -1) {
+        expansion_failed(state, result);
+        goto done;
+    }
+    if (command_validate(state, &command, &category, error) == -1) goto done;
+    result->category = category;
+    if (command.argc == 0 && tree->redirection_count != 0 &&
+        csh_state_clone(state, &redirect_state) != CSH_STATE_OK) {
+        fail(error, "cannot copy redirection environment", ENOMEM, 1);
+        goto done;
+    }
+    if (runtime_redirects(redirect_state != NULL ? redirect_state : state,
+        tree, reserved, &command, &saves, result, error) == -1) goto done;
+    if (csh_command_assignments(state, tree, &command, error) == -1) {
+        expansion_failed(state, result);
+        goto done;
+    }
+    if (direct && category == CSH_EXEC_EXTERNAL) {
+        struct launch launch;
+        if (pipeline_launch_prepare(state, &command, &launch, error) == -1) goto done;
+        launch_child(&command, &launch);
+    }
+    rc = execute_resolved(state, &command, category,
+        category == CSH_EXEC_EMPTY || category == CSH_EXEC_EXTERNAL ? NULL : bootstrap_handler,
+        NULL, result, stage, error);
+done:
+    if (rc == -1 && saves != NULL) report_error(error);
+    if (saves != NULL && restore_redirects(&saves, tree->redirection_count, error) == -1) rc = -1;
+    if (rc == -1) result->status = error->status;
+    if (result->redirection_failed && result->category == CSH_EXEC_SPECIAL_BUILTIN)
+        result->special_builtin_error = 1;
+    csh_state_destroy(redirect_state);
+    if (stage != NULL) {
+        stage->category = result->category;
+        if (!stage->reaped) stage->status = result->status;
+        stage->completed = stage->reaped || rc == 0;
+    }
+    csh_command_destroy(&command);
+    return rc;
+}
+
 static int context_stopped(struct csh_execution_context *context,
     const struct csh_execution *result)
 {
@@ -1063,7 +912,8 @@ static int context_stopped(struct csh_execution_context *context,
 
 static int context_pipeline(struct csh_execution_context *context,
     const struct execution_plan *plan, const struct descriptor_reservations *reserved,
-    int asynchronous, struct csh_execution *result, struct csh_error *error);
+    int asynchronous, struct csh_execution *result, struct csh_error *error,
+    struct csh_pipeline_result *details);
 
 static void background_setup(int redirect_input)
 {
@@ -1087,23 +937,13 @@ static void context_child(struct csh_state *state, const struct execution_plan *
     struct csh_execution result;
     struct csh_error error;
     child.state = state; /* fork isolates state, cwd, options and descriptors. */
+    csh_redirect_child();
+    csh_state_update_options(state, 0, CSH_OPT_INTERACTIVE);
     if (plan->kind == CSH_AST_SIMPLE) {
-        enum csh_execution_category category;
-        struct launch launch;
-        if (command_validate(state, &plan->command, &category, &error) == -1) {
-            diagnose("context", error.message, error.system_errno);
-            _exit(error.status);
-        }
-        if (category == CSH_EXEC_EXTERNAL) {
-            if (pipeline_launch_prepare(state, &plan->command, &launch, &error) == -1) {
-                diagnose("context", error.message, error.system_errno);
-                _exit(error.status);
-            }
-            launch_child(&plan->command, &launch);
-        }
-    }
-    if (execute_plan(&child, plan, reserved, &result, &error) == -1)
-        diagnose("context", error.message, error.system_errno);
+        if (runtime_simple(state, plan->tree, reserved, 1, NULL, &result, &error) == -1 && !error.reported)
+            diagnose("context", csh_error_message(&error), error.system_errno);
+    } else if (execute_plan(&child, plan, reserved, &result, &error) == -1 && !error.reported)
+        diagnose("context", csh_error_message(&error), error.system_errno);
     csh_execution_context_destroy(&child);
     _exit(result.status);
 }
@@ -1115,7 +955,7 @@ static int context_fork(struct csh_execution_context *context,
     struct csh_background_child *entry = NULL;
     struct csh_pipeline_stage stage = {0};
     if (asynchronous && plan->kind == CSH_AST_PIPELINE && plan->count > 1)
-        return context_pipeline(context, plan, reserved, 1, result, error);
+        return context_pipeline(context, plan, reserved, 1, result, error, NULL);
     if (asynchronous && (entry = malloc(sizeof(*entry))) == NULL)
         return fail(error, "cannot allocate background child", ENOMEM, 1);
     stage.pid = fork();
@@ -1150,7 +990,8 @@ static int context_fork(struct csh_execution_context *context,
 
 static int context_pipeline(struct csh_execution_context *context,
     const struct execution_plan *plan, const struct descriptor_reservations *reserved,
-    int asynchronous, struct csh_execution *result, struct csh_error *error)
+    int asynchronous, struct csh_execution *result, struct csh_error *error,
+    struct csh_pipeline_result *details)
 {
     struct csh_pipeline_result pipeline = {0};
     struct csh_background_child *pending = NULL;
@@ -1162,25 +1003,11 @@ static int context_pipeline(struct csh_execution_context *context,
             result->status = !result->status;
         return rc;
     }
-    /* Reuse the prepared pipeline API for all-simple stages, preserving its
-     * pre-launch assignment/lookup checks and direct external child identity. */
-    for (i = 0; i < plan->count; ++i)
-        if (plan->children[i].kind != CSH_AST_SIMPLE) break;
-    if (!asynchronous && i == plan->count) {
-        struct csh_command *commands = calloc(plan->count, sizeof(*commands));
-        if (commands == NULL) return fail(error, "cannot allocate pipeline commands", ENOMEM, 1);
-        for (i = 0; i < plan->count; ++i) commands[i] = plan->children[i].command;
-        rc = csh_execute_pipeline(context->state, commands, plan->count,
-            plan->negated, &pipeline, error);
-        *result = pipeline.execution;
-        free(commands); /* Borrowed command contents. */
-        csh_pipeline_result_destroy(&pipeline);
-        return rc;
-    }
     pipeline.stages = calloc(plan->count, sizeof(*pipeline.stages));
     if (pipeline.stages == NULL)
         return fail(error, "cannot allocate pipeline stages", ENOMEM, 1);
     pipeline.count = plan->count;
+    for (i = 0; i < plan->count; ++i) pipeline.stages[i].category = CSH_EXEC_UNRESOLVED;
     for (i = 0; i < plan->count; ++i) {
         pid_t pid;
         if (asynchronous) {
@@ -1257,7 +1084,11 @@ done:
         pending = entry->next;
         free(entry);
     }
-    csh_pipeline_result_destroy(&pipeline);
+    if (details != NULL) {
+        struct csh_execution execution = *result;
+        *details = pipeline;
+        details->execution = execution;
+    } else csh_pipeline_result_destroy(&pipeline);
     return rc;
 }
 
@@ -1270,13 +1101,9 @@ static int execute_plan(struct csh_execution_context *context,
     memset(result, 0, sizeof(*result));
     memset(error, 0, sizeof(*error));
     switch (plan->kind) {
-    case CSH_AST_SIMPLE: {
-        struct csh_pipeline_result pipeline = {0};
-        rc = csh_execute_pipeline(context->state, &plan->command, 1, 0, &pipeline, error);
-        *result = pipeline.execution;
-        csh_pipeline_result_destroy(&pipeline);
+    case CSH_AST_SIMPLE:
+        rc = runtime_simple(context->state, plan->tree, reserved, 0, NULL, result, error);
         break;
-    }
     case CSH_AST_LIST:
         for (i = 0; i < plan->count; ++i) {
             if (plan->children[i].asynchronous) {
@@ -1302,22 +1129,17 @@ static int execute_plan(struct csh_execution_context *context,
         break;
     }
     case CSH_AST_BRACE: {
-        struct csh_redirect_save *save = NULL;
-        struct csh_error restored;
-        rc = csh_redirect_apply_reserved(plan->command.redirections,
-            plan->command.redirection_count, reserved->items, reserved->count, &save, error);
-        if (rc == -1) result->redirection_failed = 1;
+        struct csh_redirect_save **saves = NULL;
+        struct csh_command command = {0};
+        rc = runtime_redirects(context->state, plan->tree, reserved, &command, &saves, result, error);
         if (rc == 0) {
             rc = execute_plan(context, &plan->children[0], reserved, result, error);
-            if (csh_redirect_restore(&save, &restored) == -1) {
-                *error = restored;
-                rc = -1;
-            }
+            if (restore_redirects(&saves, plan->tree->redirection_count, error) == -1) rc = -1;
         }
         break;
     }
     case CSH_AST_PIPELINE:
-        rc = context_pipeline(context, plan, reserved, 0, result, error);
+        rc = context_pipeline(context, plan, reserved, 0, result, error, NULL);
         break;
     default: rc = fail(error, "unsupported compound command", 0, 2); break;
     }
@@ -1325,9 +1147,7 @@ static int execute_plan(struct csh_execution_context *context,
     if (rc == -1 && result->redirection_failed) {
         /* A redirection failure is a command status for list composition.
          * Report it here, while any enclosing group's redirects are active. */
-        dprintf(STDERR_FILENO, "cshell: %s", error->message);
-        if (error->system_errno) dprintf(STDERR_FILENO, ": %s", strerror(error->system_errno));
-        dprintf(STDERR_FILENO, "\n");
+        report_error(error);
         memset(error, 0, sizeof(*error));
         result->redirection_failed = 0;
         rc = 0;
@@ -1359,5 +1179,164 @@ done:
     if (rc == -1) result->status = error->status;
     if (context != NULL && context->state != NULL)
         csh_state_set_status(context->state, result->status);
+    return rc;
+}
+
+int csh_execute_substitution(struct csh_state *state, const struct csh_ast *tree,
+    char **bytes, size_t *length, int *status, struct csh_error *error)
+{
+    static unsigned nesting;
+    struct csh_pipeline_stage child = {0};
+    int ends[2] = {-1, -1}, failed = 0;
+    size_t used = 0, capacity = 0;
+    char *buffer = NULL;
+    *bytes = NULL;
+    *length = 0;
+    if (nesting >= 128) return fail(error, "command substitution nesting limit exceeded", 0, 2);
+    if (pipeline_pipe(ends) == -1) return fail(error, "cannot create substitution pipe", errno, 1);
+    child.pid = fork();
+    if (child.pid == -1) {
+        int number = errno;
+        pipe_close(ends[0]); pipe_close(ends[1]);
+        return fail(error, "cannot fork command substitution", number, 1);
+    }
+    if (child.pid == 0) {
+        struct csh_execution_context context = {0};
+        struct csh_execution result;
+        struct csh_error failure;
+        ++nesting;
+        if (pipeline_connect(ends[1], STDOUT_FILENO) == -1) {
+            diagnose("substitution", "cannot connect output", errno);
+            _exit(1);
+        }
+        pipe_close(ends[0]); pipe_close(ends[1]);
+        csh_redirect_child();
+        csh_state_update_options(state, 0, CSH_OPT_INTERACTIVE);
+        context.state = state;
+        if (csh_execute_context_ast(&context, tree, &result, &failure) == -1 && !failure.reported)
+            diagnose("substitution", csh_error_message(&failure), failure.system_errno);
+        csh_execution_context_destroy(&context);
+        _exit(result.status);
+    }
+    pipe_close(ends[1]);
+    for (;;) {
+        char chunk[8192];
+        ssize_t count;
+        do { count = read(ends[0], chunk, sizeof(chunk)); } while (count == -1 && errno == EINTR);
+        if (count == 0) break;
+        if (count < 0) {
+            fail(error, "cannot read command substitution", errno, 1);
+            failed = 1;
+            break;
+        }
+        /* Even after a storage failure, drain before waiting so a producer
+         * cannot block on a full pipe and all synchronous children finish. */
+        if (failed) continue;
+        if (memchr(chunk, 0, (size_t)count) != NULL) {
+            fail(error, "NUL byte in command substitution output", 0, 2);
+            failed = 1;
+            continue;
+        }
+        if ((size_t)count >= SIZE_MAX - used) {
+            fail(error, "command substitution output is too large", ENOMEM, 1);
+            failed = 1;
+            continue;
+        }
+        if (used + (size_t)count + 1 > capacity) {
+            size_t grown = capacity ? capacity : sizeof(chunk) + 1;
+            char *replacement;
+            while (grown < used + (size_t)count + 1) {
+                if (grown > SIZE_MAX / 2) { grown = used + (size_t)count + 1; break; }
+                grown *= 2;
+            }
+            replacement = realloc(buffer, grown);
+            if (replacement == NULL) {
+                fail(error, "cannot allocate command substitution output", ENOMEM, 1);
+                failed = 1;
+                continue;
+            }
+            buffer = replacement;
+            capacity = grown;
+        }
+        memcpy(buffer + used, chunk, (size_t)count);
+        used += (size_t)count;
+    }
+    pipe_close(ends[0]);
+    if (stage_wait(&child) == -1) {
+        int number = errno;
+        /* Retain ownership on a failed wait. Retry once before cancellation;
+         * ordinary EINTR is already handled by stage_wait. */
+        if (number != ECHILD && stage_wait(&child) == -1) {
+            kill(child.pid, SIGKILL);
+            stage_wait(&child);
+        }
+        if (!failed) fail(error, "cannot wait for command substitution", number, 1);
+        failed = 1;
+    }
+    if (failed) { free(buffer); return -1; }
+    if (buffer == NULL && (buffer = malloc(1)) == NULL)
+        return fail(error, "cannot allocate command substitution output", ENOMEM, 1);
+    while (used && buffer[used - 1] == '\n') --used;
+    buffer[used] = 0;
+    *bytes = buffer;
+    *length = used;
+    *status = child.status;
+    return 0;
+}
+
+int csh_execute_pipeline_ast(struct csh_state *state, const struct csh_ast *tree,
+    struct csh_pipeline_result *out, struct csh_error *error)
+{
+    struct execution_plan plan = {0};
+    struct descriptor_reservations reserved = {0};
+    struct csh_execution_context context = {0};
+    const struct csh_ast *simple;
+    int rc = -1;
+    memset(out, 0, sizeof(*out));
+    memset(error, 0, sizeof(*error));
+    out->execution.category = CSH_EXEC_PIPELINE;
+    context.state = state;
+    if (tree != NULL && tree->kind == CSH_AST_LIST && tree->redirection_count == 0 &&
+        tree->data.list.item_count == 1 &&
+        tree->data.list.items[0].separator != CSH_AST_AMPERSAND)
+        tree = tree->data.list.items[0].command;
+    if (state == NULL || tree == NULL ||
+        (tree->kind != CSH_AST_SIMPLE && tree->kind != CSH_AST_PIPELINE)) {
+        fail(error, "only a foreground simple command or pipeline is supported", 0, 2);
+        goto done;
+    }
+    if (plan_prepare(tree, &plan, &reserved, 0, error) == -1) goto done;
+    if (tree->kind == CSH_AST_PIPELINE && plan.count > 1) {
+        rc = context_pipeline(&context, &plan, &reserved, 0, &out->execution, error, out);
+        goto done;
+    }
+    out->stages = calloc(1, sizeof(*out->stages));
+    if (out->stages == NULL) {
+        fail(error, "cannot allocate pipeline stage", ENOMEM, 1);
+        goto done;
+    }
+    out->count = 1;
+    simple = tree->kind == CSH_AST_SIMPLE ? tree : tree->data.pipeline.commands[0];
+    if (simple->kind == CSH_AST_SIMPLE)
+        rc = runtime_simple(state, simple, &reserved, 0, out->stages, &out->execution, error);
+    else {
+        rc = execute_plan(&context, &plan.children[0], &reserved, &out->execution, error);
+        if (!out->stages[0].reaped) out->stages[0].status = out->execution.status;
+        out->stages[0].completed = out->stages[0].reaped || rc == 0;
+    }
+    if (rc == 0 && plan.negated && !out->execution.exit_requested)
+        out->execution.status = !out->execution.status;
+done:
+    if (rc == -1 && out->execution.redirection_failed &&
+        out->execution.category == CSH_EXEC_EXTERNAL) {
+        if (!error->reported) diagnose("command", csh_error_message(error), error->system_errno);
+        memset(error, 0, sizeof(*error));
+        rc = 0;
+    }
+    plan_destroy(&plan);
+    free(reserved.items);
+    csh_execution_context_destroy(&context);
+    if (rc == -1) out->execution.status = error->status;
+    if (state != NULL) csh_state_set_status(state, out->execution.status);
     return rc;
 }

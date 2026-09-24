@@ -129,39 +129,25 @@ static const char *separator(struct csh_state *state, size_t *length)
     return view.value;
 }
 
-static char *flatten(const struct csh_expansion *value, const char *sep,
-    size_t sep_length, int pattern)
+/* Scalar consumers concatenate spans. Patterns use csh_expand_fields instead. */
+static char *flatten(const struct csh_expansion *value)
 {
-    size_t i, j, k, length = 0, position = 0;
+    size_t i, j, length = 0, position = 0;
     char *text;
-    for (i = 0; i < value->field_count; ++i) {
-        if (i != 0) {
-            if (sep_length > SIZE_MAX - length) return NULL;
-            length += sep_length;
+    for (i = 0; i < value->field_count; ++i)
+        for (j = 0; j < value->fields[i].span_count; ++j) {
+            size_t bytes = value->fields[i].spans[j].length;
+            if (bytes >= SIZE_MAX - length) return NULL;
+            length += bytes;
         }
+    text = malloc(length + 1);
+    if (text == NULL) return NULL;
+    for (i = 0; i < value->field_count; ++i)
         for (j = 0; j < value->fields[i].span_count; ++j) {
             const struct csh_expand_span *span = &value->fields[i].spans[j];
-            if (span->length > (SIZE_MAX - length) / 2) return NULL;
-            length += span->length * 2; /* room for quoting each pattern byte */
+            memcpy(text + position, span->text, span->length);
+            position += span->length;
         }
-    }
-    if (length == SIZE_MAX || (text = malloc(length + 1)) == NULL)
-        return NULL;
-    for (i = 0; i < value->field_count; ++i) {
-        if (i != 0 && sep_length != 0) {
-            memcpy(text + position, sep, sep_length);
-            position += sep_length;
-        }
-        for (j = 0; j < value->fields[i].span_count; ++j) {
-            const struct csh_expand_span *span = &value->fields[i].spans[j];
-            for (k = 0; k < span->length; ++k) {
-                if (pattern && span->quote != CSH_QUOTE_NONE &&
-                    strchr("\\*?[]-!^", span->text[k]) != NULL)
-                    text[position++] = '\\';
-                text[position++] = span->text[k];
-            }
-        }
-    }
     text[position] = 0;
     return text;
 }
@@ -429,8 +415,19 @@ static enum csh_expand_result parameter(struct expansion_work *work,
         expanded.context = CSH_EXPAND_PATTERN;
         result = range(work, index, operand, end, &expanded, CSH_EXPAND_PARAMETER, 1);
         if (result != CSH_EXPAND_OK) goto done;
-        text = flatten(&expanded, "", 0, 1);
-        if (text == NULL) { result = CSH_EXPAND_NOMEM; goto done; }
+        {
+            struct csh_fields patterns = {0};
+            result = csh_expand_fields(work->state, &expanded, NULL, &patterns, work->error);
+            if (result != CSH_EXPAND_OK) goto done;
+            if (patterns.count > 1) {
+                csh_fields_destroy(&patterns);
+                result = CSH_EXPAND_INVALID;
+                goto done;
+            }
+            text = patterns.count ? patterns.values[0] : copy_bytes((const unsigned char *)"", 0);
+            free(patterns.values);
+            if (text == NULL) { result = CSH_EXPAND_NOMEM; goto done; }
+        }
         result = scalar(out, remove_pattern(value, text, op == '%', longest),
             f->quote, CSH_EXPAND_PARAMETER);
         goto done;
@@ -450,7 +447,7 @@ static enum csh_expand_result parameter(struct expansion_work *work,
     expanded.context = CSH_EXPAND_ASSIGNMENT;
     result = range(work, index, operand, end, &expanded, CSH_EXPAND_PARAMETER, 1);
     if (result != CSH_EXPAND_OK) goto done;
-    text = flatten(&expanded, "", 0, 0);
+    text = flatten(&expanded);
     if (text == NULL) { result = CSH_EXPAND_NOMEM; goto done; }
     if (op == '?') {
         result = fail(work, CSH_EXPAND_UNSET, index,
@@ -552,7 +549,7 @@ static enum csh_expand_result arithmetic(struct expansion_work *work,
     expression.context = CSH_EXPAND_ASSIGNMENT;
     result = range(work, index, begin, end, &expression, CSH_EXPAND_LITERAL, 0);
     if (result != CSH_EXPAND_OK) goto done;
-    text = flatten(&expression, "", 0, 0);
+    text = flatten(&expression);
     if (text == NULL) { result = CSH_EXPAND_NOMEM; goto done; }
     arith = csh_arith_eval(work->state, text, &value);
     if (arith != CSH_ARITH_OK) {
@@ -794,7 +791,7 @@ enum csh_expand_result csh_expand_word(struct csh_state *state,
     if (out != NULL) memset(out, 0, sizeof(*out));
     if (state == NULL || word == NULL || out == NULL ||
         (options != NULL && (options->context < CSH_EXPAND_ARGUMENT ||
-            options->context > CSH_EXPAND_PATTERN))) {
+            options->context > CSH_EXPAND_HEREDOC))) {
         if (error != NULL) {
             error->code = CSH_EXPAND_INVALID;
             snprintf(error->message, sizeof(error->message), "invalid expansion input");
@@ -813,6 +810,7 @@ enum csh_expand_result csh_expand_word(struct csh_state *state,
         goto done;
     }
     result = range(&work, CSH_FRAGMENT_ROOT, 0, word->length, out, CSH_EXPAND_LITERAL,
+        out->context == CSH_EXPAND_HEREDOC ? 0 :
         out->context == CSH_EXPAND_ASSIGNMENT ? 3 : 1);
  done:
     if (result != CSH_EXPAND_OK) {

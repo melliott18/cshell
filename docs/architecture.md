@@ -9,9 +9,10 @@ The public `cshell` is the only runtime; CSH-039 removed the prototype input
 loop, scanner, executor, and internal candidate driver. The handwritten lexer
 requires no Flex or generated scanner.
 
-The supported bootstrap subset includes literal simple commands, state
-builtins, ordered redirections, and concurrent pipelines. Expansion and broader
-control flow remain integration work. Unsupported complete constructs are
+The supported subset includes expanded simple commands, state builtins,
+substitutions, here-documents, lists, groups, and concurrent pipelines. Broader
+control flow, functions, shell options and job control remain integration work.
+Unsupported complete constructs are
 rejected before execution. See [Runtime behavior](candidate-runtime.md).
 
 ## Current replacement modules
@@ -25,8 +26,9 @@ execution and redirections. CSH-020 adds concurrent pipelines. These modules
 have no dependency on the deleted legacy implementation.
 
 CSH-018 connected invocation modes and shell statuses; CSH-039 makes that runtime
-`src/main.c` and the default `cshell` executable. Expansion and alias APIs are
-still tested separately pending their runtime integration tickets.
+`src/main.c` and the default `cshell` executable. CSH-026 connects expansion and
+substitution capture; alias APIs still await
+their runtime integration ticket.
 
 | Path | Responsibility |
 | --- | --- |
@@ -41,7 +43,8 @@ still tested separately pending their runtime integration tickets.
 | `src/quote.c` / `include/cshell/quote.h` | Reusable dollar-single-quote decoding before expansion or delimiter quote removal |
 | `src/state.c` / `include/cshell/state.h` | Owned variables and attributes, copied invocation parameters, option/status metadata, environment snapshots, and full-state and selective variable copying/restoration |
 | `src/builtin.c` / `include/cshell/builtin.h` | State builtin lookup and handlers over replacement shell state |
-| `src/execute.c` / `include/cshell/execute.h` | Owned prepared-command boundary, bounded literal AST adapter, command lookup, owned child execution, assignment categories, parent builtin dispatch, concurrent pipelines, per-stage results, list/group evaluation, and background context ownership |
+| `src/prepare.c` / `src/prepare.h` | Phased context-sensitive word/assignment/redirection expansion and lazy substitution AST handoff |
+| `src/execute.c` / `include/cshell/execute.h` | Owned prepared-command boundary, substitution capture, command lookup, owned child execution, assignment categories, parent builtin dispatch, concurrent pipelines, per-stage results, list/group evaluation, and background context ownership |
 | `src/redirect.c` / `include/cshell/redirect.h` | Ordered file, descriptor, and prepared here-document operations with descriptor restoration |
 
 See [Input and invocation](input-and-invocation.md) for the concrete ownership,
@@ -67,14 +70,14 @@ the process environment.
 See [Value expansion](value-expansions.md) for intermediate fields, quoted empty
 values, transactional expansion errors, arithmetic limits, and the parser/executor
 handoffs, final IFS fields, pathname generation, and interruption cleanup.
-Execution and here-document integration remain CSH-026 work.
+CSH-026 integrates execution and here-document body tokenization/expansion.
 
 See [Simple-command execution](execution.md) for command ownership, execution
 categories, status and exit requests, child ownership, and descriptor restoration.
-The literal adapter executes a simple command or pipeline and rejects unsupported syntax
-or expansion before dispatch. Literal prefixes use CSH-023 assignment categories;
-resolved dispatch supplies the boundary for future function/builtin handlers.
-CSH-008 integrates expansion, and CSH-029 supplies [state builtins](state-builtins.md).
+The runtime preflights supported syntax and expands each reached command using
+CSH-026. Prefixes use CSH-023 assignment categories; resolved dispatch supplies
+the boundary for future function/builtin handlers. CSH-029 supplies
+[state builtins](state-builtins.md).
 
 ## Target module boundaries
 
@@ -110,8 +113,8 @@ unsupported operator spellings are not compatibility requirements.
 
 ## Processing model
 
-The following diagram shows the target processing model. Expansion and
-signal/job integration remain planned; the other runtime boundaries exist.
+The following diagram shows the processing model. Signal/job integration remains
+planned; the other runtime boundaries exist.
 Input, lexer, and parser construct a command tree (AST). The executor
 evaluates that tree and coordinates expansion, shell state, builtins,
 redirections, and child processes. Arrows below the executor show collaborating
@@ -168,7 +171,7 @@ CSH-021 implements composition with a persistent `csh_execution_context` that
 borrows shell state and owns a direct-child registry. Brace groups share the
 current context under reversible descriptors; subshells, pipeline stages and
 asynchronous lists use forked state/cwd/descriptor copies and fresh registries.
-The executor preflights literal syntax before effects, then applies list
+The executor preflights supported syntax before effects, then applies list
 short-circuiting and honors exit requests within the owning context. It polls
 background children at execution boundaries; explicit blocking reaping is
 available to library hosts. Shell exit detaches unfinished jobs. There is no
@@ -187,9 +190,9 @@ those modules from their first implementation.
 
 CSH-018 integrated invocation modes and statuses through a temporary runtime
 driver. CSH-039 promoted it to the public entry point and removed the alternate
-build target. The initial literal-word adapter in CSH-019 is a bounded
-replacement-module stub pending CSH-008 expansion; it neither calls legacy code
-nor flattens syntax for the old dispatcher. Unsupported syntax or expansion must
+build target. CSH-026 replaces the initial CSH-019 literal-word adapter with
+context-sensitive preparation and isolated substitution execution, without
+using legacy code or re-lexing expansion output. Unsupported syntax must
 fail before the affected construct produces side effects, with no legacy
 fallback.
 

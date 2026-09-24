@@ -68,6 +68,10 @@ int csh_lexer_create(struct csh_lexer **out, const char *source_name,
 /* Destroy the root, including unfinished child frames. Child frames are
  * released by command_end; callers must not destroy them separately. */
 void csh_lexer_destroy(struct csh_lexer *lexer);
+/* Fresh lexer only: read the entire source as a here-document value word.
+ * Top-level quotes are literal; only $, backquotes and body escapes are active.
+ * Command children retain ordinary shell tokenization. */
+void csh_lexer_document(struct csh_lexer *lexer);
 /* Append bytes to the shared source; final marks EOF, including an empty feed.
  * Feed one physical line at a time to preserve parser/executor read boundaries.
  * All frames use the same stream. No feed is allowed after final or failure. */

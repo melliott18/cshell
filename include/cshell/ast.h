@@ -9,7 +9,7 @@ struct csh_ast;
  * spelling, source positions, and quote/expansion fragments. Substitutions
  * associate parsed $(...) bodies with COMMAND fragments; begin/end are byte
  * offsets in token.raw, including the delimiters. Backquotes remain lexical
- * fragments for the expansion implementation. */
+ * fragments, decoded and parsed lazily by execution when selected. */
 struct csh_ast_substitution {
     size_t fragment_index;
     size_t begin;

@@ -16,7 +16,7 @@ static void *allocations[4096];
 static size_t live, allocation_calls, fail_allocation;
 static int fail_open, fail_dup, fail_dup2, fail_temp, fail_fork, interrupt_wait;
 static unsigned wait_calls;
-static int fail_pipe, fail_wait, fail_setfd, fork_calls;
+static int fail_pipe, fail_wait, fail_setfd, fork_calls, fail_read, interrupt_read;
 static int target_stage, child_fault;
 static pid_t launched[16];
 static size_t launched_count;
@@ -153,7 +153,12 @@ pid_t csh_execute_fault_fork(void)
     if (child > 0) {
         assert(launched_count < sizeof(launched) / sizeof(launched[0]));
         launched[launched_count++] = child;
-    } else if (child == 0 && fork_calls == target_stage) {
+    } else if (child == 0) {
+        /* Parent allocation sweeps stop at fork; child setup has its own
+         * explicitly selected failure point below. */
+        fail_allocation = 0;
+        fail_wait = interrupt_wait = fail_read = interrupt_read = 0;
+        if (fork_calls != target_stage) return child;
         int null_fd = open("/dev/null", O_WRONLY);
         assert(null_fd >= 0 && dup2(null_fd, 2) == 2);
         close(null_fd);
@@ -165,6 +170,13 @@ pid_t csh_execute_fault_fork(void)
         if (child_fault == 6) fail_dup2 = (fork_calls == 1 || fork_calls == 5 ? 1 : 2) + 1;
     }
     return child;
+}
+
+ssize_t csh_execute_fault_read(int fd, void *bytes, size_t length)
+{
+    if (interrupt_read) { interrupt_read = 0; errno = EINTR; return -1; }
+    if (fail_read && --fail_read == 0) { errno = EIO; return -1; }
+    return read(fd, bytes, length);
 }
 
 pid_t csh_execute_fault_waitpid(pid_t pid, int *status, int options)
@@ -183,7 +195,7 @@ static void arm(size_t allocation)
     fail_open = fail_dup = fail_dup2 = fail_temp = fail_fork = interrupt_wait = 0;
     wait_calls = 0;
     fail_pipe = fail_wait = fail_setfd = fork_calls = 0;
-    target_stage = child_fault = 0;
+    target_stage = child_fault = fail_read = interrupt_read = 0;
     launched_count = 0;
 }
 
@@ -211,6 +223,12 @@ static struct csh_ast *parse(const char *script)
 
 static void adapter_faults(void)
 {
+    struct csh_state *state = NULL;
+    struct csh_invocation invocation = {0};
+    size_t baseline;
+    invocation.arg0 = "faults";
+    assert(csh_state_create(&state, &invocation, NULL) == CSH_STATE_OK);
+    baseline = live;
     const char *scripts[] = {
         "cd 'two words' '' \\\" $'line\\n' >target 3<&0 4>&-\n",
         "A=one B='' A=two cd . <<'ONE' <<'TWO'\nfirst\nONE\nsecond\nTWO\n"
@@ -219,13 +237,13 @@ static void adapter_faults(void)
     for (variant = 0; variant < sizeof(scripts) / sizeof(scripts[0]); ++variant) {
         struct csh_ast *tree = parse(scripts[variant]);
         size_t point;
-        for (point = 1; point < 256; ++point) {
+        for (point = 1; point < 2048; ++point) {
             struct csh_command command = {0};
             struct csh_error error;
             int returned;
-            assert(live == 0);
+            assert(live == baseline);
             arm(point);
-            returned = csh_command_from_ast(tree, &command, &error);
+            returned = csh_command_from_ast(state, tree, &command, &error);
             if (returned == -1) {
                 assert(error.message != NULL);
                 assert(allocation_calls >= point);
@@ -237,13 +255,15 @@ static void adapter_faults(void)
             }
             csh_command_destroy(&command);
             csh_command_destroy(&command);
-            assert(live == 0);
+            assert(live == baseline);
             if (returned == 0) break;
         }
-        assert(point < 256);
+        assert(point < 2048);
         csh_ast_destroy(tree);
     }
     arm(0);
+    csh_state_destroy(state);
+    assert(live == 0);
 }
 
 static void check_temporary_variables(struct csh_state *state)
@@ -603,6 +623,61 @@ static void pipeline_faults(struct csh_state *state)
     arm(0);
 }
 
+static void substitution_faults(struct csh_state *state)
+{
+    struct csh_execution_context context = {0};
+    struct csh_ast *tree = parse("CAPTURE=$(printf payload)\n");
+    struct csh_execution result;
+    struct csh_error error;
+    struct csh_variable_view view;
+    size_t point, baseline = live, i;
+    int before = fd_count(), status, kind;
+    context.state = state;
+    for (point = 1; point < 2048; ++point) {
+        int rc;
+        arm(point);
+        rc = csh_execute_context_ast(&context, tree, &result, &error);
+        if (rc == 0) {
+            assert(allocation_calls < point && result.status == 0);
+            csh_state_get_variable(state, "CAPTURE", &view);
+            assert(view.value && !strcmp(view.value, "payload"));
+            assert(csh_state_unset_variable(state, "CAPTURE") == CSH_STATE_OK);
+        } else {
+            assert(error.system_errno == ENOMEM && result.status == 1);
+            csh_state_get_variable(state, "CAPTURE", &view);
+            assert(view.value == NULL);
+        }
+        for (i = 0; i < launched_count; ++i)
+            assert(waitpid(launched[i], &status, WNOHANG) == -1 && errno == ECHILD);
+        assert(fd_count() == before && live == baseline && context.child_count == 0);
+        if (rc == 0) break;
+    }
+    assert(point < 2048);
+    for (kind = 0; kind < 5; ++kind) {
+        arm(0);
+        if (kind == 0) fail_pipe = 1;
+        if (kind == 1) fail_fork = 1;
+        if (kind == 2) fail_setfd = 1;
+        if (kind == 3) fail_wait = 1;
+        if (kind == 4) fail_read = 1;
+        assert(csh_execute_context_ast(&context, tree, &result, &error) == -1);
+        csh_state_get_variable(state, "CAPTURE", &view);
+        assert(view.value == NULL);
+        for (i = 0; i < launched_count; ++i)
+            assert(waitpid(launched[i], &status, WNOHANG) == -1 && errno == ECHILD);
+        assert(fd_count() == before && live == baseline);
+    }
+    arm(0);
+    interrupt_read = interrupt_wait = 1;
+    assert(csh_execute_context_ast(&context, tree, &result, &error) == 0);
+    assert(csh_state_unset_variable(state, "CAPTURE") == CSH_STATE_OK);
+    assert(waitpid(-1, &status, WNOHANG) == -1 && errno == ECHILD);
+    assert(fd_count() == before && live == baseline);
+    csh_ast_destroy(tree);
+    csh_execution_context_destroy(&context);
+    arm(0);
+}
+
 static void context_faults(struct csh_state *state)
 {
     struct csh_execution_context context = {0};
@@ -705,6 +780,14 @@ int main(int argc, char **argv)
     struct csh_state *state = NULL;
     invocation.mode = CSH_MODE_STRING;
     invocation.arg0 = "execute-faults";
+    if (argc == 2 && strcmp(argv[1], "--substitution") == 0) {
+        assert(csh_state_create(&state, &invocation, NULL) == CSH_STATE_OK);
+        substitution_faults(state);
+        csh_state_destroy(state);
+        assert(live == 0);
+        puts("substitution fault checks passed");
+        return 0;
+    }
     if (argc == 2 && strcmp(argv[1], "--context") == 0) {
         assert(csh_state_create(&state, &invocation, NULL) == CSH_STATE_OK);
         context_faults(state);

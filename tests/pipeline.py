@@ -94,12 +94,10 @@ def main():
         run(f"! {helper} status 5\n")
         run(f">empty | {helper} count\n", output=b"0\n")
         assert (cwd / "empty").read_bytes() == b""
-        for unsupported in (f"{helper} args $HOME", "cd . && cd .", "(cd .)",
-                            "{ cd .; }", "cd . >$HOME"):
+        for unsupported in ("if true; then true; fi", "f() { true; }"):
             run(f"{helper} args effect >forbidden | {unsupported}\n", status=2, diagnostic=True)
             assert not (cwd / "forbidden").exists()
-        run(f"{helper} args effect >forbidden | cd . &\n", status=2, diagnostic=True)
-        assert not (cwd / "forbidden").exists()
+        run(f'{helper} args "$HOME" | {helper} copy\n', output=f'[{cwd}]\n'.encode())
         for candidate, flags, expected in (
             (api, [helper_path], b"pipeline API checks passed\n"),
             (faults, ["--pipeline"], b"pipeline fault checks passed\n"),

@@ -76,8 +76,8 @@ implementation branch; changes happen through its child tickets.
 
 The replacement is the only runtime. New modules must use the documented
 ownership contracts without restoring the deleted legacy dispatcher or its
-interfaces. The literal-word adapter remains bounded until CSH-008 integrates
-expansion. Unsupported constructs must fail before their side effects.
+interfaces. CSH-026 connects context-sensitive expansion to execution. Unsupported
+constructs must fail before their side effects.
 See the [replacement strategy](docs/architecture.md#replacement-strategy).
 
 ## Build and validation
@@ -127,7 +127,7 @@ and allocation/I/O/interruption cleanup. See
 `make test-execute` checks simple-command lookup, owned children, ordered
 redirections, bootstrap builtins, and failure cleanup without legacy objects or
 Flex. See [Simple-command execution](docs/execution.md) for the prepared-command
-contract and the temporary literal adapter's limits. `make test-pipeline` adds
+contract and context-sensitive AST preparation. `make test-pipeline` adds
 concurrent pipeline behavior, ordered stage results, builtin isolation, and
 partial-launch cleanup. It is also included in `make test` and sanitizer CI.
 

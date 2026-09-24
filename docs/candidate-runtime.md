@@ -1,7 +1,7 @@
 # Runtime behavior and exit statuses
 
 [CSH-018](tickets/CSH-018-status-and-cli-integration.md) integrated invocation,
-input, parser, literal command adapter, executor, and shell state.
+input, parser, executor, and shell state. CSH-026 integrates expansion.
 [CSH-039](tickets/CSH-039-legacy-retirement.md) promotes that runtime to the only
 public executable, with its entry point in [`src/main.c`](../src/main.c):
 
@@ -27,16 +27,20 @@ files and command strings leave stdin available independently.
 
 Each complete command uses the [execution context API](execution.md#lists-groups-and-background-contexts):
 simple commands, pipelines (including group stages), sequential lists, AND/OR
-lists, brace groups, parenthesized subshells, and asynchronous lists. Literal
-quoting, assignment prefixes, external lookup, state builtins, `exit`, and
-ordered redirections including literal here-documents are supported. Brace
-mutations persist; subshell, background, and multi-stage pipeline mutations
-remain isolated. Background execution publishes an identifier in shell state;
-parameter expansion, including spelling `$!` in a command, still awaits CSH-008.
+lists, brace groups, parenthesized subshells, and asynchronous lists. Arguments
+support tilde, parameter, arithmetic and command expansion, IFS splitting,
+pathname generation, and quote removal. Assignment values and declaration
+operands (`export`/`readonly`) use scalar expansion. Redirection operands omit
+splitting and pathname generation, including in interactive mode. Quoted
+here-document delimiters suppress expansion; unquoted bodies use body-specific
+quoting and substitution rules. See [Value expansion](value-expansions.md).
 
-Parameter/command/arithmetic expansion, globbing, conditionals, loops, case
-commands, and function definitions are rejected before any part of that complete
-construct executes. Earlier complete commands may already have executed.
+Brace mutations persist; subshell, substitution, background, and multi-stage
+pipeline mutations remain isolated. Background execution publishes `$!`.
+Conditionals, loops, case commands, and function definitions are rejected before
+any part of that complete construct executes. Earlier complete commands may
+already have executed. Expansion is deferred until a command is reached, so
+skipped branches and unselected parameter operands have no expansion effects.
 There is no unsupported-AST fallback. The executor's existing `ENOEXEC` handling
 of external text executables still uses `/bin/sh`.
 
@@ -80,6 +84,16 @@ Redirection failure for a regular builtin or external command allows the next
 complete command to run.
 Descriptors are restored before honoring a parent builtin's exit request.
 
+A command with no command name returns the last substitution status, or zero
+when no substitution ran. During expansion, `$?` retains the previous pipeline
+status from the current shell environment. Otherwise the invoked command
+determines the final status. Expansion errors prevent that command from dispatching, return status 2 (1 for resource
+failures), and end non-interactive execution. Interactive execution resumes at
+the next complete command. A failed substitution command contributes its status;
+it does not itself abort the outer command. Earlier successful substitutions,
+words and redirections may already have effects. The failing word restores its
+state checkpoint across value expansion and final field generation.
+
 These choices follow the required 0–255 and no-operand behavior in POSIX.1-2024
 [`exit`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#exit)
 and the context distinction for special-builtin errors in
@@ -97,7 +111,7 @@ physical read. Blank/comment lines restart the primary prompt; quoted multiline
 words and here-document lines retain the continuation prompt. Prompt expansion,
 startup files, job control, signal handling for the shell itself, and parser
 syntax-error recovery remain outside this runtime. Parser failures are sticky
-and terminate even an interactive shell; adapter rejection can continue
+and terminate even an interactive shell; execution or expansion errors can continue
 because its parser remains usable. `-i` with a string or file selects interactive
 error behavior without printing stdin prompts.
 
@@ -115,3 +129,13 @@ Inspect those suites or select a single generated case directly with `smoke.py`.
 `make test` includes the pipe cases; `make test-pty` includes the terminal cases.
 Native and Docker CI entry points run both. Their ASan/UBSan checks also run the
 public executable and module suites.
+
+## Remaining expansion boundaries
+
+[CSH-041](tickets/CSH-041-arithmetic-substitution-replay.md) owns lexer
+checkpoint/replay for arithmetic-first ambiguity. `$((echo hi); )` still reports
+incomplete arithmetic; `$( (echo hi); )` works. This existing grammar limitation
+is not resolved by connecting arithmetic evaluation to execution. Alias runtime
+integration, `set` option parsing, traps, locale startup, and case/function
+execution remain with their existing tickets. NUL output in command substitution
+is diagnosed as an expansion error, an explicit choice for unspecified input.
