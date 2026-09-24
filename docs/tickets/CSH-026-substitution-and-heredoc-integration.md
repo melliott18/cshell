@@ -75,9 +75,14 @@ text and are reported once under the active redirections.
 - `make test-harness`: all 62 harness self-tests passed on native and Linux.
 - `make docker-test DOCKER_IMAGE=cshell-test:csh-026-final`: all module/API/fault
   suites and 429 public runtime cases passed. Linux `make test-pty` passed.
-- Full `make -j8 test test-pty` with the ASan/UBSan flags below passed on macOS.
+- Full `make -j8 test test-pty` with the ASan/UBSan flags below passed on macOS
+  and Linux, with no sanitizer diagnostics (Linux also enabled leak detection).
   After the final status correction, `test-substitution test-runtime
-  test-runtime-pty` passed again with 429 runtime and 10 terminal cases.
+  test-runtime-pty` passed again on both platforms with 429 runtime and 10
+  terminal cases.
+- [GitHub CI on the implementation commit](https://github.com/melliott18/cshell/actions/runs/35959638159)
+  also passed the full Linux native and Docker jobs, including normal, terminal,
+  harness and ASan/UBSan checks.
 
 Sanitizer builds use a clean build, `ASAN_OPTIONS=halt_on_error=1`,
 `UBSAN_OPTIONS=halt_on_error=1`, and `MallocNanoZone=0` on macOS:
