@@ -1,6 +1,6 @@
 # CSH-028: Execute control flow and shell functions
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-009
@@ -63,7 +63,8 @@ control-transfer results, and execution are implemented by this ticket.
 ### Implementation record — 2026-09-24
 
 - Implementation commit: `ccff0f9`.
-- Review: [PR #69](https://github.com/melliott18/cshell/pull/69).
+- Merged by [PR #69](https://github.com/melliott18/cshell/pull/69) as
+  `14b79f4`; [issue #29](https://github.com/melliott18/cshell/issues/29) closed.
 
 - The execution planner handles every parsed compound kind. Reached branches
   expand lazily; for lists snapshot fields/parameters; case patterns retain quote
@@ -105,5 +106,6 @@ expansion in the cross-mode control fixtures; nested transfer and invalid operan
 recursive calls and caller-parameter restoration; invocation and compound redirect
 lifetimes; subshell/pipeline/substitution/background isolation; and parser fault
 coverage plus executor allocation/redirection/expansion cleanup. The milestone
-remains unclosed until CSH-028 is integrated. Evaluation builtins, shell options,
-and trap interactions remain with CSH-031, CSH-032, and CSH-035.
+is complete now that CSH-028 is integrated. Evaluation builtins, shell options,
+and trap interactions remain with CSH-031, CSH-032, and CSH-035 and do not block
+this ticket.
