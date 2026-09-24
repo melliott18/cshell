@@ -9,6 +9,7 @@ Start with the [project README](../README.md) for installation and current statu
 | [Input and invocation](input-and-invocation.md) | Replacement input sources, invocation operands, ownership, positions, and errors |
 | [Lexer and words](lexer-and-words.md) | Replacement tokens, quoting provenance, nested parser frames, and raw here-document handoff |
 | [Parser and AST](parser-and-ast.md) | Complete-command parsing, owned syntax trees, ordered here-documents, and diagnostics |
+| [Aliases](aliases.md) | Alias storage, handlers, parser eligibility, injected input, and read timing |
 | [Shell state](shell-state.md) | Owned variables, parameters, attributes, environment snapshots, copying, and restoration |
 | [Value expansion](value-expansions.md) | Structured value/final-field contexts, IFS, pathname generation, arithmetic, decoding, and deferred substitutions |
 | [Visual implementation plan](implementation-plan.md) | Dependencies, parallel tasks, and milestone completion |

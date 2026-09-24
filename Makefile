@@ -31,9 +31,10 @@ INPUT_OBJECTS = build/input.o build/invocation.o
 INPUT_HEADERS = include/cshell/input.h include/cshell/invocation.h
 INPUT_FAULT_OBJECTS = build/tests/fault-input.o build/tests/fault-invocation.o
 LEXER_HEADERS = include/cshell/lexer.h include/cshell/input.h
-PARSER_HEADERS = include/cshell/parser.h include/cshell/ast.h include/cshell/quote.h $(LEXER_HEADERS)
-PARSER_OBJECTS = build/parser.o build/ast.o build/lexer.o build/input.o build/quote.o
-PARSER_FAULT_OBJECTS = build/tests/parser-fault-parser.o build/tests/parser-fault-ast.o \
+ALIAS_HEADERS = include/cshell/alias.h include/cshell/input.h
+PARSER_HEADERS = $(ALIAS_HEADERS) include/cshell/parser.h include/cshell/ast.h include/cshell/quote.h $(LEXER_HEADERS)
+PARSER_OBJECTS = build/alias.o build/parser.o build/ast.o build/lexer.o build/input.o build/quote.o
+PARSER_FAULT_OBJECTS = build/tests/parser-fault-alias.o build/tests/parser-fault-parser.o build/tests/parser-fault-ast.o \
 	build/tests/parser-fault-lexer.o build/tests/parser-fault-input.o build/tests/parser-fault-quote.o
 STATE_HEADERS = include/cshell/state.h $(INPUT_HEADERS)
 EXPAND_HEADERS = include/cshell/expand.h include/cshell/arithmetic.h include/cshell/quote.h $(LEXER_HEADERS) $(STATE_HEADERS)
@@ -42,7 +43,7 @@ FIELDS_HEADERS = $(EXPAND_HEADERS) src/field_internal.h
 FIELDS_OBJECTS = build/fields.o build/pathname.o
 FIELDS_FAULT_OBJECTS = build/tests/fields-fault-fields.o build/tests/fields-fault-pathname.o
 
-.PHONY: all test test-input test-lexer test-parser test-state test-expand test-fields test-pty test-harness docker-build docker-test docker-test-pty docker-shell clean
+.PHONY: all test test-input test-lexer test-parser test-alias test-state test-expand test-fields test-pty test-harness docker-build docker-test docker-test-pty docker-shell clean
 
 all: cshell
 
@@ -126,6 +127,36 @@ test-parser: build/tests/parser_fixture build/tests/parser_faults build/tests/as
 	$(PYTHON) tests/parser.py build/tests/parser_fixture --fault-binary build/tests/parser_faults
 	./build/tests/ast_fixture
 
+build/alias.o: src/alias.c $(ALIAS_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+build/tests/alias_storage: tests/alias_storage.c build/alias.o $(ALIAS_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/alias_storage.c build/alias.o $(LDLIBS)
+
+build/tests/alias_lexer: tests/alias_lexer.c build/lexer.o $(LEXER_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/alias_lexer.c build/lexer.o $(LDLIBS)
+
+build/tests/alias_parser: tests/alias_parser.c $(PARSER_OBJECTS) $(PARSER_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/alias_parser.c $(PARSER_OBJECTS) $(LDLIBS)
+
+build/tests/fault-alias.o: src/alias.c $(ALIAS_HEADERS) tests/alias_faults.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/alias_faults.h -c $< -o $@
+
+build/tests/alias_faults: tests/alias_faults.c tests/alias_faults.h build/tests/fault-alias.o $(ALIAS_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/alias_faults.c build/tests/fault-alias.o $(LDLIBS)
+
+test-alias: build/tests/alias_storage build/tests/alias_lexer build/tests/alias_parser build/tests/alias_faults
+	$(PYTHON) tests/smoke.py ./build/tests/alias_storage --suite tests/fixtures/alias.json
+	$(PYTHON) tests/smoke.py ./build/tests/alias_lexer --suite tests/fixtures/alias.json
+	$(PYTHON) tests/smoke.py ./build/tests/alias_parser --suite tests/fixtures/alias.json
+	$(PYTHON) tests/smoke.py ./build/tests/alias_faults --suite tests/fixtures/alias.json
+
 build/state.o: src/state.c $(STATE_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
@@ -204,7 +235,7 @@ test-expand: test-fields build/tests/arithmetic_faults build/tests/expand_fixtur
 	$(PYTHON) tests/smoke.py ./build/tests/quote_fixture --suite tests/fixtures/quote.json
 	$(PYTHON) tests/smoke.py ./build/tests/arithmetic_faults --suite tests/fixtures/arithmetic-faults.json
 
-test: $(TEST_TARGET) test-input test-lexer test-parser test-state test-expand
+test: $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand
 	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
 

@@ -98,6 +98,7 @@ responsibilities and does not claim that every listed module is implemented.
 | `invocation` | Input-mode and option selection, operand mapping, interactive detection, prompt selection | Parameter expansion, prompt output, or execution |
 | `lexer` | Tokens and word fragments with quote/escape provenance | Expansion into final argument strings |
 | `parser` / `ast` | Grammar, syntax errors, command trees, ordered redirections, deferred here-documents | Forks or global shell mutation |
+| `alias` | Owned alias table and direct alias/unalias handlers; lexer/parser cooperate on substitution | Executing commands or reading descriptors |
 | `variables` / `state` | Shell variables and attributes, positional parameters, options, last status | Scanning input |
 | `expand` | Context-sensitive word expansion and field generation | Pipeline process management |
 | `execute` | Tree evaluation, execution environments, command lookup, pipeline lifecycle and status | Parsing strings by searching for operators |

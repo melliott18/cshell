@@ -1,4 +1,5 @@
 #include "cshell/parser.h"
+#include "cshell/alias.h"
 #include "cshell/quote.h"
 
 #include <errno.h>
@@ -13,6 +14,7 @@
 struct csh_parser {
     struct csh_input *input;
     struct csh_lexer *lexer;
+    const struct csh_aliases *aliases;
     enum csh_parse_result failure_result;
     struct csh_error failure;
     int final;
@@ -55,15 +57,20 @@ static int fail_at(struct parse_frame *frame, enum csh_parse_result result,
     return -1;
 }
 
+static struct csh_position token_position(const struct csh_token *token)
+{
+    return token->invocation_source != NULL ? token->invocation : token->start;
+}
+
 static struct csh_position position(struct parse_frame *frame)
 {
     size_t length;
     int final;
     struct csh_position result;
     if (frame->has_look)
-        return frame->look.token.start;
+        return token_position(&frame->look.token);
     (void)csh_lexer_pending(frame->lexer, &length, &result, &final);
-    return result;
+    return csh_lexer_diagnostic_position(frame->lexer, result);
 }
 
 static int adopt_error(struct parse_frame *frame, const struct csh_error *error)
@@ -145,7 +152,7 @@ static void frame_destroy(struct parse_frame *frame)
     free(frame->documents);
 }
 
-static int peek(struct parse_frame *frame)
+static int peek_raw(struct parse_frame *frame)
 {
     struct csh_error error;
     if (frame->has_look)
@@ -174,6 +181,7 @@ static int peek(struct parse_frame *frame)
             memset(&child, 0, sizeof(child));
             memset(&substitution, 0, sizeof(substitution));
             (void)csh_lexer_context(frame->lexer, &context, &opening);
+            opening = csh_lexer_diagnostic_position(frame->lexer, opening);
             if (frame->depth >= PARSER_NESTING_LIMIT)
                 return fail_at(frame, CSH_PARSE_ERROR, "parser nesting limit exceeded",
                     0, opening);
@@ -186,12 +194,11 @@ static int peek(struct parse_frame *frame)
                 frame_destroy(&child);
                 return -1;
             }
-            substitution.begin = opening.offset;
-            substitution.end = child.look.token.end.offset;
+            substitution.fragment_index = csh_lexer_command_fragment(frame->lexer);
             if (child.document_count != 0) {
                 fail_at(&child, CSH_PARSE_ERROR,
                     "command substitution closes before here-document body", 0,
-                    child.look.token.start);
+                    token_position(&child.look.token));
                 csh_ast_destroy(substitution.body);
                 frame_destroy(&child);
                 return -1;
@@ -210,20 +217,13 @@ static int peek(struct parse_frame *frame)
             continue;
         }
         {
-            size_t i, j = 0;
+            size_t i;
             for (i = 0; i < frame->look.substitution_count; ++i) {
                 struct csh_ast_substitution *sub = &frame->look.substitutions[i];
-                sub->begin -= frame->look.token.start.offset;
-                sub->end -= frame->look.token.start.offset;
-                sub->fragment_index = CSH_FRAGMENT_ROOT;
-                for (; j < frame->look.token.fragment_count; ++j) {
-                    const struct csh_fragment *fragment = &frame->look.token.fragments[j];
-                    if (fragment->kind == CSH_FRAGMENT_COMMAND &&
-                        fragment->begin == sub->begin && fragment->end == sub->end) {
-                        sub->fragment_index = j;
-                        break;
-                    }
-                }
+                const struct csh_fragment *fragment =
+                    &frame->look.token.fragments[sub->fragment_index];
+                sub->begin = fragment->begin;
+                sub->end = fragment->end;
             }
         }
         frame->has_look = 1;
@@ -347,6 +347,60 @@ static int reserved(const struct csh_token *token)
     return 0;
 }
 
+/* Alias lookup belongs to the delimited-token boundary, before any later
+ * token is read. A raw lookahead acquired without command context remains
+ * eligible when the grammar subsequently identifies a command position. */
+static int peek_alias(struct parse_frame *frame, int command_position)
+{
+    int result;
+    while ((result = peek_raw(frame)) > 0) {
+        const struct csh_token *token = &frame->look.token;
+        struct bytes name = {0};
+        const char *value;
+        struct csh_error error;
+        size_t i;
+        if (frame->parser->aliases == NULL || token->kind != CSH_TOKEN_WORD ||
+            (!command_position && !token->alias_eligible) || reserved(token) ||
+            (io_number(token) && csh_lexer_follows_redirection(frame->lexer)))
+            return result;
+        for (i = 0; i < token->fragment_count; ++i) {
+            const struct csh_fragment *fragment = &token->fragments[i];
+            if (fragment->kind != CSH_FRAGMENT_CONTINUATION &&
+                (fragment->kind != CSH_FRAGMENT_TEXT ||
+                 fragment->quote != CSH_QUOTE_NONE))
+                return result;
+        }
+        for (i = 0; i < token->fragment_count; ++i) {
+            const struct csh_fragment *fragment = &token->fragments[i];
+            if (fragment->kind != CSH_FRAGMENT_CONTINUATION &&
+                append(frame, &name, token->raw + fragment->begin,
+                       fragment->end - fragment->begin) == -1) {
+                free(name.data);
+                return -1;
+            }
+        }
+        value = name.data == NULL ? NULL :
+            csh_aliases_get(frame->parser->aliases, (const char *)name.data);
+        if (value == NULL || csh_lexer_alias_active(frame->lexer,
+                                                   (const char *)name.data)) {
+            free(name.data);
+            return result;
+        }
+        result = csh_lexer_alias_push(frame->lexer, token,
+                                     (const char *)name.data, value, &error);
+        free(name.data);
+        if (result == -1)
+            return adopt_error(frame, &error);
+        discard(frame);
+    }
+    return result;
+}
+
+static int peek(struct parse_frame *frame)
+{
+    return peek_alias(frame, 0);
+}
+
 static int redirection_kind(enum csh_token_kind kind)
 {
     return kind == CSH_TOKEN_LESS || kind == CSH_TOKEN_GREAT ||
@@ -419,7 +473,7 @@ static int delimiter_spelling(struct parse_frame *frame,
                         return fail_at(frame, CSH_PARSE_ERROR,
                             result == CSH_QUOTE_NOMEM ? "cannot decode here-document delimiter" :
                             "invalid dollar-single-quoted here-document delimiter",
-                            result == CSH_QUOTE_NOMEM ? ENOMEM : 0, token->start);
+                            result == CSH_QUOTE_NOMEM ? ENOMEM : 0, token_position(token));
                     }
                     *quoted = 1;
                     if (append(frame, buffer, decoded, length) == -1) {
@@ -502,7 +556,7 @@ static int collect_documents(struct parse_frame *frame)
             if (available == 0) {
                 if (final) {
                     fail_at(frame, CSH_PARSE_INCOMPLETE,
-                        "unterminated here-document", 0, document->operand.token.start);
+                        "unterminated here-document", 0, token_position(&document->operand.token));
                     goto document_failed;
                 }
                 if (feed_line(frame) == -1)
@@ -585,6 +639,7 @@ static int parse_redirection(struct parse_frame *frame, struct csh_ast *node,
     struct csh_ast_redirection *redirection = NULL;
     struct csh_error error;
     struct csh_position opening = frame->look.token.start;
+    struct csh_position diagnostic_opening = token_position(&frame->look.token);
     int result;
     if (csh_ast_redirection_create(&redirection, frame->look.token.kind, &error) == -1)
         return adopt_error(frame, &error);
@@ -598,7 +653,7 @@ static int parse_redirection(struct parse_frame *frame, struct csh_ast *node,
     result = peek(frame);
     if (result <= 0) {
         if (result == 0)
-            fail_at(frame, CSH_PARSE_INCOMPLETE, "missing redirection operand", 0, opening);
+            fail_at(frame, CSH_PARSE_INCOMPLETE, "missing redirection operand", 0, diagnostic_opening);
         csh_ast_redirection_destroy(redirection);
         return -1;
     }
@@ -627,7 +682,7 @@ static int parse_redirection(struct parse_frame *frame, struct csh_ast *node,
 static int skip_newlines(struct parse_frame *frame)
 {
     int result;
-    while ((result = peek(frame)) > 0 && frame->look.token.kind == CSH_TOKEN_NEWLINE)
+    while ((result = peek_alias(frame, 1)) > 0 && frame->look.token.kind == CSH_TOKEN_NEWLINE)
         if (newline(frame) == -1)
             return -1;
     return result;
@@ -890,15 +945,15 @@ static int trailing_redirections(struct parse_frame *frame, struct csh_ast *node
                 return -1;
         } else if (frame->look.token.kind == CSH_TOKEN_WORD && io_number(&frame->look.token)) {
             struct csh_ast_word descriptor = {0};
+            int adjacent = csh_lexer_follows_redirection(frame->lexer);
             take(frame, &descriptor);
             result = peek(frame);
-            if (result > 0 && redirection_kind(frame->look.token.kind) &&
-                descriptor.token.end.offset == frame->look.token.start.offset) {
+            if (adjacent && result > 0 && redirection_kind(frame->look.token.kind)) {
                 result = parse_redirection(frame, node, &descriptor);
             } else {
                 if (result >= 0)
                     fail_at(frame, CSH_PARSE_ERROR, "unexpected word after compound command", 0,
-                        descriptor.token.start);
+                        token_position(&descriptor.token));
                 result = -1;
             }
             csh_ast_word_destroy(&descriptor);
@@ -953,15 +1008,16 @@ static struct csh_ast *parse_command(struct parse_frame *frame)
 {
     struct csh_ast *node = NULL;
     struct csh_error error;
-    struct csh_position opening;
+    struct csh_position opening, diagnostic_opening;
     enum csh_ast_kind kind;
-    int result = peek(frame), command_name = 0, prefix = 0;
+    int result = peek_alias(frame, 1), command_name = 0, prefix = 0;
     if (result <= 0) {
         if (result == 0)
             fail_at(frame, CSH_PARSE_INCOMPLETE, "expected command", 0, position(frame));
         return NULL;
     }
     opening = frame->look.token.start;
+    diagnostic_opening = token_position(&frame->look.token);
     if (compound_kind(&frame->look.token, &kind)) {
         node = parse_compound(frame, kind);
         if (node == NULL)
@@ -976,8 +1032,8 @@ static struct csh_ast *parse_command(struct parse_frame *frame)
     node->start = opening;
     for (;;) {
         struct csh_ast_word word = {0};
-        int is_assignment;
-        result = peek(frame);
+        int is_assignment, descriptor_candidate;
+        result = peek_alias(frame, !command_name);
         if (result <= 0)
             break;
         if (redirection_kind(frame->look.token.kind)) {
@@ -992,6 +1048,8 @@ static struct csh_ast *parse_command(struct parse_frame *frame)
             fail_at(frame, CSH_PARSE_ERROR, "unexpected reserved word", 0, position(frame));
             goto failed;
         }
+        descriptor_candidate = io_number(&frame->look.token) &&
+            csh_lexer_follows_redirection(frame->lexer);
         take(frame, &word);
         result = peek(frame);
         if (result < 0) {
@@ -1004,8 +1062,7 @@ static struct csh_ast *parse_command(struct parse_frame *frame)
             csh_ast_destroy(node);
             return function;
         }
-        if (result > 0 && redirection_kind(frame->look.token.kind) &&
-            word.token.end.offset == frame->look.token.start.offset && io_number(&word.token)) {
+        if (descriptor_candidate && result > 0 && redirection_kind(frame->look.token.kind)) {
             if (parse_redirection(frame, node, &word) == -1) {
                 csh_ast_word_destroy(&word);
                 goto failed;
@@ -1028,7 +1085,7 @@ static struct csh_ast *parse_command(struct parse_frame *frame)
     if (result < 0)
         goto failed;
     if (node->data.simple.word_count == 0 && node->redirection_count == 0) {
-        fail_at(frame, CSH_PARSE_ERROR, "expected command", 0, opening);
+        fail_at(frame, CSH_PARSE_ERROR, "expected command", 0, diagnostic_opening);
         goto failed;
     }
     return node;
@@ -1042,8 +1099,11 @@ static struct csh_ast *parse_pipeline(struct parse_frame *frame)
     struct csh_ast *pipeline = NULL, *command;
     struct csh_position opening = position(frame);
     struct csh_error error;
-    int negated = frame->has_look && plain_equal(&frame->look.token, "!");
-    int result;
+    int negated;
+    int result = peek_alias(frame, 1);
+    if (result < 0)
+        return NULL;
+    negated = result > 0 && plain_equal(&frame->look.token, "!");
     if (negated)
         discard(frame);
     command = parse_command(frame);
@@ -1069,7 +1129,7 @@ static struct csh_ast *parse_pipeline(struct parse_frame *frame)
         goto failed;
     }
     while (result > 0 && frame->look.token.kind == CSH_TOKEN_PIPE) {
-        struct csh_position pipe_position = frame->look.token.start;
+        struct csh_position pipe_position = token_position(&frame->look.token);
         discard(frame);
         result = skip_newlines(frame);
         if (result <= 0) {
@@ -1113,7 +1173,7 @@ static struct csh_ast *parse_and_or(struct parse_frame *frame)
                             frame->look.token.kind != CSH_TOKEN_OR_IF))
             return left;
         kind = frame->look.token.kind == CSH_TOKEN_AND_IF ? CSH_AST_AND : CSH_AST_OR;
-        operator_position = frame->look.token.start;
+        operator_position = token_position(&frame->look.token);
         discard(frame);
         result = skip_newlines(frame);
         if (result <= 0) {
@@ -1258,7 +1318,7 @@ static struct csh_ast *parse_list(struct parse_frame *frame, enum closing closin
         }
         /* A semicolon followed by a newline ends the same complete command.
          * Never peek past this newline before returning a root tree. */
-        result = peek(frame);
+        result = peek_alias(frame, 1);
         if (result < 0)
             goto failed;
         if (closing == CLOSE_NONE && result > 0 &&
@@ -1278,7 +1338,7 @@ static struct csh_ast *parse_list(struct parse_frame *frame, enum closing closin
     }
     if (closing == CLOSE_NONE && frame->document_count != 0) {
         fail_at(frame, CSH_PARSE_INCOMPLETE, "here-document requires a following newline",
-            0, frame->documents[0]->operand.token.start);
+            0, token_position(&frame->documents[0]->operand.token));
         goto failed;
     }
     return list;
@@ -1316,6 +1376,12 @@ int csh_parser_create(struct csh_parser **out, struct csh_input *input,
     }
     *out = parser;
     return 0;
+}
+
+void csh_parser_set_aliases(struct csh_parser *parser,
+    const struct csh_aliases *aliases)
+{
+    parser->aliases = aliases;
 }
 
 void csh_parser_destroy(struct csh_parser *parser)

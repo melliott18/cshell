@@ -14,6 +14,7 @@ static void *allocations[8192];
 static size_t live_allocations;
 static size_t allocation_calls;
 static size_t fail_allocation;
+static int aliases_enabled;
 
 static size_t slot_for(void *pointer)
 {
@@ -105,6 +106,21 @@ static int run(const char *source, size_t chunk)
         struct csh_token token = {0};
         enum csh_lex_result result = csh_lexer_next(frames[depth], &token, &error);
         if (result == CSH_LEX_TOKEN) {
+            if (aliases_enabled && token.kind == CSH_TOKEN_WORD &&
+                (strcmp((const char *)token.raw, "__alias_a") == 0 ||
+                 strcmp((const char *)token.raw, "__alias_b") == 0) &&
+                !csh_lexer_alias_active(frames[depth], (const char *)token.raw)) {
+                const char *value = strcmp((const char *)token.raw, "__alias_a") == 0 ?
+                    "__alias_b " : "echo $( __alias_a )";
+                if (csh_lexer_alias_push(frames[depth], &token,
+                    (const char *)token.raw, value, &error) != 0) {
+                    csh_token_destroy(&token);
+                    sticky(frames[depth], &error);
+                    break;
+                }
+                csh_token_destroy(&token);
+                continue;
+            }
             if (depth != 0 && token.kind == CSH_TOKEN_RPAREN) {
                 if (csh_lexer_command_end(frames[depth - 1], frames[depth], &token,
                     &error) != 0) {
@@ -196,6 +212,9 @@ int main(void)
         nested[used++] = ')';
     nested[used] = '\0';
     sweep(nested, 8);
+    aliases_enabled = 1;
+    sweep("before $( __alias_a ) __alias_a end\n", 1);
+    sweep("__alias_a\n__alias_a", 4096);
     free(large);
     puts("PASS: every allocation failure, growing buffers, nested children, sticky errors, cleanup");
     return 0;

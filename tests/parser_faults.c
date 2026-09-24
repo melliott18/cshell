@@ -1,5 +1,6 @@
 #define CSHELL_PARSER_FAULT_IMPLEMENTATION
 #include "parser_faults.h"
+#include "cshell/alias.h"
 #include "cshell/parser.h"
 
 #ifdef NDEBUG
@@ -104,19 +105,38 @@ static void sticky(struct csh_parser *parser, enum csh_parse_result first_result
 }
 
 /* The final AST survives both parser and borrowed-input destruction. */
-static int run(const char *source, int valid)
+static int run(const char *source, int valid, int use_aliases)
 {
+    struct csh_aliases *aliases = NULL;
     struct csh_input *input = NULL;
     struct csh_parser *parser = NULL;
     struct csh_ast *saved = NULL;
     struct csh_error error;
     enum csh_parse_result result = CSH_PARSE_ERROR;
     int succeeded = 0;
+    if (use_aliases) {
+        static const char *const definitions[][2] = {
+            { "a", "b " }, { "b", "echo $(inside)" },
+            { "inside", "printf" }, { "pipe", "a | a" },
+            { "doc", "cat <<END" }, { "empty", "" },
+            { "bad", "echo >" }, { "self", "self argument" },
+            { "loop", "other" }, { "other", "loop" }
+        };
+        size_t index;
+        if (csh_aliases_create(&aliases, &error) != 0)
+            goto done;
+        for (index = 0; index < sizeof(definitions) / sizeof(definitions[0]); ++index) {
+            if (csh_aliases_set(aliases, definitions[index][0], definitions[index][1],
+                &error) != 0)
+                goto done;
+        }
+    }
     if (csh_input_from_string(&input, source, "allocation-fault", &error) != 0)
         assert(input == NULL);
     else if (csh_parser_create(&parser, input, &error) != 0)
         assert(parser == NULL);
     else {
+        csh_parser_set_aliases(parser, aliases);
         for (;;) {
             struct csh_ast *tree = NULL;
             result = csh_parser_next(parser, &tree, &error);
@@ -139,15 +159,17 @@ static int run(const char *source, int valid)
             }
         }
     }
+done:
     if (!succeeded)
         assert(error.system_errno == ENOMEM && error.status == 1);
     csh_parser_destroy(parser);
     csh_input_destroy(input);
+    csh_aliases_destroy(aliases);
     csh_ast_destroy(saved);
     return succeeded;
 }
 
-static void sweep(const char *source, int valid)
+static void sweep_mode(const char *source, int valid, int use_aliases)
 {
     size_t point;
     for (point = 1; point < 20000; ++point) {
@@ -155,7 +177,7 @@ static void sweep(const char *source, int valid)
         assert(live_allocations == 0);
         allocation_calls = 0;
         fail_allocation = point;
-        succeeded = run(source, valid);
+        succeeded = run(source, valid, use_aliases);
         assert(live_allocations == 0);
         if (succeeded) {
             assert(point > allocation_calls);
@@ -164,6 +186,11 @@ static void sweep(const char *source, int valid)
         assert(point <= allocation_calls);
     }
     assert(!"allocation sweep did not converge");
+}
+
+static void sweep(const char *source, int valid)
+{
+    sweep_mode(source, valid, 0);
 }
 
 int main(void)
@@ -213,6 +240,10 @@ int main(void)
     sweep("cat <<A\nbody\n", 0);
     sweep("cat <<$'E\\nD'\nbody\n", 0);
     sweep("{ echo >; }\n", 0);
+    sweep_mode("a arg\npipe\ndoc\nbody\nEND\nempty\nself; loop\n", 1, 1);
+    sweep_mode("echo $(doc\ninside\nEND\n)\n", 1, 1);
+    sweep_mode("a; (bad)\n", 0, 1);
+    sweep_mode("doc\nmissing delimiter\n", 0, 1);
     sweep("if a; then b; elif c; then d; else", 0);
     sweep("if a; then b; elif c; then d; else ; fi", 0);
     sweep("for x in $(echo a) b; do if c; then d;", 0);

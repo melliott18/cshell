@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "name": "alias-module-contracts",
+  "kind": "module",
+  "cases": [
+    {
+      "name": "alias contracts and cleanup",
+      "stdin": "",
+      "expect": {
+        "stdout": "ok\n",
+        "stderr": "",
+        "status": 0
+      }
+    }
+  ]
+}

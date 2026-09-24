@@ -3,7 +3,7 @@
 [CSH-005](tickets/CSH-005-parser-and-ast.md) adds
 [`cshell/parser.h`](../include/cshell/parser.h) and
 [`cshell/ast.h`](../include/cshell/ast.h). These modules build with the replacement
-input, lexer, and quote modules, independently of the prototype. They never
+input, lexer, alias, and quote modules, independently of the prototype. They never
 execute commands, expand arguments, open redirection targets, or mutate shell
 state. Runtime integration remains with CSH-018 and CSH-039.
 
@@ -105,7 +105,8 @@ with the matching command fragment index and byte range in that token. The
 parser uses the lexer's shared-cursor child handshake, so parentheses in groups
 and raw here-document bodies do not prematurely terminate substitutions.
 Backquote and arithmetic fragments remain syntax for their expansion owners.
-No parse-time substitution or filesystem expansion occurs.
+Alias substitution is applied during token reading; no parameter, command, or
+filesystem expansion occurs.
 
 ## Redirections and here-documents
 
@@ -172,5 +173,8 @@ CSH-024 and CSH-026: a syntax probe alone cannot recover bytes already consumed
 by the lexer; shared-cursor checkpoint/replay must preserve here-documents and
 fragment positions. Use explicitly separated `$( (command); )` for the supported
 subshell form. The parser does not claim the ambiguous form is implemented.
-Aliases remain CSH-030 work; bounded lookahead and complete-command boundaries
-leave that extension point available.
+Attach a borrowed alias table with `csh_parser_set_aliases()` to enable
+[CSH-030 alias substitution](aliases.md). Leave it NULL to retain ordinary
+parsing. Change the table only between `csh_parser_next()` calls; the next
+complete command sees the new definitions. Alias checks happen before
+consuming later tokens, using grammar position and lexer provenance.
