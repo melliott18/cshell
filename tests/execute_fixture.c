@@ -84,7 +84,7 @@ static void api_checks(struct csh_state *state)
     char *exit_args[] = {"exit", "23", NULL};
     char *failed_args[] = {"cd", "/missing-cshell-test-directory", NULL};
     int original = open("/dev/null", O_RDONLY);
-    int target = 40, before;
+    int target = 40, before, closed_source;
     struct stat expected, actual;
     size_t body_length = 1024 * 1024, offset;
     unsigned char *body = malloc(body_length);
@@ -143,10 +143,18 @@ static void api_checks(struct csh_state *state)
     assert(csh_redirect_apply(redirs, 2, &save, &error) == -1 && save == NULL);
     assert(fcntl(41, F_GETFD) == -1 && fcntl(42, F_GETFD) == -1);
     assert(fcntl(target, F_GETFD) == FD_CLOEXEC && fd_count() == before);
-    redirs[1].source_fd = 3;
-    assert(fcntl(3, F_GETFD) == -1 && errno == EBADF);
+    /* Use the first available descriptor so the backup allocator must skip a
+     * closed source operand even when a runtime owns descriptor 3. */
+    for (closed_source = 3; closed_source < target; ++closed_source) {
+        if (fcntl(closed_source, F_GETFD) == -1) {
+            assert(errno == EBADF);
+            break;
+        }
+    }
+    assert(closed_source < target);
+    redirs[1].source_fd = closed_source;
     assert(csh_redirect_apply(redirs, 2, &save, &error) == -1 && save == NULL);
-    assert(fcntl(3, F_GETFD) == -1 && errno == EBADF);
+    assert(fcntl(closed_source, F_GETFD) == -1 && errno == EBADF);
     assert(fcntl(target, F_GETFD) == FD_CLOEXEC && fd_count() == before);
     /* A self-dup makes the target inheritable, then restores original flags. */
     redirs[0].kind = CSH_REDIRECT_DUP_READ;
