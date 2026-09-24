@@ -51,6 +51,7 @@ jobs:
       - name: Check replacement modules and candidate runtime with ASan and UBSan
         env:
           ASAN_OPTIONS: halt_on_error=1
+          MallocNanoZone: '0'
           UBSAN_OPTIONS: halt_on_error=1
         run: |
           make clean

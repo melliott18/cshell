@@ -32,8 +32,11 @@ use a separate checkout or clean build:
 
 ```sh
 make clean
-ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 make test-runtime test-runtime-pty CC=clang CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+MallocNanoZone=0 ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 make test-runtime test-runtime-pty CC=clang CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
 ```
+
+`MallocNanoZone=0` prevents the macOS allocator from writing a compatibility
+notice into the PTY output before the sanitizer-instrumented candidate starts.
 
 ## Coverage and suite selection
 
