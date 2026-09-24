@@ -49,6 +49,12 @@ execution and redirections. These modules have no dependency on the legacy
 header, scanner, or executor, and the default
 executable does not call them yet.
 
+CSH-018 connects them through `src/candidate.c`, built as
+`build/cshell-candidate`. This internal runtime supports all three invocation
+modes and owns the input loop, diagnostics, prompt output, and final shell
+status. See [Candidate runtime](candidate-runtime.md) for its tested subset and
+exit policy. CSH-039 still owns the default executable cutover.
+
 | Path | Responsibility |
 | --- | --- |
 | `src/input.c` / `include/cshell/input.h` | Owned string, script, and descriptor sources; physical lines, byte positions, explicit EOF, and sticky errors |

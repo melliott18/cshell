@@ -18,9 +18,10 @@ make -j
 Enter `exit` to quit. EOF handling, quoting, pipelines, and redirections still
 have known defects; see the [implementation tickets](docs/tickets/README.md).
 The replacement [input and invocation APIs](docs/input-and-invocation.md)
-support script files, `-c`, and stdin in API fixtures. The default `cshell`
+support script files, `-c`, and stdin in the internal
+[candidate runtime](docs/candidate-runtime.md). The default `cshell`
 executable still uses the prototype input loop; script-file and `-c` arguments
-remain unavailable until runtime integration.
+remain unavailable until the CSH-039 cutover.
 
 ```sh
 make clean     # Remove the executable and generated build files
@@ -39,6 +40,8 @@ make test-expand   # Replacement value/field expansion, arithmetic, and quote AP
 make test-fields   # IFS splitting, pathname expansion, and cleanup checks
 make test-state    # Replacement shell-state API checks only
 make test-execute  # Replacement simple-command and redirection API checks
+make test-runtime  # Candidate cross-mode invocation/status behavior
+make test-runtime-pty # Candidate prompts, EOF, and exit errors on a terminal
 make test-pty      # Controlling-terminal startup and explicit-exit fixture
 make test-harness  # Test the runner's failure detection and cleanup
 make docker-test   # Build and run the selected fixtures in a Linux container
@@ -46,7 +49,8 @@ make docker-test-pty # Build and run the selected terminal fixtures in Linux
 ```
 
 `make test` includes independent input/invocation, lexer, parser/AST, alias,
-shell-state, value/field-expansion, and simple-command execution API checks. Its
+shell-state, value/field-expansion, and simple-command execution API checks,
+plus the candidate's cross-mode runtime fixtures. Its
 default behavioral suite records the current prototype's stdin
 behavior and explicit prompt allowance. Replacement shell and module tests
 select their executable and fixture suite separately; passing prototype tests
@@ -54,7 +58,8 @@ does not establish replacement behavior or POSIX compliance.
 
 `make test-pty` independently selects a candidate and terminal suite with
 `PTY_TEST_TARGET`, `PTY_TEST_BINARY`, and `PTY_TEST_SUITE`. Its default fixture
-checks startup and explicit exit on a controlling pseudo-terminal. Harness
+checks startup and explicit exit on a controlling pseudo-terminal. It also runs
+the candidate's terminal fixtures through `test-runtime-pty`. Harness
 self-tests exercise terminal signals and foreground ownership with helper
 programs; they do not claim that cshell implements signals or job control.
 
@@ -73,6 +78,7 @@ resource limits, direct Docker commands, and troubleshooting.
 | Run native or Docker tests | [Testing](docs/testing.md) |
 | Understand the code and planned modules | [Architecture](docs/architecture.md) |
 | Use replacement input and invocation APIs | [Input and invocation](docs/input-and-invocation.md) |
+| Run the internal replacement candidate | [Candidate runtime](docs/candidate-runtime.md) |
 | Use replacement tokens, words, and parser handoffs | [Lexer and words](docs/lexer-and-words.md) |
 | Parse complete commands and inspect owned trees | [Parser and AST](docs/parser-and-ast.md) |
 | Store aliases and substitute command words | [Aliases](docs/aliases.md) |
@@ -88,6 +94,7 @@ resource limits, direct Docker commands, and troubleshooting.
 ```text
 include/cshell/   Internal module interfaces
 src/main.c       Program entry point and current input loop
+src/candidate.c  Internal replacement runtime and invocation/status integration
 src/input.c      Replacement physical-line input sources
 src/invocation.c Replacement invocation and operand mapping
 src/lexer.c      Replacement tokens, word fragments, and parser handoffs

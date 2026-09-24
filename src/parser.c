@@ -19,6 +19,9 @@ struct csh_parser {
     struct csh_error failure;
     int final;
     int eof;
+    void (*before_read)(void *, int);
+    void *read_context;
+    int continuation;
 };
 
 struct parse_frame {
@@ -134,6 +137,10 @@ static int feed_line(struct parse_frame *frame)
     struct csh_input_line line;
     struct csh_error error;
     enum csh_input_result result;
+    if (frame->parser->before_read != NULL)
+        frame->parser->before_read(frame->parser->read_context,
+            frame->parser->continuation);
+    frame->parser->continuation = 1;
     result = csh_input_read_line(frame->parser->input, &line, &error);
     if (result == CSH_INPUT_ERROR)
         return adopt_error(frame, &error);
@@ -1392,6 +1399,13 @@ void csh_parser_destroy(struct csh_parser *parser)
     free(parser);
 }
 
+void csh_parser_set_read_hook(struct csh_parser *parser,
+    void (*before_read)(void *, int), void *context)
+{
+    parser->before_read = before_read;
+    parser->read_context = context;
+}
+
 const char *csh_parser_source_name(const struct csh_parser *parser)
 {
     return csh_input_name(parser->input);
@@ -1413,7 +1427,14 @@ enum csh_parse_result csh_parser_next(struct csh_parser *parser,
     memset(&frame, 0, sizeof(frame));
     frame.parser = parser;
     frame.lexer = parser->lexer;
-    result = skip_newlines(&frame);
+    /* Leading blank/comment lines start another primary prompt. Newlines
+     * consumed inside parse_list retain the continuation prompt instead. */
+    parser->continuation = 0;
+    while ((result = peek_alias(&frame, 1)) > 0 &&
+           frame.look.token.kind == CSH_TOKEN_NEWLINE) {
+        if (newline(&frame) == -1) { result = -1; break; }
+        parser->continuation = 0;
+    }
     if (result == 0) {
         parser->eof = 1;
         frame_destroy(&frame);

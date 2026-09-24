@@ -23,6 +23,13 @@ int csh_parser_create(struct csh_parser **out, struct csh_input *input,
  * The caller owns the table and may detach it with NULL. */
 void csh_parser_set_aliases(struct csh_parser *parser,
     const struct csh_aliases *aliases);
+/* Optional notification immediately before each physical input read. The
+ * callback may print a prompt, but must not read input or reenter the parser.
+ * continuation is zero at a fresh command (including after blank/comment
+ * lines), nonzero within unfinished syntax or a here-document. Context is
+ * borrowed; NULL callback detaches it. The parser itself never prints. */
+void csh_parser_set_read_hook(struct csh_parser *parser,
+    void (*before_read)(void *context, int continuation), void *context);
 void csh_parser_destroy(struct csh_parser *parser);
 const char *csh_parser_source_name(const struct csh_parser *parser);
 /* TREE transfers a fully owned tree; every other result sets *out to NULL.

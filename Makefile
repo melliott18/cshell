@@ -46,7 +46,7 @@ FIELDS_HEADERS = $(EXPAND_HEADERS) src/field_internal.h
 FIELDS_OBJECTS = build/fields.o build/pathname.o
 FIELDS_FAULT_OBJECTS = build/tests/fields-fault-fields.o build/tests/fields-fault-pathname.o
 
-.PHONY: all test test-input test-lexer test-parser test-alias test-state test-expand test-fields test-execute test-pty test-harness docker-build docker-test docker-test-pty docker-shell clean
+.PHONY: all test test-input test-lexer test-parser test-alias test-state test-expand test-fields test-execute test-runtime test-runtime-pty test-pty test-harness docker-build docker-test docker-test-pty docker-shell clean
 
 all: cshell
 
@@ -264,11 +264,25 @@ build/tests/execute_faults: tests/execute_faults.c tests/execute_faults.h $(EXEC
 test-execute: build/tests/execute_fixture build/tests/execute_helper build/tests/execute_faults
 	$(PYTHON) tests/execute.py build/tests/execute_fixture --helper build/tests/execute_helper --fault-binary build/tests/execute_faults
 
-test: $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute
+build/cshell-candidate: src/candidate.c $(EXECUTE_OBJECTS) build/invocation.o $(EXECUTE_HEADERS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ src/candidate.c $(EXECUTE_OBJECTS) build/invocation.o $(LDLIBS)
+
+build/tests/runtime.json build/tests/runtime-pty.json: tests/runtime_cases.py build/tests/execute_helper
+	$(PYTHON) tests/runtime_cases.py --helper build/tests/execute_helper --output $@
+
+test-runtime: build/cshell-candidate build/tests/runtime.json
+	$(PYTHON) tests/smoke.py ./build/cshell-candidate --suite build/tests/runtime.json \
+		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)"
+
+test-runtime-pty: build/cshell-candidate build/tests/runtime-pty.json
+	$(PYTHON) tests/smoke.py ./build/cshell-candidate --suite build/tests/runtime-pty.json \
+		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)"
+
+test: $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-runtime
 	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
 
-test-pty: $(PTY_TEST_TARGET)
+test-pty: $(PTY_TEST_TARGET) test-runtime-pty
 	$(PYTHON) tests/smoke.py "$(PTY_TEST_BINARY)" --suite "$(PTY_TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(PTY_TEST_CASE)),--case "$(PTY_TEST_CASE)")
 

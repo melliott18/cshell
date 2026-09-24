@@ -84,13 +84,15 @@ leave its input loop. Their present operand rules are:
 - `cd [--] [directory]` uses the supplied directory, or a nonempty `HOME` when
   omitted. It calls `chdir()` directly. Options, `cd -`, `CDPATH`, logical-path
   processing, and `PWD`/`OLDPWD` updates are pending.
-- `exit [status]` uses the previous status if omitted, or the low eight bits of a
-  decimal value representable by `long`. Invalid or excess operands return
-  status 2 without requesting exit.
+- `exit [--] [status]` uses the previous status if omitted, or the low eight bits
+  of a decimal value representable by `long` (optional sign, no whitespace).
+  Invalid or excess operands set status 2 and request exit only when the
+  state's interactive option is clear. A failed special-builtin redirection
+  likewise requests exit only for a non-interactive shell.
 
 These are the initial handlers needed for runtime cutover;
-CSH-018 owns complete exit/status integration and CSH-029 owns full state-builtin
-semantics.
+CSH-018 supplies [candidate exit/status integration](candidate-runtime.md), and
+CSH-029 owns full state-builtin semantics.
 
 ## Ordered redirection boundary
 

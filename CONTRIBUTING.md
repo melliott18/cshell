@@ -93,6 +93,7 @@ make test
 make test-pty
 make test-expand
 make test-execute
+make test-runtime test-runtime-pty
 make test-alias
 make test-harness
 ```
@@ -133,6 +134,13 @@ contract and the temporary literal adapter's limits.
 `make test-alias` checks alias storage, direct builtin handlers, parser
 substitution, and allocation failures without invoking the prototype. See
 [Aliases](docs/aliases.md) for parsing boundaries and the deferred dispatcher work.
+
+`make test-runtime` checks the internal replacement candidate through `-c`, script
+files, and stdin. `make test-runtime-pty` checks prompts, EOF, and interactive
+exit errors on controlling terminals. They also run through `make test` and
+`make test-pty`, respectively, including Docker and CI. See
+[Candidate runtime](docs/candidate-runtime.md) for the supported subset and
+documented status/exit decisions.
 
 Keep prototype expectations in a `prototype` suite. Add replacement shell or
 module expectations in a separate `replacement` or `module` suite and select both
