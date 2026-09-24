@@ -1,6 +1,6 @@
 # CSH-025: Complete field splitting and pathname expansion
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-008
@@ -111,5 +111,10 @@ Engine 24.0.6, Linux aarch64, Debian Bookworm/GCC 12.2.0, unprivileged UID 10001
   comparison found only the documented older-shell quoted-empty differences.
 - Changed Markdown links and `git diff --check` passed; diagrams are unchanged.
 
-The ticket remains at `review` until integration. These module checks do not
+The ticket remained at `review` until integration. These module checks do not
 claim complete shell or POSIX conformance and do not close CSH-008.
+
+Integrated into `main` through [pull request #56](https://github.com/melliott18/cshell/pull/56)
+on 2026-09-23. Implementation commit: `8e34da6`; merge commit: `bae2036`.
+GitHub closed issue #26 when the pull request merged. CSH-026 retains the
+remaining CSH-008 milestone work.
