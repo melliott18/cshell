@@ -1,6 +1,6 @@
 # CSH-035: Complete traps and shell signal semantics
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-011
@@ -64,6 +64,8 @@ profile, status mapping, exit/hangup policies, and remaining XSI/UP scope.
 
 Validation on 2026-09-25:
 
+- Merged by [PR #72](https://github.com/melliott18/cshell/pull/72) as
+  `b962ca0`; [issue #36](https://github.com/melliott18/cshell/issues/36) closed.
 - Native macOS 14.8.7 (23J520), Darwin 23.6.0 arm64, libSystem.B 1345.120.2,
   Apple Clang 15.0.0, Python 3.12.2: `make test` and `make test-pty` passed.
   Debian 12 bookworm Linux Docker (engine 24.0.6, arm64, GCC 12.2.0,
@@ -87,5 +89,4 @@ Validation on 2026-09-25:
   remaining requirement-family audit.
 
 The original [CSH-011](CSH-011-signals-and-job-control.md) criteria have combined
-jobs/traps evidence. Its completion gate remains open until CSH-035 is merged
-and the milestone prerequisites are checked.
+jobs/traps evidence. CSH-035 is merged and the milestone prerequisites are closed.
