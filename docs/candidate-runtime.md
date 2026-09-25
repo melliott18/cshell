@@ -145,5 +145,8 @@ public executable and module suites.
 checkpoint/replay: `$((echo hi); )` and `$( (echo hi); )` both capture `hi`.
 Grammar-valid arithmetic takes precedence, so `$((1/0))` remains an arithmetic
 expansion error. Classification never evaluates nested expansions. Full `set`
-option parsing and locale startup remain with their existing tickets. NUL output in command substitution
+option parsing follows [shell options](shell-options.md). The runtime loads the
+invocation locale before reading shell input; selected C and UTF-8 cases are
+covered by the [portability probes](testing.md#portability-audit-probes). Broader
+locale behavior remains open. NUL output in command substitution
 is diagnosed as an expansion error, an explicit choice for unspecified input.

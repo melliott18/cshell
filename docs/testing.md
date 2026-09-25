@@ -1,5 +1,24 @@
 # Testing cshell
 
+## Portability audit probes
+
+`make test-portability` runs [`tests/portability.py`](../tests/portability.py)
+against the public `cshell` executable. `make test` includes it, so the native,
+Docker, and sanitizer CI jobs run the same probes from a clean checkout. It uses
+the shared bounded runner for exact streams/status, per-case directories, process
+group cleanup, wall/CPU/file/output limits, and all three invocation modes where
+applicable.
+
+The probes assert C versus installed UTF-8 locale pathname matching, locale
+precedence and initial lexical locale behavior, UTF-8 IFS splitting, generated
+arithmetic and quote nesting through depth 32, and a 256 KiB input line in file
+and stdin modes. A sparse file larger than 2 GiB tests pathname expansion and a
+one-byte append past that offset; the append case raises only the runner's file
+size limit. Its disk use remains sparse. An unavailable UTF-8 locale is reported
+as a scoped skip; C-locale, generated, and sparse-file cases still run. The
+[CSH-037 record](tickets/CSH-037-portability-audit.md) identifies the tested
+platforms and remaining requirements.
+
 ## Runtime integration
 
 `make test-runtime` checks `cshell` across `-c`, script-file, and

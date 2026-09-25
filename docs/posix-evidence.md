@@ -160,10 +160,12 @@ any entire POSIX requirement verified.
 
 ## Native, Docker, and terminal evidence
 
-[`make test` and `make docker-test`](testing.md) run the same three cases. A native
-pass and a Docker pass are separate environment observations of the same
-assertions, not additional language coverage. Attach actual run results to the
-implementation ticket; the existence of either target does not imply it ran.
+The three historical smoke cases above are no longer in the current suites.
+[`make test` and `make docker-test`](testing.md) run the strict public runtime
+fixtures. A native pass and a Docker pass are separate environment observations
+of the same assertions, not additional language coverage. Attach actual run
+results to the implementation ticket; the existence of either target does not
+imply it ran.
 For Docker, record the resolved image ID/digest, base image, package/toolchain
 versions, engine/platform architecture, libc, and invocation. A mutable local
 image tag alone is insufficient. For native macOS, record the macOS build and

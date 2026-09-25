@@ -297,6 +297,13 @@ already opened/truncated remain filesystem effects.
 
 ## Ordered redirection boundary
 
+File redirections use the host `open()`/`dup2()` implementation and add no
+separate shell file-offset counter. A sparse-file append beyond 2 GiB passed on
+the [audited macOS and Docker Linux systems](testing.md#portability-audit-probes).
+The exact implementation-defined maximum and boundary error behavior remain
+open in [CSH-043](tickets/CSH-043-redirection-offset.md); this observation does
+not promise an offset on every filesystem or resource-limit configuration.
+
 Each `struct csh_redirect` has a destination descriptor and one operation. File
 operations own a path, duplication operations specify a source descriptor, and
 here-documents own already prepared bytes plus their exact length. Prepared
