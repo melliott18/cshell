@@ -207,7 +207,7 @@ def cases(fixture, directory):
         ("missing command", ["-c"], 0),
         ("missing grouped command", ["-ic"], 0),
         ("unknown option", ["-z"], 1),
-        ("deferred shell option", ["-x"], 1),
+        ("unknown shell option", ["-z"], 1),
         ("long option", ["--invalid"], 1),
         ("plus option", ["+i"], 1),
         ("conflicting grouped modes", ["-cs", "text"], 1),

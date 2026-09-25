@@ -88,8 +88,9 @@ remain the host boundary under CSH-037; no full POSIX conformance is claimed.
 
 Unset PATH uses `/bin:/usr/bin`; unset IFS uses space, tab and newline. Empty IFS
 suppresses field splitting. As elsewhere in the runtime, byte-oriented parsing
-and C-locale output are the current profile; full locale startup, shell options,
-traps, and interactive signal policy remain with CSH-032/035/037.
+and C-locale output are the current profile; full locale startup,
+traps, and interactive signal policy remain with CSH-035/037. CSH-032
+integrates [shell option interactions](shell-options.md).
 
 ## Evidence
 

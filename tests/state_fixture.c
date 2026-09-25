@@ -101,6 +101,7 @@ static void info_is(const struct csh_state *state,
     CHECK(actual.background_pid == expected->background_pid);
     CHECK(actual.mode == expected->mode);
     CHECK(actual.options == expected->options);
+    CHECK(actual.errexit_ignored == expected->errexit_ignored);
 }
 
 static void variables_and_import(void)
@@ -315,7 +316,7 @@ static void parameters_and_scalars(void)
     unsigned all_options = CSH_OPT_INTERACTIVE | CSH_OPT_ALLEXPORT |
         CSH_OPT_ERREXIT | CSH_OPT_NOGLOB | CSH_OPT_NOEXEC | CSH_OPT_NOUNSET |
         CSH_OPT_VERBOSE | CSH_OPT_XTRACE | CSH_OPT_NOCLOBBER | CSH_OPT_PIPEFAIL |
-        CSH_OPT_MONITOR | CSH_OPT_NOTIFY;
+        CSH_OPT_MONITOR | CSH_OPT_NOTIFY | CSH_OPT_HASHALL | CSH_OPT_IGNOREEOF | CSH_OPT_NOLOG;
 
     OK(csh_state_set_parameters(state, 2, replacements));
     memset(first, '#', sizeof(first) - 1);
@@ -342,9 +343,9 @@ static void parameters_and_scalars(void)
     OK(csh_state_get_info(state, &info));
     CHECK(info.last_status == 7 && info.background_pid == (pid_t)12345);
     CHECK(info.options == all_options && info.shell_pid == getpid());
-    /* Flags store configuration; ALLEXPORT does not implement assignments yet. */
+    /* Allexport applies to every assignment through the shared state API. */
     OK(csh_state_set_variable(state, "OPTION_LOCAL", "value"));
-    variable_is(state, "OPTION_LOCAL", "value", 0);
+    variable_is(state, "OPTION_LOCAL", "value", CSH_VAR_EXPORT);
     CHECK(csh_state_update_options(state, CSH_OPT_XTRACE, CSH_OPT_XTRACE) ==
         CSH_STATE_INVALID);
     CHECK(csh_state_update_options(state, 1u << 30, 0) == CSH_STATE_INVALID);
@@ -384,6 +385,8 @@ static void clone_isolation(void)
     OK(csh_state_update_options(state, CSH_OPT_INTERACTIVE | CSH_OPT_PIPEFAIL |
         CSH_OPT_NOUNSET, 0));
     OK(csh_state_get_info(state, &info));
+    csh_state_set_errexit_ignored(state, 2);
+    info.errexit_ignored = 2;
     OK(csh_state_clone(state, &clone));
     info_is(clone, &info);
     parameters_are(clone, "state-zero", 3, arguments);

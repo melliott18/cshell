@@ -7,10 +7,7 @@
 #include "cshell/alias.h"
 
 #define VARIABLE_ATTRIBUTES (CSH_VAR_EXPORT | CSH_VAR_READONLY)
-#define SHELL_OPTIONS (CSH_OPT_INTERACTIVE | CSH_OPT_ALLEXPORT | CSH_OPT_ERREXIT | \
-    CSH_OPT_NOGLOB | CSH_OPT_NOEXEC | CSH_OPT_NOUNSET | CSH_OPT_VERBOSE | \
-    CSH_OPT_XTRACE | CSH_OPT_NOCLOBBER | CSH_OPT_PIPEFAIL | CSH_OPT_MONITOR | \
-    CSH_OPT_NOTIFY)
+#define SHELL_OPTIONS (CSH_OPT_INTERACTIVE | CSH_SETTABLE_OPTIONS)
 
 struct variable {
     char *name;
@@ -195,6 +192,7 @@ enum csh_state_result csh_state_set_variable(struct csh_state *state,
         variable->next = state->variables;
         state->variables = variable;
     }
+    if (state->info.options & CSH_OPT_ALLEXPORT) variable->attributes |= CSH_VAR_EXPORT;
     /* name may borrow the previous value, which assignment just released. */
     if (!strcmp(variable->name, "PATH")) csh_state_hash_clear(state);
     if (!strcmp(variable->name, "OPTIND")) state->getopts_offset = 0;
@@ -401,7 +399,8 @@ enum csh_state_result csh_state_create(struct csh_state **out,
     }
     state->info.shell_pid = getpid();
     state->info.mode = invocation->mode;
-    state->info.options = invocation->interactive ? CSH_OPT_INTERACTIVE : 0;
+    state->info.options = invocation->options |
+        (invocation->interactive ? CSH_OPT_INTERACTIVE : 0);
     *out = state;
     return CSH_STATE_OK;
 }
@@ -486,6 +485,11 @@ enum csh_state_result csh_state_set_background(struct csh_state *state, pid_t pi
         return CSH_STATE_INVALID;
     state->info.background_pid = pid;
     return CSH_STATE_OK;
+}
+
+void csh_state_set_errexit_ignored(struct csh_state *state, unsigned depth)
+{
+    state->info.errexit_ignored = depth;
 }
 
 enum csh_state_result csh_state_update_options(struct csh_state *state,

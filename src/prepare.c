@@ -394,7 +394,12 @@ int csh_command_redirect(struct csh_state *state,
     memset(out, 0, sizeof(*out));
     switch (source->operator_kind) {
     case CSH_TOKEN_LESS: out->kind = CSH_REDIRECT_READ; input = 1; break;
-    case CSH_TOKEN_GREAT: out->kind = CSH_REDIRECT_WRITE; break;
+    case CSH_TOKEN_GREAT: {
+        struct csh_state_info info;
+        csh_state_get_info(state, &info);
+        out->kind = info.options & CSH_OPT_NOCLOBBER ? CSH_REDIRECT_NOCLOBBER : CSH_REDIRECT_WRITE;
+        break;
+    }
     case CSH_TOKEN_DGREAT: out->kind = CSH_REDIRECT_APPEND; break;
     case CSH_TOKEN_LESS_GREAT: out->kind = CSH_REDIRECT_READ_WRITE; input = 1; break;
     case CSH_TOKEN_CLOBBER: out->kind = CSH_REDIRECT_CLOBBER; break;

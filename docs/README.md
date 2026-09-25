@@ -21,6 +21,7 @@ Start with the [project README](../README.md) for installation and current statu
 | [Testing](testing.md) | Native and Docker commands, smoke coverage, and troubleshooting |
 | [POSIX tracking](posix.md) | Specification target, gaps, and conformance evidence |
 | [Requirements matrix](posix-matrix.md) | Language and invocation requirements, sources, owners, and planned evidence |
+| [Shell options](shell-options.md) | Invocation/set behavior, failure contexts and inheritance |
 | [Utilities and options](posix-utilities.md) | Required shell utilities, host boundary, options, and profile decisions |
 | [Evidence conventions](posix-evidence.md) | Fixture provenance, smoke limits, and differential example |
 | [Requirements by ticket](posix-owners.md) | Reverse lookup from implementation tickets to requirements |

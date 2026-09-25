@@ -1,3 +1,4 @@
+#include "cshell/builtin.h"
 #include "cshell/jobs.h"
 
 #include <errno.h>
@@ -193,6 +194,15 @@ static int job_status(const struct csh_job *job)
             if (job->processes[i].stopped)
                 return 128 + WSTOPSIG(job->processes[i].status);
     }
+    if (job->pipefail) {
+        for (i = job->count; i > 0; --i) {
+            int candidate = job->processes[i - 1].status;
+            if (!WIFEXITED(candidate) || WEXITSTATUS(candidate) != 0) {
+                status = candidate;
+                break;
+            }
+        }
+    }
     status = WIFEXITED(status) ? WEXITSTATUS(status) :
         WIFSIGNALED(status) ? 128 + WTERMSIG(status) : 1;
     return job->negated ? !status : status;
@@ -234,6 +244,11 @@ struct csh_job *csh_jobs_add(struct csh_jobs *jobs, size_t count,
     job->grouped = csh_jobs_monitor(jobs);
     job->background = asynchronous;
     job->negated = negated;
+    {
+        struct csh_state_info info;
+        csh_state_get_info(jobs->state, &info);
+        job->pipefail = (info.options & CSH_OPT_PIPEFAIL) != 0;
+    }
     job->next = jobs->head;
     jobs->head = job;
     ++jobs->retained;
@@ -683,50 +698,6 @@ int csh_jobs_is_builtin(const char *name)
         strcmp(name, "kill") == 0 || strcmp(name, "set") == 0;
 }
 
-static int monitor_option(struct csh_jobs *jobs, size_t argc, char *const argv[])
-{
-    size_t i;
-    struct csh_state_info info;
-    unsigned options;
-    csh_state_get_info(jobs->state, &info);
-    options = info.options;
-    if (argc == 2 && (strcmp(argv[1], "-o") == 0 || strcmp(argv[1], "+o") == 0)) {
-        int written;
-        if (argv[1][0] == '-')
-            written = outputf(STDOUT_FILENO, "monitor %s\nnotify %s\n",
-                options & CSH_OPT_MONITOR ? "on" : "off", options & CSH_OPT_NOTIFY ? "on" : "off");
-        else written = outputf(STDOUT_FILENO, "set %cm\nset %cb\n",
-                options & CSH_OPT_MONITOR ? '-' : '+', options & CSH_OPT_NOTIFY ? '-' : '+');
-        return written < 0 ? diagnostic("set", "cannot write output", NULL) : 0;
-    }
-    if (argc == 1) return diagnostic("set", "only monitor and notify options are supported", NULL);
-    for (i = 1; i < argc; ++i) {
-        const char *arg = argv[i];
-        unsigned flag;
-        int enable = arg[0] == '-';
-        size_t j;
-        if ((arg[0] != '-' && arg[0] != '+') || arg[1] == '\0')
-            return diagnostic("set", "invalid option", arg);
-        if (strcmp(arg + 1, "o") == 0) {
-            if (++i == argc) return diagnostic("set", "option name required", NULL);
-            if (strcmp(argv[i], "monitor") == 0) flag = CSH_OPT_MONITOR;
-            else if (strcmp(argv[i], "notify") == 0) flag = CSH_OPT_NOTIFY;
-            else return diagnostic("set", "unsupported option", argv[i]);
-            if (enable) options |= flag; else options &= ~flag;
-        } else for (j = 1; arg[j]; ++j) {
-            if (arg[j] == 'm') flag = CSH_OPT_MONITOR;
-            else if (arg[j] == 'b') flag = CSH_OPT_NOTIFY;
-            else return diagnostic("set", "unsupported option", arg);
-            if (enable) options |= flag; else options &= ~flag;
-        }
-    }
-    if ((options & CSH_OPT_MONITOR) && jobs->tty < 0)
-        return diagnostic("set", "job control unavailable", NULL);
-    csh_state_update_options(jobs->state, options & (CSH_OPT_MONITOR | CSH_OPT_NOTIFY),
-        ~options & (CSH_OPT_MONITOR | CSH_OPT_NOTIFY));
-    return 0;
-}
-
 int csh_jobs_builtin(struct csh_jobs *jobs, const struct csh_command *command)
 {
     size_t i = 1;
@@ -737,7 +708,7 @@ int csh_jobs_builtin(struct csh_jobs *jobs, const struct csh_command *command)
     struct csh_job *job;
     if (csh_jobs_poll(jobs) == -1) return diagnostic(name, "cannot collect child status", NULL);
     if (strcmp(name, "kill") == 0) return kill_builtin(jobs, argc, argv);
-    if (strcmp(name, "set") == 0) return monitor_option(jobs, argc, argv);
+    if (strcmp(name, "set") == 0) return csh_builtin_set(jobs->state, argc, argv, jobs->tty >= 0);
     if (strcmp(name, "jobs") == 0) {
         if (i < argc && (strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "-p") == 0)) format = argv[i++][1];
         if (i < argc && strcmp(argv[i], "--") == 0) ++i;

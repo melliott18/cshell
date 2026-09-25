@@ -15,7 +15,7 @@ Readonly values cannot be assigned or unset. CSH-028 adds function removal with 
 
 `set` without operands prints set variables in `strcoll` order in the process's
 active locale. `set --` clears positionals; `set -- args` or `set args` replaces
-them without changing `$0`. Option syntax is rejected pending CSH-032. `shift`
+them without changing `$0`. [Option syntax and effects](shell-options.md) are integrated by CSH-032. `shift`
 defaults to one, accepts zero, and rejects negative, overflowing, nondecimal or
 excess counts without changing positionals. These builtin failures return status
 1 and print a diagnostic. Startup locale selection belongs to runtime integration.
@@ -50,7 +50,7 @@ this together with the command and execution context; it is not an unconditional
 request to exit (for example, shift errors may continue). [CSH-031](evaluation-builtins.md) supplies final
 interactive/noninteractive policy and `command` suppression. CSH-023 still owns
 assignment syntax, regular-command temporary environments and declaration-word
-expansion; CSH-032 owns option effects. CSH-026 connects assignment syntax and expansion to the runtime dispatcher.
+expansion; CSH-032 integrates [option effects](shell-options.md). CSH-026 connects assignment syntax and expansion to the runtime dispatcher.
 
 `make test-builtins` runs table-driven state/status checks and 24 behavioral
 cases through the replacement executor. It includes quoting/listing, logical

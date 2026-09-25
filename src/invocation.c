@@ -90,14 +90,30 @@ int csh_invocation_parse(struct csh_invocation *out, int argc,
             ++operand;
             break;
         }
-        if (option[0] == '+') {
-            return invocation_error(error, "unsupported shell option", 0,
-                2, (size_t)operand);
-        }
-        if (option[0] != '-') {
+        if ((option[0] != '-' && option[0] != '+') || !option[1]) {
             break;
         }
         for (letter = 1; option[letter] != '\0'; ++letter) {
+            unsigned bit = csh_option_letter(option[letter]);
+            int enable = option[0] == '-';
+            if (option[letter] == 'o') {
+                const char *name = option + letter + 1;
+                if (!*name) {
+                    if (++operand == argc)
+                        return invocation_error(error, "-o requires an option name", 0, 2, (size_t)operand - 1);
+                    name = argv[operand];
+                }
+                bit = csh_option_name(name);
+                if (!bit) return invocation_error(error, "unsupported shell option", 0, 2, (size_t)operand);
+                letter = strlen(option) - 1;
+            }
+            if (bit) {
+                invocation.option_mask |= bit;
+                if (enable) invocation.options |= bit;
+                else invocation.options &= ~bit;
+                continue;
+            }
+            if (!enable) return invocation_error(error, "unsupported shell option", 0, 2, (size_t)operand);
             switch (option[letter]) {
             case 'c':
                 command_string = true;

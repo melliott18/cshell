@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "cshell/input.h"
+#include "cshell/options.h"
 
 enum csh_input_mode {
     CSH_MODE_STDIN,
@@ -17,13 +18,15 @@ struct csh_invocation {
     struct csh_input *input;
     enum csh_input_mode mode;
     bool interactive;
+    unsigned options;
+    unsigned option_mask; /* Explicit selections, including disabled options. */
     char *arg0;
     size_t argument_count;
     char **arguments;
 };
 
-/* Supports -c, -s, -i, grouped options, --, and lone -. Other shell options
- * are deferred to CSH-032 and diagnosed. argv and descriptors are borrowed
+/* Supports -c, -s, -i, shared letter/named options, --, and lone -.
+ * argv and descriptors are borrowed
  * during parsing; all retained strings are copied. stdin_fd supplies input
  * and terminal detection; stderr_fd is used only for terminal detection.
  * out must not own an earlier invocation. It is zeroed on any failure.

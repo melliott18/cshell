@@ -19,7 +19,7 @@ interactive error behavior but does not enable monitor mode.
 | `kill -l [status ...]` | List supported symbolic signal names, or convert a signal number or shell signal status to a name. |
 | `set -m`, `set +m`, `set -o monitor`, `set +o monitor` | Enable/disable grouping for subsequent launches. Enabling monitor requires a usable terminal. |
 | `set -b`, `set +b`, `set -o notify`, `set +o notify` | Enable/disable reporting background status changes while waiting for input. Otherwise changes are reported before the next prompt. |
-| `set -o`, `set +o` | Show these two implemented options, or print commands restoring their settings. |
+| `set -o`, `set +o` | Show all implemented shell options, or print commands restoring their settings (CSH-032). |
 
 `%number`, `%%`, `%+`, `%-`, `%prefix`, and `%?substring` select jobs. Omitted
 `fg`/`bg` operands select the current job. Stopped jobs take precedence over
@@ -43,9 +43,9 @@ removed to meet that limit.
 
 Job builtins execute under the executor's normal assignment/redirection rules.
 `set` is a special builtin; the others are regular builtins. Invalid `set`
-operands are validated before changing either option. Other `set` options,
-positional-parameter handling, and invocation option spellings `-m`/`-b` remain
-CSH-032 work. Job tables are isolated in subshells, background compound commands,
+operands are validated before changing options or positional parameters.
+CSH-032 integrates [the shared option parser](shell-options.md), including
+invocation `-m`/`-b` and disabling forms. Job tables are isolated in subshells, background compound commands,
 and pipeline stages. A `wait` in one cannot consume its parent's statuses.
 
 ## Process and terminal ownership
@@ -103,7 +103,8 @@ signal policy, interrupted parser input/recovery, and shell exit/hangup policy.
 In particular, Ctrl-C at an idle or continuation prompt does not yet reset the
 parser or draw a fresh prompt. Shell exit retains the existing detach policy;
 it does not wait for or explicitly hang up running/stopped jobs. This ticket
-does not claim full POSIX shell signal compliance or implement pipefail.
+does not claim full POSIX shell signal compliance. CSH-032 adds captured
+pipefail selection to foreground and retained background pipeline statuses.
 
 ## Evidence
 

@@ -1,4 +1,5 @@
 #include "cshell/builtin.h"
+#include "cshell/output.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <stdint.h>
@@ -10,7 +11,11 @@
 
 static int problem(const char *name, const char *message)
 {
-    dprintf(2, "cshell: %s: %s\n", name, message);
+    csh_write_text(2, "cshell: ");
+    csh_write_text(2, name);
+    csh_write_text(2, ": ");
+    csh_write_text(2, message);
+    csh_write_text(2, "\n");
     return 1;
 }
 
@@ -232,6 +237,66 @@ done:
     return status;
 }
 
+static int report_option(const char *name, int enabled, int reusable)
+{
+    char line[64];
+    int length = reusable ? snprintf(line, sizeof(line), "set %co %s\n", enabled ? '-' : '+', name) :
+        snprintf(line, sizeof(line), "%s %s\n", name, enabled ? "on" : "off");
+    if (length < 0 || (size_t)length >= sizeof(line)) return -1;
+    return csh_write_bytes(STDOUT_FILENO, line, (size_t)length);
+}
+
+int csh_builtin_set(struct csh_state *state, size_t argc, char *const argv[], int monitor_available)
+{
+    struct csh_state_info info;
+    size_t i = 1;
+    int replace = 0, report = 0;
+    unsigned options;
+    csh_state_get_info(state, &info);
+    if (argc == 1) return listing(state, "set", 0);
+    options = info.options & CSH_SETTABLE_OPTIONS;
+    while (i < argc) {
+        const char *arg = argv[i++];
+        size_t j;
+        int enable = arg[0] == '-';
+        if (!strcmp(arg, "--")) { replace = 1; break; }
+        /* Unspecified lone '-' follows the traditional disable-v/x choice. */
+        if (!strcmp(arg, "-")) { options &= ~(CSH_OPT_VERBOSE | CSH_OPT_XTRACE); break; }
+        if ((arg[0] != '-' && arg[0] != '+') || !arg[1]) { --i; break; }
+        for (j = 1; arg[j]; ++j) {
+            unsigned bit;
+            if (arg[j] == 'o') {
+                const char *name = arg + j + 1;
+                if (!*name && (i == argc || argv[i][0] == '-' || argv[i][0] == '+')) {
+                    report = enable ? 1 : 2;
+                    break;
+                }
+                if (!*name) name = argv[i++];
+                bit = csh_option_name(name);
+                j = strlen(arg) - 1;
+            } else bit = csh_option_letter(arg[j]);
+            if (!bit) return problem("set", "invalid option");
+            if (enable) options |= bit; else options &= ~bit;
+        }
+    }
+    if ((options & CSH_OPT_MONITOR) && !monitor_available)
+        return problem("set", "job control unavailable");
+    if (replace || i < argc) {
+        int status = state_result("set", csh_state_set_parameters(state, argc - i,
+            (const char *const *)(argv + i)));
+        if (status) return status;
+    }
+    csh_state_update_options(state, options, CSH_SETTABLE_OPTIONS & ~options);
+    if (report) {
+#define REPORT(bit, name, ch) \
+        if (report_option(name, (options & CSH_OPT_##bit) != 0, report == 2) < 0) \
+            return problem("set", "cannot write output");
+        CSH_OPTION_LIST(REPORT)
+#undef REPORT
+    }
+    return 0;
+}
+
 int csh_state_builtin_run(struct csh_state *state, size_t argc, char *const argv[])
 {
     if (!strcmp(argv[0], "cd")) csh_state_hash_clear(state);
@@ -245,9 +310,7 @@ int csh_state_builtin_run(struct csh_state *state, size_t argc, char *const argv
         !strcmp(name, "getopts") || !strcmp(name, "umask") || !strcmp(name, "ulimit")) return directory(state, argc, argv);
     if (!strcmp(name, "set")) {
         if (argc == 1) return listing(state, name, 0);
-        if (!strcmp(argv[i], "--")) ++i;
-        else if (argv[i][0] == '-' || argv[i][0] == '+') return problem(name, "shell options require CSH-032");
-        return state_result(name, csh_state_set_parameters(state, argc-i, (const char *const *)(argv+i)));
+        return csh_builtin_set(state, argc, argv, 1);
     }
     if (!strcmp(name, "shift")) {
         struct csh_state_info info;

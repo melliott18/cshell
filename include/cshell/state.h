@@ -55,22 +55,6 @@ enum csh_variable_attribute {
     CSH_VAR_READONLY = 1u << 1
 };
 
-/* Storage flags only: parsing and option effects belong to later tickets. */
-enum csh_shell_option {
-    CSH_OPT_INTERACTIVE = 1u << 0,
-    CSH_OPT_ALLEXPORT = 1u << 1,
-    CSH_OPT_ERREXIT = 1u << 2,
-    CSH_OPT_NOGLOB = 1u << 3,
-    CSH_OPT_NOEXEC = 1u << 4,
-    CSH_OPT_NOUNSET = 1u << 5,
-    CSH_OPT_VERBOSE = 1u << 6,
-    CSH_OPT_XTRACE = 1u << 7,
-    CSH_OPT_NOCLOBBER = 1u << 8,
-    CSH_OPT_PIPEFAIL = 1u << 9,
-    CSH_OPT_MONITOR = 1u << 10,
-    CSH_OPT_NOTIFY = 1u << 11
-};
-
 struct csh_variable_view {
     /* NULL is unset; "" is set and empty. A missing name has attributes 0. */
     const char *value;
@@ -85,7 +69,8 @@ struct csh_state_info {
     pid_t shell_pid;             /* $$; captured once, preserved by copies */
     pid_t background_pid;        /* $!; 0 means no background command yet */
     enum csh_input_mode mode;    /* Original invocation source selection */
-    unsigned options;           /* Initially only invocation.interactive */
+    unsigned options;           /* Invocation choices and runtime set state. */
+    unsigned errexit_ignored;   /* Nested tested-command contexts, inherited by copies. */
 };
 
 /* All retained strings are copied. No operation uses getenv/setenv/environ.
@@ -104,7 +89,7 @@ void csh_state_destroy(struct csh_state *state); /* NULL accepted */
 
 enum csh_state_result csh_state_get_variable(const struct csh_state *state,
     const char *name, struct csh_variable_view *out);
-/* Assign a non-NULL value, preserving attributes; new names start unexported. */
+/* Assign a non-NULL value, preserving attributes; allexport adds export. */
 enum csh_state_result csh_state_set_variable(struct csh_state *state,
     const char *name, const char *value);
 /* Set/clear masks must be disjoint and contain only known attribute bits.
@@ -151,6 +136,8 @@ enum csh_state_result csh_state_set_status(struct csh_state *state, int status);
 enum csh_state_result csh_state_set_background(struct csh_state *state, pid_t pid);
 enum csh_state_result csh_state_update_options(struct csh_state *state,
     unsigned set, unsigned clear);
+
+void csh_state_set_errexit_ignored(struct csh_state *state, unsigned depth);
 
 void csh_state_set_source_depth(struct csh_state *state, unsigned depth);
 void csh_state_set_function_depth(struct csh_state *state, unsigned depth);

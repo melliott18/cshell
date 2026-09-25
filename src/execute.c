@@ -4,6 +4,7 @@
 #include "cshell/jobs.h"
 #include "cshell/parser.h"
 #include "cshell/alias.h"
+#include "cshell/output.h"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -641,6 +642,8 @@ int csh_execute_pipeline(struct csh_state *state,
     struct launch *launches = NULL;
     size_t i;
     int previous = -1, ends[2] = {-1, -1}, rc = -1;
+    struct csh_state_info initial = {0};
+    if (state != NULL) csh_state_get_info(state, &initial);
     memset(out, 0, sizeof(*out));
     memset(error, 0, sizeof(*error));
     out->execution.category = CSH_EXEC_PIPELINE;
@@ -716,6 +719,9 @@ int csh_execute_pipeline(struct csh_state *state,
         }
     }
     out->execution.status = out->stages[count - 1].status;
+    if (initial.options & CSH_OPT_PIPEFAIL)
+        for (i = 0; i < count; ++i)
+            if (out->stages[i].status) out->execution.status = out->stages[i].status;
     rc = 0;
     goto done;
 cancel:
@@ -902,6 +908,35 @@ void csh_execution_context_destroy(struct csh_execution_context *context)
 static int execute_plan(struct csh_execution_context *context,
     const struct execution_plan *plan, const struct descriptor_reservations *reserved,
     struct csh_execution *result, struct csh_error *error);
+static void apply_errexit(struct csh_state *state, enum csh_ast_kind kind,
+    struct csh_execution *result)
+{
+    struct csh_state_info info;
+    csh_state_get_info(state, &info);
+    /* A function/eval/dot call is itself a simple command. The compound
+     * exception inside its body does not exempt this command's status. */
+    if (kind == CSH_AST_SIMPLE) result->errexit_ignored = 0;
+    if (info.errexit_ignored) result->errexit_ignored = 1;
+    if ((info.options & CSH_OPT_ERREXIT) && result->status != 0 &&
+        !info.errexit_ignored && !result->errexit_ignored &&
+        result->control == CSH_CONTROL_NONE &&
+        kind != CSH_AST_LIST && kind != CSH_AST_AND && kind != CSH_AST_OR)
+        result->exit_requested = 1;
+}
+
+static int execute_test(struct csh_execution_context *context,
+    const struct execution_plan *plan, const struct descriptor_reservations *reserved,
+    struct csh_execution *result, struct csh_error *error)
+{
+    struct csh_state_info info;
+    int rc;
+    csh_state_get_info(context->state, &info);
+    csh_state_set_errexit_ignored(context->state, info.errexit_ignored + 1);
+    rc = execute_plan(context, plan, reserved, result, error);
+    csh_state_set_errexit_ignored(context->state, info.errexit_ignored);
+    return rc;
+}
+
 static int context_job(struct csh_execution_context *context,
     const struct execution_plan *plan, const struct descriptor_reservations *reserved,
     const struct csh_command *prepared, int asynchronous,
@@ -980,6 +1015,62 @@ static int runtime_redirects(struct csh_state *state, struct csh_jobs *jobs, con
     return 0;
 }
 
+/* Trace one expanded simple command. PS4 uses here-document expansion:
+ * parameter/arithmetic/substitution expansion, without field splitting/globbing.
+ * Recursive tracing of PS4 itself is suppressed. */
+static void trace_word(const char *word)
+{
+    const char *p;
+    if (*word && strspn(word, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_./-:=+") == strlen(word)) {
+        csh_write_text(2, word);
+        return;
+    }
+    csh_write_text(2, "'");
+    for (p = word; *p; ++p) {
+        if (*p == '\'') csh_write_text(2, "'\\''");
+        else csh_write_bytes(2, p, 1);
+    }
+    csh_write_text(2, "'");
+}
+
+static void trace_command(struct csh_state *state, const struct csh_command *command)
+{
+    static int tracing;
+    struct csh_state_info info;
+    struct csh_variable_view ps4;
+    struct csh_ast_word word = {0};
+    struct csh_fields fields = {0};
+    struct csh_error error;
+    const char *prefix;
+    size_t i;
+    int separated = 0;
+    csh_state_get_info(state, &info);
+    if (!(info.options & CSH_OPT_XTRACE) || tracing) return;
+    tracing = 1;
+    csh_state_get_variable(state, "PS4", &ps4);
+    prefix = ps4.value != NULL ? ps4.value : "+ ";
+    if (csh_parser_document((const unsigned char *)prefix, strlen(prefix), &word, &error) == 0 &&
+        csh_prepare_word(state, &word, CSH_EXPAND_HEREDOC, &fields, &error) == 0)
+        csh_write_text(2, fields.count ? fields.values[0] : "");
+    else csh_write_text(2, "+ ");
+    csh_ast_word_destroy(&word);
+    csh_fields_destroy(&fields);
+    for (i = 0; i < command->assignment_count; ++i) {
+        if (separated) csh_write_text(2, " ");
+        csh_write_text(2, command->assignments[i].name);
+        csh_write_text(2, "=");
+        trace_word(command->assignments[i].value);
+        separated = 1;
+    }
+    for (i = 0; i < command->argc; ++i) {
+        if (separated) csh_write_text(2, " ");
+        trace_word(command->argv[i]);
+        separated = 1;
+    }
+    csh_write_text(2, "\n");
+    tracing = 0;
+}
+
 static int runtime_simple(struct csh_execution_context *context,
     const struct execution_plan *plan, const struct descriptor_reservations *reserved,
     int direct, struct csh_pipeline_stage *stage,
@@ -1012,6 +1103,7 @@ static int runtime_simple(struct csh_execution_context *context,
         expansion_failed(state, result);
         goto done;
     }
+    trace_command(state, &command);
     handler = category == CSH_EXEC_EMPTY || category == CSH_EXEC_EXTERNAL ?
         NULL : bootstrap_handler;
     if (context->jobs != NULL && command.argc != 0 &&
@@ -1053,6 +1145,13 @@ done:
     }
     csh_command_destroy(&command);
     return rc;
+}
+
+static int context_noexec(const struct csh_execution_context *context)
+{
+    struct csh_state_info info;
+    csh_state_get_info(context->state, &info);
+    return (info.options & CSH_OPT_NOEXEC) != 0;
 }
 
 static int context_stopped(struct csh_execution_context *context,
@@ -1136,6 +1235,13 @@ static int lookup_report(struct csh_state *state, const char *name, int verbose,
     }
 }
 
+void csh_execute_input_line(void *state, const unsigned char *bytes, size_t length)
+{
+    struct csh_state_info info;
+    csh_state_get_info(state, &info);
+    if (info.options & CSH_OPT_VERBOSE) csh_write_bytes(STDERR_FILENO, bytes, length);
+}
+
 static int evaluate_input(struct csh_execution_context *context, struct csh_input *input,
     struct csh_execution *result, struct csh_error *error)
 {
@@ -1144,6 +1250,7 @@ static int evaluate_input(struct csh_execution_context *context, struct csh_inpu
     enum csh_execution_category category = result->category;
     if (context->evaluation_depth >= 128) return fail(error, "evaluation nesting limit exceeded", 0, 2);
     if (csh_parser_create(&parser, input, error) == -1) return -1;
+    csh_input_set_line_hook(input, csh_execute_input_line, context->state);
     if (csh_state_aliases(context->state) == NULL) {
         csh_parser_destroy(parser); return fail(error, "cannot allocate aliases", ENOMEM, 1);
     }
@@ -1479,6 +1586,11 @@ static int context_job(struct csh_execution_context *context,
             close(gate[1]);
             if (monitor && setpgid(0, job->pgid) == -1) _exit(1);
             csh_jobs_after_fork(context->jobs, asynchronous);
+            if (is_pipeline && plan->negated) {
+                struct csh_state_info info;
+                csh_state_get_info(context->state, &info);
+                csh_state_set_errexit_ignored(context->state, info.errexit_ignored + 1);
+            }
             do { received = read(gate[0], &byte, 1); } while (received == -1 && errno == EINTR);
             close(gate[0]);
             if (received == -1) _exit(1);
@@ -1592,6 +1704,8 @@ static int context_pipeline(struct csh_execution_context *context,
     struct csh_background_child *pending = NULL;
     size_t i;
     int rc = -1, previous = -1, ends[2] = {-1, -1};
+    struct csh_state_info initial;
+    csh_state_get_info(context->state, &initial);
     if (plan->count == 1) {
         rc = execute_plan(context, &plan->children[0], reserved, result, error);
         if (rc == 0 && plan->negated && !result->exit_requested && result->control == CSH_CONTROL_NONE)
@@ -1637,6 +1751,11 @@ static int context_pipeline(struct csh_execution_context *context,
             pipe_close(previous);
             pipe_close(ends[0]);
             pipe_close(ends[1]);
+            if (plan->negated) {
+                struct csh_state_info info;
+                csh_state_get_info(context->state, &info);
+                csh_state_set_errexit_ignored(context->state, info.errexit_ignored + 1);
+            }
             context_child(context->state, &plan->children[i], reserved, 0);
         }
         pipeline.stages[i].pid = pid;
@@ -1668,6 +1787,9 @@ static int context_pipeline(struct csh_execution_context *context,
         }
     result->category = CSH_EXEC_PIPELINE;
     result->status = pipeline.stages[plan->count - 1].status;
+    if (initial.options & CSH_OPT_PIPEFAIL)
+        for (i = 0; i < plan->count; ++i)
+            if (pipeline.stages[i].status) result->status = pipeline.stages[i].status;
     if (plan->negated) result->status = !result->status;
     rc = 0;
     goto done;
@@ -1849,8 +1971,8 @@ static int compound_body(struct csh_execution_context *context,
     switch (plan->kind) {
     case CSH_AST_IF:
         for (i = 0; i < tree->data.if_clause.branch_count; ++i) {
-            rc = execute_plan(context, &plan->children[i * 2], reserved, result, error);
-            if (rc == -1 || context_stopped(context, result)) return rc;
+            rc = execute_test(context, &plan->children[i * 2], reserved, result, error);
+            if (rc == -1 || (context_stopped(context, result) || context_noexec(context))) return rc;
             if (result->status == 0)
                 return execute_plan(context, &plan->children[i * 2 + 1], reserved, result, error);
         }
@@ -1859,22 +1981,24 @@ static int compound_body(struct csh_execution_context *context,
         result->status = 0;
         return 0;
     case CSH_AST_WHILE: case CSH_AST_UNTIL: {
-        int last = 0;
+        int last = 0, last_ignored = 0;
         ++context->loop_depth;
         for (;;) {
             int transfer;
-            rc = execute_plan(context, &plan->children[0], reserved, result, error);
+            rc = execute_test(context, &plan->children[0], reserved, result, error);
             transfer = loop_transfer(result);
-            if (rc == -1 || transfer == 1 || context_stopped(context, result)) break;
+            if (rc == -1 || transfer == 1 || (context_stopped(context, result) || context_noexec(context))) break;
             if (transfer == 2) continue;
             if ((result->status == 0) != (plan->kind == CSH_AST_WHILE)) {
                 result->status = last;
+                result->errexit_ignored = last_ignored;
                 break;
             }
             rc = execute_plan(context, &plan->children[1], reserved, result, error);
             last = result->status;
+            last_ignored = result->errexit_ignored;
             transfer = loop_transfer(result);
-            if (rc == -1 || transfer == 1 || context_stopped(context, result)) break;
+            if (rc == -1 || transfer == 1 || (context_stopped(context, result) || context_noexec(context))) break;
         }
         --context->loop_depth;
         return rc;
@@ -1929,7 +2053,7 @@ static int compound_body(struct csh_execution_context *context,
             }
             rc = execute_plan(context, &plan->children[0], reserved, result, error);
             transfer = loop_transfer(result);
-            if (rc == -1 || transfer == 1 || context_stopped(context, result)) break;
+            if (rc == -1 || transfer == 1 || (context_stopped(context, result) || context_noexec(context))) break;
         }
         --context->loop_depth;
 for_done:
@@ -1958,7 +2082,7 @@ for_done:
             if (!match) continue;
             if (plan->children[i].count != 0)
                 rc = execute_plan(context, &plan->children[i], reserved, result, error);
-            if (rc == -1 || context_stopped(context, result) || item->terminator != CSH_AST_CASE_FALLTHROUGH) break;
+            if (rc == -1 || (context_stopped(context, result) || context_noexec(context)) || item->terminator != CSH_AST_CASE_FALLTHROUGH) break;
             fallthrough = 1;
         }
         csh_fields_destroy(&word);
@@ -1976,6 +2100,11 @@ static int execute_plan(struct csh_execution_context *context,
     int rc = 0;
     memset(result, 0, sizeof(*result));
     memset(error, 0, sizeof(*error));
+    {
+        struct csh_state_info info;
+        csh_state_get_info(context->state, &info);
+        if (info.options & CSH_OPT_NOEXEC) { result->status = info.last_status; return 0; }
+    }
     switch (plan->kind) {
     case CSH_AST_SIMPLE:
         rc = runtime_simple(context, plan, reserved, 0, NULL, result, error);
@@ -1986,13 +2115,13 @@ static int execute_plan(struct csh_execution_context *context,
                 memset(result, 0, sizeof(*result));
                 rc = context_fork(context, &plan->children[i], reserved, 1, result, error);
             } else rc = execute_plan(context, &plan->children[i], reserved, result, error);
-            if (rc == -1 || context_stopped(context, result)) break;
+            if (rc == -1 || (context_stopped(context, result) || context_noexec(context))) break;
             if (csh_execution_context_reap(context, 0, error) == -1) { rc = -1; break; }
         }
         break;
     case CSH_AST_AND: case CSH_AST_OR:
-        rc = execute_plan(context, &plan->children[0], reserved, result, error);
-        if (rc == 0 && !context_stopped(context, result) &&
+        rc = execute_test(context, &plan->children[0], reserved, result, error);
+        if (rc == 0 && !(context_stopped(context, result) || context_noexec(context)) &&
             ((plan->kind == CSH_AST_AND) == (result->status == 0)))
             rc = execute_plan(context, &plan->children[1], reserved, result, error);
         break;
@@ -2026,9 +2155,16 @@ static int execute_plan(struct csh_execution_context *context,
         }
         break;
     }
-    case CSH_AST_PIPELINE:
+    case CSH_AST_PIPELINE: {
+        struct csh_state_info before;
+        csh_state_get_info(context->state, &before);
+        if (plan->negated) csh_state_set_errexit_ignored(context->state, before.errexit_ignored + 1);
         rc = context_pipeline(context, plan, reserved, 0, result, error, NULL);
+        csh_state_set_errexit_ignored(context->state, before.errexit_ignored);
+        /* The status after inversion is still exempt, even when nonzero. */
+        if (plan->negated) result->errexit_ignored = 1;
         break;
+    }
     default: rc = fail(error, "unsupported compound command", 0, 2); break;
     }
     if (rc == -1) result->status = error->status;
@@ -2040,6 +2176,7 @@ static int execute_plan(struct csh_execution_context *context,
         result->redirection_failed = 0;
         rc = 0;
     }
+    apply_errexit(context->state, plan->kind, result);
     csh_state_set_status(context->state, result->status);
     return rc;
 }
@@ -2187,11 +2324,14 @@ int csh_execute_pipeline_ast(struct csh_state *state, const struct csh_ast *tree
     struct descriptor_reservations reserved = {0};
     struct csh_execution_context context = {0};
     const struct execution_plan *simple;
+    struct csh_state_info initial = {0};
+    int executing = 0;
     int rc = -1;
     memset(out, 0, sizeof(*out));
     memset(error, 0, sizeof(*error));
     out->execution.category = CSH_EXEC_PIPELINE;
     context.state = state;
+    if (state != NULL) csh_state_get_info(state, &initial);
     if (tree != NULL && tree->kind == CSH_AST_LIST && tree->redirection_count == 0 &&
         tree->data.list.item_count == 1 &&
         tree->data.list.items[0].separator != CSH_AST_AMPERSAND)
@@ -2202,6 +2342,13 @@ int csh_execute_pipeline_ast(struct csh_state *state, const struct csh_ast *tree
         goto done;
     }
     if (plan_prepare(tree, &plan, &reserved, 0, error) == -1) goto done;
+    if (initial.options & CSH_OPT_NOEXEC) {
+        out->execution.status = initial.last_status;
+        rc = 0;
+        goto done;
+    }
+    executing = 1;
+    if (plan.negated) csh_state_set_errexit_ignored(state, initial.errexit_ignored + 1);
     if (tree->kind == CSH_AST_PIPELINE && plan.count > 1) {
         rc = context_pipeline(&context, &plan, &reserved, 0, &out->execution, error, out);
         goto done;
@@ -2229,6 +2376,12 @@ done:
         if (!error->reported) diagnose("command", csh_error_message(error), error->system_errno);
         memset(error, 0, sizeof(*error));
         rc = 0;
+    }
+    if (state != NULL) csh_state_set_errexit_ignored(state, initial.errexit_ignored);
+    if (rc == -1) out->execution.status = error->status;
+    if (executing) {
+        if (plan.negated) out->execution.errexit_ignored = 1;
+        apply_errexit(state, plan.kind, &out->execution);
     }
     plan_destroy(&plan);
     free(reserved.items);

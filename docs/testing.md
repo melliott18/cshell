@@ -774,8 +774,8 @@ unrelated child ownership, repeated captures, all initially closed standard-fd
 combinations, word rollback, API-supplied nounset/noglob/interactive options,
 parent descriptor counts, and injected allocation/pipe/fcntl/fork/read/wait
 failures. Capture failures drain or close output and reap the owned child.
-The option flags exercise existing state APIs; runtime `set -u`/`set -f` parsing
-still belongs to CSH-032.
+The option flags exercise state APIs; CSH-032 adds runtime `set -u`/`set -f`
+and other option parsing/effects through `make test-options`.
 
 Both suites are in `make test`, so the normal native, Docker and sanitizer CI
 paths cover them. For a focused sanitizer run:
@@ -811,3 +811,13 @@ parameter, descriptor and allocation restoration assertions. The terminal suite
 adds read continuation prompts, eval error recovery and `command` foreground
 interruption. See [Evaluation builtins](evaluation-builtins.md) for supported
 behavior, explicit host dependencies and profile boundaries.
+
+## Shell options
+
+`make test-options` checks invocation and runtime option behavior with explicit
+stdout/stderr/status/filesystem expectations in all three input modes.
+`make test-runtime-pty` adds interactive EOF, monitor defaults and overrides,
+nounset recovery and noexec. These suites are included in `make test` and
+`make test-pty`, including Docker and sanitizer runs. See
+[Shell options](shell-options.md) for the requirement mapping and permitted
+choices; fixture sources are `tests/option_cases.py` and `tests/runtime_cases.py`.

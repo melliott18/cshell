@@ -62,6 +62,12 @@ void csh_input_destroy(struct csh_input *input);
 void csh_input_set_wait_hook(struct csh_input *input,
     int (*hook)(void *context, int fd), void *context);
 
+/* Borrowed observers: line runs once per physical line before parsing; eof
+ * returns nonzero to retry a terminal EOF (e.g. interactive ignoreeof). */
+void csh_input_set_line_hook(struct csh_input *input,
+    void (*hook)(void *, const unsigned char *, size_t), void *context);
+void csh_input_set_eof_hook(struct csh_input *input, int (*hook)(void *), void *context);
+
 /* Borrowed name remains valid until destroy. Position is the next unread byte. */
 const char *csh_input_name(const struct csh_input *input);
 struct csh_position csh_input_position(const struct csh_input *input);

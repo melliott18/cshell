@@ -184,8 +184,8 @@ first wait, and waits for every owned child using its positive PID with EINTR
 retry. Pipeline length does not require keeping every pipe open at once.
 
 `result.execution` holds the summary. On success its status is the last stage's
-status, logically inverted to 0/1 for `!`; an earlier failure does not implement
-`pipefail`. A signal status is `128 + signal_number`. Multi-stage results have
+status, or the rightmost nonzero stage status when pipefail was enabled at
+pipeline creation, logically inverted to 0/1 for `!`. A signal status is `128 + signal_number`. Multi-stage results have
 category `CSH_EXEC_PIPELINE` and no parent exit request. The state's last status
 is updated to the summary after completion.
 
@@ -200,7 +200,7 @@ that were not launched if setup failed:
 | `reaped`, `wait_status` | Raw `waitpid` result is valid when `reaped` is set; inspect with `WIFEXITED`/`WIFSIGNALED` and related macros. |
 
 All valid PIDs are historical after return: callers must not signal or wait for
-them again. CSH-010 can derive `pipefail` from the ordered, unnegated statuses.
+them again. CSH-032 derives `pipefail` from these ordered, unnegated statuses.
 CSH-034 adds process groups and suspended jobs through an optional runtime
 context manager (see [Job control](job-control.md)); this synchronous API does
 not transfer live children or pretend that stopped children have completed. Callers must serialize descriptor
@@ -336,9 +336,9 @@ boundary on both success and failure.
 
 ## Scope and validation
 
-CSH-028 adds [control flow and functions](control-flow.md). Pipefail/noclobber
-option behavior and full builtin semantics remain incomplete. Both `>` and `>|`
-currently create or truncate output files. The AST front end collects
+CSH-028 adds [control flow and functions](control-flow.md). CSH-032 integrates
+[shell options](shell-options.md), including pipefail and noclobber. With
+noclobber enabled, `>` refuses existing regular files while `>|` overrides it. The AST front end collects
 here-documents; CSH-026 expands unquoted bodies when reached and preserves
 quoted-delimiter bodies literally. Direct API clients can supply prepared byte
 data. Large bodies use temporary-file input rather than requiring a pipe reader

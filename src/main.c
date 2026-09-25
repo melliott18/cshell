@@ -27,6 +27,7 @@ static void diagnose(const struct csh_error *error, const char *source)
 struct prompt_context {
     struct csh_invocation *invocation;
     struct csh_jobs *jobs;
+    struct csh_state *state;
 };
 
 static void prompt(void *context, int continuation)
@@ -40,6 +41,17 @@ static void prompt(void *context, int continuation)
         fputs(text, stderr);
         fflush(stderr);
     }
+}
+
+static int ignore_eof(void *user)
+{
+    struct prompt_context *data = user;
+    struct csh_state_info info;
+    csh_state_get_info(data->state, &info);
+    if (!(info.options & CSH_OPT_IGNOREEOF)) return 0;
+    fputs("cshell: use exit to leave the shell\n", stderr);
+    prompt(user, 0);
+    return 1;
 }
 
 int main(int argc, char **argv)
@@ -80,10 +92,23 @@ int main(int argc, char **argv)
         csh_state_set_status(state, 1);
         goto done;
     }
+    /* Job setup supplies the interactive monitor default. Explicit command
+     * line choices override it, including +m, and notify survives setup. */
+    csh_state_update_options(state, invocation.options & invocation.option_mask,
+        invocation.option_mask & ~invocation.options);
+    if ((invocation.options & CSH_OPT_MONITOR) && !csh_jobs_monitor(context.jobs)) {
+        fputs("cshell: job control unavailable\n", stderr);
+        csh_state_set_status(state, 2);
+        goto done;
+    }
+    prompt_data.state = state;
     prompt_data.invocation = &invocation;
     prompt_data.jobs = context.jobs;
     csh_input_set_wait_hook(invocation.input, csh_jobs_read_ready, context.jobs);
     csh_parser_set_read_hook(parser, prompt, &prompt_data);
+    csh_input_set_line_hook(invocation.input, csh_execute_input_line, state);
+    if (invocation.interactive && invocation.mode == CSH_MODE_STDIN && isatty(STDIN_FILENO))
+        csh_input_set_eof_hook(invocation.input, ignore_eof, &prompt_data);
     for (;;) {
         struct csh_ast *tree = NULL;
         struct csh_execution execution;
