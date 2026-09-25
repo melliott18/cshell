@@ -1,6 +1,6 @@
 # CSH-010: Complete required builtins, options, and aliases
 
-- Status: backlog
+- Status: done
 - Type: feat
 - Kind: milestone
 - Parent: None
@@ -29,15 +29,15 @@ of CSH-011, and make command categories and shell options explicit.
 
 ## Acceptance criteria
 
-- [ ] Every required builtin/option has an implementation and test mapping, an
+- [x] Every required builtin/option has an implementation and test mapping, an
   explicit profile applicability decision, or a linked CSH-011 entry for traps
   and job-control behavior. In-scope requirements are implemented and tested.
-- [ ] Lookup precedence and `command` behavior follow POSIX command search rules.
-- [ ] Special-builtin failures and assignment persistence follow their distinct
+- [x] Lookup precedence and `command` behavior follow POSIX command search rules.
+- [x] Special-builtin failures and assignment persistence follow their distinct
   interactive/non-interactive rules.
-- [ ] `errexit` is tested in conditionals, pipelines, functions, and substitutions.
-- [ ] Aliases respect parse timing and quoting, without unbounded recursion.
-- [ ] Builtin diagnostics, operands, and statuses are documented and tested.
+- [x] `errexit` is tested in conditionals, pipelines, functions, and substitutions.
+- [x] Aliases respect parse timing and quoting, without unbounded recursion.
+- [x] Builtin diagnostics, operands, and statuses are documented and tested.
 
 ## Validation
 
@@ -50,9 +50,9 @@ single shell's behavior.
 
 - [x] [CSH-029: State builtins and inventory](CSH-029-state-builtins.md) is done.
 - [x] [CSH-030: Alias substitution](CSH-030-alias-substitution.md) is done.
-- [ ] [CSH-031: Evaluation and remaining utility builtins](CSH-031-evaluation-builtins.md) is done.
-- [ ] [CSH-032: Shell options](CSH-032-shell-options.md) is done.
-- [ ] The original acceptance criteria above pass together, with recorded
+- [x] [CSH-031: Evaluation and remaining utility builtins](CSH-031-evaluation-builtins.md) is done.
+- [x] [CSH-032: Shell options](CSH-032-shell-options.md) is done.
+- [x] The original acceptance criteria above pass together, with recorded
   cross-feature evidence and all completion prerequisites satisfied.
 
 Child dependencies control when each work item can start. The parent
@@ -64,3 +64,12 @@ Completing one child does not establish the milestone or POSIX compliance.
 The inventory is an audit task, not an assumption that the list above is
 exhaustive. Split large builtin families into linked tickets if needed without
 dropping them from the requirements matrix.
+
+## Completion record (2026-09-24)
+
+All four child tickets and the CSH-007, CSH-008, and CSH-009 prerequisites are
+complete. Their combined validation covers the original milestone criteria:
+state and evaluation builtins, utility lookup and assignment rules, alias parse
+timing, and option interactions pass together in native macOS, native Ubuntu,
+and Linux Docker CI. Traps and job-control-specific behavior remain explicitly
+owned by CSH-011 and its children rather than this milestone.
