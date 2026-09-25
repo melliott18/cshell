@@ -311,7 +311,7 @@ def terminal_cases(helper):
         {"expect": "$ "}, {"signal": "USR1"}], "$ $ ", 23)
     terminal("traps: hangup signals background job", [
         {"expect": "$ "}, {"send": "trap 'wait %1' EXIT\n"}, {"expect": "$ "},
-        {"send": "{ /bin/sh -c 'trap \"echo hup >marker; exit 0\" HUP; : >ready; sleep 60' & } 2>/dev/null\n"},
+        {"send": "{ /bin/sh -c 'trap \"echo hup >marker; exit 0\" HUP; : >ready; while :; do sleep 0.05; done' & } 2>/dev/null\n"},
         {"expect": "$ "},
         {"send": "/bin/sh -c 'while [ ! -e ready ]; do sleep 0.01; done'; kill -HUP $$\n"}],
         "$ $ $ ", 128 + signal.SIGHUP)

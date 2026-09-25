@@ -108,7 +108,7 @@ int main(void)
         assert(write(input[1], "r", 1) == 1);
         _exit(0);
     }
-    assert(csh_jobs_read_ready(context.jobs, input[0]) == 0);
+    assert(csh_jobs_read_ready(context.jobs, input[0], 0) == 0);
     assert(read(input[0], &byte, 1) == 1 && byte == 'r');
     assert(waited(observer, &status, 0) == observer && WEXITSTATUS(status) == 0);
     assert(run(&context, "wait\n").status == 0);
@@ -169,7 +169,7 @@ int main(void)
             assert(write(input[1], "r", 1) == 1);
             _exit(0);
         }
-        assert(csh_jobs_read_ready(context.jobs, input[0]) == 0);
+        assert(csh_jobs_read_ready(context.jobs, input[0], 0) == 0);
         assert(waited(observer, &status, 0) == observer && WEXITSTATUS(status) == 0);
         assert(dup2(saved_error, STDERR_FILENO) == STDERR_FILENO);
         close(saved_error);

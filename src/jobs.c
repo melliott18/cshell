@@ -339,6 +339,7 @@ static void block_events(sigset_t *old)
     sigemptyset(&blocked);
     sigaddset(&blocked, SIGCHLD);
     sigaddset(&blocked, SIGINT);
+    csh_traps_add_caught(csh_traps_active(), &blocked);
     sigprocmask(SIG_BLOCK, &blocked, old);
 }
 
@@ -581,7 +582,7 @@ void csh_jobs_notify(struct csh_jobs *jobs)
     }
 }
 
-int csh_jobs_read_ready(void *context, int fd)
+int csh_jobs_read_ready(void *context, int fd, int defer_pending)
 {
     struct csh_jobs *jobs = context;
     sigset_t old, waiting;
@@ -594,13 +595,19 @@ int csh_jobs_read_ready(void *context, int fd)
     for (;;) {
         fd_set input;
         struct csh_state_info info;
+        if (interrupted || hung_up || (!defer_pending && csh_traps_pending())) {
+            errno = EINTR;
+            rc = -1;
+            break;
+        }
         if (csh_jobs_poll(jobs) == -1) { rc = -1; break; }
         csh_state_get_info(jobs->state, &info);
         if (info.options & CSH_OPT_NOTIFY) csh_jobs_notify(jobs);
         FD_ZERO(&input);
         FD_SET(fd, &input);
         rc = pselect(fd + 1, &input, NULL, NULL, NULL, &waiting);
-        if (rc >= 0 || errno != EINTR || interrupted || hung_up || csh_traps_pending()) break;
+        if (rc >= 0 || errno != EINTR || interrupted || hung_up ||
+            (!defer_pending && csh_traps_pending())) break;
     }
     sigprocmask(SIG_SETMASK, &old, NULL);
     return rc < 0 ? -1 : 0;

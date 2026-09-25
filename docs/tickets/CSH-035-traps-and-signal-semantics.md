@@ -54,8 +54,11 @@ Child setup resets caught actions and retains ignored dispositions; standalone
 `trap` substitution can print its parent's saved actions. Launch masks protect
 disposition changes across fork. A shell that ignores CHLD uses a no-op handler
 until exec so the kernel does not auto-reap children before the job manager
-collects them. External commands still receive ignored CHLD. Input interruption
-resets the parser's partial command while ordinary input errors remain sticky.
+collects them. External commands still receive ignored CHLD. Input waits block
+managed signals across their readiness check and release them atomically in
+`pselect`; this closes the prompt-to-wait interrupt race seen in hosted PTY runs.
+Input interruption resets the parser's partial command while ordinary input
+errors remain sticky.
 See [Traps and signal behavior](../traps-and-signals.md) for the selected base
 profile, status mapping, exit/hangup policies, and remaining XSI/UP scope.
 
@@ -66,7 +69,7 @@ Validation on 2026-09-25:
   Debian 12 bookworm Linux Docker (engine 24.0.6, arm64, GCC 12.2.0,
   Python 3.11.2, glibc 2.36): `make docker-test` and `make docker-test-pty`
   passed. The final image was
-  `sha256:34a72b2bb6e881097f88d8bd4233d1b541f3da78a38d4469aaa44ad66df219af`,
+  `sha256:a97c477c4b1b57777b9da03bf2be991b62c17f1935f7da98d8b7f241a2cd649d`,
   built from `debian:bookworm-slim` at
   `sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251`.
   Both runtime suites had 1,318 strict cases across command strings, files,
@@ -76,6 +79,9 @@ Validation on 2026-09-25:
 - `make test-harness` passed 64 bounded harness tests, including forced-timeout
   process and terminal cleanup. CSH-034's job ownership, rapid-completion,
   terminal-control, and interrupted-wait regressions pass in the combined runs.
+- After the hosted prompt race was found, 50 immediate idle Ctrl-C PTY runs
+  passed. The hangup/background fixture passed 20 focused repetitions after
+  replacing its long blocking child command with a bounded short-sleep loop.
 - No PTY cases were skipped. Full POSIX conformance, XSI, and UP editing remain
   outside this ticket's claim; the matrix records implemented subsets and the
   remaining requirement-family audit.

@@ -60,9 +60,10 @@ int csh_jobs_poll(struct csh_jobs *jobs);
 int csh_jobs_reap(struct csh_jobs *jobs, int wait);
 void csh_jobs_announce(struct csh_jobs *jobs, const struct csh_job *job);
 void csh_jobs_notify(struct csh_jobs *jobs);
-/* Input wait hook: pselect atomically unblocks SIGCHLD, reaps while idle, and
- * reports changes immediately only when notify is enabled. No read-ahead. */
-int csh_jobs_read_ready(void *jobs, int fd);
+/* Input wait hook: pselect atomically unblocks managed signals, reaps while
+ * idle, and reports changes immediately only when notify is enabled. Pending
+ * actions raised by an action can be deferred to the next command boundary. */
+int csh_jobs_read_ready(void *jobs, int fd, int defer_pending);
 int csh_jobs_is_builtin(const char *name);
 int csh_jobs_builtin(struct csh_jobs *jobs, const struct csh_command *command);
 /* Temporarily restore inherited signal actions around exec; recover on failure. */

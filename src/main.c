@@ -40,7 +40,7 @@ static int input_ready(void *user, int fd)
     for (;;) {
         struct csh_execution execution = {0};
         struct csh_error error;
-        if (csh_jobs_read_ready(data->jobs, fd) == 0) return 0;
+        if (csh_jobs_read_ready(data->jobs, fd, dispatched) == 0) return 0;
         if (errno != EINTR || csh_jobs_interrupt_pending() ||
             csh_jobs_hangup_pending()) return -1;
         if (csh_traps_pending() && !dispatched) {
