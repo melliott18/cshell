@@ -22,7 +22,7 @@ UNAVAILABLE = {errno.ENOSYS, errno.ENODEV, errno.ENOENT, errno.ENXIO,
                errno.EPERM, errno.EACCES, errno.ENOTTY}
 CONTROLS = {"C": b"\x03", "Z": b"\x1a", "D": b"\x04", "\\": b"\x1c"}
 SIGNALS = {name: getattr(signal, "SIG" + name)
-           for name in ("CONT", "INT", "TERM", "HUP", "KILL", "TSTP")}
+           for name in ("CONT", "INT", "TERM", "HUP", "KILL", "TSTP", "USR1")}
 
 
 def open_terminal():

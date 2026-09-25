@@ -109,7 +109,7 @@ and the context distinction for special-builtin errors in
 [shell errors](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_08_01).
 Signed operands, modulo reduction outside 0–255, and numeric overflow diagnosis
 are explicit project choices in otherwise unspecified operand cases. This
-runtime does not implement traps.
+runtime runs [EXIT and signal traps](traps-and-signals.md) with saved status semantics.
 
 ## Interactive boundary
 
@@ -118,9 +118,9 @@ The invocation API recognizes a terminal on both stdin and stderr, or explicit
 fixed `$ ` primary prompt or `> ` continuation prompt on stderr, once per
 physical read. Blank/comment lines restart the primary prompt; quoted multiline
 words and here-document lines retain the continuation prompt. Prompt expansion,
-startup files, full trap/signal semantics, and parser
-syntax-error recovery remain outside this runtime. Parser failures are sticky
-and terminate even an interactive shell; execution or expansion errors can continue
+startup files, and parser syntax-error recovery remain outside this runtime.
+SIGINT during input resets the parser to a primary prompt. Other parser failures
+are sticky and terminate even an interactive shell; execution or expansion errors can continue
 because its parser remains usable. `-i` with a string or file selects interactive
 error behavior without printing stdin prompts.
 
@@ -145,5 +145,5 @@ public executable and module suites.
 checkpoint/replay: `$((echo hi); )` and `$( (echo hi); )` both capture `hi`.
 Grammar-valid arithmetic takes precedence, so `$((1/0))` remains an arithmetic
 expansion error. Classification never evaluates nested expansions. Full `set`
-option parsing, traps, and locale startup remain with their existing tickets. NUL output in command substitution
+option parsing and locale startup remain with their existing tickets. NUL output in command substitution
 is diagnosed as an expansion error, an explicit choice for unspecified input.

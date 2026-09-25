@@ -82,7 +82,8 @@ struct csh_input_line {
 enum csh_input_result {
     CSH_INPUT_ERROR = -1,
     CSH_INPUT_EOF = 0,
-    CSH_INPUT_LINE = 1
+    CSH_INPUT_LINE = 1,
+    CSH_INPUT_INTERRUPTED = 2
 };
 
 /* Acquires exactly one physical line, including its newline when present.

@@ -15,6 +15,7 @@ from substitution_cases import add_cases
 from control_flow_cases import add_control_cases
 from evaluation_cases import add_evaluation_cases
 from option_cases import add_option_cases, invocation_cases
+from trap_cases import add_trap_cases
 
 
 def cases(helper):
@@ -43,6 +44,7 @@ def cases(helper):
     result.extend(invocation_cases())
     add_cases(cross, helper)
     add_evaluation_cases(cross, helper)
+    add_trap_cases(cross, helper)
     cross("empty input", "")
     cross("blank and comment input", "\n# comment\n\n")
     cross("successful output", f"{helper} both\n", stdout="out\n", stderr="err\n")
@@ -279,6 +281,41 @@ def terminal_cases(helper):
         {"expect": "$ "}, { "send": "command /bin/sh -c 'echo ready; exec sleep 20'\n"}, {"expect": "ready\n"},
         {"control": "C"}, {"expect": "$ "}, {"send": "echo \"$?\"\n"},
         {"expect": "130\n$ "}, {"send": "exit\n"}], "$ ready\n$ 130\n$ ", 0)
+    terminal("traps: idle Ctrl-C resets prompt", [
+        {"expect": "$ "}, {"control": "C"}, {"expect": "$ "},
+        {"send": "echo \"$?\"\n"}, {"expect": "130\n$ "},
+        {"send": "exit\n"}], "$ $ 130\n$ ", 0)
+    terminal("traps: trapped idle Ctrl-C", [
+        {"expect": "$ "}, {"send": "trap 'echo interrupted' INT\n"},
+        {"expect": "$ "}, {"control": "C"},
+        {"expect": "interrupted\n$ "}, {"send": "echo alive\n"},
+        {"expect": "alive\n$ "}, {"send": "exit\n"}],
+        "$ $ interrupted\n$ alive\n$ ", 0)
+    terminal("traps: Ctrl-C discards continuation", [
+        {"expect": "$ "}, {"send": "echo 'partial\n"}, {"expect": "> "},
+        {"control": "C"}, {"expect": "$ "},
+        {"send": "echo alive\n"}, {"expect": "alive\n$ "},
+        {"send": "exit\n"}], "$ > $ alive\n$ ", 0)
+    terminal("traps: interactive hangup exits", [
+        {"expect": "$ "}, {"send": "trap 'echo exit-action' EXIT\n"},
+        {"expect": "$ "}, {"send": "kill -HUP $$\n"}],
+        "$ $ exit-action\n", 128 + signal.SIGHUP)
+    terminal("traps: caught signal preserves partial input", [
+        {"expect": "$ "}, {"send": "trap 'echo signal' USR1\n"},
+        {"expect": "$ "}, {"send": "echo half"}, {"signal": "USR1"},
+        {"expect": "signal\n"}, {"send": "line\n"},
+        {"expect": "halfline\n$ "}, {"send": "exit\n"}],
+        "$ $ signal\nhalfline\n$ ", 0)
+    terminal("traps: idle action can exit", [
+        {"expect": "$ "}, {"send": "trap 'exit 23' USR1\n"},
+        {"expect": "$ "}, {"signal": "USR1"}], "$ $ ", 23)
+    terminal("traps: hangup signals background job", [
+        {"expect": "$ "}, {"send": "trap 'wait %1' EXIT\n"}, {"expect": "$ "},
+        {"send": "{ /bin/sh -c 'trap \"echo hup >marker; exit 0\" HUP; : >ready; sleep 60' & } 2>/dev/null\n"},
+        {"expect": "$ "},
+        {"send": "/bin/sh -c 'while [ ! -e ready ]; do sleep 0.01; done'; kill -HUP $$\n"}],
+        "$ $ $ ", 128 + signal.SIGHUP)
+    result[-1]["expect"]["files"] = {"marker": {"type": "file", "content": "hup\n"}}
     return result
 
 

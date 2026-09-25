@@ -79,7 +79,8 @@ and return status 2. These special-builtin errors stop non-interactive execution
 interactive execution can resume at the next command. Behavior outside enclosing
 loops/functions, non-lexical loop enclosure, and signed/out-of-range return
 statuses are explicit project choices where the standard leaves latitude.
-Dot-script returns and trap interaction belong to CSH-031 and CSH-035.
+Dot-script returns are covered by [evaluation builtins](evaluation-builtins.md);
+trap control transfers are covered by [traps and signals](traps-and-signals.md).
 
 ## Evidence
 

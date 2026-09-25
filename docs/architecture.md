@@ -12,7 +12,8 @@ requires no Flex or generated scanner.
 The supported subset includes expanded simple commands, state builtins,
 substitutions, here-documents, lists, groups, concurrent pipelines, and job
 control, plus [conditionals, loops, case selection, and functions](control-flow.md).
-Shell options are integrated by CSH-032; traps remain integration work.
+Shell options are integrated by CSH-032; CSH-035 adds
+[traps and signal dispatch](traps-and-signals.md).
 See [Shell options](shell-options.md) for parsing, state and executor ownership.
 Unsupported complete constructs are
 rejected before execution. See [Runtime behavior](candidate-runtime.md).
@@ -49,6 +50,7 @@ command lookup, exec, and stateful utilities.
 | `src/prepare.c` / `src/prepare.h` | Phased context-sensitive word/assignment/redirection expansion and lazy substitution AST handoff |
 | `src/execute.c` / `include/cshell/execute.h` | Owned prepared-command boundary, substitution capture, command lookup, owned child execution, assignment categories, parent builtin dispatch, concurrent pipelines, per-stage results, list/group evaluation, and background context ownership |
 | `src/jobs.c` / `include/cshell/jobs.h` | Runtime job records, direct-child collection, process groups, terminal settings, safe signal wakeups, and job builtins |
+| `src/traps.c` / `include/cshell/traps.h` | Trap action storage, signal-safe pending flags, dispositions, listing, and fork/exec reset |
 | `src/redirect.c` / `include/cshell/redirect.h` | Ordered file, descriptor, and prepared here-document operations with descriptor restoration |
 
 See [Input and invocation](input-and-invocation.md) for the concrete ownership,
@@ -180,9 +182,9 @@ short-circuiting and honors exit requests within the owning context. Library
 contexts without a job manager retain direct-child polling and explicit
 blocking reaping. CSH-034 attaches a job manager in the runtime, transferring
 launched PIDs to a retained registry and adding process groups, terminal handoff,
-job builtins, and SIGCHLD wakeups during idle input. Shell exit still detaches
-unfinished jobs; CSH-035 owns exit/hangup and trap policy. See
-[Job control](job-control.md) and [Execution contexts](execution.md#lists-groups-and-background-contexts)
+job builtins, and SIGCHLD wakeups during idle input. Shell exit detaches
+unfinished jobs, while interactive hangup signals them before exit. See
+[Traps and signals](traps-and-signals.md), [Job control](job-control.md), and [Execution contexts](execution.md#lists-groups-and-background-contexts)
 for lifecycle details and the synchronous convenience APIs.
 
 ## Replacement strategy

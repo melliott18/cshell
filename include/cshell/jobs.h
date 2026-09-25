@@ -33,6 +33,7 @@ struct csh_job {
  * fd is a borrowed terminal candidate, or -1 for scripts/subshells. Missing
  * terminal capabilities leave monitor off. Destroy restores dispositions. */
 int csh_jobs_create(struct csh_jobs **out, struct csh_state *state, int fd);
+struct csh_jobs *csh_jobs_active(void);
 void csh_jobs_destroy(struct csh_jobs *jobs);
 /* Child-only: restore dispositions, close tty, free the copied manager
  * without touching its parent-owned PIDs, and clear interactive/monitor bits. */
@@ -66,4 +67,14 @@ int csh_jobs_is_builtin(const char *name);
 int csh_jobs_builtin(struct csh_jobs *jobs, const struct csh_command *command);
 /* Temporarily restore inherited signal actions around exec; recover on failure. */
 void csh_jobs_exec_signals(struct csh_jobs *jobs, int recover);
+/* Signal naming is shared by kill and trap. Signal-context notification only
+ * writes the interactive wait flag; no child is reaped by a handler. */
+int csh_jobs_signal_number(const char *text);
+const char *csh_jobs_signal_name(int number);
+void csh_jobs_note_signal(int number);
+int csh_jobs_take_interrupt(void);
+int csh_jobs_interrupt_pending(void);
+int csh_jobs_hangup_pending(void);
+void csh_jobs_clear_hangup(void);
+void csh_jobs_hangup(struct csh_jobs *jobs);
 #endif

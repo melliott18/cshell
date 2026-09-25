@@ -2,6 +2,7 @@
 #include "prepare.h"
 #include "cshell/builtin.h"
 #include "cshell/jobs.h"
+#include "cshell/traps.h"
 #include "cshell/parser.h"
 #include "cshell/alias.h"
 #include "cshell/output.h"
@@ -174,6 +175,8 @@ static void launch_child(const struct csh_command *command, struct launch *launc
 {
     struct csh_redirect_save *save = NULL;
     struct csh_error error;
+    if (csh_jobs_active() != NULL) csh_jobs_after_fork(csh_jobs_active(), 0);
+    csh_traps_exec_signals(csh_traps_active(), 0);
     if (csh_redirect_apply(command->redirections, command->redirection_count, &save, &error) == -1) {
         diagnose(command->argv[0], error.message, error.system_errno);
         _exit(error.status);
@@ -305,7 +308,8 @@ static enum csh_execution_category command_category(struct csh_state *state,
     const char *name)
 {
     enum csh_execution_category category = path_builtin_category(state, name, 0);
-    if (!strcmp(name, "exit") || control_name(name)) return CSH_EXEC_SPECIAL_BUILTIN;
+    if (!strcmp(name, "exit") || !strcmp(name, "trap") || control_name(name))
+        return CSH_EXEC_SPECIAL_BUILTIN;
     if (category != CSH_EXEC_SPECIAL_BUILTIN && csh_state_function(state, name) != NULL)
         return CSH_EXEC_FUNCTION;
     return category;
@@ -455,7 +459,8 @@ done:
     if (rc == -1) result->status = error->status;
     if (result->category == CSH_EXEC_SPECIAL_BUILTIN && result->status != 0 && !result->exit_requested &&
         result->control == CSH_CONTROL_NONE &&
-        (rc == -1 || (strcmp(command->argv[0], "eval") && strcmp(command->argv[0], "."))))
+        (rc == -1 || (strcmp(command->argv[0], "eval") && strcmp(command->argv[0], ".") &&
+                       strcmp(command->argv[0], "trap"))))
         result->special_builtin_error = 1;
     if (state != NULL) csh_state_set_status(state, result->status);
     return rc;
@@ -494,6 +499,12 @@ static int bootstrap_handler(struct csh_state *state,
         !strcmp(command->argv[0], "umask") || !strcmp(command->argv[0], "ulimit") ||
         !strcmp(command->argv[0], "times")) {
         result->status = csh_utility_run(state, command->argc, command->argv);
+        return 0;
+    }
+    if (!strcmp(command->argv[0], "trap")) {
+        struct csh_execution_context *shell = context;
+        result->status = csh_traps_builtin(shell ? shell->traps : csh_traps_active(),
+            command->argc, command->argv);
         return 0;
     }
     if (strcmp(command->argv[0], "exit") == 0)
@@ -605,6 +616,9 @@ static void pipeline_child(struct csh_state *state,
 {
     struct csh_execution result;
     struct csh_error error;
+    if (csh_jobs_active() != NULL) csh_jobs_after_fork(csh_jobs_active(), 0);
+    if (category == CSH_EXEC_EXTERNAL) csh_traps_exec_signals(csh_traps_active(), 0);
+    else csh_traps_after_fork(csh_traps_active(), 0, 0);
     if (pipeline_connect(previous, STDIN_FILENO) == -1 ||
         pipeline_connect(ends[1], STDOUT_FILENO) == -1) {
         diagnose("pipeline", "cannot connect pipe", errno);
@@ -1284,6 +1298,80 @@ static int evaluate_input(struct csh_execution_context *context, struct csh_inpu
     return rc;
 }
 
+static void evaluate_trap_action(struct csh_execution_context *context,
+    const char *action, int saved, struct csh_execution *outer)
+{
+    struct csh_input *input = NULL;
+    struct csh_execution execution = {0};
+    struct csh_error error;
+    csh_state_set_status(context->state, saved);
+    if (csh_input_from_string(&input, action, "trap", &error) == -1 ||
+        evaluate_input(context, input, &execution, &error) == -1) {
+        if (!error.reported) report_error(&error);
+    }
+    csh_input_destroy(input);
+    if (execution.exit_requested) {
+        outer->exit_requested = 1;
+        outer->status = execution.status;
+    } else if (execution.control != CSH_CONTROL_NONE) {
+        outer->control = execution.control;
+        outer->levels = execution.levels;
+        outer->status = execution.status;
+        csh_state_set_status(context->state, execution.status);
+    } else csh_state_set_status(context->state, saved);
+}
+
+int csh_execute_pending_traps(struct csh_execution_context *context,
+    struct csh_execution *result, struct csh_error *error)
+{
+    int number = 0, next;
+    char *action;
+    unsigned char seen[CSH_TRAP_LIMIT] = {0};
+    if (context == NULL || context->traps == NULL || context->dispatching_traps) return 0;
+    context->dispatching_traps = 1;
+    while ((next = csh_traps_first_pending()) > 0 && !seen[next]) {
+        struct csh_state_info info;
+        number = csh_traps_take(context->traps, &action);
+        if (number <= 0) break;
+        seen[number] = 1;
+        csh_state_get_info(context->state, &info);
+        evaluate_trap_action(context, action, info.last_status, result);
+        free(action);
+        if (result->exit_requested || result->control != CSH_CONTROL_NONE) break;
+    }
+    context->dispatching_traps = 0;
+    if (number < 0) {
+        result->status = 1;
+        csh_state_set_status(context->state, 1);
+        return fail(error, "cannot allocate trap action", ENOMEM, 1);
+    }
+    return 0;
+}
+
+int csh_execute_exit_trap(struct csh_execution_context *context,
+    struct csh_error *error)
+{
+    char *action;
+    struct csh_state_info info;
+    struct csh_execution result = {0};
+    if (context == NULL || context->state == NULL) return 0;
+    csh_state_get_info(context->state, &info);
+    if (context->traps == NULL) return info.last_status;
+    action = csh_traps_exit_action(context->traps);
+    if (action == NULL) {
+        if (errno == ENOMEM) {
+            fail(error, "cannot allocate EXIT action", ENOMEM, 1);
+            report_error(error);
+            csh_state_set_status(context->state, 1);
+            return 1;
+        }
+        return info.last_status;
+    }
+    evaluate_trap_action(context, action, info.last_status, &result);
+    free(action);
+    return result.exit_requested ? result.status : info.last_status;
+}
+
 static int evaluation_handler(struct csh_state *state, const struct csh_command *command,
     struct csh_execution *result, struct csh_error *error, void *user)
 {
@@ -1367,8 +1455,10 @@ static int evaluation_handler(struct csh_state *state, const struct csh_command 
             if (prepared == -1) return -1;
         }
         csh_jobs_exec_signals(context->jobs, 0);
+        csh_traps_exec_signals(context->traps, 0);
         result->status = launch_replace(&target, &launch);
         csh_jobs_exec_signals(context->jobs, 1);
+        csh_traps_exec_signals(context->traps, 1);
         launch_destroy(&launch);
         csh_state_get_info(state, &info);
         result->exit_requested = !(info.options & CSH_OPT_INTERACTIVE);
@@ -1458,13 +1548,15 @@ static void background_setup(int redirect_input)
     signal(SIGQUIT, SIG_IGN);
 }
 
-static void context_child(struct csh_state *state, const struct execution_plan *plan,
+static void context_child(struct csh_state *state, struct csh_traps *traps,
+    const struct execution_plan *plan,
     const struct descriptor_reservations *reserved, int managed)
 {
     struct csh_execution_context child = {0};
     struct csh_execution result;
     struct csh_error error;
     child.state = state; /* fork isolates state, cwd, options and descriptors. */
+    child.traps = traps;
     csh_redirect_child();
     csh_state_update_options(state, 0, CSH_OPT_INTERACTIVE);
     if (managed && csh_jobs_create(&child.jobs, state, -1) == -1) {
@@ -1477,7 +1569,11 @@ static void context_child(struct csh_state *state, const struct execution_plan *
             diagnose("context", csh_error_message(&error), error.system_errno);
     } else if (execute_plan(&child, plan, reserved, &result, &error) == -1 && !error.reported)
         diagnose("context", csh_error_message(&error), error.system_errno);
+    csh_execute_pending_traps(&child, &result, &error);
+    csh_state_set_status(state, result.status);
+    result.status = csh_execute_exit_trap(&child, &error);
     csh_execution_context_destroy(&child);
+    csh_traps_destroy(traps);
     _exit(result.status);
 }
 
@@ -1567,6 +1663,7 @@ static int context_job(struct csh_execution_context *context,
     sigaddset(&launch_signals, SIGTSTP);
     sigaddset(&launch_signals, SIGTTIN);
     sigaddset(&launch_signals, SIGTTOU);
+    csh_traps_add_caught(context->traps, &launch_signals);
     if (sigprocmask(SIG_BLOCK, &launch_signals, &prior_mask) == -1) {
         fail(error, "cannot block job launch signals", errno, 1); goto cancel;
     }
@@ -1586,6 +1683,8 @@ static int context_job(struct csh_execution_context *context,
             close(gate[1]);
             if (monitor && setpgid(0, job->pgid) == -1) _exit(1);
             csh_jobs_after_fork(context->jobs, asynchronous);
+            if (prepared != NULL) csh_traps_exec_signals(context->traps, 0);
+            else csh_traps_after_fork(context->traps, asynchronous, 0);
             if (is_pipeline && plan->negated) {
                 struct csh_state_info info;
                 csh_state_get_info(context->state, &info);
@@ -1602,7 +1701,7 @@ static int context_job(struct csh_execution_context *context,
             pipe_close(previous); pipe_close(ends[0]); pipe_close(ends[1]);
             sigprocmask(SIG_SETMASK, &prior_mask, NULL);
             if (prepared != NULL) launch_child(prepared, &launches[0]);
-            context_child(context->state, stage, reserved, 1);
+            context_child(context->state, context->traps, stage, reserved, 1);
         }
         job->processes[i].pid = pid;
         if (job->pgid == 0) job->pgid = pid;
@@ -1658,6 +1757,7 @@ static int context_fork(struct csh_execution_context *context,
 {
     struct csh_background_child *entry = NULL;
     struct csh_pipeline_stage stage = {0};
+    sigset_t blocked, prior;
     if (context->jobs != NULL)
         return context_job(context, plan, reserved, NULL,
             asynchronous, result, error);
@@ -1665,16 +1765,27 @@ static int context_fork(struct csh_execution_context *context,
         return context_pipeline(context, plan, reserved, 1, result, error, NULL);
     if (asynchronous && (entry = malloc(sizeof(*entry))) == NULL)
         return fail(error, "cannot allocate background child", ENOMEM, 1);
+    sigemptyset(&blocked);
+    csh_traps_add_caught(context->traps, &blocked);
+    if (sigprocmask(SIG_BLOCK, &blocked, &prior) == -1) {
+        free(entry);
+        return fail(error, "cannot block execution signals", errno, 1);
+    }
     stage.pid = fork();
     if (stage.pid == -1) {
+        int number = errno;
+        sigprocmask(SIG_SETMASK, &prior, NULL);
         free(entry);
-        return fail(error, "cannot fork execution context", errno, 1);
+        return fail(error, "cannot fork execution context", number, 1);
     }
     if (stage.pid == 0) {
         /* Apply the implicit input before any explicit body redirects. */
+        csh_traps_after_fork(context->traps, asynchronous, 0);
         if (asynchronous) background_setup(1);
-        context_child(context->state, plan, reserved, 0);
+        sigprocmask(SIG_SETMASK, &prior, NULL);
+        context_child(context->state, context->traps, plan, reserved, 0);
     }
+    sigprocmask(SIG_SETMASK, &prior, NULL);
     if (asynchronous) {
         entry->pid = stage.pid;
         entry->next = context->children;
@@ -1722,6 +1833,7 @@ static int context_pipeline(struct csh_execution_context *context,
     for (i = 0; i < plan->count; ++i) pipeline.stages[i].category = CSH_EXEC_UNRESOLVED;
     for (i = 0; i < plan->count; ++i) {
         pid_t pid;
+        sigset_t blocked, prior;
         if (asynchronous) {
             struct csh_background_child *entry = malloc(sizeof(*entry));
             if (entry == NULL) {
@@ -1736,13 +1848,23 @@ static int context_pipeline(struct csh_execution_context *context,
             fail(error, "cannot create pipeline pipe", errno, 1);
             goto cancel;
         }
+        sigemptyset(&blocked);
+        csh_traps_add_caught(context->traps, &blocked);
+        if (sigprocmask(SIG_BLOCK, &blocked, &prior) == -1) {
+            fail(error, "cannot block pipeline signals", errno, 1);
+            goto cancel;
+        }
         pid = fork();
         if (pid == -1) {
-            fail(error, "cannot fork pipeline stage", errno, 1);
+            int number = errno;
+            sigprocmask(SIG_SETMASK, &prior, NULL);
+            fail(error, "cannot fork pipeline stage", number, 1);
             goto cancel;
         }
         if (pid == 0) {
+            csh_traps_after_fork(context->traps, asynchronous, 0);
             if (asynchronous) background_setup(i == 0);
+            sigprocmask(SIG_SETMASK, &prior, NULL);
             if (pipeline_connect(previous, STDIN_FILENO) == -1 ||
                 pipeline_connect(ends[1], STDOUT_FILENO) == -1) {
                 diagnose("pipeline", "cannot connect pipe", errno);
@@ -1756,8 +1878,9 @@ static int context_pipeline(struct csh_execution_context *context,
                 csh_state_get_info(context->state, &info);
                 csh_state_set_errexit_ignored(context->state, info.errexit_ignored + 1);
             }
-            context_child(context->state, &plan->children[i], reserved, 0);
+            context_child(context->state, context->traps, &plan->children[i], reserved, 0);
         }
+        sigprocmask(SIG_SETMASK, &prior, NULL);
         pipeline.stages[i].pid = pid;
         if (asynchronous) pending->pid = pid;
         pipe_close(previous);
@@ -2178,6 +2301,9 @@ static int execute_plan(struct csh_execution_context *context,
     }
     apply_errexit(context->state, plan->kind, result);
     csh_state_set_status(context->state, result->status);
+    if (context->traps != NULL && !context->dispatching_traps &&
+        csh_execute_pending_traps(context, result, error) == -1)
+        rc = -1;
     return rc;
 }
 
@@ -2215,11 +2341,28 @@ done:
     return rc;
 }
 
+static int standalone_trap(const struct csh_ast *tree)
+{
+    while (tree != NULL) {
+        if (tree->kind == CSH_AST_LIST && tree->data.list.item_count == 1)
+            tree = tree->data.list.items[0].command;
+        else if (tree->kind == CSH_AST_PIPELINE &&
+            tree->data.pipeline.command_count == 1 && !tree->data.pipeline.negated)
+            tree = tree->data.pipeline.commands[0];
+        else break;
+    }
+    return tree != NULL && tree->kind == CSH_AST_SIMPLE &&
+        tree->data.simple.word_count != 0 &&
+        tree->data.simple.words[0].word.token.length == 4 &&
+        !memcmp(tree->data.simple.words[0].word.token.raw, "trap", 4);
+}
+
 int csh_execute_substitution(struct csh_state *state, const struct csh_ast *tree,
     char **bytes, size_t *length, int *status, struct csh_error *error)
 {
     static unsigned nesting;
     struct csh_pipeline_stage child = {0};
+    sigset_t blocked, prior;
     int ends[2] = {-1, -1}, failed = 0;
     size_t used = 0, capacity = 0;
     char *buffer = NULL;
@@ -2227,9 +2370,17 @@ int csh_execute_substitution(struct csh_state *state, const struct csh_ast *tree
     *length = 0;
     if (nesting >= 128) return fail(error, "command substitution nesting limit exceeded", 0, 2);
     if (pipeline_pipe(ends) == -1) return fail(error, "cannot create substitution pipe", errno, 1);
+    sigemptyset(&blocked);
+    csh_traps_add_caught(csh_traps_active(), &blocked);
+    if (sigprocmask(SIG_BLOCK, &blocked, &prior) == -1) {
+        int number = errno;
+        pipe_close(ends[0]); pipe_close(ends[1]);
+        return fail(error, "cannot block substitution signals", number, 1);
+    }
     child.pid = fork();
     if (child.pid == -1) {
         int number = errno;
+        sigprocmask(SIG_SETMASK, &prior, NULL);
         pipe_close(ends[0]); pipe_close(ends[1]);
         return fail(error, "cannot fork command substitution", number, 1);
     }
@@ -2237,6 +2388,9 @@ int csh_execute_substitution(struct csh_state *state, const struct csh_ast *tree
         struct csh_execution_context context = {0};
         struct csh_execution result;
         struct csh_error failure;
+        if (csh_jobs_active() != NULL) csh_jobs_after_fork(csh_jobs_active(), 0);
+        csh_traps_after_fork(csh_traps_active(), 0, standalone_trap(tree));
+        sigprocmask(SIG_SETMASK, &prior, NULL);
         ++nesting;
         if (pipeline_connect(ends[1], STDOUT_FILENO) == -1) {
             diagnose("substitution", "cannot connect output", errno);
@@ -2246,11 +2400,20 @@ int csh_execute_substitution(struct csh_state *state, const struct csh_ast *tree
         csh_redirect_child();
         csh_state_update_options(state, 0, CSH_OPT_INTERACTIVE);
         context.state = state;
+        context.traps = csh_traps_active();
         if (csh_execute_context_ast(&context, tree, &result, &failure) == -1 && !failure.reported)
             diagnose("substitution", csh_error_message(&failure), failure.system_errno);
-        csh_execution_context_destroy(&context);
+        csh_execute_pending_traps(&context, &result, &failure);
+        csh_state_set_status(state, result.status);
+        result.status = csh_execute_exit_trap(&context, &failure);
+        {
+            struct csh_traps *traps = context.traps;
+            csh_execution_context_destroy(&context);
+            csh_traps_destroy(traps);
+        }
         _exit(result.status);
     }
+    sigprocmask(SIG_SETMASK, &prior, NULL);
     pipe_close(ends[1]);
     for (;;) {
         char chunk[8192];

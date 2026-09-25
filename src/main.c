@@ -2,6 +2,7 @@
 #include "cshell/execute.h"
 #include "cshell/parser.h"
 #include "cshell/jobs.h"
+#include "cshell/traps.h"
 #include <errno.h>
 
 #include <stdio.h>
@@ -28,7 +29,36 @@ struct prompt_context {
     struct csh_invocation *invocation;
     struct csh_jobs *jobs;
     struct csh_state *state;
+    struct csh_execution_context *shell;
+    int exit_requested;
 };
+
+static int input_ready(void *user, int fd)
+{
+    struct prompt_context *data = user;
+    int dispatched = 0;
+    for (;;) {
+        struct csh_execution execution = {0};
+        struct csh_error error;
+        if (csh_jobs_read_ready(data->jobs, fd) == 0) return 0;
+        if (errno != EINTR || csh_jobs_interrupt_pending() ||
+            csh_jobs_hangup_pending()) return -1;
+        if (csh_traps_pending() && !dispatched) {
+            if (csh_execute_pending_traps(data->shell, &execution, &error) == -1) {
+                errno = ENOMEM;
+                return -1;
+            }
+            if (execution.exit_requested) {
+                data->exit_requested = 1;
+                errno = EINTR;
+                return -1;
+            }
+            /* Leave signals raised by an action for the next command
+             * boundary, but accept a later independent idle delivery. */
+            dispatched = csh_traps_pending();
+        }
+    }
+}
 
 static void prompt(void *context, int continuation)
 {
@@ -86,6 +116,11 @@ int main(int argc, char **argv)
     }
     csh_parser_set_aliases(parser, csh_state_aliases(state));
     csh_state_set_variable(state, "OPTIND", "1");
+    if (csh_traps_create(&context.traps, invocation.interactive) == -1) {
+        fprintf(stderr, "cshell: cannot initialize traps: %s\n", strerror(errno));
+        csh_state_set_status(state, 1);
+        goto done;
+    }
     if (csh_jobs_create(&context.jobs, state,
         invocation.interactive ? STDIN_FILENO : -1) == -1) {
         fprintf(stderr, "cshell: cannot initialize jobs: %s\n", strerror(errno));
@@ -104,7 +139,9 @@ int main(int argc, char **argv)
     prompt_data.state = state;
     prompt_data.invocation = &invocation;
     prompt_data.jobs = context.jobs;
-    csh_input_set_wait_hook(invocation.input, csh_jobs_read_ready, context.jobs);
+    prompt_data.shell = &context;
+    prompt_data.exit_requested = 0;
+    csh_input_set_wait_hook(invocation.input, input_ready, &prompt_data);
     csh_parser_set_read_hook(parser, prompt, &prompt_data);
     csh_input_set_line_hook(invocation.input, csh_execute_input_line, state);
     if (invocation.interactive && invocation.mode == CSH_MODE_STDIN && isatty(STDIN_FILENO))
@@ -117,25 +154,58 @@ int main(int argc, char **argv)
         csh_parser_set_aliases(parser, csh_state_aliases(state));
         parsed = csh_parser_next(parser, &tree, &error);
         if (parsed == CSH_PARSE_EOF) break;
+        if (parsed == CSH_PARSE_INTERRUPTED) {
+            struct csh_execution pending = {0};
+            if (prompt_data.exit_requested) break;
+            int signal_number = csh_jobs_take_interrupt();
+            if (signal_number) csh_state_set_status(state, 128 + signal_number);
+            if (csh_execute_pending_traps(&context, &pending, &error) == -1) {
+                diagnose(&error, NULL);
+                break;
+            }
+            if (csh_jobs_hangup_pending()) {
+                csh_state_set_status(state, 129);
+                break;
+            }
+            if (pending.exit_requested) break;
+            continue;
+        }
         if (parsed != CSH_PARSE_TREE) {
             diagnose(&error, csh_parser_source_name(parser));
             csh_state_set_status(state, error.status);
-            break; /* Parser errors are sticky; recovery belongs to CSH-011. */
+            break; /* Ordinary parser errors remain sticky. */
         }
         executed = csh_execute_context_ast(&context, tree, &execution, &error);
+        csh_jobs_take_interrupt();
         csh_ast_destroy(tree);
         if (executed == -1 && !error.reported)
             diagnose(&error, NULL);
         if (execution.exit_requested ||
             (execution.special_builtin_error && !invocation.interactive)) break;
+        if (csh_jobs_hangup_pending()) {
+            csh_state_set_status(state, 129);
+            break;
+        }
         if (executed == -1 && !invocation.interactive &&
             execution.category == CSH_EXEC_PIPELINE) break;
     }
 done:
     if (state != NULL) {
+        if (csh_jobs_hangup_pending()) {
+            csh_jobs_hangup(context.jobs);
+            csh_state_set_status(state, 129);
+            csh_jobs_clear_hangup();
+        }
+        if (context.traps != NULL) {
+            struct csh_execution pending = {0};
+            if (csh_execute_pending_traps(&context, &pending, &error) == -1)
+                diagnose(&error, NULL);
+            csh_execute_exit_trap(&context, &error);
+        }
         csh_state_get_info(state, &info);
         status = info.last_status;
     }
+    csh_traps_destroy(context.traps);
     csh_execution_context_destroy(&context);
     csh_parser_destroy(parser);
     csh_state_destroy(state);

@@ -7,7 +7,7 @@ struct csh_parser;
 struct csh_aliases;
 enum csh_parse_result {
     CSH_PARSE_ERROR = -1, CSH_PARSE_EOF = 0, CSH_PARSE_TREE = 1,
-    CSH_PARSE_INCOMPLETE = 2
+    CSH_PARSE_INCOMPLETE = 2, CSH_PARSE_INTERRUPTED = 3
 };
 
 /* The parser borrows input, which must be unread and outlive it, and owns its

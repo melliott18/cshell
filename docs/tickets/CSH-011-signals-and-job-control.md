@@ -46,7 +46,7 @@ cleanup after a harness timeout.
 ## Completion gate
 
 - [x] [CSH-033: Pseudo-terminal test harness](CSH-033-pty-test-harness.md) is done.
-- [ ] [CSH-034: Job control](CSH-034-job-control.md) is done.
+- [x] [CSH-034: Job control](CSH-034-job-control.md) is done.
 - [ ] [CSH-035: Traps and signal semantics](CSH-035-traps-and-signal-semantics.md) is done.
 - [ ] The original acceptance criteria above pass together, with recorded
   cross-feature evidence and all completion prerequisites satisfied.

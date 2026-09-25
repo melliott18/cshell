@@ -33,14 +33,14 @@ PARSER_FAULT_OBJECTS = build/tests/parser-fault-alias.o build/tests/parser-fault
 STATE_HEADERS = include/cshell/state.h $(INPUT_HEADERS)
 EXPAND_HEADERS = include/cshell/expand.h include/cshell/arithmetic.h include/cshell/quote.h $(LEXER_HEADERS) $(STATE_HEADERS)
 EXPAND_OBJECTS = build/expand.o build/quote.o build/arithmetic.o
-EXECUTE_HEADERS = src/prepare.h include/cshell/output.h $(EXPAND_HEADERS) include/cshell/jobs.h include/cshell/builtin.h include/cshell/execute.h include/cshell/redirect.h $(PARSER_HEADERS) $(STATE_HEADERS)
-EXECUTE_OBJECTS = build/jobs.o build/builtin.o build/utility.o build/execute.o build/prepare.o build/redirect.o $(PARSER_OBJECTS) build/state.o build/alias.o build/expand.o build/arithmetic.o $(FIELDS_OBJECTS)
-EXECUTE_FAULT_OBJECTS = build/tests/execute-fault-utility.o build/tests/execute-fault-jobs.o build/tests/execute-fault-prepare.o build/tests/execute-fault-expand.o build/tests/execute-fault-fields.o build/tests/execute-fault-pathname.o build/tests/execute-fault-arithmetic.o build/tests/execute-fault-execute.o build/tests/execute-fault-redirect.o build/tests/execute-fault-state.o
+EXECUTE_HEADERS = src/prepare.h include/cshell/output.h $(EXPAND_HEADERS) include/cshell/jobs.h include/cshell/traps.h include/cshell/builtin.h include/cshell/execute.h include/cshell/redirect.h $(PARSER_HEADERS) $(STATE_HEADERS)
+EXECUTE_OBJECTS = build/jobs.o build/traps.o build/builtin.o build/utility.o build/execute.o build/prepare.o build/redirect.o $(PARSER_OBJECTS) build/state.o build/alias.o build/expand.o build/arithmetic.o $(FIELDS_OBJECTS)
+EXECUTE_FAULT_OBJECTS = build/tests/execute-fault-utility.o build/tests/execute-fault-jobs.o build/tests/execute-fault-traps.o build/tests/execute-fault-prepare.o build/tests/execute-fault-expand.o build/tests/execute-fault-fields.o build/tests/execute-fault-pathname.o build/tests/execute-fault-arithmetic.o build/tests/execute-fault-execute.o build/tests/execute-fault-redirect.o build/tests/execute-fault-state.o
 FIELDS_HEADERS = $(EXPAND_HEADERS) src/field_internal.h
 FIELDS_OBJECTS = build/fields.o build/pathname.o
 FIELDS_FAULT_OBJECTS = build/tests/fields-fault-fields.o build/tests/fields-fault-pathname.o
 
-.PHONY: all test test-input test-lexer test-parser test-alias test-state test-expand test-fields test-execute test-pipeline test-context test-runtime test-runtime-pty test-pty test-harness docker-build docker-test docker-test-pty docker-shell clean
+.PHONY: all test test-input test-lexer test-parser test-alias test-state test-expand test-fields test-execute test-pipeline test-context test-runtime test-runtime-pty test-pty test-traps test-harness docker-build docker-test docker-test-pty docker-shell clean
 
 all: cshell
 
@@ -252,7 +252,7 @@ build/tests/assignment_fixture: tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(LDLIBS)
 
-build/tests/runtime.json build/tests/runtime-pty.json build/tests/control-flow.json build/tests/evaluation.json build/tests/options.json: tests/runtime_cases.py tests/option_cases.py tests/substitution_cases.py tests/control_flow_cases.py tests/evaluation_cases.py build/tests/execute_helper
+build/tests/runtime.json build/tests/runtime-pty.json build/tests/control-flow.json build/tests/evaluation.json build/tests/options.json: tests/runtime_cases.py tests/trap_cases.py tests/option_cases.py tests/substitution_cases.py tests/control_flow_cases.py tests/evaluation_cases.py build/tests/execute_helper
 	$(PYTHON) tests/runtime_cases.py --helper build/tests/execute_helper --output $@
 
 .PHONY: test-control
@@ -295,7 +295,7 @@ test-builtins: build/tests/builtin_fixture build/tests/execute_fixture
 	./build/tests/builtin_fixture
 	$(PYTHON) tests/builtins.py build/tests/execute_fixture
 
-test: test-control test-jobs test-substitution test-builtins $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline test-context $(TEST_SUITE)
+test: test-control test-jobs test-traps test-substitution test-builtins $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline test-context $(TEST_SUITE)
 	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
 
@@ -332,6 +332,10 @@ build/jobs.o: src/jobs.c $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
+build/traps.o: src/traps.c $(EXECUTE_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
+
 build/tests/jobs_helper: tests/jobs_helper.c
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(filter-out -fsanitize=%,$(CFLAGS)) $(filter-out -fsanitize=%,$(LDFLAGS)) -o $@ $< $(LDLIBS)
@@ -351,6 +355,9 @@ build/tests/jobs_fixture: tests/jobs_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEAD
 .PHONY: test-jobs
 test-jobs: cshell build/tests/jobs_fixture build/tests/execute_faults
 	$(PYTHON) tests/jobs.py ./cshell --api-binary build/tests/jobs_fixture --fault-binary build/tests/execute_faults
+
+test-traps: cshell
+	$(PYTHON) tests/traps.py ./cshell
 
 build/tests/substitution_fixture: tests/substitution_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)

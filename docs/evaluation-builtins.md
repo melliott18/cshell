@@ -38,8 +38,8 @@ Command substitutions inherit aliases with their isolated state.
 Search checks special builtins before functions, then intrinsic utilities, then
 PATH. The internal `pwd` implementation is selected when PATH reaches `/bin/pwd`
 or `/usr/bin/pwd`; other PATH entries can override it. `pwd` is not intrinsic.
-The existing job-aware builtin inventory remains owned by CSH-034/035; `trap`
-is reserved for CSH-035. `type` is supplied as a convenience extension without
+The job-aware builtins and `trap` are described in [job control](job-control.md)
+and [traps and signals](traps-and-signals.md). `type` is supplied as a convenience extension without
 selecting the complete XSI profile.
 
 `command [-p] [-v|-V] [--] name [arguments...]` suppresses function lookup and the
@@ -88,9 +88,10 @@ remain the host boundary under CSH-037; no full POSIX conformance is claimed.
 
 Unset PATH uses `/bin:/usr/bin`; unset IFS uses space, tab and newline. Empty IFS
 suppresses field splitting. As elsewhere in the runtime, byte-oriented parsing
-and C-locale output are the current profile; full locale startup,
-traps, and interactive signal policy remain with CSH-035/037. CSH-032
-integrates [shell option interactions](shell-options.md).
+and C-locale output are the current profile. Traps and interactive signals use
+the [selected base profile](traps-and-signals.md); full locale and profile
+audits remain CSH-037 work. CSH-032 integrates
+[shell option interactions](shell-options.md).
 
 ## Evidence
 
