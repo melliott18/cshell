@@ -41,6 +41,7 @@ covered by an existing ticket.
 | [CSH-042](tickets/CSH-042-locale-semantics.md) | [ENV-004](posix-matrix.md#env-004), [EXP-004](posix-matrix.md#exp-004), [EXP-007](posix-matrix.md#exp-007), [EXP-008](posix-matrix.md#exp-008), [EXP-010](posix-matrix.md#exp-010), [EXEC-012](posix-matrix.md#exec-012) |
 | [CSH-043](tickets/CSH-043-redirection-offset.md) | [SH-009](posix-matrix.md#sh-009), [O-026](posix-utilities.md#o-026) |
 | [CSH-044](tickets/CSH-044-intermittent-bg-prompt.md) | [JOB-002](posix-matrix.md#job-002), [JOB-003](posix-matrix.md#job-003) |
+| [CSH-045](tickets/CSH-045-jobs-fixture-timeout.md) | [JOB-003](posix-matrix.md#job-003) |
 
 ## Supporting and audit tickets
 

@@ -68,7 +68,7 @@ safety and robustness evidence for their asserted paths, not language coverage.
 | Environment | Build and suite result |
 | --- | --- |
 | Native macOS 14.8.7 (23J520), Darwin 23.6.0 arm64, Apple clang 15.0.0 (clang-1500.3.9.4), SDK 14.5, Python 3.12.2; libSystem.B.dylib current version 1345.120.2 | Clean-worktree `make -j2 test test-pty test-harness` passed. After the final sparse-append addition, `make clean && make -j2 test test-pty test-harness` passed: 60 portability, 27 runtime PTY, 1,318 runtime and 64 harness tests, with no suite skips. The normal `cshell` executable SHA-256 was `9c7e581699863965d2c0e5c4446908ceaf40e9b5358c53bac81d4c2330bff795`. The same clean build with clang `-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer` and matching linker sanitizers also passed. |
-| Docker Desktop 24.0.6, Linux aarch64 (`linuxkit` 6.4.16), Debian 12 bookworm-slim, GCC 12.2.0, glibc 2.36, Python 3.11.2, base image `debian:bookworm-slim` arm64 manifest `sha256:0c8bbb8e987a035fe1d9704eb2e571b7e9a836e1caa46345290674b45b69e417`; built image `sha256:bad5f5f41570295ed615acf54f44791b7d7458b8c1ce632aaa2314613415a492` | Final `make docker-test`, `make docker-test-pty` and in-image `make test-harness` passed: 60 portability, 27 runtime PTY, 1,318 runtime and 64 harness tests, with no suite skips. Linux ASan/UBSan rerun is pending. |
+| Docker Desktop 24.0.6, Linux aarch64 (`linuxkit` 6.4.16), Debian 12 bookworm-slim, GCC 12.2.0, glibc 2.36, Python 3.11.2, base image `debian:bookworm-slim` arm64 manifest `sha256:0c8bbb8e987a035fe1d9704eb2e571b7e9a836e1caa46345290674b45b69e417`; built image `sha256:bad5f5f41570295ed615acf54f44791b7d7458b8c1ce632aaa2314613415a492` | Final `make docker-test`, `make docker-test-pty` and in-image `make test-harness` passed: 60 portability, 27 runtime PTY, 1,318 runtime and 64 harness tests, with no suite skips. A clean in-image GCC ASan/UBSan rebuild and `make -j2 test test-pty` also passed: 60 portability, 27 runtime PTY and 1,318 runtime cases with no failures or skips. |
 
 The selected UTF-8 locales were `en_US.UTF-8` on macOS and `C.UTF-8` on the
 Docker Linux image. All 131 matrix rows (65 language/invocation, 66 utility/
@@ -83,8 +83,8 @@ native macOS supplies all six. `ed` is not a dependency of the current test
 suite, and this minimal image does not serve as whole-system POSIX utility
 evidence. The [CI workflow](../../.github/workflows/tests.yml) runs native
 Ubuntu 24.04/GCC and macOS 15/Clang plus
-Docker, each with runtime, PTY, harness and ASan/UBSan checks. The branch's
-hosted CI result and independent matrix review remain pending. The first hosted
+Docker, each with runtime, PTY, harness and ASan/UBSan checks. Independent
+matrix review remains pending. The first hosted
 run exposed two timing-sensitive failures: an Ubuntu PTY `bg` case printed its
 `Running` line without the next prompt within five seconds, then passed in a
 second run of the same revision; [CSH-044](CSH-044-intermittent-bg-prompt.md)
@@ -92,7 +92,16 @@ second run of the same revision; [CSH-044](CSH-044-intermittent-bg-prompt.md)
 regression work. On macOS 15, two harness timeout self-tests expired before
 the helper reached its setup marker. Their test-only startup allowance was
 raised from 0.3 to 1 second, while retaining a five-second end-to-end bound
-and the same descendant-cleanup assertions. Hosted reruns are pending.
+and the same descendant-cleanup assertions. For revision `ca42ac0`, two
+Ubuntu and two Docker hosted jobs passed. One macOS sanitizer job
+([run 36156787452](https://github.com/melliott18/cshell/actions/runs/36156787452))
+hit the 20-second overall `jobs_fixture` alarm after its normal build passed;
+the parallel macOS job for the same revision
+([run 36156792625](https://github.com/melliott18/cshell/actions/runs/36156792625))
+passed. [CSH-045](CSH-045-jobs-fixture-timeout.md)
+([#77](https://github.com/melliott18/cshell/issues/77)) owns phase isolation
+and root-cause work. Neither intermittent failure is counted as passing
+conformance evidence.
 
 The source tree and Makefile contain no `src/legacy`, Flex scanner, legacy
 dispatcher, alternate shell executable, or runtime fallback. The default
