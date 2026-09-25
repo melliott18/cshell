@@ -1,6 +1,6 @@
 # CSH-032: Complete shell option behavior and interactions
 
-- Status: review
+- Status: done
 - Type: feat
 - Kind: implementation
 - Parent: CSH-010
@@ -61,6 +61,8 @@ CSH-037 and the existing profile-allocation gates. PS4 is the implemented subset
 
 Validation on 2026-09-24:
 
+- Merged by [PR #71](https://github.com/melliott18/cshell/pull/71) as
+  `3751e25`; [issue #33](https://github.com/melliott18/cshell/issues/33) closed.
 - Native macOS 14.8.7 arm64, Apple Clang 15.0.0, Python 3.12.2:
   `make -j4 test test-pty` passed, including 1,237 runtime cases, 20 runtime PTY
   cases, 12 job PTY cases, and all module/API/failure suites.
