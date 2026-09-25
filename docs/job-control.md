@@ -96,15 +96,12 @@ the barrier is released. Errors after release cannot undo command effects.
 The synchronous prepared-command APIs retain their existing direct-child contract
 and do not acquire a terminal; hosts wanting jobs opt into the context manager.
 
-## Remaining signal work
+## Trap and hangup integration
 
-[CSH-035](tickets/CSH-035-traps-and-signal-semantics.md) owns traps, full inherited
-signal policy, interrupted parser input/recovery, and shell exit/hangup policy.
-In particular, Ctrl-C at an idle or continuation prompt does not yet reset the
-parser or draw a fresh prompt. Shell exit retains the existing detach policy;
-it does not wait for or explicitly hang up running/stopped jobs. This ticket
-does not claim full POSIX shell signal compliance. CSH-032 adds captured
-pipefail selection to foreground and retained background pipeline statuses.
+[CSH-035](traps-and-signals.md) adds pending actions, input interrupt recovery,
+child disposition reset, and an interactive hangup policy. Ordinary shell exit
+still detaches background jobs; HUP signals live jobs before exit. The combined
+job and trap tests do not claim full POSIX shell conformance.
 
 ## Evidence
 

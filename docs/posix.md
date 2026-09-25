@@ -50,7 +50,7 @@ standalone module evidence does not establish runtime feature support.
 | Word expansion | Integrated value/field expansion, substitutions, here-documents, and arithmetic-first replay; milestone complete | [CSH-008](tickets/CSH-008-word-expansion.md) |
 | Compound commands and functions | Parsing and runtime control flow, function lifetimes, and control transfer fixtures | [CSH-009](tickets/CSH-009-compounds-and-functions.md) |
 | Builtins, aliases, and options | State/evaluation builtins, aliases and [shell options](shell-options.md); full conformance audit remains open | [CSH-010](tickets/CSH-010-builtins-options-and-aliases.md) |
-| Signals, interactive mode, and jobs | Process groups, terminal handoff, job builtins and retained statuses; traps/input recovery/hangup pending | [CSH-034](tickets/CSH-034-job-control.md), [CSH-035](tickets/CSH-035-traps-and-signal-semantics.md) |
+| Signals, interactive mode, and jobs | Process groups, terminal handoff, job builtins, traps, input interrupt recovery, and hangup policy; full conformance audit pending | [CSH-034](tickets/CSH-034-job-control.md), [CSH-035](tickets/CSH-035-traps-and-signal-semantics.md) |
 | Conformance evidence and portability | Native/Docker module and runtime fixtures; full conformance suite pending | [CSH-012](tickets/CSH-012-conformance-and-portability.md) |
 
 Legacy syntax such as `|&` and `>>&` must not be used as evidence of POSIX
@@ -148,5 +148,6 @@ their intentionally limited smoke coverage.
 CSH-034 adds [job control](job-control.md) through the persistent runtime context.
 Native and Docker script/PTY checks cover job builtins, process groups, terminal
 signals, stopping/resuming, terminal modes, idle reaping, and failure cleanup.
-Signal/trap inheritance, parser interruption, and exit/hangup policy remain
-CSH-035 work; these tests do not close the CSH-011 signals milestone.
+CSH-035 adds [trap and signal evidence](traps-and-signals.md) for inheritance,
+parser interruption, and exit/hangup policy. The combined tests do not by
+themselves establish full conformance for the CSH-011 milestone.

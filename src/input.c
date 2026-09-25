@@ -278,7 +278,7 @@ static int next_byte(struct csh_input *input, unsigned char *byte)
         if (input->wait_hook != NULL &&
             input->wait_hook(input->wait_context, input->fd) == -1) return -1;
         count = read(input->fd, byte, 1);
-    } while (count == -1 && errno == EINTR);
+    } while (count == -1 && errno == EINTR && input->wait_hook == NULL);
     return (int)count;
 }
 
@@ -320,8 +320,15 @@ enum csh_input_result csh_input_read_line(struct csh_input *input,
             input->position.column == SIZE_MAX)
             return read_failure(input, error, "input position overflow", EOVERFLOW, 1);
         result = next_byte(input, &byte);
-        if (result == -1)
+        if (result == -1) {
+            if (errno == EINTR) {
+                fail(error, "input interrupted", EINTR, 128);
+                error->position = input->position;
+                if (length != 0) { ++input->position.line; input->position.column = 1; }
+                return CSH_INPUT_INTERRUPTED;
+            }
             return read_failure(input, error, "cannot read input", errno, 128);
+        }
         if (result == 0) {
             if (length == 0 && input->eof_hook && input->eof_hook(input->eof_context)) continue;
             input->ended = 1;

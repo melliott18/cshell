@@ -754,9 +754,20 @@ and wait errors and checks the recovered shell group and resource ownership.
 Both targets are included in the default native, Docker, and sanitizer paths.
 The job helper has no sanitizer instrumentation so its terminal/descriptor
 observations measure the launched process rather than sanitizer startup.
-See [Job control](job-control.md) for implemented behavior and remaining CSH-035
-signal policy. Harness timeouts bound all interactive scenarios; no job-control
+See [Job control](job-control.md) and [Traps and signals](traps-and-signals.md)
+for the combined behavior. Harness timeouts bound all interactive scenarios; no job-control
 claim follows from a helper-only test.
+
+## Trap and signal checks
+
+`tests/trap_cases.py` contributes cross-mode cases to `make test-runtime` and
+`make test`. They cover EXIT and signal actions, listing/reinput, ignored and
+reset dispositions, invalid conditions, function/eval/subshell/substitution
+environments, foreground deferral, and interrupted wait status. The runtime
+PTY suite adds idle and continuation Ctrl-C recovery, trapped INT, and hangup.
+`make test-pty` and `make docker-test-pty` include these cases alongside the
+existing job and terminal ownership checks. The strict runner terminates the
+case's process session after a failure or timeout.
 
 ## Integrated substitutions and here-documents
 

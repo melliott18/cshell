@@ -17,6 +17,7 @@ Start with the [project README](../README.md) for installation and current statu
 | [Evaluation builtins](evaluation-builtins.md) | Dot/eval, exec, lookup, aliases, input and resource utilities |
 | [Control flow and functions](control-flow.md) | Selection, loops, function lifetimes, control transfer, and validation |
 | [Job control](job-control.md) | Interactive groups, terminal ownership, job builtins, retained statuses, and signal boundaries |
+| [Traps and signals](traps-and-signals.md) | Trap command, pending actions, inheritance, input interrupts, and hangup policy |
 | [Visual implementation plan](implementation-plan.md) | Dependencies, parallel tasks, and milestone completion |
 | [Testing](testing.md) | Native and Docker commands, smoke coverage, and troubleshooting |
 | [POSIX tracking](posix.md) | Specification target, gaps, and conformance evidence |

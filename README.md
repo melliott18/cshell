@@ -27,9 +27,9 @@ no prompt or banner. Background jobs and interactive
 [job control](docs/job-control.md) are supported. [Control flow and functions](docs/control-flow.md) include conditionals,
 loops, case selection, and explicit control transfer. [Evaluation, lookup, aliases, and stateful utilities](docs/evaluation-builtins.md)
 are supported. [Shell options](docs/shell-options.md) include errexit, pipefail, nounset,
-noclobber, noglob, tracing and noexec. Traps remain incomplete;
-unsupported syntax is
-diagnosed before that construct executes.
+noclobber, noglob, tracing and noexec. [Traps and signal handling](docs/traps-and-signals.md)
+cover the selected base profile. Unsupported syntax is diagnosed before that
+construct executes.
 See [Runtime behavior](docs/candidate-runtime.md) for the exact subset and statuses.
 
 ```sh
@@ -57,6 +57,7 @@ make test-pipeline # Concurrent pipeline, stage-status, and failure-cleanup chec
 make test-control  # Conditionals, loops, case, functions, and failure cleanup
 make test-context  # Lists, groups, background ownership, and cleanup checks
 make test-jobs     # Job builtins, retained statuses, idle reaping, and failure checks
+make test-traps    # Signals ignored before shell startup
 make test-jobs-pty # Process groups, terminal signals, stop/resume, and restoration
 make test-runtime  # Cross-mode invocation/status behavior
 make test-runtime-pty # Shell prompts, EOF, and exit errors on a terminal
@@ -126,6 +127,7 @@ src/prepare.c    Context-sensitive command preparation and lazy substitution han
 src/execute.c    Execution contexts, assignment scopes, dispatch, capture, and pipelines
 src/redirect.c   Ordered descriptor operations and restoration
 src/jobs.c       Process groups, terminal ownership, job statuses, and builtins
+src/traps.c      Trap actions, signal flags, dispositions, and listing
 docs/            Architecture, POSIX tracking, and implementation tickets
 tests/           Module fixtures, pipe/PTY behavioral runner, and self-tests
 build/           Object files and generated test fixtures (ignored by Git)

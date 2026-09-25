@@ -7,6 +7,7 @@
 #include <sys/types.h>
 
 struct csh_assignment { char *name; char *value; };
+struct csh_traps;
 
 /* All pointers are owned; argv is NULL-terminated when argc > 0. Counts
  * describe initialized entries. Zero initialization is an empty command.
@@ -146,6 +147,8 @@ struct csh_execution_context {
     struct csh_background_child *children; /* Private owned registry. */
     size_t child_count;
     struct csh_jobs *jobs; /* Optional owned runtime job manager; see jobs.h. */
+    struct csh_traps *traps; /* Borrowed process trap table; see traps.h. */
+    int dispatching_traps;
 };
 /* Lists, AND/OR, compounds, functions, and pipelines with compound stages.
  * Preflight supported syntax before effects; expand only commands reached.
@@ -153,6 +156,14 @@ struct csh_execution_context {
  * Reap completed background children at execution boundaries. */
 int csh_execute_context_ast(struct csh_execution_context *context,
     const struct csh_ast *tree, struct csh_execution *result,
+    struct csh_error *error);
+/* Dispatch pending actions at a command boundary; save and restore the status
+ * seen before each action. Propagate an exit requested by an action. */
+int csh_execute_pending_traps(struct csh_execution_context *context,
+    struct csh_execution *result, struct csh_error *error);
+/* Run EXIT once with the current status, retaining it unless the action exits
+ * explicitly. The caller must have completed command execution first. */
+int csh_execute_exit_trap(struct csh_execution_context *context,
     struct csh_error *error);
 /* wait=0 polls; wait=1 waits for all registered children, retrying EINTR.
  * Neither changes last status or $!. Errors retain unreaped ownership for a

@@ -1,5 +1,6 @@
 #include "cshell/builtin.h"
 #include "cshell/jobs.h"
+#include "cshell/traps.h"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -13,7 +14,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-static const int signals[] = {SIGCHLD, SIGINT, SIGQUIT, SIGTSTP, SIGTTIN, SIGTTOU};
+static const int signals[] = {SIGCHLD, SIGINT, SIGQUIT, SIGTSTP, SIGTTIN, SIGTTOU, SIGHUP};
 #define SIGNAL_COUNT (sizeof(signals) / sizeof(signals[0]))
 struct csh_jobs {
     struct csh_state *state;
@@ -31,6 +32,11 @@ struct csh_jobs {
     int modes_valid;
 };
 static volatile sig_atomic_t interrupted;
+static volatile sig_atomic_t hung_up;
+static struct csh_jobs *active_jobs;
+static int complete(const struct csh_job *job);
+
+struct csh_jobs *csh_jobs_active(void) { return active_jobs; }
 
 /* Own formatting buffers explicitly, including write-error paths. This also
  * avoids libc stream-attachment allocations on closed descriptor failures. */
@@ -70,7 +76,42 @@ static int outputf(int fd, const char *format, ...)
 
 static void pending_signal(int number)
 {
+    csh_jobs_note_signal(number);
+}
+
+void csh_jobs_note_signal(int number)
+{
     if (number == SIGINT) interrupted = number;
+    if (number == SIGHUP) hung_up = number;
+}
+
+int csh_jobs_take_interrupt(void)
+{
+    int number = interrupted;
+    interrupted = 0;
+    return number;
+}
+
+int csh_jobs_interrupt_pending(void) { return interrupted != 0; }
+
+int csh_jobs_hangup_pending(void) { return hung_up != 0; }
+void csh_jobs_clear_hangup(void) { hung_up = 0; }
+
+void csh_jobs_hangup(struct csh_jobs *jobs)
+{
+    struct csh_job *job;
+    if (jobs == NULL) return;
+    for (job = jobs->head; job != NULL; job = job->next) {
+        size_t i;
+        if (job->grouped && job->pgid > 0 && !complete(job)) {
+            kill(-job->pgid, SIGHUP);
+            kill(-job->pgid, SIGCONT);
+        } else for (i = 0; i < job->count; ++i)
+            if (!job->processes[i].done && job->processes[i].pid > 0) {
+                kill(job->processes[i].pid, SIGHUP);
+                kill(job->processes[i].pid, SIGCONT);
+            }
+    }
 }
 
 static int terminal_group(int fd, pid_t pgid)
@@ -113,15 +154,19 @@ int csh_jobs_create(struct csh_jobs **out, struct csh_state *state, int fd)
     jobs->interactive = (info.options & CSH_OPT_INTERACTIVE) != 0;
     csh_state_update_options(state, 0, CSH_OPT_MONITOR | CSH_OPT_NOTIFY);
     interrupted = 0;
+    hung_up = 0;
     for (i = 0; i < SIGNAL_COUNT; ++i) {
-        struct sigaction action;
+        struct sigaction action, previous;
         if (i > 0 && !jobs->interactive) break;
         memset(&action, 0, sizeof(action));
         sigemptyset(&action.sa_mask);
         /* Catch keyboard signals with a no-op/flag handler: ignored signals
          * may be discarded even while blocked in a just-forked child. TTOU
          * remains ignored so a background shell can reclaim its terminal. */
-        action.sa_handler = i < 4 ? pending_signal : SIG_IGN;
+        action.sa_handler = i < 4 || signals[i] == SIGHUP ? pending_signal : SIG_IGN;
+        if (i != 0 && sigaction(signals[i], NULL, &previous) == 0 &&
+            previous.sa_handler == SIG_IGN)
+            action.sa_handler = SIG_IGN;
         if (sigaction(signals[i], &action, &jobs->saved[i]) == -1) {
             csh_jobs_destroy(jobs);
             return -1;
@@ -161,6 +206,7 @@ int csh_jobs_create(struct csh_jobs **out, struct csh_state *state, int fd)
         }
     }
     *out = jobs;
+    active_jobs = jobs;
     return 0;
 }
 
@@ -293,6 +339,7 @@ static void block_events(sigset_t *old)
     sigemptyset(&blocked);
     sigaddset(&blocked, SIGCHLD);
     sigaddset(&blocked, SIGINT);
+    csh_traps_add_caught(csh_traps_active(), &blocked);
     sigprocmask(SIG_BLOCK, &blocked, old);
 }
 
@@ -307,6 +354,10 @@ static int wait_job(struct csh_jobs *jobs, struct csh_job *job, int interruptibl
     interrupted = 0;
     for (;;) {
         if (csh_jobs_poll(jobs) == -1) { rc = -1; break; }
+        if (hung_up) { rc = 128 + hung_up; break; }
+        if (interruptible && csh_traps_first_pending()) {
+            rc = 128 + csh_traps_first_pending(); break;
+        }
         if (interruptible && interrupted) { rc = 128 + interrupted; break; }
         if (complete(job) || (job->grouped && stopped(job))) break;
         sigsuspend(&waiting);
@@ -378,7 +429,7 @@ int csh_jobs_foreground(struct csh_jobs *jobs, struct csh_job *job, int resume,
     if (rc == -1) number = errno;
     if (restore_terminal(jobs, job) == -1) { rc = -1; number = errno; }
     if (rc == -1) { job->background = 1; errno = number; return -1; }
-    *status = job_status(job);
+    *status = rc > 0 ? rc : job_status(job);
     if (complete(job)) csh_jobs_remove(jobs, job);
     else { job->background = 1; job->changed = 1; promote_job(jobs, job); }
     return 0;
@@ -418,7 +469,8 @@ void csh_jobs_after_fork(struct csh_jobs *jobs, int asynchronous)
     int monitor = csh_jobs_monitor(jobs);
     for (i = 0; i < jobs->installed; ++i) {
         struct sigaction action = jobs->saved[i];
-        if (i != 0 && jobs->interactive) action.sa_handler = SIG_DFL;
+        if (i != 0 && jobs->interactive && action.sa_handler != SIG_IGN)
+            action.sa_handler = SIG_DFL;
         sigaction(signals[i], &action, NULL);
     }
     if (asynchronous && !monitor) {
@@ -430,6 +482,7 @@ void csh_jobs_after_fork(struct csh_jobs *jobs, int asynchronous)
         CSH_OPT_INTERACTIVE | CSH_OPT_MONITOR | CSH_OPT_NOTIFY);
     /* These are copied parent records, never children of this process. */
     while (jobs->head != NULL) csh_jobs_remove(jobs, jobs->head);
+    if (active_jobs == jobs) active_jobs = NULL;
     free(jobs);
 }
 
@@ -441,6 +494,7 @@ void csh_jobs_destroy(struct csh_jobs *jobs)
     while (jobs->head != NULL) csh_jobs_remove(jobs, jobs->head);
     if (jobs->tty >= 0) close(jobs->tty);
     for (i = jobs->installed; i > 0; --i) sigaction(signals[i - 1], &jobs->saved[i - 1], NULL);
+    if (active_jobs == jobs) active_jobs = NULL;
     free(jobs);
 }
 
@@ -528,7 +582,7 @@ void csh_jobs_notify(struct csh_jobs *jobs)
     }
 }
 
-int csh_jobs_read_ready(void *context, int fd)
+int csh_jobs_read_ready(void *context, int fd, int defer_pending)
 {
     struct csh_jobs *jobs = context;
     sigset_t old, waiting;
@@ -541,13 +595,19 @@ int csh_jobs_read_ready(void *context, int fd)
     for (;;) {
         fd_set input;
         struct csh_state_info info;
+        if (interrupted || hung_up || (!defer_pending && csh_traps_pending())) {
+            errno = EINTR;
+            rc = -1;
+            break;
+        }
         if (csh_jobs_poll(jobs) == -1) { rc = -1; break; }
         csh_state_get_info(jobs->state, &info);
         if (info.options & CSH_OPT_NOTIFY) csh_jobs_notify(jobs);
         FD_ZERO(&input);
         FD_SET(fd, &input);
         rc = pselect(fd + 1, &input, NULL, NULL, NULL, &waiting);
-        if (rc >= 0 || errno != EINTR) break;
+        if (rc >= 0 || errno != EINTR || interrupted || hung_up ||
+            (!defer_pending && csh_traps_pending())) break;
     }
     sigprocmask(SIG_SETMASK, &old, NULL);
     return rc < 0 ? -1 : 0;
@@ -621,7 +681,7 @@ static const struct signal_name signal_names[] = {
 };
 #define SIGNAL_NAMES (sizeof(signal_names) / sizeof(signal_names[0]))
 
-static int signal_number(const char *text)
+int csh_jobs_signal_number(const char *text)
 {
     size_t i;
     long value;
@@ -634,6 +694,14 @@ static int signal_number(const char *text)
     for (i = 0; i < SIGNAL_NAMES; ++i)
         if (strcmp(text, signal_names[i].name) == 0) return signal_names[i].value;
     return -1;
+}
+
+const char *csh_jobs_signal_name(int number)
+{
+    size_t i;
+    for (i = 0; i < SIGNAL_NAMES; ++i)
+        if (signal_names[i].value == number) return signal_names[i].name;
+    return NULL;
 }
 
 static int kill_builtin(struct csh_jobs *jobs, size_t argc, char *const argv[])
@@ -664,9 +732,9 @@ static int kill_builtin(struct csh_jobs *jobs, size_t argc, char *const argv[])
     }
     if (i < argc && strcmp(argv[i], "-s") == 0) {
         if (++i == argc) return diagnostic("kill", "signal required", NULL);
-        sig = signal_number(argv[i++]);
+        sig = csh_jobs_signal_number(argv[i++]);
     } else if (i < argc && argv[i][0] == '-' && strcmp(argv[i], "--") != 0)
-        sig = signal_number(argv[i++] + 1);
+        sig = csh_jobs_signal_number(argv[i++] + 1);
     if (sig < 0) return diagnostic("kill", "invalid signal", NULL);
     if (i < argc && strcmp(argv[i], "--") == 0) ++i;
     if (i == argc) return diagnostic("kill", "operand required", NULL);
@@ -787,7 +855,8 @@ void csh_jobs_exec_signals(struct csh_jobs *jobs, int recover)
         if (recover) sigaction(signals[i], &jobs->exec_saved[i], NULL);
         else {
             struct sigaction action = jobs->saved[i];
-            if (i != 0 && jobs->interactive) action.sa_handler = SIG_DFL;
+            if (i != 0 && jobs->interactive && action.sa_handler != SIG_IGN)
+                action.sa_handler = SIG_DFL;
             sigaction(signals[i], &action, &jobs->exec_saved[i]);
         }
     }

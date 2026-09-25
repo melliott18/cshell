@@ -42,6 +42,17 @@ int main(int argc, char **argv)
             const char *value = getenv(argv[index]);
             printf("%s=%s\n", argv[index], value == NULL ? "<unset>" : value);
         }
+    } else if (strcmp(argv[1], "disposition") == 0) {
+        struct sigaction action;
+        int number;
+        if (argc != 3) return 96;
+        if (!strcmp(argv[2], "CHLD")) number = SIGCHLD;
+        else if (!strcmp(argv[2], "INT")) number = SIGINT;
+        else if (!strcmp(argv[2], "USR1")) number = SIGUSR1;
+        else return 96;
+        if (sigaction(number, NULL, &action) == -1) return 96;
+        puts(action.sa_handler == SIG_IGN ? "ignored" :
+            action.sa_handler == SIG_DFL ? "default" : "caught");
     } else if (strcmp(argv[1], "pwd") == 0) {
         char buffer[4096];
         if (getcwd(buffer, sizeof(buffer)) == NULL) return 85;

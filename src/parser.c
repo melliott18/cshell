@@ -87,6 +87,8 @@ static int adopt_error(struct parse_frame *frame, const struct csh_error *error)
             error->message != NULL &&
             strncmp(error->message, "unterminated ", 13) == 0 ?
             CSH_PARSE_INCOMPLETE : CSH_PARSE_ERROR;
+        if (error->system_errno == EINTR)
+            frame->parser->failure_result = CSH_PARSE_INTERRUPTED;
     }
     return -1;
 }
@@ -142,7 +144,7 @@ static int feed_line(struct parse_frame *frame)
             frame->parser->continuation);
     frame->parser->continuation = 1;
     result = csh_input_read_line(frame->parser->input, &line, &error);
-    if (result == CSH_INPUT_ERROR)
+    if (result == CSH_INPUT_ERROR || result == CSH_INPUT_INTERRUPTED)
         return adopt_error(frame, &error);
     if (result == CSH_INPUT_EOF) {
         frame->parser->final = 1;
@@ -1476,6 +1478,18 @@ enum csh_parse_result csh_parser_next(struct csh_parser *parser,
     csh_lexer_destroy(parser->lexer);
     parser->lexer = NULL;
     *error = parser->failure;
+    if (parser->failure_result == CSH_PARSE_INTERRUPTED) {
+        struct csh_error reset_error;
+        if (csh_lexer_create(&parser->lexer, csh_input_name(parser->input), &reset_error) == -1) {
+            parser->failure = reset_error;
+            parser->failure_result = CSH_PARSE_ERROR;
+            *error = reset_error;
+            return CSH_PARSE_ERROR;
+        }
+        memset(&parser->failure, 0, sizeof(parser->failure));
+        parser->continuation = 0;
+        return CSH_PARSE_INTERRUPTED;
+    }
     return parser->failure_result;
 }
 
