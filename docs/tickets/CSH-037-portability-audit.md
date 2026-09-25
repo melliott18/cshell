@@ -84,7 +84,15 @@ suite, and this minimal image does not serve as whole-system POSIX utility
 evidence. The [CI workflow](../../.github/workflows/tests.yml) runs native
 Ubuntu 24.04/GCC and macOS 15/Clang plus
 Docker, each with runtime, PTY, harness and ASan/UBSan checks. The branch's
-hosted CI result and independent matrix review remain pending.
+hosted CI result and independent matrix review remain pending. The first hosted
+run exposed two timing-sensitive failures: an Ubuntu PTY `bg` case printed its
+`Running` line without the next prompt within five seconds, then passed in a
+second run of the same revision; [CSH-044](CSH-044-intermittent-bg-prompt.md)
+([#76](https://github.com/melliott18/cshell/issues/76)) owns root-cause and
+regression work. On macOS 15, two harness timeout self-tests expired before
+the helper reached its setup marker. Their test-only startup allowance was
+raised from 0.3 to 1 second, while retaining a five-second end-to-end bound
+and the same descendant-cleanup assertions. Hosted reruns are pending.
 
 The source tree and Makefile contain no `src/legacy`, Flex scanner, legacy
 dispatcher, alternate shell executable, or runtime fallback. The default

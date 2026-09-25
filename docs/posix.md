@@ -61,7 +61,7 @@ standalone module evidence does not establish runtime feature support.
 | Compound commands and functions | Parsing and runtime control flow, function lifetimes, and control transfer fixtures | [CSH-009](tickets/CSH-009-compounds-and-functions.md) |
 | Builtins, aliases, and options | State/evaluation builtins, aliases and [shell options](shell-options.md); full conformance audit remains open | [CSH-010](tickets/CSH-010-builtins-options-and-aliases.md) |
 | Signals, interactive mode, and jobs | Process groups, terminal handoff, job builtins, traps, input interrupt recovery, and hangup policy; full conformance audit pending | [CSH-034](tickets/CSH-034-job-control.md), [CSH-035](tickets/CSH-035-traps-and-signal-semantics.md) |
-| Conformance evidence and portability | Native/Docker module and runtime fixtures, plus [locale, large-input and sparse-file probes](testing.md#portability-audit-probes); full requirement-level verification remains open | [CSH-037](tickets/CSH-037-portability-audit.md), [CSH-042](tickets/CSH-042-locale-semantics.md), [CSH-043](tickets/CSH-043-redirection-offset.md) |
+| Conformance evidence and portability | Native/Docker module and runtime fixtures, plus [locale, large-input and sparse-file probes](testing.md#portability-audit-probes); full requirement-level verification remains open | [CSH-037](tickets/CSH-037-portability-audit.md), [CSH-042](tickets/CSH-042-locale-semantics.md), [CSH-043](tickets/CSH-043-redirection-offset.md), [CSH-044](tickets/CSH-044-intermittent-bg-prompt.md) |
 
 Legacy syntax such as `|&` and `>>&` must not be used as evidence of POSIX
 coverage or retained as compatibility requirements. New modules take their
