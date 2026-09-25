@@ -1,6 +1,6 @@
 # CSH-011: Implement signals, traps, and interactive job control
 
-- Status: backlog
+- Status: done
 - Type: feat
 - Kind: milestone
 - Parent: None
@@ -26,14 +26,14 @@ explicit ownership of jobs and the controlling terminal.
 
 ## Acceptance criteria
 
-- [ ] Foreground interrupts affect the job and leave an interactive shell usable.
-- [ ] The shell regains terminal control after foreground completion or stop.
-- [ ] Background and stopped jobs have stable records and are eventually reaped.
-- [ ] Trap actions run with the required status and environment semantics.
-- [ ] Signal handlers use only operations permitted in signal context.
-- [ ] Exit, hangup, and interrupted input/wait behavior follow the selected POSIX
+- [x] Foreground interrupts affect the job and leave an interactive shell usable.
+- [x] The shell regains terminal control after foreground completion or stop.
+- [x] Background and stopped jobs have stable records and are eventually reaped.
+- [x] Trap actions run with the required status and environment semantics.
+- [x] Signal handlers use only operations permitted in signal context.
+- [x] Exit, hangup, and interrupted input/wait behavior follow the selected POSIX
   requirements and any permitted policy is documented.
-- [ ] Job control is gated by terminal/platform capability without breaking
+- [x] Job control is gated by terminal/platform capability without breaking
   non-interactive operation.
 
 ## Validation
@@ -47,8 +47,8 @@ cleanup after a harness timeout.
 
 - [x] [CSH-033: Pseudo-terminal test harness](CSH-033-pty-test-harness.md) is done.
 - [x] [CSH-034: Job control](CSH-034-job-control.md) is done.
-- [ ] [CSH-035: Traps and signal semantics](CSH-035-traps-and-signal-semantics.md) is done.
-- [ ] The original acceptance criteria above pass together, with recorded
+- [x] [CSH-035: Traps and signal semantics](CSH-035-traps-and-signal-semantics.md) is done.
+- [x] The original acceptance criteria above pass together, with recorded
   cross-feature evidence and all completion prerequisites satisfied.
 
 Child dependencies control when each work item can start. The parent
@@ -59,3 +59,15 @@ Completing one child does not establish the milestone or POSIX compliance.
 
 Record applicable POSIX option groups and platform assumptions in the
 requirements matrix before claiming the job-control milestone is complete.
+
+## Completion record (2026-09-25)
+
+All three children and the CSH-006, CSH-009, and CSH-010 prerequisites are
+complete. The combined job and trap suites cover foreground interrupts,
+terminal restoration, retained and reaped jobs, pending traps, safe signal
+notification, and exit, hangup, and interrupted-wait behavior. Native macOS,
+native Ubuntu, and Linux Docker CI passed the integrated CSH-035 branch tests,
+including the bounded PTY and sanitizer suites. The selected base profile and
+platform conditions are recorded in the [signal behavior](../traps-and-signals.md)
+and [requirements matrix](../posix-matrix.md). Broader POSIX conformance and
+XSI/UP profile review remain owned by CSH-012 and CSH-037.
