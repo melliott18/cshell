@@ -1,3 +1,4 @@
+#include "cshell/character.h"
 #include "prepare.h"
 #include "cshell/parser.h"
 
@@ -38,11 +39,15 @@ static int backquote_tree(struct csh_state *state, const struct csh_token *token
     *out = NULL;
     text = malloc(f->end - f->begin);
     if (text == NULL) return fail(error, "cannot allocate backquote source", ENOMEM);
-    for (i = f->begin + 1; i + 1 < f->end; ++i) {
+    for (i = f->begin + 1; i + 1 < f->end;) {
+        size_t width;
         if (token->raw[i] == '\\' && i + 2 < f->end &&
             (strchr("$`\\", token->raw[i + 1]) != NULL ||
              (f->quote == CSH_QUOTE_DOUBLE && token->raw[i + 1] == '"'))) ++i;
-        text[used++] = (char)token->raw[i];
+        width = csh_character_length(token->raw + i, f->end - 1 - i, 1, 1);
+        memcpy(text + used, token->raw + i, width);
+        used += width;
+        i += width;
     }
     text[used] = 0;
     if (csh_input_from_string(&input, text, "backquote", error) == -1 ||
