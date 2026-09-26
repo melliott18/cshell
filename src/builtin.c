@@ -109,6 +109,32 @@ static char *current(struct csh_state *state, int physical)
     return !physical && logical_valid(v.value) ? strdup(v.value) : cwd();
 }
 
+int csh_builtin_initialize(struct csh_state *state)
+{
+    char parent[32];
+    char *directory_name;
+    enum csh_state_result result;
+    snprintf(parent, sizeof(parent), "%ld", (long)getppid());
+    if (csh_state_set_variable(state, "IFS", " \t\n") != CSH_STATE_OK ||
+        csh_state_set_variable(state, "PPID", parent) != CSH_STATE_OK ||
+        csh_state_set_variable(state, "OPTIND", "1") != CSH_STATE_OK)
+        return 1;
+    /* Keep a valid logical path, including symlinks. For over-PATH_MAX
+     * imported paths this chooses the permitted retain-path alternative. */
+    errno = 0;
+    directory_name = current(state, 0);
+    if (!directory_name) {
+        if (errno == ENOMEM) return 1;
+        /* When the physical cwd cannot be determined POSIX leaves PWD
+         * unspecified. Select unset rather than retaining an invalid path. */
+        return csh_state_unset_variable(state, "PWD") != CSH_STATE_OK;
+    }
+    result = csh_state_set_variable(state, "PWD", directory_name);
+    free(directory_name);
+    if (result != CSH_STATE_OK) return 1;
+    return csh_state_update_attributes(state, "PWD", CSH_VAR_EXPORT, 0) != CSH_STATE_OK;
+}
+
 static char *join(const char *a, const char *b)
 {
     size_t n = strlen(a), m = strlen(b);

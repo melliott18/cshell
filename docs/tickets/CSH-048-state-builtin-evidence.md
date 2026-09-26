@@ -1,11 +1,11 @@
 # CSH-048: Close shell state and builtin integration evidence gaps
 
-- Status: ready
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-036, CSH-039
-- Branch: Assigned when work starts
+- Branch: `test/CSH-048-state-builtin-evidence`
 - Issue: [#80](https://github.com/melliott18/cshell/issues/80)
 
 ## Goal
@@ -14,7 +14,7 @@ Map and reproduce existing tests by utility option/operand/status/environment cl
 
 ## Explicit current limitation
 
-State and utility implementations have selected passing witnesses, but startup imports, special-builtin consequences, evaluation/lookup, utility options/errors and environment lifetime interactions lack a complete reviewed requirement-to-case map. ENV-005 mixes base behavior and unselected UP/XSI portions and needs clause-level applicability without waiving base behavior.
+The [clause/condition map](../state-builtin-evidence.md) now links all 24 families to exact assertions, implementation and selected policies. Startup IFS/PPID/PWD, times formatting and ulimit resource descriptions are corrected. Residual permissions, allocation/I/O errors, locale, prompt, signal and option combinations remain explicitly identified in that map; those limitations prevent whole-family verification. ENV-005 now separates source-conditional UP/XSI variable processing from applicable base consumers.
 
 This is an open evidence limitation found by the
 [CSH-037 independent review](../audit-review.md), not a declaration that every

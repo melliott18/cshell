@@ -252,7 +252,7 @@ build/tests/assignment_fixture: tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(LDLIBS)
 
-build/tests/runtime.json build/tests/runtime-pty.json build/tests/control-flow.json build/tests/evaluation.json build/tests/options.json build/tests/syntax.json: tests/runtime_cases.py tests/syntax_cases.py tests/trap_cases.py tests/option_cases.py tests/substitution_cases.py tests/control_flow_cases.py tests/evaluation_cases.py build/tests/execute_helper
+build/tests/runtime.json build/tests/runtime-pty.json build/tests/control-flow.json build/tests/evaluation.json build/tests/options.json build/tests/syntax.json build/tests/state-builtins.json: tests/state_builtin_cases.py tests/runtime_cases.py tests/syntax_cases.py tests/trap_cases.py tests/option_cases.py tests/substitution_cases.py tests/control_flow_cases.py tests/evaluation_cases.py build/tests/execute_helper
 	$(PYTHON) tests/runtime_cases.py --helper build/tests/execute_helper --output $@
 
 .PHONY: test-control
@@ -313,7 +313,7 @@ test-builtins: build/tests/builtin_fixture build/tests/execute_fixture
 	./build/tests/builtin_fixture
 	$(PYTHON) tests/builtins.py build/tests/execute_fixture
 
-test: test-invocation test-control test-jobs test-traps test-substitution test-builtins test-portability test-redirection-offset test-prompt $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline test-context $(TEST_SUITE)
+test: test-state-observations test-invocation test-control test-jobs test-traps test-substitution test-builtins test-portability test-redirection-offset test-prompt $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline test-context $(TEST_SUITE)
 	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
 
@@ -404,3 +404,15 @@ test-evaluation: cshell build/tests/evaluation.json
 .PHONY: test-options
 test-options: cshell build/tests/options.json
 	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/options.json
+
+.PHONY: test-state-builtins
+test-state-builtins: test-state-observations cshell build/tests/state-builtins.json
+	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/state-builtins.json
+
+build/tests/state_builtin_helper: tests/state_builtin_helper.c
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(filter-out -fsanitize=%,$(CFLAGS)) $(filter-out -fsanitize=%,$(LDFLAGS)) -o $@ $< $(LDLIBS)
+
+.PHONY: test-state-observations
+test-state-observations: cshell build/tests/state_builtin_helper
+	$(PYTHON) tests/state_builtin_observations.py ./cshell build/tests/state_builtin_helper

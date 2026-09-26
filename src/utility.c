@@ -279,14 +279,19 @@ static int times_builtin(size_t argc, char *const argv[])
     for (i = 0; i < 4; ++i) {
         double seconds = (double)values[i] / ticks;
         long minutes = (long)(seconds / 60);
-        if (dprintf(1, "%ldm%.3fs%c", minutes, seconds - minutes * 60, i % 2 ? '\n' : ' ') < 0) return 1;
+        if (dprintf(1, "%ldm%fs%c", minutes, seconds - minutes * 60, i % 2 ? '\n' : ' ') < 0) return 1;
     }
     return 0;
 }
-struct resource { char option; int resource; unsigned unit; };
+struct resource { char option; int resource; unsigned unit; const char *description; };
 static const struct resource resources[] = {
-    {'c', RLIMIT_CORE, 512}, {'d', RLIMIT_DATA, 1024}, {'f', RLIMIT_FSIZE, 512},
-    {'n', RLIMIT_NOFILE, 1}, {'s', RLIMIT_STACK, 1024}, {'v', RLIMIT_AS, 1024}, {'t', RLIMIT_CPU, 1}
+    {'c', RLIMIT_CORE, 512, "core size (512-byte blocks)"},
+    {'d', RLIMIT_DATA, 1024, "data size (1024-byte blocks)"},
+    {'f', RLIMIT_FSIZE, 512, "file size (512-byte blocks)"},
+    {'n', RLIMIT_NOFILE, 1, "open descriptors (count)"},
+    {'s', RLIMIT_STACK, 1024, "stack size (1024-byte blocks)"},
+    {'v', RLIMIT_AS, 1024, "address space (1024-byte blocks)"},
+    {'t', RLIMIT_CPU, 1, "CPU time (seconds)"}
 };
 static int ulimit_builtin(size_t argc, char *const argv[])
 {
@@ -328,7 +333,7 @@ static int ulimit_builtin(size_t argc, char *const argv[])
             if (setrlimit(r->resource, &limit)) return problem("ulimit", "cannot set resource limit");
         } else {
             value = hard ? limit.rlim_max : limit.rlim_cur;
-            if (all && dprintf(1, "-%c ", r->option) < 0) return 1;
+            if (all && dprintf(1, "-%c %s: ", r->option, r->description) < 0) return 1;
             if ((value == RLIM_INFINITY ? dprintf(1, "unlimited\n") :
                 dprintf(1, "%ju\n", (uintmax_t)value / r->unit)) < 0) return 1;
         }

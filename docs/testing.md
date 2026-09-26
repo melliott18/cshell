@@ -938,3 +938,15 @@ that external executable. Its signal-number listing and TERM delivery are
 tested separately from the builtin. Debian procps 4.0.2 fails the separate
 `/bin/kill -l 143` audit probe; [CSH-052](tickets/CSH-052-host-utility-evidence.md)
 owns that host gap. It is not counted as a passing status-mapping assertion.
+
+## Shell state and builtin clause evidence
+
+`make test-state-builtins` runs CSH-048's 144 exact cross-mode cases plus 36
+predicate observations for times, limits, listing order and hash invariants.
+The exact cases also run in the default runtime suite; predicate observations
+are a prerequisite of `make test`. See the [clause map](state-builtin-evidence.md)
+for reused tests, source conditions, policies, native/Docker identities and
+remaining evidence gaps. Resource limits are changed only in disposable
+processes. The helper reports host `getrlimit` state and burns bounded CPU for
+child accounting; it does not invoke a reference shell. `times` predicates
+check format and monotonicity rather than machine-dependent exact CPU totals.

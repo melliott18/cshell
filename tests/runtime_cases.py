@@ -17,13 +17,14 @@ from evaluation_cases import add_evaluation_cases
 from option_cases import add_option_cases, invocation_cases
 from trap_cases import add_trap_cases
 from syntax_cases import add_syntax_cases
+from state_builtin_cases import add_state_builtin_cases
 
 
 def cases(helper):
     result = []
 
     def cross(name, script, status=0, stdout="", stderr="", *, setup=None,
-              files=None):
+              files=None, env=None):
         for mode, source in (("string", "-c"), ("file", "script"), ("stdin", "stdin")):
             contents = dict(setup or {})
             args, stdin = [], ""
@@ -39,8 +40,9 @@ def cases(helper):
             if files:
                 expect["files"] = files
             result.append({"name": f"{name} ({mode})", "args": args, "stdin": stdin,
-                           "setup": contents, "expect": expect})
+                           "setup": contents, "expect": expect, "env": env or {}})
 
+    add_state_builtin_cases(cross, helper)
     add_syntax_cases(cross, helper)
     add_option_cases(cross, helper)
     result.extend(invocation_cases())
@@ -332,6 +334,9 @@ def main():
     if args.output.name == "control-flow.json":
         suite["name"] = "cshell control flow"
         suite["cases"] = [case for case in suite["cases"] if case["name"].startswith("control: ")]
+    if args.output.name == "state-builtins.json":
+        suite["name"] = "cshell state and builtin evidence"
+        suite["cases"] = [case for case in suite["cases"] if case["name"].startswith("state-builtin: ")]
     if args.output.name == "evaluation.json":
         suite["name"] = "cshell evaluation builtins"
         suite["cases"] = [case for case in suite["cases"] if case["name"].startswith("evaluation: ")]
