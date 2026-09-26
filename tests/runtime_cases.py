@@ -17,6 +17,7 @@ from evaluation_cases import add_evaluation_cases
 from option_cases import add_option_cases, invocation_cases
 from trap_cases import add_trap_cases
 from syntax_cases import add_syntax_cases
+from execution_cases import add_execution_cases, add_execution_errors
 
 
 def cases(helper):
@@ -42,6 +43,8 @@ def cases(helper):
                            "setup": contents, "expect": expect})
 
     add_syntax_cases(cross, helper)
+    add_execution_cases(cross, helper)
+    add_execution_errors(cross, result)
     add_option_cases(cross, helper)
     result.extend(invocation_cases())
     add_cases(cross, helper)
@@ -341,6 +344,9 @@ def main():
     if args.output.name == "syntax.json":
         suite["name"] = "cshell invocation and syntax evidence"
         suite["cases"] = [case for case in suite["cases"] if case["name"].startswith("syntax: ")]
+    if args.output.name == "execution.json":
+        suite["name"] = "cshell execution evidence"
+        suite["cases"] = [case for case in suite["cases"] if case["name"].startswith("execution: ")]
     args.output.write_text(json.dumps(suite, indent=2) + "\n")
 
 
