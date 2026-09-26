@@ -1018,3 +1018,19 @@ that option places halt-on-error settings in each actual child environment,
 and disables LeakSanitizer on Linux. It is ASan/UBSan evidence, not Linux leak
 scanning evidence. The observer helper is deliberately unsanitized so startup
 does not change the descriptors or resource state it measures.
+
+## Qualified host utilities (CSH-056)
+
+`make test-host-utilities` retains stock-host observations.
+`make test-host-profile` builds the opt-in [host profile](../tools/host-profile/README.md),
+runs the same assertions with `--strict-gaps`, and adds residual condition cases.
+It requires ed/BusyBox on Debian/Ubuntu and Homebrew coreutils on macOS.
+The [condition map](host-contract-profile.md) lists exact assertions and
+capability limitations, including optional stat-only block-device witnesses.
+
+`CSH_TEST_PATH` explicitly replaces the otherwise isolated runner PATH. Use
+`CSH_TEST_PATH="$PWD/build/host-profile/bin:$(getconf PATH)" make test-runtime test-pty`
+after profile changes. Individual fixture environment overrides still take
+precedence. The production shell receives no special profile logic.
+The runner's `--path` selects and inventories the same PATH used in its child
+shells; `--echo-policy` must match a documented Apple/GNU selection.

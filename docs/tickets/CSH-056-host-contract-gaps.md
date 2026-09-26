@@ -1,11 +1,11 @@
 # CSH-056: Resolve residual host utility contracts
 
-- Status: ready
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-039
-- Branch: Assigned when work starts
+- Branch: test/CSH-056-host-contracts
 - Issue: [#97](https://github.com/melliott18/cshell/issues/97)
 
 ## Goal
