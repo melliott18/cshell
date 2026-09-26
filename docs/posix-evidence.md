@@ -188,11 +188,13 @@ checks establish their specific safety/build observations, not language results.
 
 Case ID: `expansion/parameter-default-null`; owner:
 [CSH-024](tickets/CSH-024-value-expansions.md), with harness integration in CSH-017.
-This is a documented reference-only case. Its future executable fixture is
-pending; cshell's [EXP-003](posix-matrix.md#exp-003) remains missing. The prototype
-was not run on this script. The comparison also exercises quoting, assignment,
-and [U-035 `printf`](posix-utilities.md#u-035); it verifies none of those cshell
-requirements.
+This historical example runs only reference shells; the prototype was not run
+on this script. Later cshell value-expansion and [runtime substitution cases](../tests/substitution_cases.py)
+provide selected [EXP-003](posix-matrix.md#exp-003) evidence. The
+[independent runtime sample](audit-review.md) reproduces those assertions, while
+CSH-047 owns the complete parameter-expansion evidence gap. The comparison below
+also exercises quoting, assignment and [host printf](posix-utilities.md#u-035);
+it does not itself verify any cshell requirement.
 
 Literal script (including the final newline):
 
@@ -305,6 +307,7 @@ with tempfile.TemporaryDirectory(prefix="csh-036-differential-") as directory:
 ```
 
 This small known-input example has a timeout but is not a general hostile-input
-runner. CSH-017 must add output/resource bounds and its own cleanup self-checks
-before expanding it into a differential suite. Adding this reference observation
-does not introduce a passing cshell expansion test.
+runner. The implemented CSH-017 [shared runner](../tests/smoke.py) supplies
+output/resource bounds and cleanup self-checks for runtime fixtures; any broader
+differential suite should use those guarantees. This reference observation stays
+separate from later passing cshell expansion tests.

@@ -41,8 +41,15 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-040](CSH-040-macos-harness-cleanup.md) | Make repeated macOS harness cleanup reliable | [CSH-017](CSH-017-test-harness-and-ci.md) | [#48](https://github.com/melliott18/cshell/issues/48) |
 | [CSH-042](CSH-042-locale-semantics.md) | Complete locale-sensitive shell behavior found by the portability audit | [CSH-037](CSH-037-portability-audit.md) | [#73](https://github.com/melliott18/cshell/issues/73) |
 | [CSH-043](CSH-043-redirection-offset.md) | Define and verify the redirection offset maximum | [CSH-037](CSH-037-portability-audit.md) | [#74](https://github.com/melliott18/cshell/issues/74) |
-| [CSH-044](CSH-044-intermittent-bg-prompt.md) | Diagnose intermittent background-resume prompt stall | [CSH-037](CSH-037-portability-audit.md) | [#76](https://github.com/melliott18/cshell/issues/76) |
-| [CSH-045](CSH-045-jobs-fixture-timeout.md) | Diagnose intermittent macOS sanitizer jobs fixture timeout | [CSH-037](CSH-037-portability-audit.md) | [#77](https://github.com/melliott18/cshell/issues/77) |
+| [CSH-044](CSH-044-intermittent-bg-prompt.md) | Diagnose intermittent background-resume prompt stall | [CSH-034](CSH-034-job-control.md) | [#76](https://github.com/melliott18/cshell/issues/76) |
+| [CSH-045](CSH-045-jobs-fixture-timeout.md) | Diagnose intermittent macOS sanitizer jobs fixture timeout | [CSH-034](CSH-034-job-control.md) | [#77](https://github.com/melliott18/cshell/issues/77) |
+| [CSH-046](CSH-046-invocation-syntax-evidence.md) | Close invocation, lexical, grammar and alias evidence gaps | [CSH-036](CSH-036-conformance-matrix.md), [CSH-039](CSH-039-legacy-retirement.md) | [#78](https://github.com/melliott18/cshell/issues/78) |
+| [CSH-047](CSH-047-expansion-evidence.md) | Close expansion, parameter and locale evidence gaps | [CSH-036](CSH-036-conformance-matrix.md), [CSH-039](CSH-039-legacy-retirement.md) | [#79](https://github.com/melliott18/cshell/issues/79) |
+| [CSH-048](CSH-048-state-builtin-evidence.md) | Close shell state and builtin integration evidence gaps | [CSH-036](CSH-036-conformance-matrix.md), [CSH-039](CSH-039-legacy-retirement.md) | [#80](https://github.com/melliott18/cshell/issues/80) |
+| [CSH-049](CSH-049-execution-evidence.md) | Close execution, redirection and control-flow evidence gaps | [CSH-036](CSH-036-conformance-matrix.md), [CSH-039](CSH-039-legacy-retirement.md) | [#81](https://github.com/melliott18/cshell/issues/81) |
+| [CSH-050](CSH-050-jobs-signals-evidence.md) | Close jobs, signal and trap evidence gaps | [CSH-036](CSH-036-conformance-matrix.md), [CSH-039](CSH-039-legacy-retirement.md) | [#82](https://github.com/melliott18/cshell/issues/82) |
+| [CSH-051](CSH-051-shell-option-evidence.md) | Close base shell-option evidence gaps | [CSH-036](CSH-036-conformance-matrix.md), [CSH-039](CSH-039-legacy-retirement.md) | [#83](https://github.com/melliott18/cshell/issues/83) |
+| [CSH-052](CSH-052-host-utility-evidence.md) | Close host utility and intrinsic lookup evidence gaps | [CSH-036](CSH-036-conformance-matrix.md), [CSH-039](CSH-039-legacy-retirement.md) | [#84](https://github.com/melliott18/cshell/issues/84) |
 
 ## Child implementation tickets
 

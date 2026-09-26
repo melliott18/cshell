@@ -1,0 +1,80 @@
+# CSH-052: Close host utility and intrinsic lookup evidence gaps
+
+- Status: ready
+- Type: test
+- Kind: implementation
+- Parent: None
+- Depends on: CSH-036, CSH-039
+- Branch: Assigned when work starts
+- Issue: [#84](https://github.com/melliott18/cshell/issues/84)
+
+## Goal
+
+Name the exact required host integration scope, inventory paths/version identities and unavailable tools per supported image, map lookup/argv/environment/status assertions for printf/echo/test/[/true/false and other scoped helpers, and verify the documented intrinsic allocation and utility syntax exceptions. Distinguish external utility responsibility from shell dispatch; retain missing tools as explicit image limitations.
+
+## Explicit current limitation
+
+Internal/host allocation is documented but U-035 through U-041 still have only planned fixture/allocation entries. Availability of a small host utility sample is not utility semantic or integration coverage, the Docker image lacks ed, and the actual intrinsic-set/no-extra-intrinsics choice is not connected to case-level results.
+
+This is an open evidence limitation found by the
+[CSH-037 independent review](../audit-review.md), not a declaration that every
+listed behavior is absent or defective. Existing passing witnesses retain
+their original scope. This ticket must not be closed by relabeling a broad
+requirement family from a small sample.
+
+## Scope
+
+| Requirement | Obligation to review and map to exact assertions |
+| --- | --- |
+| [U-034](../posix-utilities.md#u-034) | Other standard utilities (for example cat, env, find, ls, stty, ed): retain exec accessibility and declare fixture dependencies. CSH-029 finalizes allocation; CSH-037 checks platform packages/executables. No claim to reimplement their full contracts. |
+| [U-035](../posix-utilities.md#u-035) | `printf`: formatted output, format reuse/missing operands, escapes, numeric conversions and errors. Record whether a fixture invokes host printf or a builtin; selected host behavior is fixture infrastructure, not shell expansion evidence. |
+| [U-036](../posix-utilities.md#u-036) | `echo`: ordinary arguments/newline and literal `--`; backslashes and leading combinations of e/E/n after `-` require a documented base choice or XSI rules. CSH-029 allocates implementation; avoid using ambiguous echo as an oracle. |
+| [U-037](../posix-utilities.md#u-037) | `test` and `[`: expression primaries/argument-count evaluation, closing `]`, status 0/1/>1 and argument boundaries; distinguish unspecified expression forms. |
+| [U-038](../posix-utilities.md#u-038) | `true`: no output and successful status; identify resolved executable/builtin when used in control-flow tests. |
+| [U-039](../posix-utilities.md#u-039) | `false`: no output and non-zero status; do not assume a particular non-zero value from the standard. |
+| [U-040](../posix-utilities.md#u-040) | Utility defaults: invalid-option/missing-argument diagnostics and status, operand order, eight-bit-transparent arguments/input, unused stdin, seekable input offsets, documented resource limits and environment effects. Apply special-builtin, echo and test exceptions instead of a universal `--` rule. |
+| [U-041](../posix-utilities.md#u-041) | Verify intrinsic commands bypass PATH lookup and remain distinct from special builtins/functions. CSH-029 documents the exact intrinsic set; resolve any additional-name proposal as an explicit implementation choice and extension, with lookup fixtures. |
+
+Relevant documented choices: U-036 (echo implementation-defined cases), U-041 (no additional intrinsics). Review the
+[choice register](../posix-matrix.md#open-implementation-choices) and the
+source links in each row; separate required, conditional, unspecified and
+implementation-defined portions before selecting an oracle.
+
+## Existing witnesses to reconcile
+
+- [tests/evaluation_cases.py](../../tests/evaluation_cases.py)
+- [src/execute.c](../../src/execute.c)
+- [src/utility.c](../../src/utility.c)
+- [docs/posix-utilities.md#csh-029-allocation-decision](../posix-utilities.md#csh-029-allocation-decision)
+
+These are starting points for inspection, not claims that the complete rows
+already pass. Reuse exact case names and assertions where they are sufficient;
+add or split fixtures only for a concrete coverage gap.
+
+## Acceptance criteria
+
+- [ ] Every requirement above has a clause/condition map naming the reviewed
+  normative source, selected policies, implementation, exact fixture assertions
+  and any narrower unresolved defect or limitation.
+- [ ] Remaining applicable runtime cases pass on supported native macOS and
+  Linux/Docker configurations; required PTY/capability or locale skips name
+  the reason, scope and follow-up owner.
+- [ ] Results record the source/suite revision, binary identity, compiler,
+  flags, OS/libc/architecture and exact status/output/state assertions.
+- [ ] Matrix rows and reverse ownership links reflect only the verified scope;
+  broad rows are split where necessary and the CSH-012 compliance gate remains
+  closed while any applicable requirements are unmet.
+
+## Validation
+
+Run the applicable focused suites above and the integration paths documented in
+[Testing](../testing.md), including `make test test-pty test-harness`, Docker
+and ASan/UBSan checks where the changed paths require them. Record exact case
+names and results following the [evidence rules](../posix-evidence.md).
+Reference-shell comparisons are separate observations, never normative oracles.
+
+## Implementation notes/evidence
+
+Allocated by the CSH-037 follow-up audit at baseline `58ca5c3`. The explicit
+limitation and complete row list above replace reliance on already-completed
+implementation tickets as owners of remaining verification work.

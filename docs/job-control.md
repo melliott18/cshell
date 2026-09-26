@@ -110,9 +110,17 @@ job and trap tests do not claim full POSIX shell conformance.
 interruption, allocation/pipe/fork/wait failures, and builtin behavior in all
 three input modes. API/fault fixtures use the existing bounded process-group
 runner, so failures/timeouts cannot leave their descendants running.
+Each API phase/pipeline has a five-second progress watchdog and a 60-second
+outer bound; a deliberate stall checks diagnostics and descendant cleanup.
 `make test-jobs-pty` uses CSH-033's bounded terminal runner
 for Ctrl-C, Ctrl-Z, bg/fg, grouped pipelines, background reads, job selectors,
 monitor toggles, descriptor reservations, and terminal settings. Injected
 process-group, handoff, mode-restoration, and wait failures verify terminal
 ownership and absence of live direct children/descriptors. These targets join
 `make test` and `make test-pty`, respectively, including Docker and sanitizer CI.
+The PTY suite repeats 32 full stop/bg/fg/Ctrl-C cycles. Prompt writes use the
+shared interrupted/partial-write retry helper; `make test-prompt` independently
+injects both faults into primary and continuation prompts. The
+[CSH-037 follow-up record](tickets/CSH-037-portability-audit.md) links the
+CSH-044/045 regressions and platform results. Complete jobs/signal evidence
+remains open under [CSH-050](tickets/CSH-050-jobs-signals-evidence.md).

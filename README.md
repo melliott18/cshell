@@ -65,6 +65,7 @@ make test-traps    # Signals ignored before shell startup
 make test-jobs-pty # Process groups, terminal signals, stop/resume, and restoration
 make test-runtime  # Cross-mode invocation/status behavior
 make test-portability # Locale, large input, sparse files, bounded generated cases
+make test-prompt   # Interrupted and partial primary/continuation prompt writes
 make test-runtime-pty # Shell prompts, EOF, and exit errors on a terminal
 make test-pty      # Shell terminal behavior, prompts, EOF, and exit errors
 make test-harness  # Test the runner's failure detection and cleanup

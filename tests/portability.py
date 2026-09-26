@@ -60,15 +60,16 @@ def cases(selected):
             yield from case(f"UTF-8 pathname {pattern}",
                             f"printf '%s\\n' {pattern}\n", stdout="café\n",
                             env={"LC_ALL": selected}, setup={"café": ""})
-        # LC_ALL takes precedence at invocation; a later shell assignment to
-        # LC_CTYPE does not change lexical interpretation in this invocation.
+        # LC_ALL takes precedence over LC_CTYPE, including after assignment.
+        # Pathname matching is not evidence for the separate lexical-startup
+        # rule; that interpretation and locale-update coverage remain CSH-042.
         yield from case("LC_ALL overrides LC_CTYPE", "printf '%s\\n' caf?\n",
                         stdout="caf?\n", env={"LC_ALL": "C", "LC_CTYPE": selected},
                         setup={"café": ""})
         yield from case("LC_CTYPE when LC_ALL is empty", "printf '%s\\n' caf?\n",
                         stdout="café\n", env={"LC_ALL": "", "LC_CTYPE": selected},
                         setup={"café": ""})
-        yield from case("startup LC_CTYPE survives assignment",
+        yield from case("LC_ALL overrides assigned LC_CTYPE",
                         "LC_CTYPE=C; printf '%s\\n' caf?\n", stdout="café\n",
                         env={"LC_ALL": selected}, setup={"café": ""})
         yield from case("UTF-8 IFS character",
