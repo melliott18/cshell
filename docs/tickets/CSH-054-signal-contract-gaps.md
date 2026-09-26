@@ -1,11 +1,11 @@
 # CSH-054: Complete residual jobs and signal contracts
 
-- Status: ready
+- Status: review
 - Type: fix
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-034, CSH-035
-- Branch: Assigned when work starts
+- Branch: fix/CSH-054-signal-contracts
 - Issue: [#90](https://github.com/melliott18/cshell/issues/90)
 
 ## Goal
@@ -80,14 +80,14 @@ following are unverified; do not infer that they are all implementation defects:
 
 ## Acceptance criteria
 
-- [ ] Fix the TERM and lowercase kill defects with bounded failing-before and
+- [x] Fix the TERM and lowercase kill defects with bounded failing-before and
   passing-after native and Docker assertions.
-- [ ] Resolve each clause above with exact cases or further explicitly owned
+- [x] Resolve each clause above with exact cases or further explicitly owned
   tickets; retain UP/XSI and unspecified portions separately.
-- [ ] Diagnose the recorded cleanup/setup/signal harness failures under load,
+- [x] Diagnose the recorded cleanup/setup/signal harness failures under load,
   retaining bounded cleanup and exact terminal assertions.
-- [ ] Document the D-007 unmonitored stop policy and its process/terminal tests.
-- [ ] Update forward and reverse requirement links and platform evidence without
+- [x] Document the D-007 unmonitored stop policy and its process/terminal tests.
+- [x] Update forward and reverse requirement links and platform evidence without
   promoting whole families based on partial tests.
 
 ## Validation
@@ -95,3 +95,30 @@ following are unverified; do not infer that they are all implementation defects:
 Run `make test test-pty test-harness`, focused jobs/trap targets, Docker and
 ASan/UBSan. Use the [evidence identity contract](../posix-evidence.md).
 Capability skips must retain an owner and cannot stand in for passing behavior.
+
+## Implementation and clause disposition
+
+The implementation is on `fix/CSH-054-signal-contracts`; source/test commit
+`943e987` fixes TERM, case-independent signal names (including host POLL), and
+omitted exit status when ending a trap action. Interactive QUIT/TERM and the
+D-007 unmonitored TSTP/TTIN/TTOU policy use SIG_IGN. Blocked fork preparation
+preserves pending child signals and restores parent dispositions on success
+and failure. The existing fault regression is extended to TERM/QUIT.
+
+The [exact assertion/disposition map](../jobs-signals-evidence.md#csh-054)
+resolves every item in this ticket's inventory through implemented assertions
+or the explicitly scoped [CSH-057](CSH-057-job-lifecycle-boundaries.md) and
+[CSH-058](CSH-058-signal-edge-evidence.md) follow-ups. Those tickets own the
+remaining jobs lifecycle and signal edge conditions; this ticket does not
+promote any complete requirement family to verified. UP/XSI and unspecified
+portions remain separate. The native signal API and monitored/unmonitored PTY
+cases establish the documented [D-007 policy](../traps-and-signals.md#interactive-dispositions-and-d-007).
+
+## Validation record
+
+[Retained logs, exact identities, commands, bounds and observations](../evidence/csh-054/README.md)
+include failing-before native/Linux probes, concurrent native/Docker/ASan runs,
+the controlled historical cleanup-budget regression, and all final results.
+The initial sanitizer run's oversized enumeration timeouts remain failures;
+final batching retains each value and timeout. CSH-057/058 do not waive those
+historical observations or imply full conformance.

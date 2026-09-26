@@ -1,0 +1,38 @@
+{
+  "source_revision": "943e987",
+  "command_statuses": {
+    "baseline probes": "Expected pre-fix failures, exact observations retained",
+    "baseline cleanup regression": "Expected pre-fix unit failure",
+    "native-full": 0,
+    "docker-full": 0,
+    "sanitizer-full": 2,
+    "native-final": 0,
+    "docker-final": 0,
+    "sanitizer-final": 0
+  },
+  "sha256": {
+    "README.md": "f5ff3db852c32acf0b2213ce7a109a123a95f1c05be71ecc2457a1619492fde2",
+    "baseline-build.log.gz": "e1477a65ac72200d120c357007846321f2eb1f3894de2bf7c1b29bd2a60839eb",
+    "baseline-cleanup-unit.log.gz": "439300642f25529f1dc3d6b0612d5b0f1360f54abb5a3ad36ade6d7491f07fc3",
+    "baseline-docker-build.log.gz": "5aa24315a1af7eb0fc9cd1174c7ae7f6c57dfb604ea1f28bf18c9d809ea5df8b",
+    "baseline-docker.log.gz": "d1971e50bb77c5eb472439c111ffc3aee6969e6e645df1ed0c2ab21435e85b1c",
+    "baseline-native.log.gz": "3b8e6aad8b7943c8af4dce0b72bd3bea3a1a575b564b7eddc4e5d75bdbb9eb01",
+    "docker-build.log.gz": "8434dd415b939800b0410fcbebcf237a178e73006968ac606243718f43f2ed26",
+    "docker-final-build.log.gz": "c035b0a8dbd4c134f8ee21c626249903a80ff251e14574cbd6314bc2305ed398",
+    "docker-final.log.gz": "b9daa68afb233fa463993c6c68fde6dd166bfef43addf2571cac9df78325e1e7",
+    "docker-full.log.gz": "a5ccc2fbb8f66cadd3d3da35d93de07ce06ad553064db9c30dc48649548172df",
+    "docker-identity.json": "f617919bc6446fc573334813886bd86e336835e9c78c9bc0b89a8123e05d1cb5",
+    "docker-images.json": "ea52c8df20eae361d45650bb0bbcedf441995b133099dd7da933e6c25d5da31a",
+    "focused.log.gz": "b4571961d932050227749241c7898688a9ae58f983e1f8700674cd4cd6779e63",
+    "focused2.log.gz": "cb010fbfc3dcdc1a9384077700a74e42964b63780709a421ee422b204406d7ee",
+    "focused3.log.gz": "a70795e81f889eaacabdb8eed47906385dd41a7bb8f8d3a833d593df33216259",
+    "identity.py": "224d7cc837a7aa33504f6aa384421f3ea2bb753f305e5b66d90d31d7fda310ad",
+    "native-final.log.gz": "bd47f0957289d0a1a2e4ee095fc60833385e23e248035743490e6edb33bbe7d4",
+    "native-full.log.gz": "22d3f540de5c2d93c39672834832eff23cfcff1692ae44dac8b82217b8799132",
+    "native-identity.json": "78b6230161c1784d84667ff3e49ca23a0877a6caa191ebc4c3d31d507207bbb3",
+    "sanitizer-final.log.gz": "abbaef448bd0e1427f6fec305e0e722e7de231dab5d553e6bdadb6e59efdd904",
+    "sanitizer-full.log.gz": "33588fa8d5e968c807abd1ba2c456eaa209c3f23392f8e5a56a6de0597a4bf86",
+    "sanitizer-identity.json": "abeab9855fb255ae8cd453be66832ff3ff29aab5347231c6ec3470fa3a9584fc",
+    "sanitizer-initial-identity.json": "66d2a73478b933bd7869889c391e785b30eff328aebd644923c21b634f476c1d"
+  }
+}
