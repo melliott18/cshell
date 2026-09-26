@@ -23,7 +23,12 @@ parameter/case classes, whole-character `read` splitting, lexical UTF-8 stabilit
 host-qualified collation and libc diagnostics, and explicit invalid-name policy.
 See [locale behavior](locales.md) for exact oracle boundaries and capability
 skips. Docker/native Linux CI install en_US/fr_FR UTF-8 locales; Docker retains
-French libc catalogs. Broader encoding-sensitive lexing remains CSH-053.
+French libc catalogs. CSH-053 adds `tests/multibyte_cases.py` and `build/tests/character_fixture`,
+checking raw source/output bytes and split lexer feeds under startup/current
+locale changes. Linux CI and Docker provision GB18030; macOS also exercises
+installed Shift-JIS, Big5 and GBK. Unavailable encodings and unsupported raw
+filenames are explicit capability skips. See the
+[raw-byte witness contract](locales.md#raw-byte-lexical-witnesses-csh-053).
 
 ## Redirection offset probes
 
@@ -1032,3 +1037,12 @@ only jobs.c's sigsuspend call interposed; it checks the blocked mask, queues
 selected signals, and invokes the real sigsuspend. It is test-only scheduling
 evidence, not a production environment switch. [Exact assertions and remaining
 owners](jobs-signals-evidence.md#csh-054) distinguish the two binaries.
+
+## Residual execution contracts
+
+`make test-execution-contracts` runs CSH-055's public-runtime inherited descriptor
+and injected command-read error witnesses. It is included in `make test` and
+`make test-execution-evidence`. The fault binary compiles only input.c with a
+read wrapper; all other objects, including main, are the ordinary runtime.
+The [contract map](execution-contracts.md) identifies exact assertions, source
+alternatives, bounds, environments, and sanitizer handling for closed descriptors.

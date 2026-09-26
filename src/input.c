@@ -403,3 +403,8 @@ void csh_input_reserve_end(struct csh_input_reservation *reservation)
     reservations = reservation->previous;
     reservation->active = 0;
 }
+
+int csh_input_failed(const struct csh_input *input)
+{
+    return input != NULL && input->failure.status != 0;
+}

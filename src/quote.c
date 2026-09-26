@@ -1,3 +1,4 @@
+#include "cshell/character.h"
 #include "cshell/quote.h"
 
 #include <stdint.h>
@@ -56,14 +57,31 @@ enum csh_quote_result csh_quote_decode(const unsigned char *bytes, size_t length
         return CSH_QUOTE_NOMEM;
 
     while (cursor < length) {
-        unsigned char byte = bytes[cursor++];
+        size_t width = csh_character_length(bytes + cursor, length - cursor, 1, 1);
+        unsigned char byte;
         int check_control = 0;
+        if (width > 1) {
+            memcpy(result + used, bytes + cursor, width);
+            used += width;
+            cursor += width;
+            continue;
+        }
+        byte = bytes[cursor++];
 
         if (byte == '\\' && cursor < length) {
-            unsigned char escaped = bytes[cursor++];
+            unsigned char escaped;
             unsigned int value;
             size_t digits;
             int digit;
+            width = csh_character_length(bytes + cursor, length - cursor, 1, 1);
+            if (width > 1) {
+                result[used++] = '\\';
+                memcpy(result + used, bytes + cursor, width);
+                used += width;
+                cursor += width;
+                continue;
+            }
+            escaped = bytes[cursor++];
 
             switch (escaped) {
             case '"': byte = '"'; break;

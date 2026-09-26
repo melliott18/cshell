@@ -25,6 +25,7 @@ enum csh_fragment_kind {
 
 /* Fragments are a flat, preorder tree. parent == CSH_FRAGMENT_ROOT means a
  * direct child of the word. begin/end index token.raw, including delimiters.
+ * ESCAPE spans a backslash and one complete character, possibly >2 bytes.
  * Text inside a command substitution is retained by its COMMAND fragment;
  * its grammar is supplied by the parser, not duplicated in this tree. */
 #define CSH_FRAGMENT_ROOT ((size_t)-1)

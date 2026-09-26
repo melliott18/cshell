@@ -125,6 +125,7 @@ src/main.c       Invocation, complete-command loop, prompts, and final status
 src/input.c      Replacement physical-line input sources
 src/invocation.c Replacement invocation and operand mapping
 src/lexer.c      Replacement tokens, word fragments, and parser handoffs
+src/character.c  Startup lexical and current-locale character decoding
 src/parser.c     Replacement complete-command parser and here-documents
 src/ast.c        Owned syntax trees and cleanup
 src/alias.c      Alias storage and alias/unalias handlers
