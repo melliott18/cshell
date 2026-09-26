@@ -23,7 +23,7 @@ def add_trap_cases(cross, helper):
           stdout="caught:0\nafter:0\n")
     cross("traps: listing and reset",
           "trap 'echo hello' INT\ntrap -p INT\ntrap - INT\ntrap -p INT\n",
-          stdout="trap -- 'echo hello' INT\n")
+          stdout="trap -- 'echo hello' INT\ntrap -- '-' INT\n")
     cross("traps: listing can be reinput",
           "trap \"echo 'quoted'\" USR1\nsaved=$(trap -p USR1)\n"
           "trap - USR1\neval \"$saved\"\nkill -s USR1 $$\n",
@@ -99,3 +99,41 @@ def add_trap_cases(cross, helper):
           "/bin/sh -c 'sleep 0.1; kill -USR1 \"$1\"; sleep 0.2' sh \"$$\" &\n"
           "wait\nprintf \"wait:%s\\n\" \"$?\"\n",
           stdout=f"trap:{128 + signal.SIGUSR1}\nwait:{128 + signal.SIGUSR1}\n")
+
+    # CSH-050 / U-015: Issue 8 -p includes defaults, unlike plain trap.
+    cross("traps: selected defaults can be restored",
+          "saved=$(trap -p USR1 EXIT)\ntrap 'echo wrong' USR1 EXIT\n"
+          "eval \"$saved\"\ntrap -p USR1 EXIT\n",
+          stdout="trap -- '-' USR1\ntrap -- '-' EXIT\n")
+    cross("traps: all defaults can be restored",
+          "trap - USR1 USR2 EXIT\nsaved=$(trap -p)\n"
+          "trap 'echo wrong' USR1 USR2 EXIT\neval \"$saved\"\n"
+          "trap -p USR1 USR2 EXIT\n",
+          stdout="trap -- '-' USR1\ntrap -- '-' USR2\ntrap -- '-' EXIT\n")
+    cross("traps: plain listing omits defaults",
+          "trap - USR1 EXIT\ntrap 'echo action' USR2\ntrap\n",
+          stdout="trap -- 'echo action' USR2\n")
+    cross("traps: invalid condition returns nonzero and continues",
+          "trap ':' CSH_INVALID\nprintf 'status:%s\\n' \"$?\"\necho alive\n",
+          stdout="status:1\nalive\n", stderr="cshell: trap: invalid condition: CSH_INVALID\n")
+    for name in ("INT", "QUIT"):
+        cross(f"traps: asynchronous {name} disposition is ignored",
+              f"trap ':' {name}\n{helper} disposition {name} &\nwait\n",
+              stdout="ignored\n")
+    cross("traps: ignored action retained in subshell and substitution",
+          "trap '' USR1\n(trap -p USR1)\nvalue=$(trap -p USR1; :)\necho \"$value\"\n",
+          stdout="trap -- '' USR1\ntrap -- '' USR1\n")
+    cross("traps: dot shares actions",
+          ". ./actions\nkill -s USR1 $$\n", stdout="dot\n",
+          setup={"actions": "trap 'echo dot' USR1\n"})
+    cross("traps: exec resets caught disposition",
+          f"trap 'echo wrong' USR1 EXIT\nexec {helper} disposition USR1\n",
+          stdout="default\n")
+    cross("traps: exec retains ignored disposition",
+          f"trap '' USR1\nexec {helper} disposition USR1\n", stdout="ignored\n")
+    cross("traps: EXIT retains environment and omitted status",
+          "trap 'printf \"%s:%s\\n\" \"$value\" \"$?\"' EXIT\nvalue=final\nfalse\nexit\n",
+          stdout="final:1\n", status=1)
+    cross("traps: zero operand resets EXIT",
+          "trap 'echo wrong' EXIT\ntrap 0\ntrap -p EXIT\n",
+          stdout="trap -- '-' EXIT\n")

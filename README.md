@@ -32,7 +32,8 @@ no prompt or banner. Background jobs and interactive
 loops, case selection, and explicit control transfer. [Evaluation, lookup, aliases, and stateful utilities](docs/evaluation-builtins.md)
 are supported. [Shell options](docs/shell-options.md) include errexit, pipefail, nounset,
 noclobber, noglob, tracing and noexec. [Traps and signal handling](docs/traps-and-signals.md)
-cover the selected base profile. Unsupported syntax is diagnosed before that
+provide the documented subset; [clause evidence](docs/jobs-signals-evidence.md)
+records remaining gaps. Unsupported syntax is diagnosed before that
 construct executes.
 See [Runtime behavior](docs/candidate-runtime.md) for the exact subset and statuses.
 

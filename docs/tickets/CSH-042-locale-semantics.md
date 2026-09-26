@@ -1,6 +1,6 @@
 # CSH-042: Complete locale-sensitive shell behavior
 
-- Status: review
+- Status: done
 - Type: fix
 - Kind: implementation
 - Parent: None
@@ -9,6 +9,9 @@
 - Issue: [#73](https://github.com/melliott18/cshell/issues/73)
 
 ## Goal
+
+Integrated in [PR #87](https://github.com/melliott18/cshell/pull/87).
+Multibyte lexical boundaries remain separately owned by CSH-053 (#86).
 
 Close the locale behavior left open by the CSH-037 startup-locale fix before
 advancing [ENV-004](../posix-matrix.md#env-004) or related pattern rows to verified.

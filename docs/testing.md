@@ -928,3 +928,13 @@ tests/invocation.py ./cshell`. This changes credentials only in test children;
 no setuid executable is installed. The Docker CI job runs this separate root
 probe after the unprivileged suite. Root results do not replace unprivileged
 permission/error testing.
+
+## CSH-050 jobs and signal evidence
+
+The [clause map](jobs-signals-evidence.md) identifies exact runtime, PTY and API
+assertions and residual requirements. `make test-jobs` also invokes `/bin/kill`;
+the Docker image installs Debian `procps` explicitly. Native hosts must supply
+that external executable. Its signal-number listing and TERM delivery are
+tested separately from the builtin. Debian procps 4.0.2 fails the separate
+`/bin/kill -l 143` audit probe; [CSH-052](tickets/CSH-052-host-utility-evidence.md)
+owns that host gap. It is not counted as a passing status-mapping assertion.

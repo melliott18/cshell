@@ -44,6 +44,20 @@ def main():
             time.sleep(0.01)
         print('jobs fixture progress watchdog passed')
     cases = [
+        # CSH-050: EXEC-009/U-032 numeric operands, status order and stdin.
+        ('exit 23 & p=$!; wait "$p"', 23, '', ''),
+        ('exit 23 & p=$!; wait "$p"; wait "$p" 2>/dev/null', 127, '', ''),
+        ('exit 3 & a=$!; exit 7 & b=$!; wait "$b" "$a"', 3, '', ''),
+        ('exit 3 & p=$!; wait 999999999 "$p" 2>/dev/null', 3, '', ''),
+        ('exit 3 & p=$!; wait "$p" 999999999 2>/dev/null', 127, '', ''),
+        ('exit 3 & p=$!; wait; wait "$p" 2>/dev/null', 127, '', ''),
+        ('printf x >input; /bin/cat <input & wait "$!"', 0, 'x', ''),
+        ('/bin/cat & wait "$!"; echo after', 0, 'after\n', ''),
+        ('/bin/sleep 60 & p=$!; echo "$?"; kill "$p"; wait "$p"', 128 + signal.SIGTERM, '0\n', ''),
+        ('/bin/sleep 60 & p=$!; /bin/kill -s TERM "$p"; wait "$p"', 128 + signal.SIGTERM, '', ''),
+        # Host signal-status mapping is a separate failing CSH-052 audit probe
+        # on Debian procps 4.0.2; do not count this number mapping as that pass.
+        ('/bin/kill -l ' + str(signal.SIGTERM), 0, 'TERM\n', ''),
         ('wait', 0, '', ''),
         ('kill -l 143 >&-', 1, '', 'cshell: kill: cannot write output\n'),
         ('set -o >&-', 1, '', 'cshell: set: cannot write output\n'),

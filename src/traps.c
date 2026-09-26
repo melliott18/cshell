@@ -163,12 +163,16 @@ static int quote_action(const char *action)
     return csh_write_bytes(STDOUT_FILENO, "'", 1);
 }
 
-static int list_one(struct csh_traps *traps, int number)
+static int list_one(struct csh_traps *traps, int number, int defaults)
 {
     const char *action = number == 0 ? traps->exit_action : traps->entries[number].action;
     const char *name = number == 0 ? "EXIT" : csh_jobs_signal_name(number);
     char numeric[24];
-    if (action == NULL) return 0;
+    /* Entry ignores are part of the saved shell state even when no trap
+     * command installed them. -p must also restore default conditions. */
+    if (action == NULL && number > 0 && traps->entry_ignored[number]) action = "";
+    if (action == NULL && !defaults) return 0;
+    if (action == NULL) action = "-";
     if (name == NULL) {
         snprintf(numeric, sizeof(numeric), "%d", number);
         name = numeric;
@@ -234,17 +238,27 @@ int csh_traps_builtin(struct csh_traps *traps, size_t argc, char *const argv[])
     if (listing && first < argc && !strcmp(argv[first], "--")) ++first;
     if (listing || first == argc) {
         if (first == argc) {
-            for (i = 0; i < TRAP_LIMIT; ++i)
-                if (list_one(traps, (int)i)) rc = 1;
+            for (i = 0; i < TRAP_LIMIT; ++i) {
+                struct sigaction disposition;
+                /* KILL/STOP may be omitted; never emit unreinputable traps.
+                 * Probe the host so Linux real-time signals are included. */
+                if (i == SIGKILL || i == SIGSTOP ||
+                    (i > 0 && sigaction((int)i, NULL, &disposition) == -1)) continue;
+                if (list_one(traps, (int)i, listing)) rc = 1;
+            }
         } else for (i = first; i < argc; ++i) {
             int number = condition(argv[i]);
             if (number < 0) { diagnostic("invalid condition", argv[i]); rc = 1; }
-            else if (list_one(traps, number)) rc = 1;
+            else if (list_one(traps, number, 1)) rc = 1;
         }
         return rc;
     }
     {
-        const char *action = argv[first++];
+        const char *action = argv[first];
+        /* An unsigned decimal first operand is a condition, not an action.
+         * In particular, `trap 0` resets EXIT in the base profile. */
+        if (*action && strspn(action, "0123456789") == strlen(action)) action = "-";
+        else ++first;
         if (first == argc) return diagnostic("missing condition", NULL);
         for (i = first; i < argc; ++i) {
             int number = condition(argv[i]);
