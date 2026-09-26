@@ -40,3 +40,17 @@ API runners inherit `ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1`
 and native `MallocNanoZone=0`; the runtime harness supplies its controlled
 environment. External descriptor observers are deliberately uninstrumented so
 sanitizer startup does not hide shell descriptor behavior.
+
+`hosted-ubuntu.log.gz` and `hosted-ubuntu-job.json` retain the successful native
+Ubuntu 24.04 job for implementation commit `814cd0a`. Both full normal and full
+ASan/UBSan runs passed. The log includes runner image, Python/setup, commands,
+and individual results; CI does not publish binary hashes. This supplements the
+local identities and does not silently replace any failed local attempt.
+
+`hosted-docker.log.gz` and `hosted-docker-job.json` similarly retain the passing
+full normal/sanitizer Linux Docker job for the same implementation head. Hosted
+results are separate from the local arm64 Docker attempts and their identities.
+
+`docker-final-sanitizer.log.gz` records the completed passing local serial retry.
+Its source digest agrees with the final native normal/sanitizer and Docker normal
+manifests. `artifacts.json` hashes every retained artifact except itself.

@@ -14,7 +14,9 @@ The reviewed source is POSIX.1-2024 Shell Command Language
 [2.9.5](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_09_05),
 and [continue](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_18).
 No reference shell is an oracle. Diagnostics are cshell policy, with host errno
-text derived using `os.strerror`. The public source was checked on 2026-09-26.
+text derived using `os.strerror`. Status 128 is cshell's read-error mapping;
+for dot failures, the portable assertions are nonzero status and the specified
+stop/continue consequences. The public source was checked on 2026-09-26.
 
 `E` below means [execution_cases.py](../tests/execution_cases.py), with the
 `execution: ` prefix in generated fixtures. Cases run in string, file and stdin

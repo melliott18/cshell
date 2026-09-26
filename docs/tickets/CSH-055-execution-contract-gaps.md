@@ -129,7 +129,7 @@ The artifact README gives exact sanitizer flags and environment handling.
 | Initial Docker ASan/UBSan `-j2` | FAIL: new descriptor launcher exceeded its unchanged 5s deadline; existing `options: terminal ignoreeof` and `options: terminal ignoreeof disable` timed out, statuses -9 instead of 7/0. Other 28 runtime PTY cases passed. Make stopped scheduling remaining targets. No sanitizer diagnostic was emitted. |
 | Final native full normal and focused sanitizers | PASS: 3,116 runtime, 319 execution, 51 contracts, all module/API/fault targets; focused ASan/UBSan also passes 210 control and 30 runtime PTY, without sanitizer findings. |
 | Final Docker normal | PASS: 3,116 runtime, 319 execution, 51 contracts, all module/API/fault targets; 15+1+30 PTY and 69 harness tests (10.154s). |
-| Final Docker serial focused sanitizers | In progress; the failed initial run remains recorded above. |
+| Final Docker serial focused sanitizers | PASS: 319 execution, 51 contracts, 61 execution API behavior, 52 pipeline, 60 context, 210 control, 30 runtime PTY, and API/allocation cleanup checks. No sanitizer findings. Both initially timed-out ignoreeof cases passed with unchanged deadlines. |
 
 The failed initial sanitizer descriptor run stopped before later descriptor/read
 checks; it does not count those as passed. Contention is a possible cause of the
@@ -138,8 +138,26 @@ timeouts, not a proven diagnosis. Retried runs preserve deadlines and assertions
 No new execution-case skips are allowed. Existing default-suite capabilities
 remain scoped: native untranslated libc diagnostic (CSH-042), and two unequal
 uid/gid Linux-root probes (CSH-046). Twelve host-utility gaps per normal environment
-remain explicitly labelled gaps under CSH-052/056, not passes. Native Linux
-outside Docker is not available locally; the existing Ubuntu job in
-[tests.yml](../../.github/workflows/tests.yml) owns that integration run, with
-CSH-049 retaining the cross-platform evidence record. CSH-055 does not infer
-native-Linux success from Docker, or full-family compliance from these cases.
+remain explicitly labelled gaps under CSH-052/056, not passes. Native Linux outside Docker is not available locally; the hosted Ubuntu run
+below supplies separate native-Linux evidence. CSH-049 retains the cross-platform
+integration record. CSH-055 does not infer native-Linux success from Docker,
+or full-family compliance from these cases.
+
+### Hosted native Linux
+
+[Native Ubuntu job 108450525750](https://github.com/melliott18/cshell/actions/runs/36258797305/job/108450525750)
+passed on implementation commit `814cd0a` (final source manifest above), with
+Ubuntu 24.04/GCC, runner image `20260920.314.1`, Python 3.11.16. It passed full normal and full ASan/UBSan runs, each including
+3,116 runtime cases and all 51 new contract probes, plus PTY and 69 harness
+self-tests. [Raw log and job metadata](../evidence/csh-055/README.md) are retained.
+The hosted job does not publish binary hashes; it is supplementary integration
+evidence, not a replacement for local binary/source identity manifests.
+
+
+[Hosted Docker job 108450610484](https://github.com/melliott18/cshell/actions/runs/36258827067/job/108450610484)
+also passed full normal, full ASan/UBSan, PTY and all 69 harness tests for the
+same head `814cd0a`. Both runtime builds passed 3,116 cases and 51 new contracts.
+Its log/metadata are retained separately from the local arm64 Docker runs;
+this hosted Linux success does not erase the local timeout observations.
+
+Review: [PR #104](https://github.com/melliott18/cshell/pull/104).
