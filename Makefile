@@ -386,8 +386,17 @@ test-prompt: build/tests/prompt_faults
 test-jobs: cshell build/tests/jobs_fixture build/tests/execute_faults
 	$(PYTHON) tests/jobs.py ./cshell --api-binary build/tests/jobs_fixture --fault-binary build/tests/execute_faults
 
-test-traps: cshell
+build/tests/wait-jobs.o: src/jobs.c $(EXECUTE_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -Dsigsuspend=csh_wait_sigsuspend -c $< -o $@
+
+build/tests/wait_handshake: tests/wait_handshake.c build/main.o build/invocation.o build/tests/wait-jobs.o $(EXECUTE_OBJECTS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/main.o build/invocation.o build/tests/wait-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) $(LDLIBS)
+
+test-traps: cshell build/tests/execute_helper build/tests/wait_handshake
 	$(PYTHON) tests/traps.py ./cshell
+	$(PYTHON) tests/signal_contracts.py ./cshell build/tests/execute_helper
+	$(PYTHON) tests/wait_handshake.py build/tests/wait_handshake
 
 build/tests/substitution_fixture: tests/substitution_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)

@@ -1,4 +1,5 @@
 #include "cshell/jobs.h"
+#include "cshell/traps.h"
 #include "cshell/parser.h"
 #ifdef NDEBUG
 #undef NDEBUG
@@ -83,6 +84,29 @@ static int descriptors(void)
     return count;
 }
 
+static void interactive_dispositions(void)
+{
+    const int ignored[] = {SIGTERM, SIGQUIT, SIGTSTP, SIGTTIN, SIGTTOU};
+    struct csh_invocation invocation = {0};
+    struct csh_state *state;
+    struct csh_jobs *jobs;
+    size_t i;
+    invocation.arg0 = "signal-policy";
+    invocation.options = CSH_OPT_INTERACTIVE;
+    assert(csh_state_create(&state, &invocation, NULL) == CSH_STATE_OK);
+    assert(csh_jobs_create(&jobs, state, -1) == 0);
+    assert(!csh_jobs_monitor(jobs));
+    for (i = 0; i < sizeof(ignored) / sizeof(ignored[0]); ++i) {
+        struct sigaction action;
+        assert(sigaction(ignored[i], NULL, &action) == 0);
+        /* A caught no-op or orphaned default stop can look like ignore in a
+         * transcript. Check the actual D-007 disposition as well. */
+        assert(action.sa_handler == SIG_IGN);
+    }
+    csh_jobs_destroy(jobs);
+    csh_state_destroy(state);
+}
+
 int main(int argc, char **argv)
 {
     struct csh_invocation invocation = {0};
@@ -102,6 +126,7 @@ int main(int argc, char **argv)
     sigemptyset(&watchdog.sa_mask);
     assert(sigaction(SIGALRM, &watchdog, NULL) == 0);
     begin_phase(OWNERSHIP);
+    interactive_dispositions();
     invocation.arg0 = "job-fixture";
     invocation.mode = CSH_MODE_STRING;
     assert(sigaction(SIGCHLD, NULL, &original) == 0);

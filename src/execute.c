@@ -185,12 +185,12 @@ static void launch_child(const struct csh_command *command, struct launch *launc
 }
 
 static void builtin_exit(struct csh_state *state, const struct csh_command *command,
-    struct csh_execution *result)
+    struct csh_execution *result, const struct csh_execution_context *context)
 {
     struct csh_state_info info;
     size_t first = 1;
     csh_state_get_info(state, &info);
-    result->status = info.last_status;
+    result->status = context && context->in_trap ? context->trap_status : info.last_status;
     if (first < command->argc && strcmp(command->argv[first], "--") == 0) ++first;
     if (command->argc - first > 1) {
         diagnose("exit", "too many arguments", 0);
@@ -508,7 +508,7 @@ static int bootstrap_handler(struct csh_state *state,
         return 0;
     }
     if (strcmp(command->argv[0], "exit") == 0)
-        builtin_exit(state, command, result);
+        builtin_exit(state, command, result, context);
     else
         result->status = csh_state_builtin_run(state, command->argc,
             command->argv);
@@ -1311,12 +1311,17 @@ static void evaluate_trap_action(struct csh_execution_context *context,
     struct csh_input *input = NULL;
     struct csh_execution execution = {0};
     struct csh_error error;
+    int previous_in_trap = context->in_trap, previous_status = context->trap_status;
+    context->in_trap = 1;
+    context->trap_status = saved;
     csh_state_set_status(context->state, saved);
     if (csh_input_from_string(&input, action, "trap", &error) == -1 ||
         evaluate_input(context, input, &execution, &error) == -1) {
         if (!error.reported) report_error(&error);
     }
     csh_input_destroy(input);
+    context->in_trap = previous_in_trap;
+    context->trap_status = previous_status;
     if (execution.exit_requested) {
         outer->exit_requested = 1;
         outer->status = execution.status;
@@ -1667,6 +1672,7 @@ static int context_job(struct csh_execution_context *context,
     sigemptyset(&launch_signals);
     sigaddset(&launch_signals, SIGINT);
     sigaddset(&launch_signals, SIGQUIT);
+    sigaddset(&launch_signals, SIGTERM);
     sigaddset(&launch_signals, SIGTSTP);
     sigaddset(&launch_signals, SIGTTIN);
     sigaddset(&launch_signals, SIGTTOU);
@@ -1675,6 +1681,9 @@ static int context_job(struct csh_execution_context *context,
         fail(error, "cannot block job launch signals", errno, 1); goto cancel;
     }
     masked = 1;
+    if (csh_jobs_fork_signals(context->jobs, 0) == -1) {
+        fail(error, "cannot prepare job launch signals", errno, 1); goto cancel;
+    }
     for (i = 0; i < count; ++i) {
         pid_t pid;
         const struct execution_plan *stage = is_pipeline ? &plan->children[i] : plan;
@@ -1723,6 +1732,9 @@ static int context_job(struct csh_execution_context *context,
     }
     pipe_close(gate[0]); gate[0] = -1;
     pipe_close(gate[1]); gate[1] = -1;
+    if (csh_jobs_fork_signals(context->jobs, 1) == -1) {
+        fail(error, "cannot restore job launch signals", errno, 1); goto cancel;
+    }
     sigprocmask(SIG_SETMASK, &prior_mask, NULL);
     masked = 0;
     if (asynchronous) {
@@ -1741,7 +1753,10 @@ cancel:
     pipe_close(ends[1]); ends[1] = -1;
     csh_jobs_cancel(context->jobs, job);
 done:
-    if (masked) sigprocmask(SIG_SETMASK, &prior_mask, NULL);
+    if (masked) {
+        csh_jobs_fork_signals(context->jobs, 1);
+        sigprocmask(SIG_SETMASK, &prior_mask, NULL);
+    }
     pipe_close(gate[0]); pipe_close(gate[1]);
     if (stream != NULL) fclose(stream);
     free(text);

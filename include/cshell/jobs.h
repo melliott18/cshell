@@ -68,6 +68,10 @@ int csh_jobs_is_builtin(const char *name);
 int csh_jobs_builtin(struct csh_jobs *jobs, const struct csh_command *command);
 /* Temporarily restore inherited signal actions around exec; recover on failure. */
 void csh_jobs_exec_signals(struct csh_jobs *jobs, int recover);
+/* Caller blocks QUIT/TERM/TSTP/TTIN/TTOU before prepare and restores them only
+ * after recover (also required after a failed prepare). Prevent forked children
+ * from discarding pending signals solely due to interactive shell ignores. */
+int csh_jobs_fork_signals(struct csh_jobs *jobs, int recover);
 /* Signal naming is shared by kill and trap. Signal-context notification only
  * writes the interactive wait flag; no child is reaped by a handler. */
 int csh_jobs_signal_number(const char *text);
