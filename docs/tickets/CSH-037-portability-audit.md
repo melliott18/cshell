@@ -1,6 +1,6 @@
 # CSH-037: Audit integrated conformance and platform portability
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: CSH-012
@@ -194,7 +194,9 @@ commands. The formerly failing prompt and jobs API paths passed without skips
 or relaxed PTY expectations.
 
 All audit acceptance criteria now have recorded evidence or explicit open
-limitation owners. CSH-037, CSH-044 and CSH-045 are **review**, pending integration;
-no ticket is marked done before merge. CSH-042/043 and CSH-046–CSH-052 remain
+limitation owners. CSH-037, CSH-044 and CSH-045 were integrated by
+[PR #85](https://github.com/melliott18/cshell/pull/85) as `c012aed`.
+Commits were separated by issue without changing the tested final tree.
+CSH-042/043 and CSH-046–CSH-052 remain
 open. Completing this audit records an outcome and does not establish POSIX
 conformance or complete CSH-012's separate milestone review.
