@@ -108,8 +108,6 @@ Exact selected outcomes on both platforms:
 | Native `make test-redirection-offset` | 36 passed, zero failures/skips. |
 | Native `make -j2 test test-pty test-harness` | Passed: 36 offset, 60 portability, 1318 runtime, 13 jobs PTY, 27 runtime PTY and 64 harness cases, plus all module/fault checks; zero failures/skips. |
 | `make docker-build DOCKER_IMAGE=cshell-test:csh043`, then `docker run --rm --init cshell-test:csh043 make -j2 test test-pty test-harness` | Passed with the same counts and zero failures/skips; includes the focused offset target. |
-
-
 | Native sanitizer temporary copy: `make -j2 test`, then separate `make test-pty` | Both passed on macOS 14.8.7: all module/fault checks, 36 offset, 60 portability, 1318 runtime, 13 jobs PTY and 27 runtime PTY cases, zero failures/skips. Completed 2026-09-26 05:21 UTC. |
 | Hosted Ubuntu 24.04/GCC and Docker Linux, implementation commit `c37890d`, [run 36220176817](https://github.com/melliott18/cshell/actions/runs/36220176817) | Both jobs passed normal, PTY, harness and full ASan/UBSan stages. Each normal/sanitized run passed all 36 offset and 1318 runtime cases. Native Linux uses ext4 (`0xef53`, `_PC_FILESIZEBITS=64`); Docker uses overlayfs (`0x794c7630`, `_PC_FILESIZEBITS=32`). Both report the same 17592186040320 seek boundary and `EINVAL` as local Docker. |
 
