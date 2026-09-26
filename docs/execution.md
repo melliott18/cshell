@@ -439,3 +439,12 @@ private descriptor closed. This preserves errors for `1>&$fd` when `$fd` names a
 closed user descriptor. After fork, a fresh shell context closes inherited
 backups; the parent retains its own restoration tokens. Saves restore in reverse
 order on execution, expansion, assignment and redirection failure.
+
+## Clause-level execution evidence
+
+[CSH-049’s condition map](execution-evidence.md) separates the exact runtime,
+API and PTY assertions from the unverified clauses. It includes D-002, D-006
+and D-007 choices, the CSH-043 offset boundaries and CSH-042 locale witnesses.
+Temporary prefix PATH currently does not affect the PATH-associated `pwd`
+builtin selection; [CSH-055](tickets/CSH-055-execution-contract-gaps.md) records
+the failing reproducer and residual execution contracts.

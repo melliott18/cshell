@@ -58,6 +58,7 @@ make test-options  # Invocation/set, option effects, and environment interaction
 make test-evaluation # Evaluation, lookup, aliases, and remaining utilities
 make test-builtins # Replacement state builtins and executor integration
 make test-state    # Replacement shell-state API checks only
+make test-execution-evidence # Clause-mapped execution/redirection/control witnesses
 make test-execute  # Replacement command, assignment, and redirection API checks
 make test-pipeline # Concurrent pipeline, stage-status, and failure-cleanup checks
 make test-control  # Conditionals, loops, case, functions, and failure cleanup

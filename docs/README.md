@@ -15,6 +15,7 @@ Start with the [project README](../README.md) for installation and current statu
 | [Locale behavior](locales.md) | Startup/runtime precedence, patterns, IFS, diagnostics, host-qualified evidence and encoding limits |
 | [Value expansion](value-expansions.md) | Structured value/final-field contexts, IFS, pathname generation, arithmetic, decoding, and deferred substitutions |
 | [Simple-command execution](execution.md) | Owned prepared commands, phased expansion, lookup, child ownership, bootstrap builtins, and reversible redirections |
+| [Execution clause evidence](execution-evidence.md) | Ordering, descriptors, lookup, pipelines, control flow and error assertions |
 | [Evaluation builtins](evaluation-builtins.md) | Dot/eval, exec, lookup, aliases, input and resource utilities |
 | [Control flow and functions](control-flow.md) | Selection, loops, function lifetimes, control transfer, and validation |
 | [Job control](job-control.md) | Interactive groups, terminal ownership, job builtins, retained statuses, and signal boundaries |
