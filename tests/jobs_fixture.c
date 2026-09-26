@@ -209,17 +209,22 @@ int main(int argc, char **argv)
     /* Notify reports completion while idle and still leaves the status for
      * wait. Capture stderr independently of nondeterministic launch PIDs. */
     begin_phase(NOTIFY);
-    {
+    for (int notify = 0; notify <= 1; ++notify) {
         int messages[2], saved_error = dup(STDERR_FILENO);
-        char output[256];
+        char output[256], expected[256];
         ssize_t length;
         assert(saved_error >= 0 && pipe(messages) == 0 && pipe(input) == 0);
         timeout_fd = saved_error;
         assert(dup2(messages[1], STDERR_FILENO) == STDERR_FILENO);
         close(messages[1]);
-        run(&context, "set -b; { exit 17 & } 2>/dev/null\n");
+        run(&context, notify ? "set -b; exit 17 &\n" : "set +b; exit 17 &\n");
         csh_state_get_info(state, &info);
         background = info.background_pid;
+        length = read(messages[0], output, sizeof(output) - 1);
+        assert(length > 0);
+        output[length] = '\0';
+        snprintf(expected, sizeof(expected), "[%d] %ld\n", notify + 2, (long)background);
+        assert(strcmp(output, expected) == 0);
         observer = fork();
         assert(observer >= 0);
         if (observer == 0) {
@@ -234,14 +239,23 @@ int main(int argc, char **argv)
         assert(read(input[0], &byte, 1) == 1 && byte == 'r');
         assert(waited(observer, &status, 0) == observer &&
             WIFEXITED(status) && WEXITSTATUS(status) == 0);
+        if (!notify) {
+            /* Reaping completed while input was idle. With +b no message is
+             * allowed until the caller's before-prompt notification hook. */
+            assert(fcntl(messages[0], F_SETFL, O_NONBLOCK) == 0);
+            assert(read(messages[0], output, sizeof(output)) == -1 && errno == EAGAIN);
+            csh_jobs_notify(context.jobs);
+        }
         assert(dup2(saved_error, STDERR_FILENO) == STDERR_FILENO);
         timeout_fd = STDERR_FILENO;
         close(saved_error);
         length = read(messages[0], output, sizeof(output) - 1);
         assert(length > 0);
         output[length] = '\0';
-        assert(strcmp(output, "[2]  Done(17) exit 17\n") == 0);
-        assert(run(&context, "wait %2\n").status == 17);
+        snprintf(expected, sizeof(expected), "[%d]  Done(17) exit 17\n", notify + 2);
+        assert(strcmp(output, expected) == 0);
+        snprintf(script, sizeof(script), "wait %%%d\n", notify + 2);
+        assert(run(&context, script).status == 17);
         close(messages[0]); close(input[0]);
     }
     begin_phase(CLEANUP);

@@ -7,13 +7,22 @@ import shlex
 import signal
 
 
-def cases(helper):
+def cases(helper, shell):
     result = []
 
     def terminal(name, steps, output, status=0):
         result.append(dict(name=name, transport="pty", steps=steps,
                            expect=dict(output=output, status=status)))
 
+    # CSH-050 / JOB-001, JOB-002: exact nested-startup handshakes.
+    for mode in ("foreground", "background"):
+        handshake = ("startup-stopped\n" if mode == "background" else "") + "startup-foreground\n$ "
+        terminal(f"nested {mode} startup and restoration", [
+            {"expect": "$ "}, {"send": f"{helper} startup {mode} {shell}\n"},
+            {"expect": handshake}, {"foreground": "leader"},
+            {"send": "echo $?\n"}, {"expect": "0\n$ "},
+            {"send": f"{helper} check\n"}, {"expect": "terminal-ok\n$ "},
+            {"send": "exit\n"}], "$ " + handshake + "0\n$ terminal-ok\n$ ")
     terminal("foreground Ctrl-C and restored terminal", [
         {"expect": "$ "}, {"send": f"{helper} hold\n"}, {"expect": "ready\n"},
         {"foreground": "other"}, {"control": "C"}, {"expect": "$ "},
@@ -125,10 +134,11 @@ def cases(helper):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--helper", required=True)
+    parser.add_argument("--shell", required=True)
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
     helper = shlex.quote(str(Path(args.helper).resolve()))
-    Path(args.output).write_text(json.dumps({"version": 1, "name": "shell job control", "kind": "replacement", "cases": cases(helper)}, indent=2) + "\n")
+    Path(args.output).write_text(json.dumps({"version": 1, "name": "shell job control", "kind": "replacement", "cases": cases(helper, shlex.quote(str(Path(args.shell).resolve())))}, indent=2) + "\n")
 
 
 if __name__ == "__main__":

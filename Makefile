@@ -344,7 +344,7 @@ build/tests/jobs_helper: tests/jobs_helper.c
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(filter-out -fsanitize=%,$(CFLAGS)) $(filter-out -fsanitize=%,$(LDFLAGS)) -o $@ $< $(LDLIBS)
 
 build/tests/jobs-pty.json: tests/jobs_cases.py build/tests/jobs_helper
-	$(PYTHON) tests/jobs_cases.py --helper build/tests/jobs_helper --output $@
+	$(PYTHON) tests/jobs_cases.py --helper build/tests/jobs_helper --shell ./cshell --output $@
 
 .PHONY: test-jobs-pty
 test-jobs-pty: cshell build/tests/jobs-pty.json build/tests/execute_faults
