@@ -326,6 +326,16 @@ class HarnessTests(unittest.TestCase):
             with self.subTest(option=option, value=value):
                 self.assert_failure(self.run_suite([case()], extra=(option, value)), option)
 
+    def test_suite_size_boundary(self):
+        fixture = self.directory / "boundary.json"
+        document = {"version": 1, "name": "boundary", "kind": "self", "cases": [case()]}
+        encoded = json.dumps(document).encode()
+        fixture.write_bytes(encoded + b' ' * (smoke.SUITE_LIMIT - len(encoded)))
+        self.assert_success(self.run_suite(fixture=fixture))
+        with fixture.open("ab") as output:
+            output.write(b' ')
+        self.assert_failure(self.run_suite(fixture=fixture), "suite exceeds", str(smoke.SUITE_LIMIT))
+
     def test_invalid_fixture_documents_fail(self):
         base = {"version": 1, "name": "invalid test", "kind": "self", "cases": [case()]}
         documents = []
