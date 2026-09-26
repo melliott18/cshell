@@ -4,7 +4,7 @@
 EXP-001–011 for the POSIX.1-2024 base profile. The inventory records selected
 runtime assertions, API-only contracts, implementation policies and remaining
 limits. No complete family is promoted to verified. The CSH-012 compliance
-gate remains closed, including for the known non-UTF-8 lexical defect in
+gate remains closed, including the encoding breadth limits recorded by
 [CSH-053](tickets/CSH-053-multibyte-lexical-boundaries.md).
 
 ## Sources and execution contract
@@ -96,8 +96,9 @@ See [locale contract](locales.md) for the full original inventory.
 These are conditional locale witnesses. Unavailable UTF-8, distinct collation
 or translated libc catalogs remain reasoned skips owned by CSH-042. The
 startup lexical requirement is **not established for all encodings**:
-CSH-053 owns syntax-valued trailing bytes in Shift-JIS and related quotation
-paths. Internal cshell diagnostics have no translated catalogs. Invalid-locale
+CSH-053 adds [raw-byte witnesses](locales.md#raw-byte-lexical-witnesses-csh-053)
+for syntax-valued constituent bytes and related quotation paths in installed
+Shift-JIS, Big5, GBK and GB18030; stateful encodings remain unestablished. Internal cshell diagnostics have no translated catalogs. Invalid-locale
 C fallback is a project policy tested by L, not evidence for valid locale
 semantics. Neither a missing locale nor an invalid-byte probe is inapplicability.
 
@@ -189,7 +190,7 @@ V `multibyte()` also checks invalid-byte fallback, a project choice, not a
 portable expectation. Non-C multi-character collating elements and equivalence
 classes remain unverified; special `#`/`@`/`*` forms have source-specific
 unspecified conditions. CSH-042 owns unavailable locale capabilities and
-CSH-053 the concrete encoding defect; CSH-047 retains pattern breadth.
+CSH-053 the bounded constituent-byte witnesses; CSH-047 retains pattern breadth.
 
 <a id="exp-005"></a>
 ### EXP-005 — command substitution
@@ -296,8 +297,8 @@ asterisk. IFS empty-field witnesses above retain quote provenance until final
 fields; X `substitution output is never shell syntax` asserts no reparse.
 F `set f removes quote syntax` and `assignment removes protection syntax`
 cover API contexts. Q `quote contracts` and [CSH-046 LEX-005](invocation-syntax-evidence.md#lex-005)
-map required and policy escapes. ASCII-compatible C/UTF-8 witnesses do not
-resolve CSH-053 or establish quote handling for every locale encoding.
+map required and policy escapes. CSH-053 adds startup-context multibyte quote
+removal witnesses; these do not establish every locale encoding.
 
 <a id="exp-010"></a>
 ### EXP-010 — pattern notation
@@ -316,7 +317,7 @@ unspecified. L `locale UTF-8 case classes and quoted patterns` covers a UTF-8
 character and quotation. Multi-character/non-C equivalence classes, ambiguous
 invalid brackets, trailing pattern backslashes and source-unspecified `^`
 negation are not assigned portable oracles; CSH-047 retains breadth and CSH-053
-owns the known constituent-byte defect.
+records the bounded constituent-byte pattern fix and raw pathname witnesses.
 
 <a id="exp-011"></a>
 ### EXP-011 — declaration utility context

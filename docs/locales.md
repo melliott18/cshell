@@ -26,15 +26,25 @@ not change the locale. State construction/cloning alone does not modify libc;
 `main` opts the active state into locale management after environment import.
 Restoration does not allocate shell storage, but libc may allocate internally.
 
-The lexer recognizes ASCII shell syntax independently of libc locale changes.
-For C/POSIX and UTF-8, later LC_CTYPE changes preserve literal text, quoting,
-escaped newlines, eval, and subshell parsing. This is bounded evidence for the
-startup lexical rule, not proof for every encoding. A reproduced Shift-JIS
-character containing byte `0x5c` loses that byte during lexical processing;
-[CSH-053](tickets/CSH-053-multibyte-lexical-boundaries.md) owns the fix and the
-startup decoding-context tests for encodings containing syntax-valued bytes.
-New external shell invocations initialize their own locale from the exported
-environment.
+The runtime saves an immutable libc locale object immediately after startup
+locale selection. Lexer lookahead and word fragments decode whole characters
+using that context; eval, dot files, aliases, backquotes, here-documents and
+command substitutions use the same saved context, including after fork.
+Later LC_CTYPE, LANG or LC_ALL assignments cannot reinterpret source bytes.
+A newly invoked external shell takes its own snapshot from its environment.
+Startup snapshot allocation failure is fatal before source execution.
+
+CSH-053 preserves syntax-valued constituent bytes in ASCII-compatible,
+stateless encodings. Native macOS witnesses cover Shift-JIS, Big5, GBK and
+GB18030; Linux provisions GB18030. A split lexer feed waits for the complete
+character, while positions and fragment offsets remain byte based. Invalid or
+final incomplete sequences use a one-byte fallback (project policy, not a
+portable oracle). Stateful encodings are not established by these witnesses.
+Dollar-single-quote source decoding and delimiter/backquote quote removal use
+the saved lexical context; the representability check for generated control
+escapes still uses current LC_CTYPE. Expansion, IFS, pattern construction and
+`read` continue using current categories. `read` protects complete escaped
+characters and never interprets a constituent backslash as an escape.
 
 If an effective locale name is unavailable or invalid, cshell silently selects
 C for **all** categories. The variable values are retained. Correcting/unsetting
@@ -81,7 +91,7 @@ does not change diagnostic destinations or exit statuses.
 | Patterns and values | UTF-8 `?`, bracket alpha classes, quoted patterns, parameter length and all four removal forms; C portable classes |
 | IFS/read | Whole characters sharing a leading byte, empty fields, quoted delimiter, trailing delimiter and remainder; `$*` joining |
 | Runtime state | CTYPE/LANG/LC_ALL assignments and unset, temporary builtin scope, subshell and substitution isolation |
-| Lexical stability | Literal UTF-8 words/quotes and escaped newline after CTYPE changes, eval and nested parsing; other encodings remain CSH-053 |
+| Lexical stability | UTF-8 and CSH-053 raw-byte words, quotes, aliases, here-documents, eval/dot and nested parsing after locale changes; external shells select a fresh context |
 | Collation | Host-qualified pathname order, initial precedence and runtime assignment/rollback; no portable non-C range-order claim |
 | Diagnostics | Host-qualified strerror suffix, precedence, runtime LC_MESSAGES assignment where translated catalogs exist, exact streams/status |
 | Invalid locale | Cshell's silent, consistent C fallback and recovery policy (implementation-specific) |
@@ -98,4 +108,24 @@ These witnesses support [ENV-004](posix-matrix.md#env-004),
 [EXP-008](posix-matrix.md#exp-008), [EXP-010](posix-matrix.md#exp-010),
 [EXEC-012](posix-matrix.md#exec-012), and [read](posix-utilities.md#u-027).
 They do not promote those broad families to verified; CSH-047/048/049 retain
-family-level audits and CSH-053 retains the concrete non-UTF-8 lexical defect.
+family-level audits. [CSH-053](tickets/CSH-053-multibyte-lexical-boundaries.md)
+records the bounded non-UTF-8 witnesses and their remaining encoding limits.
+
+### Raw-byte lexical witnesses (CSH-053)
+
+[`tests/multibyte_cases.py`](../tests/multibyte_cases.py) compares exact output
+bytes, empty stderr and status in command-string, script-file and stdin modes.
+It covers constituent bytes `5c`, `60`, `7c`, `5b`, `5d`, `7b` and `7d` in
+locale-qualified characters, without transcoding scripts or expected output.
+The [character API fixture](../tests/character_fixture.c) first verifies libc
+can decode every selected character, then checks startup/current decoding and
+all feed splits of bare, quoted, escaped and dollar-adjacent words.
+
+Unavailable candidate locales produce encoding-specific skips. macOS rejects
+these non-UTF-8 filenames, so pathname cases explicitly skip on that filesystem;
+Linux exercises both literal multibyte path components and quoted patterns
+followed by wildcards. The startup-C invalid-byte examples assert the documented
+fallback policy; valid-character witnesses are the specification-derived
+preservation assertions. Run `make test-portability` (included in `make test`).
+These tests add ENV-004, LEX-002/004 and EXP-010 evidence without declaring any
+whole requirement family verified.

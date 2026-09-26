@@ -26,7 +26,8 @@ enum csh_quote_result {
  * Character escapes use the C/POSIX and ASCII-compatible locale encodings.
  * \e and \cX produce ASCII control bytes; INVALID is returned if the active
  * LC_CTYPE cannot represent the resulting byte as a single-byte character.
- * No locale is changed and no multibyte text is otherwise interpreted. */
+ * Literal multibyte source characters are preserved using the startup lexical
+ * context (current locale for module clients without startup initialization). */
 enum csh_quote_result csh_quote_decode(const unsigned char *bytes, size_t length,
     char **out, size_t *out_length);
 

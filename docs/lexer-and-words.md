@@ -269,3 +269,19 @@ limits are reported as failures. See the
 [CSH-004 validation record](tickets/CSH-004-lexer-and-words.md#validation) for
 long-token, repeated-scan, nested-input, and allocation-failure coverage and
 the limits of the current evidence.
+
+## Startup character boundaries
+
+The runtime initializes `csh_character_startup()` before creating any parser.
+That immutable process context survives locale variable updates and fork;
+new lexer instances for eval, dot and substitutions use it as well. Standalone
+module clients can initialize the same context explicitly; clients that omit
+initialization use their current locale. `csh_character_shutdown()` releases
+it after parsers/execution are destroyed.
+
+Source acquisition and positions remain byte based. Syntax recognition and
+lookahead advance over complete characters in supported ASCII-compatible,
+stateless encodings. Partial feeds return MORE until a character can be decoded;
+invalid/final incomplete input has a one-byte fallback. ESCAPE fragments can
+contain more than two bytes: one backslash followed by a complete character.
+See [locale behavior and raw-byte witnesses](locales.md#raw-byte-lexical-witnesses-csh-053).
