@@ -107,3 +107,7 @@ Expected behavior is based on Issue 8 [set](https://pubs.opengroup.org/onlinepub
 [redirection](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_07_02),
 and [sh invocation](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sh.html#tag_20_110_04).
 Reference-shell checks are diagnostic comparisons, not fixture oracles.
+
+CSH-051 supplies the [per-clause option evidence map](shell-option-evidence.md),
+including invocation/set forms, enabled/disabled effects, execution environments,
+formatting and default choices, and [native/Docker run records](evidence/csh-051/README.md).

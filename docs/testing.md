@@ -954,3 +954,12 @@ evidence. `make test-execute test-pipeline test-context test-control
 `python3 tests/smoke.py ./cshell --suite tests/fixtures/execution-known-gaps.json`
 to observe it. It is not part of the passing default suite and its required
 expected output must not be changed to match the defect.
+
+## Base option evidence grid
+
+`make test-options` runs the existing option witnesses plus the CSH-051
+[entry/state/environment grid](shell-option-evidence.md). The same cases run
+in `make test`; interactive choices run in `make test-pty`. Generated runtime
+JSON uses compact serialization to stay within the runner's unchanged 1 MiB
+suite limit when helper paths include long worktree names. The Python source
+fixtures and archived suite snapshots retain all exact names and assertions.

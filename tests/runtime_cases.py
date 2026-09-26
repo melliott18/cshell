@@ -15,6 +15,7 @@ from substitution_cases import add_cases
 from control_flow_cases import add_control_cases
 from evaluation_cases import add_evaluation_cases
 from option_cases import add_option_cases, invocation_cases
+from option_evidence_cases import evidence_cases
 from trap_cases import add_trap_cases
 from syntax_cases import add_syntax_cases
 from execution_cases import add_execution_cases, add_execution_errors
@@ -47,6 +48,7 @@ def cases(helper):
     add_execution_errors(cross, result)
     add_option_cases(cross, helper)
     result.extend(invocation_cases())
+    result.extend(evidence_cases(helper))
     add_cases(cross, helper)
     add_evaluation_cases(cross, helper)
     add_trap_cases(cross, helper)
@@ -233,6 +235,18 @@ def terminal_cases(helper):
         {"expect": "$ "}, {"send": "set -n\n"}, {"expect": "$ "},
         {"send": "echo never; set +n; exit 8\n"}, {"expect": "$ "}, {"control": "D"}], "$ $ $ ", 0)
 
+    terminal("options: terminal monitor default", [
+        {"expect": "$ "}, {"send": 'echo "$-"\n'}, {"expect": "mi\n$ "},
+        {"send": "exit\n"}], "$ mi\n$ ", 0)
+    terminal("options: terminal recursive noexec", [
+        {"expect": "$ "}, {"send": '((set -n; echo never)); echo alive\n'},
+        {"expect": "alive\n$ "}, {"send": "exit\n"}], "$ alive\n$ ", 0)
+    terminal("options: terminal arithmetic nounset recovery", [
+        {"expect": "$ "}, {"send": 'unset csh_missing; set -u; echo "$((csh_missing+1))"\n'},
+        {"expect": "cshell: arithmetic expansion failed\n$ "},
+        {"send": "echo alive\n"}, {"expect": "alive\n$ "}, {"send": "exit\n"}],
+        "$ cshell: arithmetic expansion failed\n$ alive\n$ ", 0)
+
     terminal("terminal exit status", [{"expect": "$ "}, {"foreground": "leader"}, {"send": "exit 23\n"}], "$ ", 23)
     terminal("terminal EOF initially", [{"expect": "$ "}, {"control": "D"}], "$ ", 0)
     for operand, message in (("bad", "numeric status required"), ("1 2", "too many arguments")):
@@ -347,7 +361,9 @@ def main():
     if args.output.name == "execution.json":
         suite["name"] = "cshell execution evidence"
         suite["cases"] = [case for case in suite["cases"] if case["name"].startswith("execution: ")]
-    args.output.write_text(json.dumps(suite, indent=2) + "\n")
+    # Keep generated grids below the bounded loader size limit even when
+    # worktree helper paths are long. Source fixtures remain human-readable.
+    args.output.write_text(json.dumps(suite, separators=(",", ":")) + "\n")
 
 
 if __name__ == "__main__":

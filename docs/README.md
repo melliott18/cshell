@@ -45,3 +45,5 @@ so the information remains accessible in a plain Markdown reader.
 - [State builtins](state-builtins.md): variables, positionals, directories, and special-builtin integration.
 
 - [Invocation, lexical, grammar and alias clause evidence](invocation-syntax-evidence.md)
+
+- [Base shell-option clause evidence](shell-option-evidence.md): CSH-051 entry, state, environment, policy and run mapping.
