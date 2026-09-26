@@ -10,6 +10,12 @@
 
 ## Goal
 
+Integration note (2026-09-26): the combined CSH-047/048/049/051 runtime
+grid measured 1,063,914 bytes with a long worktree helper path, exceeding the
+1 MiB loader limit despite compact JSON. The bounded suite-input limit is now
+2 MiB with exact-limit success and limit-plus-one rejection tests. Child
+resource limits, timeouts, and behavioral assertions are unchanged.
+
 Build an explicit option by entry point/state/affected-environment map using current exact fixture names, classify unspecified reporting/tracing and permitted defaults, add missing combinations, and record native/Docker/PTY results for every applicable base branch. Preserve the existing UP exclusions.
 
 ## Audit baseline limitation

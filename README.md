@@ -51,6 +51,7 @@ make test-input    # Replacement input/invocation API checks only
 make test-lexer    # Replacement lexer/token API checks only
 make test-parser   # Replacement parser/AST API checks only
 make test-alias    # Alias storage, handlers, and token/AST substitution
+make test-expansion # Clause-mapped public-runtime expansion evidence
 make test-expand   # Replacement value/field expansion, arithmetic, and quote APIs
 make test-substitution # Integrated expansion, child ownership, and capture failures
 make test-fields   # IFS splitting, pathname expansion, and cleanup checks

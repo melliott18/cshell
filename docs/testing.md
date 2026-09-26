@@ -475,7 +475,8 @@ Every case runs in a fresh temporary working directory with fresh `HOME` and
 `TMPDIR` directories. The environment begins with the platform's default `PATH`
 and `LC_ALL=C`, `LANG=C`; the invoking user's environment is not inherited.
 Explicit fixture `env` values are then applied, except `HOME` and `TMPDIR` cannot
-be overridden. Suite files are limited to 1 MiB.
+be overridden. Suite files are limited to 2 MiB. This input bound is independent
+of child output and file-size limits; its exact boundary is tested.
 
 The runner streams both output channels and stops the case when their combined
 byte limit is exceeded; PTY cases apply the same bound to their combined terminal
@@ -722,6 +723,18 @@ macOS sanitizer-startup reason as the simple-command checks. Executor, state,
 parser, API fixtures, and fault objects remain instrumented. See
 [Pipeline lifecycle](execution.md#pipeline-lifecycle-and-stage-results) for the
 synchronous ownership contract and the boundaries reserved for options/job control.
+
+## Public-runtime expansion evidence
+
+`make test-expansion` runs the 354 CSH-047 cases in `-c`, file and stdin modes.
+They are also part of `make test`, including native and Docker CI and the
+existing ASan/UBSan jobs. `tests/expansion_cases.py` contains exact scripts,
+fields, statuses, diagnostics and filesystem assertions; the
+[clause/condition map](expansion-evidence.md) distinguishes required cases from
+project policies and API-only coverage. `make test-expand test-substitution
+test-portability` supplies the related API, lifecycle and locale witnesses.
+The generator derives login homes and signed-long width from the executing
+host; generate suites where the binary runs, as with the Docker build.
 
 ## Value-expansion API and sanitizer checks
 
@@ -972,6 +985,7 @@ expected output must not be changed to match the defect.
 `make test-options` runs the existing option witnesses plus the CSH-051
 [entry/state/environment grid](shell-option-evidence.md). The same cases run
 in `make test`; interactive choices run in `make test-pty`. Generated runtime
-JSON uses compact serialization to stay within the runner's unchanged 1 MiB
-suite limit when helper paths include long worktree names. The Python source
+JSON uses compact serialization. Integrating CSH-047/048/049/051 exceeded the
+former 1 MiB suite limit with long worktree helper paths, so the input bound is
+now 2 MiB; child resource limits and assertions are unchanged. The Python source
 fixtures and archived suite snapshots retain all exact names and assertions.

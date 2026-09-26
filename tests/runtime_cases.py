@@ -18,6 +18,8 @@ from option_cases import add_option_cases, invocation_cases
 from option_evidence_cases import evidence_cases
 from trap_cases import add_trap_cases
 from syntax_cases import add_syntax_cases
+from expansion_cases import add_expansion_cases
+
 from state_builtin_cases import add_state_builtin_cases
 
 from execution_cases import add_execution_cases, add_execution_errors
@@ -47,6 +49,8 @@ def cases(helper):
 
     add_state_builtin_cases(cross, helper)
     add_syntax_cases(cross, helper)
+    add_expansion_cases(cross, helper)
+
     add_execution_cases(cross, helper)
     add_execution_errors(cross, result)
     add_option_cases(cross, helper)
@@ -361,6 +365,9 @@ def main():
     if args.output.name == "options.json":
         suite["name"] = "cshell options"
         suite["cases"] = [case for case in suite["cases"] if case["name"].startswith("options: ")]
+    if args.output.name == "expansion.json":
+        suite["name"] = "cshell expansion evidence"
+        suite["cases"] = [case for case in suite["cases"] if case["name"].startswith("expansion: ")]
     if args.output.name == "syntax.json":
         suite["name"] = "cshell invocation and syntax evidence"
         suite["cases"] = [case for case in suite["cases"] if case["name"].startswith("syntax: ")]

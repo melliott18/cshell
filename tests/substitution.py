@@ -19,7 +19,7 @@ def main():
             ([faults, '--substitution'], b'substitution fault checks passed\n'),
         ):
             result = bounded_run(command, cwd=Path(cwd), env=dict(os.environ, LC_ALL='C'), timeout=20)
-            assert result.returncode == 0 and result.stdout == output, result
+            assert result.returncode == 0 and result.stdout == output and result.stderr == b'', result
             print(output.decode(), end='')
 
 

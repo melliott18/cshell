@@ -18,7 +18,9 @@ import pty_harness
 
 
 DEFAULT_SUITE = Path(__file__).resolve().parent.parent / "build" / "tests" / "runtime.json"
-SUITE_LIMIT = 1024 * 1024
+# The combined evidence grids exceed 1 MiB with long worktree helper paths.
+# Keep input parsing bounded independently of child output/file-size limits.
+SUITE_LIMIT = 2 * 1024 * 1024
 DIAGNOSTIC_LIMIT = 1000
 
 

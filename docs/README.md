@@ -13,6 +13,7 @@ Start with the [project README](../README.md) for installation and current statu
 | [Aliases](aliases.md) | Alias storage, handlers, parser eligibility, injected input, and read timing |
 | [Shell state](shell-state.md) | Owned variables, parameters, attributes, environment snapshots, copying, and restoration |
 | [Locale behavior](locales.md) | Startup/runtime precedence, patterns, IFS, diagnostics, host-qualified evidence and encoding limits |
+| [Expansion evidence](expansion-evidence.md) | Clause/condition map, exact runtime/API cases, policies and locale limits for CSH-047 |
 | [Value expansion](value-expansions.md) | Structured value/final-field contexts, IFS, pathname generation, arithmetic, decoding, and deferred substitutions |
 | [Simple-command execution](execution.md) | Owned prepared commands, phased expansion, lookup, child ownership, bootstrap builtins, and reversible redirections |
 | [Execution clause evidence](execution-evidence.md) | Ordering, descriptors, lookup, pipelines, control flow and error assertions |

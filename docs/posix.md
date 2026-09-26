@@ -93,6 +93,8 @@ integrates these APIs with substitutions, context-sensitive command preparation
 and here-documents; [its evidence](tickets/CSH-026-substitution-and-heredoc-integration.md)
 covers public runtime behavior and resource cleanup. CSH-041 adds arithmetic
 ambiguity replay with lexer/parser fault sweeps and public cross-mode cases.
+The [CSH-047 clause/condition map](expansion-evidence.md) reconciles exact
+runtime/API witnesses, numeric/encoding policies and remaining limits.
 Standalone API fixtures and selected integration cases do not establish shell
 conformance.
 

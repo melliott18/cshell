@@ -179,7 +179,7 @@ def main():
         passed += 1
         print("PASS: sparse file pathname expansion")
     for reason in skips:
-        print("SKIP:", reason)
+        print("SKIP:", reason, "(owner CSH-042)")
     print(f"Result: {passed} passed, {failed} failed, "
           f"{(0 if selected else 18) + len(skips)} skipped (cases/capability groups)")
     return 1 if failed else 0
