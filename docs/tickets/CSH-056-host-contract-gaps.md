@@ -6,7 +6,7 @@
 - Parent: None
 - Depends on: CSH-039
 - Branch: Assigned when work starts
-- Issue: Not yet assigned
+- Issue: [#97](https://github.com/melliott18/cshell/issues/97)
 
 ## Goal
 
