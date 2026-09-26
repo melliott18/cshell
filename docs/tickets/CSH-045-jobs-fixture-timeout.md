@@ -1,6 +1,6 @@
 # CSH-045: Diagnose intermittent macOS sanitizer jobs fixture timeout
 
-- Status: review
+- Status: done
 - Type: fix
 - Kind: implementation
 - Parent: None
@@ -135,5 +135,5 @@ total duration, so a fast pre-fix pass alone does not validate the old budget.
 The integrated source `41c2eb6` passed full native macOS ASan/UBSan and
 [all hosted native Ubuntu, macOS 15 and Docker jobs](https://github.com/melliott18/cshell/actions/runs/36217674357),
 including sanitizer stages. See the [CSH-037 run record](CSH-037-portability-audit.md#integrated-follow-up-validation)
-for identities and counts. The ticket is ready for review and remains `review`
-until integration.
+for identities and counts. Integrated as issue-specific commit `40583ad` in
+[PR #85](https://github.com/melliott18/cshell/pull/85), merged as `c012aed`.
