@@ -43,7 +43,7 @@ observations, not the source of the character-preservation requirement.
 - [x] The reproduction preserves the complete character.
 - [x] Startup lexical state remains fixed after locale assignments in parent
   and subshell parsing; newly invoked shells use their new startup state.
-- [ ] Native macOS/Linux and sanitizer results identify tested encodings and
+- [x] Native macOS/Linux and sanitizer results identify tested encodings and
   unavailable-locale skips without treating reference output as an oracle.
 
 ## Validation
@@ -90,11 +90,34 @@ GCC 12/glibc 2.36. Docker Linux is recorded separately from native Linux CI.
   injection. The added API fixture checks every two-feed split of bare,
   escaped, single/double/dollar-single quoted and dollar-adjacent characters
   after switching the runtime locale to C.
-- Full macOS and Docker ASan/UBSan runs are in progress. An initial parallel
-  macOS run hit the existing five-second invocation fixture timeout; its
-  isolated rerun uses `MallocNanoZone=0 ASAN_OPTIONS=halt_on_error=1
-  UBSAN_OPTIONS=halt_on_error=1` and the documented sanitizer flags. Hosted
-  native Linux/macOS CI validation is pending.
+- [Hosted native Ubuntu 24.04/GCC](https://github.com/melliott18/cshell/actions/runs/36258778259/job/108450475641)
+  passed the complete normal, PTY, harness and ASan/UBSan suites at
+  `4b81c6380e43fbcd0f46c58ead57cc4bddb4639c`. Normal and sanitizer runs each
+  report 553 CSH-053 passes, zero failures and three unavailable encoding
+  groups. Full portability: 715 passes/four capability skips (the additional
+  group is the existing unavailable translated libc catalog).
+- [Hosted Docker Linux](https://github.com/melliott18/cshell/actions/runs/36258778259/job/108450475817)
+  passed the complete normal, PTY, harness, root invocation and ASan/UBSan
+  suites at the same revision, including 553 CSH-053 passes per build.
+- Local parallel sanitizer attempts hit existing five-second deadlines in
+  macOS invocation and Docker redirection-offset fixtures under concurrent
+  load; no sanitizer diagnostic was reported. The isolated Docker
+  redirection-offset rerun passed all 36 cases and its sanitizer portability
+  suite passed 727 checks (553 CSH-053), with three unavailable-encoding
+  groups. The serial macOS rerun uses
+  `MallocNanoZone=0 ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1`
+  and the documented sanitizer flags: the complete `make test test-pty`
+  rerun passed, including 2,044/2,044 CSH-053 checks and four raw-pathname
+  capability skips.
+- The [duplicate push-triggered macOS 15 sanitizer job](https://github.com/melliott18/cshell/actions/runs/36258729341/job/108450341412)
+  passed all 2,044 CSH-053 checks but failed the existing
+  `repeated background resumes preserve prompt and terminal` PTY case with
+  an output mismatch (7,328 captured bytes versus 7,216 expected). No sanitizer
+  diagnostic was emitted. A local sanitized build of the unchanged base
+  passed that case once plus 20 additional repetitions; the mismatch was not
+  reproduced. This is retained as an unresolved hosted job-control observation,
+  not silently reclassified as a pass. The separate PR-triggered macOS 15
+  sanitizer job is still running at this record's update.
 
 Expected raw bytes are derived from character-preservation and quote rules;
 no reference shell output is used as the oracle. Startup-C invalid-byte
