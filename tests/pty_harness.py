@@ -104,8 +104,13 @@ def session_members(session, deadline):
     return members
 
 
-def cleanup_session(process, master, timeout=1.0):
-    """Kill every owned session group and reap the leader with a separate bound."""
+def cleanup_session(process, master, timeout=5.0):
+    """Bound session enumeration/killing separately from the final leader reap.
+
+    Darwin's system-wide ps can take over one second under concurrent builds.
+    Give teardown the same five-second budget as a normal case, without using
+    up the final reap budget when a snapshot fails or reaches its deadline.
+    """
     deadline = time.monotonic() + timeout
     failures = []
     needs_fallback = True
@@ -146,9 +151,9 @@ def cleanup_session(process, master, timeout=1.0):
             except OSError as error:
                 failures.append(f"PTY cleanup could not kill group {group}: {error}")
         try:
-            process.wait(timeout=max(0, deadline - time.monotonic()))
+            process.wait(timeout=1.0)
         except subprocess.TimeoutExpired:
-            failures.append(f"PTY cleanup could not reap leader within {timeout:g}s")
+            failures.append("PTY cleanup could not reap leader within 1s")
     return failures
 
 

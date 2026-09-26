@@ -14,6 +14,16 @@ def cases(helper, shell):
         result.append(dict(name=name, transport="pty", steps=steps,
                            expect=dict(output=output, status=status)))
 
+    for monitor in ("+m", "-m"):
+        terminal(f"interactive ignored signals with monitor {monitor}", [
+            {"expect": "$ "}, {"send": f"set {monitor}\n"}, {"expect": "$ "},
+            {"control": "Z"}, {"control": "\\"}, {"signal": "TERM"},
+            {"send": "kill -s TSTP $$; kill -s QUIT $$; kill -s TTIN $$; kill -s TTOU $$; echo alive\n"},
+            {"expect": "alive\n$ "}, {"foreground": "leader"},
+            {"send": "set -m\n"}, {"expect": "$ "},
+            {"send": f"{helper} check\n"}, {"expect": "terminal-ok\n$ "},
+            {"send": "exit\n"}], "$ $ alive\n$ $ terminal-ok\n$ ")
+
     # CSH-050 / JOB-001, JOB-002: exact nested-startup handshakes.
     for mode in ("foreground", "background"):
         handshake = ("startup-stopped\n" if mode == "background" else "") + "startup-foreground\n$ "

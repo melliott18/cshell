@@ -10,12 +10,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <sys/select.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
-static const int signals[] = {SIGCHLD, SIGINT, SIGQUIT, SIGTSTP, SIGTTIN, SIGTTOU, SIGHUP};
+static const int signals[] = {SIGCHLD, SIGINT, SIGQUIT, SIGTSTP, SIGTTIN, SIGTTOU, SIGHUP, SIGTERM};
 #define SIGNAL_COUNT (sizeof(signals) / sizeof(signals[0]))
+static const int fork_signals[] = {SIGQUIT, SIGTERM, SIGTSTP, SIGTTIN, SIGTTOU};
+#define FORK_SIGNAL_COUNT (sizeof(fork_signals) / sizeof(fork_signals[0]))
 struct csh_jobs {
     struct csh_state *state;
     struct csh_job *head;
@@ -28,6 +31,8 @@ struct csh_jobs {
     size_t installed;
     struct sigaction saved[SIGNAL_COUNT];
     struct sigaction exec_saved[SIGNAL_COUNT];
+    struct sigaction fork_saved[FORK_SIGNAL_COUNT];
+    size_t fork_prepared;
     struct termios shell_modes;
     int modes_valid;
 };
@@ -160,10 +165,11 @@ int csh_jobs_create(struct csh_jobs **out, struct csh_state *state, int fd)
         if (i > 0 && !jobs->interactive) break;
         memset(&action, 0, sizeof(action));
         sigemptyset(&action.sa_mask);
-        /* Catch keyboard signals with a no-op/flag handler: ignored signals
-         * may be discarded even while blocked in a just-forked child. TTOU
-         * remains ignored so a background shell can reclaim its terminal. */
-        action.sa_handler = i < 4 || signals[i] == SIGHUP ? pending_signal : SIG_IGN;
+        /* Interactive QUIT/TERM must be ignored. D-007 also chooses ignore
+         * for terminal-stop signals with monitor disabled. Children restore
+         * entry dispositions before the terminal handoff/launch barrier opens. */
+        action.sa_handler = signals[i] == SIGCHLD || signals[i] == SIGINT ||
+            signals[i] == SIGHUP ? pending_signal : SIG_IGN;
         if (i != 0 && sigaction(signals[i], NULL, &previous) == 0 &&
             previous.sa_handler == SIG_IGN)
             action.sa_handler = SIG_IGN;
@@ -678,6 +684,9 @@ static const struct signal_name signal_names[] = {
 #ifdef SIGWINCH
     , {"WINCH", SIGWINCH}
 #endif
+#ifdef SIGPOLL
+    , {"POLL", SIGPOLL}
+#endif
 };
 #define SIGNAL_NAMES (sizeof(signal_names) / sizeof(signal_names[0]))
 
@@ -692,7 +701,7 @@ int csh_jobs_signal_number(const char *text)
         return value > 0 && value <= INT_MAX && sigaddset(&set, (int)value) == 0 ? (int)value : -1;
     }
     for (i = 0; i < SIGNAL_NAMES; ++i)
-        if (strcmp(text, signal_names[i].name) == 0) return signal_names[i].value;
+        if (strcasecmp(text, signal_names[i].name) == 0) return signal_names[i].value;
     return -1;
 }
 
@@ -860,4 +869,34 @@ void csh_jobs_exec_signals(struct csh_jobs *jobs, int recover)
             sigaction(signals[i], &action, &jobs->exec_saved[i]);
         }
     }
+}
+
+int csh_jobs_fork_signals(struct csh_jobs *jobs, int recover)
+{
+    size_t i;
+    int rc = 0;
+    if (!jobs->interactive) return 0;
+    if (recover) {
+        while (jobs->fork_prepared > 0) {
+            i = --jobs->fork_prepared;
+            if (sigaction(fork_signals[i], &jobs->fork_saved[i], NULL) == -1) rc = -1;
+        }
+        return rc;
+    }
+    /* Ignored signals may be discarded even when blocked. Temporarily use
+     * default while the caller blocks these signals across fork. The parent
+     * restores its ignores before unblocking; the child resets dispositions
+     * before opening the launch barrier. Explicit/inherited child ignores are
+     * still applied there, discarding pending signals where appropriate. */
+    for (i = 0; i < FORK_SIGNAL_COUNT; ++i) {
+        struct sigaction action;
+        if (sigaction(fork_signals[i], NULL, &jobs->fork_saved[i]) == -1) return -1;
+        ++jobs->fork_prepared;
+        action = jobs->fork_saved[i];
+        if (action.sa_handler == SIG_IGN) {
+            action.sa_handler = SIG_DFL;
+            if (sigaction(fork_signals[i], &action, NULL) == -1) return -1;
+        }
+    }
+    return 0;
 }

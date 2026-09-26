@@ -487,10 +487,14 @@ process group. Pipe cleanup kills that group after success or failure, including
 descendants left behind by a candidate that exits early. PTY cleanup covers all
 process groups still in the candidate's session, including stopped foreground
 jobs, background groups, and descendants left after the leader exits. Terminal
-descriptors are closed on success and failure. Final pipe and PTY cleanup have
-their own one-second budgets separate from the case's overall timeout; inability
-to reap the leader within that bound fails the case instead of hanging the
-runner. PTY cleanup also verifies that no live session members remain.
+descriptors are closed on success and failure. Final pipe cleanup has its own
+one-second budget. PTY cleanup allows five
+seconds for session enumeration/killing, then a separate one second to reap the
+leader, even after snapshot failure. These budgets are separate from the case
+timeout; failure to enumerate, kill or reap fails the case. PTY cleanup also
+verifies that no live session members remain. CSH-054 adds controlled slow and
+failed snapshot regressions, and uses a wakeup pipe in the Python terminal
+signal helper so a buffered read cannot delay its signal observation.
 
 PTY session discovery uses `/proc` on Linux and `/bin/ps` plus process-session
 queries on macOS. Both transports share the group-kill check: macOS can return
@@ -1018,3 +1022,13 @@ that option places halt-on-error settings in each actual child environment,
 and disables LeakSanitizer on Linux. It is ASan/UBSan evidence, not Linux leak
 scanning evidence. The observer helper is deliberately unsanitized so startup
 does not change the descriptors or resource state it measures.
+
+### CSH-054 signal contracts
+
+`make test-traps` also runs `tests/signal_contracts.py` in all three input modes
+and explicit interactive command-string cases, plus `tests/wait_handshake.py`
+against `build/tests/wait_handshake`. The latter links the normal runtime with
+only jobs.c's sigsuspend call interposed; it checks the blocked mask, queues
+selected signals, and invokes the real sigsuspend. It is test-only scheduling
+evidence, not a production environment switch. [Exact assertions and remaining
+owners](jobs-signals-evidence.md#csh-054) distinguish the two binaries.

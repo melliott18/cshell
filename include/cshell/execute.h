@@ -105,7 +105,8 @@ int csh_command_from_ast(struct csh_state *state, const struct csh_ast *tree, st
  * Child failures print once in the child.
  * Signal termination maps to 128 + signal number. No process-global environ
  * mutation; exec uses the state's exported environment and PATH variable.
- * exit [--] [status] preserves last_status when omitted; otherwise accepts a
+ * exit [--] [status] preserves last_status when omitted (or the pre-action
+ * status when ending a trap action); otherwise accepts a
  * signed decimal long and uses its low eight bits. Operand errors set status
  * 2 and request exit only in non-interactive state, as do special-builtin
  * redirection errors with their own failure status. */
@@ -149,6 +150,8 @@ struct csh_execution_context {
     struct csh_jobs *jobs; /* Optional owned runtime job manager; see jobs.h. */
     struct csh_traps *traps; /* Borrowed process trap table; see traps.h. */
     int dispatching_traps;
+    int in_trap;
+    int trap_status; /* Status before the current action, for an omitted exit. */
 };
 /* Lists, AND/OR, compounds, functions, and pipelines with compound stages.
  * Preflight supported syntax before effects; expand only commands reached.

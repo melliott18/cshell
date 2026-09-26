@@ -163,12 +163,28 @@ def main():
             Path("result.txt").write_text(Path("seed.txt").read_text() + line)
         return int(arguments[0]) if arguments else 0
     elif mode == "signals":
-        signal.signal(signal.SIGINT, lambda *_: emit("interrupt\n"))
-        signal.signal(signal.SIGQUIT, lambda *_: emit("quit\n"))
-        emit("signals ready\n")
-        while sys.stdin.readline():
-            pass
-        emit("eof\n")
+        # A buffered blocking readline may be restarted before Python gets a
+        # signal safe point. A wakeup pipe makes delivery observable even when
+        # the signal arrives between printing readiness and entering select.
+        read_end, write_end = os.pipe()
+        os.set_blocking(write_end, False)
+        previous = signal.set_wakeup_fd(write_end)
+        try:
+            signal.signal(signal.SIGINT, lambda *_: None)
+            signal.signal(signal.SIGQUIT, lambda *_: None)
+            emit("signals ready\n")
+            while True:
+                ready, _, _ = select.select([0, read_end], [], [])
+                if read_end in ready:
+                    for number in os.read(read_end, 1024):
+                        emit("interrupt\n" if number == signal.SIGINT else "quit\n")
+                if 0 in ready and not os.read(0, 1024):
+                    break
+            emit("eof\n")
+        finally:
+            signal.set_wakeup_fd(previous)
+            os.close(read_end)
+            os.close(write_end)
     elif mode == "job-control":
         job_control(marker)
     elif mode == "leaderless-group":
