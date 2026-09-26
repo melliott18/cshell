@@ -161,3 +161,13 @@ claim native Linux outside Docker, non-C encodings, unrestricted recursive
 size, or any unexecuted combination identified in the clause map. No reference
 shell results are used as normative evidence. `git diff --check` and Python
 warning-as-error compilation of the changed generators/probes pass.
+
+### Integration validation (2026-09-26)
+
+After integrating CSH-042/043, local macOS ASan/UBSan checks passed: 49
+invocation probes (two Linux-root-only skips), 102 syntax cases, and 36 offset
+cases. Hosted macOS run 36248557880 exposed allocator startup warnings on PTY
+stderr because the new runner dropped CI's `MallocNanoZone=0`. The runner now
+preserves this one setting, matching `smoke.py`; exact terminal assertions are
+unchanged and report their actual bytes on failure. No diagnostic stripping is
+performed.

@@ -25,8 +25,13 @@ LIMIT = 65536
 
 
 def environment(directory):
-    return dict(PATH=os.defpath, HOME=str(directory), TMPDIR=str(directory),
-                LC_ALL='C', LANG='C', TZ='UTC0', PS1='$ ', PS2='> ')
+    result = dict(PATH=os.defpath, HOME=str(directory), TMPDIR=str(directory),
+                  LC_ALL='C', LANG='C', TZ='UTC0', PS1='$ ', PS2='> ')
+    # Match smoke.py: preserve CI's macOS sanitizer allocator setting without
+    # admitting unrelated host variables into the controlled shell environment.
+    if 'MallocNanoZone' in os.environ:
+        result['MallocNanoZone'] = os.environ['MallocNanoZone']
+    return result
 
 
 def run(binary, directory, args=(), data=b'', *, argv0='csh-046-name',
