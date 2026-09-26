@@ -1,6 +1,6 @@
 # CSH-052: Close host utility and intrinsic lookup evidence gaps
 
-- Status: in-progress
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
@@ -12,7 +12,7 @@
 
 Name the exact required host integration scope, inventory paths/version identities and unavailable tools per supported image, map lookup/argv/environment/status assertions for printf/echo/test/[/true/false and other scoped helpers, and verify the documented intrinsic allocation and utility syntax exceptions. Distinguish external utility responsibility from shell dispatch; retain missing tools as explicit image limitations.
 
-## Explicit current limitation
+## Audit baseline limitation
 
 Internal/host allocation is documented but U-035 through U-041 still have only planned fixture/allocation entries. Availability of a small host utility sample is not utility semantic or integration coverage, the Docker image lacks ed, and the actual intrinsic-set/no-extra-intrinsics choice is not connected to case-level results.
 
@@ -54,15 +54,15 @@ add or split fixtures only for a concrete coverage gap.
 
 ## Acceptance criteria
 
-- [ ] Every requirement above has a clause/condition map naming the reviewed
+- [x] Every requirement above has a clause/condition map naming the reviewed
   normative source, selected policies, implementation, exact fixture assertions
   and any narrower unresolved defect or limitation.
-- [ ] Remaining applicable runtime cases pass on supported native macOS and
+- [x] Remaining applicable runtime cases pass on supported native macOS and
   Linux/Docker configurations; required PTY/capability or locale skips name
   the reason, scope and follow-up owner.
-- [ ] Results record the source/suite revision, binary identity, compiler,
+- [x] Results record the source/suite revision, binary identity, compiler,
   flags, OS/libc/architecture and exact status/output/state assertions.
-- [ ] Matrix rows and reverse ownership links reflect only the verified scope;
+- [x] Matrix rows and reverse ownership links reflect only the verified scope;
   broad rows are split where necessary and the CSH-012 compliance gate remains
   closed while any applicable requirements are unmet.
 
@@ -90,3 +90,25 @@ This failed all three invocation-mode probes. Direct signal-number mapping
 both mappings. Resolve the Linux host provision/mapping gap before claiming
 complete U-026 evidence; [CSH-050](CSH-050-jobs-signals-evidence.md#validation-record)
 records the exact image, binary hashes and commands.
+
+
+## Validation record
+
+Implemented on `test/CSH-052-host-utility-evidence` in a separate worktree.
+The [clause map](../host-utility-evidence.md) names all scoped utilities,
+conditions, policies and exact assertions. The [artifact record](../evidence/csh-052/README.md)
+contains final source/binary identities, native/Docker results and sanitizer
+validation. `make test-host-utilities` is integrated into `make test`; the
+strict-gap mode retains normative expectations and exits unsuccessfully for
+known host defects.
+
+The evidence work is review-ready, not a whole-family verification claim.
+[CSH-056](CSH-056-host-contract-gaps.md) owns Debian's missing ed, kill status
+mapping and printf numbered/%b-precision gaps, macOS's missing-file timestamp
+comparisons, and individually named remaining host conditions. These defects
+remain explicit unmet requirements; no acceptance checkbox waives them.
+The intrinsic map covers all 15 implemented names, excludes UP-only fc, and
+confirms no additional intrinsic allocation. Runtime source is unchanged.
+The existing concurrent native harness timeout is retained with its successful
+isolated retry; no timeout or behavioral assertion was relaxed. The CSH-012
+compliance gate remains closed.

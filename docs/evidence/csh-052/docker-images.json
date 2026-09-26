@@ -1,0 +1,278 @@
+[
+    {
+        "Id": "sha256:9021914b5b5dad6b9e3f3705452d1174501f4490fd46854db113794f9eb53d99",
+        "RepoTags": [
+            "cshell-test:csh-052"
+        ],
+        "RepoDigests": [],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2026-09-26T16:41:06.019201216Z",
+        "Container": "",
+        "ContainerConfig": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": null,
+            "Cmd": null,
+            "Image": "",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": null
+        },
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "cshell",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "make",
+                "test"
+            ],
+            "ArgsEscaped": true,
+            "Image": "",
+            "Volumes": null,
+            "WorkingDir": "/work",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": null
+        },
+        "Architecture": "arm64",
+        "Variant": "v8",
+        "Os": "linux",
+        "Size": 439145452,
+        "VirtualSize": 439145452,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/ikv44bgeownr59g4bx933lgtz/diff:/var/lib/docker/overlay2/zhb9y6qjm8z54k8dl3dmebnzw/diff:/var/lib/docker/overlay2/34j4ftcf8vpsc1its9kp9braj/diff:/var/lib/docker/overlay2/7m0a1nac13cm053txvh50pnbo/diff:/var/lib/docker/overlay2/t2vwo5gn508b9jboquvgwpm9l/diff:/var/lib/docker/overlay2/oklx4h6kdtttlboe0dh8vblgn/diff:/var/lib/docker/overlay2/c37f26ba37fe2f02f97484c4726d0562b062888393f4d15a54666c981c24d058/diff",
+                "MergedDir": "/var/lib/docker/overlay2/b98yb5x26pf3dqm45x7n9nv7o/merged",
+                "UpperDir": "/var/lib/docker/overlay2/b98yb5x26pf3dqm45x7n9nv7o/diff",
+                "WorkDir": "/var/lib/docker/overlay2/b98yb5x26pf3dqm45x7n9nv7o/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:055ab12bd547e17a0630037f06a186cf405e3f61bb03a614562ca8f5ab52a8be",
+                "sha256:fd9b00543efeaeffc074ed3ea883d5a927aacf21e3366d4fc701155274b1c81d",
+                "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+                "sha256:d0382f614dadd2ce7b539808b8a0eeed488a69cda3b88714941d7a6db46ca615",
+                "sha256:8ba079fc92e2e0b9669ca75c2fd8e7adfa530c0a4309c691c6aff46ac903eba8",
+                "sha256:28f1b788bc02b50141a2d7a65b9549d4f277075c7e6c0ee469fd82b425001932",
+                "sha256:e5f00c3e432b74c1d3803ed659fa6cc2c273b6f7164a08193cf80612285701b4",
+                "sha256:a91dd5e42228498ec8578222ec5910ff24d7f53f4cc990d702e368b3e3163599"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2026-09-26T16:41:06.140932383Z"
+        }
+    },
+    {
+        "Id": "sha256:ac70adb69e03aec16317aa81c1464c217fc6b20f99862984002aba73f8474ac5",
+        "RepoTags": [
+            "cshell-test:csh-052-built"
+        ],
+        "RepoDigests": [],
+        "Parent": "sha256:9021914b5b5dad6b9e3f3705452d1174501f4490fd46854db113794f9eb53d99",
+        "Comment": "",
+        "Created": "2026-09-26T16:42:41.017831552Z",
+        "Container": "bbe433f0c0a552447a0de38ed692bd1073b3d333239475595914b76a5b6dad0f",
+        "ContainerConfig": {
+            "Hostname": "bbe433f0c0a5",
+            "Domainname": "",
+            "User": "cshell",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "make",
+                "test-host-utilities",
+                "test-harness"
+            ],
+            "Image": "cshell-test:csh-052",
+            "Volumes": null,
+            "WorkingDir": "/work",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {}
+        },
+        "DockerVersion": "24.0.6",
+        "Author": "",
+        "Config": {
+            "Hostname": "bbe433f0c0a5",
+            "Domainname": "",
+            "User": "cshell",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "make",
+                "test-host-utilities",
+                "test-harness"
+            ],
+            "Image": "cshell-test:csh-052",
+            "Volumes": null,
+            "WorkingDir": "/work",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {}
+        },
+        "Architecture": "arm64",
+        "Variant": "v8",
+        "Os": "linux",
+        "Size": 439983684,
+        "VirtualSize": 439983684,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/b98yb5x26pf3dqm45x7n9nv7o/diff:/var/lib/docker/overlay2/ikv44bgeownr59g4bx933lgtz/diff:/var/lib/docker/overlay2/zhb9y6qjm8z54k8dl3dmebnzw/diff:/var/lib/docker/overlay2/34j4ftcf8vpsc1its9kp9braj/diff:/var/lib/docker/overlay2/7m0a1nac13cm053txvh50pnbo/diff:/var/lib/docker/overlay2/t2vwo5gn508b9jboquvgwpm9l/diff:/var/lib/docker/overlay2/oklx4h6kdtttlboe0dh8vblgn/diff:/var/lib/docker/overlay2/c37f26ba37fe2f02f97484c4726d0562b062888393f4d15a54666c981c24d058/diff",
+                "MergedDir": "/var/lib/docker/overlay2/767f9f7dcc2028f12a7584b47bb52fbbc1d6ca8857e9e94f8b1bc07c0addd6a6/merged",
+                "UpperDir": "/var/lib/docker/overlay2/767f9f7dcc2028f12a7584b47bb52fbbc1d6ca8857e9e94f8b1bc07c0addd6a6/diff",
+                "WorkDir": "/var/lib/docker/overlay2/767f9f7dcc2028f12a7584b47bb52fbbc1d6ca8857e9e94f8b1bc07c0addd6a6/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:055ab12bd547e17a0630037f06a186cf405e3f61bb03a614562ca8f5ab52a8be",
+                "sha256:fd9b00543efeaeffc074ed3ea883d5a927aacf21e3366d4fc701155274b1c81d",
+                "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+                "sha256:d0382f614dadd2ce7b539808b8a0eeed488a69cda3b88714941d7a6db46ca615",
+                "sha256:8ba079fc92e2e0b9669ca75c2fd8e7adfa530c0a4309c691c6aff46ac903eba8",
+                "sha256:28f1b788bc02b50141a2d7a65b9549d4f277075c7e6c0ee469fd82b425001932",
+                "sha256:e5f00c3e432b74c1d3803ed659fa6cc2c273b6f7164a08193cf80612285701b4",
+                "sha256:a91dd5e42228498ec8578222ec5910ff24d7f53f4cc990d702e368b3e3163599",
+                "sha256:59e9ead297e291981698e6ac6959d5158c06c53e54048ec10ddb3fff23ebd394"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2026-09-26T16:42:41.049591385Z"
+        }
+    },
+    {
+        "Id": "sha256:b730536507a1c2ea801c5e4b3dbe79a1f25ab4a841238720406c7905b894727e",
+        "RepoTags": [
+            "cshell-test:csh-052-sanitized"
+        ],
+        "RepoDigests": [],
+        "Parent": "sha256:ac70adb69e03aec16317aa81c1464c217fc6b20f99862984002aba73f8474ac5",
+        "Comment": "",
+        "Created": "2026-09-26T16:43:43.636709345Z",
+        "Container": "9a7559ce18255db342f4c14d4ccaccb57c47a04be71d5a52d3ffbc1935f4605d",
+        "ContainerConfig": {
+            "Hostname": "9a7559ce1825",
+            "Domainname": "",
+            "User": "cshell",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "sh",
+                "-c",
+                "make clean && make -j4 test-host-utilities CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'"
+            ],
+            "Image": "cshell-test:csh-052-built",
+            "Volumes": null,
+            "WorkingDir": "/work",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {}
+        },
+        "DockerVersion": "24.0.6",
+        "Author": "",
+        "Config": {
+            "Hostname": "9a7559ce1825",
+            "Domainname": "",
+            "User": "cshell",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "sh",
+                "-c",
+                "make clean && make -j4 test-host-utilities CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'"
+            ],
+            "Image": "cshell-test:csh-052-built",
+            "Volumes": null,
+            "WorkingDir": "/work",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {}
+        },
+        "Architecture": "arm64",
+        "Variant": "v8",
+        "Os": "linux",
+        "Size": 451116515,
+        "VirtualSize": 451116515,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/767f9f7dcc2028f12a7584b47bb52fbbc1d6ca8857e9e94f8b1bc07c0addd6a6/diff:/var/lib/docker/overlay2/b98yb5x26pf3dqm45x7n9nv7o/diff:/var/lib/docker/overlay2/ikv44bgeownr59g4bx933lgtz/diff:/var/lib/docker/overlay2/zhb9y6qjm8z54k8dl3dmebnzw/diff:/var/lib/docker/overlay2/34j4ftcf8vpsc1its9kp9braj/diff:/var/lib/docker/overlay2/7m0a1nac13cm053txvh50pnbo/diff:/var/lib/docker/overlay2/t2vwo5gn508b9jboquvgwpm9l/diff:/var/lib/docker/overlay2/oklx4h6kdtttlboe0dh8vblgn/diff:/var/lib/docker/overlay2/c37f26ba37fe2f02f97484c4726d0562b062888393f4d15a54666c981c24d058/diff",
+                "MergedDir": "/var/lib/docker/overlay2/0c0d02743c2ac34c68ac9ed37addd49899cdcfb4e29473ada84d1f99bd55bcb8/merged",
+                "UpperDir": "/var/lib/docker/overlay2/0c0d02743c2ac34c68ac9ed37addd49899cdcfb4e29473ada84d1f99bd55bcb8/diff",
+                "WorkDir": "/var/lib/docker/overlay2/0c0d02743c2ac34c68ac9ed37addd49899cdcfb4e29473ada84d1f99bd55bcb8/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:055ab12bd547e17a0630037f06a186cf405e3f61bb03a614562ca8f5ab52a8be",
+                "sha256:fd9b00543efeaeffc074ed3ea883d5a927aacf21e3366d4fc701155274b1c81d",
+                "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+                "sha256:d0382f614dadd2ce7b539808b8a0eeed488a69cda3b88714941d7a6db46ca615",
+                "sha256:8ba079fc92e2e0b9669ca75c2fd8e7adfa530c0a4309c691c6aff46ac903eba8",
+                "sha256:28f1b788bc02b50141a2d7a65b9549d4f277075c7e6c0ee469fd82b425001932",
+                "sha256:e5f00c3e432b74c1d3803ed659fa6cc2c273b6f7164a08193cf80612285701b4",
+                "sha256:a91dd5e42228498ec8578222ec5910ff24d7f53f4cc990d702e368b3e3163599",
+                "sha256:59e9ead297e291981698e6ac6959d5158c06c53e54048ec10ddb3fff23ebd394",
+                "sha256:f64e88b791ea116deb9a3da25c6de799ebed78de2f22d5d3d538d0bcb8948cb9"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2026-09-26T16:43:43.723480011Z"
+        }
+    }
+]

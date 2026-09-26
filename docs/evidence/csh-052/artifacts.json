@@ -1,0 +1,76 @@
+{
+  "source_revision": "86db26b35fbab3b0ac48ecadc7e0f7605c0ea3a9",
+  "source_sha256": "48d0f3556ab843d43384d1f53c7ca0a710619d7bef64eb7d42d763b5918d6efa",
+  "base_image": "debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251",
+  "commands": [
+    {
+      "log": "native-integration.log.gz",
+      "command": "make -j4 test test-pty test-harness",
+      "status": 2
+    },
+    {
+      "log": "native-harness-retry.log.gz",
+      "command": "make test-harness",
+      "status": 0
+    },
+    {
+      "log": "native-final.log.gz",
+      "command": "make -j4 test-host-utilities test-harness",
+      "status": 0
+    },
+    {
+      "log": "native-sanitizer.log.gz",
+      "command": "MallocNanoZone=0 python3 tests/host_utilities.py ./cshell build/tests/host_utility_helper --sanitizer --record /tmp/csh52-native-sanitizer-results.json",
+      "status": 0
+    },
+    {
+      "log": "docker-integration.log.gz",
+      "command": "docker run --init cshell-test:csh-052 make -j4 test test-pty",
+      "status": 0
+    },
+    {
+      "log": "docker-final.log.gz",
+      "command": "docker run --init cshell-test:csh-052 make test-host-utilities test-harness",
+      "status": 0
+    },
+    {
+      "log": "docker-sanitizer.log.gz",
+      "command": "docker run --init cshell-test:csh-052-built sh -c \"make clean && make -j4 test-host-utilities CFLAGS=SANITIZER_CFLAGS LDFLAGS=-fsanitize=address,undefined\"",
+      "status": 0
+    },
+    {
+      "log": "docker-root.log.gz",
+      "command": "docker run --init --user 0 cshell-test:csh-052-built python3 tests/invocation.py ./cshell",
+      "status": 0
+    },
+    {
+      "log": "docker-strict.log.gz",
+      "command": "docker run --init cshell-test:csh-052-built python3 tests/host_utilities.py ./cshell build/tests/host_utility_helper --strict-gaps",
+      "status": 1
+    }
+  ],
+  "artifacts": {
+    "README.md": "6f6fa805622388f285e7948e44df546c238f318f3ff4b71d763f501eee4b1949",
+    "docker-build.log.gz": "9f988d4e9dd93daccc17fa21e742f803982cf561be2f1d366d2d8de3a69cce5c",
+    "docker-final.log.gz": "831a7907e701ac4ca7509a0b7625b48dc449e397ff7fdd5f4487baa3025eea1a",
+    "docker-identity.json": "84d8c0bd48508de6d226b51b822e655c1abc0639dd7f1d226acf26e2af9b9719",
+    "docker-images.json": "f1c72968a3d22bc6192e98f68aac0ea325cb97efa84c0c607ea2e753650a5832",
+    "docker-integration.log.gz": "996bb626c9ef450b3ebc926368f2b1066fdcd71773f3fd03028dc07e3dd4eb39",
+    "docker-results.json.gz": "a41b53a0b496d273b7fa1da5d51bdbe47ce38a205e8a65385e9e50b97bff8a3d",
+    "docker-root.log.gz": "d3f34b53a68f1d185876f32297b5a17364ccfd8a8189b1f3217bc975ca30c4db",
+    "docker-sanitizer-identity.json": "50fe7cbbadcc4a9dce20c2f22bb441dfd1718f339d6fc1d859eb5ef48e84a90c",
+    "docker-sanitizer-results.json.gz": "281d8980debf6329175cdd2304da338121773314fc661c3b03365df387f45b62",
+    "docker-sanitizer.log.gz": "65a66bec7965c2d9d2bf4e3131ac2933a9aad8f09ec417c17f841fc4bc457d55",
+    "docker-strict.log.gz": "d3b05afabebf9448f21e4e7c4d861ae071f5b96232523d2ea2a492287f76537a",
+    "identity.py": "ff9e39c317d44098766b9040314e0c6b6f4428b8f583f0552df2541e930a525a",
+    "native-final.log.gz": "efbbbf996fc7261dada1ca14fec70ecf62753d7b8215320de889e2aa2c068587",
+    "native-harness-retry.log.gz": "015e823745c28e89d05b4fdba6fc127a34224ae462dfc74e286cd52292b28054",
+    "native-identity.json": "05e7c9a361e4ffa38c3659107e7ab566371654d83bc5120106a632d940c5a962",
+    "native-integration.log.gz": "523d14c6f68a4d4dae620d5ba781074cee493043171e44c811444c95bd68dc12",
+    "native-results.json.gz": "6274f62f75e1ad17a7b8b8583f1410419969c302c95120c2174dadf7105e42c4",
+    "native-sanitizer-build.log.gz": "0b6484ca5be2fbd57a71d5098c265762fc0be361da4891d2e50dc38d9190d632",
+    "native-sanitizer-identity.json": "bbc668c6e1c2737d78fb5d06dcc01afa4640d18efe12ff95f7151a26095e49da",
+    "native-sanitizer-results.json.gz": "da6fac6c7a5715c45886f3bc71f7904b5326389055b40b37a5ddb19aea2d0fcf",
+    "native-sanitizer.log.gz": "a2640d04149ce2f6a54b441fcdc6120064a20dc35e84926d0e9dc60fccdbd519"
+  }
+}
