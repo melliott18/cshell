@@ -1,7 +1,12 @@
 FROM debian:bookworm-slim
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends build-essential python3 procps \
+# Debian slim excludes message catalogs by default; retain French libc
+# diagnostics so CSH-042 exercises LC_MESSAGES as well as locale names.
+RUN echo 'path-include=/usr/share/locale/fr/*' > /etc/dpkg/dpkg.cfg.d/zz-cshell-locale \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends build-essential python3 procps locales \
+    && localedef -i en_US -f UTF-8 en_US.UTF-8 \
+    && localedef -i fr_FR -f UTF-8 fr_FR.UTF-8 \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --create-home --uid 10001 cshell \
     && mkdir /work \
