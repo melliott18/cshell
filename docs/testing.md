@@ -989,3 +989,32 @@ JSON uses compact serialization. Integrating CSH-047/048/049/051 exceeded the
 former 1 MiB suite limit with long worktree helper paths, so the input bound is
 now 2 MiB; child resource limits and assertions are unchanged. The Python source
 fixtures and archived suite snapshots retain all exact names and assertions.
+
+## Host utility integration evidence
+
+`make test-host-utilities` (included in `make test`) runs the CSH-052 host and
+intrinsic lookup suite in command-string, file and stdin modes, plus a controlling
+PTY stty roundtrip. It writes `build/tests/host-utilities-results.json`, including
+resolved executable hashes/package identities, scripts, exact byte expectations,
+status predicates, filesystem effects and observed results. See the
+[clause map](host-utility-evidence.md) for the 21 explicitly scoped host names
+and the distinction between shell dispatch and external utility semantics.
+
+Known host defects appear as `GAP`, not passes. Unknown signatures fail. To make
+all unmet requirements fatal, run:
+
+```sh
+python3 tests/host_utilities.py ./cshell build/tests/host_utility_helper --strict-gaps
+```
+
+The known Debian ed absence, kill and printf defects, and macOS test timestamp
+defects remain [CSH-056](tickets/CSH-056-host-contract-gaps.md) limitations.
+The suite requires C locale; it does not skip or claim non-C locale conditions.
+Its only PTY case uses the shared runner's controlled terminal and bounded
+cleanup. An unavailable PTY fails setup rather than pretending that stty passed.
+Normal evidence and sanitizer results are retained in [CSH-052 artifacts](evidence/csh-052/README.md).
+Sanitizer builds automatically pass `--sanitizer` from the Makefile's LDFLAGS;
+that option places halt-on-error settings in each actual child environment,
+and disables LeakSanitizer on Linux. It is ASan/UBSan evidence, not Linux leak
+scanning evidence. The observer helper is deliberately unsanitized so startup
+does not change the descriptors or resource state it measures.

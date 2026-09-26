@@ -12,7 +12,9 @@ jobs:
   native:
     name: Native (${{ matrix.os }}, ${{ matrix.cc }})
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 15
+    # Full macOS sanitizer coverage approached 15 minutes before CSH-052's
+    # additional host cases. Individual test/resource deadlines stay bounded.
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
