@@ -48,6 +48,7 @@ int main(int argc, char **argv)
         if (argc != 3) return 96;
         if (!strcmp(argv[2], "CHLD")) number = SIGCHLD;
         else if (!strcmp(argv[2], "INT")) number = SIGINT;
+        else if (!strcmp(argv[2], "QUIT")) number = SIGQUIT;
         else if (!strcmp(argv[2], "USR1")) number = SIGUSR1;
         else return 96;
         if (sigaction(number, NULL, &action) == -1) return 96;

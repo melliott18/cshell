@@ -7,6 +7,7 @@
 #include <string.h>
 #include <termios.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 int main(int argc, char **argv)
 {
@@ -24,6 +25,43 @@ int main(int argc, char **argv)
     }
     tty = open("/dev/tty", O_RDWR);
     if (tty < 0 || tcgetattr(tty, &modes) < 0) return 3;
+    /* CSH-050 / JOB-001: exercise a nested shell both in the inherited
+     * foreground group (not its leader) and in a separate background group.
+     * The PTY runner bounds and cleans the whole session on any failure. */
+    if (strcmp(argv[1], "startup") == 0) {
+        pid_t child;
+        int status, background;
+        if (argc != 4) return 2;
+        background = strcmp(argv[2], "background") == 0;
+        child = fork();
+        if (child < 0) return 11;
+        if (child == 0) {
+            if (background && setpgid(0, 0) < 0) _exit(12);
+            execl(argv[3], argv[3], "-ic",
+                "case $- in *m*) ;; *) exit 19;; esac; exec \"$1\" startup-check \"$$\"",
+                "startup", argv[0], (char *)NULL);
+            _exit(13);
+        }
+        if (background) {
+            pid_t result;
+            do { result = waitpid(child, &status, WUNTRACED); } while (result < 0 && errno == EINTR);
+            if (result != child || !WIFSTOPPED(status) || WSTOPSIG(status) != SIGTTIN ||
+                tcgetpgrp(tty) != getpgrp()) return 14;
+            puts("startup-stopped");
+            fflush(stdout);
+            if (tcsetpgrp(tty, child) < 0 || kill(child, SIGCONT) < 0) return 15;
+        }
+        while (waitpid(child, &status, 0) < 0) if (errno != EINTR) return 16;
+        signal(SIGTTOU, SIG_IGN);
+        if (tcsetpgrp(tty, getpgrp()) < 0) return 17;
+        return WIFEXITED(status) ? WEXITSTATUS(status) : 18;
+    }
+    if (strcmp(argv[1], "startup-check") == 0) {
+        if (argc != 3 || getpgrp() != (pid_t)strtol(argv[2], NULL, 10) ||
+            tcgetpgrp(tty) != getpgrp()) return 20;
+        puts("startup-foreground");
+        return 0;
+    }
     if (strcmp(argv[1], "check") == 0) {
         if (tcgetpgrp(tty) != getpgrp() || !(modes.c_lflag & ICANON) ||
             (modes.c_lflag & ECHO)) return 4;
