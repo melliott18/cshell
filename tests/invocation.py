@@ -169,7 +169,8 @@ def detection(binary, directory, stdin_tty, stderr_tty, mode):
         prompts = b'$ $ ' if interactive and stdin_mode else b''
         expect(actual, b'interactive' if interactive else b'batch', 7,
                b'' if stderr_tty else prompts)
-        assert drain(master) == (prompts if stderr_tty else b'')
+        terminal_output = drain(master)
+        assert terminal_output == (prompts if stderr_tty else b''), repr(terminal_output)
     finally:
         os.close(master); os.close(slave)
 
