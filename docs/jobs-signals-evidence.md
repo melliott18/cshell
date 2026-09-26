@@ -136,7 +136,7 @@ prompt recovery, status 130, discarded input and trap execution. The five
 [traps.py](../tests/traps.py) entry probes require ignored INT/QUIT/CHLD to remain
 ignored, including attempted reset and trap listing.
 Interactive TERM and the unmonitored stop-disposition policy are retained
-failures/limitations under [CSH-053](tickets/CSH-053-signal-contract-gaps.md).
+failures/limitations under [CSH-054](tickets/CSH-054-signal-contract-gaps.md).
 No full interactive disposition claim follows from Ctrl-C success.
 
 <a id="sig-002"></a>
@@ -223,7 +223,7 @@ procps 4.0.2; CSH-052 retains that failure. Existing J `kill -s UNKNOWN 1`,
 an unintended process. Job selector/pipeline KILL and STOP/CONT/TERM cases are
 supported XSI/extension witnesses. Both host binaries are identified in the run
 record. Docker now explicitly installs `procps` to supply exec-accessible kill.
-Case-independent `-s` is a confirmed builtin defect in CSH-053. Numeric group/zero
+Case-independent `-s` is a confirmed builtin defect in CSH-054. Numeric group/zero
 operands, full symbolic listing/status mapping, multi-operand error continuation
 and permission failures still need isolated tests. No reference-shell vote was
 used to set these expectations.
@@ -246,7 +246,7 @@ coverage; all retained-status claims are limited to the exercised counts.
 
 ## Remaining obligations
 
-[CSH-053](tickets/CSH-053-signal-contract-gaps.md) owns the two reproduced defects
+[CSH-054](tickets/CSH-054-signal-contract-gaps.md) owns the two reproduced defects
 and the explicit unverified clauses above. This is a concrete residual inventory,
 not a waiver and not a claim that all untested behavior is defective. CSH-050
 supplies a reviewable map and run record; CSH-012 remains closed. The parent rows
@@ -257,9 +257,9 @@ CSH-044 and CSH-045 were integrated by PR #85 before this work's baseline. Their
 old failures remain historical failures; this work reruns the fixed regressions
 and does not treat retries as passes. A concurrent macOS validation run failed
 the harness cleanup snapshot deadline; its distinct loaded-run failure is
-retained in CSH-053 and the run record. PTY allocation/controlling-terminal
+retained in CSH-054 and the run record. PTY allocation/controlling-terminal
 capability errors can produce scoped skips through the existing harness:
-CSH-033 owns transport availability, CSH-053 owns missing behavioral evidence.
+CSH-033 owns transport availability, CSH-054 owns missing behavioral evidence.
 Any such skip leaves JOB-001/002/003 and terminal SIG-001 portions unverified.
 Only C locale is exercised; non-C signal diagnostics remain CSH-042/052 scope.
 No reference-shell comparisons are part of this record.

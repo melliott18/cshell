@@ -26,7 +26,7 @@ requirement family from a small sample.
 
 | Requirement | Obligation to review and map to exact assertions |
 | --- | --- |
-| [U-026](../posix-utilities.md#u-026) | External host kill provisioning and status-to-signal mapping; CSH-050 reproduced a Debian procps `-l 143` failure. Internal/job-aware kill remains CSH-053. |
+| [U-026](../posix-utilities.md#u-026) | External host kill provisioning and status-to-signal mapping; CSH-050 reproduced a Debian procps `-l 143` failure. Internal/job-aware kill remains CSH-054. |
 | [U-034](../posix-utilities.md#u-034) | Other standard utilities (for example cat, env, find, ls, stty, ed): retain exec accessibility and declare fixture dependencies. CSH-029 finalizes allocation; CSH-037 checks platform packages/executables. No claim to reimplement their full contracts. |
 | [U-035](../posix-utilities.md#u-035) | `printf`: formatted output, format reuse/missing operands, escapes, numeric conversions and errors. Record whether a fixture invokes host printf or a builtin; selected host behavior is fixture infrastructure, not shell expansion evidence. |
 | [U-036](../posix-utilities.md#u-036) | `echo`: ordinary arguments/newline and literal `--`; backslashes and leading combinations of e/E/n after `-` require a documented base choice or XSI rules. CSH-029 allocates implementation; avoid using ambiguous echo as an oracle. |

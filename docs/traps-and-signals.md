@@ -95,5 +95,5 @@ completion, unique reaping, process groups, and terminal restoration. Run
 for the combined native and Linux-container evidence.
 
 [CSH-050 clause evidence](jobs-signals-evidence.md) maps exact cases and platform
-results. [CSH-053](tickets/CSH-053-signal-contract-gaps.md) retains interactive
+results. [CSH-054](tickets/CSH-054-signal-contract-gaps.md) retains interactive
 TERM, lowercase kill, unmonitored stop policy and other residual obligations.

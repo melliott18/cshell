@@ -14,7 +14,7 @@ Separate base and conditional portions, map exact runtime/PTY/API cases to each 
 
 ## Explicit current limitation
 
-The retained job/signal/trap witnesses do not form complete requirement-family evidence. CSH-044/045 are integrated; their regressions are retained. The clause map and residual obligations are now explicit in [jobs/signals evidence](../jobs-signals-evidence.md) and [CSH-053](CSH-053-signal-contract-gaps.md). Base signal/asynchronous-list/wait semantics remain applicable even while the UP utility profile is unselected; implemented job-control extensions need their supported behavior and terminal capability conditions recorded separately.
+The retained job/signal/trap witnesses do not form complete requirement-family evidence. CSH-044/045 are integrated; their regressions are retained. The clause map and residual obligations are now explicit in [jobs/signals evidence](../jobs-signals-evidence.md) and [CSH-054](CSH-054-signal-contract-gaps.md). Base signal/asynchronous-list/wait semantics remain applicable even while the UP utility profile is unselected; implemented job-control extensions need their supported behavior and terminal capability conditions recorded separately.
 
 This is an open evidence limitation found by the
 [CSH-037 independent review](../audit-review.md), not a declaration that every
@@ -88,7 +88,7 @@ implementation tickets as owners of remaining verification work.
 
 The [eleven-family clause map](../jobs-signals-evidence.md) names normative
 sources, policies, implementation entry points, exact assertions and residual
-clauses. Parent requirements remain implemented subsets. CSH-053 owns two
+clauses. Parent requirements remain implemented subsets. CSH-054 owns two
 confirmed shell defects (interactive TERM and lowercase `kill -s`) plus the
 narrower unverified obligations. CSH-052 owns the reproduced external kill
 status-mapping failure. None is counted as a pass or as inapplicable.
@@ -129,7 +129,7 @@ Docker: engine 24.0.6; final image
 `debian:bookworm-slim`, Debian 12 arm64; Linux 6.4.16-linuxkit aarch64;
 GCC 12.2.0 (`12.2.0-14+deb12u1`), glibc `2.36-9+deb12u14`, Python 3.11.2;
 procps `2:4.0.2-3`. Native Linux outside Docker is **not-run** on this Mac;
-CSH-053/CI owns that additional environment, not a capability exclusion.
+CSH-054/CI owns that additional environment, not a capability exclusion.
 
 Sanitizer flags on both hosts:
 `-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1
@@ -211,16 +211,16 @@ Failed observations are retained separately:
   -axo pid=,stat=` timed out at 0.99965 seconds. The concurrent sanitizer run
   similarly **failed** `nested background startup and restoration` at 0.99924
   seconds. There was no transcript/foreground mismatch in either failure.
-  CSH-053 retains this load/transport boundary; serial passes do not erase it.
+  CSH-054 retains this load/transport boundary; serial passes do not erase it.
 - The first Docker harness run **failed** two self-tests:
   `test_snapshot_failure_reports_teardown_error_and_reaps_leader` did not reach
   process setup, and `test_terminal_control_characters_deliver_interrupt_quit_and_eof`
   exceeded the five-second fixture bound. Sanitizer execution chained after
   that harness was **not-run**; it was subsequently launched separately.
-  CSH-053 owns these transport failures with the CSH-033/040 fixtures.
+  CSH-054 owns these transport failures with the CSH-033/040 fixtures.
 - Isolated probes on both hosts **failed** interactive untrapped TERM (process
   status -15, no output) and lowercase `kill -s term` (status 1 with invalid-signal
-  diagnostic). CSH-053 records sources and reproducers.
+  diagnostic). CSH-054 records sources and reproducers.
 
 Logs and identity JSON are retained locally in this worktree's ignored
 `build/evidence/` (also `/tmp/csh050-*.log`). The serial native log begins after

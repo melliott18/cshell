@@ -1,4 +1,4 @@
-# CSH-053: Complete residual jobs and signal contracts
+# CSH-054: Complete residual jobs and signal contracts
 
 - Status: ready
 - Type: fix
@@ -6,7 +6,7 @@
 - Parent: None
 - Depends on: CSH-034, CSH-035
 - Branch: Assigned when work starts
-- Issue: Assigned when published
+- Issue: [#90](https://github.com/melliott18/cshell/issues/90)
 
 ## Goal
 
@@ -39,13 +39,13 @@ separate full sanitizer build/run and Docker build/run, failed P `Ctrl-Z jobs bg
 fg Ctrl-C` in `pty_harness.cleanup_session`: `/bin/ps -axo pid=,stat=` timed out
 at 0.99965 seconds. There was no transcript or foreground assertion failure.
 This is a failed loaded run, not a recurrence proven to have CSH-044's prompt
-write cause. CSH-053 owns reproducing and resolving this transport/load boundary
+write cause. CSH-054 owns reproducing and resolving this transport/load boundary
 with the CSH-040 cleanup harness; isolated later passes do not erase it.
 The concurrent sanitizer suite had the same cleanup timeout in `nested
 background startup and restoration` (0.99924 seconds). A Docker harness run
 also failed `test_snapshot_failure_reports_teardown_error_and_reaps_leader`
 before process setup and `test_terminal_control_characters_deliver_interrupt_quit_and_eof`
-waiting for `interrupt\n` after `signals ready\n`. CSH-053 owns reproducing
+waiting for `interrupt\n` after `signals ready\n`. CSH-054 owns reproducing
 these with the CSH-033/040 transport fixtures; no shell defect is inferred
 solely from these harness self-test failures.
 

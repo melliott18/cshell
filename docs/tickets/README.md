@@ -50,7 +50,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-050](CSH-050-jobs-signals-evidence.md) | Close jobs, signal and trap evidence gaps | [CSH-036](CSH-036-conformance-matrix.md), [CSH-039](CSH-039-legacy-retirement.md) | [#82](https://github.com/melliott18/cshell/issues/82) |
 | [CSH-051](CSH-051-shell-option-evidence.md) | Close base shell-option evidence gaps | [CSH-036](CSH-036-conformance-matrix.md), [CSH-039](CSH-039-legacy-retirement.md) | [#83](https://github.com/melliott18/cshell/issues/83) |
 | [CSH-052](CSH-052-host-utility-evidence.md) | Close host utility and intrinsic lookup evidence gaps | [CSH-036](CSH-036-conformance-matrix.md), [CSH-039](CSH-039-legacy-retirement.md) | [#84](https://github.com/melliott18/cshell/issues/84) |
-| [CSH-053](CSH-053-signal-contract-gaps.md) | Complete residual jobs and signal contracts | [CSH-034](CSH-034-job-control.md), [CSH-035](CSH-035-traps-and-signal-semantics.md) | Assigned when published |
+| [CSH-054](CSH-054-signal-contract-gaps.md) | Complete residual jobs and signal contracts | [CSH-034](CSH-034-job-control.md), [CSH-035](CSH-035-traps-and-signal-semantics.md) | [#90](https://github.com/melliott18/cshell/issues/90) |
 
 ## Child implementation tickets
 

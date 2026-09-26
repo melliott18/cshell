@@ -125,4 +125,4 @@ injects both faults into primary and continuation prompts. The
 CSH-044/045 regressions and platform results. The
 [CSH-050 clause map](jobs-signals-evidence.md) adds nested startup,
 notification timing and numeric-PID coverage, with residual obligations under
-[CSH-053](tickets/CSH-053-signal-contract-gaps.md).
+[CSH-054](tickets/CSH-054-signal-contract-gaps.md).
