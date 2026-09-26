@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sha256:4cb4250875de81fc0796d15ee1c70683b2ad3f65264cb06d8340969d3ff14795",
+    "tags": [
+      "cshell-test:csh-051"
+    ],
+    "digests": [],
+    "created": "2026-09-26T15:33:23.874874378Z",
+    "os": "linux",
+    "architecture": "arm64"
+  },
+  {
+    "id": "sha256:011b14d99f57edd3f1d10d3b0511adf0f282da08053dff20aa6eff440d5a4e3b",
+    "tags": [
+      "cshell-test:csh-051-built"
+    ],
+    "digests": [],
+    "created": "2026-09-26T15:34:51.731066293Z",
+    "os": "linux",
+    "architecture": "arm64"
+  },
+  {
+    "id": "sha256:09ac95e6fa4b240fadec387138cc43d5d91ccd96edf9852ea61cd13e833618ef",
+    "tags": [
+      "cshell-test:csh-051-sanitized"
+    ],
+    "digests": [],
+    "created": "2026-09-26T15:40:33.804627091Z",
+    "os": "linux",
+    "architecture": "arm64"
+  }
+]

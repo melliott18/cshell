@@ -66,11 +66,13 @@ Valid-name import and export marking follow [POSIX shell
 variables](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_05_03).
 
 No state operation reads or changes `environ`, calls `getenv()` or `setenv()`,
-or synchronizes the host process environment. Special startup initialization
-of `IFS`, `PPID`, and `PWD` remains
-[CSH-029](tickets/CSH-029-state-builtins.md) work. In particular, raw import
-does not perform the required invocation-time reset of `IFS` to space, tab,
-and newline. Future runtime initialization must apply those rules separately.
+or synchronizes the host process environment. Raw import preserves supplied
+values. The public runtime then calls `csh_builtin_initialize()` before parsing:
+it resets IFS to space/tab/newline, PPID to the invoking parent's PID and OPTIND
+to 1. It retains a valid absolute logical PWD without dot components, otherwise
+uses the physical cwd; when that cwd cannot be obtained it selects unset PWD.
+PWD is exported. Imported export attributes on reset variables are retained.
+See [the CSH-048 startup assertions](state-builtin-evidence.md#env-003).
 
 ## Child environment snapshots
 

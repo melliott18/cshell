@@ -57,3 +57,8 @@ cases through the replacement executor. It includes quoting/listing, logical
 and physical directories, CDPATH, readonly directory rollback, invalid operands,
 redirection restoration, special categories and prepared assignment persistence.
 `make test-execute` retains the existing exit and descriptor/failure coverage.
+
+The public runtime initializes IFS, PPID, OPTIND and PWD before parsing; its
+validated startup PWD is exported. See [CSH-048 clause evidence](state-builtin-evidence.md)
+for the distinction from raw storage import, exact runtime assertions, selected
+policies and remaining validation gaps.

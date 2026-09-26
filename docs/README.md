@@ -16,6 +16,7 @@ Start with the [project README](../README.md) for installation and current statu
 | [Expansion evidence](expansion-evidence.md) | Clause/condition map, exact runtime/API cases, policies and locale limits for CSH-047 |
 | [Value expansion](value-expansions.md) | Structured value/final-field contexts, IFS, pathname generation, arithmetic, decoding, and deferred substitutions |
 | [Simple-command execution](execution.md) | Owned prepared commands, phased expansion, lookup, child ownership, bootstrap builtins, and reversible redirections |
+| [Execution clause evidence](execution-evidence.md) | Ordering, descriptors, lookup, pipelines, control flow and error assertions |
 | [Evaluation builtins](evaluation-builtins.md) | Dot/eval, exec, lookup, aliases, input and resource utilities |
 | [Control flow and functions](control-flow.md) | Selection, loops, function lifetimes, control transfer, and validation |
 | [Job control](job-control.md) | Interactive groups, terminal ownership, job builtins, retained statuses, and signal boundaries |
@@ -45,3 +46,7 @@ so the information remains accessible in a plain Markdown reader.
 - [State builtins](state-builtins.md): variables, positionals, directories, and special-builtin integration.
 
 - [Invocation, lexical, grammar and alias clause evidence](invocation-syntax-evidence.md)
+
+- [Shell state and builtin clause evidence](state-builtin-evidence.md): CSH-048 startup, environments, utility assertions and run records.
+
+- [Base shell-option clause evidence](shell-option-evidence.md): CSH-051 entry, state, environment, policy and run mapping.

@@ -34,7 +34,7 @@ primary allocations. Existing concrete defects retain their separate owners.
 | --- | --- | --- |
 | [CSH-046: invocation and syntax](tickets/CSH-046-invocation-syntax-evidence.md) | SH-001–SH-008; LEX-001–LEX-006; GRAM-001–GRAM-005; U-017, U-031 (21) | Complete input/invocation, token/grammar and alias clause mapping; PATH-only negative, identity, nonblocking-terminal/post-completion and documented boundary witnesses. |
 | [CSH-047: expansion](tickets/CSH-047-expansion-evidence.md) | ENV-002, ENV-004; EXP-001–EXP-011 (13) | Expansion context/order, parameters, patterns, numeric/encoding choices and supported locale breadth require reviewed assertions beyond selected witnesses. |
-| [CSH-048: state and builtins](tickets/CSH-048-state-builtin-evidence.md) | ENV-001, ENV-003, ENV-005, ENV-006; U-001, U-002, U-005–U-007, U-009–U-014, U-016, U-019, U-020, U-023, U-024, U-027, U-029, U-030, U-033 (24) | Startup, utility options/errors, special-builtin effects, evaluation/lookup and environment interactions need complete case-level evidence; mixed profile portions need precise applicability. |
+| [CSH-048: state and builtins](tickets/CSH-048-state-builtin-evidence.md) | ENV-001, ENV-003, ENV-005, ENV-006; U-001, U-002, U-005–U-007, U-009–U-014, U-016, U-019, U-020, U-023, U-024, U-027, U-029, U-030, U-033 (24) | [Clause-level state/builtin map](state-builtin-evidence.md) records startup fixes, exact native/Docker assertions and source-conditional profile portions. Residual utility/error/context conditions remain explicitly owned by CSH-048 or its named narrower owners. |
 | [CSH-049: execution](tickets/CSH-049-execution-evidence.md) | SH-009; RED-001–RED-006; EXEC-001–EXEC-008, EXEC-010–EXEC-016; U-003, U-004; O-026 (25) | Ordering, descriptors, search, pipelines/status, control flow and error consequences lack complete family evidence; descriptor/offset and permitted execution choices need explicit boundary records. |
 | [CSH-050: jobs and signals](tickets/CSH-050-jobs-signals-evidence.md) | EXEC-009; JOB-001–JOB-003; SIG-001–SIG-003; U-008, U-015, U-026, U-032 (11) | Base asynchronous/signal/wait rules and conditional terminal behavior need a complete runtime/PTY assertion map. Fixing intermittent failures alone does not verify the families. |
 | [CSH-051: shell options](tickets/CSH-051-shell-option-evidence.md) | O-001, O-002, O-004–O-007, O-009, O-012–O-014, O-016–O-018 (13) | Each applicable option needs explicit invocation/set, enable/disable, defaults/reports and affected-environment coverage; common links to the option suite are insufficient. |
@@ -215,3 +215,8 @@ integration or an unimplemented nesting guard. This
 documentation check does not change the source identity or results of the
 independent sample above; final integrated runtime/CI and defect dispositions
 remain the main audit ticket's responsibility.
+
+CSH-051 now provides the [option-by-clause map](shell-option-evidence.md) and
+[platform run evidence](evidence/csh-051/README.md) for its 13 rows. The original
+audit findings above are historical; other follow-up owners and the CSH-012
+compliance gate remain open.

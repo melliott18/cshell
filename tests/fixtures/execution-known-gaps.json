@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "name": "CSH-055 known execution defects (expected to fail until fixed)",
+  "kind": "replacement",
+  "cases": [
+    {
+      "name": "EXEC-004 prefix PATH selects external pwd",
+      "args": ["-c", "chmod +x bin/pwd; PATH=bin pwd\n"],
+      "stdin": "",
+      "setup": {"bin/pwd": "#!/bin/sh\nprintf 'custom-pwd\\n'\n"},
+      "expect": {"stdout": "custom-pwd\n", "stderr": "", "status": 0}
+    }
+  ]
+}
