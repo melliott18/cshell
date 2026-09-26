@@ -89,7 +89,7 @@ in [redirect.c](../src/redirect.c).
 | At least 0–9, not argv | E `RED-001 numeric descriptor 0` through `9`: helper writes `fd\n` into each target; subsequent stdout restored | Source/API validates larger integers; descriptor exhaustion stays an error, not an exclusion |
 | Failure stops later redirects but preserves earlier file effects | E `RED-001 rollback retains file effects`: first file truncated, last file absent, status 1 then restored stdout | No filesystem rollback is promised |
 | Expansion context and timing | S `redirection operands do not split or glob`, `redirection expansion observes previous redirection`; literal filename `two words *` and ordered target contents | Interactive optional globbing is not selected; exhaustive target-expansion combinations remain CSH-047/049 |
-| Restore flags, closures and no private-fd exposure | [execute_fixture.c](../tests/execute_fixture.c) assertions for fd 40/41 preserve FD_CLOEXEC/count after success and failure; S `private group descriptor cannot become expanded dup source 3` through generated descriptors | API assertions, plus selected runtime witnesses; arbitrary inherited descriptor layouts remain CSH-055 |
+| Restore flags, closures and no private-fd exposure | [execute_fixture.c](../tests/execute_fixture.c) assertions for fd 40/41 preserve FD_CLOEXEC/count after success and failure; S `private group descriptor cannot become expanded dup source 3` through generated descriptors | API assertions, plus selected runtime witnesses; CSH-055 adds [public-runtime descriptor masks and inherited flags](execution-contracts.md#descriptor-and-command-read-witnesses); arbitrary layouts are not inferred |
 
 <a id="red-002"></a>
 
@@ -177,7 +177,7 @@ Implementation: prepare.c `csh_command_arguments/assignments`, execute.c
 | EXEC-002/function | E `function export policy`: child sees prefix, parent old/unexported restored; C `function state and prefix lifetime` retains unrelated mutation | D-006 unspecified persistence/export choices |
 | EXEC-002/readonly | E `readonly category empty`, `:`, `read answer`, helper `status 0`, `f`: status 1, diagnostic, no body/later files | All five categories, noninteractive; interactive recovery under EXEC-015 |
 | EXEC-003/last-status | E `last substitution status`: statuses 7 (last assignment substitution), 9 (redirection substitution), 0 (no substitution), exact created files | Last status obtained, not assumed first or rightmost textual nesting |
-| EXEC-003/environment | S `empty command redirection environment isolated`: `${made:=created}` creates file but does not set parent variable | Disposal covers this mutation; trap/environment combinations remain CSH-048/055 |
+| EXEC-003/environment | S `empty command redirection environment isolated`: `${made:=created}` creates file but does not set parent variable | Disposal covers this mutation; [CSH-055](execution-contracts.md) adds no-name trap/substitution combinations; full environment combinations remain CSH-048 |
 
 <a id="exec-004"></a><a id="exec-005"></a>
 
@@ -190,10 +190,10 @@ Implementation: execute.c `command_category`, `path_builtin_category`,
 | Stable scope | Exact assertions | Limit/owner |
 | --- | --- | --- |
 | EXEC-004/precedence | C `function lookup before regular builtin`; V `command bypass function`, `command intrinsic without PATH`; special names rejected by C `function special name rejected` | Invalid special function names are outside portable application guarantees; reserved unspecified utility names are not treated as required search behavior |
-| EXEC-004/path | E `PATH refresh after assignment`: `one\ntwo\n`; execute.py literal PATH search with first nonexecutable and second executable directory, empty component, and missing interpreter (126) | **Known defect:** temporary prefix PATH is ignored when deciding the built-in `pwd` category. [CSH-055](tickets/CSH-055-execution-contract-gaps.md) owns the reproducer |
+| EXEC-004/path | E `PATH refresh after assignment`: `one\ntwo\n`; execute.py literal PATH search with first nonexecutable and second executable directory, empty component, and missing interpreter (126) | Fixed by [CSH-055](execution-contracts.md): expanded last-prefix PATH controls builtin selection; the strict regression now joins default suites |
 | EXEC-004/pathname-fallback | E `pathname bypass and format fallback` ignores a same-name function, passes spaced argument and script `$0`, returns 17 | Host `/bin/sh` dependency; CSH-052 owns host Issue 8 gaps |
-| EXEC-005/argv-environment | R `literal quoting` preserves empty/spaced/literal arguments; E `external export and restore` checks environment; execute.py prefixed PATH/VISIBLE/PRIVATE scripts assert exported vs unexported values | Complete argv[0] variants and invalid imported environment names remain CSH-055; invalid names have unspecified inclusion policy |
-| EXEC-005/open-descriptors | E numeric 0–9 and shared-offset witnesses inspect descriptors after exec; [pipeline_fixture.c](../tests/pipeline_fixture.c) loops through all seven originally closed standard-fd masks and asserts restored closures/no fd growth | Closed masks are API evidence. Public-runtime initial stdout/stderr closure combinations and arbitrary inherited layouts remain CSH-055; POSIX permits reopening |
+| EXEC-005/argv-environment | R `literal quoting` preserves empty/spaced/literal arguments; E `external export and restore` checks environment; execute.py prefixed PATH/VISIBLE/PRIVATE scripts assert exported vs unexported values | [CSH-055](execution-contracts.md) adds exact direct/PATH argv[0] and invalid imported-name policy assertions |
+| EXEC-005/open-descriptors | E numeric 0–9 and shared-offset witnesses inspect descriptors after exec; [pipeline_fixture.c](../tests/pipeline_fixture.c) loops through all seven originally closed standard-fd masks and asserts restored closures/no fd growth | CSH-055 adds all public-runtime standard-fd masks in string/file modes and inherited fd flags; POSIX permits reopening closed standard fds |
 
 <a id="exec-006"></a><a id="exec-007"></a>
 
@@ -264,8 +264,8 @@ asserts successful definition status and that `unset -f` retains variable `f`.
 C recursive/redefined/unset-active-body cases retain owned AST lifetime.
 Function-prefix export/lifetime is D-006, not an extra POSIX requirement.
 The explicit recursion ceiling remains a documented size limitation under
-CSH-046; syntax-error recovery and nested fault paths are not all exhaustively
-covered by these function cases (CSH-055).
+CSH-046. [CSH-055](execution-contracts.md) adds nested function return, syntax
+recovery/unwind and allocation-failure restoration witnesses.
 
 <a id="exec-015"></a>
 
@@ -297,10 +297,11 @@ P `terminal expansion error recovers`, `terminal exit redirection error continue
 `terminal control operand error recovers`. These assert combined terminal bytes
 and subsequent commands, not just process survival. contexts.py readonly and
 special errors in subshells assert parent survival. [input.py](../tests/input.py)
-and trap/input-interruption tests cover input APIs and EINTR; **unrecoverable
-command-read errors with already-buffered commands, interactive read errors,
-and the dot exception need public-runtime fault injection** (CSH-055). They are
-not inferred from regular EOF, closed-fd utility reads, or interrupted input.
+and trap/input-interruption tests cover input APIs and EINTR.
+[CSH-055](execution-contracts.md#descriptor-and-command-read-witnesses) adds
+public-main EIO injection for buffered commands, interactive input, pending
+non-EXIT traps and dot/`command .` exceptions. These are distinct from EOF
+and recoverable interruption.
 
 <a id="exec-016"></a>
 
@@ -334,13 +335,14 @@ commands, `break cannot cross function boundary`, and `break in subshell isolate
 are project robustness/policy witnesses: positive operands and same-environment
 lexical enclosure are application preconditions, and non-lexical enclosure is
 unspecified. `eval loop transfer` is therefore not a mandatory oracle for every
-shell. Continue in while/until conditions, return/control combinations and
-signal interruption remain narrower coverage work in CSH-055/054.
+shell. [CSH-055](execution-contracts.md) adds while/until condition continues, nested
+lexical transfers and explicit nonlexical policies. Signal interruption remains
+CSH-054.
 
 ## Remaining obligations
 
-[CSH-055](tickets/CSH-055-execution-contract-gaps.md) owns the confirmed prefix
-PATH/builtin lookup defect and named execution coverage gaps above. CSH-047
+[CSH-055](execution-contracts.md) fixes the prefix PATH/builtin lookup defect
+and supplies assertions for its named execution conditions. CSH-047
 owns expansion/declaration combinations; CSH-048 owns full environment/utility
 state; CSH-053 owns multibyte lexical boundaries; CSH-054 owns residual signal,
 job and loaded-PTY cleanup failures; CSH-052 owns host utilities and fallback

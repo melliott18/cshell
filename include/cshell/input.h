@@ -61,6 +61,8 @@ int csh_input_reserve_begin(struct csh_input_reservation *reservation,
 /* Shared with other private descriptor owners during nested execution. */
 int csh_input_descriptor_reserved(int fd);
 void csh_input_reserve_end(struct csh_input_reservation *reservation);
+/* True after a sticky input failure; excludes EOF and recoverable EINTR. */
+int csh_input_failed(const struct csh_input *input);
 void csh_input_destroy(struct csh_input *input);
 /* Optional borrowed event-loop hook, called before each descriptor read.
  * Return 0 when ready or -1 with errno. String sources do not call it. */

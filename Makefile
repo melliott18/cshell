@@ -313,7 +313,7 @@ test-builtins: build/tests/builtin_fixture build/tests/execute_fixture
 	./build/tests/builtin_fixture
 	$(PYTHON) tests/builtins.py build/tests/execute_fixture
 
-test: test-host-utilities test-state-observations test-invocation test-control test-jobs test-traps test-substitution test-builtins test-portability test-redirection-offset test-prompt $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline test-context $(TEST_SUITE)
+test: test-execution-contracts test-host-utilities test-state-observations test-invocation test-control test-jobs test-traps test-substitution test-builtins test-portability test-redirection-offset test-prompt $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline test-context $(TEST_SUITE)
 	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
 
@@ -422,7 +422,7 @@ test-state-observations: cshell build/tests/state_builtin_helper
 	$(PYTHON) tests/state_builtin_observations.py ./cshell build/tests/state_builtin_helper
 
 .PHONY: test-execution-evidence
-test-execution-evidence: cshell build/tests/execution.json
+test-execution-evidence: test-execution-contracts cshell build/tests/execution.json
 	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/execution.json
 
 # Host executables remain distinct from cshell builtins and fixture helpers.
@@ -433,3 +433,15 @@ build/tests/host_utility_helper: tests/host_utility_helper.c
 .PHONY: test-host-utilities
 test-host-utilities: cshell build/tests/host_utility_helper
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --record build/tests/host-utilities-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+# Public entry point with only the command input read syscall instrumented.
+build/tests/command-read-input.o: src/input.c tests/command_read_faults.h $(INPUT_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/command_read_faults.h -c $< -o $@
+
+build/tests/command_read_faults: tests/command_read_faults.c build/tests/command-read-input.o $(OBJECTS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/command_read_faults.c build/tests/command-read-input.o $(filter-out build/input.o,$(OBJECTS)) $(LDLIBS)
+
+.PHONY: test-execution-contracts
+test-execution-contracts: cshell build/tests/command_read_faults build/tests/execute_helper
+	$(PYTHON) tests/execution_contracts.py ./cshell build/tests/command_read_faults build/tests/execute_helper

@@ -1018,3 +1018,12 @@ that option places halt-on-error settings in each actual child environment,
 and disables LeakSanitizer on Linux. It is ASan/UBSan evidence, not Linux leak
 scanning evidence. The observer helper is deliberately unsanitized so startup
 does not change the descriptors or resource state it measures.
+
+## Residual execution contracts
+
+`make test-execution-contracts` runs CSH-055's public-runtime inherited descriptor
+and injected command-read error witnesses. It is included in `make test` and
+`make test-execution-evidence`. The fault binary compiles only input.c with a
+read wrapper; all other objects, including main, are the ordinary runtime.
+The [contract map](execution-contracts.md) identifies exact assertions, source
+alternatives, bounds, environments, and sanitizer handling for closed descriptors.

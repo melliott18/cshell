@@ -445,6 +445,11 @@ order on execution, expansion, assignment and redirection failure.
 [CSH-049’s condition map](execution-evidence.md) separates the exact runtime,
 API and PTY assertions from the unverified clauses. It includes D-002, D-006
 and D-007 choices, the CSH-043 offset boundaries and CSH-042 locale witnesses.
-Temporary prefix PATH currently does not affect the PATH-associated `pwd`
-builtin selection; [CSH-055](tickets/CSH-055-execution-contract-gaps.md) records
-the failing reproducer and residual execution contracts.
+[CSH-055's residual contract map](execution-contracts.md) adds prefix-PATH
+selection, inherited descriptors, no-name trap environments, nested function
+restoration and condition-list continue witnesses. The expanded final PATH
+prefix participates in PATH-associated `pwd` selection before dispatch, without
+installing a second assignment scope. `command -p` retains the standard path.
+Unrecoverable command-read errors discard pending commands and permit only EXIT
+trap evaluation. Dot-file read errors use special-utility error consequences,
+including interactive recovery and suppression through `command .`.
