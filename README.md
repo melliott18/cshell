@@ -5,6 +5,10 @@ and `sh` behavior. **cshell is currently a bootstrap implementation, not a POSIX
 shell.** The executable is named `cshell`; this project implements the Bourne-style
 POSIX language, not the C shell (`csh`) language.
 
+The current target is the [base shell profile](docs/posix.md#selected-profile).
+Native macOS and Linux and the documented Docker image are tested; this
+repository has no installation target yet. Build locally and run `./cshell`.
+
 ## Build and run
 
 Requirements: a C99 compiler and GNU Make. The handwritten lexer needs no
@@ -60,6 +64,7 @@ make test-jobs     # Job builtins, retained statuses, idle reaping, and failure 
 make test-traps    # Signals ignored before shell startup
 make test-jobs-pty # Process groups, terminal signals, stop/resume, and restoration
 make test-runtime  # Cross-mode invocation/status behavior
+make test-portability # Locale, large input, sparse files, bounded generated cases
 make test-runtime-pty # Shell prompts, EOF, and exit errors on a terminal
 make test-pty      # Shell terminal behavior, prompts, EOF, and exit errors
 make test-harness  # Test the runner's failure detection and cleanup

@@ -4,6 +4,7 @@
 #include "cshell/jobs.h"
 #include "cshell/traps.h"
 #include <errno.h>
+#include <locale.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -94,6 +95,11 @@ int main(int argc, char **argv)
     struct csh_state_info info;
     int status = 0;
     struct prompt_context prompt_data;
+
+    /* The process starts in the C locale. Establish the invocation locale
+     * before reading shell input or expanding any words. Changes to shell
+     * LC_CTYPE variables later do not change this invocation's lexer locale. */
+    (void)setlocale(LC_ALL, "");
 
     if (csh_invocation_parse(&invocation, argc, argv, STDIN_FILENO,
             STDERR_FILENO, &error) == -1) {

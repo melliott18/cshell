@@ -5,6 +5,16 @@
 cshell targets the shell language and `sh` behavior in POSIX.1-2024 (Issue 8).
 It currently implements a bootstrap subset. No complete conformance claim is made.
 
+## Selected profile
+
+The current target is the base Shell Command Language and `sh` utility. The
+optional User Portability Utilities (UP) and XSI groups are not selected. cshell
+already implements some job-control and XSI-associated commands, but those
+features do not establish either complete option group. The conditional rows
+remain in the [utility and option map](posix-utilities.md); selecting either
+group later reopens its full linked set of requirements. This profile decision
+does not exclude base requirements or make the current shell conforming.
+
 Normative references:
 
 - [Shell Command Language](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html)
@@ -44,14 +54,14 @@ standalone module evidence does not establish runtime feature support.
 | Memory and process safety | Module ownership, allocation failures, descriptor restoration, and child cleanup fixtures | [CSH-016](tickets/CSH-016-input-and-invocation.md), [CSH-019](tickets/CSH-019-simple-command-redirections.md), [CSH-020](tickets/CSH-020-pipeline-lifecycle.md) |
 | Invocation and input | String/script/stdin, EOF, interactive detection, strict output, and final statuses | [CSH-018](tickets/CSH-018-status-and-cli-integration.md), [Runtime behavior](candidate-runtime.md) |
 | Token recognition and quoting | Structured words, quote provenance, and integrated expansion | [CSH-004](tickets/CSH-004-lexer-and-words.md) |
-| Grammar and command composition | AST parsing exists; lists and compound execution rejected | [CSH-005](tickets/CSH-005-parser-and-ast.md), [CSH-021](tickets/CSH-021-lists-and-execution-contexts.md) |
+| Grammar and command composition | Lists, groups, control flow and functions run through the replacement AST; full conformance audit remains open | [CSH-005](tickets/CSH-005-parser-and-ast.md), [CSH-021](tickets/CSH-021-lists-and-execution-contexts.md), [CSH-028](tickets/CSH-028-control-flow-and-functions.md) |
 | Execution and redirections | Literal commands, external lookup/statuses, ordered redirections, concurrent pipelines | [CSH-019](tickets/CSH-019-simple-command-redirections.md), [CSH-020](tickets/CSH-020-pipeline-lifecycle.md) |
 | Variables and execution state | Owned state, environment import, literal assignments, state builtins | [CSH-007](tickets/CSH-007-variables-and-parameters.md) |
 | Word expansion | Integrated value/field expansion, substitutions, here-documents, and arithmetic-first replay; milestone complete | [CSH-008](tickets/CSH-008-word-expansion.md) |
 | Compound commands and functions | Parsing and runtime control flow, function lifetimes, and control transfer fixtures | [CSH-009](tickets/CSH-009-compounds-and-functions.md) |
 | Builtins, aliases, and options | State/evaluation builtins, aliases and [shell options](shell-options.md); full conformance audit remains open | [CSH-010](tickets/CSH-010-builtins-options-and-aliases.md) |
 | Signals, interactive mode, and jobs | Process groups, terminal handoff, job builtins, traps, input interrupt recovery, and hangup policy; full conformance audit pending | [CSH-034](tickets/CSH-034-job-control.md), [CSH-035](tickets/CSH-035-traps-and-signal-semantics.md) |
-| Conformance evidence and portability | Native/Docker module and runtime fixtures; full conformance suite pending | [CSH-012](tickets/CSH-012-conformance-and-portability.md) |
+| Conformance evidence and portability | Native/Docker module and runtime fixtures, plus [locale, large-input and sparse-file probes](testing.md#portability-audit-probes); full requirement-level verification remains open | [CSH-037](tickets/CSH-037-portability-audit.md), [CSH-042](tickets/CSH-042-locale-semantics.md), [CSH-043](tickets/CSH-043-redirection-offset.md), [CSH-044](tickets/CSH-044-intermittent-bg-prompt.md) |
 
 Legacy syntax such as `|&` and `>>&` must not be used as evidence of POSIX
 coverage or retained as compatibility requirements. New modules take their

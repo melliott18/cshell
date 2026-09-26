@@ -155,12 +155,13 @@ def validate_steps(steps, name):
             raise ValueError(f"{name}: invalid PTY {action}: {value!r}")
 
 
-def child_limits(timeout, output_limit):
+def child_limits(timeout, output_limit, file_size_limit=None):
     """Run only in the forked child of this single-threaded POSIX runner."""
     for kind, limit in (
         (resource.RLIMIT_CORE, 0),
         (resource.RLIMIT_CPU, math.ceil(timeout) + 1),
-        (resource.RLIMIT_FSIZE, max(1024 * 1024, output_limit)),
+        (resource.RLIMIT_FSIZE, file_size_limit if file_size_limit is not None
+         else max(1024 * 1024, output_limit)),
         (resource.RLIMIT_NOFILE, 64),
     ):
         soft, hard = resource.getrlimit(kind)
@@ -176,7 +177,7 @@ def kill_group(process, deadline=None):
     pty_harness.kill_group(process.pid, process.pid, deadline)
 
 
-def capture(binary, case, directory, timeout, output_limit):
+def capture(binary, case, directory, timeout, output_limit, file_size_limit=None):
     environment = {
         "PATH": os.defpath, "LANG": "C", "LC_ALL": "C",
         "HOME": str(directory / ".home"), "TMPDIR": str(directory / ".tmp"),
@@ -196,7 +197,8 @@ def capture(binary, case, directory, timeout, output_limit):
     process = subprocess.Popen(
         [str(binary)] + case.get("args", []), cwd=directory, env=environment,
         stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        start_new_session=True, preexec_fn=lambda: child_limits(timeout, output_limit),
+        start_new_session=True,
+        preexec_fn=lambda: child_limits(timeout, output_limit, file_size_limit),
     )
     try:
         with selectors.DefaultSelector() as selector:

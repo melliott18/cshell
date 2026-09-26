@@ -150,15 +150,17 @@ class HarnessTests(unittest.TestCase):
         item = case(mode="hang", args=["hang", str(marker)], stdin="x" * 200000,
                     timeout=5)
         started = time.monotonic()
-        result = self.run_suite([item], extra=("--timeout", "0.3"))
+        # Hosted macOS can spend more than 0.3s launching Python under load;
+        # the candidate must reach setup before its intentional hang is timed.
+        result = self.run_suite([item], extra=("--timeout", "1"))
         self.assert_failure(result, "self test", "time")
-        self.assertLess(time.monotonic() - started, 3, result.stdout)
+        self.assertLess(time.monotonic() - started, 5, result.stdout)
         self.assert_not_running(self.process_record(marker)["parent"])
 
     def test_timeout_kills_same_group_descendants(self):
         marker = self.directory / "processes.json"
         self.addCleanup(self.kill_recorded_group, marker)
-        item = case(mode="fork-hang", args=["fork-hang", str(marker)], timeout=0.3)
+        item = case(mode="fork-hang", args=["fork-hang", str(marker)], timeout=1)
         result = self.run_suite([item])
         self.assert_failure(result, "time")
         record = self.process_record(marker)

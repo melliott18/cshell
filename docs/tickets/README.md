@@ -39,6 +39,10 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-013](CSH-013-visual-roadmap.md) | Document visual architecture and parallel implementation work | [CSH-001](CSH-001-project-foundation.md) | [#14](https://github.com/melliott18/cshell/issues/14) |
 | [CSH-038](CSH-038-legacy-retirement-plan.md) | Remove legacy constraints from the implementation roadmap | [CSH-013](CSH-013-visual-roadmap.md) | [#40](https://github.com/melliott18/cshell/issues/40) |
 | [CSH-040](CSH-040-macos-harness-cleanup.md) | Make repeated macOS harness cleanup reliable | [CSH-017](CSH-017-test-harness-and-ci.md) | [#48](https://github.com/melliott18/cshell/issues/48) |
+| [CSH-042](CSH-042-locale-semantics.md) | Complete locale-sensitive shell behavior found by the portability audit | [CSH-037](CSH-037-portability-audit.md) | [#73](https://github.com/melliott18/cshell/issues/73) |
+| [CSH-043](CSH-043-redirection-offset.md) | Define and verify the redirection offset maximum | [CSH-037](CSH-037-portability-audit.md) | [#74](https://github.com/melliott18/cshell/issues/74) |
+| [CSH-044](CSH-044-intermittent-bg-prompt.md) | Diagnose intermittent background-resume prompt stall | [CSH-037](CSH-037-portability-audit.md) | [#76](https://github.com/melliott18/cshell/issues/76) |
+| [CSH-045](CSH-045-jobs-fixture-timeout.md) | Diagnose intermittent macOS sanitizer jobs fixture timeout | [CSH-037](CSH-037-portability-audit.md) | [#77](https://github.com/melliott18/cshell/issues/77) |
 
 ## Child implementation tickets
 
