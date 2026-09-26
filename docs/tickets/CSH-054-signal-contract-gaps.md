@@ -1,6 +1,6 @@
 # CSH-054: Complete residual jobs and signal contracts
 
-- Status: review
+- Status: done
 - Type: fix
 - Kind: implementation
 - Parent: None
@@ -9,6 +9,13 @@
 - Issue: [#90](https://github.com/melliott18/cshell/issues/90)
 
 ## Goal
+
+Integrated in [PR #105](https://github.com/melliott18/cshell/pull/105).
+Combined revision `a57d404` passed full local native tests (3,113 runtime
+cases, terminal suites, host qualification, 71 harness self-tests) and hosted
+Linux/Docker normal and sanitizer checks in run 36273124710. Hosted macOS
+sanitizer checks were still running at integration. Scoped residual work and
+capability limitations below remain open; integration is not a conformance claim.
 
 Resolve the concrete defects and finish the narrower unverified obligations in
 [CSH-050's clause map](../jobs-signals-evidence.md). This ticket owns residual
