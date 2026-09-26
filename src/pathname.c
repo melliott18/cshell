@@ -1,3 +1,4 @@
+#include "cshell/character.h"
 #include "field_internal.h"
 
 #include <dirent.h>
@@ -48,6 +49,12 @@ static enum csh_expand_result filesystem_error(int error)
     }
 }
 
+/* Bound the lookahead even for long unexpanded patterns. */
+static size_t pattern_width(const char *text)
+{
+    return csh_character_length(text, strnlen(text, MB_CUR_MAX), 0, 1);
+}
+
 /* A closing bracket in the first list position is literal. Skip POSIX
  * bracket subexpressions so their closing brackets do not close the list. */
 static int has_bracket(const char *pattern)
@@ -57,17 +64,18 @@ static int has_bracket(const char *pattern)
     if (*position == ']') ++position;
     while (*position != 0 && *position != '/') {
         if (*position == '\\' && position[1] != 0 && position[1] != '/') {
-            position += 2;
+            ++position;
+            position += pattern_width(position);
         } else if (*position == ']') {
             return 1;
         } else if (*position == '[' && position[1] != 0 &&
             strchr(":.=", position[1]) != NULL) {
             const char *end = position + 2;
             while (*end != 0 && *end != '/' &&
-                !(end[0] == position[1] && end[1] == ']')) ++end;
+                !(end[0] == position[1] && end[1] == ']')) end += pattern_width(end);
             if (*end == 0 || *end == '/') return 0;
             position = end + 2;
-        } else ++position;
+        } else position += pattern_width(position);
     }
     return 0;
 }
@@ -75,10 +83,12 @@ static int has_bracket(const char *pattern)
 static int has_pattern(const char *pattern)
 {
     while (*pattern != 0) {
-        if (*pattern == '\\' && pattern[1] != 0) pattern += 2;
-        else if (*pattern == '*' || *pattern == '?' ||
+        if (*pattern == '\\' && pattern[1] != 0) {
+            ++pattern;
+            pattern += pattern_width(pattern);
+        } else if (*pattern == '*' || *pattern == '?' ||
             (*pattern == '[' && has_bracket(pattern))) return 1;
-        else ++pattern;
+        else pattern += pattern_width(pattern);
     }
     return 0;
 }
@@ -96,7 +106,12 @@ static char *pathname_pattern(const char *pattern)
             if (pattern[1] != '/') *write++ = *pattern;
             ++pattern;
         }
-        *write++ = *pattern++;
+        {
+            size_t width = pattern_width(pattern);
+            memcpy(write, pattern, width);
+            write += width;
+            pattern += width;
+        }
     }
     *write = 0;
     return copy;
@@ -107,7 +122,12 @@ static void unescape(char *text)
     char *read = text, *write = text;
     while (*read != 0) {
         if (*read == '\\' && read[1] != 0) ++read;
-        *write++ = *read++;
+        {
+            size_t width = pattern_width(read);
+            memmove(write, read, width);
+            write += width;
+            read += width;
+        }
     }
     *write = 0;
 }

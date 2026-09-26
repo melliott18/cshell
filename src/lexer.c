@@ -1,3 +1,4 @@
+#include "cshell/character.h"
 #include "cshell/lexer.h"
 #include "cshell/arithmetic.h"
 
@@ -518,11 +519,21 @@ static int peek(struct csh_lexer *lexer, size_t wanted,
                 continue;
             }
         }
-        source->look_positions[source->look_count++] = cursor;
-        source->look_scan = cursor + 1;
+        {
+            size_t width = csh_character_length(source->data + source->cursor + cursor,
+                available - cursor, 1, source->final);
+            if (width == 0) return -2;
+            source->look_positions[source->look_count++] = cursor;
+            source->look_scan = cursor + width;
+        }
     }
-    *physical = source->look_positions[wanted] + 1;
-    return source->data[source->cursor + source->look_positions[wanted]];
+    {
+        size_t offset = source->look_positions[wanted];
+        size_t width = csh_character_length(source->data + source->cursor + offset,
+            available - offset, 1, source->final);
+        *physical = offset + width;
+        return width > 1 ? 256 : source->data[source->cursor + offset];
+    }
 }
 
 /* Consume a known physical span of delimiters, exposing any continuations. */
@@ -900,7 +911,7 @@ static int operator_step(struct csh_lexer *lexer, struct csh_token *token,
     byte = peek(lexer, 0, &physical);
     if (byte == -2)
         return CSH_LEX_MORE;
-    if (byte < 0)
+    if (byte < 0 || byte > 255)
         return publish(lexer, token, error);
     memcpy(candidate, lexer->operator_text, lexer->operator_length);
     candidate[lexer->operator_length] = (char)byte;
@@ -979,7 +990,7 @@ static int dollar(struct csh_lexer *lexer, enum csh_quote quote,
                     CSH_QUOTE_DOLLAR_SINGLE, physical, error) == -1 ? -1 : 1;
     if (name_start(next))
         return push(lexer, SIMPLE, CSH_FRAGMENT_PARAMETER, quote, physical, error) == -1 ? -1 : 1;
-    if (digit(next) || (next > 0 && strchr("@*#?-$!", next) != NULL)) {
+    if (digit(next) || (next > 0 && next < 256 && strchr("@*#?-$!", next) != NULL)) {
         if (push(lexer, SIMPLE, CSH_FRAGMENT_PARAMETER, quote, physical, error) == -1 ||
             pop(lexer, 0, error) == -1)
             return -1;
@@ -1008,7 +1019,7 @@ static enum csh_lex_result next_token(struct csh_lexer *lexer,
         enum csh_quote quote = frame == NULL ?
             (lexer->document ? CSH_QUOTE_DOUBLE : CSH_QUOTE_NONE) : frame->quote;
         int byte, next;
-        size_t physical = 0;
+        size_t physical = 0, width;
         if (lexer->active && lexer->kind != CSH_TOKEN_WORD)
             return operator_step(lexer, token, error);
         if (source->cursor == source->length) {
@@ -1039,6 +1050,22 @@ static enum csh_lex_result next_token(struct csh_lexer *lexer,
                 continue;
             }
             if (delimiter(lexer, physical, quote, error) == -1)
+                return CSH_LEX_ERROR;
+            continue;
+        }
+        width = csh_character_length(source->data + source->cursor,
+            source->length - source->cursor, 1, source->final);
+        if (width == 0) return CSH_LEX_MORE;
+        if (width > 1) {
+            if (!lexer->active) {
+                if (start_token(lexer, error) == -1) return CSH_LEX_ERROR;
+                lexer->kind = CSH_TOKEN_WORD;
+            }
+            if (frame != NULL && frame->kind == PARAMETER) {
+                parameter_context(frame, 256);
+                quote = frame->quote;
+            }
+            if (piece(lexer, CSH_FRAGMENT_TEXT, quote, width, error) == -1)
                 return CSH_LEX_ERROR;
             continue;
         }
@@ -1107,9 +1134,12 @@ static enum csh_lex_result next_token(struct csh_lexer *lexer,
                     return CSH_LEX_MORE;
                 return fail(lexer, error, "unterminated escape", 0);
             }
-            next = source->data[source->cursor + 1];
+            width = csh_character_length(source->data + source->cursor + 1,
+                source->length - source->cursor - 1, 1, source->final);
+            if (width == 0) return CSH_LEX_MORE;
+            next = width > 1 ? 256 : source->data[source->cursor + 1];
             if (frame != NULL && frame->kind == DOLLAR_SINGLE) {
-                if (piece(lexer, CSH_FRAGMENT_ESCAPE, quote, 2, error) == -1)
+                if (piece(lexer, CSH_FRAGMENT_ESCAPE, quote, 1 + width, error) == -1)
                     return CSH_LEX_ERROR;
                 continue;
             }
@@ -1123,10 +1153,10 @@ static enum csh_lex_result next_token(struct csh_lexer *lexer,
                 continue;
             }
             if ((frame != NULL && frame->kind == BACKQUOTE) ?
-                (strchr("$`\\", next) != NULL ||
+                ((next < 256 && strchr("$`\\", next) != NULL) ||
                  (quote == CSH_QUOTE_DOUBLE && next == '"')) :
                 (quote != CSH_QUOTE_DOUBLE ||
-                 strchr("$`\\", next) != NULL ||
+                 (next < 256 && strchr("$`\\", next) != NULL) ||
                  (next == '"' && !(frame != NULL && frame->kind == ARITHMETIC) &&
                   !(lexer->document && frame == NULL)) ||
                  (frame != NULL && frame->kind == PARAMETER && next == '}'))) {
@@ -1135,7 +1165,7 @@ static enum csh_lex_result next_token(struct csh_lexer *lexer,
                         return CSH_LEX_ERROR;
                     lexer->kind = CSH_TOKEN_WORD;
                 }
-                if (piece(lexer, CSH_FRAGMENT_ESCAPE, quote, 2, error) == -1)
+                if (piece(lexer, CSH_FRAGMENT_ESCAPE, quote, 1 + width, error) == -1)
                     return CSH_LEX_ERROR;
                 continue;
             }

@@ -1,5 +1,6 @@
 /* Shell invocation, complete-command execution, and final status. */
 #include "cshell/execute.h"
+#include "cshell/character.h"
 #include "cshell/builtin.h"
 #include "cshell/parser.h"
 #include "cshell/jobs.h"
@@ -102,9 +103,15 @@ int main(int argc, char **argv)
      * LC_CTYPE variables later do not change this invocation's lexer locale. */
     if (setlocale(LC_ALL, "") == NULL) (void)setlocale(LC_ALL, "C");
 
+    if (csh_character_startup() == -1) {
+        fputs("cshell: cannot preserve startup character locale\n", stderr);
+        return 1;
+    }
+
     if (csh_invocation_parse(&invocation, argc, argv, STDIN_FILENO,
             STDERR_FILENO, &error) == -1) {
         diagnose(&error, error.argument_index != 0 ? argv[error.argument_index] : NULL);
+        csh_character_shutdown();
         return error.status;
     }
     if (csh_state_create(&state, &invocation, environ) != CSH_STATE_OK) {
@@ -222,5 +229,6 @@ done:
     csh_parser_destroy(parser);
     csh_state_destroy(state);
     csh_invocation_destroy(&invocation);
+    csh_character_shutdown();
     return status;
 }

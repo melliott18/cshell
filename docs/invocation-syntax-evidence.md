@@ -143,3 +143,12 @@ identity, commands and logs accompany that record. Native macOS skips only the
 two privileged identity probes; an explicit Linux Docker root run supplies
 those observations. Full PTY and harness tests remain separate from I's
 non-controlling terminal descriptor probes.
+
+## Multibyte follow-up evidence
+
+[CSH-053](tickets/CSH-053-multibyte-lexical-boundaries.md) extends LEX-002/004
+and ENV-004 with [raw-byte tests](locales.md#raw-byte-lexical-witnesses-csh-053):
+syntax-valued bytes inside valid multibyte characters remain data in bare,
+escaped, single/double/dollar-single quoted words and nested source, including
+after runtime locale changes. Locale and filesystem capability skips remain
+explicit; this does not extend the claim to stateful or every installed encoding.

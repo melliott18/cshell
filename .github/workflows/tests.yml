@@ -37,6 +37,7 @@ jobs:
           sudo apt-get install -y build-essential locales
           sudo localedef -i en_US -f UTF-8 en_US.UTF-8
           sudo localedef -i fr_FR -f UTF-8 fr_FR.UTF-8
+          sudo localedef -i zh_CN -f GB18030 zh_CN.GB18030
       - name: Build
         run: make -j2
       - name: Test replacement APIs, cshell runtime, and selected behavior
