@@ -884,5 +884,6 @@ They preserve resource/time/output limits and session cleanup. The two unequal
 identity cases require Linux root; ordinary native/container runs print scoped
 skips. Run them explicitly with `docker run --rm --init --user 0 IMAGE python3
 tests/invocation.py ./cshell`. This changes credentials only in test children;
-no setuid executable is installed. Root results do not replace unprivileged
+no setuid executable is installed. The Docker CI job runs this separate root
+probe after the unprivileged suite. Root results do not replace unprivileged
 permission/error testing.

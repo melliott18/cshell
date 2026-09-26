@@ -62,6 +62,8 @@ jobs:
         run: make docker-test-pty
       - name: Test harness failure handling in Linux image
         run: docker run --rm --init cshell-test:local make test-harness
+      - name: Test unequal invocation identities in Linux image
+        run: docker run --rm --init --user 0 cshell-test:local python3 tests/invocation.py ./cshell
       - name: Check Linux build with ASan and UBSan
         run: >-
           docker run --rm --init -e ASAN_OPTIONS=halt_on_error=1 -e UBSAN_OPTIONS=halt_on_error=1
