@@ -98,6 +98,23 @@ def add_option_cases(cross, helper):
     case('O-017 eval dot alias state', "alias enable='set -f'\neval enable\necho \"$-\"\n. ./source\necho \"$-\"\n", 'f\n\n', setup={'source':'set +f\n'})
     case('O-007 hashall and O-011 nolog', 'set -h -o nolog; hash echo; echo one; set +h +o nolog; echo two\n', 'one\ntwo\n')
 
+    case('O-002 loop and child assignments', f'unset item child; set -a; for item in value; do :; done; ({helper} environment item; child=local; {helper} environment child); {helper} environment child\n', 'item=value\nchild=local\nchild=<unset>\n')
+    case('O-005 until body fails', 'set -e; until false; do false; echo never; done; echo never\n', status=1)
+    case('O-005 elif and loop tested functions', 'set -e; f() { false; echo tested; }; if false; then :; elif f; then echo elif; fi; while f && false; do echo never; done; until f; do echo never; done; echo after\n', 'tested\nelif\ntested\ntested\nafter\n')
+    case('O-005 last substitution status succeeds', 'set -e; a=$(exit 7) b=$(true); echo after\n', 'after\n')
+    case('O-005 last substitution status fails', 'set -e; a=$(true) b=$(exit 7); echo never\n', status=7)
+    case('O-006 other expansion stages', 'HOME=/chosen; set -f; value="*.txt two"; printf "<%s>\\n" ~ "$((1+2))" "$(echo four)" $value "$value"\n', '</chosen>\n' + '<3>\n<four>\n<*.txt>\n<two>\n<*.txt two>\n', setup={'a.txt':''})
+    case('O-012 braced positional exemptions', 'set --; set -u; printf "<%s>\\n" ${@} ${*} "${@}" "${*}"\n', '<>\n')
+    case('O-012 unset length', 'unset absent; set -u; echo "${#absent}"; echo never\n', status=2, stderr='cshell: absent\n')
+    case('O-012 unset pattern removal', 'unset absent; set -u; echo "${absent%pattern}"; echo never\n', status=2, stderr='cshell: absent\n')
+    case('O-012 subshell error stays local', 'unset absent; set -u; (echo "$absent"; echo never); echo "$?:after"\n', '2:after\n', stderr='cshell: absent\n')
+    case('O-012 substitution error stays local', 'unset absent; set -u; value=$(echo "$absent"; echo never); echo "$?:after:$value"\n', '2:after:\n', stderr='cshell: substitution: absent\n')
+    case('O-014 physical continuations and heredoc', 'set -v\necho one\\\ntwo\ncat <<EOF\n$((1+2))\nEOF\n', 'onetwo\n3\n', stderr='echo one\\\ntwo\ncat <<EOF\n$((1+2))\nEOF\n')
+    case('O-014 noexec still reads', 'set -vn\necho never >out\n', stderr='echo never >out\n', files={'out':None})
+    case('O-016 trace precedes execution', 'set -x; echo "$((1+1))" >&2\n', stderr='+ echo 2\n2\n')
+    case('O-016 PS4 expansions', "tag=T; PS4='$(printf p)$((1+1)):${tag}> '; set -x; echo value\n", 'value\n', stderr='p2:T> echo value\n')
+    case('O-016 disabling has no later trace', 'set -x; set +x 2>/dev/null; echo after\n', 'after\n')
+
 
 def invocation_cases():
     cases = []

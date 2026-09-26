@@ -215,3 +215,8 @@ integration or an unimplemented nesting guard. This
 documentation check does not change the source identity or results of the
 independent sample above; final integrated runtime/CI and defect dispositions
 remain the main audit ticket's responsibility.
+
+CSH-051 now provides the [option-by-clause map](shell-option-evidence.md) and
+[platform run evidence](evidence/csh-051/README.md) for its 13 rows. The original
+audit findings above are historical; other follow-up owners and the CSH-012
+compliance gate remain open.
