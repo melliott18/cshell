@@ -94,6 +94,12 @@ records the exact image, binary hashes and commands.
 
 ## Validation record
 
+Integration recheck (2026-09-26): native host checks passed 784 cases with 12
+explicit known-gap observations, and all 69 harness self-tests passed. Native
+CI's overall job budget is now 30 minutes: the preceding combined runtime
+suite approached/exceeded 15 minutes in macOS sanitizer jobs before these host
+cases were added. Individual test timeouts and resource limits are unchanged.
+
 Implemented on `test/CSH-052-host-utility-evidence` in a separate worktree.
 The [clause map](../host-utility-evidence.md) names all scoped utilities,
 conditions, policies and exact assertions. The [artifact record](../evidence/csh-052/README.md)
