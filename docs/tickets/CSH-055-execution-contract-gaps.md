@@ -1,6 +1,6 @@
 # CSH-055: Complete residual execution contracts
 
-- Status: review
+- Status: done
 - Type: fix
 - Kind: implementation
 - Parent: None
@@ -9,6 +9,13 @@
 - Issue: [#92](https://github.com/melliott18/cshell/issues/92)
 
 ## Goal
+
+Integrated in [PR #104](https://github.com/melliott18/cshell/pull/104).
+Combined revision `a57d404` passed full local native tests (3,113 runtime
+cases, terminal suites, host qualification, 71 harness self-tests) and hosted
+Linux/Docker normal and sanitizer checks in run 36273124710. Hosted macOS
+sanitizer checks were still running at integration. Scoped residual work and
+capability limitations below remain open; integration is not a conformance claim.
 
 Fix the prefix-PATH lookup defect and complete the narrower unverified
 execution obligations identified by [CSH-049](CSH-049-execution-evidence.md).
