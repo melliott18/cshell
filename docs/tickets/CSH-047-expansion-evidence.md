@@ -1,11 +1,11 @@
 # CSH-047: Close expansion, parameter and locale evidence gaps
 
-- Status: ready
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-036, CSH-039
-- Branch: Assigned when work starts
+- Branch: `test/CSH-047-expansion-evidence`
 - Issue: [#79](https://github.com/melliott18/cshell/issues/79)
 
 ## Goal

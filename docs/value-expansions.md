@@ -307,3 +307,11 @@ failures. The [CSH-026 ticket](tickets/CSH-026-substitution-and-heredoc-integrat
 records validation. The [CSH-008 closure record](tickets/CSH-008-word-expansion.md)
 combines this evidence with CSH-041 and the completed prerequisites. These
 selected checks do not establish full POSIX compliance.
+
+## Clause-level runtime evidence
+
+[CSH-047](expansion-evidence.md) maps exact API and public-runtime witnesses to
+ENV-002/004 and EXP-001–011, including unspecified/policy partitions and
+remaining locale, pattern and depth limits. Run `make test-expansion` for the
+354 new runtime cases; `make test` includes them. This inventory does not
+promote any complete expansion family to verified.

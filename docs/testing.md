@@ -723,6 +723,18 @@ parser, API fixtures, and fault objects remain instrumented. See
 [Pipeline lifecycle](execution.md#pipeline-lifecycle-and-stage-results) for the
 synchronous ownership contract and the boundaries reserved for options/job control.
 
+## Public-runtime expansion evidence
+
+`make test-expansion` runs the 354 CSH-047 cases in `-c`, file and stdin modes.
+They are also part of `make test`, including native and Docker CI and the
+existing ASan/UBSan jobs. `tests/expansion_cases.py` contains exact scripts,
+fields, statuses, diagnostics and filesystem assertions; the
+[clause/condition map](expansion-evidence.md) distinguishes required cases from
+project policies and API-only coverage. `make test-expand test-substitution
+test-portability` supplies the related API, lifecycle and locale witnesses.
+The generator derives login homes and signed-long width from the executing
+host; generate suites where the binary runs, as with the Docker build.
+
 ## Value-expansion API and sanitizer checks
 
 `make test-expand` builds independent expansion, arithmetic, and quote-decoder
