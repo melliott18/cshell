@@ -1,3 +1,5 @@
+#include <errno.h>
+#include <locale.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -23,6 +25,7 @@ struct function_entry {
 };
 
 struct csh_state {
+    int manages_locale;
     struct csh_aliases *aliases;
     struct variable *hashes;
     size_t getopts_offset;
@@ -84,6 +87,57 @@ static struct variable *find_variable(const struct csh_state *state,
             return variable;
     }
     return NULL;
+}
+
+/* Only the active runtime opts into the process-global libc locale. Module
+ * states and construction of snapshots must not change it. Shell variables,
+ * including unexported assignments, are authoritative after startup. */
+static const struct { const char *name; int category; } locale_categories[] = {
+    {"LC_CTYPE", LC_CTYPE}, {"LC_COLLATE", LC_COLLATE},
+    {"LC_MESSAGES", LC_MESSAGES}, {"LC_MONETARY", LC_MONETARY},
+    {"LC_NUMERIC", LC_NUMERIC}, {"LC_TIME", LC_TIME}
+};
+
+static int locale_variable(const char *name)
+{
+    size_t i;
+    if (!strcmp(name, "LANG") || !strcmp(name, "LC_ALL")) return 1;
+    for (i = 0; i < sizeof(locale_categories) / sizeof(locale_categories[0]); ++i)
+        if (!strcmp(name, locale_categories[i].name)) return 1;
+    return 0;
+}
+
+static const char *locale_value(const struct csh_state *state, const char *name)
+{
+    struct variable *v = find_variable(state, name);
+    return v && v->value && *v->value ? v->value : NULL;
+}
+
+static void refresh_locale(const struct csh_state *state)
+{
+    const char *all, *lang;
+    size_t i;
+    int saved_errno = errno;
+    if (!state->manages_locale) return;
+    all = locale_value(state, "LC_ALL");
+    lang = locale_value(state, "LANG");
+    for (i = 0; i < sizeof(locale_categories) / sizeof(locale_categories[0]); ++i) {
+        const char *name = all ? all : locale_value(state, locale_categories[i].name);
+        if (!name) name = lang ? lang : "C";
+        if (!setlocale(locale_categories[i].category, name)) {
+            /* POSIX leaves an unsupported locale environment unspecified.
+             * Choose a consistent, silent C fallback for all categories. */
+            (void)setlocale(LC_ALL, "C");
+            break;
+        }
+    }
+    errno = saved_errno;
+}
+
+void csh_state_manage_locale(struct csh_state *state)
+{
+    state->manages_locale = 1;
+    refresh_locale(state);
 }
 
 static void destroy_variable(struct variable *variable)
@@ -196,6 +250,7 @@ enum csh_state_result csh_state_set_variable(struct csh_state *state,
     /* name may borrow the previous value, which assignment just released. */
     if (!strcmp(variable->name, "PATH")) csh_state_hash_clear(state);
     if (!strcmp(variable->name, "OPTIND")) state->getopts_offset = 0;
+    if (locale_variable(variable->name)) refresh_locale(state);
     return CSH_STATE_OK;
 }
 
@@ -239,7 +294,11 @@ enum csh_state_result csh_state_unset_variable(struct csh_state *state,
             return CSH_STATE_READONLY;
         *link = variable->next;
         if (!strcmp(name, "PATH")) csh_state_hash_clear(state);
-        destroy_variable(variable);
+        {
+            int changed_locale = locale_variable(variable->name);
+            destroy_variable(variable);
+            if (changed_locale) refresh_locale(state);
+        }
         break;
     }
     return CSH_STATE_OK;
@@ -291,9 +350,11 @@ nomem:
 enum csh_state_result csh_state_restore_variables(struct csh_state *state,
     struct csh_variable_save **save)
 {
+    int changed_locale = 0;
     if (state == NULL || save == NULL) return CSH_STATE_INVALID;
     while (*save != NULL) {
         struct csh_variable_save *entry = *save;
+        changed_locale |= locale_variable(entry->variable->name);
         if (!strcmp(entry->variable->name, "PATH")) csh_state_hash_clear(state);
         struct variable **link;
         for (link = &state->variables; *link != NULL; link = &(*link)->next) {
@@ -310,6 +371,7 @@ enum csh_state_result csh_state_restore_variables(struct csh_state *state,
         *save = entry->next;
         free(entry);
     }
+    if (changed_locale) refresh_locale(state);
     return CSH_STATE_OK;
 }
 
@@ -542,6 +604,7 @@ enum csh_state_result csh_state_clone(const struct csh_state *state,
         for (variable = state->hashes; variable; variable = variable->next)
             if (csh_state_hash_set(copy, variable->name, variable->value) != CSH_STATE_OK) goto failure;
     }
+    copy->manages_locale = state->manages_locale;
     copy->getopts_offset = state->getopts_offset;
     copy->info = state->info;
     *out = copy;
@@ -591,6 +654,7 @@ enum csh_state_result csh_state_restore(struct csh_state *state,
     *(*checkpoint)->saved = discarded;
     csh_state_checkpoint_destroy(*checkpoint);
     *checkpoint = NULL;
+    refresh_locale(state);
     return CSH_STATE_OK;
 }
 

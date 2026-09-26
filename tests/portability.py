@@ -13,6 +13,7 @@ import sys
 import tempfile
 
 import smoke
+import locale_cases
 
 
 def utf8_locale():
@@ -150,8 +151,12 @@ def main():
         parser.error(f"missing executable: {binary}")
     selected = utf8_locale()
     print(f"UTF-8 locale: {selected or 'unavailable'}", flush=True)
+    data = locale_cases.host_data()
+    print("Locale probes available: " + ", ".join(data), flush=True)
+    skips = []
+    fixtures = list(cases(selected)) + list(locale_cases.cases(case, selected, data, skips))
     passed = failed = 0
-    for fixture in cases(selected):
+    for fixture in fixtures:
         failures = smoke.run_case(binary, fixture, 5, 65536)
         if failures:
             failed += 1
@@ -173,8 +178,10 @@ def main():
     else:
         passed += 1
         print("PASS: sparse file pathname expansion")
+    for reason in skips:
+        print("SKIP:", reason)
     print(f"Result: {passed} passed, {failed} failed, "
-          f"{0 if selected else 18} skipped")
+          f"{(0 if selected else 18) + len(skips)} skipped (cases/capability groups)")
     return 1 if failed else 0
 
 

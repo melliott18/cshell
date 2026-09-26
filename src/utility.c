@@ -10,6 +10,7 @@
 #include <sys/stat.h>
 #include <sys/times.h>
 #include <unistd.h>
+#include <wchar.h>
 
 static int problem(const char *name, const char *message)
 {
@@ -24,9 +25,27 @@ static int assign(struct csh_state *state, const char *name, const char *value)
         "readonly variable" : rc == CSH_STATE_NOMEM ? "out of memory" : "invalid variable name");
 }
 static int white(unsigned char c) { return c == ' ' || c == '\t' || c == '\n'; }
-static int delimiter(const char *ifs, unsigned char c, unsigned char quoted)
+static size_t character_bytes(const char *text, size_t length)
 {
-    return c && !quoted && strchr(ifs, c) != NULL;
+    mbstate_t state = {0};
+    size_t n = mbrlen(text, length, &state);
+    return n == (size_t)-1 || n == (size_t)-2 || n == 0 ? 1 : n;
+}
+/* Return a complete, unquoted IFS character, never a constituent byte. */
+static size_t delimiter(const char *ifs, const char *text, size_t length,
+    const unsigned char *quoted)
+{
+    size_t left = strlen(ifs), n, i;
+    if (!length) return 0;
+    while (left) {
+        n = character_bytes(ifs, left);
+        if (n <= length && !memcmp(ifs, text, n)) {
+            for (i = 0; i < n && !quoted[i]; ++i) {}
+            if (i == n) return n;
+        }
+        ifs += n; left -= n;
+    }
+    return 0;
 }
 static int read_builtin(struct csh_state *state, size_t argc, char *const argv[])
 {
@@ -97,24 +116,33 @@ static int read_builtin(struct csh_state *state, size_t argc, char *const argv[]
     line[used] = 0;
     if (status <= 1) for (i = first; i < argc; ++i) {
         size_t start, finish, next;
-        while (pos < used && white((unsigned char)line[pos]) && delimiter(ifs, line[pos], quoted[pos])) ++pos;
+        while (pos < used && white((unsigned char)line[pos]) &&
+            delimiter(ifs, line + pos, used - pos, quoted + pos)) ++pos;
         start = pos;
-        while (pos < used && !delimiter(ifs, line[pos], quoted[pos])) ++pos;
+        while (pos < used && !delimiter(ifs, line + pos, used - pos, quoted + pos))
+            pos += character_bytes(line + pos, used - pos);
         finish = pos;
         if (i + 1 == argc) {
             /* Last variable receives the remaining fields and intervening separators.
              * A lone terminating separator is removed just as for one field. */
             next = pos;
-            while (next < used && white((unsigned char)line[next]) && delimiter(ifs, line[next], quoted[next])) ++next;
-            if (next < used && delimiter(ifs, line[next], quoted[next])) ++next;
-            while (next < used && white((unsigned char)line[next]) && delimiter(ifs, line[next], quoted[next])) ++next;
+            while (next < used && white((unsigned char)line[next]) &&
+                delimiter(ifs, line + next, used - next, quoted + next)) ++next;
+            if (next < used)
+                next += delimiter(ifs, line + next, used - next, quoted + next);
+            while (next < used && white((unsigned char)line[next]) &&
+                delimiter(ifs, line + next, used - next, quoted + next)) ++next;
             if (next < used) {
                 finish = used;
-                while (finish > start && white((unsigned char)line[finish-1]) && delimiter(ifs, line[finish-1], quoted[finish-1])) --finish;
+                while (finish > start && white((unsigned char)line[finish-1]) &&
+                    delimiter(ifs, line + finish - 1, used - finish + 1,
+                        quoted + finish - 1)) --finish;
             }
         } else {
-            while (pos < used && white((unsigned char)line[pos]) && delimiter(ifs, line[pos], quoted[pos])) ++pos;
-            if (pos < used && delimiter(ifs, line[pos], quoted[pos])) ++pos;
+            while (pos < used && white((unsigned char)line[pos]) &&
+                delimiter(ifs, line + pos, used - pos, quoted + pos)) ++pos;
+            if (pos < used)
+                pos += delimiter(ifs, line + pos, used - pos, quoted + pos);
         }
         { char saved = line[finish]; line[finish] = 0;
           if (assign(state, argv[i], line + start)) status = 2;

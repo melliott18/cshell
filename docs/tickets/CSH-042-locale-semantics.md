@@ -1,11 +1,11 @@
 # CSH-042: Complete locale-sensitive shell behavior
 
-- Status: backlog
+- Status: in-progress
 - Type: fix
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-037
-- Branch: Assigned when work starts
+- Branch: `fix/CSH-042-locale-semantics`
 - Issue: [#73](https://github.com/melliott18/cshell/issues/73)
 
 ## Goal
@@ -44,3 +44,48 @@ separately from specification-derived expectations.
 
 [CSH-037](CSH-037-portability-audit.md) initializes the runtime locale and
 adds selected C/UTF-8 probes. Those cases establish only their assertions.
+
+## Implementation and validation record (2026-09-26)
+
+Started from `main` at `b692aa517d7ce26750f28b7855ed844c4793d758` in a
+separate worktree. [Locale behavior](../locales.md) documents category precedence,
+invalid-name policy, libc catalog limitations, exact fixture families and their
+matrix links. Runtime state now refreshes libc on locale assignment/unset and
+scope restoration; `read` consumes whole multibyte IFS characters.
+
+A clean build of the starting revision fails the new string-mode regressions:
+
+- `locale runtime CTYPE assignment and unset`: `2/3/2` lengths instead of `1/3/1`.
+- `locale UTF-8 read IFS whole characters`: splits the shared leading byte of
+  `è`/`é`, producing broken fields rather than `è`, `a`, empty, `b`.
+- `locale runtime collation and temporary scope restoration`: retains C order
+  after LC_COLLATE assignment instead of the host's en_US order.
+
+The updated runtime passes all three in each input mode. An additional concrete
+Shift-JIS lexer mismatch has its own reproduction, acceptance criteria and owner:
+[CSH-053 / #86](CSH-053-multibyte-lexical-boundaries.md). CSH-042 does not advance
+ENV-004 or the related broad matrix families to verified.
+
+### Validation in progress
+
+- Native macOS 14.8.7 (23J520), Darwin arm64, Apple Clang 15.0.0
+  (`clang-1500.3.9.4`), Python 3.12.2. Selected locales: C, en_US.UTF-8,
+  fr_FR.UTF-8, de_DE.UTF-8, sv_SE.UTF-8; C.UTF-8 unavailable. The default
+  `make -j2 test test-pty` passed all module checks, 1,318 runtime, 13 job PTY,
+  27 runtime PTY and the initial 150 portability cases. The final focused
+  `make test-portability` passes 156 cases, zero failures; one capability group
+  is skipped because no candidate libc locale translates ENOENT.
+- Docker Linux aarch64, Debian bookworm, GCC 12.2.0, glibc 2.36
+  (`2.36-9+deb12u14`). Selected installed names: C, C.utf8, POSIX,
+  en_US.utf8, fr_FR.utf8. The final image retains French libc catalogs and the
+  focused portability suite passes 168 cases, zero failures/skips.
+- Full ASan/UBSan runs and hosted native Linux validation are pending.
+
+### Reference observations (not test oracles)
+
+macOS `/bin/sh` and `/bin/bash` 3.2.57 both return length 1 after changing
+LC_CTYPE from C to en_US.UTF-8 for `v=é`. Both preserve `83 5c 0a` in the
+Shift-JIS reproduction; cshell currently emits `83 0a`. These comparisons only
+corroborate the source-derived obligations. Collation and translated-error
+fixtures use the installed libc data explicitly; invalid-locale cases assert
+cshell's documented policy where POSIX leaves the result unspecified.

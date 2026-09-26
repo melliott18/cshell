@@ -86,6 +86,13 @@ struct csh_state_info {
 enum csh_state_result csh_state_create(struct csh_state **out,
     const struct csh_invocation *invocation, char *const envp[]);
 void csh_state_destroy(struct csh_state *state); /* NULL accepted */
+/* Opt the active runtime into libc locale updates on locale-variable mutation
+ * and rollback. Uses shell values (export is irrelevant), preserves errno,
+ * silently falls back to C on unsupported names. Only one active state per
+ * process; clones inherit the flag but do not activate until mutated/restored.
+ * Lexer syntax recognition is independent of these runtime category updates.
+ * Libc may allocate internally when refreshing the locale. */
+void csh_state_manage_locale(struct csh_state *state);
 
 enum csh_state_result csh_state_get_variable(const struct csh_state *state,
     const char *name, struct csh_variable_view *out);
