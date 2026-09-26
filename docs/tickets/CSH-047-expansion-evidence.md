@@ -1,6 +1,6 @@
 # CSH-047: Close expansion, parameter and locale evidence gaps
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
@@ -9,6 +9,12 @@
 - Issue: [#79](https://github.com/melliott18/cshell/issues/79)
 
 ## Goal
+
+Integrated in [PR #96](https://github.com/melliott18/cshell/pull/96).
+Combined revision `5fc4657` passed native Linux, macOS, and Docker CI in
+[run 36254005069](https://github.com/melliott18/cshell/actions/runs/36254005069).
+Local integration passed 3,045 runtime cases, terminal suites and 65 harness
+self-tests; this does not extend the scoped conformance claims below.
 
 Map existing exact case names to source clauses and input modes, classify selected parsing/numeric/encoding policies, add remaining scoped runtime cases, and retain unavailable locale configurations as reasoned skips with CSH-042 ownership. Record native/Docker execution identities and outcomes without promoting a family from selected witnesses.
 
