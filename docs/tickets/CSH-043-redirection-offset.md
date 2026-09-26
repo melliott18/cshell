@@ -1,6 +1,6 @@
 # CSH-043: Define and verify redirection offset maximum
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
@@ -9,6 +9,8 @@
 - Issue: [#74](https://github.com/melliott18/cshell/issues/74)
 
 ## Goal
+
+Integrated in [PR #88](https://github.com/melliott18/cshell/pull/88).
 
 Resolve the implementation-defined redirection offset maximum in
 [SH-009](../posix-matrix.md#sh-009) and
