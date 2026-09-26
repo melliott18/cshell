@@ -1,6 +1,6 @@
 # CSH-043: Define and verify redirection offset maximum
 
-- Status: in-progress
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
@@ -26,11 +26,11 @@ Resolve the implementation-defined redirection offset maximum in
 
 ## Acceptance criteria
 
-- [ ] The user documentation names the supported maximum or its precise
+- [x] The user documentation names the supported maximum or its precise
   per-file determination rule and the corresponding failure behavior.
-- [ ] Cross-platform fixtures verify success and failure at the documented
+- [x] Cross-platform fixtures verify success and failure at the documented
   boundary with exact status, diagnostics and file effects.
-- [ ] The matrix links the decision, implementation and passing run records.
+- [x] The matrix links the decision, implementation and passing run records.
 
 ## Validation
 
@@ -110,13 +110,29 @@ Exact selected outcomes on both platforms:
 | `make docker-build DOCKER_IMAGE=cshell-test:csh043`, then `docker run --rm --init cshell-test:csh043 make -j2 test test-pty test-harness` | Passed with the same counts and zero failures/skips; includes the focused offset target. |
 
 
+| Native sanitizer temporary copy: `make -j2 test`, then separate `make test-pty` | Both passed on macOS 14.8.7: all module/fault checks, 36 offset, 60 portability, 1318 runtime, 13 jobs PTY and 27 runtime PTY cases, zero failures/skips. Completed 2026-09-26 05:21 UTC. |
+| Hosted Ubuntu 24.04/GCC and Docker Linux, implementation commit `c37890d`, [run 36220176817](https://github.com/melliott18/cshell/actions/runs/36220176817) | Both jobs passed normal, PTY, harness and full ASan/UBSan stages. Each normal/sanitized run passed all 36 offset and 1318 runtime cases. Native Linux uses ext4 (`0xef53`, `_PC_FILESIZEBITS=64`); Docker uses overlayfs (`0x794c7630`, `_PC_FILESIZEBITS=32`). Both report the same 17592186040320 seek boundary and `EINVAL` as local Docker. |
+
+Sanitizer builds use `-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1
+-fsanitize=address,undefined -fno-omit-frame-pointer`, matching linker sanitizer
+flags, and `ASAN_OPTIONS=halt_on_error=1`, `UBSAN_OPTIONS=halt_on_error=1`.
+Native macOS also uses `MallocNanoZone=0`. Normal builds use the default C99
+warning/optimization flags; all use `_POSIX_C_SOURCE=200809L`. Later ticket and
+review updates change documentation only. [PR #88](https://github.com/melliott18/cshell/pull/88)
+contains the implementation and this record.
+
 The first native combined sanitizer run passed all 36 offset cases but failed
 `stopped job modes saved and shell modes restored` during harness cleanup:
 `/bin/ps -axo pid=,stat=` exceeded the existing one-second cleanup deadline.
 The initial Docker sanitizer run encountered five-second timeouts in multiple
 offset cases during heavy concurrent host load (load average above 700) and was
-stopped. Neither run is counted as passing full-suite evidence. No timeout or
-assertion was relaxed; separate reruns are recorded below when complete.
+stopped. A separate Docker sanitizer retry reached the focused target and
+reported 17 passes and 19 failures, all with five-second timeouts; its chained
+full-suite stages therefore did not run. These local Docker attempts are not
+counted as passing evidence. No timeout or assertion was relaxed. Hosted Ubuntu
+and Docker jobs for the same test source passed their full sanitizer suites
+([run 36220176817](https://github.com/melliott18/cshell/actions/runs/36220176817));
+this separates the local timeout observations from passing independent runs.
 
 The selected boundary/error evidence resolves this ticket's scope. It does not
 claim every filesystem's absolute writable maximum, every redirection failure
