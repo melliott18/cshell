@@ -43,7 +43,9 @@ primary allocations. Existing concrete defects retain their separate owners.
 [CSH-042](tickets/CSH-042-locale-semantics.md) retains ENV-004, EXP-004,
 EXP-007, EXP-008, EXP-010 and EXEC-012 locale findings.
 [CSH-043](tickets/CSH-043-redirection-offset.md) retains SH-009/O-026 offset
-maximum and boundary findings. [CSH-044](tickets/CSH-044-intermittent-bg-prompt.md)
+maximum and boundary findings from this audit; the subsequent
+[CSH-043 validation](tickets/CSH-043-redirection-offset.md#validation-record)
+resolves that selected offset scope. [CSH-044](tickets/CSH-044-intermittent-bg-prompt.md)
 and [CSH-045](tickets/CSH-045-jobs-fixture-timeout.md) retain the two observed
 jobs/PTY failures. These are concrete findings, while CSH-046–CSH-052 own
 unestablished family evidence, not presumed defects in every listed feature.
@@ -120,7 +122,7 @@ Retain that distinction and give every unfinished part an open evidence owner.
 | Choice | What is already documented | What remains open |
 | --- | --- | --- |
 | D-001 | [Direct script opening](input-and-invocation.md#invocation-contract), no PATH fallback; `-i` requests interactivity. | PATH-only negative and unequal-identity runtime witnesses: CSH-046. |
-| D-002 | [Parser contract](parser-and-ast.md) explicitly omits optional `{name}` descriptor allocation; selected numeric redirections and sparse append already run. | Descriptor policy/boundaries: CSH-046/049; exact per-open-file offset maximum/error behavior: CSH-043. |
+| D-002 | [Parser contract](parser-and-ast.md) explicitly omits optional `{name}` descriptor allocation; selected numeric redirections and sparse append already run. | Descriptor policy/boundaries: CSH-046/049; [native offset maximum and boundary records](tickets/CSH-043-redirection-offset.md#validation-record): CSH-043; wider filesystem/error combinations remain CSH-049. |
 | D-003 | [Dollar-single-quote choices](value-expansions.md#dollar-single-quote-decoding) specify escape encodings, NUL handling and supported encoding assumptions. | Complete IFS/encoding/locale evidence and required versus unspecified classification: CSH-042/047. |
 | D-004 | [Alias timing](aliases.md#parser-eligibility-and-timing) and permitted alias choices are explicit. CSH-026 describes eager dollar-form versus deferred backquote parsing and NUL rejection; CSH-041 adds arithmetic-first replay. | Replace `missing; open` with those selected policies; full case-to-clause evidence remains CSH-046/047. |
 | D-005 | [Signed-long model](value-expansions.md#arithmetic-and-parser-cooperation), overflow policy, unsupported extensions and recursion guard are explicit. | Exact platform boundaries, extension classification and full runtime coverage: CSH-047. |

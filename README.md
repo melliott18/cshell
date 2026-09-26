@@ -64,6 +64,7 @@ make test-jobs     # Job builtins, retained statuses, idle reaping, and failure 
 make test-traps    # Signals ignored before shell startup
 make test-jobs-pty # Process groups, terminal signals, stop/resume, and restoration
 make test-runtime  # Cross-mode invocation/status behavior
+make test-redirection-offset # Sparse-file offset and resource-limit boundaries
 make test-portability # Locale, large input, sparse files, bounded generated cases
 make test-prompt   # Interrupted and partial primary/continuation prompt writes
 make test-runtime-pty # Shell prompts, EOF, and exit errors on a terminal

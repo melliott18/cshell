@@ -34,6 +34,9 @@ struct csh_redirect_save;
  * Descriptor mutation must be serialized, including signal handlers.
  * Restore attempts every target on error and reports the first failure.
  * Restore cannot undo filesystem creation/truncation or shared file offsets.
+ * File opens use the native off_t/open offset maximum, with no lower shell
+ * limit. Duplications retain the source open description and shared offset.
+ * Filesystem and resource-limit enforcement remain host responsibilities.
  * All errors are returned without printing. error and save are required.
  * Callers serialize descriptor mutation, including signal handlers; no
  * concurrent descriptor acquisition is allowed during interrupted closes. */
