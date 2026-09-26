@@ -1,11 +1,11 @@
 # CSH-052: Close host utility and intrinsic lookup evidence gaps
 
-- Status: ready
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-036, CSH-039
-- Branch: Assigned when work starts
+- Branch: `test/CSH-052-host-utility-evidence`
 - Issue: [#84](https://github.com/melliott18/cshell/issues/84)
 
 ## Goal

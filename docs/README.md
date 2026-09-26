@@ -49,4 +49,5 @@ so the information remains accessible in a plain Markdown reader.
 
 - [Shell state and builtin clause evidence](state-builtin-evidence.md): CSH-048 startup, environments, utility assertions and run records.
 
+- [Host utility clause evidence](host-utility-evidence.md): CSH-052 executable inventory, assertions and host gaps.
 - [Base shell-option clause evidence](shell-option-evidence.md): CSH-051 entry, state, environment, policy and run mapping.
