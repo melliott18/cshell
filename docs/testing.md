@@ -909,6 +909,26 @@ nounset recovery and noexec. These suites are included in `make test` and
 [Shell options](shell-options.md) for the requirement mapping and permitted
 choices; fixture sources are `tests/option_cases.py` and `tests/runtime_cases.py`.
 
+## Invocation and syntax evidence
+
+`make test-syntax` runs the CSH-046 cross-mode syntax/alias cases plus
+`tests/invocation.py` against public `cshell`. `make test-invocation` selects
+only the process-level invocation probes. Both join `make test`: syntax cases
+are included in the generated runtime suite, and invocation probes run as a
+dependency. The [clause/condition map](invocation-syntax-evidence.md) names exact
+assertions, policies, module-only evidence and remaining limitations.
+
+Invocation probes cover custom argv[0], standalone dash, non-executable paths,
+PATH-only negative lookup, binary data after a parsed prefix, terminal detection
+and O_NONBLOCK during utility reads and after completion in all input modes.
+They preserve resource/time/output limits and session cleanup. The two unequal
+identity cases require Linux root; ordinary native/container runs print scoped
+skips. Run them explicitly with `docker run --rm --init --user 0 IMAGE python3
+tests/invocation.py ./cshell`. This changes credentials only in test children;
+no setuid executable is installed. The Docker CI job runs this separate root
+probe after the unprivileged suite. Root results do not replace unprivileged
+permission/error testing.
+
 ## CSH-050 jobs and signal evidence
 
 The [clause map](jobs-signals-evidence.md) identifies exact runtime, PTY and API

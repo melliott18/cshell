@@ -43,6 +43,11 @@ int csh_input_from_file(struct csh_input **out, const char *path,
  * file description, as required for shell stdin. Other flags are preserved. */
 int csh_input_from_fd(struct csh_input **out, int fd, const char *name,
                       struct csh_error *error);
+/* Normalize shell stdin for every invocation mode without consuming bytes or
+ * closing fd. Clear O_NONBLOCK only for FIFO/terminal descriptions, retaining
+ * all other flags. A closed fd is a no-op (valid for independent -c/file input).
+ * Return 0 on success, -1 with error on inspection/normalization failure. */
+int csh_input_prepare_stdin(int fd, struct csh_error *error);
 /* Stack token borrows descriptor operands until end. Nested calls exclude all
  * enclosing operands when relocating parser descriptors. Initialize with {0}. */
 struct csh_input_reservation {

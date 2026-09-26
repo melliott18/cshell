@@ -1,0 +1,432 @@
+{
+  "ticket": "CSH-046",
+  "recorded_utc": "2026-09-26T05:25:26.861538+00:00",
+  "source_revision": "5e77577e892192567c091d0c20658ce4f01f6327",
+  "assertion_map": "../../invocation-syntax-evidence.md",
+  "identities": {
+    "native": {
+      "recorded_utc": "2026-09-26T05:15:30.230273+00:00",
+      "source_revision": "5e77577e892192567c091d0c20658ce4f01f6327",
+      "source_note": "Normal runs preceded source commit 5e77577 on identical source/test bytes. Source fingerprint covers Makefile, src, include and tests (excluding Python caches); later documentation and CI routing changes do not alter these inputs.",
+      "source_sha256": "77d2071d105c26b0d94013ed2097be5f0dab5276a1225aa4fca27f7c4866bfb1",
+      "binary": {
+        "path": "/Users/mitchell/.codex/worktrees/csh-046-invocation-syntax-evidence/cshell/cshell",
+        "realpath": "/Users/mitchell/.codex/worktrees/csh-046-invocation-syntax-evidence/cshell/cshell",
+        "sha256": "23590856a0adb50b3a793d38339d62732491d75b7f2b4c3fa1daa09feeddfdbb"
+      },
+      "compiler": {
+        "argv": [
+          "cc",
+          "--version"
+        ],
+        "status": 0,
+        "output": "Apple clang version 15.0.0 (clang-1500.3.9.4)\nTarget: arm64-apple-darwin23.6.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
+      },
+      "platform": "macOS-14.8.7-arm64-arm-64bit",
+      "uname": [
+        "Darwin",
+        "Mitchells-MacBook-Pro-2.local",
+        "23.6.0",
+        "Darwin Kernel Version 23.6.0: Tue Apr 21 20:21:28 PDT 2026; root:xnu-10063.141.1.712.16~1/RELEASE_ARM64_T6000",
+        "arm64",
+        "arm"
+      ],
+      "python": "3.12.2 (v3.12.2:6abddd9f6a, Feb  6 2024, 17:02:06) [Clang 13.0.0 (clang-1300.0.29.30)]",
+      "libc": [
+        "",
+        ""
+      ],
+      "flags": {
+        "CPPFLAGS": "-D_POSIX_C_SOURCE=200809L -Iinclude",
+        "CFLAGS": "-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2",
+        "LDFLAGS": "",
+        "LDLIBS": ""
+      },
+      "generated_suites": {
+        "build/tests/control-flow.json": "048bee2c4eddff8efaa6d29d9937dc5d0dc67b1b5c250ad03b136d21345323df",
+        "build/tests/jobs-pty.json": "18f5a5fe1ccf33295f4af2dd2c5d5f45532804ee3497f118dbc341f3e45b324a",
+        "build/tests/runtime-pty.json": "a530351e088acbd7929647fe6d2dfea84fd1f7af8385f1d1ee2264dc697b550e",
+        "build/tests/runtime.json": "2fa6a9eb855e9f6d79e071fdd80dc46d6e1c4a5faa2eef530a2f89b06c594ddc",
+        "build/tests/syntax.json": "4fa410d698ad88d5d0797d7085aa5a59c7740a04f3c447178af43e66da5b1831"
+      },
+      "helpers": {
+        "/bin/cat": "38c19fef3e9b4e6ffeee7fef5ff90119f913720b48f55ae0406b77d2beee1dab",
+        "/usr/bin/cmp": "9a4e2eaeccc87d4fe8f9d436f8d4ac0bb5a3b74b763807328daa729722a1fe03",
+        "/Users/mitchell/.codex/worktrees/csh-046-invocation-syntax-evidence/cshell/build/tests/execute_helper": "21fd248da4225cd19a6eded32dc9b3863c0f2b7cf4161f02424110a3947015cd"
+      },
+      "os_build": {
+        "argv": [
+          "sw_vers"
+        ],
+        "status": 0,
+        "output": "ProductName:\t\tmacOS\nProductVersion:\t\t14.8.7\nBuildVersion:\t\t23J520"
+      },
+      "system_library": {
+        "argv": [
+          "ls",
+          "-l",
+          "/usr/lib/libSystem.B.dylib"
+        ],
+        "status": 1,
+        "output": "ls: /usr/lib/libSystem.B.dylib: No such file or directory"
+      }
+    },
+    "docker": {
+      "recorded_utc": "2026-09-26T05:16:33.476893+00:00",
+      "source_revision": "5e77577e892192567c091d0c20658ce4f01f6327",
+      "source_note": "Normal runs preceded source commit 5e77577 on identical source/test bytes. Source fingerprint covers Makefile, src, include and tests (excluding Python caches); later documentation and CI routing changes do not alter these inputs.",
+      "source_sha256": "77d2071d105c26b0d94013ed2097be5f0dab5276a1225aa4fca27f7c4866bfb1",
+      "binary": {
+        "path": "/work/cshell",
+        "realpath": "/work/cshell",
+        "sha256": "22a5e40226a0499b13d1b0c5cd9e6bd05c638856d005599da78bfc2f95933b24"
+      },
+      "compiler": {
+        "argv": [
+          "cc",
+          "--version"
+        ],
+        "status": 0,
+        "output": "cc (Debian 12.2.0-14+deb12u1) 12.2.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+      },
+      "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+      "uname": [
+        "Linux",
+        "f3d0d7add853",
+        "6.4.16-linuxkit",
+        "#1 SMP PREEMPT Thu Nov 16 10:49:20 UTC 2023",
+        "aarch64",
+        ""
+      ],
+      "python": "3.11.2 (main, May 12 2026, 05:17:27) [GCC 12.2.0]",
+      "libc": [
+        "glibc",
+        "2.36"
+      ],
+      "flags": {
+        "CPPFLAGS": "-D_POSIX_C_SOURCE=200809L -Iinclude",
+        "CFLAGS": "-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2",
+        "LDFLAGS": "",
+        "LDLIBS": ""
+      },
+      "generated_suites": {
+        "build/tests/runtime-pty.json": "1fab5db38a70cf392a45d24c83798e08f9f943399a31ba4709cbef4e48ffb8ee",
+        "build/tests/runtime.json": "a39d66d5b801a7b2039b78e8ae9d6d3198758f17b1766edf72ed3c8458d498ed",
+        "build/tests/syntax.json": "f2fa67735dd1fd15762f509a8919dbfe847c91f138bcc7b962f97f01dcd83b11"
+      },
+      "helpers": {
+        "/bin/cat": "491ea6f9b1804d893d660477e6873855b28271c018b13f086c2fc419d51560bb",
+        "/usr/bin/cmp": "2f7b69a504f687fdc54ea05e3d89c16d13c79a9078036e0bfca7792d2ae3846c",
+        "/work/build/tests/execute_helper": "10be6b1e84d81b45db675b10453bcdfe79711c179c7596b4365f340f0d05d773"
+      },
+      "os_release": "PRETTY_NAME=\"Debian GNU/Linux 12 (bookworm)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"12\"\nVERSION=\"12 (bookworm)\"\nVERSION_CODENAME=bookworm\nID=debian\nHOME_URL=\"https://www.debian.org/\"\nSUPPORT_URL=\"https://www.debian.org/support\"\nBUG_REPORT_URL=\"https://bugs.debian.org/\"\n",
+      "libc_build": {
+        "argv": [
+          "ldd",
+          "--version"
+        ],
+        "status": 0,
+        "output": "ldd (Debian GLIBC 2.36-9+deb12u14) 2.36\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nWritten by Roland McGrath and Ulrich Drepper."
+      }
+    },
+    "native-sanitizer": {
+      "recorded_utc": "2026-09-26T05:17:26.740049+00:00",
+      "source_revision": "5e77577e892192567c091d0c20658ce4f01f6327",
+      "source_note": "Normal runs preceded source commit 5e77577 on identical source/test bytes. Source fingerprint covers Makefile, src, include and tests (excluding Python caches); later documentation and CI routing changes do not alter these inputs.",
+      "source_sha256": "77d2071d105c26b0d94013ed2097be5f0dab5276a1225aa4fca27f7c4866bfb1",
+      "binary": {
+        "path": "/Users/mitchell/.codex/worktrees/csh-046-invocation-syntax-evidence/cshell/cshell",
+        "realpath": "/Users/mitchell/.codex/worktrees/csh-046-invocation-syntax-evidence/cshell/cshell",
+        "sha256": "a3731e79e1284629f62708bd2c5b0d80b2a47427cfcc380a62d8efed4f91ab96"
+      },
+      "compiler": {
+        "argv": [
+          "cc",
+          "--version"
+        ],
+        "status": 0,
+        "output": "Apple clang version 15.0.0 (clang-1500.3.9.4)\nTarget: arm64-apple-darwin23.6.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
+      },
+      "platform": "macOS-14.8.7-arm64-arm-64bit",
+      "uname": [
+        "Darwin",
+        "Mitchells-MacBook-Pro-2.local",
+        "23.6.0",
+        "Darwin Kernel Version 23.6.0: Tue Apr 21 20:21:28 PDT 2026; root:xnu-10063.141.1.712.16~1/RELEASE_ARM64_T6000",
+        "arm64",
+        "arm"
+      ],
+      "python": "3.12.2 (v3.12.2:6abddd9f6a, Feb  6 2024, 17:02:06) [Clang 13.0.0 (clang-1300.0.29.30)]",
+      "libc": [
+        "",
+        ""
+      ],
+      "flags": {
+        "CPPFLAGS": "-D_POSIX_C_SOURCE=200809L -Iinclude",
+        "CFLAGS": "-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+        "LDFLAGS": "-fsanitize=address,undefined",
+        "LDLIBS": ""
+      },
+      "generated_suites": {
+        "build/tests/runtime-pty.json": "a530351e088acbd7929647fe6d2dfea84fd1f7af8385f1d1ee2264dc697b550e",
+        "build/tests/syntax.json": "4fa410d698ad88d5d0797d7085aa5a59c7740a04f3c447178af43e66da5b1831"
+      },
+      "helpers": {
+        "/bin/cat": "38c19fef3e9b4e6ffeee7fef5ff90119f913720b48f55ae0406b77d2beee1dab",
+        "/usr/bin/cmp": "9a4e2eaeccc87d4fe8f9d436f8d4ac0bb5a3b74b763807328daa729722a1fe03",
+        "/Users/mitchell/.codex/worktrees/csh-046-invocation-syntax-evidence/cshell/build/tests/execute_helper": "bd0908842b1a8ebac9738489606cf882044758831f73b8f54e64029075c33de1"
+      },
+      "os_build": {
+        "argv": [
+          "sw_vers"
+        ],
+        "status": 0,
+        "output": "ProductName:\t\tmacOS\nProductVersion:\t\t14.8.7\nBuildVersion:\t\t23J520"
+      },
+      "system_library": {
+        "argv": [
+          "ls",
+          "-l",
+          "/usr/lib/libSystem.B.dylib"
+        ],
+        "status": 1,
+        "output": "ls: /usr/lib/libSystem.B.dylib: No such file or directory"
+      }
+    },
+    "docker-sanitizer": {
+      "recorded_utc": "2026-09-26T05:19:12.255259+00:00",
+      "source_revision": "5e77577e892192567c091d0c20658ce4f01f6327",
+      "source_note": "Normal runs preceded source commit 5e77577 on identical source/test bytes. Source fingerprint covers Makefile, src, include and tests (excluding Python caches); later documentation and CI routing changes do not alter these inputs.",
+      "source_sha256": "77d2071d105c26b0d94013ed2097be5f0dab5276a1225aa4fca27f7c4866bfb1",
+      "binary": {
+        "path": "/work/cshell",
+        "realpath": "/work/cshell",
+        "sha256": "96d3a54a1e45c313d457bdf25f5b6541665ae92c5c0d56ee3371e57e59e81f20"
+      },
+      "compiler": {
+        "argv": [
+          "cc",
+          "--version"
+        ],
+        "status": 0,
+        "output": "cc (Debian 12.2.0-14+deb12u1) 12.2.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+      },
+      "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+      "uname": [
+        "Linux",
+        "f8c6d2db521e",
+        "6.4.16-linuxkit",
+        "#1 SMP PREEMPT Thu Nov 16 10:49:20 UTC 2023",
+        "aarch64",
+        ""
+      ],
+      "python": "3.11.2 (main, May 12 2026, 05:17:27) [GCC 12.2.0]",
+      "libc": [
+        "glibc",
+        "2.36"
+      ],
+      "flags": {
+        "CPPFLAGS": "-D_POSIX_C_SOURCE=200809L -Iinclude",
+        "CFLAGS": "-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+        "LDFLAGS": "-fsanitize=address,undefined",
+        "LDLIBS": ""
+      },
+      "generated_suites": {
+        "build/tests/runtime-pty.json": "1fab5db38a70cf392a45d24c83798e08f9f943399a31ba4709cbef4e48ffb8ee",
+        "build/tests/syntax.json": "f2fa67735dd1fd15762f509a8919dbfe847c91f138bcc7b962f97f01dcd83b11"
+      },
+      "helpers": {
+        "/bin/cat": "491ea6f9b1804d893d660477e6873855b28271c018b13f086c2fc419d51560bb",
+        "/usr/bin/cmp": "2f7b69a504f687fdc54ea05e3d89c16d13c79a9078036e0bfca7792d2ae3846c",
+        "/work/build/tests/execute_helper": "700c918ab95157f3dfbf0594ecd0862e106a4bb46627b45fdb251d4cd65417f4"
+      },
+      "os_release": "PRETTY_NAME=\"Debian GNU/Linux 12 (bookworm)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"12\"\nVERSION=\"12 (bookworm)\"\nVERSION_CODENAME=bookworm\nID=debian\nHOME_URL=\"https://www.debian.org/\"\nSUPPORT_URL=\"https://www.debian.org/support\"\nBUG_REPORT_URL=\"https://bugs.debian.org/\"\n",
+      "libc_build": {
+        "argv": [
+          "ldd",
+          "--version"
+        ],
+        "status": 0,
+        "output": "ldd (Debian GLIBC 2.36-9+deb12u14) 2.36\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nWritten by Roland McGrath and Ulrich Drepper."
+      }
+    }
+  },
+  "runs": [
+    {
+      "name": "native",
+      "command": "make -j4 test test-pty test-harness",
+      "command_exit_status": 0,
+      "identity": "native",
+      "artifact": "native.log.gz",
+      "artifact_sha256": "5fe5899375c7c324b1374216f869d55995778f7976600082e8233e9a9674e99e",
+      "summaries": [
+        "SKIP: SH-004 unequal uid accepts -i (D-001) : requires Linux root setresuid/setresgid; owner CSH-046; Docker root runs it",
+        "SKIP: SH-004 unequal gid accepts -i (D-001) : requires Linux root setresuid/setresgid; owner CSH-046; Docker root runs it",
+        "Result: 49 passed, 0 failed, 2 skipped",
+        "63/63 input/invocation checks passed",
+        "Result: 60 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "71/71 lexer checks passed",
+        "Result: 210 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 115 passed, 0 failed, 0 skipped",
+        "238/238 parser checks passed",
+        "Result: 13 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "110/110 final-field checks passed",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 27 passed, 0 failed, 0 skipped",
+        "Ran 64 tests in 31.847s",
+        "OK",
+        "Result: 1420 passed, 0 failed, 0 skipped"
+      ]
+    },
+    {
+      "name": "docker",
+      "command": "docker run --rm --init cshell-test:csh-046 make -j4 test test-pty test-harness",
+      "command_exit_status": 0,
+      "identity": "docker",
+      "artifact": "docker.log.gz",
+      "artifact_sha256": "a9cbfcbb5f0f6bce7ac44cb0ecc7b23cccc65d88519548192039086fe5988cc8",
+      "summaries": [
+        "SKIP: SH-004 unequal uid accepts -i (D-001) : requires Linux root setresuid/setresgid; owner CSH-046; Docker root runs it",
+        "SKIP: SH-004 unequal gid accepts -i (D-001) : requires Linux root setresuid/setresgid; owner CSH-046; Docker root runs it",
+        "Result: 49 passed, 0 failed, 2 skipped",
+        "Result: 60 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "63/63 input/invocation checks passed",
+        "71/71 lexer checks passed",
+        "Result: 210 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 115 passed, 0 failed, 0 skipped",
+        "Result: 13 passed, 0 failed, 0 skipped",
+        "238/238 parser checks passed",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 27 passed, 0 failed, 0 skipped",
+        "110/110 final-field checks passed",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Ran 64 tests in 23.275s",
+        "OK",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1420 passed, 0 failed, 0 skipped"
+      ]
+    },
+    {
+      "name": "docker-root",
+      "command": "docker run --rm --init --user 0 cshell-test:csh-046 python3 tests/invocation.py ./cshell",
+      "command_exit_status": 0,
+      "identity": "docker",
+      "artifact": "docker-root.log.gz",
+      "artifact_sha256": "d3f34b53a68f1d185876f32297b5a17364ccfd8a8189b1f3217bc975ca30c4db",
+      "summaries": [
+        "Result: 51 passed, 0 failed, 0 skipped"
+      ]
+    },
+    {
+      "name": "native-sanitizer",
+      "command": "ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 make -j4 test-input test-lexer test-parser test-alias test-syntax test-runtime-pty CFLAGS=<sanitizer flags> LDFLAGS=-fsanitize=address,undefined",
+      "command_exit_status": 0,
+      "identity": "native-sanitizer",
+      "artifact": "native-sanitizer.log.gz",
+      "artifact_sha256": "967ba696328c56d4c35685da89e0e46d2d142e91e41ab5446e4d066e075be937",
+      "summaries": [
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "63/63 input/invocation checks passed",
+        "Result: 27 passed, 0 failed, 0 skipped",
+        "Result: 102 passed, 0 failed, 0 skipped",
+        "71/71 lexer checks passed",
+        "238/238 parser checks passed",
+        "SKIP: SH-004 unequal uid accepts -i (D-001) : requires Linux root setresuid/setresgid; owner CSH-046; Docker root runs it",
+        "SKIP: SH-004 unequal gid accepts -i (D-001) : requires Linux root setresuid/setresgid; owner CSH-046; Docker root runs it",
+        "Result: 49 passed, 0 failed, 2 skipped"
+      ]
+    },
+    {
+      "name": "docker-sanitizer",
+      "command": "docker run --rm --init -e ASAN_OPTIONS=halt_on_error=1 -e UBSAN_OPTIONS=halt_on_error=1 cshell-test:csh-046 sh -c \"make clean && make -j4 test-input test-lexer test-parser test-alias test-syntax test-runtime-pty CFLAGS=<sanitizer flags> LDFLAGS=-fsanitize=address,undefined\"",
+      "command_exit_status": 2,
+      "identity": "docker-sanitizer",
+      "artifact": "docker-sanitizer.log.gz",
+      "artifact_sha256": "240af0abe5174697adc00381c594f3b3744412a5ba75b4434d79d91c78f7b12b",
+      "summaries": [
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "FAIL: file: empty: subprocess exceeded 5.0s",
+        "62/63 input/invocation checks passed",
+        "make: *** [Makefile:71: test-input] Error 1",
+        "Result: 102 passed, 0 failed, 0 skipped",
+        "SKIP: SH-004 unequal uid accepts -i (D-001) : requires Linux root setresuid/setresgid; owner CSH-046; Docker root runs it",
+        "SKIP: SH-004 unequal gid accepts -i (D-001) : requires Linux root setresuid/setresgid; owner CSH-046; Docker root runs it",
+        "Result: 49 passed, 0 failed, 2 skipped",
+        "71/71 lexer checks passed",
+        "238/238 parser checks passed"
+      ]
+    },
+    {
+      "name": "docker-sanitizer-retry",
+      "command": "docker run --rm --init -e ASAN_OPTIONS=halt_on_error=1 -e UBSAN_OPTIONS=halt_on_error=1 cshell-test:csh-046-sanitizer make test-input",
+      "command_exit_status": 0,
+      "identity": "docker-sanitizer",
+      "artifact": "docker-sanitizer-retry.log.gz",
+      "artifact_sha256": "21e2c530b1989d7fd22dede4ed560977b25ab84c621edaad590f9f4a0ac43933",
+      "summaries": [
+        "63/63 input/invocation checks passed"
+      ]
+    },
+    {
+      "name": "docker-sanitizer-pty",
+      "command": "docker run --rm --init -e ASAN_OPTIONS=halt_on_error=1 -e UBSAN_OPTIONS=halt_on_error=1 cshell-test:csh-046-sanitizer make test-runtime-pty",
+      "command_exit_status": 0,
+      "identity": "docker-sanitizer",
+      "artifact": "docker-sanitizer-pty.log.gz",
+      "artifact_sha256": "ae7e8eeda18718175d3b27110e00e119e2d4c159b8ebb7c637014c76fc336588",
+      "summaries": [
+        "Result: 27 passed, 0 failed, 0 skipped"
+      ]
+    }
+  ],
+  "docker": {
+    "image_id": "sha256:403b0b1fc84156b8ca96d7f2003ee0bcfa13c4371ba18d3a48ac22612e45be65",
+    "architecture": "arm64",
+    "os": "linux",
+    "base": "debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251",
+    "dockerfile_sha256": "ae89db3a6dde2125bb1f011aa6d5b8f72cbaca96b48024dba5c4700b84bc21ea",
+    "sanitizer_snapshot_id": "sha256:f2383147df6bc89f5ea4be65a8179f23f98f313b4e40810a460e2aa5a29a7e21"
+  },
+  "normative_sources": {
+    "sh": "b6f11dc31fccb2145dd51ccd92704779dfce1faa00b3a5bec27f0007b711a054",
+    "V3_chap02": "0889867a53fe12508a71e8739ec23ecdddc95e6f67697c98e26acc8ff0ec1acd",
+    "alias": "8cea5106a27e91c9fdb17fc52593006423777ae8f2c859d2d3e99305110366f1",
+    "unalias": "6a55559940ea84b8dfe3be5b4c77b27e4efbb3340bbfd688ec828ee3aaea0ba7"
+  },
+  "limitations": [
+    "No broad family verification or POSIX compliance claim.",
+    "Known parser/executor recursive-size guard remains open under CSH-046.",
+    "Non-root unequal-identity skips are covered by separate Linux root probes.",
+    "Initial Docker sanitizer input timeout is retained; targeted unchanged-deadline retry passed. Runtime PTY ran separately after make skipped it on failure.",
+    "Source-read-error and command-string-final heredoc delimiter runtime boundaries remain API-only.",
+    "Non-C encoding and broader cross-feature scopes remain with linked owners."
+  ]
+}

@@ -1,11 +1,11 @@
 # CSH-046: Close invocation, lexical, grammar and alias evidence gaps
 
-- Status: ready
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-036, CSH-039
-- Branch: Assigned when work starts
+- Branch: `test/CSH-046-invocation-syntax-evidence`
 - Issue: [#78](https://github.com/melliott18/cshell/issues/78)
 
 ## Goal
@@ -14,13 +14,17 @@ Inventory source clauses and map the existing module/runtime case names before a
 
 ## Explicit current limitation
 
-Module and runtime witnesses exist, but the complete invocation/input, token/grammar and alias requirement families are not traced to reviewed clause-level runtime assertions and revision-qualified platform results. The record lacks PATH-only negative invocation, unequal-identity interactive invocation, nonblocking terminal/post-completion descriptors, and documented nesting/shebang/operator policy witnesses.
+The [clause/condition map](../invocation-syntax-evidence.md) now reconciles all
+21 rows with exact public-runtime and module witnesses. New tests cover the
+named PATH, identity, descriptor, syntax-boundary and alias-policy gaps.
+The recursive parser/executor size guard remains a known limitation; the map
+also identifies API-only source-read-error and heredoc end-of-string boundaries
+and encoding/cross-feature coverage owned by related tickets. No broad family
+is promoted to verified and the CSH-012 compliance gate remains closed.
 
-This is an open evidence limitation found by the
-[CSH-037 independent review](../audit-review.md), not a declaration that every
-listed behavior is absent or defective. Existing passing witnesses retain
-their original scope. This ticket must not be closed by relabeling a broad
-requirement family from a small sample.
+This is the implementation/evidence record for the
+[CSH-037 independent review](../audit-review.md) follow-up. Ticket review status
+does not assert unrestricted grammar support or complete POSIX conformance.
 
 ## Scope
 
@@ -68,15 +72,15 @@ add or split fixtures only for a concrete coverage gap.
 
 ## Acceptance criteria
 
-- [ ] Every requirement above has a clause/condition map naming the reviewed
+- [x] Every requirement above has a clause/condition map naming the reviewed
   normative source, selected policies, implementation, exact fixture assertions
   and any narrower unresolved defect or limitation.
-- [ ] Remaining applicable runtime cases pass on supported native macOS and
+- [x] Remaining applicable runtime cases pass on supported native macOS and
   Linux/Docker configurations; required PTY/capability or locale skips name
   the reason, scope and follow-up owner.
-- [ ] Results record the source/suite revision, binary identity, compiler,
+- [x] Results record the source/suite revision, binary identity, compiler,
   flags, OS/libc/architecture and exact status/output/state assertions.
-- [ ] Matrix rows and reverse ownership links reflect only the verified scope;
+- [x] Matrix rows and reverse ownership links reflect only the verified scope;
   broad rows are split where necessary and the CSH-012 compliance gate remains
   closed while any applicable requirements are unmet.
 
@@ -93,3 +97,77 @@ Reference-shell comparisons are separate observations, never normative oracles.
 Allocated by the CSH-037 follow-up audit at baseline `58ca5c3`. The explicit
 limitation and complete row list above replace reliance on already-completed
 implementation tickets as owners of remaining verification work.
+
+
+## Implementation result
+
+Added 34 syntax/alias scenarios across all three input modes (102 strict runtime
+cases), and 51 process-level invocation probes. They run through `make test`,
+with focused `make test-syntax` and `make test-invocation` targets. The Docker
+CI job explicitly runs the two privileged identity probes as root after the
+unprivileged suites. No setuid executable or host credential change is needed.
+
+The nine nonblocking-input probes exposed a defect in string/file invocation:
+only stdin command mode cleared O_NONBLOCK. `csh_input_prepare_stdin()` now
+normalizes FIFO/terminal stdin for all command sources, without consuming bytes
+or changing other flags. Tests assert the flags during utility reads and after
+exit, preserve regular-file flags and permit closed stdin for independent
+command sources. Six native pre-fix string/file probes failed the flags
+assertion; the same cases pass after the fix.
+
+The [inventory](../invocation-syntax-evidence.md) links normative clauses,
+implementation, exact assertions, source-permitted policies and remaining
+limitations. Matrix and reverse-owner links point to those scoped claims.
+
+## Validation record
+
+Source and suite revision: `5e77577e892192567c091d0c20658ce4f01f6327`, based on
+`b692aa5`. Normal runs executed on the identical implementation before it was
+committed; subsequent validation changes affect documentation and CI routing.
+Makefile/src/include/tests fingerprint:
+`77d2071d105c26b0d94013ed2097be5f0dab5276a1225aa4fca27f7c4866bfb1`.
+
+Full [machine-readable identities](../evidence/csh-046/validation.json) retain
+binary and generated-suite hashes, exact compiler flags, Python, OS/libc,
+Docker image/base identity and artifact hashes. [Compressed logs and reproduction
+instructions](../evidence/csh-046/README.md) retain each assertion result.
+Records were collected on 2026-09-26 UTC; collection timestamps are explicit
+and are not presented as exact test-start times.
+
+| Environment / command | Result |
+| --- | --- |
+| Native macOS 14.8.7 build 23J520, Darwin 23.6.0 arm64, Apple Clang 15.0.0, Python 3.12.2; `make -j4 test test-pty test-harness` | Pass. 1,420 public runtime cases (including 102 new syntax cases); 49 invocation probes plus two capability skips; 63 input, 71 lexer, 238 parser checks; all default API/fault suites; 13 job PTY and 27 runtime PTY cases; 64 harness self-tests. |
+| Debian bookworm, Linux 6.4.16-linuxkit aarch64, GCC 12.2.0, glibc 2.36-9+deb12u14, Python 3.11.2; `docker run --rm --init cshell-test:csh-046 make -j4 test test-pty test-harness` | Pass, same runtime/input/lexer/parser/PTY/harness counts and the same two identity skips as native. Image built from this worktree with its own Linux compiler. |
+| Same Docker image, `--user 0 python3 tests/invocation.py ./cshell` | 51 passed, zero failures/skips. Child setup verifies unequal real/effective UID or GID separately before exec; the tested shell accepts `-i`. |
+| Native ASan/UBSan: `make -j4 test-input test-lexer test-parser test-alias test-syntax test-runtime-pty` with flags below | Pass: 63 input, 71 lexer, 238 parser checks, alias suites, 102 syntax cases, 49 invocation probes/two identity skips, 27 runtime PTY cases. No sanitizer diagnostics. |
+| Docker ASan/UBSan, same focused targets at `-j4` | First run failed one existing input case (`file: empty`, five-second timeout); other 62 input checks, lexer 71, parser 238, alias suites, syntax 102 and invocation 49/two skips passed. No sanitizer diagnostic. Make did not start runtime PTY after the input failure. |
+| Same instrumented Docker snapshot, targeted `make test-input`, then separate `make test-runtime-pty` | Input retry: 63 passed with unchanged five-second deadlines. Separate terminal run: 27 passed, zero failures/skips. The initial failed log remains attached; CPU contention from concurrent test containers is a plausible explanation, not a proven root cause. |
+
+Normal flags: `-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2`, with
+`-D_POSIX_C_SOURCE=200809L -Iinclude` and no extra linker libraries.
+Sanitizer CFLAGS:
+`-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer`;
+LDFLAGS: `-fsanitize=address,undefined`;
+`ASAN_OPTIONS=halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1`.
+The runtime descriptor-observer helper remains uninstrumented, per the existing
+Makefile contract; cshell/input/parser and their API/fault binaries are
+instrumented. Native libSystem identity is tied to the recorded macOS build
+(the standalone dylib is not present outside the system shared cache).
+
+The two ordinary-run identity skips require Linux root setresuid/setresgid;
+CSH-046 owns the skip and the separate root run covers it. There are no PTY or
+locale skips in the new C-locale syntax/descriptor probes. This record does not
+claim native Linux outside Docker, non-C encodings, unrestricted recursive
+size, or any unexecuted combination identified in the clause map. No reference
+shell results are used as normative evidence. `git diff --check` and Python
+warning-as-error compilation of the changed generators/probes pass.
+
+### Integration validation (2026-09-26)
+
+After integrating CSH-042/043, local macOS ASan/UBSan checks passed: 49
+invocation probes (two Linux-root-only skips), 102 syntax cases, and 36 offset
+cases. Hosted macOS run 36248557880 exposed allocator startup warnings on PTY
+stderr because the new runner dropped CI's `MallocNanoZone=0`. The runner now
+preserves this one setting, matching `smoke.py`; exact terminal assertions are
+unchanged and report their actual bytes on failure. No diagnostic stripping is
+performed.
