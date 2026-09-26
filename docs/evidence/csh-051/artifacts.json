@@ -1,0 +1,86 @@
+{
+  "ticket": "CSH-051",
+  "recorded_utc": "2026-09-26T15:42:13.886976+00:00",
+  "source_revision": "e1091a5fd818a85ec6a7b2ddc90a54cf1fdd8c9d",
+  "commands": [
+    {
+      "log": "native-suite-limit.log.gz",
+      "command": "make -j4 test test-pty test-harness",
+      "status": 2,
+      "result": "runtime suite rejected before execution"
+    },
+    {
+      "log": "native.log.gz",
+      "command": "make -j4 test test-pty test-harness",
+      "status": 0,
+      "result": "full native pass; scoped capability skips"
+    },
+    {
+      "log": "docker-build.log.gz",
+      "command": "docker build -t cshell-test:csh-051 .",
+      "status": 0,
+      "result": "image build"
+    },
+    {
+      "log": "docker.log.gz",
+      "command": "make -j4 test test-pty test-harness",
+      "status": 2,
+      "result": "runtime/module/PTY pass; one harness setup deadline failure"
+    },
+    {
+      "log": "docker-harness-retry.log.gz",
+      "command": "make test-harness",
+      "status": 0,
+      "result": "isolated unchanged fixture retry"
+    },
+    {
+      "log": "docker-root-invocation.log.gz",
+      "command": "python3 tests/invocation.py ./cshell (root)",
+      "status": 0,
+      "result": "51 invocation cases pass"
+    },
+    {
+      "log": "native-sanitizer.log.gz",
+      "command": "make -j4 test-options test-runtime-pty (instrumented flags)",
+      "status": 0,
+      "result": "1101 option and 30 PTY cases pass"
+    },
+    {
+      "log": "docker-sanitizer.log.gz",
+      "command": "make -j4 test-options test-runtime-pty (instrumented flags)",
+      "status": 143,
+      "result": "partial run stopped after two timeouts with default leak scanning"
+    },
+    {
+      "log": "docker-asan-ubsan.log.gz",
+      "command": "python3 /tmp/sanitizer.py",
+      "status": 0,
+      "result": "1101 option and 30 PTY cases pass; detect_leaks=0"
+    }
+  ],
+  "sha256": {
+    "README.md": "19b245bc430dd5863478109f7f0482f4141cce51e9b7c3d77f30bcf0e9861203",
+    "docker-asan-ubsan.log.gz": "187df8ccb562850a518732506ddc37dee32c59a9cdd52a93809363888404660e",
+    "docker-build.log.gz": "205071d6e233721e145e2f9d7d3f44137fe61a06a4ad2924110846446687a685",
+    "docker-harness-retry.log.gz": "ce39738a5e9f3fbcb11962d83635954d8641edb484ca54913fc295b31ca492a8",
+    "docker-identity.json": "2735799f7e3d14427b566735dae9da8a66977b569060d598eae83c02d2c61b05",
+    "docker-images.json": "a601fa654853c47adf8c2446bfeebcaf8eca105d1d60164b4879bee13478a403",
+    "docker-options-asan-ubsan.json.gz": "1a1f05eb8dec645a6176b314d238e5a2b14e1423a4e0c46913deeda36cb34cb6",
+    "docker-options.json.gz": "d6c3c3f1182bf8af5c6dcc077c5b24b958ad0c53445ff96f8015c10f1d5e381c",
+    "docker-root-invocation.log.gz": "d3f34b53a68f1d185876f32297b5a17364ccfd8a8189b1f3217bc975ca30c4db",
+    "docker-runtime-pty-asan-ubsan.json.gz": "504d5cfe05bd4b1640c1ab0d0c6b9374489e1db7a4dd73b3d62a084595aab221",
+    "docker-runtime-pty.json.gz": "107012aa809822dedd65aa2d46f67e738d9d41d45e8e5d0399875f89619aa4ff",
+    "docker-sanitizer-identity.json": "dbe090bdd0245c168b5ef79209e92e9631ab355f35934d8d4efdc3289da5142d",
+    "docker-sanitizer.log.gz": "653b333ff920e44a1dcda0cb9289db7453b92e3301b9fb07d1a24784d5e9bd6d",
+    "docker.log.gz": "1cd26310ed8481f9d2ecb140059d6acc91098bb542545d43d9c2dbf7370ba167",
+    "identity.py": "36814ed34d9f7993aa044895948e3c856147ccd78029ca3d9a25cfb8990ed766",
+    "native-identity.json": "579923d978f154c332df55e841e6bc055481c8f0cfa1aa452233ef0723e0b6b2",
+    "native-options.json.gz": "d63c67cd10dd907647aa75af02d55c815d4c46fefa76922beecbe4ce21d98302",
+    "native-runtime-pty.json.gz": "6cdfeed3de818464d2bb5dea7849934c5b765b42c6fbe996f546ea16b8b1c6f3",
+    "native-sanitizer-identity.json": "f27807aa8091c3abd6011c34094bb49d1bfb708f2645b6cc4b9a2b690cbd0018",
+    "native-sanitizer.log.gz": "cd67119b0613d2a733c09ac3c31abe066ae6c03e0ad627dbbd1d40a7db26d58b",
+    "native-suite-limit.log.gz": "56be60122ed240b1d845f91252c4cb315ee761210c9ae1f5dfba2b9a042076cd",
+    "native.log.gz": "0e477f254d3bbecefb16fd18b2e3d244b3702be9d913608745a972fdebce322b",
+    "sanitizer.py": "8813579582d3cd4a4d5a81758fd7a397a4b0fcaf6d9cb91cb17ceeb26e5f5864"
+  }
+}

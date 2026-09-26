@@ -938,3 +938,12 @@ that external executable. Its signal-number listing and TERM delivery are
 tested separately from the builtin. Debian procps 4.0.2 fails the separate
 `/bin/kill -l 143` audit probe; [CSH-052](tickets/CSH-052-host-utility-evidence.md)
 owns that host gap. It is not counted as a passing status-mapping assertion.
+
+## Base option evidence grid
+
+`make test-options` runs the existing option witnesses plus the CSH-051
+[entry/state/environment grid](shell-option-evidence.md). The same cases run
+in `make test`; interactive choices run in `make test-pty`. Generated runtime
+JSON uses compact serialization to stay within the runner's unchanged 1 MiB
+suite limit when helper paths include long worktree names. The Python source
+fixtures and archived suite snapshots retain all exact names and assertions.
