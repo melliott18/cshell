@@ -297,12 +297,9 @@ already opened/truncated remain filesystem effects.
 
 ## Ordered redirection boundary
 
-File redirections use the host `open()`/`dup2()` implementation and add no
-separate shell file-offset counter. A sparse-file append beyond 2 GiB passed on
-the [audited macOS and Docker Linux systems](testing.md#portability-audit-probes).
-The exact implementation-defined maximum and boundary error behavior remain
-open in [CSH-043](tickets/CSH-043-redirection-offset.md); this observation does
-not promise an offset on every filesystem or resource-limit configuration.
+File redirections use the host `open()`/`dup2()` implementation. The
+[redirection offset policy](#redirection-offset-maximum) below defines the
+maximum and distinguishes it from filesystem and resource limits.
 
 Each `struct csh_redirect` has a destination descriptor and one operation. File
 operations own a path, duplication operations specify a source descriptor, and
@@ -340,6 +337,72 @@ Restoration concerns descriptors, not filesystem transactions: a file already
 created or truncated stays changed, and offsets shared with other descriptors
 cannot be rewound automatically. Parent builtin execution uses this restoration
 boundary on both success and failure.
+
+## Redirection offset maximum
+
+cshell adds **no lower file-offset limit**. For a newly opened redirection, the
+open file description has the native `open()` offset maximum: the largest
+positive value of the build's signed `off_t`. This follows the POSIX
+[`open()` contract](https://pubs.opengroup.org/onlinepubs/9799919799/functions/open.html).
+On the supported and tested 64-bit macOS and Linux builds, `off_t` is signed
+64-bit, so this maximum is **9,223,372,036,854,775,807 bytes (2^63 − 1)**.
+This is a representation ceiling, not a promise that every filesystem accepts
+that seek or file size. Other ABIs inherit their native `off_t`/`open()` policy;
+32-bit builds are not covered by the recorded validation.
+
+The per-file determination rule is:
+
+1. `<`, `>`, `>|`, `>>`, and `<>` open the named object using the native ABI in
+   [`src/redirect.c`](../src/redirect.c). `>>` uses `O_APPEND`; `>`/`>|` truncate;
+   `<>` does not truncate. Here-document backing files use `mkstemp()` with the
+   same ABI. `>&`/`<&` duplicate the existing open file description, retaining
+   its offset maximum, current offset, and status flags; they do not reopen it.
+2. The filesystem may impose a smaller seek or file-size maximum. A seekable
+   offset is not necessarily writable: seeking past EOF does not grow a file.
+   `fpathconf(fd, _PC_FILESIZEBITS)` reports filesystem size-bit information,
+   **not an exact writable byte boundary**. There is no portable query that
+   combines all these limits into one exact number for every open file.
+3. Regular-file writes also obey the host's enforcement of the process's
+   current soft `RLIMIT_FSIZE`, available space and quotas. For positioned
+   writes, the end position cannot exceed the lesser of the open-description
+   maximum, filesystem size maximum, and enforced file-size resource limit.
+   A last byte can be written at one less than that end position; a subsequent
+   nonempty write at the boundary fails. Reads are not capped by `RLIMIT_FSIZE`.
+   Devices, pipes and sockets retain their native behavior (including no
+   seekable offset for pipes).
+
+Resource enforcement has a tested platform difference: on macOS 14.8.7/APFS,
+**a fresh `O_APPEND` write can exceed `RLIMIT_FSIZE`**. This is consistent with
+[XNU's `vn_write()` ordering](https://github.com/apple-oss-distributions/xnu/blob/main/bsd/vfs/vfs_vnops.c),
+which checks the pre-append offset before dispatching to the filesystem. The same direct syscall and cshell redirection reject the
+write on the tested Linux filesystem. cshell preserves native append semantics;
+it does not emulate an extra limit or seek before appending. Do not use
+`RLIMIT_FSIZE` as a portable hard storage bound for append output. The regression
+compares against an independent native `open(O_APPEND)`/`write()` control, so a
+host fix changes the expected profile without masking a shell difference.
+
+A failure while opening/installing a redirection prevents the command from
+running, returns status 1, and diagnoses `cshell: cannot apply redirection:`
+followed by the host error text (for example, `EOVERFLOW` for an unrepresentable
+file size). Once the redirection succeeds, write failures belong to the command,
+not redirection setup. Limit errors can return `EFBIG`, and `RLIMIT_FSIZE`
+violations can generate `SIGXFSZ`; a default signal action terminates the writer.
+cshell reports an external signal status as `128 + signal number`. With
+`SIGXFSZ` ignored, a failing `pwd` builtin returns 1 and prints exactly
+`cshell: pwd: cannot write output`. External utilities choose their own error
+text and nonzero status. Partial writes can leave the permitted prefix in the
+file. Descriptor restoration does not roll back bytes, truncation, or shared
+offsets. Other errors such as `ENOSPC` and `EDQUOT` can occur before any maximum.
+
+[`make test-redirection-offset`](testing.md#redirection-offset-probes) verifies
+positioned success/failure at a controlled boundary beyond 2 GiB, append behavior,
+reads, truncation, shared offsets, restoration, and the filesystem's seek
+boundary without writing there. The [CSH-043 run record](tickets/CSH-043-redirection-offset.md#validation-record)
+records each host's ABI, filesystem information and exact outcomes. These probes
+do not allocate files near the filesystem's absolute size ceiling. Pathname
+expansion's independence from file size is separately exercised by
+[`tests/portability.py`](../tests/portability.py); it does not establish an offset
+maximum or a redirection failure policy.
 
 ## Scope and validation
 

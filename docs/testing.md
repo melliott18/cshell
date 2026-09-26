@@ -20,6 +20,42 @@ as a scoped skip; C-locale, generated, and sparse-file cases still run. The
 platforms and remaining requirements. Pathname matching does not establish the
 separate rule for initial lexical interpretation; CSH-042/047 retain that gap.
 
+## Redirection offset probes
+
+`make test-redirection-offset` builds
+[`tests/redirection_offset_helper.c`](../tests/redirection_offset_helper.c) with
+the shell's compiler/ABI and runs
+[`tests/redirection_offsets.py`](../tests/redirection_offsets.py). It is included
+in `make test`, including the existing native, Docker and ASan/UBSan CI paths.
+The [offset policy](execution.md#redirection-offset-maximum) distinguishes the
+open-description maximum from filesystem and process restrictions.
+
+The 36 cases cover twelve behaviors in command-string, script-file and stdin
+modes, asserting exact stdout, stderr, status, first/last file bytes, final size
+and bounded allocated storage. Sparse files use a logical boundary of
+2,147,487,744 bytes (2 GiB + 4096) and at most 1 MiB of allocated data per file;
+setup writes just two sentinel bytes. No probe reads the entire file, fills its
+hole, or writes at the filesystem's absolute ceiling. The shared runner retains
+five-second deadlines, 64 KiB captured-output bounds, process-group cleanup,
+64-descriptor and zero-core limits. Only `RLIMIT_FSIZE` is set to the larger,
+exact boundary. A pre-existing lower resource limit fails the probe explicitly.
+
+The helper checks the last legal positioned write, `EFBIG`/partial-write
+behavior with ignored `SIGXFSZ`, default-signal status, large reads, `<>` and
+duplicated shared offsets. Parent-builtin failure checks descriptor restoration.
+A separate direct-syscall control establishes native append enforcement before
+checking the shell's exact outcome. Native macOS/APFS and Linux can differ here;
+neither outcome is accepted merely because the shell produced it.
+
+A bounded binary search using only `lseek()` locates the file's largest accepted
+seek, then verifies rejection of `SEEK_CUR + 1`, unchanged current offset, size
+and allocated blocks. The info probe prints `off_t` width/maximum,
+`_PC_FILESIZEBITS`, seek maximum and next-seek errno, filesystem identity/block
+size, platform/libc/Python versions, and selected resource limits. File-size-bit
+metadata and a successful seek do not prove an absolute writable file size.
+See the [validation record](tickets/CSH-043-redirection-offset.md#validation-record)
+for actual runs and remaining evidence scope.
+
 ## Runtime integration
 
 `make test-runtime` checks `cshell` across `-c`, script-file, and
