@@ -1,0 +1,55 @@
+{
+  "recorded_utc": "2026-09-26T17:19:16.487287+00:00",
+  "source_revision": "8b4cfc4",
+  "source_note": "Source digest covers Makefile, Dockerfile, src, include, tests and tools, excluding Python caches. Subsequent evidence documentation is outside that digest.",
+  "source_sha256": "1fd583be34dfd0f25acc2cf118b2e6d3de1223f5e4681d665346d0201808826a",
+  "binary": {
+    "path": "/work/cshell",
+    "realpath": "/work/cshell",
+    "sha256": "a1574f277ab75278b767861c4eafedd8be16d72e41c901a157d3adf3af9ba301"
+  },
+  "compiler": {
+    "argv": [
+      "cc",
+      "--version"
+    ],
+    "status": 0,
+    "output": "cc (Debian 12.2.0-14+deb12u1) 12.2.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+  },
+  "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+  "uname": [
+    "Linux",
+    "9916ead21168",
+    "6.4.16-linuxkit",
+    "#1 SMP PREEMPT Thu Nov 16 10:49:20 UTC 2023",
+    "aarch64",
+    ""
+  ],
+  "python": "3.11.2 (main, May 12 2026, 05:17:27) [GCC 12.2.0]",
+  "libc": [
+    "glibc",
+    "2.36"
+  ],
+  "flags": {
+    "CPPFLAGS": "-D_POSIX_C_SOURCE=200809L -Iinclude",
+    "CFLAGS": "-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+    "LDFLAGS": "-fsanitize=address,undefined",
+    "LDLIBS": ""
+  },
+  "generated_suites": {
+    "build/tests/host-profile-results.json": "5a84d1539cda1fbfdc0e056d377efac0be6aa192aaadf95c9279de4010c0c5ba"
+  },
+  "helpers": {
+    "/bin/cat": "491ea6f9b1804d893d660477e6873855b28271c018b13f086c2fc419d51560bb",
+    "/usr/bin/cmp": "2f7b69a504f687fdc54ea05e3d89c16d13c79a9078036e0bfca7792d2ae3846c"
+  },
+  "os_release": "PRETTY_NAME=\"Debian GNU/Linux 12 (bookworm)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"12\"\nVERSION=\"12 (bookworm)\"\nVERSION_CODENAME=bookworm\nID=debian\nHOME_URL=\"https://www.debian.org/\"\nSUPPORT_URL=\"https://www.debian.org/support\"\nBUG_REPORT_URL=\"https://bugs.debian.org/\"\n",
+  "libc_build": {
+    "argv": [
+      "ldd",
+      "--version"
+    ],
+    "status": 0,
+    "output": "ldd (Debian GLIBC 2.36-9+deb12u14) 2.36\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nWritten by Roland McGrath and Ulrich Drepper."
+  }
+}

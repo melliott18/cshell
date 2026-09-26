@@ -19,7 +19,7 @@ platforms in the retained run record.
 | U-026/host-direct | Verified: external signal-number mapping and owned-child delivery |
 | U-026/host-status-map | Verified in the CSH-056 qualified profile; Debian stock-host gap retained |
 | U-034/scoped-access | Verified: listed exec/lookup operations and PTY stty, including provisioned ed in CSH-056 |
-| U-034/host-ed | Verified in the CSH-056 qualified profile; Debian stock-host gap retained |
+| U-034/host-ed | Verified: CSH-056 provisions ed; CSH-052 missing-package record retained |
 | U-035/core-format | Verified: named format/conversion/error witnesses below |
 | U-035/numbered, U-035/b-precision | Verified in the CSH-056 qualified profile; Debian stock-host gap retained |
 | U-035/locale-errors | Verified selected conversion/continuation and French-locale witnesses; broader catalogs/limits CSH-057 |
