@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "name": "CSH-055 known execution defects (expected to fail until fixed)",
+  "name": "CSH-055 prefix PATH regression (also in the default suite)",
   "kind": "replacement",
   "cases": [
     {

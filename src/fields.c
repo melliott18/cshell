@@ -1,3 +1,4 @@
+#include "cshell/character.h"
 #include "cshell/expand.h"
 #include "field_internal.h"
 
@@ -106,7 +107,7 @@ static enum csh_expand_result bracket_subexpression(const char *raw,
     *quoted = 0;
     if (begin + 1 >= length || strchr(":.=", raw[begin + 1]) == NULL)
         return CSH_EXPAND_OK;
-    for (i = begin + 1; i < length; ++i) {
+    for (i = begin + 1; i < length; i += csh_character_length(raw + i, length - i, 0, 1)) {
         if (interrupted(options)) return CSH_EXPAND_INTERRUPTED;
         if (context == CSH_EXPAND_ARGUMENT && raw[i] == '/') break;
         if (protection[i] & FIELD_QUOTED) *quoted = 1;
@@ -130,9 +131,18 @@ static enum csh_expand_result make_pattern(const char *raw,
     size_t i, position = 0;
     int pending_escape = 0, bracket = 0;
     for (i = 0; i < length; ++i) {
+        size_t width = csh_character_length(raw + i, length - i, 0, 1);
         char byte = raw[i];
         int quoted = (protection[i] & FIELD_QUOTED) != 0, force_literal = 0;
         if (interrupted(options)) return CSH_EXPAND_INTERRUPTED;
+        if (width > 1) {
+            memcpy(pattern + position, raw + i, width);
+            position += width;
+            i += width - 1;
+            pending_escape = 0;
+            if (bracket) bracket = 3;
+            continue;
+        }
         if (context == CSH_EXPAND_ARGUMENT && byte == '/') bracket = 0;
         if (pending_escape) {
             /* A second protective slash could reactivate a quoted wildcard. */
@@ -241,11 +251,15 @@ static enum csh_expand_result finish_field(const struct csh_expand_field *field,
         n = context == CSH_EXPAND_ARGUMENT ?
             delimiter(span, cursor.offset, ifs, ifs_length, &white) : 0;
         if (n == 0) {
-            char byte = span->text[cursor.offset++];
-            protection[raw_length] =
+            size_t width = csh_character_length(span->text + cursor.offset,
+                span->length - cursor.offset, 0, 1);
+            unsigned char flags =
                 (span->quote != CSH_QUOTE_NONE ? FIELD_QUOTED : 0) |
                 (span->origin == CSH_EXPAND_LITERAL ? FIELD_LITERAL : 0);
-            raw[raw_length++] = byte;
+            memcpy(raw + raw_length, span->text + cursor.offset, width);
+            memset(protection + raw_length, flags, width);
+            cursor.offset += width;
+            raw_length += width;
             continue;
         }
         /* Issue 8: discard IFS whitespace, consume at most one following

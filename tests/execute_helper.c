@@ -28,7 +28,30 @@ int main(int argc, char **argv)
 {
     int index;
     if (argc < 2) return 80;
-    if (strcmp(argv[1], "both") == 0) {
+    if (strcmp(argv[1], "launch-fds") == 0) {
+        int mask, fd;
+        if (argc < 5) return 97;
+        mask = atoi(argv[2]);
+        fd = open("inherited", O_CREAT | O_RDWR | O_APPEND, 0600);
+        if (fd < 0 || dup2(fd, 8) < 0) return 97;
+        if (fd != 8) close(fd);
+        if (fcntl(8, F_SETFD, 0) < 0) return 97;
+        for (index = 0; index < 3; ++index)
+            if (mask & (1 << index)) close(index);
+        execv(argv[3], argv + 3);
+        return 97;
+    } else if (strcmp(argv[1], "inspect-inherited") == 0) {
+        int flags = fcntl(8, F_GETFL), mask;
+        if (argc != 4 || strcmp(argv[0], argv[2])) return 98;
+        mask = atoi(argv[3]);
+        if (flags < 0 || !(flags & O_APPEND) || (flags & O_ACCMODE) != O_RDWR ||
+            fcntl(8, F_GETFD) != 0) return 98;
+        /* Closed standard fds may be reopened, including by sanitizer startup.
+         * Every originally open standard fd must remain available. */
+        for (index = 0; index < 3; ++index)
+            if (!(mask & (1 << index)) && fcntl(index, F_GETFD) < 0) return 98;
+        if (write(8, "inherited-ok\n", 13) != 13) return 98;
+    } else if (strcmp(argv[1], "both") == 0) {
         if (write(1, "out\n", 4) != 4 || write(2, "err\n", 4) != 4) return 83;
     } else if (strcmp(argv[1], "args") == 0) {
         for (index = 2; index < argc; ++index) printf("[%s]\n", argv[index]);
@@ -50,10 +73,19 @@ int main(int argc, char **argv)
         else if (!strcmp(argv[2], "INT")) number = SIGINT;
         else if (!strcmp(argv[2], "QUIT")) number = SIGQUIT;
         else if (!strcmp(argv[2], "USR1")) number = SIGUSR1;
+        else if (!strcmp(argv[2], "TERM")) number = SIGTERM;
+        else if (!strcmp(argv[2], "TSTP")) number = SIGTSTP;
+        else if (!strcmp(argv[2], "TTIN")) number = SIGTTIN;
+        else if (!strcmp(argv[2], "TTOU")) number = SIGTTOU;
         else return 96;
         if (sigaction(number, NULL, &action) == -1) return 96;
         puts(action.sa_handler == SIG_IGN ? "ignored" :
             action.sa_handler == SIG_DFL ? "default" : "caught");
+    } else if (strcmp(argv[1], "signal-conditions") == 0) {
+        struct sigaction action;
+        for (index = 1; index < 128; ++index)
+            if (index != SIGKILL && index != SIGSTOP &&
+                sigaction(index, NULL, &action) == 0) printf("%d\n", index);
     } else if (strcmp(argv[1], "pwd") == 0) {
         char buffer[4096];
         if (getcwd(buffer, sizeof(buffer)) == NULL) return 85;

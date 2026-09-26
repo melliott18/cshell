@@ -886,9 +886,9 @@ static void terminal_job_faults(struct csh_state *state)
     tree = parse("/usr/bin/true\n");
     /* Deliver terminal signals inside the fork wrapper, before the child can
      * reset inherited shell handlers. They must remain pending until reset. */
-    for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < 4; ++i) {
         sigset_t original_mask, after_mask;
-        int sent = i == 0 ? SIGINT : SIGTSTP;
+        int sent = i == 0 ? SIGINT : i == 1 ? SIGTSTP : i == 2 ? SIGTERM : SIGQUIT;
         arm(0);
         assert(csh_jobs_create(&context.jobs, state, 0) == 0);
         assert(sigprocmask(SIG_SETMASK, NULL, &original_mask) == 0);
@@ -924,6 +924,10 @@ static void control_faults(struct csh_state *state)
     const char *parameters[] = {"caller", "second"};
     const char *scripts[] = {
         "f child",
+        "PATH=/bin:/usr/bin PATH=/usr/bin:/bin pwd >control-output",
+        "PATH=absent pwd >control-output",
+        "outer() { inner() { return 7; } >control-output; TEMP=child inner arg; }; TEMP=outer outer call",
+
         "eval 'value=shared; for x in a b; do :; done' >control-output",
         "command eval 'value=shared; :'; command -p true",
         "eval '. ./evaluation-source inner' >control-output",
@@ -975,6 +979,16 @@ static void control_faults(struct csh_state *state)
             csh_state_get_info(copy, &info);
             assert(info.argument_count == 2 && info.function_depth == 0);
             assert(context.loop_depth == 0);
+            {
+                struct csh_variable_view original, restored;
+                assert(csh_state_get_variable(state, "PATH", &original) == CSH_STATE_OK);
+                assert(csh_state_get_variable(copy, "PATH", &restored) == CSH_STATE_OK);
+                assert(original.attributes == restored.attributes);
+                assert(original.value == NULL ? restored.value == NULL :
+                    restored.value != NULL && !strcmp(original.value, restored.value));
+                assert(csh_state_get_variable(copy, "TEMP", &restored) == CSH_STATE_OK);
+                assert(restored.value == NULL && restored.attributes == 0);
+            }
             csh_execution_context_destroy(&context);
             csh_state_destroy(copy);
             assert(live == baseline && fd_count() == before);

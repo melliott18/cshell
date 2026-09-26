@@ -23,7 +23,12 @@ parameter/case classes, whole-character `read` splitting, lexical UTF-8 stabilit
 host-qualified collation and libc diagnostics, and explicit invalid-name policy.
 See [locale behavior](locales.md) for exact oracle boundaries and capability
 skips. Docker/native Linux CI install en_US/fr_FR UTF-8 locales; Docker retains
-French libc catalogs. Broader encoding-sensitive lexing remains CSH-053.
+French libc catalogs. CSH-053 adds `tests/multibyte_cases.py` and `build/tests/character_fixture`,
+checking raw source/output bytes and split lexer feeds under startup/current
+locale changes. Linux CI and Docker provision GB18030; macOS also exercises
+installed Shift-JIS, Big5 and GBK. Unavailable encodings and unsupported raw
+filenames are explicit capability skips. See the
+[raw-byte witness contract](locales.md#raw-byte-lexical-witnesses-csh-053).
 
 ## Redirection offset probes
 
@@ -487,10 +492,14 @@ process group. Pipe cleanup kills that group after success or failure, including
 descendants left behind by a candidate that exits early. PTY cleanup covers all
 process groups still in the candidate's session, including stopped foreground
 jobs, background groups, and descendants left after the leader exits. Terminal
-descriptors are closed on success and failure. Final pipe and PTY cleanup have
-their own one-second budgets separate from the case's overall timeout; inability
-to reap the leader within that bound fails the case instead of hanging the
-runner. PTY cleanup also verifies that no live session members remain.
+descriptors are closed on success and failure. Final pipe cleanup has its own
+one-second budget. PTY cleanup allows five
+seconds for session enumeration/killing, then a separate one second to reap the
+leader, even after snapshot failure. These budgets are separate from the case
+timeout; failure to enumerate, kill or reap fails the case. PTY cleanup also
+verifies that no live session members remain. CSH-054 adds controlled slow and
+failed snapshot regressions, and uses a wakeup pipe in the Python terminal
+signal helper so a buffered read cannot delay its signal observation.
 
 PTY session discovery uses `/proc` on Linux and `/bin/ps` plus process-session
 queries on macOS. Both transports share the group-kill check: macOS can return
@@ -1034,3 +1043,22 @@ after profile changes. Individual fixture environment overrides still take
 precedence. The production shell receives no special profile logic.
 The runner's `--path` selects and inventories the same PATH used in its child
 shells; `--echo-policy` must match a documented Apple/GNU selection.
+
+### CSH-054 signal contracts
+
+`make test-traps` also runs `tests/signal_contracts.py` in all three input modes
+and explicit interactive command-string cases, plus `tests/wait_handshake.py`
+against `build/tests/wait_handshake`. The latter links the normal runtime with
+only jobs.c's sigsuspend call interposed; it checks the blocked mask, queues
+selected signals, and invokes the real sigsuspend. It is test-only scheduling
+evidence, not a production environment switch. [Exact assertions and remaining
+owners](jobs-signals-evidence.md#csh-054) distinguish the two binaries.
+
+## Residual execution contracts
+
+`make test-execution-contracts` runs CSH-055's public-runtime inherited descriptor
+and injected command-read error witnesses. It is included in `make test` and
+`make test-execution-evidence`. The fault binary compiles only input.c with a
+read wrapper; all other objects, including main, are the ordinary runtime.
+The [contract map](execution-contracts.md) identifies exact assertions, source
+alternatives, bounds, environments, and sanitizer handling for closed descriptors.

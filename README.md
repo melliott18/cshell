@@ -68,7 +68,7 @@ make test-pipeline # Concurrent pipeline, stage-status, and failure-cleanup chec
 make test-control  # Conditionals, loops, case, functions, and failure cleanup
 make test-context  # Lists, groups, background ownership, and cleanup checks
 make test-jobs     # Job builtins, retained statuses, idle reaping, and failure checks
-make test-traps    # Signals ignored before shell startup
+make test-traps    # Signal contracts, inherited ignores, and blocked-wait checks
 make test-jobs-pty # Process groups, terminal signals, stop/resume, and restoration
 make test-runtime  # Cross-mode invocation/status behavior
 make test-redirection-offset # Sparse-file offset and resource-limit boundaries
@@ -126,6 +126,7 @@ src/main.c       Invocation, complete-command loop, prompts, and final status
 src/input.c      Replacement physical-line input sources
 src/invocation.c Replacement invocation and operand mapping
 src/lexer.c      Replacement tokens, word fragments, and parser handoffs
+src/character.c  Startup lexical and current-locale character decoding
 src/parser.c     Replacement complete-command parser and here-documents
 src/ast.c        Owned syntax trees and cleanup
 src/alias.c      Alias storage and alias/unalias handlers
