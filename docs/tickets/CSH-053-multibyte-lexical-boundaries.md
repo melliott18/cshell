@@ -1,6 +1,6 @@
 # CSH-053: Preserve syntax-valued bytes inside multibyte source characters
 
-- Status: review
+- Status: done
 - Type: fix
 - Kind: implementation
 - Parent: None
@@ -9,6 +9,13 @@
 - Issue: [#86](https://github.com/melliott18/cshell/issues/86)
 
 ## Goal
+
+Integrated in [PR #103](https://github.com/melliott18/cshell/pull/103).
+Combined revision `a57d404` passed full local native tests (3,113 runtime
+cases, terminal suites, host qualification, 71 harness self-tests) and hosted
+Linux/Docker normal and sanitizer checks in run 36273124710. Hosted macOS
+sanitizer checks were still running at integration. Scoped residual work and
+capability limitations below remain open; integration is not a conformance claim.
 
 Make lexical processing respect startup character boundaries in encodings where
 multibyte characters can contain bytes with ASCII shell syntax values. This is
