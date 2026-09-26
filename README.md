@@ -67,7 +67,7 @@ make test-pipeline # Concurrent pipeline, stage-status, and failure-cleanup chec
 make test-control  # Conditionals, loops, case, functions, and failure cleanup
 make test-context  # Lists, groups, background ownership, and cleanup checks
 make test-jobs     # Job builtins, retained statuses, idle reaping, and failure checks
-make test-traps    # Signals ignored before shell startup
+make test-traps    # Signal contracts, inherited ignores, and blocked-wait checks
 make test-jobs-pty # Process groups, terminal signals, stop/resume, and restoration
 make test-runtime  # Cross-mode invocation/status behavior
 make test-redirection-offset # Sparse-file offset and resource-limit boundaries

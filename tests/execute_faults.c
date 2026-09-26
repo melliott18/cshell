@@ -886,9 +886,9 @@ static void terminal_job_faults(struct csh_state *state)
     tree = parse("/usr/bin/true\n");
     /* Deliver terminal signals inside the fork wrapper, before the child can
      * reset inherited shell handlers. They must remain pending until reset. */
-    for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < 4; ++i) {
         sigset_t original_mask, after_mask;
-        int sent = i == 0 ? SIGINT : SIGTSTP;
+        int sent = i == 0 ? SIGINT : i == 1 ? SIGTSTP : i == 2 ? SIGTERM : SIGQUIT;
         arm(0);
         assert(csh_jobs_create(&context.jobs, state, 0) == 0);
         assert(sigprocmask(SIG_SETMASK, NULL, &original_mask) == 0);

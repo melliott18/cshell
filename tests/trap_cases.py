@@ -94,11 +94,8 @@ def add_trap_cases(cross, helper):
           "/bin/sh -c 'kill -USR2 \"$PPID\"; kill -USR1 \"$PPID\"; "
           "kill -USR1 \"$PPID\"; sleep 0.1; echo foreground'\n",
           stdout="foreground\nfirst\nsecond\n")
-    cross("traps: wait interrupted before action",
-          "trap 'printf \"trap:%s\\n\" \"$?\"' USR1\n"
-          "/bin/sh -c 'sleep 0.1; kill -USR1 \"$1\"; sleep 0.2' sh \"$$\" &\n"
-          "wait\nprintf \"wait:%s\\n\" \"$?\"\n",
-          stdout=f"trap:{128 + signal.SIGUSR1}\nwait:{128 + signal.SIGUSR1}\n")
+    # SIG-002 blocked-wait timing now uses tests/wait_handshake.py; no sleep
+    # is used to guess when the parent has entered wait.
 
     # CSH-050 / U-015: Issue 8 -p includes defaults, unlike plain trap.
     cross("traps: selected defaults can be restored",

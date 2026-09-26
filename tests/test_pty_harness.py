@@ -337,7 +337,10 @@ class PtyHarnessTests(unittest.TestCase):
 
     def test_snapshot_failure_reports_teardown_error_and_reaps_leader(self):
         marker = self.process_marker()
-        item = case("hang", args=(marker,), output="hanging\n", timeout=0.15)
+        # Reach setup before triggering cleanup; 150ms included interpreter
+        # startup and could expire before the marker existed under Docker load.
+        item = case("hang", args=(marker,), output="hanging\n", status=-signal.SIGKILL,
+                    steps=[{"expect": "hanging\n"}, {"signal": "KILL"}])
         initial = self.open_descriptors()
         with mock.patch.object(pty_harness, "session_members",
                                side_effect=OSError("injected snapshot failure")):
@@ -346,6 +349,37 @@ class PtyHarnessTests(unittest.TestCase):
                             for failure in failures), failures)
         self.assert_recorded_processes_stopped(marker)
         self.assertEqual(self.open_descriptors(), initial)
+
+    def test_slow_snapshot_has_budget_and_reap_has_its_own_deadline(self):
+        # Model the historical >1s ps delay without relying on host load or
+        # sleeping. Even an exhausted snapshot deadline must permit reaping.
+        process = mock.Mock(pid=41234)
+        now = [100.0]
+
+        def snapshot(session, deadline):
+            now[0] += 1.2
+            self.assertLess(now[0], deadline)
+            return []
+
+        with mock.patch.object(pty_harness.time, "monotonic", side_effect=lambda: now[0]), \
+                mock.patch.object(pty_harness.os, "tcgetpgrp", return_value=0), \
+                mock.patch.object(pty_harness.os, "killpg"), \
+                mock.patch.object(pty_harness, "session_members", side_effect=snapshot):
+            self.assertEqual(pty_harness.cleanup_session(process, -1), [])
+        process.wait.assert_called_once_with(timeout=1.0)
+
+        def expired_snapshot(session, deadline):
+            now[0] = deadline
+            raise TimeoutError("snapshot exhausted deadline")
+
+        process.reset_mock()
+        with mock.patch.object(pty_harness.time, "monotonic", side_effect=lambda: now[0]), \
+                mock.patch.object(pty_harness.os, "tcgetpgrp", return_value=0), \
+                mock.patch.object(pty_harness.os, "killpg"), \
+                mock.patch.object(pty_harness, "session_members", side_effect=expired_snapshot):
+            failures = pty_harness.cleanup_session(process, -1)
+        self.assertTrue(any("snapshot exhausted deadline" in f for f in failures), failures)
+        process.wait.assert_called_once_with(timeout=1.0)
 
     def test_controlling_terminal_unavailable_cannot_hide_teardown_failure(self):
         ioctl = pty_harness.fcntl.ioctl
