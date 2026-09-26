@@ -1,6 +1,6 @@
 # CSH-052: Close host utility and intrinsic lookup evidence gaps
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
@@ -93,6 +93,12 @@ records the exact image, binary hashes and commands.
 
 
 ## Validation record
+
+Integrated in [PR #98](https://github.com/melliott18/cshell/pull/98).
+Hosted run 36256710229 passed Linux and Docker, including sanitizer checks;
+macOS normal checks passed, with its full sanitizer job still running at
+integration. Focused native sanitizer results are retained in the artifact
+record below. Remaining host contracts stay open in CSH-056 (#97).
 
 Integration recheck (2026-09-26): native host checks passed 784 cases with 12
 explicit known-gap observations, and all 69 harness self-tests passed. Native
