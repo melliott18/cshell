@@ -64,3 +64,12 @@ Completing one child does not establish the milestone or POSIX compliance.
 
 Passing a differential suite is useful evidence but does not itself prove POSIX
 conformance. External certification, if desired, is separate from this ticket.
+
+### CSH-056 host-profile gate
+
+The [qualified host profile](../host-contract-profile.md) resolves the five
+CSH-052 stock-host gaps and records selected residual witnesses. This applies
+only with the documented PATH and executable identities; stock macOS/Debian
+are not promoted. [CSH-057](CSH-057-host-boundary-capabilities.md) owns each
+remaining host capability/limit in the linked inventory. U-034/U-040 and the
+system-wide §1.6 obligation remain open, so this completion gate stays closed.

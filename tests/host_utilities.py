@@ -9,21 +9,24 @@ import platform
 import shlex
 import shutil
 import socket
+import stat
+import locale
 import subprocess
 import tempfile
 
 import smoke
 from host_utility_cases import HOSTS, INTRINSICS, cases
+from host_boundary_cases import cases as boundary_cases
 
 
 def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def inventory():
+def inventory(search_path=os.defpath):
     result = {}
     for name in HOSTS:
-        path = shutil.which(name, path=os.defpath)
+        path = shutil.which(name, path=search_path)
         entry = {'path': path, 'realpath': os.path.realpath(path) if path else None}
         if path:
             entry['sha256'] = sha(path)
@@ -44,13 +47,15 @@ def setup(directory):
                 'first': b'first\n', 'second': b'second\n', 'tree/leaf': b'',
                 'old': b'', 'new': b'', 'setuid': b'', 'setgid': b'',
                 'executable': b'', 'high': bytes(range(128, 256)),
-                'binary': bytes(range(256))}
+                'binary': bytes(range(256)), 'denied': b'private',
+                'long': b'x' * 8192 + b'\n'}
     for name, content in contents.items():
         path = directory / name
         path.parent.mkdir(exist_ok=True)
         path.write_bytes(content)
     os.utime(directory / 'old', (1000000000, 1000000000))
     os.utime(directory / 'new', (1000000002, 1000000002))
+    os.chmod(directory / 'denied', 0)
     os.chmod(directory / 'setuid', 0o4600)
     os.chmod(directory / 'setgid', 0o2600)
     os.chmod(directory / 'executable', 0o700)
@@ -84,6 +89,13 @@ def match(expected, actual):
     if expected == 'any':
         return True
     return expected == actual
+
+
+def matches_case(case, status, output):
+    return any(match(expected['status'], status) and
+               match(expected['stdout'], bytes(output['stdout'])) and
+               match(expected['stderr'], bytes(output['stderr']))
+               for expected in case.get('alternatives', [case]))
 
 
 def serial(value):
@@ -126,17 +138,59 @@ def main():
     parser.add_argument('binary', type=Path)
     parser.add_argument('helper', type=Path)
     parser.add_argument('--record', type=Path)
+    parser.add_argument('--path', default=os.environ.get('CSH_TEST_PATH', os.defpath),
+                        help='Explicit utility search path, also used inside the shell')
     parser.add_argument('--strict-gaps', action='store_true')
+    parser.add_argument('--boundaries', action='store_true')
+    parser.add_argument('--echo-policy', choices=('darwin', 'gnu'),
+                        default='darwin' if platform.system() == 'Darwin' else 'gnu')
+    parser.add_argument('--block-device', type=Path,
+                        help='Stat-only positive predicate witness; never opened')
     parser.add_argument('--sanitizer', action='store_true',
                         help='Set ASan/UBSan in the actual case environment; disable Linux leak scanning')
     args = parser.parse_args()
     binary = args.binary.resolve()
     helper = shlex.quote(str(args.helper.resolve()))
-    tools = inventory()
+    tools = inventory(args.path)
     paths = {name: entry['path'] for name, entry in tools.items()}
     records = []
+    capabilities = {'euid': os.geteuid(), 'egid': os.getegid(),
+                    'groups': os.getgroups(), 'permission_denial': os.geteuid() != 0,
+                    'block_device': None, 'numeric_locale': None}
+    if args.block_device:
+        if not stat.S_ISBLK(args.block_device.stat().st_mode):
+            parser.error('--block-device must name a block device')
+        capabilities['block_device'] = str(args.block_device.resolve())
+    if args.boundaries:
+        previous = locale.setlocale(locale.LC_NUMERIC)
+        try:
+            for candidate in ('fr_FR.UTF-8', 'fr_FR.utf8'):
+                try:
+                    locale.setlocale(locale.LC_NUMERIC, candidate)
+                except locale.Error:
+                    continue
+                if locale.localeconv()['decimal_point'] == ',':
+                    capabilities['numeric_locale'] = candidate
+                    break
+        finally:
+            locale.setlocale(locale.LC_NUMERIC, previous)
+    selected = list(cases(paths, helper, args.echo_policy))
+    limitations = []
+    if args.boundaries:
+        selected.extend(boundary_cases(helper, args.echo_policy,
+                                       capabilities['numeric_locale'],
+                                       capabilities['block_device'],
+                                       capabilities['permission_denial']))
+        for condition, available, reason in (
+            ('U-035/locale-errors', capabilities['numeric_locale'], 'French numeric locale unavailable'),
+            ('U-037/permission-denial', capabilities['permission_denial'], 'effective UID 0 bypasses mode-bit denial'),
+            ('U-037/block-device', capabilities['block_device'], 'no explicit stat-only block-device witness supplied')):
+            if not available:
+                limitations.append(dict(condition=condition, reason=reason, owner='CSH-057'))
+        for limitation in limitations:
+            print('LIMITATION: ' + json.dumps(limitation), flush=True)
     totals = dict(passed=0, failed=0, gaps=0)
-    for case in cases(paths, helper):
+    for case in selected:
         for mode in case.get('modes', ('string', 'file', 'stdin')):
             name = case['name'] + ' (' + mode + ')'
             if case.get('requires') and not paths[case['requires']]:
@@ -152,11 +206,12 @@ def main():
                 directory = Path(temporary)
                 connection = setup(directory)
                 try:
-                    fixture = {'args': [], 'stdin': '', 'env': {}}
+                    fixture = {'args': [], 'stdin': '', 'env': {'PATH': args.path}}
+                    fixture['env'].update(case.get('env', {}))
                     if args.sanitizer:
-                        fixture['env'] = {'ASAN_OPTIONS': 'halt_on_error=1' +
+                        fixture['env'].update({'ASAN_OPTIONS': 'halt_on_error=1' +
                                          (':detect_leaks=0' if platform.system() == 'Linux' else ''),
-                                         'UBSAN_OPTIONS': 'halt_on_error=1'}
+                                         'UBSAN_OPTIONS': 'halt_on_error=1'})
                     if mode == 'pty':
                         fixture.update(transport='pty', steps=[], args=['-c', case['script']])
                     elif mode == 'string':
@@ -175,9 +230,7 @@ def main():
                     for path, expected in case.get('files', {}).items():
                         target = directory / path
                         actual_files[path] = target.read_bytes() if target.exists() else None
-                    ok = (not errors and match(case['status'], status) and
-                          match(case['stdout'], bytes(output['stdout'])) and
-                          match(case['stderr'], bytes(output['stderr'])) and
+                    ok = (not errors and matches_case(case, status, output) and
                           actual_files == case.get('files', {}))
                     gap = not ok and not errors and known_gap(case, status, output)
                     verdict = 'PASS' if ok else 'GAP' if gap else 'FAIL'
@@ -192,7 +245,13 @@ def main():
                         print(json.dumps(record['actual']), flush=True)
                 finally:
                     connection.close()
-    result = {'platform': platform.platform(), 'path': os.defpath, 'inventory': tools,
+    result = {'platform': platform.platform(), 'path': args.path, 'inventory': tools,
+              'capabilities': capabilities, 'limitations': limitations,
+              'echo_policy': args.echo_policy,
+              'host_limits': {name: os.sysconf(name) for name in
+                              ('SC_ARG_MAX', 'SC_OPEN_MAX', 'SC_LINE_MAX')},
+              'filesystem_limits': {name: os.pathconf('.', name) for name in
+                                    ('PC_NAME_MAX', 'PC_PATH_MAX', 'PC_PIPE_BUF')},
               'binary_sha256': sha(binary), 'helper_sha256': sha(args.helper),
               'limits': {'timeout_seconds': 5, 'combined_output_bytes': 65536,
                          'child_resources': 'smoke.child_limits'},

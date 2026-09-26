@@ -5,7 +5,8 @@
 `false`, and `kill` utility pages. This is a bounded integration profile, not
 certification of the host's complete utility collection. The CSH-012 compliance
 gate remains closed. [CSH-056](tickets/CSH-056-host-contract-gaps.md) owns the
-specific host defects and remaining conditions below.
+specific host defects below. The [qualified profile and residual conditions](host-contract-profile.md)
+record CSH-056's resolution; stock-host failures remain historical observations.
 
 ## Condition evidence states
 
@@ -16,21 +17,21 @@ platforms in the retained run record.
 | Condition | State and scope |
 | --- | --- |
 | U-026/host-direct | Verified: external signal-number mapping and owned-child delivery |
-| U-026/host-status-map | Missing on Debian; verified on recorded macOS |
-| U-034/scoped-access | Verified: listed exec/lookup operations and PTY stty, except ed |
-| U-034/host-ed | Missing on Debian; verified on recorded macOS |
+| U-026/host-status-map | Verified in the CSH-056 qualified profile; Debian stock-host gap retained |
+| U-034/scoped-access | Verified: listed exec/lookup operations and PTY stty, including provisioned ed in CSH-056 |
+| U-034/host-ed | Verified: CSH-056 provisions ed; CSH-052 missing-package record retained |
 | U-035/core-format | Verified: named format/conversion/error witnesses below |
-| U-035/numbered, U-035/b-precision | Missing on Debian; verified on recorded macOS |
-| U-035/locale-errors | Missing residual boundary/locale evidence; CSH-056 |
+| U-035/numbered, U-035/b-precision | Verified in the CSH-056 qualified profile; Debian stock-host gap retained |
+| U-035/locale-errors | Verified selected conversion/continuation and French-locale witnesses; broader catalogs/limits CSH-057 |
 | U-036/base-operands | Verified: ordinary operands, newline and literal -- |
 | U-036/selected-policy | Verified for the named C-locale host choices |
-| U-036/host-environment | Missing other host-environment evidence; CSH-056 |
+| U-036/host-environment | Verified named Apple/GNU POSIXLY_CORRECT policies and explicit policy selection; arbitrary alternatives CSH-057 |
 | U-037/expressions | Verified: named base argument-count/primary/error witnesses |
-| U-037/missing-timestamps | Missing on macOS; verified on recorded Debian |
-| U-037/capabilities | Missing positive block-device/permission-denial witnesses; CSH-056 |
+| U-037/missing-timestamps | Verified in the CSH-056 qualified profile; macOS stock-host gap retained |
+| U-037/capabilities | Verified positive block-node and non-root denial in dedicated native/Docker runs; extended identities/ACLs CSH-057 |
 | U-038/base, U-039/base | Verified: no output, required status and unused stdin |
 | U-040/dispatch-defaults | Verified: named argv/input/order/offset/environment/resource cases |
-| U-040/host-boundaries | Missing remaining host limits/locales/failure evidence; CSH-056 |
+| U-040/host-boundaries | Selected failures/locales/system limits verified by CSH-056; individual remaining capabilities CSH-057 |
 | U-041/selected-set | Verified: all 15 implemented names and named non-intrinsic controls |
 | U-041/fc | Inapplicable: UP not selected; absent lookup is a profile witness |
 
@@ -78,7 +79,7 @@ encoding. No unrelated process is targeted.
 
 `U-034 exec kill` separately proves exec accessibility. Native macOS passes;
 Debian procps-ng 4.0.2 fails status-to-name conversion with status zero and a
-stderr diagnostic. **U-026/host-status-map remains missing**, owned by CSH-056;
+stderr diagnostic. **U-026/host-status-map was missing on the CSH-052 stock host**; CSH-056 qualifies BusyBox kill;
 no complete U-026 verification is claimed. Internal/job-aware kill stays with
 [CSH-054](tickets/CSH-054-signal-contract-gaps.md).
 
@@ -110,7 +111,7 @@ The terminal starts with canonical input, signals enabled, echo and output
 newline translation disabled; all terminal output is compared as one stream.
 The shared harness owns foreground process setup and session teardown.
 `ed -s` must read the fixture's first line and exit successfully. Linux's absent
-`ed` is **U-034/host-ed missing**, owned by CSH-056, not excluded from the scope.
+`ed` was **U-034/host-ed missing** in CSH-052; CSH-056 provisions ed in Docker and CI.
 Other utility contracts, outside these declared integration operations, remain
 host responsibility; this evidence never labels those complete pages verified.
 
@@ -140,10 +141,10 @@ Every `U-035 printf …` invokes the external utility, with these exact suffixes
 
 Do not infer coverage for unspecified mixed numbered/unnumbered formats,
 unknown escapes, or precision after `%b`'s `\c`. Numbered missing operands allow
-alternatives and need a separate invariant witness. **U-035/numbered** and
+alternatives and need a separate invariant witness, now supplied by CSH-056. **U-035/numbered** and
 **U-035/b-precision** fail on GNU coreutils 9.1; native macOS passes. Locale
 numeric formatting outside C, diagnostic catalogs, and conversion-error
-continuation beyond these cases remain **U-035/locale-errors**, CSH-056.
+continuation beyond these cases are now exercised by CSH-056; wider catalogs/limits remain CSH-057.
 
 <a id="u-036"></a>
 ## U-036: echo
@@ -170,7 +171,7 @@ of e/E/n, defaults to literal backslashes, and `-e`/`-E` select escape processin
 These are host policies, not expansion oracles. XSI escape semantics are
 inapplicable under the selected base profile. `POSIXLY_CORRECT` and arbitrary
 replacement tools can change host behavior and are outside these C-locale
-policy assertions; U-036/host-environment remains with CSH-056.
+policy assertions; CSH-056 adds the named POSIXLY_CORRECT policies. Unqualified alternatives remain CSH-057.
 
 <a id="u-037"></a>
 ## U-037: test and bracket
@@ -196,9 +197,9 @@ expression operand, not an option marker. Arbitrary >4 argument expressions,
 `-a`/`-o` and historical parentheses are not base-profile oracles.
 
 macOS fails the missing-file timestamp branches: **U-037/missing-timestamps**,
-CSH-056. Positive block-device access and read/write permission denial under
-non-root identities remain **U-037/capabilities**, CSH-056; existing predicates
-are not claims about every permission environment.
+resolved by the CSH-056 GNU test/bracket selection. CSH-056 adds positive
+block-node predicates and mode-000 denial under recorded non-root identities;
+ACLs and unequal effective/real credentials remain CSH-057.
 
 <a id="u-038"></a>
 <a id="u-039"></a>
@@ -240,7 +241,7 @@ CPU/output/descriptor limits are test protections, not proposed POSIX maxima.
 builtin syntax rules; those are not overridden with a blanket `--` expectation.
 Echo/test exceptions are tested above, printf's default separately. General
 cross-utility locales, interruption/write failures, and documented host maxima
-remain **U-040/host-boundaries**, CSH-056. A selected test for each default is
+are split into CSH-056 passing witnesses and the explicit CSH-057 capability inventory. A selected test for each default is
 not whole-family verification.
 
 <a id="u-041"></a>

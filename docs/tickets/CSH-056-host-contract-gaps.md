@@ -1,11 +1,11 @@
 # CSH-056: Resolve residual host utility contracts
 
-- Status: ready
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-039
-- Branch: Assigned when work starts
+- Branch: test/CSH-056-host-contracts
 - Issue: [#97](https://github.com/melliott18/cshell/issues/97)
 
 ## Goal
@@ -61,9 +61,36 @@ remain outside this repository's implementation scope; §1.6 is not waived.
 
 ## Acceptance criteria
 
-- [ ] Provision or qualify supported native/Docker hosts for the five known gaps.
-- [ ] Run the strict reproducer successfully with executable/package identities.
-- [ ] Supply the residual witnesses or retain individually justified capability
+- [x] Provision or qualify supported native/Docker hosts for the five known gaps.
+- [x] Run the strict reproducer successfully with executable/package identities.
+- [x] Supply the residual witnesses or retain individually justified capability
   limitations with source, environment and owning follow-up.
-- [ ] Update the stable condition rows and CSH-012 gate without promoting broad
+- [x] Update the stable condition rows and CSH-012 gate without promoting broad
   utility families from selected tests.
+
+## Implementation and validation
+
+Implemented on `test/CSH-056-host-contracts` in a separate managed worktree.
+The [qualified profile](../../tools/host-profile/README.md) selects external
+executables with ordinary PATH/exec behavior. The original assertions remain
+unchanged. It uses a pinned standalone FreeBSD printf with GNU getopt and
+buffered-output-error adapters, BusyBox kill on Linux, provisioned ed, and GNU
+test/bracket on macOS. No cshell runtime source changes are needed.
+
+The [condition map](../host-contract-profile.md) adds numbered missing-operand
+alternatives, exact conversion overflow/continuation, French numeric/diagnostic
+environments, explicit Apple/GNU echo policy, positive block-node/non-root
+permission witnesses, host error/write/interruption checks and queried limits.
+Each remaining per-utility capability has a source/environment/reason and an
+owner in [CSH-057](CSH-057-host-boundary-capabilities.md) ([#101](https://github.com/melliott18/cshell/issues/101)).
+CSH-012 stays closed; no entire utility page is certified.
+
+The [retained run records](../evidence/csh-056/README.md) contain source/binary
+identities and exact commands/results. Native and Docker final strict profiles
+pass 919 assertions each, with zero gaps. Full tests, 3,045-case runtime reruns
+under the profile, PTY checks, and all 70 harness self-tests pass on both hosts.
+Focused ASan/UBSan checks cover the selected host profile and C adapters.
+
+The first runtime rerun caught a pwd diagnostic change caused by symlinking all
+host tools. The final profile includes only required replacements, preserving
+the PATH-associated pwd builtin; final reruns pass without relaxing assertions.

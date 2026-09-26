@@ -433,3 +433,15 @@ build/tests/host_utility_helper: tests/host_utility_helper.c
 .PHONY: test-host-utilities
 test-host-utilities: cshell build/tests/host_utility_helper
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --record build/tests/host-utilities-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+# Opt-in host qualification. Stock-host evidence remains test-host-utilities.
+.PHONY: host-profile test-host-profile
+build/host-printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.c
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/printf.c $(LDLIBS)
+
+host-profile: build/host-printf
+	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
+
+test-host-profile: cshell build/tests/host_utility_helper host-profile
+	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
