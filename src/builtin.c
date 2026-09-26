@@ -198,7 +198,7 @@ static int directory(struct csh_state *state, size_t argc, char *const argv[])
     if (!is_cd) {
         newpwd = current(state, physical);
         if (newpwd) {
-            status = dprintf(1, "%s\n", newpwd) < 0;
+            status = csh_write_text(1, newpwd) < 0 || csh_write_text(1, "\n") < 0;
             if (status) problem("pwd", "cannot write output");
         }
         else problem("pwd", "cannot determine current directory");
@@ -254,7 +254,8 @@ static int directory(struct csh_state *state, size_t argc, char *const argv[])
     if (status) {
         if (fchdir(fd) < 0) problem("cd", "cannot restore directory after state failure");
         csh_state_restore(state, &checkpoint);
-    } else if (print && dprintf(1, "%s\n", newpwd) < 0) status = 1;
+    } else if (print && (csh_write_text(1, newpwd) < 0 ||
+        csh_write_text(1, "\n") < 0)) status = 1;
 done:
     if (status) problem("cd", "cannot change directory or update directory state");
     if (fd >= 0) close(fd);
