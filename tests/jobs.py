@@ -8,8 +8,10 @@ import subprocess
 import sys
 import signal
 import tempfile
+import time
 from execute import bounded_run
 from option_cases import report
+from pty_harness import session_members
 
 
 def main():
@@ -20,12 +22,27 @@ def main():
     args = parser.parse_args()
     binary = str(Path(args.binary).resolve())
     with tempfile.TemporaryDirectory(prefix='cshell-job-api-') as temp:
-        for executable, arguments in ((args.api_binary, []),
-                                      (args.fault_binary, ['--jobs'])):
+        for executable, arguments, timeout in ((args.api_binary, [], 60),
+                                               (args.fault_binary, ['--jobs'], 30)):
             result = bounded_run([str(Path(executable).resolve()), *arguments],
-                                 cwd=Path(temp), env=os.environ.copy(), timeout=30)
+                                 cwd=Path(temp), env=os.environ.copy(), timeout=timeout)
             assert result.returncode == 0, result
             print(result.stdout.decode(), end='')
+        # The fixture watchdog bounds each operation to five seconds, including
+        # each of its 150 rapid-exit pipelines. Its larger overall cap permits
+        # cumulative sanitizer/fork overhead while still bounding the suite.
+        # Exercise an actual stalled pipeline and the same group-cleanup path.
+        result = bounded_run([str(Path(args.api_binary).resolve()), '--stall-rapid-exit'],
+                             cwd=Path(temp), env=os.environ.copy(), timeout=15)
+        assert result.returncode == 124, result
+        assert result.stderr == b'jobs fixture timeout: rapid-exit pipeline\n', result
+        session = int(result.stdout)
+        assert session > 0, result
+        deadline = time.monotonic() + 2
+        while session_members(session, deadline):
+            assert time.monotonic() < deadline, 'watchdog left live descendants'
+            time.sleep(0.01)
+        print('jobs fixture progress watchdog passed')
     cases = [
         ('wait', 0, '', ''),
         ('kill -l 143 >&-', 1, '', 'cshell: kill: cannot write output\n'),
