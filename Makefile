@@ -460,8 +460,8 @@ build/tests/command-read-input.o: src/input.c tests/command_read_faults.h $(INPU
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/command_read_faults.h -c $< -o $@
 
-build/tests/command_read_faults: tests/command_read_faults.c build/tests/command-read-input.o $(OBJECTS)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/command_read_faults.c build/tests/command-read-input.o $(filter-out build/input.o,$(OBJECTS)) $(LDLIBS)
+build/tests/command_read_faults: tests/command_read_faults.c build/tests/command-read-input.o $(OBJECTS) build/character.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/command_read_faults.c build/tests/command-read-input.o $(filter-out build/input.o,$(OBJECTS)) build/character.o $(LDLIBS)
 
 .PHONY: test-execution-contracts
 test-execution-contracts: cshell build/tests/command_read_faults build/tests/execute_helper
