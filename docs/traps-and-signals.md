@@ -8,8 +8,11 @@ shell conformance.
 ## Trap command
 
 `trap [--] action condition...` installs an action; `-` resets a condition and
-an empty action ignores it. `trap` and `trap -p [--] [condition...]` print active
-actions as quoted, reinput-ready commands. `EXIT` and `0` name the exit action.
+an empty action ignores it. `trap` and `trap -p [--] [condition...]` print
+actions as quoted, reinput-ready commands. `-p` includes default actions,
+whereas plain `trap` lists only non-default
+actions, including signals ignored on entry. All-condition `-p` omits KILL/STOP.
+`EXIT` and `0` name the exit action; `trap 0` resets it.
 Signal names accept an optional `SIG` prefix. Numeric signal conditions are an
 extension while full XSI remains unselected. Unknown, unsupported, or
 uninstallable conditions produce a diagnostic and nonzero status; processing
@@ -90,3 +93,7 @@ The existing `make test-jobs` and `make test-jobs-pty` suites cover rapid job
 completion, unique reaping, process groups, and terminal restoration. Run
 `make test`, `make test-pty`, `make docker-test`, and `make docker-test-pty`
 for the combined native and Linux-container evidence.
+
+[CSH-050 clause evidence](jobs-signals-evidence.md) maps exact cases and platform
+results. [CSH-053](tickets/CSH-053-signal-contract-gaps.md) retains interactive
+TERM, lowercase kill, unmonitored stop policy and other residual obligations.

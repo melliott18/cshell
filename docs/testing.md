@@ -867,3 +867,13 @@ nounset recovery and noexec. These suites are included in `make test` and
 `make test-pty`, including Docker and sanitizer runs. See
 [Shell options](shell-options.md) for the requirement mapping and permitted
 choices; fixture sources are `tests/option_cases.py` and `tests/runtime_cases.py`.
+
+## CSH-050 jobs and signal evidence
+
+The [clause map](jobs-signals-evidence.md) identifies exact runtime, PTY and API
+assertions and residual requirements. `make test-jobs` also invokes `/bin/kill`;
+the Docker image installs Debian `procps` explicitly. Native hosts must supply
+that external executable. Its signal-number listing and TERM delivery are
+tested separately from the builtin. Debian procps 4.0.2 fails the separate
+`/bin/kill -l 143` audit probe; [CSH-052](tickets/CSH-052-host-utility-evidence.md)
+owns that host gap. It is not counted as a passing status-mapping assertion.

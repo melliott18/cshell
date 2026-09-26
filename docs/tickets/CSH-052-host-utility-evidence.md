@@ -26,6 +26,7 @@ requirement family from a small sample.
 
 | Requirement | Obligation to review and map to exact assertions |
 | --- | --- |
+| [U-026](../posix-utilities.md#u-026) | External host kill provisioning and status-to-signal mapping; CSH-050 reproduced a Debian procps `-l 143` failure. Internal/job-aware kill remains CSH-053. |
 | [U-034](../posix-utilities.md#u-034) | Other standard utilities (for example cat, env, find, ls, stty, ed): retain exec accessibility and declare fixture dependencies. CSH-029 finalizes allocation; CSH-037 checks platform packages/executables. No claim to reimplement their full contracts. |
 | [U-035](../posix-utilities.md#u-035) | `printf`: formatted output, format reuse/missing operands, escapes, numeric conversions and errors. Record whether a fixture invokes host printf or a builtin; selected host behavior is fixture infrastructure, not shell expansion evidence. |
 | [U-036](../posix-utilities.md#u-036) | `echo`: ordinary arguments/newline and literal `--`; backslashes and leading combinations of e/E/n after `-` require a documented base choice or XSI rules. CSH-029 allocates implementation; avoid using ambiguous echo as an oracle. |
@@ -78,3 +79,14 @@ Reference-shell comparisons are separate observations, never normative oracles.
 Allocated by the CSH-037 follow-up audit at baseline `58ca5c3`. The explicit
 limitation and complete row list above replace reliance on already-completed
 implementation tickets as owners of remaining verification work.
+
+### CSH-050 host kill finding
+
+The CSH-050 Debian bookworm arm64 image supplies `/bin/kill` from procps-ng
+4.0.2. `/bin/kill -l 143` returns status 0 but no stdout and writes
+`/bin/kill: unknown signal name 143\n` to stderr, instead of `TERM\n`.
+This failed all three invocation-mode probes. Direct signal-number mapping
+(`-l 15`) and `-s TERM` delivery pass separately. macOS 14.8.7 `/bin/kill` passes
+both mappings. Resolve the Linux host provision/mapping gap before claiming
+complete U-026 evidence; [CSH-050](CSH-050-jobs-signals-evidence.md#validation-record)
+records the exact image, binary hashes and commands.

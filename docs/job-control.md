@@ -26,10 +26,10 @@ interactive error behavior but does not enable monitor mode.
 running jobs; within each class the most recently launched/resumed/stopped job
 is current and the next eligible job is previous. Ambiguous, missing, completed, or
 unmonitored operands cannot be foregrounded or continued by `fg`/`bg`.
-Quote substring specifications such as `'%?sleep'`: the literal adapter still
-rejects unquoted pathname-generation syntax. Numeric `wait` operands identify
+Quote substring specifications such as `'%?sleep'` to prevent pathname expansion.
+Numeric `wait` operands identify
 the asynchronous command PID published as `$!` (the final pipeline stage).
-The runtime still cannot expand `$!`; module clients can read it from shell state.
+The runtime expands `$!`; module clients can also read it from shell state.
 
 Interactive asynchronous launches print `[job-number] last-stage-pid` to stderr.
 Job descriptions use prepared argument text and pipeline/group separators; they
@@ -122,5 +122,7 @@ The PTY suite repeats 32 full stop/bg/fg/Ctrl-C cycles. Prompt writes use the
 shared interrupted/partial-write retry helper; `make test-prompt` independently
 injects both faults into primary and continuation prompts. The
 [CSH-037 follow-up record](tickets/CSH-037-portability-audit.md) links the
-CSH-044/045 regressions and platform results. Complete jobs/signal evidence
-remains open under [CSH-050](tickets/CSH-050-jobs-signals-evidence.md).
+CSH-044/045 regressions and platform results. The
+[CSH-050 clause map](jobs-signals-evidence.md) adds nested startup,
+notification timing and numeric-PID coverage, with residual obligations under
+[CSH-053](tickets/CSH-053-signal-contract-gaps.md).
