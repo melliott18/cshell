@@ -40,7 +40,7 @@ FIELDS_HEADERS = $(EXPAND_HEADERS) src/field_internal.h
 FIELDS_OBJECTS = build/fields.o build/pathname.o
 FIELDS_FAULT_OBJECTS = build/tests/fields-fault-fields.o build/tests/fields-fault-pathname.o
 
-.PHONY: all test test-input test-lexer test-parser test-alias test-state test-expand test-fields test-execute test-pipeline test-context test-runtime test-runtime-pty test-portability test-pty test-traps test-harness docker-build docker-test docker-test-pty docker-shell clean
+.PHONY: all test test-input test-lexer test-parser test-alias test-state test-expand test-fields test-execute test-pipeline test-context test-runtime test-runtime-pty test-portability test-redirection-offset test-pty test-traps test-harness docker-build docker-test docker-test-pty docker-shell clean
 
 all: cshell
 
@@ -273,6 +273,13 @@ test-syntax: cshell build/tests/syntax.json
 	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/syntax.json
 	$(PYTHON) tests/invocation.py ./cshell
 
+build/tests/redirection_offset_helper: tests/redirection_offset_helper.c
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+test-redirection-offset: cshell build/tests/redirection_offset_helper
+	$(PYTHON) tests/redirection_offsets.py ./cshell build/tests/redirection_offset_helper
+
 test-portability: cshell
 	$(PYTHON) tests/portability.py ./cshell
 
@@ -306,7 +313,7 @@ test-builtins: build/tests/builtin_fixture build/tests/execute_fixture
 	./build/tests/builtin_fixture
 	$(PYTHON) tests/builtins.py build/tests/execute_fixture
 
-test: test-invocation test-control test-jobs test-traps test-substitution test-builtins test-portability test-prompt $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline test-context $(TEST_SUITE)
+test: test-invocation test-control test-jobs test-traps test-substitution test-builtins test-portability test-redirection-offset test-prompt $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline test-context $(TEST_SUITE)
 	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
 

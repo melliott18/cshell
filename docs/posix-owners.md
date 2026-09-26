@@ -39,7 +39,7 @@ covered by an existing ticket.
 | [CSH-036](tickets/CSH-036-conformance-matrix.md) | [O-020](posix-utilities.md#o-020) |
 | [CSH-037](tickets/CSH-037-portability-audit.md) | [SH-009](posix-matrix.md#sh-009), [ENV-004](posix-matrix.md#env-004), [U-034](posix-utilities.md#u-034), [O-020](posix-utilities.md#o-020), [O-021](posix-utilities.md#o-021), [O-026](posix-utilities.md#o-026) |
 | [CSH-041](tickets/CSH-041-arithmetic-substitution-replay.md) | [EXP-005](posix-matrix.md#exp-005), [EXP-006](posix-matrix.md#exp-006) |
-| [CSH-042](tickets/CSH-042-locale-semantics.md) | [ENV-004](posix-matrix.md#env-004), [EXP-004](posix-matrix.md#exp-004), [EXP-007](posix-matrix.md#exp-007), [EXP-008](posix-matrix.md#exp-008), [EXP-010](posix-matrix.md#exp-010), [EXEC-012](posix-matrix.md#exec-012) |
+| [CSH-042](tickets/CSH-042-locale-semantics.md) | [ENV-004](posix-matrix.md#env-004), [EXP-004](posix-matrix.md#exp-004), [EXP-007](posix-matrix.md#exp-007), [EXP-008](posix-matrix.md#exp-008), [EXP-010](posix-matrix.md#exp-010), [EXEC-012](posix-matrix.md#exec-012), [U-027](posix-utilities.md#u-027) |
 | [CSH-043](tickets/CSH-043-redirection-offset.md) | [SH-009](posix-matrix.md#sh-009), [O-026](posix-utilities.md#o-026) |
 | [CSH-044](tickets/CSH-044-intermittent-bg-prompt.md) | [JOB-002](posix-matrix.md#job-002), [JOB-003](posix-matrix.md#job-003) |
 | [CSH-045](tickets/CSH-045-jobs-fixture-timeout.md) | [JOB-003](posix-matrix.md#job-003) |
@@ -50,6 +50,7 @@ covered by an existing ticket.
 | [CSH-050](tickets/CSH-050-jobs-signals-evidence.md) | [EXEC-009](posix-matrix.md#exec-009), [JOB-001](posix-matrix.md#job-001), [JOB-002](posix-matrix.md#job-002), [JOB-003](posix-matrix.md#job-003), [SIG-001](posix-matrix.md#sig-001), [SIG-002](posix-matrix.md#sig-002), [SIG-003](posix-matrix.md#sig-003), [U-008](posix-utilities.md#u-008), [U-015](posix-utilities.md#u-015), [U-026](posix-utilities.md#u-026), [U-032](posix-utilities.md#u-032) |
 | [CSH-051](tickets/CSH-051-shell-option-evidence.md) | [O-001](posix-utilities.md#o-001), [O-002](posix-utilities.md#o-002), [O-004](posix-utilities.md#o-004), [O-005](posix-utilities.md#o-005), [O-006](posix-utilities.md#o-006), [O-007](posix-utilities.md#o-007), [O-009](posix-utilities.md#o-009), [O-012](posix-utilities.md#o-012), [O-013](posix-utilities.md#o-013), [O-014](posix-utilities.md#o-014), [O-016](posix-utilities.md#o-016), [O-017](posix-utilities.md#o-017), [O-018](posix-utilities.md#o-018) |
 | [CSH-052](tickets/CSH-052-host-utility-evidence.md) | [U-034](posix-utilities.md#u-034), [U-035](posix-utilities.md#u-035), [U-036](posix-utilities.md#u-036), [U-037](posix-utilities.md#u-037), [U-038](posix-utilities.md#u-038), [U-039](posix-utilities.md#u-039), [U-040](posix-utilities.md#u-040), [U-041](posix-utilities.md#u-041) |
+| [CSH-053](tickets/CSH-053-multibyte-lexical-boundaries.md) | [ENV-004](posix-matrix.md#env-004), [LEX-002](posix-matrix.md#lex-002), [LEX-004](posix-matrix.md#lex-004), [EXP-010](posix-matrix.md#exp-010), [U-027](posix-utilities.md#u-027) |
 
 ## Supporting and audit tickets
 

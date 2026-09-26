@@ -95,8 +95,9 @@ so slashes and leading dots are ordinary characters. Quoted pattern characters
 are escaped for the matcher. Invalid multibyte sequences are processed one byte
 at a time, a documented choice where the standard leaves behavior unspecified.
 The public runtime initializes its process locale from the invocation environment
-before parsing. The fixtures establish C-locale behavior and selected UTF-8 cases,
-not all locale or diagnostic behavior; see [CSH-037](tickets/CSH-037-portability-audit.md).
+before parsing and refreshes runtime categories on shell locale-variable changes.
+See [locale behavior](locales.md) for C/POSIX and UTF-8 evidence, runtime scope
+restoration, diagnostic catalogs and remaining encoding limits.
 
 ## Dollar-single-quote decoding
 
@@ -209,8 +210,8 @@ caller's locale; only space, tab, and newline count as IFS whitespace. Invalid
 multibyte sequences in IFS are treated as individual bytes. Input bytes need not
 be valid characters, and a multibyte delimiter cannot cross span/result
 boundaries. The supported locale evidence covers C/POSIX and selected UTF-8
-cases. The public runtime initializes its process locale at startup; further
-locale coverage remains with CSH-037.
+cases. [CSH-042 locale witnesses](locales.md) additionally cover runtime category
+changes and multibyte IFS in `read`; broader family evidence remains CSH-047.
 
 After splitting, argument fields undergo pathname generation unless
 `CSH_OPT_NOGLOB` is set. Each pathname component uses POSIX `fnmatch()` with

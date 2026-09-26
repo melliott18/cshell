@@ -50,6 +50,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-050](CSH-050-jobs-signals-evidence.md) | Close jobs, signal and trap evidence gaps | [CSH-036](CSH-036-conformance-matrix.md), [CSH-039](CSH-039-legacy-retirement.md) | [#82](https://github.com/melliott18/cshell/issues/82) |
 | [CSH-051](CSH-051-shell-option-evidence.md) | Close base shell-option evidence gaps | [CSH-036](CSH-036-conformance-matrix.md), [CSH-039](CSH-039-legacy-retirement.md) | [#83](https://github.com/melliott18/cshell/issues/83) |
 | [CSH-052](CSH-052-host-utility-evidence.md) | Close host utility and intrinsic lookup evidence gaps | [CSH-036](CSH-036-conformance-matrix.md), [CSH-039](CSH-039-legacy-retirement.md) | [#84](https://github.com/melliott18/cshell/issues/84) |
+| [CSH-053](CSH-053-multibyte-lexical-boundaries.md) | Preserve syntax-valued bytes inside multibyte source characters | [CSH-004](CSH-004-lexer-and-words.md) | [#86](https://github.com/melliott18/cshell/issues/86) |
 
 ## Child implementation tickets
 

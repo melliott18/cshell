@@ -109,7 +109,7 @@ static enum csh_expand_result scalar(struct csh_expansion *out,
 
 /* Join fields for contexts where POSIX specifies one scalar. IFS is read from
  * shell state, never the host process environment. Invalid multibyte input is
- * treated as individual bytes; fixtures use the C locale. */
+ * treated as individual bytes; valid input follows the active LC_CTYPE. */
 static size_t character_bytes(const char *text, size_t length)
 {
     mbstate_t state = {0};
