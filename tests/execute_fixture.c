@@ -202,6 +202,17 @@ static void api_checks(struct csh_state *state)
     assert(result.status == 2 && error.message != NULL);
     assert(access("invalid-side-effect", F_OK) == -1);
     command.assignments = NULL;
+    {
+        char *pwd_args[] = {"pwd", NULL};
+        struct csh_command invalid = {0};
+        struct csh_state_info info;
+        invalid.argc = 1; invalid.argv = pwd_args;
+        invalid.assignment_count = 1; /* Missing vector must precede PATH lookup. */
+        csh_state_set_status(state, 37);
+        assert(csh_execute_command(state, &invalid, &result, &error) == -1);
+        csh_state_get_info(state, &info);
+        assert(result.status == 2 && info.last_status == 2);
+    }
     command.assignment_count = 0;
     /* Executor must not reap this other owner's already-exited child. */
     unrelated = fork();

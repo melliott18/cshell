@@ -90,6 +90,84 @@ def add_execution_cases(cross, helper):
     check('EXEC-004 PATH refresh after assignment',
           'chmod +x one/probe two/probe; PATH=one; probe; PATH=two; probe',
           setup={'one/probe': 'echo one\n', 'two/probe': 'echo two\n'}, stdout='one\ntwo\n')
+    pwd_setup = {'one/pwd': "#!/bin/sh\n/usr/bin/printf 'one\\n'\n",
+                 'two/pwd': "#!/bin/sh\n/usr/bin/printf 'custom-pwd\\n'\n"}
+    setup_pwd = 'chmod +x one/pwd two/pwd; '
+    check('EXEC-004 prefix PATH selects external pwd',
+          setup_pwd + 'PATH=two pwd', setup=pwd_setup, stdout='custom-pwd\n')
+    check('EXEC-004 repeated prefix PATH and restore attributes',
+          setup_pwd + f'unset PATH; PATH=one; PATH=missing PATH=two pwd; '
+          f'{args} "$PATH"; {helper} environment PATH; PATH=two; pwd',
+          setup=pwd_setup, stdout='custom-pwd\n[one]\nPATH=<unset>\ncustom-pwd\n')
+    check('EXEC-004 expanded sequential PATH prefixes',
+          setup_pwd + 'PATH=one PATH="${PATH%one}two" pwd',
+          setup=pwd_setup, stdout='custom-pwd\n')
+    check('EXEC-004 prefix restores exported PATH',
+          setup_pwd + f'export PATH=one; PATH=two pwd; {helper} environment PATH',
+          setup=pwd_setup, stdout='custom-pwd\nPATH=one\n')
+    check('EXEC-004 prefix function precedence and command bypass',
+          setup_pwd + 'pwd() { /usr/bin/printf "function:%s\\n" "$PATH"; }; '
+          'PATH=two pwd; PATH=two command pwd', setup=pwd_setup,
+          stdout='function:two\ncustom-pwd\n')
+    check('EXEC-004 default PATH overrides prefix for command p',
+          setup_pwd + 'PATH=two command -p pwd >actual; /bin/pwd >expected; '
+          'cmp actual expected; /usr/bin/printf "status:%s\\n" "$?"',
+          setup=pwd_setup, stdout='status:0\n')
+    check('EXEC-004 prefix selects standard builtin from replaced PATH',
+          setup_pwd + 'PATH=one; PATH=/bin:/usr/bin pwd >actual; /bin/pwd >expected; '
+          '/usr/bin/cmp actual expected; /usr/bin/printf "status:%s:%s\\n" "$?" "$PATH"',
+          setup=pwd_setup, stdout='status:0:one\n')
+    check('EXEC-004 empty prefix PATH searches current directory',
+          'chmod +x pwd; PATH= pwd',
+          setup={'pwd': "#!/bin/sh\nprintf 'local\\n'\n"}, stdout='local\n')
+    check('EXEC-004 readonly PATH prevents target execution',
+          setup_pwd + 'readonly PATH=one; PATH=two pwd; : >later',
+          setup=pwd_setup, status=1, stderr='cshell: cannot assign to readonly variable\n',
+          files={'later': {'type': 'absent'}})
+    check('EXEC-004 prefix PATH in pipeline stages',
+          setup_pwd + f'PATH=two pwd | {helper} copy; {helper} status 0 | PATH=two pwd',
+          setup=pwd_setup, stdout='custom-pwd\ncustom-pwd\n')
+    check('EXEC-004 missing prefix target and restore',
+          setup_pwd + 'PATH=one; PATH=missing pwd; /usr/bin/printf "status:%s:%s\\n" "$?" "$PATH"; pwd',
+          setup=pwd_setup, stdout='status:127:one\none\n',
+          stderr='cshell: pwd: command not found\n')
+    check('EXEC-004 prefix redirect failure restores PATH',
+          setup_pwd + 'PATH=one; PATH=two pwd <missing; /usr/bin/printf "status:%s:%s\\n" "$?" "$PATH"; pwd',
+          setup=pwd_setup, stdout='status:1:one\none\n', stderr=missing)
+    check('EXEC-003 no-name trap and expansion environments',
+          'trap \'/usr/bin/printf "exit:%s:%s\\n" "$v" "${made-unset}"\' EXIT; '
+          'v=parent; v=$(trap \'/usr/bin/printf child-exit\' EXIT; /usr/bin/printf child) '
+          '>"${made:=out}"; /usr/bin/printf "%s:%s:%s\\n" "$?" "$v" "${made-unset}"',
+          stdout='0:childchild-exit:unset\nexit:childchild-exit:unset\n',
+          files={'out': file('')})
+    check('EXEC-003 redirect substitution trap isolated',
+          'trap \'/usr/bin/printf \"parent-exit\\n\"\' EXIT; '
+          '>"$(trap \'/usr/bin/printf child\' EXIT; /usr/bin/printf out; exit 7)"; /usr/bin/printf "status:%s\\n" "$?"',
+          stdout='status:7\nparent-exit\n', files={'outchild': file('')})
+    for loop, stop in (('while', '[ "$n" -lt 3 ]'), ('until', '[ "$n" -ge 3 ]')):
+        check('U-004 continue in ' + loop + ' condition',
+              f'n=0; {loop} n=$((n+1)); if [ "$n" -eq 1 ]; then continue; fi; {stop}; '
+              'do /usr/bin/printf "body:%s\\n" "$n"; done; /usr/bin/printf "end:%s:%s\\n" "$n" "$?"',
+              stdout='body:2\nend:3:0\n')
+        check('U-004 nested lexical ' + loop + ' condition continue outer',
+              f'for x in a b; do {loop} case $x in *) {{ /usr/bin/printf "%s\\n" "$x"; continue 2; }};; esac; '
+              'do : >body; done; : >later; done', stdout='a\nb\n',
+              files={'body': {'type': 'absent'}, 'later': {'type': 'absent'}})
+    check('U-004 eval nonlexical continue policy',
+          'for x in a b; do eval continue; : >later; done; /usr/bin/printf done',
+          stdout='done', files={'later': {'type': 'absent'}})
+    check('EXEC-014 nested function return restores scopes',
+          'set -- caller; PATH=parent; outer() { inner() { '
+          '/usr/bin/printf "%s:%s\\n" "$1" "$PATH"; return 7; } >inner; '
+          'PATH=child inner arg; /usr/bin/printf "%s:%s:%s\\n" "$?" "$1" "$PATH"; return 9; }; '
+          'PATH=outer outer call >outer; /usr/bin/printf "%s:%s:%s\\n" "$?" "$1" "$PATH"',
+          stdout='9:caller:parent\n', files={'inner': file('arg:child\n'), 'outer': file('7:call:outer\n')})
+    check('U-004 function nonlexical continue policy',
+          'f() { continue; }; for x in a; do f; done', status=2,
+          stderr='cshell: continue: not in a loop\n')
+    check('EXEC-005 invalid imported environment name policy',
+          f'{helper} environment BAD-NAME', env={'BAD-NAME': 'ignored'},
+          stdout='BAD-NAME=<unset>\n')
     check('EXEC-006 pipe connected before output redirection',
           f'{helper} both 2>&1 >out | {helper} copy',
           stdout='err\n', files={'out': file('out\n')})
@@ -164,3 +242,23 @@ def add_execution_errors(cross, result):
                            'args': ['-ic', script] if mode == 'string' else ['-i', 'script'],
                            'stdin': '', 'setup': {'script': script} if mode == 'file' else {},
                            'expect': {'stdout': f'continued:{status}\n', 'stderr': diagnostic, 'status': 0}})
+
+    # Nested eval parses fresh function syntax; unwinding must restore both
+    # function parameter frames, temporary prefixes, and enclosing redirects.
+    script = ("set -- caller; v=parent; "
+              "outer() { inner() { eval 'nested() { if'; } >inner; "
+              "v=child inner argument; }; "
+              "v=outer outer call >outer\n"
+              "printf '%s:%s:%s\\n' \"$?\" \"$1\" \"$v\"\n")
+    for mode in ('string', 'file'):
+        result.append({'name': f'execution: EXEC-014 nested syntax interactive restoration ({mode})',
+                       'args': ['-ic', script] if mode == 'string' else ['-i', 'script'],
+                       'stdin': '', 'setup': {'script': script} if mode == 'file' else {},
+                       'expect': {'stdout': '2:caller:parent\n',
+                                  'stderr': 'cshell: unterminated command group\n', 'status': 0,
+                                  'files': {'inner': {'type': 'file', 'content': ''},
+                                            'outer': {'type': 'file', 'content': ''}}}})
+    cross('execution: EXEC-014 nested syntax noninteractive unwind',
+          "trap 'printf \"exit:%s:%s:%s\\n\" \"$?\" \"$1\" \"$v\"' EXIT\n" + script,
+          stdout='exit:2:caller:parent\n', stderr='cshell: unterminated command group\n', status=2,
+          files={'inner': {'type': 'file', 'content': ''}, 'outer': {'type': 'file', 'content': ''}})
