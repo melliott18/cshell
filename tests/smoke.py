@@ -181,7 +181,7 @@ def kill_group(process, deadline=None):
 
 def capture(binary, case, directory, timeout, output_limit, file_size_limit=None):
     environment = {
-        "PATH": os.defpath, "LANG": "C", "LC_ALL": "C",
+        "PATH": os.environ.get("CSH_TEST_PATH", os.defpath), "LANG": "C", "LC_ALL": "C",
         "HOME": str(directory / ".home"), "TMPDIR": str(directory / ".tmp"),
     }
     if "MallocNanoZone" in os.environ:

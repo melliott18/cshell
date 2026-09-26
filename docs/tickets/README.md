@@ -56,6 +56,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-056](CSH-056-host-contract-gaps.md) | Resolve residual host utility contracts | [CSH-039](CSH-039-legacy-retirement.md) | [#97](https://github.com/melliott18/cshell/issues/97) |
 | [CSH-057](CSH-057-job-lifecycle-boundaries.md) | Verify remaining job lifecycle boundaries | [CSH-034](CSH-034-job-control.md), [CSH-035](CSH-035-traps-and-signal-semantics.md) | [#99](https://github.com/melliott18/cshell/issues/99) |
 | [CSH-058](CSH-058-signal-edge-evidence.md) | Complete signal inheritance and permission evidence | [CSH-035](CSH-035-traps-and-signal-semantics.md) | [#100](https://github.com/melliott18/cshell/issues/100) |
+| [CSH-059](CSH-059-host-boundary-capabilities.md) | Extend qualified host boundary capabilities | [CSH-056](CSH-056-host-contract-gaps.md) | [#101](https://github.com/melliott18/cshell/issues/101) |
 
 ## Child implementation tickets
 

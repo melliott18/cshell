@@ -17,7 +17,7 @@ SPECIALS = (':', '.', 'break', 'continue', 'eval', 'exec', 'exit', 'export',
             'readonly', 'return', 'set', 'shift', 'times', 'trap', 'unset')
 
 
-def cases(paths, helper):
+def cases(paths, helper, echo_policy=None):
     def case(name, script, out=b'', status=0, err=b'', **kw):
         return dict(name=name, script=script + '\n', stdout=out, status=status,
                     stderr=err, **kw)
@@ -136,7 +136,7 @@ def cases(paths, helper):
         ('ne', r"-ne 'a\nb'", b'-ne a\\nb\n', b'a\nb'),
         ('backslash', r"'a\nb'", b'a\\nb\n', b'a\\nb\n')):
         yield case('U-036 echo policy ' + name, 'echo ' + operands,
-                   darwin if sys.platform == 'darwin' else linux)
+                   darwin if (echo_policy or ('darwin' if sys.platform == 'darwin' else 'gnu')) == 'darwin' else linux)
 
     expressions = [('zero', '', 1), ('empty', "''", 1), ('one', "'two words'", 0),
                    ('literal --', '--', 0), ('not empty', "! ''", 0), ('not word', '! x', 1),

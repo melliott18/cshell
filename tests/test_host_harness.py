@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import patch
 
-from host_utilities import known_gap, match, sanitizer_diagnostic
+from host_utilities import known_gap, match, matches_case, sanitizer_diagnostic
 
 
 class HostEvidenceTests(unittest.TestCase):
@@ -35,3 +35,13 @@ class HostEvidenceTests(unittest.TestCase):
             self.assertTrue(match('nonempty', output['stderr']))
             self.assertTrue(sanitizer_diagnostic(output))
         self.assertFalse(sanitizer_diagnostic({'stderr': b'expected host error'}))
+
+    def test_numbered_alternatives_require_consistent_streams_and_status(self):
+        case = {'alternatives': [
+            dict(stdout=b':a\n', stderr=b'', status=0),
+            dict(stdout='any', stderr='nonempty', status='nonzero')]}
+        self.assertTrue(matches_case(case, 0, dict(stdout=b':a\n', stderr=b'')))
+        self.assertTrue(matches_case(case, 1, dict(stdout=b'', stderr=b'missing')))
+        self.assertFalse(matches_case(case, 0, dict(stdout=b'', stderr=b'missing')))
+        self.assertFalse(matches_case(case, 1, dict(stdout=b':a\n', stderr=b'')))
+        self.assertFalse(matches_case(case, -11, dict(stdout=b'', stderr=b'crash')))

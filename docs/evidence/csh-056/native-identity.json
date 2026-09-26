@@ -1,0 +1,68 @@
+{
+  "recorded_utc": "2026-09-26T17:17:58.940659+00:00",
+  "source_revision": "8b4cfc47678b7f37554b27b204a0fb30bf0a11d7",
+  "source_note": "Source digest covers Makefile, Dockerfile, src, include, tests and tools, excluding Python caches. Subsequent evidence documentation is outside that digest.",
+  "source_sha256": "1fd583be34dfd0f25acc2cf118b2e6d3de1223f5e4681d665346d0201808826a",
+  "binary": {
+    "path": "/Users/mitchell/.codex/worktrees/csh-056-host-contracts/cshell/cshell",
+    "realpath": "/Users/mitchell/.codex/worktrees/csh-056-host-contracts/cshell/cshell",
+    "sha256": "647d059c9aff02531a734238f99c72d1baa043956c2ac1afe1aba39cb04dc04a"
+  },
+  "compiler": {
+    "argv": [
+      "cc",
+      "--version"
+    ],
+    "status": 0,
+    "output": "Apple clang version 15.0.0 (clang-1500.3.9.4)\nTarget: arm64-apple-darwin23.6.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
+  },
+  "platform": "macOS-14.8.7-arm64-arm-64bit",
+  "uname": [
+    "Darwin",
+    "Mitchells-MacBook-Pro-2.local",
+    "23.6.0",
+    "Darwin Kernel Version 23.6.0: Tue Apr 21 20:21:28 PDT 2026; root:xnu-10063.141.1.712.16~1/RELEASE_ARM64_T6000",
+    "arm64",
+    "arm"
+  ],
+  "python": "3.12.2 (v3.12.2:6abddd9f6a, Feb  6 2024, 17:02:06) [Clang 13.0.0 (clang-1300.0.29.30)]",
+  "libc": [
+    "",
+    ""
+  ],
+  "flags": {
+    "CPPFLAGS": "-D_POSIX_C_SOURCE=200809L -Iinclude",
+    "CFLAGS": "-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2",
+    "LDFLAGS": "",
+    "LDLIBS": ""
+  },
+  "generated_suites": {
+    "build/tests/control-flow.json": "f337c4483fdfc6d0a6518e13658c8f796d7b9f30a23a14b908e16d0f6265f25e",
+    "build/tests/host-profile-results.json": "b5d2e0ccbba3ce635bc34938a41c2d2a68742e9e35da277cd76214e9ce3e66f3",
+    "build/tests/host-utilities-results.json": "be321425ce8c5dd11dcc3c10bbb740db232ef89ee81a44f6b24981f457960dfd",
+    "build/tests/jobs-pty.json": "6711ff05cda5624ae801699377703a61e733aaa79be745ae0b7f32b8b2ffe607",
+    "build/tests/runtime-pty.json": "f774cb0ff0fc35b3ff49e596cf87866c35154bf7829c67791be88239be942704",
+    "build/tests/runtime.json": "cc51d864ae41d0fc581b2936b72775af774ac6bdbadf1c1ff3f53efc33afb28e"
+  },
+  "helpers": {
+    "/bin/cat": "38c19fef3e9b4e6ffeee7fef5ff90119f913720b48f55ae0406b77d2beee1dab",
+    "/usr/bin/cmp": "9a4e2eaeccc87d4fe8f9d436f8d4ac0bb5a3b74b763807328daa729722a1fe03",
+    "/Users/mitchell/.codex/worktrees/csh-056-host-contracts/cshell/build/tests/execute_helper": "4a9e2cf8df843bdcbcebd29ddb31c28b64f20625b29682728fa667c55e27649c"
+  },
+  "os_build": {
+    "argv": [
+      "sw_vers"
+    ],
+    "status": 0,
+    "output": "ProductName:\t\tmacOS\nProductVersion:\t\t14.8.7\nBuildVersion:\t\t23J520"
+  },
+  "system_library": {
+    "argv": [
+      "ls",
+      "-l",
+      "/usr/lib/libSystem.B.dylib"
+    ],
+    "status": 1,
+    "output": "ls: /usr/lib/libSystem.B.dylib: No such file or directory"
+  }
+}

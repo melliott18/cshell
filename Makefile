@@ -390,8 +390,8 @@ build/tests/wait-jobs.o: src/jobs.c $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -Dsigsuspend=csh_wait_sigsuspend -c $< -o $@
 
-build/tests/wait_handshake: tests/wait_handshake.c build/main.o build/invocation.o build/tests/wait-jobs.o $(EXECUTE_OBJECTS)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/main.o build/invocation.o build/tests/wait-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) $(LDLIBS)
+build/tests/wait_handshake: tests/wait_handshake.c build/main.o build/invocation.o build/tests/wait-jobs.o $(EXECUTE_OBJECTS) build/character.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/main.o build/invocation.o build/tests/wait-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o $(LDLIBS)
 
 test-traps: cshell build/tests/execute_helper build/tests/wait_handshake
 	$(PYTHON) tests/traps.py ./cshell
@@ -443,13 +443,25 @@ build/tests/host_utility_helper: tests/host_utility_helper.c
 test-host-utilities: cshell build/tests/host_utility_helper
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --record build/tests/host-utilities-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 
+# Opt-in host qualification. Stock-host evidence remains test-host-utilities.
+.PHONY: host-profile test-host-profile
+build/host-printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.c
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/printf.c $(LDLIBS)
+
+host-profile: build/host-printf
+	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
+
+test-host-profile: cshell build/tests/host_utility_helper host-profile
+	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
 # Public entry point with only the command input read syscall instrumented.
 build/tests/command-read-input.o: src/input.c tests/command_read_faults.h $(INPUT_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/command_read_faults.h -c $< -o $@
 
-build/tests/command_read_faults: tests/command_read_faults.c build/tests/command-read-input.o $(OBJECTS)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/command_read_faults.c build/tests/command-read-input.o $(filter-out build/input.o,$(OBJECTS)) $(LDLIBS)
+build/tests/command_read_faults: tests/command_read_faults.c build/tests/command-read-input.o $(OBJECTS) build/character.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/command_read_faults.c build/tests/command-read-input.o $(filter-out build/input.o,$(OBJECTS)) build/character.o $(LDLIBS)
 
 .PHONY: test-execution-contracts
 test-execution-contracts: cshell build/tests/command_read_faults build/tests/execute_helper
