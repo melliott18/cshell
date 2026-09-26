@@ -83,8 +83,8 @@ remain the host boundary under CSH-037; no full POSIX conformance is claimed.
 | `read [-r] [-d delim] var...` | Reads without input read-ahead; backslash protection and continuation; IFS whitespace/non-whitespace separators; final-variable remainder; empty fields; custom delimiter, including NUL for an empty delimiter; partial EOF assignment/status 1; operand, input and assignment errors/status 2. Interactive terminal continuations print PS2 or `> `. |
 | `getopts optstring name [args...]` | Explicit or positional arguments; grouped options; attached/separate required arguments; OPTARG unset when absent; OPTIND initialized to 1; persistent group cursor and explicit OPTIND reset; leading-colon silent errors; unknown/missing options as successful `?`/`:` results; end status 1; usage/state/assignment errors status 2. Functions share its state. |
 | `umask [-S] [mask]` | Octal masks, symbolic clauses with `+`, `-`, `=`, permission copying, numeric output and reusable `-S` output. Invalid operands leave the old mask intact. Process-local changes are inherited by children. |
-| `times` | Two lines of accumulated shell and waited-child user/system CPU times, in minutes and fractional seconds. Output and operand failures return nonzero. |
-| `ulimit [-H|-S] [-a] [-c|-d|-f|-n|-s|-v|-t] [limit]` | Soft/hard querying and mutation; default file-size resource; default soft query and both-limit mutation; `unlimited`; all-resource listing; overflow/error validation; inherited process limits. File/core limits use 512-byte units, data/stack/address-space limits 1024-byte units, open files counts, and CPU time seconds. `-t` is an extension under the base-only profile. |
+| `times` | Two lines of accumulated shell and waited-child user/system CPU times, in minutes and seconds with six fractional digits in the POSIX locale. Output and operand failures return nonzero. |
+| `ulimit [-H|-S] [-a] [-c|-d|-f|-n|-s|-v|-t] [limit]` | Soft/hard querying and mutation; default file-size resource; default soft query and both-limit mutation; `unlimited`; all-resource listing with resource descriptions and units; overflow/error validation; inherited process limits. File/core limits use 512-byte units, data/stack/address-space limits 1024-byte units, open files counts, and CPU time seconds. `-t` is an extension under the base-only profile. |
 
 Unset PATH uses `/bin:/usr/bin`; unset IFS uses space, tab and newline. Empty IFS
 suppresses field splitting. As elsewhere in the runtime, byte-oriented parsing
@@ -115,3 +115,5 @@ Normative references: [special builtins and command search](https://pubs.opengro
 and [ulimit](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ulimit.html).
 The inventory retains Issue 8 features even where older reference shells differ
 (`read -d`, intrinsic lookup, and base resource-limit options).
+
+[CSH-048 clause evidence](state-builtin-evidence.md) maps exact runtime assertions, source conditions, policies and remaining utility gaps.

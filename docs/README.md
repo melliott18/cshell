@@ -46,4 +46,6 @@ so the information remains accessible in a plain Markdown reader.
 
 - [Invocation, lexical, grammar and alias clause evidence](invocation-syntax-evidence.md)
 
+- [Shell state and builtin clause evidence](state-builtin-evidence.md): CSH-048 startup, environments, utility assertions and run records.
+
 - [Base shell-option clause evidence](shell-option-evidence.md): CSH-051 entry, state, environment, policy and run mapping.

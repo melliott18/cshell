@@ -1,5 +1,6 @@
 /* Shell invocation, complete-command execution, and final status. */
 #include "cshell/execute.h"
+#include "cshell/builtin.h"
 #include "cshell/parser.h"
 #include "cshell/jobs.h"
 #include "cshell/output.h"
@@ -111,6 +112,11 @@ int main(int argc, char **argv)
         status = 1;
         goto done;
     }
+    if (csh_builtin_initialize(state)) {
+        fputs("cshell: cannot initialize shell variables\n", stderr);
+        csh_state_set_status(state, 1);
+        goto done;
+    }
     csh_state_manage_locale(state);
     if (csh_parser_create(&parser, invocation.input, &error) == -1) {
         diagnose(&error, csh_input_name(invocation.input));
@@ -122,7 +128,6 @@ int main(int argc, char **argv)
         csh_state_set_status(state, 1); goto done;
     }
     csh_parser_set_aliases(parser, csh_state_aliases(state));
-    csh_state_set_variable(state, "OPTIND", "1");
     if (csh_traps_create(&context.traps, invocation.interactive) == -1) {
         fprintf(stderr, "cshell: cannot initialize traps: %s\n", strerror(errno));
         csh_state_set_status(state, 1);

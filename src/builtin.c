@@ -109,6 +109,32 @@ static char *current(struct csh_state *state, int physical)
     return !physical && logical_valid(v.value) ? strdup(v.value) : cwd();
 }
 
+int csh_builtin_initialize(struct csh_state *state)
+{
+    char parent[32];
+    char *directory_name;
+    enum csh_state_result result;
+    snprintf(parent, sizeof(parent), "%ld", (long)getppid());
+    if (csh_state_set_variable(state, "IFS", " \t\n") != CSH_STATE_OK ||
+        csh_state_set_variable(state, "PPID", parent) != CSH_STATE_OK ||
+        csh_state_set_variable(state, "OPTIND", "1") != CSH_STATE_OK)
+        return 1;
+    /* Keep a valid logical path, including symlinks. For over-PATH_MAX
+     * imported paths this chooses the permitted retain-path alternative. */
+    errno = 0;
+    directory_name = current(state, 0);
+    if (!directory_name) {
+        if (errno == ENOMEM) return 1;
+        /* When the physical cwd cannot be determined POSIX leaves PWD
+         * unspecified. Select unset rather than retaining an invalid path. */
+        return csh_state_unset_variable(state, "PWD") != CSH_STATE_OK;
+    }
+    result = csh_state_set_variable(state, "PWD", directory_name);
+    free(directory_name);
+    if (result != CSH_STATE_OK) return 1;
+    return csh_state_update_attributes(state, "PWD", CSH_VAR_EXPORT, 0) != CSH_STATE_OK;
+}
+
 static char *join(const char *a, const char *b)
 {
     size_t n = strlen(a), m = strlen(b);
@@ -172,7 +198,7 @@ static int directory(struct csh_state *state, size_t argc, char *const argv[])
     if (!is_cd) {
         newpwd = current(state, physical);
         if (newpwd) {
-            status = dprintf(1, "%s\n", newpwd) < 0;
+            status = csh_write_text(1, newpwd) < 0 || csh_write_text(1, "\n") < 0;
             if (status) problem("pwd", "cannot write output");
         }
         else problem("pwd", "cannot determine current directory");
@@ -228,7 +254,8 @@ static int directory(struct csh_state *state, size_t argc, char *const argv[])
     if (status) {
         if (fchdir(fd) < 0) problem("cd", "cannot restore directory after state failure");
         csh_state_restore(state, &checkpoint);
-    } else if (print && dprintf(1, "%s\n", newpwd) < 0) status = 1;
+    } else if (print && (csh_write_text(1, newpwd) < 0 ||
+        csh_write_text(1, "\n") < 0)) status = 1;
 done:
     if (status) problem("cd", "cannot change directory or update directory state");
     if (fd >= 0) close(fd);

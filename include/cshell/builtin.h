@@ -6,6 +6,9 @@
  * Run borrows validated argv/state, uses current fds/cwd, prints diagnostics,
  * returns shell status, and never exits. Caller owns redirection lifetimes. */
 enum csh_execution_category csh_state_builtin_category(const char *name);
+/* Runtime-only startup, after raw environment import and before parsing.
+ * Initializes IFS, PPID, OPTIND and validated PWD. Returns nonzero on failure. */
+int csh_builtin_initialize(struct csh_state *state);
 int csh_state_builtin_run(struct csh_state *state, size_t argc, char *const argv[]);
 /* Job-aware set validates monitor capability before changing options/parameters. */
 int csh_builtin_set(struct csh_state *state, size_t argc, char *const argv[], int monitor_available);
