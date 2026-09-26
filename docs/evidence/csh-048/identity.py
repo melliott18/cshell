@@ -1,4 +1,5 @@
 """Collect tested source/binary identity; run at the repository/image root."""
+import ctypes
 import datetime
 import hashlib
 import json
@@ -27,7 +28,10 @@ manifest = {str(p.relative_to(root)): sha(p) for p in sorted(inputs)}
 identity = {
     'recorded_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
     'source_base': os.environ.get('EVIDENCE_SOURCE_BASE', 'daa1be1'),
-    'source_note': 'Uncommitted CSH-048 implementation; manifest identifies exact source and suite bytes. Documentation is outside this digest.',
+    'source_note': 'Manifest identifies exact source and suite bytes. Documentation is outside this digest.',
+    'source_revision': (command('git', 'rev-parse', 'HEAD') if (root / '.git').exists()
+                        else os.environ.get('EVIDENCE_SOURCE_REVISION')),
+    'worktree_status': (command('git', 'status', '--short') if (root / '.git').exists() else None),
     'source_manifest': manifest,
     'source_sha256': hashlib.sha256(json.dumps(manifest, sort_keys=True).encode()).hexdigest(),
     'binary': {'path': str(root / 'cshell'), 'realpath': str((root / 'cshell').resolve()),
@@ -48,7 +52,13 @@ identity = {
 }
 if sys.platform == 'darwin':
     identity['os_build'] = command('sw_vers')
-    identity['system_library'] = command('ls', '-l', '/usr/lib/libSystem.B.dylib')
+    version = ctypes.CDLL(None).NSVersionOfRunTimeLibrary
+    version.argtypes = [ctypes.c_char_p]
+    version.restype = ctypes.c_int32
+    value = version(b'System')
+    identity['runtime_system_library'] = {
+        'method': 'NSVersionOfRunTimeLibrary("System")', 'raw': value,
+        'version': f'{value >> 16}.{(value >> 8) & 255}.{value & 255}'}
 else:
     identity['os_release'] = Path('/etc/os-release').read_text()
     identity['libc_build'] = command('ldd', '--version')
