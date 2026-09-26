@@ -181,3 +181,13 @@ Docker commands and the [ticket](tickets/CSH-022-shell-state-storage.md) for
 the validation record. These tests establish storage and ownership behavior;
 end-to-end expansion, assignments, startup variables, and builtin behavior
 remain separate evidence.
+
+## Active runtime locale
+
+The public runtime calls `csh_state_manage_locale` after environment import.
+Locale assignments/unset and variable/full-state rollback then refresh libc
+from shell values, with LC_ALL/category/LANG precedence. Cloning preserves the
+opt-in flag without changing libc while copying; module states remain inert
+unless explicitly activated. This is one active shell state per process, not
+thread-local locale management. Libc may allocate internally during refresh.
+See [locale behavior](locales.md) for invalid-name policy and lexical boundaries.

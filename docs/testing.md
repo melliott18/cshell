@@ -17,8 +17,13 @@ one-byte append past that offset; the append case raises only the runner's file
 size limit. Its disk use remains sparse. An unavailable UTF-8 locale is reported
 as a scoped skip; C-locale, generated, and sparse-file cases still run. The
 [CSH-037 record](tickets/CSH-037-portability-audit.md) identifies the tested
-platforms and remaining requirements. Pathname matching does not establish the
-separate rule for initial lexical interpretation; CSH-042/047 retain that gap.
+platforms and remaining requirements. [CSH-042](tickets/CSH-042-locale-semantics.md)
+adds [`tests/locale_cases.py`](../tests/locale_cases.py): runtime locale changes,
+parameter/case classes, whole-character `read` splitting, lexical UTF-8 stability,
+host-qualified collation and libc diagnostics, and explicit invalid-name policy.
+See [locale behavior](locales.md) for exact oracle boundaries and capability
+skips. Docker/native Linux CI install en_US/fr_FR UTF-8 locales; Docker retains
+French libc catalogs. Broader encoding-sensitive lexing remains CSH-053.
 
 ## Runtime integration
 

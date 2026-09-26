@@ -1111,8 +1111,15 @@ static int runtime_simple(struct csh_execution_context *context,
         fail(error, "cannot copy redirection environment", ENOMEM, 1);
         goto done;
     }
-    if (runtime_redirects(redirect_state != NULL ? redirect_state : state, context->jobs,
-        tree, reserved, &command, &saves, result, error) == -1) goto done;
+    {
+        int redirected = runtime_redirects(redirect_state != NULL ? redirect_state : state,
+            context->jobs, tree, reserved, &command, &saves, result, error);
+        /* Assignment-only redirections expand in a disposable state. Its
+         * locale mutations must not escape into subsequent parent expansion,
+         * including when applying the redirection fails. */
+        if (redirect_state != NULL) csh_state_refresh_locale(state);
+        if (redirected == -1) goto done;
+    }
     if (csh_command_assignments(state, tree, &command, error) == -1) {
         expansion_failed(state, result);
         goto done;

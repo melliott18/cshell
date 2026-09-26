@@ -99,7 +99,7 @@ int main(int argc, char **argv)
     /* The process starts in the C locale. Establish the invocation locale
      * before reading shell input or expanding any words. Changes to shell
      * LC_CTYPE variables later do not change this invocation's lexer locale. */
-    (void)setlocale(LC_ALL, "");
+    if (setlocale(LC_ALL, "") == NULL) (void)setlocale(LC_ALL, "C");
 
     if (csh_invocation_parse(&invocation, argc, argv, STDIN_FILENO,
             STDERR_FILENO, &error) == -1) {
@@ -111,6 +111,7 @@ int main(int argc, char **argv)
         status = 1;
         goto done;
     }
+    csh_state_manage_locale(state);
     if (csh_parser_create(&parser, invocation.input, &error) == -1) {
         diagnose(&error, csh_input_name(invocation.input));
         csh_state_set_status(state, error.status);
