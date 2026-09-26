@@ -113,7 +113,7 @@ static const char *locale_value(const struct csh_state *state, const char *name)
     return v && v->value && *v->value ? v->value : NULL;
 }
 
-static void refresh_locale(const struct csh_state *state)
+void csh_state_refresh_locale(const struct csh_state *state)
 {
     const char *all, *lang;
     size_t i;
@@ -137,7 +137,7 @@ static void refresh_locale(const struct csh_state *state)
 void csh_state_manage_locale(struct csh_state *state)
 {
     state->manages_locale = 1;
-    refresh_locale(state);
+    csh_state_refresh_locale(state);
 }
 
 static void destroy_variable(struct variable *variable)
@@ -250,7 +250,7 @@ enum csh_state_result csh_state_set_variable(struct csh_state *state,
     /* name may borrow the previous value, which assignment just released. */
     if (!strcmp(variable->name, "PATH")) csh_state_hash_clear(state);
     if (!strcmp(variable->name, "OPTIND")) state->getopts_offset = 0;
-    if (locale_variable(variable->name)) refresh_locale(state);
+    if (locale_variable(variable->name)) csh_state_refresh_locale(state);
     return CSH_STATE_OK;
 }
 
@@ -297,7 +297,7 @@ enum csh_state_result csh_state_unset_variable(struct csh_state *state,
         {
             int changed_locale = locale_variable(variable->name);
             destroy_variable(variable);
-            if (changed_locale) refresh_locale(state);
+            if (changed_locale) csh_state_refresh_locale(state);
         }
         break;
     }
@@ -371,7 +371,7 @@ enum csh_state_result csh_state_restore_variables(struct csh_state *state,
         *save = entry->next;
         free(entry);
     }
-    if (changed_locale) refresh_locale(state);
+    if (changed_locale) csh_state_refresh_locale(state);
     return CSH_STATE_OK;
 }
 
@@ -654,7 +654,7 @@ enum csh_state_result csh_state_restore(struct csh_state *state,
     *(*checkpoint)->saved = discarded;
     csh_state_checkpoint_destroy(*checkpoint);
     *checkpoint = NULL;
-    refresh_locale(state);
+    csh_state_refresh_locale(state);
     return CSH_STATE_OK;
 }
 

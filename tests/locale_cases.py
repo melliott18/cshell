@@ -108,6 +108,15 @@ def cases(case, selected, data, skips):
         yield from case("locale temporary builtin assignment restores categories",
                         "LC_ALL=C read v < data; v=é; printf '%s\\n' \"${#v}\"\n",
                         env={"LC_ALL": selected}, setup={"data": "text\n"}, stdout="1\n")
+        for target, error in (("${LC_CTYPE:=C}", ""),
+                              ("missing/${LC_CTYPE:=C}",
+                               f"cshell: cannot apply redirection: {data['C'][1]}\n")):
+            yield from case("locale redirection clone restores parent " +
+                            ("failure" if error else "success"),
+                            f'> "{target}"; v=é; printf "%s|%s\\n" '
+                            '"${#v}" "${LC_CTYPE-unset}"\n',
+                            env={**env, "LC_MESSAGES": "C"}, stderr=error,
+                            stdout="1|unset\n")
         yield from case("locale subshell and substitution changes stay local",
                         f"LC_CTYPE=C; (LC_CTYPE={selected}; v=é; printf '%s\\n' \"${{#v}}\")\n"
                         f"v=$(LC_CTYPE={selected}; v=é; printf '%s' \"${{#v}}\"); "

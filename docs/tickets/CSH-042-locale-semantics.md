@@ -51,7 +51,9 @@ Started from `main` at `b692aa517d7ce26750f28b7855ed844c4793d758` in a
 separate worktree. [Locale behavior](../locales.md) documents category precedence,
 invalid-name policy, libc catalog limitations, exact fixture families and their
 matrix links. Runtime state now refreshes libc on locale assignment/unset and
-scope restoration; `read` consumes whole multibyte IFS characters.
+scope restoration; `read` consumes whole multibyte IFS characters. Assignment-only redirection
+clones reselect the parent locale before subsequent command expansion, including
+the redirection-failure path (two additional three-mode regressions).
 
 A clean build of the starting revision fails the new string-mode regressions:
 
@@ -73,7 +75,7 @@ ENV-004 or the related broad matrix families to verified.
   fr_FR.UTF-8, de_DE.UTF-8, sv_SE.UTF-8; C.UTF-8 unavailable. The default
   `make -j2 test test-pty` passed all module checks, 1,318 runtime, 13 job PTY,
   27 runtime PTY and the initial 150 portability cases. The final focused
-  `make test-portability` passes 156 cases, zero failures; one capability group
+  `make test-portability` passes 162 cases, zero failures; one capability group
   is skipped because no candidate libc locale translates ENOENT.
 - Docker Linux aarch64, Debian bookworm, GCC 12.2.0, glibc 2.36
   (`2.36-9+deb12u14`). Selected installed names: C, C.utf8, POSIX,

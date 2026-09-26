@@ -18,7 +18,9 @@ initialized consistently, although they are not shell-language test oracles.
 After startup, successful assignment, `unset`, and assignment-scope rollback
 refresh the categories from **shell variables**, including unexported values.
 Export controls child environments, not the current shell's locale. Temporary
-builtin assignments restore the prior effective categories. Subshell and command
+builtin assignments restore the prior effective categories. Assignment-only
+redirection clones reselect the parent locale after expansion, on both success
+and failure. Subshell and command
 substitution changes are process-local. Readonly/failed variable mutations do
 not change the locale. State construction/cloning alone does not modify libc;
 `main` opts the active state into locale management after environment import.
