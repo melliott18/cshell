@@ -92,6 +92,11 @@ following are unverified; do not infer that they are all implementation defects:
 
 ## Validation
 
+Integration note: hosted macOS sanitizer run 36259234620 exhausted the
+180-second whole-suite wrapper while individual signal cases were passing.
+The wrapper budget is now 600 seconds for the exhaustive suite; each case
+retains its five-second deadline, exact assertions, and bounded cleanup.
+
 Run `make test test-pty test-harness`, focused jobs/trap targets, Docker and
 ASan/UBSan. Use the [evidence identity contract](../posix-evidence.md).
 Capability skips must retain an owner and cannot stand in for passing behavior.

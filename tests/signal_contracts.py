@@ -115,7 +115,7 @@ def main():
         suite = Path(directory) / 'signals.json'
         suite.write_text(json.dumps(dict(version=1, name='CSH-054 signals', kind='replacement', cases=cases)))
         subprocess.run([sys.executable, str(Path(__file__).with_name('smoke.py')), binary,
-                        '--suite', str(suite)], check=True, timeout=180)
+                        '--suite', str(suite)], check=True, timeout=600)
 
 
 def signal_name(number):
