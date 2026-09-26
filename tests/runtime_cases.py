@@ -16,6 +16,7 @@ from control_flow_cases import add_control_cases
 from evaluation_cases import add_evaluation_cases
 from option_cases import add_option_cases, invocation_cases
 from trap_cases import add_trap_cases
+from syntax_cases import add_syntax_cases
 
 
 def cases(helper):
@@ -40,6 +41,7 @@ def cases(helper):
             result.append({"name": f"{name} ({mode})", "args": args, "stdin": stdin,
                            "setup": contents, "expect": expect})
 
+    add_syntax_cases(cross, helper)
     add_option_cases(cross, helper)
     result.extend(invocation_cases())
     add_cases(cross, helper)
@@ -336,6 +338,9 @@ def main():
     if args.output.name == "options.json":
         suite["name"] = "cshell options"
         suite["cases"] = [case for case in suite["cases"] if case["name"].startswith("options: ")]
+    if args.output.name == "syntax.json":
+        suite["name"] = "cshell invocation and syntax evidence"
+        suite["cases"] = [case for case in suite["cases"] if case["name"].startswith("syntax: ")]
     args.output.write_text(json.dumps(suite, indent=2) + "\n")
 
 

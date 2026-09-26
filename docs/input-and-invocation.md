@@ -196,3 +196,11 @@ int inspect_invocation(int argc, char **argv)
 See [Testing](testing.md) and the
 [CSH-016 validation record](tickets/CSH-016-input-and-invocation.md#validation)
 for fixtures and limits of the current evidence.
+
+CSH-046 normalizes FIFO/terminal stdin with `csh_input_prepare_stdin()` for
+command strings and script files as well as stdin command sources. It consumes
+no input, preserves other flags, and leaves the shared description blocking
+after shell completion. A closed stdin is permitted for independent command
+sources; stdin command mode still requires a valid descriptor. Public-runtime
+[descriptor and invocation witnesses](invocation-syntax-evidence.md#sh-007)
+cover these conditions.

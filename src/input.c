@@ -154,12 +154,34 @@ int csh_input_from_file(struct csh_input **out, const char *path,
     return 0;
 }
 
+int csh_input_prepare_stdin(int fd, struct csh_error *error)
+{
+    struct stat info;
+    int flags;
+
+    clear_error(error);
+    /* -c and script invocations can legitimately have stdin closed. Their
+     * command source is independent; a later utility owns any read error. */
+    if (fstat(fd, &info) == -1) {
+        if (errno == EBADF) return 0;
+        return fail(error, "cannot inspect input descriptor", errno, 1);
+    }
+    flags = fcntl(fd, F_GETFL);
+    if (flags == -1)
+        return fail(error, "cannot inspect input descriptor", errno, 1);
+    /* sh STDIN applies even when commands come from -c or a script. Status
+     * flags are shared with the caller and must stay blocking after exit. */
+    if ((flags & O_NONBLOCK) != 0 &&
+        (S_ISFIFO(info.st_mode) || isatty(fd)) &&
+        fcntl(fd, F_SETFL, flags & ~O_NONBLOCK) == -1)
+        return fail(error, "cannot enable blocking input", errno, 1);
+    return 0;
+}
+
 int csh_input_from_fd(struct csh_input **out, int fd, const char *name,
                       struct csh_error *error)
 {
     struct csh_input *input;
-    struct stat info;
-    int flags;
     int number;
 
     *out = NULL;
@@ -175,21 +197,9 @@ int csh_input_from_fd(struct csh_input **out, int fd, const char *name,
         csh_input_destroy(input);
         return fail(error, "cannot duplicate input descriptor", number, 1);
     }
-    if (fstat(input->fd, &info) == -1 ||
-        (flags = fcntl(input->fd, F_GETFL)) == -1) {
-        number = errno;
+    if (csh_input_prepare_stdin(input->fd, error) == -1) {
         csh_input_destroy(input);
-        return fail(error, "cannot inspect input descriptor", number, 1);
-    }
-    /* sh's STDIN contract requires blocking reads on FIFO/terminal input.
-     * File status flags belong to the shared open file description. */
-    if ((flags & O_NONBLOCK) != 0 &&
-        (S_ISFIFO(info.st_mode) || isatty(input->fd))) {
-        if (fcntl(input->fd, F_SETFL, flags & ~O_NONBLOCK) == -1) {
-            number = errno;
-            csh_input_destroy(input);
-            return fail(error, "cannot enable blocking input", number, 1);
-        }
+        return -1;
     }
     *out = input;
     return 0;

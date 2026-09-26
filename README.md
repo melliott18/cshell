@@ -45,6 +45,7 @@ make CC=clang  # Select a compiler
 
 ```sh
 make test          # Module API and selected behavioral fixtures; Python 3.9+
+make test-syntax   # Clause-mapped invocation, descriptor, syntax and alias checks
 make test-input    # Replacement input/invocation API checks only
 make test-lexer    # Replacement lexer/token API checks only
 make test-parser   # Replacement parser/AST API checks only

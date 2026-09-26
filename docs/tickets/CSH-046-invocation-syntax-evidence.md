@@ -1,11 +1,11 @@
 # CSH-046: Close invocation, lexical, grammar and alias evidence gaps
 
-- Status: ready
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-036, CSH-039
-- Branch: Assigned when work starts
+- Branch: `test/CSH-046-invocation-syntax-evidence`
 - Issue: [#78](https://github.com/melliott18/cshell/issues/78)
 
 ## Goal

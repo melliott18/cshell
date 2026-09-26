@@ -196,6 +196,11 @@ int csh_invocation_parse(struct csh_invocation *out, int argc,
         csh_invocation_destroy(&invocation);
         return -1;
     }
+    if (invocation.mode != CSH_MODE_STDIN &&
+        csh_input_prepare_stdin(stdin_fd, error) == -1) {
+        csh_invocation_destroy(&invocation);
+        return -1;
+    }
     invocation.interactive = force_interactive ||
         (invocation.mode == CSH_MODE_STDIN && isatty(stdin_fd) &&
             isatty(stderr_fd));

@@ -74,3 +74,5 @@ CSH-026 runtime evidence is recorded in [its ticket](tickets/CSH-026-substitutio
 [CSH-041](tickets/CSH-041-arithmetic-substitution-replay.md) additionally owns the
 arithmetic-first replay portion of EXP-005 and EXP-006. CSH-035 retains trap and
 signal policy for SIG-003; copied substitution environments alone do not close it.
+
+CSH-046 now provides the [clause/condition map and exact runtime/API witnesses](invocation-syntax-evidence.md) for its 21 rows. The mapped limitations remain open; no broad family is promoted to verified.

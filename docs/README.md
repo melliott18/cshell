@@ -40,3 +40,5 @@ diagrams. GitHub renders these diagrams; each is accompanied by text or tables
 so the information remains accessible in a plain Markdown reader.
 
 - [State builtins](state-builtins.md): variables, positionals, directories, and special-builtin integration.
+
+- [Invocation, lexical, grammar and alias clause evidence](invocation-syntax-evidence.md)
