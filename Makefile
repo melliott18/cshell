@@ -252,7 +252,7 @@ build/tests/assignment_fixture: tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(LDLIBS)
 
-build/tests/runtime.json build/tests/runtime-pty.json build/tests/control-flow.json build/tests/evaluation.json build/tests/options.json build/tests/syntax.json: tests/runtime_cases.py tests/syntax_cases.py tests/trap_cases.py tests/option_cases.py tests/substitution_cases.py tests/control_flow_cases.py tests/evaluation_cases.py build/tests/execute_helper
+build/tests/runtime.json build/tests/runtime-pty.json build/tests/control-flow.json build/tests/evaluation.json build/tests/options.json build/tests/syntax.json: tests/runtime_cases.py tests/syntax_cases.py tests/trap_cases.py tests/option_cases.py tests/option_evidence_cases.py tests/substitution_cases.py tests/control_flow_cases.py tests/evaluation_cases.py build/tests/execute_helper
 	$(PYTHON) tests/runtime_cases.py --helper build/tests/execute_helper --output $@
 
 .PHONY: test-control
