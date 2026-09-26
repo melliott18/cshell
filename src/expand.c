@@ -1,3 +1,4 @@
+#include "cshell/character.h"
 #include "cshell/expand.h"
 #include "cshell/arithmetic.h"
 #include "cshell/quote.h"
@@ -499,7 +500,12 @@ static enum csh_expand_result tilde_prefix(struct expansion_work *work,
             pos += 2;
             continue;
         }
-        name[length++] = (char)work->word->raw[pos++];
+        {
+            size_t width = csh_character_length(work->word->raw + pos, end - pos, 1, 1);
+            memcpy(name + length, work->word->raw + pos, width);
+            length += width;
+            pos += width;
+        }
     }
     name[length] = 0;
     if (length == 0) {
@@ -618,7 +624,7 @@ static enum csh_expand_result range(struct expansion_work *work, size_t parent,
                 }
                 tilde_ok = (tilde & 2) &&
                     f->quote == CSH_QUOTE_NONE && work->word->raw[p] == ':';
-                ++p;
+                p += csh_character_length(work->word->raw + p, stop - p, 1, 1);
             }
             if (result == CSH_EXPAND_OK && run < stop)
                 result = append(out, (const char *)work->word->raw + run, stop - run,
@@ -671,7 +677,8 @@ static int fragment_syntax(const struct csh_token *word, const struct csh_fragme
     case CSH_FRAGMENT_CONTINUATION:
         return f->end - f->begin == 2 && word->raw[pos] == '\\' && word->raw[pos + 1] == '\n';
     case CSH_FRAGMENT_ESCAPE:
-        return f->end - f->begin == 2 && word->raw[pos] == '\\';
+        return f->end - f->begin >= 2 && word->raw[pos] == '\\' &&
+            csh_character_length(word->raw + pos + 1, f->end - pos - 1, 1, 1) == f->end - pos - 1;
     case CSH_FRAGMENT_QUOTED:
         if (f->quote == CSH_QUOTE_DOLLAR_SINGLE) {
             if (logical(word, &pos, f->end) != '$') return 0;

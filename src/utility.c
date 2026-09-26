@@ -50,7 +50,8 @@ static size_t delimiter(const char *ifs, const char *text, size_t length,
 static int read_builtin(struct csh_state *state, size_t argc, char *const argv[])
 {
     size_t first = 1, used = 0, capacity = 128, i, pos = 0;
-    int raw = 0, escaped = 0, status = 1;
+    int raw = 0, escaped = 0, status = 1, partial = 0;
+    mbstate_t decoding = {0};
     unsigned char end = '\n', *quoted;
     char *line;
     struct csh_variable_view view;
@@ -87,9 +88,9 @@ static int read_builtin(struct csh_state *state, size_t argc, char *const argv[]
         if (n < 0 && errno == EINTR) continue;
         if (n < 0) { status = problem("read", "cannot read input"); break; }
         if (n == 0) break;
-        if (!escaped && byte == end) { status = 0; break; }
-        if (!raw && !escaped && byte == '\\') { escaped = 1; continue; }
-        if (escaped && byte == '\n') {
+        if (!partial && !escaped && byte == end) { status = 0; break; }
+        if (!partial && !raw && !escaped && byte == '\\') { escaped = 1; continue; }
+        if (!partial && escaped && byte == '\n') {
             struct csh_state_info info;
             csh_state_get_info(state, &info);
             if ((info.options & CSH_OPT_INTERACTIVE) && isatty(0)) {
@@ -111,7 +112,16 @@ static int read_builtin(struct csh_state *state, size_t argc, char *const argv[]
             if (!q) { status = problem("read", "out of memory"); break; }
             quoted = q;
         }
-        line[used] = (char)byte; quoted[used++] = (unsigned char)escaped; escaped = 0;
+        line[used] = (char)byte;
+        quoted[used++] = (unsigned char)escaped;
+        {
+            size_t decoded = mbrlen((const char *)&byte, 1, &decoding);
+            partial = decoded == (size_t)-2;
+            if (!partial) {
+                escaped = 0;
+                if (decoded == (size_t)-1) memset(&decoding, 0, sizeof(decoding));
+            }
+        }
     }
     line[used] = 0;
     if (status <= 1) for (i = first; i < argc; ++i) {

@@ -14,6 +14,7 @@ import tempfile
 
 import smoke
 import locale_cases
+import multibyte_cases
 
 
 def utf8_locale():
@@ -155,7 +156,8 @@ def main():
     print("Locale probes available: " + ", ".join(data), flush=True)
     skips = []
     fixtures = list(cases(selected)) + list(locale_cases.cases(case, selected, data, skips))
-    passed = failed = 0
+    passed, failed, multibyte_skips = multibyte_cases.run(
+        binary, Path("build/tests/character_fixture").resolve())
     for fixture in fixtures:
         failures = smoke.run_case(binary, fixture, 5, 65536)
         if failures:
@@ -181,7 +183,7 @@ def main():
     for reason in skips:
         print("SKIP:", reason, "(owner CSH-042)")
     print(f"Result: {passed} passed, {failed} failed, "
-          f"{(0 if selected else 18) + len(skips)} skipped (cases/capability groups)")
+          f"{(0 if selected else 18) + len(skips) + multibyte_skips} skipped (cases/capability groups)")
     return 1 if failed else 0
 
 

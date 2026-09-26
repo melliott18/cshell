@@ -1,3 +1,4 @@
+#include "cshell/character.h"
 #include "cshell/parser.h"
 #include "cshell/alias.h"
 #include "cshell/quote.h"
@@ -459,6 +460,12 @@ static int delimiter_spelling(struct parse_frame *frame,
     unsigned char quote = 0;
     while (i < token->length) {
         unsigned char byte = token->raw[i];
+        size_t width = csh_character_length(token->raw + i, token->length - i, 1, 1);
+        if (width > 1) {
+            if (append(frame, buffer, token->raw + i, width) == -1) return -1;
+            i += width;
+            continue;
+        }
         if (quote == '\'') {
             if (byte == '\'') {
                 quote = 0;
@@ -473,9 +480,10 @@ static int delimiter_spelling(struct parse_frame *frame,
             }
             if (quote == 0 || strchr("$`\\\"", next) != NULL) {
                 *quoted = 1;
-                if (append(frame, buffer, token->raw + i + 1, 1) == -1)
+                width = csh_character_length(token->raw + i + 1, token->length - i - 1, 1, 1);
+                if (append(frame, buffer, token->raw + i + 1, width) == -1)
                     return -1;
-                i += 2;
+                i += 1 + width;
                 continue;
             }
         } else if (byte == '"') {
@@ -500,7 +508,7 @@ static int delimiter_spelling(struct parse_frame *frame,
                 while (end < token->length && token->raw[end] != '\'') {
                     if (token->raw[end] == '\\' && end + 1 < token->length)
                         ++end;
-                    ++end;
+                    end += csh_character_length(token->raw + end, token->length - end, 1, 1);
                 }
                 if (end < token->length) {
                     result = csh_quote_decode(token->raw + opening + 1,
@@ -608,9 +616,12 @@ static int collect_documents(struct parse_frame *frame)
             if (length < available)
                 ++length;
             if (!document->delimiter_quoted && length > content) {
-                while (backslashes < content &&
-                       pending[content - backslashes - 1] == '\\')
-                    ++backslashes;
+                size_t at = 0;
+                while (at < content) {
+                    size_t width = csh_character_length(pending + at, content - at, 1, 1);
+                    backslashes = width == 1 && pending[at] == '\\' ? backslashes + 1 : 0;
+                    at += width;
+                }
             }
             continued = (backslashes % 2) != 0;
             if (append(frame, &line, pending, length) == -1 ||
