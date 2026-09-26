@@ -210,8 +210,12 @@ done:
         }
         if (context.traps != NULL) {
             struct csh_execution pending = {0};
-            if (csh_execute_pending_traps(&context, &pending, &error) == -1)
+            if (!csh_input_failed(invocation.input) &&
+                csh_execute_pending_traps(&context, &pending, &error) == -1)
                 diagnose(&error, NULL);
+            /* Read failure permits only the EXIT action, even if another
+             * signal was pending or arrives while that action executes. */
+            if (csh_input_failed(invocation.input)) context.dispatching_traps = 1;
             csh_execute_exit_trap(&context, &error);
         }
         csh_state_get_info(state, &info);

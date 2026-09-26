@@ -69,7 +69,7 @@ static int launch_prepare(struct csh_state *state, const struct csh_command *com
     struct launch *launch, struct csh_error *error)
 {
     struct csh_variable_view variable;
-    const char *path, *start;
+    const char *path, *start, *prefix_path = NULL;
     char *standard = NULL;
     size_t count = 1, i, name_length = strlen(command->argv[0]);
     int direct = strchr(command->argv[0], '/') != NULL;
@@ -80,7 +80,13 @@ static int launch_prepare(struct csh_state *state, const struct csh_command *com
         if (!length || !(standard = malloc(length))) goto nomem;
         if (!confstr(_CS_PATH, standard, length)) goto nomem;
     }
-    path = standard ? standard : variable.value != NULL ? variable.value : "/bin:/usr/bin";
+    /* Prefixes are already expanded. The last PATH value also controls
+     * category lookup before the command's assignment scope is installed. */
+    for (i = 0; i < command->assignment_count; ++i)
+        if (!strcmp(command->assignments[i].name, "PATH"))
+            prefix_path = command->assignments[i].value;
+    path = standard ? standard : prefix_path ? prefix_path :
+        variable.value != NULL ? variable.value : "/bin:/usr/bin";
     if (!direct)
         for (start = path; *start; ++start) if (*start == ':') ++count;
     if (count > SIZE_MAX / sizeof(*launch->paths) ||
@@ -116,7 +122,7 @@ static int launch_prepare(struct csh_state *state, const struct csh_command *com
         launch->paths[launch->count++] = candidate;
         if (end != NULL) start = end + 1;
     }
-    if (!direct && !command->default_path) {
+    if (!direct && !command->default_path && prefix_path == NULL) {
         const char *cached = csh_state_hash_get(state, command->argv[0]);
         struct stat st;
         if (cached && stat(cached, &st) == 0 && S_ISREG(st.st_mode) && access(cached, X_OK) == 0) {
@@ -289,15 +295,15 @@ static int special_name(const char *name)
 }
 
 static char *lookup_path(struct csh_state *state, const char *name, int defaults,
-    int readable, struct csh_error *error);
+    int readable, const struct csh_command *prefix, struct csh_error *error);
 
 static enum csh_execution_category path_builtin_category(struct csh_state *state,
-    const char *name, int defaults)
+    const char *name, int defaults, const struct csh_command *prefix)
 {
     enum csh_execution_category category = csh_state_builtin_category(name);
     if (!strcmp(name, "pwd")) {
         struct csh_error error;
-        char *path = lookup_path(state, name, defaults, 0, &error);
+        char *path = lookup_path(state, name, defaults, 0, prefix, &error);
         if (!path || (strcmp(path, "/bin/pwd") && strcmp(path, "/usr/bin/pwd"))) category = CSH_EXEC_EXTERNAL;
         free(path);
     }
@@ -305,9 +311,9 @@ static enum csh_execution_category path_builtin_category(struct csh_state *state
 }
 
 static enum csh_execution_category command_category(struct csh_state *state,
-    const char *name)
+    const char *name, const struct csh_command *prefix)
 {
-    enum csh_execution_category category = path_builtin_category(state, name, 0);
+    enum csh_execution_category category = path_builtin_category(state, name, 0, prefix);
     if (!strcmp(name, "exit") || !strcmp(name, "trap") || control_name(name))
         return CSH_EXEC_SPECIAL_BUILTIN;
     if (category != CSH_EXEC_SPECIAL_BUILTIN && csh_state_function(state, name) != NULL)
@@ -349,7 +355,7 @@ static int command_validate(struct csh_state *state,
     if (csh_redirect_validate(command->redirections,
         command->redirection_count, error) == -1) return -1;
     if (command->argc == 0) *category = CSH_EXEC_EMPTY;
-    else *category = command_category(state, command->argv[0]);
+    else *category = command_category(state, command->argv[0], command);
     return 0;
 }
 
@@ -520,11 +526,14 @@ int csh_execute_command(struct csh_state *state, const struct csh_command *comma
 {
     enum csh_execution_category category = CSH_EXEC_EMPTY;
     csh_command_handler handler = NULL;
-    if (command != NULL && command->argc != 0 && command->argv != NULL &&
-        command->argv[0] != NULL) {
-        category = command_category(state, command->argv[0]);
-        if (category != CSH_EXEC_EXTERNAL) handler = bootstrap_handler;
+    if (command_validate(state, command, &category, error) == -1) {
+        memset(result, 0, sizeof(*result));
+        result->status = error->status;
+        if (state != NULL) csh_state_set_status(state, result->status);
+        return -1;
     }
+    if (category != CSH_EXEC_EMPTY && category != CSH_EXEC_EXTERNAL)
+        handler = bootstrap_handler;
     return execute_resolved(state, command, category, handler, NULL,
         result, NULL, error);
 }
@@ -1124,6 +1133,11 @@ static int runtime_simple(struct csh_execution_context *context,
         expansion_failed(state, result);
         goto done;
     }
+    /* Argument/redirection expansion precedes prefix expansion. Resolve again
+     * with the final prefix values, without changing their lifetime/attributes. */
+    if (command.argc != 0)
+        category = command_category(state, command.argv[0], &command);
+    result->category = category;
     trace_command(state, &command);
     handler = category == CSH_EXEC_EMPTY || category == CSH_EXEC_EXTERNAL ?
         NULL : bootstrap_handler;
@@ -1186,13 +1200,17 @@ static int context_stopped(struct csh_execution_context *context,
 
 /* Lookup uses the same PATH candidate construction as execution. */
 static char *lookup_path(struct csh_state *state, const char *name, int defaults,
-    int readable, struct csh_error *error)
+    int readable, const struct csh_command *prefix, struct csh_error *error)
 {
     char *argv[] = {(char *)name, NULL}, *path = NULL;
     struct csh_command command = {0};
     struct launch launch;
     size_t i;
     command.argc = 1; command.argv = argv; command.default_path = defaults;
+    if (prefix != NULL) {
+        command.assignments = prefix->assignments;
+        command.assignment_count = prefix->assignment_count;
+    }
     if (launch_prepare(state, &command, &launch, error) == -1) return NULL;
     for (i = 0; i < launch.count; ++i) {
         struct stat st;
@@ -1228,7 +1246,7 @@ static int lookup_report(struct csh_state *state, const char *name, int verbose,
     int defaults, struct csh_error *error)
 {
     const char *alias = csh_aliases_get(csh_state_aliases(state), name);
-    enum csh_execution_category category = command_category(state, name);
+    enum csh_execution_category category = command_category(state, name, NULL);
     static const char *const reserved[] = {"!", "{", "}", "case", "do", "done", "elif",
         "else", "esac", "fi", "for", "if", "in", "then", "until", "while"};
     size_t i;
@@ -1245,7 +1263,7 @@ static int lookup_report(struct csh_state *state, const char *name, int verbose,
         return dprintf(1, verbose ? "%s is a %s\n" : "%s\n", name,
             category == CSH_EXEC_FUNCTION ? "function" : "shell builtin") < 0;
     }
-    { char *path = lookup_path(state, name, defaults, 0, error);
+    { char *path = lookup_path(state, name, defaults, 0, NULL, error);
       int rc;
       if (!path) {
           if (verbose) diagnose(name, "not found", 0);
@@ -1264,7 +1282,7 @@ void csh_execute_input_line(void *state, const unsigned char *bytes, size_t leng
 }
 
 static int evaluate_input(struct csh_execution_context *context, struct csh_input *input,
-    struct csh_execution *result, struct csh_error *error)
+    int sourced, struct csh_execution *result, struct csh_error *error)
 {
     struct csh_parser *parser = NULL;
     int rc = 0;
@@ -1287,7 +1305,10 @@ static int evaluate_input(struct csh_execution_context *context, struct csh_inpu
         if (parsed != CSH_PARSE_TREE) {
             struct csh_state_info info;
             csh_state_get_info(context->state, &info);
-            result->exit_requested = !(info.options & CSH_OPT_INTERACTIVE);
+            /* A dot read failure is a utility error. Let the caller's
+             * category apply the interactive / command suppression rules. */
+            result->exit_requested = csh_input_failed(input) ? !sourced :
+                !(info.options & CSH_OPT_INTERACTIVE);
             rc = -1; break;
         }
         rc = csh_execute_context_ast(context, tree, result, error);
@@ -1313,7 +1334,7 @@ static void evaluate_trap_action(struct csh_execution_context *context,
     struct csh_error error;
     csh_state_set_status(context->state, saved);
     if (csh_input_from_string(&input, action, "trap", &error) == -1 ||
-        evaluate_input(context, input, &execution, &error) == -1) {
+        evaluate_input(context, input, 0, &execution, &error) == -1) {
         if (!error.reported) report_error(&error);
     }
     csh_input_destroy(input);
@@ -1402,7 +1423,7 @@ static int evaluation_handler(struct csh_state *state, const struct csh_command 
         if (sourced) {
             if (first < command->argc && !strcmp(command->argv[first], "--")) ++first;
             if (first == command->argc) return fail(error, "dot requires a file", 0, 2);
-            text = lookup_path(state, command->argv[first++], 0, 1, error);
+            text = lookup_path(state, command->argv[first++], 0, 1, NULL, error);
             if (!text) return fail(error, "cannot find readable dot file", error->system_errno, 1);
             rc = csh_input_from_file(&input, text, error);
             if (rc == 0 && first < command->argc) {
@@ -1433,7 +1454,7 @@ static int evaluation_handler(struct csh_state *state, const struct csh_command 
             struct csh_state_info info;
             csh_state_get_info(state, &info);
             if (sourced) csh_state_set_source_depth(state, info.source_depth + 1);
-            rc = evaluate_input(context, input, result, error);
+            rc = evaluate_input(context, input, sourced, result, error);
             if (sourced) {
                 csh_state_set_source_depth(state, info.source_depth);
                 if (result->control == CSH_CONTROL_RETURN) result->control = CSH_CONTROL_NONE;
@@ -1491,7 +1512,7 @@ static int evaluation_handler(struct csh_state *state, const struct csh_command 
             target.assignments = NULL; target.assignment_count = 0;
             target.redirections = NULL; target.redirection_count = 0;
             target.default_path = defaults;
-            category = path_builtin_category(state, target.argv[0], defaults);
+            category = path_builtin_category(state, target.argv[0], defaults, NULL);
             if (!strcmp(target.argv[0], "exit") || control_name(target.argv[0])) category = CSH_EXEC_SPECIAL_BUILTIN;
             if (category == CSH_EXEC_SPECIAL_BUILTIN) category = CSH_EXEC_REGULAR_BUILTIN;
             if (context->evaluation_depth >= 128) return fail(error, "evaluation nesting limit exceeded", 0, 2);
@@ -1517,15 +1538,15 @@ static int evaluation_handler(struct csh_state *state, const struct csh_command 
             char **names;
             if (csh_state_hash_names(state, &names) != CSH_STATE_OK) return fail(error, "cannot list command cache", ENOMEM, 1);
             for (i = 0; names[i]; ++i)
-                if (command_category(state, names[i]) == CSH_EXEC_EXTERNAL &&
+                if (command_category(state, names[i], NULL) == CSH_EXEC_EXTERNAL &&
                     dprintf(1, "%s\n", csh_state_hash_get(state, names[i])) < 0) result->status = 1;
             csh_state_environment_destroy(names);
         }
         for (i = first; i < command->argc; ++i) {
             char *path;
             const char *operand = command->argv[i];
-            if (command_category(state, operand) != CSH_EXEC_EXTERNAL || csh_jobs_is_builtin(operand)) continue;
-            path = lookup_path(state, operand, 0, 0, error);
+            if (command_category(state, operand, NULL) != CSH_EXEC_EXTERNAL || csh_jobs_is_builtin(operand)) continue;
+            path = lookup_path(state, operand, 0, 0, NULL, error);
             if (!path) { diagnose(operand, "command not found", 0); result->status = 1; }
             else if (!strchr(operand, '/') && csh_state_hash_set(state, operand, path) != CSH_STATE_OK) result->status = 1;
             free(path);

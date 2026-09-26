@@ -81,7 +81,8 @@ signal policy for SIG-003; copied substitution environments alone do not close i
 CSH-046 now provides the [clause/condition map and exact runtime/API witnesses](invocation-syntax-evidence.md) for its 21 rows. The mapped limitations remain open; no broad family is promoted to verified.
 
 CSH-049 provides the [execution clause map](execution-evidence.md) for its 25
-rows. CSH-055 owns the prefix PATH/builtin defect and narrower unverified
+rows. CSH-055 fixes prefix PATH/builtin selection and adds [scoped residual contract
+witnesses](execution-contracts.md) for the previously unverified
 execution contracts. Parent rows remain implemented subsets.
 
 CSH-052 residual host conditions belong to [CSH-056](tickets/CSH-056-host-contract-gaps.md):

@@ -204,3 +204,9 @@ after shell completion. A closed stdin is permitted for independent command
 sources; stdin command mode still requires a valid descriptor. Public-runtime
 [descriptor and invocation witnesses](invocation-syntax-evidence.md#sh-007)
 cover these conditions.
+
+CSH-055 adds `csh_input_failed()` to distinguish a sticky input failure from EOF,
+recoverable interruption, and parser syntax errors. Runtime finalization uses it
+to restrict fatal command-read handling to the EXIT action; sourced-file reads
+use the special-utility exception described in the
+[execution contract map](execution-contracts.md#descriptor-and-command-read-witnesses).
