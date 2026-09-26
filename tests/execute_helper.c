@@ -98,6 +98,14 @@ int main(int argc, char **argv)
         pid_t pid = getpid();
         if (write(atoi(argv[2]), &pid, sizeof(pid)) != sizeof(pid)) return 93;
         return read(atoi(argv[3]), &byte, 1) == 1 ? 0 : 94;
+    } else if (strcmp(argv[1], "seek-write") == 0) {
+        int fd = atoi(argv[2]);
+        if (lseek(fd, 0, SEEK_SET) == (off_t)-1) return 97;
+        return write(fd, "XY", 2) == 2 ? 0 : 97;
+    } else if (strcmp(argv[1], "read-write") == 0) {
+        char byte;
+        if (read(0, &byte, 1) != 1 || write(0, "X", 1) != 1) return 98;
+        return write(1, &byte, 1) == 1 && write(1, "\n", 1) == 1 ? 0 : 98;
     } else if (strcmp(argv[1], "fd-write") == 0) {
         return write(atoi(argv[2]), "fd\n", 3) == 3 ? 0 : 87;
     } else return 88;
