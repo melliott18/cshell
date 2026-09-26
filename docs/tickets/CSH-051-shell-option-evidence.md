@@ -1,6 +1,6 @@
 # CSH-051: Close base shell-option evidence gaps
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
@@ -9,6 +9,12 @@
 - Issue: [#83](https://github.com/melliott18/cshell/issues/83)
 
 ## Goal
+
+Integrated in [PR #94](https://github.com/melliott18/cshell/pull/94).
+Combined revision `5fc4657` passed native Linux, macOS, and Docker CI in
+[run 36254005069](https://github.com/melliott18/cshell/actions/runs/36254005069).
+Local integration passed 3,045 runtime cases, terminal suites and 65 harness
+self-tests; this does not extend the scoped conformance claims below.
 
 Integration note (2026-09-26): the combined CSH-047/048/049/051 runtime
 grid measured 1,063,914 bytes with a long worktree helper path, exceeding the
