@@ -1,6 +1,6 @@
 # CSH-056: Resolve residual host utility contracts
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
@@ -9,6 +9,13 @@
 - Issue: [#97](https://github.com/melliott18/cshell/issues/97)
 
 ## Goal
+
+Integrated in [PR #102](https://github.com/melliott18/cshell/pull/102).
+Combined revision `a57d404` passed full local native tests (3,113 runtime
+cases, terminal suites, host qualification, 71 harness self-tests) and hosted
+Linux/Docker normal and sanitizer checks in run 36273124710. Hosted macOS
+sanitizer checks were still running at integration. Scoped residual work and
+capability limitations below remain open; integration is not a conformance claim.
 
 Resolve the specific host provisioning/semantic gaps and remaining boundary
 witnesses identified by [CSH-052](CSH-052-host-utility-evidence.md). The
