@@ -145,6 +145,7 @@ specified in the [map](../execution-evidence.md#fixture-identities-and-condition
 | Debian bookworm, Linux 6.4.16-linuxkit aarch64, GCC 12.2.0, glibc 2.36, Python 3.11.2; Docker `make -j4 test && make test-pty && make test-harness` | PASS: 1,704 runtime, all normal module/API/fault/offset/portability targets, 15 jobs PTY, one terminal fault, 27 runtime PTY and 64 harness self-tests (11.250s). Two Linux-root invocation skips in the unprivileged suite. |
 | Same Docker image, `--user 0 python3 tests/invocation.py ./cshell` | PASS: all 51 invocation probes, including unequal real/effective uid and gid; zero skips. |
 | Native ASan/UBSan focused command below | PASS: 248 execution, 210 control, 36 offset, 61 execution API behavior, 52 pipeline and 60 context behavior cases, plus their API/fault checks. No sanitizer findings or skips. |
+| Docker ASan/UBSan focused command (`-j2`, same targets/flags) | Combined make FAIL: all 248 new execution cases passed; offset suite 33 passed/3 timed out. Remaining execution/pipeline/context/control API targets were not-run after make stopped scheduling. No sanitizer diagnostics. |
 | Native and Docker `execution-known-gaps.json` | FAIL as recorded above: working-directory output instead of `custom-pwd\n`; status 0, stderr empty. Owned by CSH-055. |
 
 Normal flags: `-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2`, CPPFLAGS
@@ -183,3 +184,47 @@ above. No PTY or locale capability was substituted for applicable execution
 evidence. Native Linux outside Docker remains not-run locally. The complete
 platform acceptance box stays open while the recorded harness timeout and
 CSH-055/other residual obligations remain unresolved.
+
+
+Docker sanitizer failures were `positioned first rejected byte (string)`,
+`(file)` and `(stdin)`: each exceeded the unchanged five-second bound and
+observed status -9 instead of 23. All other offset cases and all new execution
+cases passed. Host load averages were approximately 620/581/522 during the run,
+with other sanitizer containers active. Contention is a possible explanation,
+not a proven cause; the failed run is retained. The sanitizer container exited
+2 and its binary/suite identities were copied before removal. CSH-049 retains
+this platform-validation gap with the CSH-043 offset witnesses; native focused
+sanitizer success does not erase it.
+
+[PR #93](https://github.com/melliott18/cshell/pull/93) contains this audit.
+
+
+### Hosted integration checks
+
+[Run 36252848695, attempt 1](https://github.com/melliott18/cshell/actions/runs/36252848695/attempts/1)
+tested `ed4eb175cec221c37ced130c29dfe1d6e26ce8d9`, whose implementation/test
+bytes are unchanged from `9f755de`. Ubuntu 24.04/GCC and Docker Linux passed
+all normal, terminal, harness and full ASan/UBSan stages, including all 1,704
+runtime cases and all 36 offset cases in both normal and sanitizer builds.
+These independent passes do not erase the local Docker timeout observations.
+Native Linux is therefore exercised by CI, although not available locally.
+Ubuntu runner image: `20260920.314.1`, Python 3.11.16.
+
+Hosted macOS 15.7.9 arm64, image `20260907.0337.1`, Python 3.11.9 passed normal
+runtime (1,704), PTY and all 64 harness tests, then **failed** the existing
+sanitizer PTY case `repeated background resumes preserve prompt and terminal`:
+expected 7,216 combined terminal bytes, captured 7,438. The logger truncates
+the displayed byte prefixes, so this record does not infer the exact extra
+message or root cause. Make stopped scheduling after `test-jobs-pty` failed;
+its remaining full-sanitizer scope is incomplete. The archived log retains
+all executed results. CSH-054 owns this job/terminal contract investigation.
+The push run 36252831240 failed the existing sanitizer case `current previous
+and ambiguous job operands`: expected 317 bytes, captured 432, including
+`cshell: fg: cannot foreground job: %-` and a `Done(130)` notification. Its log
+is retained separately as `hosted-push-macos.log.gz`; CSH-054 also owns this
+observation. A failed-job retry was requested without changing code, fixture
+expectations or limits.
+
+Hosted logs are supplementary integration evidence: runner image/build commands
+are recorded, but these CI jobs do not publish binary hashes. They do not
+replace the detailed local binary identities or promote any broad matrix row.

@@ -800,6 +800,229 @@
         "LDFLAGS": "-fsanitize=address,undefined",
         "LDLIBS": ""
       }
+    },
+    "docker-asan": {
+      "collected_utc": "2026-09-26T15:44:30.821491+00:00",
+      "source_revision": "9f755dec9d7c8840f3e38e95011eceb64e55e662",
+      "source_note": "Same source image as normal run; sanitizer binaries and generated suites copied from stopped cshell-csh049-asan container after combined make exited 2. Source manifest is inherited from the identical normal image.",
+      "source_sha256": "8b0645c281259c58b21d989cefb639d63ea20759df9f5a6570222e2a960c5124",
+      "source_files": {
+        "Makefile": "ef93579129135efd0ac93fb64de172bb73e84939a824be39b7be6e5e0719c2f1",
+        "include/cshell/alias.h": "f727c4b6d5a1b3ff9175c2df10cb3ee50358cb266a21f92494fd2eff502962dc",
+        "include/cshell/arithmetic.h": "5b148baa744b5d9caa7843ab33ca0c0518745358bca17ec30b305af4153595fa",
+        "include/cshell/ast.h": "a9a5bc6def771ecc7a5adb587b5ed0d1af3cc1fb3b9ece26306eabcf0fda87cf",
+        "include/cshell/builtin.h": "aa672919a576353068d5a10c6036d89297dd66e8b213466bc8e31bf8df0b859c",
+        "include/cshell/execute.h": "e2508a3a1f45c3283c4af770bcb14b29bf88918a99fdbc4f209b82379a024d04",
+        "include/cshell/expand.h": "4791d9c04539acc6eac3b9ba98c3a7961b271b8cb79ee01355bedf71c7469b36",
+        "include/cshell/input.h": "4bcf0ced11cfdbc164c49cb77a2c9c23238d857fa7b23bc958e677a9d647f41b",
+        "include/cshell/invocation.h": "32d1919150df784605aa47e4cebf15ac22e79332532b69821cae78577f237edf",
+        "include/cshell/jobs.h": "d8817e8f8384ffe5e9cd5329f13b1d5636e21efb57e75f2246ca0c61b74a5c66",
+        "include/cshell/lexer.h": "29a77233f38de92ceb30d815a3e2fb7dc5802abfab84df6eaadc784934386cf2",
+        "include/cshell/options.h": "261154be284ee80c8a0000b67bb8c0cb7de2321dc37c8477be84adfd4131ca15",
+        "include/cshell/output.h": "701e3a9a07001158145904b5130d87bd8b7cc5fae50cf8d89238a8b8dc6f2d5d",
+        "include/cshell/parser.h": "8266a23092ae3894fb106a2b2ab59349f7dd09c42a0a8bcf7af0812146a8b98e",
+        "include/cshell/quote.h": "b27b4691604234a8d1d8b8f6a34b4911cd548dc16e35360bad5131a2b43aa9ee",
+        "include/cshell/redirect.h": "c109c4e109800c2aceb06724219bac4344cae972da5120b993ac4a82c33b841a",
+        "include/cshell/state.h": "f7276560ffe419ece5a6fe2ec06222b3723fd3849d83378d30de63c9561c45d1",
+        "include/cshell/traps.h": "55ec6f6b36006e3a470b742e6eac5082eccd01f0c78b4e5cee7c25c039a71f78",
+        "src/alias.c": "f12dfb9647bf37096ff7b2b7ff4a78cb0fee610955af16aa0f5d84aa12cdb7af",
+        "src/arithmetic.c": "5bf935b51ac03c3c74b7d5bf5f6f606b00d2ddb008708b48f68250b7c3940e53",
+        "src/ast.c": "3291b111de7bd1d320a3227835515f1556bc1781fd3d13e35de0220d3e14f099",
+        "src/builtin.c": "0de6b5a6caae4c61c9b73960948659cd7075a5993c0b5623ec2e2371d65fab90",
+        "src/execute.c": "a3800a3edd32caea0c647cfa55840ba5ccc3641bd6656aefee0a7568179d6e19",
+        "src/expand.c": "3606c3962941cbae67a7e3bfd7a37e7bd3ec5cb238c06cfc81837e6797226b74",
+        "src/field_internal.h": "2ece7cd114aa7d98e3e02ff294c3d7cfd4b01fb79dc77c40d47f341e48c892df",
+        "src/fields.c": "cb9327d1124563a098d656f0d34862db6d1f134cac0e9f1bf0945923c4af65b6",
+        "src/input.c": "c30580af43fa5c99e8e69d23a1ec4f5424844b20a79f95bd3a166b1f6f6d1bd8",
+        "src/invocation.c": "0a02152e17bc302a4235976fe549fdbff18b4593cf96e64223e62d0e89c1bbde",
+        "src/jobs.c": "4dbf3b55a285f3aa6e0969f22378b0ac44357d2e04bd57517b7cb6f5d2c66c03",
+        "src/lexer.c": "d9f0a14c822c67ecd4267a996d340ef946d6b92be62c915f58f450f66cbf0547",
+        "src/main.c": "dc4c32eb9f6ff4df95f5772cad1ff5750cd50e18e028c669272f845068e3f6f1",
+        "src/parser.c": "3f32a380e97d6d46dd80058ab6b4e220dd34981e21990542cd65af7a3274e2f9",
+        "src/pathname.c": "fb2e83875f8eff895ce41e3d219f43f7d57186482c164802bfb738f4d04ab376",
+        "src/prepare.c": "fd13735c11f6aedefd20b513e6f9f8534c0500897c2f4dc44740444cfd59c387",
+        "src/prepare.h": "dd9cad3706a1b40d37739a84f622595d4e1c77d4da5dcc58671162b46f176cdc",
+        "src/quote.c": "bd1768c8eaaf6e375ab9744792367b89f608c46627834cfe07ac10565666f0d6",
+        "src/redirect.c": "fb20ebb87da3691bd90170078c6b707240a235112c1abb01d07965c9b73864c7",
+        "src/state.c": "a80156ba4764cd5759ef4f7b4a0bb40046af855c3fd57494afff79230fc56ba1",
+        "src/traps.c": "e9c4a04359458baa5cb1333c0961d8a19c093aa3e15c8d20773c72cd3c80efec",
+        "src/utility.c": "c89d7b1bdac32b31847c2273e12071c3979996a74b2114de94923ed4ab13a226",
+        "tests/alias_faults.c": "4bce3434c621354368554a9fc6ca4bbfb52b35a5d5f568ec159a70c7fa482c86",
+        "tests/alias_faults.h": "a0b4a890e7b34cd949d1936b5335fc964438823f3cfd707d0bca8903585854b1",
+        "tests/alias_lexer.c": "86e1b5a1e28b649d6c11c58af41f1c8858095d4d55be76f09a06adf523ce84e3",
+        "tests/alias_parser.c": "a598c8fbadb92228ea4ed4eecb3254a5adeb191b6deb52027b7080144ebadfbf",
+        "tests/alias_storage.c": "5a0450b0090c1bd6a28f8500ded6c5115d44e88352867817789461eada6af30f",
+        "tests/arithmetic_faults.c": "671837bd1836a12249a28d368df2a8cc5203c8c84c42e2a1ecb4c9c9d94a9121",
+        "tests/arithmetic_faults.h": "0dafbcc1ac07c2d23b753ec5f736b8e6f8305d315399219d6617f32ed810ce96",
+        "tests/arithmetic_fixture.c": "4ac524a75e56983afdaf7ca784b83697c152829a545e3b942acad6b12f4758d5",
+        "tests/assignment_fixture.c": "5c3798dcdbab5add0fa6d5ca1162b3e3b6870e5f0137e02d4a641c26b6d1e65e",
+        "tests/ast_fixture.c": "14bea23e3b1db21483055af86bf8396a5996eb94316c395161bf34e7de2dc3cc",
+        "tests/builtin_fixture.c": "9dd3ef56ae58e016d5364862db6836adfb2d6a1ef705e6b86c7b98232f87bdf5",
+        "tests/builtins.py": "86b5d9c01420f82dd857a24c48aed5f9f226105ca1adf1294fd0ac1c22944da6",
+        "tests/context_fixture.c": "4c4f24fc1307c2a7eb2b09a7a6c190db69dff9ab2f39a0f4ae1b56073cb0eefb",
+        "tests/contexts.py": "0667f0a1daa89dd4229eec6e9e5e23d66b8f2b0e98bf969be67965fc08794350",
+        "tests/control_flow.py": "5743d1d0299bd575a72926a79aa39be8fafa577362c7a9bcd0a42706d431e0d3",
+        "tests/control_flow_cases.py": "48f060396096b0f9cb888569a323c8be01a00fc9af00e8d4e9d44f4dc859ad81",
+        "tests/evaluation_cases.py": "fd4b6dd6da9531f6862d8f354dead2ca0216eece10dbc35ea436219991b33d59",
+        "tests/execute.py": "c66a5d879625620d0f2f521f1651af92dae08b696e92a0b870a64d0d49e84fd7",
+        "tests/execute_faults.c": "74e0c6303a471f285832e172427b54a2c3c7179f7037e0d035f55fc0defdeb2c",
+        "tests/execute_faults.h": "682823df395b78358ee0660038886724f345ffe7360e2b653e1bec41ef674342",
+        "tests/execute_fixture.c": "56da972b721ad6b3c760486e36e4392facfdfeb807e5e0856c4f777eb83597a4",
+        "tests/execute_helper.c": "1e776496570fa10d0e5f44592daf085101e6338204f409abd9ee756bd8420685",
+        "tests/execution_cases.py": "5a8de8676ad851af4953381c245befdd45743f9d7871e77d7e9e16255eab1fb4",
+        "tests/expand_faults.c": "eb24eb090d10a5b042b27b785713fa1f5684979084a4377bc02093a3d9c6f20e",
+        "tests/expand_faults.h": "c59af0b08cf78faf04798ddd75ad3915b4813873d50bec02891b4e37fe497c59",
+        "tests/expand_fixture.c": "5ec8e6afb40e46d2990aa78e66dcb92191706653d766a9651159c9a560803062",
+        "tests/fields.py": "b2469449059e60efcbbb3020c9d414a7d030e6c09e6734e2defd6824e22c9a78",
+        "tests/fields_faults.c": "c9e25ef5dc7f78c4b0efdf3073c1caebba734ca3f4c51dae2357b553849fbc6b",
+        "tests/fields_faults.h": "ff284d88872993fbc6cf8657d8c6c4c11018d50287cd838f246e5b1895782209",
+        "tests/fields_fixture.c": "8ef780fcc423056dbc5f0df5f09007b8364590ef35442589fe8d4b19ee5bd16a",
+        "tests/fixtures/alias.json": "908ec91229179e704f6396e7577a4af412b9c7d1cde2d20ff407588a3895bfef",
+        "tests/fixtures/arithmetic-faults.json": "25090fb0617d1310bc53f37e0919c17ed4bf6f61dfdae2bae86d3acd79040dcb",
+        "tests/fixtures/arithmetic.json": "19fca4fc27a4ed62bdf89cebb7051ddaaf6fd4a759045a221d74a028601783d3",
+        "tests/fixtures/execution-known-gaps.json": "ea814ce2dff861a5385883456afd8a2a83f46bcabe16bc0ac0e049b61993e559",
+        "tests/fixtures/expand-faults.json": "a186c3b95692ae59cdb298e5fd44f911d1e9cfd2d46778ede31b6948e4681bcd",
+        "tests/fixtures/expand.json": "5a7d4dc2f844b43538278ccd63e85c6b4025cac152d5f92355c775c8e45a984e",
+        "tests/fixtures/jobs-fault-pty.json": "d2b1b35a1c029d6375390d0b864270989aab213bc20903a1c2fa10da8b104b45",
+        "tests/fixtures/prompt-faults.json": "90acd695b357ece661acb0b601aefa284ef06ed2f47968c309230eb8c6281824",
+        "tests/fixtures/quote.json": "bffc802358ef908c20fa5e5b162fbb25dead5a9857bddea35bbbabd4e362e520",
+        "tests/fixtures/self/failing.json": "92bc19ac78ee5bac9e3525b7306d4f55fae4b836616f117df472255085b7b652",
+        "tests/fixtures/self/passing.json": "bc7ca401a8966f4511274b8c40f529a0aa6c42596d39ddbde24ca70bbe3ae449",
+        "tests/fixtures/state-faults.json": "9fc8bb7eebb72611f390a2c30fcde4f35f8fd30e4bd9981a4d288517d8bd7af3",
+        "tests/fixtures/state.json": "9f676b4aa8d9778b1826c9b0eaf8e1c08258d9e7274a1e70f5cd1348dfdcdce7",
+        "tests/helpers/candidate.py": "b55bcb23724359aae329b53eed4cc23dfb886ac0944f5cacaf6a76577065d672",
+        "tests/helpers/pty_candidate.py": "dd36be18e6d9781485a1057c52ee5832c7e36b9ab5b389f4bcd5640a202bfafb",
+        "tests/input.py": "289b576a80b9aeb2b167e7e87b74cec9c4306a04d196fb36ecb30c3c2776c6d4",
+        "tests/input_faults.c": "2ab030878f7fad145cb6ef535b3705b26c18936ae68ea32a82fec3ba94ad0d29",
+        "tests/input_faults.h": "3c72d4e870f7d92f70df30e51bd190798168b07fbaf38e94ff702ff4a247f089",
+        "tests/input_fixture.c": "8a4fae7112c1d435b44ee86c8e75afd62dd1e5eeaf5202e15fefc097853bcf13",
+        "tests/invocation.py": "d1de5911e5af696cfab8099d418db89f395336afc5430ebe13cdb197b80426d1",
+        "tests/jobs.py": "72e30a10270cf247e58adb5c10abd5662bf5bd5f97cd8f05459b672c0d2bd271",
+        "tests/jobs_cases.py": "b8e5a24844f493bf7a0533e5f2328ed23a72ac99077281d49d7d2ade15c8f228",
+        "tests/jobs_fixture.c": "444ae7ff50ce480b6e4bb3851982f0bac4252377896b6f23b1bf65a123ff42da",
+        "tests/jobs_helper.c": "11282f9dd5790dfd25935427a404bc10a1307019df4a0d7784b07c225fc5c2dc",
+        "tests/lexer.py": "fdd559a8aa53e32d3ccd66c913edfa24d959b69890d12bf3f46af3defc2f9262",
+        "tests/lexer_faults.c": "dd4aad84ba78bbcaffe1b0e1fbb8effc2c345eb3523ac8bd0e96cb1249006b53",
+        "tests/lexer_faults.h": "30b4ec6f25b7163b428a7bba9dfb28ce072d5589ce059c50203d56df1851ac8a",
+        "tests/lexer_fixture.c": "3bbc5b1247510bb90bdfd88c580f805fa64749fa1984a035f7e352728d70a04b",
+        "tests/locale_cases.py": "8a2805a826a35ecd489ddcd9ce21e4016ae68f76fd84bf8071ac8ff36d445b5c",
+        "tests/option_cases.py": "a42b9012b14ad04395e02c4d197b6ab883820011a730aaf2ca4799600ee6e9e2",
+        "tests/parser.py": "6908c1f0694095e94157fa75b0032b3d3c24fc1578a6392c99ee9fafe41a48b2",
+        "tests/parser_faults.c": "c2a0bf55eb1ecc84ead97b12447fda1aaa9ac46fd0d4b08cf3e9138b6c5b49f1",
+        "tests/parser_faults.h": "8e8499070c1751e3774e8170c073d060475c17129970017548757531f35fba09",
+        "tests/parser_fixture.c": "1ba6b84a14f415ebd7f31b9bdd960a6245279aa1aa9c3c249aefb790f822969b",
+        "tests/pipeline.py": "12ad2671bf5d40131a1a171f8b15ef748b36ca31ca9f6983efe76c7ec6c96b8a",
+        "tests/pipeline_fixture.c": "3b8ff149fd29981d1877476e3ddc020bbf2e144aa098f9ffd4c157fada2ab47e",
+        "tests/portability.py": "6b49bafc77d6ac30254afcce4a6b7964914bddd02bcb3289dd3b212edbbb9fcf",
+        "tests/prompt_faults.c": "b33a1ab27ae8daadaadd0f6c30241b4670a3aa0bfbc752557968e959a630b863",
+        "tests/prompt_faults.h": "3afa85d7f2b6e82b55465ae7c9bdd525617cdd075d51775bd7f9662057bcf2d9",
+        "tests/pty_harness.py": "919b71782cd94ee34b5a422a64e3e687dbd157fa62bad2ab7c8945697d0912df",
+        "tests/quote_fixture.c": "42446b4eff85b11642baaac22994a5dfc91b29730579b8032dae65d8d61b6296",
+        "tests/redirection_offset_helper.c": "62f38c87c72be0e517d9c64fdbb3773069a2269974b100fc507d57f5d703215f",
+        "tests/redirection_offsets.py": "9322364a3919f4cd3e4e9cce0516efa86af12a475ca13bd3cb78b64a3748bcbf",
+        "tests/runtime_cases.py": "f6f51e9a6f9b56941a42587dae547e2bed14fb00c6f5da0567edeb7747b2945b",
+        "tests/smoke.py": "72c9b619c7fa337b80f8d296d1fe7b5ef774d8c65ece85ce3b85c8c6fe3de79f",
+        "tests/state_faults.c": "b8a8091c581de7c9af8b255e5700f35e317d205b0d580a1e5e6b1457f4d27f9e",
+        "tests/state_faults.h": "9d5124050fd08a6ed7559e8e9333163152c4c6bc25814223a37652cdce7e49fa",
+        "tests/state_fixture.c": "1562503fa1b1ecd7a2f7f48666cc132aea426b3ee72fb5e91fc184ca279e425c",
+        "tests/substitution.py": "685431d9c887457127fee3da40a09861d041afd324db60912b4f47ef93add03e",
+        "tests/substitution_cases.py": "4818f259cf5445ae9383b44ecd7c10073b2e0de4399e751add2f32add890267d",
+        "tests/substitution_fixture.c": "b0a499dab4d6369b278fae6cb665f4e31ab6371b4f0e4c6247c5671c2fb9b604",
+        "tests/syntax_cases.py": "606291d7de2de3b7e884cadbcc1a2acf68d5a48db6265441ca2737cc4d581acb",
+        "tests/test_cleanup_harness.py": "0e8577f3da49beca1a3e7fe3f9cc492851073e53d5601392a2621eff8c79eb86",
+        "tests/test_harness.py": "353e4d7ddb2ef00236a70d9d92d86a94425e3f9f6884949086d2b9cd1e4e3664",
+        "tests/test_pty_harness.py": "b09d65027870bc4b27c0a1718fc67ee2e319811ff747dd4ad13b4ba5adab0981",
+        "tests/trap_cases.py": "42964e7eab26a55a6a5f499e379a3f519ec5dc198241c8155bfc1199e545281f",
+        "tests/traps.py": "3c44a40632c50c0c444bca398de262927a61127640ddc269f5400d8fe3558113"
+      },
+      "cwd": "/work",
+      "binaries": {
+        "cshell": {
+          "realpath": "/work/cshell",
+          "sha256": "84ad42222084739345eaa53ca62d98f5a8993fec1222ec1499d64ff732c3d0d1"
+        },
+        "build/tests/execute_helper": {
+          "realpath": "/work/build/tests/execute_helper",
+          "sha256": "503e80e090abb34a4a42b01fc1fcff18f33b816b718da48278d4e4b8d1efd3fa"
+        }
+      },
+      "generated_suites": {
+        "build/tests/execution.json": "793977feaf23909695be720d0cd68997b4631457e75483a3eba129d32c7ec45e",
+        "build/tests/control-flow.json": "31feadc84c4bb9d283ff9aa6090d1ad11048c208fc1651f7cbf910febaeaabd1"
+      },
+      "compiler": {
+        "argv": [
+          "cc",
+          "--version"
+        ],
+        "status": 0,
+        "output": "cc (Debian 12.2.0-14+deb12u1) 12.2.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n"
+      },
+      "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+      "uname": [
+        "Linux",
+        "527e82fef1a7",
+        "6.4.16-linuxkit",
+        "#1 SMP PREEMPT Thu Nov 16 10:49:20 UTC 2023",
+        "aarch64",
+        ""
+      ],
+      "python": "3.11.2 (main, May 12 2026, 05:17:27) [GCC 12.2.0]",
+      "libc": [
+        "glibc",
+        "2.36"
+      ],
+      "macos_build": null,
+      "linux_packages": {
+        "argv": [
+          "dpkg-query",
+          "-W",
+          "gcc",
+          "libc6",
+          "python3",
+          "procps"
+        ],
+        "status": 0,
+        "output": "gcc\t4:12.2.0-3\nlibc6:arm64\t2.36-9+deb12u14\nprocps\t2:4.0.2-3\npython3\t3.11.2-1+b1\n"
+      },
+      "api_inherited_environment_names": [
+        "ASAN_OPTIONS",
+        "HOME",
+        "HOSTNAME",
+        "LC_CTYPE",
+        "PATH",
+        "PWD",
+        "UBSAN_OPTIONS"
+      ],
+      "api_relevant_environment": {
+        "LANG": null,
+        "LC_ALL": null,
+        "LC_CTYPE": "C.UTF-8",
+        "TZ": null,
+        "TERM": null,
+        "ASAN_OPTIONS": "halt_on_error=1",
+        "UBSAN_OPTIONS": "halt_on_error=1",
+        "MallocNanoZone": null
+      },
+      "host_helpers": {
+        "/bin/sh": "15fc4c72f49c86639a383121eec6fbdbcd32ec9d03db915cb3096928295e1a17",
+        "/bin/cat": "491ea6f9b1804d893d660477e6873855b28271c018b13f086c2fc419d51560bb",
+        "/bin/chmod": "ca00b5e3f39f71555b48b45effd7be511d3e73d87a767579bc10aff81bf02bc6",
+        "/bin/echo": "06b166eee3ef88d62a7174a4a03a42416d959fb4bd05754d597365f89b9cd984",
+        "/usr/bin/printf": "2c7b0151ee3c1ba4e829209f2ff4336de9d97143e22bf87c7448539112139957"
+      },
+      "flags": {
+        "CPPFLAGS": "-D_POSIX_C_SOURCE=200809L -Iinclude",
+        "CFLAGS": "-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+        "LDFLAGS": "-fsanitize=address,undefined",
+        "LDLIBS": ""
+      },
+      "result": "Combined make failed: execution 248 passed; offset 33 passed/3 timeouts; remaining execution/pipeline/context/control API targets not-run. No sanitizer diagnostic.",
+      "container_state": {
+        "ExitCode": 2,
+        "StartedAt": "2026-09-26T15:37:52.023514919Z",
+        "FinishedAt": "2026-09-26T15:42:32.68616109Z"
+      }
     }
   },
   "docker_image": "sha256:11f34d504c3a749522cda49ea27566759f961fffcca19583cec968e9d5807f71",
@@ -844,6 +1067,382 @@
     "docker-root-invocation.log.gz": {
       "sha256": "d3f34b53a68f1d185876f32297b5a17364ccfd8a8189b1f3217bc975ca30c4db",
       "uncompressed_sha256": "8292c995ca06d98a7274d77136749fc5cadf727fe5431bc7a20ea3cde0889890"
+    },
+    "docker-asan.log.gz": {
+      "sha256": "a5ee8e06a708f3e7adfc77e66375ddff6225b8f94feda78828eed2b5f4436ece",
+      "uncompressed_sha256": "72690598e446deba65b55bdaeb595daf544dc73c3be243bfa20e9ce909376eec"
+    },
+    "hosted-ubuntu.log.gz": {
+      "sha256": "57e1ba630953764f8c5f6717f97aa2286a26fff490e5f298b3cbc8b890a1ae49",
+      "uncompressed_sha256": "ee9bb8b9c930f01659fc83ad3fa6e955650c62d07d20e6742aa16d1f7fdf8f38"
+    },
+    "hosted-docker.log.gz": {
+      "sha256": "04a73025e570c24d069d23128bf0cdd5822619a741776f93882ae0a1118a7656",
+      "uncompressed_sha256": "1cae612549f8d066fd45e9984aec894a3354cc71fc0e8fd9f3e49b88a886704f"
+    },
+    "hosted-macos.log.gz": {
+      "sha256": "55832fb107038c97d1f3e14a3fccad9593cec1a082d55b833433fb9b6e96e65d",
+      "uncompressed_sha256": "bd07e6183844f7fccb3a648b26c179daa562c7ffd65d1726b6d1ab92bb812dc3"
+    },
+    "hosted-push-macos.log.gz": {
+      "sha256": "fdf0eca6566d521168e00583803ac8f76272a193d19926f923286f330dda4ffb",
+      "uncompressed_sha256": "1f743ac996bfe84c172eb16087760bbfcb57490fe7b5fc76dabfd7a50854d6bd"
     }
+  },
+  "hosted_attempt_1": {
+    "url": "https://github.com/melliott18/cshell/actions/runs/36252848695/attempts/1",
+    "head_sha": "ed4eb175cec221c37ced130c29dfe1d6e26ce8d9",
+    "implementation_revision": "9f755dec9d7c8840f3e38e95011eceb64e55e662",
+    "note": "Supplementary integration evidence. Workflow logs identify runner image and build commands; CI does not publish binary hashes. Local identities above supply the retained binary evidence.",
+    "jobs": [
+      {
+        "id": 108434001121,
+        "run_id": 36252848695,
+        "workflow_name": "Tests",
+        "head_branch": "test/CSH-049-execution-evidence",
+        "run_url": "https://api.github.com/repos/melliott18/cshell/actions/runs/36252848695",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOJPzIE88AAAAZPyuM4Q",
+        "head_sha": "ed4eb175cec221c37ced130c29dfe1d6e26ce8d9",
+        "url": "https://api.github.com/repos/melliott18/cshell/actions/jobs/108434001121",
+        "html_url": "https://github.com/melliott18/cshell/actions/runs/36252848695/job/108434001121",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-09-26T15:42:03Z",
+        "started_at": "2026-09-26T15:42:06Z",
+        "completed_at": "2026-09-26T15:44:20Z",
+        "name": "Native (ubuntu-24.04, gcc)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-09-26T15:42:07Z",
+            "completed_at": "2026-09-26T15:42:07Z"
+          },
+          {
+            "name": "Run actions/checkout@v6",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-09-26T15:42:07Z",
+            "completed_at": "2026-09-26T15:42:08Z"
+          },
+          {
+            "name": "Run actions/setup-python@v6",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-09-26T15:42:08Z",
+            "completed_at": "2026-09-26T15:42:08Z"
+          },
+          {
+            "name": "Install Linux build dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-09-26T15:42:08Z",
+            "completed_at": "2026-09-26T15:42:22Z"
+          },
+          {
+            "name": "Build",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-09-26T15:42:22Z",
+            "completed_at": "2026-09-26T15:42:24Z"
+          },
+          {
+            "name": "Test replacement APIs, cshell runtime, and selected behavior",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-09-26T15:42:24Z",
+            "completed_at": "2026-09-26T15:42:58Z"
+          },
+          {
+            "name": "Test cshell terminal behavior and selected terminal suite",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-09-26T15:42:58Z",
+            "completed_at": "2026-09-26T15:42:59Z"
+          },
+          {
+            "name": "Test harness failure handling",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-09-26T15:42:59Z",
+            "completed_at": "2026-09-26T15:43:10Z"
+          },
+          {
+            "name": "Check replacement modules and cshell runtime with ASan and UBSan",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-09-26T15:43:10Z",
+            "completed_at": "2026-09-26T15:44:17Z"
+          },
+          {
+            "name": "Post Run actions/setup-python@v6",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 17,
+            "started_at": "2026-09-26T15:44:17Z",
+            "completed_at": "2026-09-26T15:44:17Z"
+          },
+          {
+            "name": "Post Run actions/checkout@v6",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 18,
+            "started_at": "2026-09-26T15:44:17Z",
+            "completed_at": "2026-09-26T15:44:18Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 19,
+            "started_at": "2026-09-26T15:44:18Z",
+            "completed_at": "2026-09-26T15:44:18Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/melliott18/cshell/check-runs/108434001121",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000005145,
+        "runner_name": "GitHub Actions 1000005145",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      {
+        "id": 108434001125,
+        "run_id": 36252848695,
+        "workflow_name": "Tests",
+        "head_branch": "test/CSH-049-execution-evidence",
+        "run_url": "https://api.github.com/repos/melliott18/cshell/actions/runs/36252848695",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOJPzIE88AAAAZPyuM5Q",
+        "head_sha": "ed4eb175cec221c37ced130c29dfe1d6e26ce8d9",
+        "url": "https://api.github.com/repos/melliott18/cshell/actions/jobs/108434001125",
+        "html_url": "https://github.com/melliott18/cshell/actions/runs/36252848695/job/108434001125",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-09-26T15:42:03Z",
+        "started_at": "2026-09-26T15:42:05Z",
+        "completed_at": "2026-09-26T15:44:29Z",
+        "name": "Docker (Linux)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-09-26T15:42:06Z",
+            "completed_at": "2026-09-26T15:42:06Z"
+          },
+          {
+            "name": "Run actions/checkout@v6",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-09-26T15:42:06Z",
+            "completed_at": "2026-09-26T15:42:07Z"
+          },
+          {
+            "name": "Build Linux image and test replacement APIs, cshell runtime, and selected behavior",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-09-26T15:42:07Z",
+            "completed_at": "2026-09-26T15:43:06Z"
+          },
+          {
+            "name": "Test cshell and selected terminal behavior in Linux image",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-09-26T15:43:06Z",
+            "completed_at": "2026-09-26T15:43:11Z"
+          },
+          {
+            "name": "Test harness failure handling in Linux image",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-09-26T15:43:11Z",
+            "completed_at": "2026-09-26T15:43:21Z"
+          },
+          {
+            "name": "Test unequal invocation identities in Linux image",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-09-26T15:43:21Z",
+            "completed_at": "2026-09-26T15:43:21Z"
+          },
+          {
+            "name": "Check Linux build with ASan and UBSan",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-09-26T15:43:21Z",
+            "completed_at": "2026-09-26T15:44:28Z"
+          },
+          {
+            "name": "Post Run actions/checkout@v6",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14,
+            "started_at": "2026-09-26T15:44:28Z",
+            "completed_at": "2026-09-26T15:44:28Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15,
+            "started_at": "2026-09-26T15:44:28Z",
+            "completed_at": "2026-09-26T15:44:29Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/melliott18/cshell/check-runs/108434001125",
+        "labels": [
+          "ubuntu-24.04"
+        ],
+        "runner_id": 1000005144,
+        "runner_name": "GitHub Actions 1000005144",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      {
+        "id": 108434001147,
+        "run_id": 36252848695,
+        "workflow_name": "Tests",
+        "head_branch": "test/CSH-049-execution-evidence",
+        "run_url": "https://api.github.com/repos/melliott18/cshell/actions/runs/36252848695",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOJPzIE88AAAAZPyuM-w",
+        "head_sha": "ed4eb175cec221c37ced130c29dfe1d6e26ce8d9",
+        "url": "https://api.github.com/repos/melliott18/cshell/actions/jobs/108434001147",
+        "html_url": "https://github.com/melliott18/cshell/actions/runs/36252848695/job/108434001147",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-09-26T15:42:03Z",
+        "started_at": "2026-09-26T15:42:12Z",
+        "completed_at": "2026-09-26T15:46:33Z",
+        "name": "Native (macos-15, clang)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-09-26T15:42:13Z",
+            "completed_at": "2026-09-26T15:42:14Z"
+          },
+          {
+            "name": "Run actions/checkout@v6",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-09-26T15:42:14Z",
+            "completed_at": "2026-09-26T15:42:16Z"
+          },
+          {
+            "name": "Run actions/setup-python@v6",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-09-26T15:42:16Z",
+            "completed_at": "2026-09-26T15:42:16Z"
+          },
+          {
+            "name": "Install Linux build dependencies",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 4,
+            "started_at": "2026-09-26T15:42:16Z",
+            "completed_at": "2026-09-26T15:42:16Z"
+          },
+          {
+            "name": "Build",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-09-26T15:42:16Z",
+            "completed_at": "2026-09-26T15:42:21Z"
+          },
+          {
+            "name": "Test replacement APIs, cshell runtime, and selected behavior",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-09-26T15:42:21Z",
+            "completed_at": "2026-09-26T15:43:19Z"
+          },
+          {
+            "name": "Test cshell terminal behavior and selected terminal suite",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-09-26T15:43:19Z",
+            "completed_at": "2026-09-26T15:43:22Z"
+          },
+          {
+            "name": "Test harness failure handling",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-09-26T15:43:22Z",
+            "completed_at": "2026-09-26T15:43:47Z"
+          },
+          {
+            "name": "Check replacement modules and cshell runtime with ASan and UBSan",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 9,
+            "started_at": "2026-09-26T15:43:47Z",
+            "completed_at": "2026-09-26T15:46:29Z"
+          },
+          {
+            "name": "Post Run actions/setup-python@v6",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 17,
+            "started_at": "2026-09-26T15:46:29Z",
+            "completed_at": "2026-09-26T15:46:29Z"
+          },
+          {
+            "name": "Post Run actions/checkout@v6",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 18,
+            "started_at": "2026-09-26T15:46:29Z",
+            "completed_at": "2026-09-26T15:46:30Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 19,
+            "started_at": "2026-09-26T15:46:30Z",
+            "completed_at": "2026-09-26T15:46:30Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/melliott18/cshell/check-runs/108434001147",
+        "labels": [
+          "macos-15"
+        ],
+        "runner_id": 1000005146,
+        "runner_name": "GitHub Actions 1000005146",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      }
+    ]
   }
 }

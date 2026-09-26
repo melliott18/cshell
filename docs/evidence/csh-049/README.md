@@ -27,6 +27,17 @@ docker run --rm --init cshell-test:csh-049 sh -c 'make -j4 test && make test-pty
 docker run --rm --init --user 0 cshell-test:csh-049 python3 tests/invocation.py ./cshell
 ```
 
+`docker-asan.log.gz` is a failed combined run: all 248 new execution cases
+passed, three existing offset cases timed out, and make left later API targets
+unrun. Binary and suite identities come from that stopped container.
+
 The focused new cases are `make test-execution-evidence`. Sanitizer flags and
 scope are in the ticket. Generated helper paths differ by worktree; source
 fixture bytes and the recorded hashes identify the exact assertions.
+
+
+The `hosted-*.log.gz` files retain completed job logs for the linked hosted
+run. Ubuntu and Docker passed full checks. macOS passed normal checks and
+failed an existing sanitizer terminal transcript assertion. The additional
+push-run macOS log is a distinct attempt; consult its actual failure, not an
+assumed common cause. Hosted binary hashes are not available from this workflow.
