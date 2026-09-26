@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import patch
 
-from host_utilities import known_gap, match
+from host_utilities import known_gap, match, sanitizer_diagnostic
 
 
 class HostEvidenceTests(unittest.TestCase):
@@ -27,3 +27,11 @@ class HostEvidenceTests(unittest.TestCase):
     def test_native_gap_is_not_a_linux_allowance(self, _):
         self.assertFalse(known_gap({'gap': 'test-missing-time'}, 1,
                                    {'stdout': b'', 'stderr': b''}))
+
+    def test_sanitizer_cannot_satisfy_a_diagnostic_predicate(self):
+        for marker in (b'AddressSanitizer', b'UndefinedBehaviorSanitizer',
+                       b'LeakSanitizer', b'runtime error:'):
+            output = {'stdout': b'', 'stderr': b'ordinary diagnostic\n' + marker}
+            self.assertTrue(match('nonempty', output['stderr']))
+            self.assertTrue(sanitizer_diagnostic(output))
+        self.assertFalse(sanitizer_diagnostic({'stderr': b'expected host error'}))

@@ -96,6 +96,12 @@ def serial(value):
     return value
 
 
+def sanitizer_diagnostic(output):
+    return any(marker in bytes(stream) for stream in output.values()
+               for marker in (b"AddressSanitizer", b"UndefinedBehaviorSanitizer",
+                              b"LeakSanitizer", b"runtime error:"))
+
+
 def known_gap(case, status, output):
     # Exact, separately reported baseline signatures only. A new symptom fails.
     # These are not passing requirements; --strict-gaps makes them fatal.
@@ -163,6 +169,8 @@ def main():
                     status, output, errors = smoke.capture(binary, fixture, directory, 5, 65536)
                     if mode == 'pty':
                         output = {'stdout': output['output'], 'stderr': b''}
+                    if sanitizer_diagnostic(output):
+                        errors.append('sanitizer diagnostic')
                     actual_files = {}
                     for path, expected in case.get('files', {}).items():
                         target = directory / path

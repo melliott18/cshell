@@ -104,7 +104,7 @@ absence, sleep success, sh's status 17, and the six core utility outcomes.
 while U-033's existing evidence owns full logical/physical semantics.
 
 `stty` on `/dev/null` must fail diagnostically. `U-034 stty terminal roundtrip`
-uses the shared controlling-PTY harness, captures `stty -g`, mutates echo,
+uses the shared controlling-PTY harness, captures `stty -g`, enables echo,
 restores the saved attributes, and compares a second capture byte-for-byte.
 The terminal starts with canonical input, signals enabled, echo and output
 newline translation disabled; all terminal output is compared as one stream.

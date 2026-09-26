@@ -194,5 +194,5 @@ def cases(paths, helper):
                status=128 + signal.SIGTERM)
 
     yield case('U-034 stty terminal roundtrip',
-               'saved=$(stty -g); stty -echo; stty "$saved"; current=$(stty -g); '
+               'saved=$(stty -g); stty echo; stty "$saved"; current=$(stty -g); '
                'test "$saved" = "$current"', modes=('pty',))
