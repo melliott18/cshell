@@ -10,14 +10,15 @@ group cleanup, wall/CPU/file/output limits, and all three invocation modes where
 applicable.
 
 The probes assert C versus installed UTF-8 locale pathname matching, locale
-precedence and initial lexical locale behavior, UTF-8 IFS splitting, generated
+precedence (including after an LC_CTYPE assignment), UTF-8 IFS splitting, generated
 arithmetic and quote nesting through depth 32, and a 256 KiB input line in file
 and stdin modes. A sparse file larger than 2 GiB tests pathname expansion and a
 one-byte append past that offset; the append case raises only the runner's file
 size limit. Its disk use remains sparse. An unavailable UTF-8 locale is reported
 as a scoped skip; C-locale, generated, and sparse-file cases still run. The
 [CSH-037 record](tickets/CSH-037-portability-audit.md) identifies the tested
-platforms and remaining requirements.
+platforms and remaining requirements. Pathname matching does not establish the
+separate rule for initial lexical interpretation; CSH-042/047 retain that gap.
 
 ## Runtime integration
 
@@ -764,9 +765,16 @@ verification remains separate work.
 `make test-jobs` exercises runtime job ownership, retained statuses, idle
 SIGCHLD reaping, interrupted waits, rapid pipeline exits, and controlled launch
 failures. It also runs job builtins through command strings, files, and stdin.
+The jobs API fixture gives each phase and each of its 150 rapid-exit pipelines
+a five-second progress watchdog, with a 60-second outer runner bound. Timeout
+diagnostics name the active phase. A deliberately stalled pipeline checks the
+watchdog and descendant cleanup. This separates cumulative sanitizer/fork cost
+from a stalled operation without reducing the iteration count.
 `make test-jobs-pty` drives actual cshell jobs using the CSH-033 transport:
 foreground signals, stopped pipelines, bg/fg, background terminal reads,
 selectors, monitor changes, descriptor collisions, and saved terminal settings.
+One case repeats 32 complete stop/bg/fg/Ctrl-C cycles with exact prompt and
+foreground-group assertions under the existing five-second case bound.
 A second PTY fixture injects process-group, terminal-transfer, mode-restoration,
 and wait errors and checks the recovered shell group and resource ownership.
 
@@ -776,6 +784,14 @@ observations measure the launched process rather than sanitizer startup.
 See [Job control](job-control.md) and [Traps and signals](traps-and-signals.md)
 for the combined behavior. Harness timeouts bound all interactive scenarios; no job-control
 claim follows from a helper-only test.
+
+`make test-prompt` compiles only the main module with fault hooks that interrupt
+and shorten prompt writes. Its exact primary/continuation transcript proves
+that prompt output retries EINTR and partial writes before waiting for input.
+It runs through `make test`, including the default Docker and sanitizer paths.
+See [CSH-044](tickets/CSH-044-intermittent-bg-prompt.md) and
+[CSH-045](tickets/CSH-045-jobs-fixture-timeout.md) for the failing observations
+and fixes.
 
 ## Trap and signal checks
 

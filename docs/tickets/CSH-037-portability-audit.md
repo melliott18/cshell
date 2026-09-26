@@ -1,11 +1,11 @@
 # CSH-037: Audit integrated conformance and platform portability
 
-- Status: in-progress
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: CSH-012
 - Depends on: CSH-008, CSH-009, CSH-010, CSH-011, CSH-036
-- Branch: test/CSH-037-portability-audit
+- Branch: test/CSH-037-audit-follow-up
 - Issue: [#38](https://github.com/melliott18/cshell/issues/38)
 
 ## Goal
@@ -26,15 +26,15 @@ supported platforms before publishing final behavior or compliance statements.
 
 ## Acceptance criteria
 
-- [ ] Every applicable requirement links to passing implementation evidence or an
+- [x] Every applicable requirement links to passing implementation evidence or an
   explicit defect/limitation ticket; selected scope and permitted choices are clear.
-- [ ] Clean-checkout native and Docker validation reproduces documented results,
+- [x] Clean-checkout native and Docker validation reproduces documented results,
   with compiler, libc, architecture, suite, and reference-shell versions recorded.
-- [ ] CI covers supported platforms and applicable behavior; skipped/waived cases
+- [x] CI covers supported platforms and applicable behavior; skipped/waived cases
   include a concrete reason and scope, with follow-up owners where needed.
-- [ ] Discovered defects have regression coverage and resolved or linked tickets;
+- [x] Discovered defects have regression coverage and resolved or linked tickets;
   independent review checks the matrix and reproduces a sample of evidence.
-- [ ] User/developer docs reflect verified behavior; compliance claims remain
+- [x] User/developer docs reflect verified behavior; compliance claims remain
   withheld while applicable requirements are unmet and otherwise name the edition,
   selected profile, and evidence without implying external certification.
 
@@ -128,3 +128,73 @@ Neither selected UTF-8 cases nor a successful append beyond 2 GiB verifies the
 full associated requirement row. A further row-by-row evidence review and
 independent reproduction are needed before the acceptance checkboxes can be
 closed.
+
+### Follow-up audit, 2026-09-26
+
+[PR #75](https://github.com/melliott18/cshell/pull/75) was integrated as
+`58ca5c3`. Follow-up work uses a new separate worktree on
+`test/CSH-037-audit-follow-up`. The tested source changes are commit
+`41c2eb6899e8e47351cc7008fc66e777a0c220c9`; the accompanying documentation
+changes do not alter that runtime or its regression fixtures.
+
+The two hosted failures now have identified causes and regression coverage:
+
+- [CSH-044](CSH-044-intermittent-bg-prompt.md): `SIGCHLD` interrupted unchecked
+  stdio prompt output after `bg`. Prompts now use the existing interrupted and
+  partial-write retry helper. A deterministic injected-fault test and a
+  32-cycle exact PTY case cover the correction without relaxing case bounds.
+- [CSH-045](CSH-045-jobs-fixture-timeout.md): the 20-second aggregate alarm
+  expired during still-progressing sanitizer pipeline stress. Each of the
+  unchanged 150 pipelines and each fixture phase now has a five-second
+  watchdog, with a separate 60-second overall runner cap. A genuine stalled
+  pipeline regression checks phase diagnostics and live-descendant cleanup.
+
+Both changes received independent code review with no actionable findings.
+The [independent matrix review](../audit-review.md) separately built the merged
+baseline from a clean archive and reproduced 60 portability and 1,318 runtime
+cases. It checked every row and implementation-choice record, then verified
+all 378 reciprocal owner mappings after reconciliation.
+
+The audit now assigns all **115 applicable rows** to explicit open evidence
+limitations in [CSH-046–CSH-052](../audit-review.md#findings-and-closure-conditions),
+with exact row lists and closure criteria; **16 UP/XSI rows** retain the
+source-conditional base-profile exclusions. CSH-042 and CSH-043 retain the
+concrete locale and redirection-offset gaps. A completed implementation ticket
+is no longer the sole owner of unfinished family verification. Selected
+runtime witnesses replace stale statements about missing integration, while
+no broad family is promoted to `verified`.
+
+The LC_CTYPE assignment probe is described accurately as an LC_ALL precedence
+case. Pathname matching does not establish lexical-startup behavior. The
+choice register now distinguishes selected alias/substitution/pipeline policies
+from incomplete proof of their full requirement families. User, testing,
+architecture-entry and evidence documentation retain the base target and
+withhold compliance claims.
+
+#### Integrated follow-up validation
+
+| Environment and execution identity | Result |
+| --- | --- |
+| Native macOS 14.8.7 (23J520), Darwin 23.6.0 arm64, Apple Clang 15.0.0 (`clang-1500.3.9.4`), SDK 14.5, Python 3.12.7, libSystem 1345.120.2; default `-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2`, `_POSIX_C_SOURCE=200809L`; completed 2026-09-26 04:14:09 UTC | `make -j2 test test-pty test-harness` passed: 60 portability, 1 prompt fault, 13 job PTY, 27 runtime PTY, 1,318 runtime and 64 harness cases, plus module/fault/watchdog checks, with zero failures/skips. The later comment/case-label correction was separately rerun with `make test-portability` (60/0/0). Binary SHA-256: `3cf3574d90ef47163baf4816f4ed8d9fcf37f19dc803c8fb0257406777303beb`; generated runtime-suite SHA-256: `449697c183d703ae1af843991ed4a2b7bba9965b8c526b148dbc52e8b6a4d654`. |
+| Clean temporary copy of the same source, native toolchain above, `-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer`, matching linker flags; `ASAN_OPTIONS=halt_on_error=1`, `UBSAN_OPTIONS=halt_on_error=1`, `MallocNanoZone=0`; completed 2026-09-26 04:21:26 UTC | Full `make -j2 test test-pty` passed, including all new regressions, 60 portability, 13 job PTY, 27 runtime PTY and 1,318 runtime cases, with zero failures/skips. Sanitized binary SHA-256: `532a15d114581cbd8194b424edc071eff5582eeb39e043278e3d457e4fc7c20f`. |
+| Docker Desktop 24.0.6; Linux 6.4.16-linuxkit aarch64; Debian 12.15, GCC 12.2.0 (`12.2.0-14+deb12u1`), glibc 2.36 (`2.36-9+deb12u14`), Python 3.11.2; image `sha256:7c91c4bbfb207a95e6d5aa5f3043f87916663a27c9cee56283c4b1bad4fc7701`; completed 2026-09-26 04:15:54 UTC | `make docker-test DOCKER_IMAGE=cshell-test:csh037-followup`, `make docker-test-pty` with the same image argument, and in-image `make test-harness` passed with the same normal case counts and zero failures/skips. Focused Linux prompt sanitizer/stress observations are separated in CSH-044. Hosted Linux sanitizer validation also passed in the run below. |
+
+The standard runner keeps its existing per-case time/output/resource bounds,
+exact streams/status/PTY state and cleanup checks. No test was waived or
+converted to a skip. Reference versions and observations from the first audit
+remain historical observations; this follow-up makes no additional reference
+or complete standard-conformance claim. The source/Makefile still contain no
+legacy runtime, Flex dependency, alternate public shell or fallback.
+
+[Hosted run 36217674357](https://github.com/melliott18/cshell/actions/runs/36217674357)
+passed all three jobs from clean checkouts of `41c2eb6`: native Ubuntu
+24.04/GCC, native macOS 15/Clang, and Docker Linux, each including its full
+ASan/UBSan stage. The run logs retain the runner image identities and exact
+commands. The formerly failing prompt and jobs API paths passed without skips
+or relaxed PTY expectations.
+
+All audit acceptance criteria now have recorded evidence or explicit open
+limitation owners. CSH-037, CSH-044 and CSH-045 are **review**, pending integration;
+no ticket is marked done before merge. CSH-042/043 and CSH-046–CSH-052 remain
+open. Completing this audit records an outcome and does not establish POSIX
+conformance or complete CSH-012's separate milestone review.
