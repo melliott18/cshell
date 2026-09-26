@@ -40,7 +40,8 @@ int main(int argc, char **argv)
         if (child == 0) {
             close(ready[0]);
             execvp(argv[2], argv + 2);
-            (void)write(ready[1], "x", 1);
+            do { count = write(ready[1], "x", 1); } while (count < 0 && errno == EINTR);
+            if (count != 1) _exit(126);
             _exit(127);
         }
         close(ready[1]);
