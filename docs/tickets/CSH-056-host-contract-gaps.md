@@ -82,7 +82,7 @@ alternatives, exact conversion overflow/continuation, French numeric/diagnostic
 environments, explicit Apple/GNU echo policy, positive block-node/non-root
 permission witnesses, host error/write/interruption checks and queried limits.
 Each remaining per-utility capability has a source/environment/reason and an
-owner in [CSH-057](CSH-057-host-boundary-capabilities.md) ([#101](https://github.com/melliott18/cshell/issues/101)).
+owner in [CSH-059](CSH-059-host-boundary-capabilities.md) ([#101](https://github.com/melliott18/cshell/issues/101)).
 CSH-012 stays closed; no entire utility page is certified.
 
 The [retained run records](../evidence/csh-056/README.md) contain source/binary

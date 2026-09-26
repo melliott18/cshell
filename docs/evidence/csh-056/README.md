@@ -104,6 +104,6 @@ runs pass; these investigation logs are not final source evidence.
 
 Stock hosts still fail their original strict reproducer. This is expected and
 is not converted to a pass. The qualified profile resolves those five gaps;
-[CSH-057](../../tickets/CSH-057-host-boundary-capabilities.md) retains each
+[CSH-059](../../tickets/CSH-059-host-boundary-capabilities.md) retains each
 remaining capability/limit. No broad utility family or CSH-012 compliance gate
 is promoted.

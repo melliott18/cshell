@@ -186,7 +186,7 @@ def main():
             ('U-037/permission-denial', capabilities['permission_denial'], 'effective UID 0 bypasses mode-bit denial'),
             ('U-037/block-device', capabilities['block_device'], 'no explicit stat-only block-device witness supplied')):
             if not available:
-                limitations.append(dict(condition=condition, reason=reason, owner='CSH-057'))
+                limitations.append(dict(condition=condition, reason=reason, owner='CSH-059'))
         for limitation in limitations:
             print('LIMITATION: ' + json.dumps(limitation), flush=True)
     totals = dict(passed=0, failed=0, gaps=0)

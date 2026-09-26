@@ -22,16 +22,16 @@ platforms in the retained run record.
 | U-034/host-ed | Verified: CSH-056 provisions ed; CSH-052 missing-package record retained |
 | U-035/core-format | Verified: named format/conversion/error witnesses below |
 | U-035/numbered, U-035/b-precision | Verified in the CSH-056 qualified profile; Debian stock-host gap retained |
-| U-035/locale-errors | Verified selected conversion/continuation and French-locale witnesses; broader catalogs/limits CSH-057 |
+| U-035/locale-errors | Verified selected conversion/continuation and French-locale witnesses; broader catalogs/limits CSH-059 |
 | U-036/base-operands | Verified: ordinary operands, newline and literal -- |
 | U-036/selected-policy | Verified for the named C-locale host choices |
-| U-036/host-environment | Verified named Apple/GNU POSIXLY_CORRECT policies and explicit policy selection; arbitrary alternatives CSH-057 |
+| U-036/host-environment | Verified named Apple/GNU POSIXLY_CORRECT policies and explicit policy selection; arbitrary alternatives CSH-059 |
 | U-037/expressions | Verified: named base argument-count/primary/error witnesses |
 | U-037/missing-timestamps | Verified in the CSH-056 qualified profile; macOS stock-host gap retained |
-| U-037/capabilities | Verified positive block-node and non-root denial in dedicated native/Docker runs; extended identities/ACLs CSH-057 |
+| U-037/capabilities | Verified positive block-node and non-root denial in dedicated native/Docker runs; extended identities/ACLs CSH-059 |
 | U-038/base, U-039/base | Verified: no output, required status and unused stdin |
 | U-040/dispatch-defaults | Verified: named argv/input/order/offset/environment/resource cases |
-| U-040/host-boundaries | Selected failures/locales/system limits verified by CSH-056; individual remaining capabilities CSH-057 |
+| U-040/host-boundaries | Selected failures/locales/system limits verified by CSH-056; individual remaining capabilities CSH-059 |
 | U-041/selected-set | Verified: all 15 implemented names and named non-intrinsic controls |
 | U-041/fc | Inapplicable: UP not selected; absent lookup is a profile witness |
 
@@ -144,7 +144,7 @@ unknown escapes, or precision after `%b`'s `\c`. Numbered missing operands allow
 alternatives and need a separate invariant witness, now supplied by CSH-056. **U-035/numbered** and
 **U-035/b-precision** fail on GNU coreutils 9.1; native macOS passes. Locale
 numeric formatting outside C, diagnostic catalogs, and conversion-error
-continuation beyond these cases are now exercised by CSH-056; wider catalogs/limits remain CSH-057.
+continuation beyond these cases are now exercised by CSH-056; wider catalogs/limits remain CSH-059.
 
 <a id="u-036"></a>
 ## U-036: echo
@@ -171,7 +171,7 @@ of e/E/n, defaults to literal backslashes, and `-e`/`-E` select escape processin
 These are host policies, not expansion oracles. XSI escape semantics are
 inapplicable under the selected base profile. `POSIXLY_CORRECT` and arbitrary
 replacement tools can change host behavior and are outside these C-locale
-policy assertions; CSH-056 adds the named POSIXLY_CORRECT policies. Unqualified alternatives remain CSH-057.
+policy assertions; CSH-056 adds the named POSIXLY_CORRECT policies. Unqualified alternatives remain CSH-059.
 
 <a id="u-037"></a>
 ## U-037: test and bracket
@@ -199,7 +199,7 @@ expression operand, not an option marker. Arbitrary >4 argument expressions,
 macOS fails the missing-file timestamp branches: **U-037/missing-timestamps**,
 resolved by the CSH-056 GNU test/bracket selection. CSH-056 adds positive
 block-node predicates and mode-000 denial under recorded non-root identities;
-ACLs and unequal effective/real credentials remain CSH-057.
+ACLs and unequal effective/real credentials remain CSH-059.
 
 <a id="u-038"></a>
 <a id="u-039"></a>
@@ -241,7 +241,7 @@ CPU/output/descriptor limits are test protections, not proposed POSIX maxima.
 builtin syntax rules; those are not overridden with a blanket `--` expectation.
 Echo/test exceptions are tested above, printf's default separately. General
 cross-utility locales, interruption/write failures, and documented host maxima
-are split into CSH-056 passing witnesses and the explicit CSH-057 capability inventory. A selected test for each default is
+are split into CSH-056 passing witnesses and the explicit CSH-059 capability inventory. A selected test for each default is
 not whole-family verification.
 
 <a id="u-041"></a>

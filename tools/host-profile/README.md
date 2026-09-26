@@ -43,7 +43,7 @@ For positive block-device predicates, pass
 Mac with that node. Only `stat` is performed; the device is never opened. The
 Linux evidence uses a disposable block node created inside a container, then
 runs the suite as UID 10001. Missing device access, root-only execution, and
-missing French locales are individually recorded limitations owned by CSH-057;
+missing French locales are individually recorded limitations owned by CSH-059;
 these do not become passes. `--strict-gaps` concerns unmet assertions, not
 universal capability coverage.
 

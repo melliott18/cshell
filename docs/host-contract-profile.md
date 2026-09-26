@@ -25,7 +25,7 @@ invocation modes. `make test-host-profile` enables them and strict-gap handling.
 
 ## Explicit remaining capability limits
 
-[CSH-057](tickets/CSH-057-host-boundary-capabilities.md) owns the conditions
+[CSH-059](tickets/CSH-059-host-boundary-capabilities.md) owns the conditions
 below. They are **unverified**, not known passing or inapplicable. Each utility
 page is reachable from the [POSIX utility index](https://pubs.opengroup.org/onlinepubs/9799919799/idx/utilities.html);
 XCU [§1.4](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap01.html#tag_18_04)
@@ -38,7 +38,7 @@ pathname operands by the recorded filesystem limits. Neither value proves a
 tool's complete maximum accepted input. Exhausting host memory/disk or changing
 global terminal/device state is outside the bounded test environment.
 
-| Scoped utility / source page | Evidence boundary and remaining capability, owned by CSH-057 |
+| Scoped utility / source page | Evidence boundary and remaining capability, owned by CSH-059 |
 | --- | --- |
 | [printf](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/printf.html) | 64-bit numeric saturation, French decimal point and descriptor failure checked; allocation/format-size exhaustion and all other locale catalogs unverified. |
 | [echo](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/echo.html) | Named Apple/GNU environment policies and descriptor failure checked; arbitrary replacement policies and multibyte/large-argv boundaries unverified. |
