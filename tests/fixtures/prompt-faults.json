@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "name": "interrupted prompt output",
+  "kind": "module",
+  "cases": [{
+    "name": "primary and continuation prompts retry EINTR and partial writes",
+    "args": ["-i"],
+    "stdin": "if true\nthen\nprintf 'ok\\n'\nfi\nexit\n",
+    "expect": {
+      "stdout": "ok\n",
+      "stderr": "$ > > > $ ",
+      "status": 0
+    }
+  }]
+}

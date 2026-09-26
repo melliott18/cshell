@@ -2,6 +2,7 @@
 #include "cshell/execute.h"
 #include "cshell/parser.h"
 #include "cshell/jobs.h"
+#include "cshell/output.h"
 #include "cshell/traps.h"
 #include <errno.h>
 #include <locale.h>
@@ -68,10 +69,9 @@ static void prompt(void *context, int continuation)
     csh_jobs_poll(prompt_data->jobs);
     csh_jobs_notify(prompt_data->jobs);
     const char *text = csh_invocation_prompt(invocation, continuation, "$ ", "> ");
-    if (text != NULL) {
-        fputs(text, stderr);
-        fflush(stderr);
-    }
+    /* SIGCHLD from bg can interrupt even this short terminal write. Retry
+     * interrupted/partial output before entering the next input wait. */
+    if (text != NULL) (void)csh_write_text(STDERR_FILENO, text);
 }
 
 static int ignore_eof(void *user)

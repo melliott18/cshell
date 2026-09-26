@@ -33,6 +33,24 @@ def cases(helper):
         {"expect": label + "\n"}, {"foreground": "other"}, {"control": "C"},
         {"expect": "$ "}, {"foreground": "leader"}, {"send": "exit\n"}],
         f"$ ready\n[1]+ Stopped {label}\n$ [1]+ Stopped {label}\n$ [1]+ Running {label}\n$ {label}\n$ ", 128 + signal.SIGINT)
+    # Repeat real resume notifications without sleeps or relaxed transcripts.
+    # Finish each job with Ctrl-C: another immediate Ctrl-Z after fg's display
+    # could precede its SIGCONT and would create a race in the fixture itself.
+    steps = [{"expect": "$ "}]
+    output = "$ "
+    for cycle in range(32):
+        stopped = f"[{cycle + 1}]+ Stopped {label}\n$ "
+        resumed = f"[{cycle + 1}]+ Running {label}\n$ "
+        steps.extend([
+            {"send": label + "\n"}, {"expect": "ready\n"},
+            {"control": "Z"}, {"expect": stopped},
+            {"foreground": "leader"}, {"send": "bg\n"}, {"expect": resumed},
+            {"foreground": "leader"}, {"send": "fg\n"}, {"expect": label + "\n"},
+            {"foreground": "other"}, {"control": "C"}, {"expect": "$ "}])
+        output += "ready\n" + stopped + resumed + label + "\n$ "
+    steps.extend([{"foreground": "leader"}, {"send": "exit\n"}])
+    terminal("repeated background resumes preserve prompt and terminal", steps,
+             output, 128 + signal.SIGINT)
     label = f"{helper} producer | {helper} pipeline"
     terminal("pipeline stop resume group and wait", [
         {"expect": "$ "}, {"send": label + "\n"}, {"expect": "pipeline-ready\n"},

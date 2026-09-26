@@ -298,7 +298,7 @@ test-builtins: build/tests/builtin_fixture build/tests/execute_fixture
 	./build/tests/builtin_fixture
 	$(PYTHON) tests/builtins.py build/tests/execute_fixture
 
-test: test-control test-jobs test-traps test-substitution test-builtins test-portability $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline test-context $(TEST_SUITE)
+test: test-control test-jobs test-traps test-substitution test-builtins test-portability test-prompt $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline test-context $(TEST_SUITE)
 	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
 
@@ -354,6 +354,18 @@ test-jobs-pty: cshell build/tests/jobs-pty.json build/tests/execute_faults
 build/tests/jobs_fixture: tests/jobs_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(EXECUTE_OBJECTS) $(LDLIBS)
+
+build/tests/prompt-fault-main.o: src/main.c tests/prompt_faults.h $(EXECUTE_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/prompt_faults.h -c $< -o $@
+
+build/tests/prompt_faults: tests/prompt_faults.c tests/prompt_faults.h build/tests/prompt-fault-main.o $(EXECUTE_OBJECTS) build/invocation.o
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/prompt_faults.c build/tests/prompt-fault-main.o $(EXECUTE_OBJECTS) build/invocation.o $(LDLIBS)
+
+.PHONY: test-prompt
+test-prompt: build/tests/prompt_faults
+	$(PYTHON) tests/smoke.py ./build/tests/prompt_faults --suite tests/fixtures/prompt-faults.json
 
 .PHONY: test-jobs
 test-jobs: cshell build/tests/jobs_fixture build/tests/execute_faults
