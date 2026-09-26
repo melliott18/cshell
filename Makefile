@@ -390,8 +390,8 @@ build/tests/wait-jobs.o: src/jobs.c $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -Dsigsuspend=csh_wait_sigsuspend -c $< -o $@
 
-build/tests/wait_handshake: tests/wait_handshake.c build/main.o build/invocation.o build/tests/wait-jobs.o $(EXECUTE_OBJECTS)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/main.o build/invocation.o build/tests/wait-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) $(LDLIBS)
+build/tests/wait_handshake: tests/wait_handshake.c build/main.o build/invocation.o build/tests/wait-jobs.o $(EXECUTE_OBJECTS) build/character.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/main.o build/invocation.o build/tests/wait-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o $(LDLIBS)
 
 test-traps: cshell build/tests/execute_helper build/tests/wait_handshake
 	$(PYTHON) tests/traps.py ./cshell
