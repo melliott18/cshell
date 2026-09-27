@@ -1,0 +1,81 @@
+{
+  "recorded_utc": "2026-09-27T09:52:18.278569+00:00",
+  "source_revision": "adb9e5c103f7183836eb5f8f19ba180b134a004a",
+  "source_note": "Source digest covers Makefile, Dockerfile, src, include, tests and tools, excluding Python caches. Subsequent evidence documentation is outside that digest.",
+  "source_sha256": "d284b8e7eb5c9c08281af0bff25a1cd590ab8d3e32a04f097c4ef688843f06d8",
+  "binary": {
+    "path": "/private/tmp/csh057-sanitizer.shWsbm/cshell",
+    "realpath": "/private/tmp/csh057-sanitizer.shWsbm/cshell",
+    "sha256": "ea6c7d6a405534c72e6059b35d64b48a82099cd355ad96593f709bd16e39f429"
+  },
+  "child_max": 10666,
+  "environment": {
+    "ASAN_OPTIONS": "halt_on_error=1",
+    "UBSAN_OPTIONS": "halt_on_error=1",
+    "MallocNanoZone": "0",
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/Users/mitchell/.local/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Library/TeX/texbin:/Applications/Wireshark.app/Contents/MacOS:/Applications/VMware Fusion Tech Preview.app/Contents/Public:/usr/local/share/dotnet:~/.dotnet/tools:/opt/homebrew/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/mitchell/.codex/tmp/arg0/codex-arg0GHCk9O:/Users/mitchell/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/mitchell/Downloads/google-cloud-sdk/bin:/opt/anaconda3/bin:/opt/anaconda3/condabin:/Users/mitchell/.opam/default/bin:/usr/local/sbin:/opt/homebrew/sbin:/Users/mitchell/.local/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/Users/mitchell/go/bin:/opt/homebrew/opt/go/libexec/bin:/usr/local/opt/mongodb-community@6.0/bin:/Users/mitchell/.config/gcu/scripts:/Users/mitchell/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8"
+  },
+  "git_status": {
+    "note": "exported source snapshot"
+  },
+  "compiler": {
+    "argv": [
+      "cc",
+      "--version"
+    ],
+    "status": 0,
+    "output": "Apple clang version 15.0.0 (clang-1500.3.9.4)\nTarget: arm64-apple-darwin23.6.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
+  },
+  "platform": "macOS-14.8.7-arm64-arm-64bit",
+  "uname": [
+    "Darwin",
+    "Mitchells-MacBook-Pro-2.local",
+    "23.6.0",
+    "Darwin Kernel Version 23.6.0: Tue Apr 21 20:21:28 PDT 2026; root:xnu-10063.141.1.712.16~1/RELEASE_ARM64_T6000",
+    "arm64",
+    "arm"
+  ],
+  "python": "3.12.2 (v3.12.2:6abddd9f6a, Feb  6 2024, 17:02:06) [Clang 13.0.0 (clang-1300.0.29.30)]",
+  "libc": [
+    "",
+    ""
+  ],
+  "flags": {
+    "CPPFLAGS": "-D_POSIX_C_SOURCE=200809L -Iinclude",
+    "CFLAGS": "-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+    "LDFLAGS": "-fsanitize=address,undefined",
+    "LDLIBS": ""
+  },
+  "generated_suites": {
+    "build/tests/control-flow.json": "c09c19adfcf7993e88709095489876c8727db4e05cc42326fca35283fade0479",
+    "build/tests/host-utilities-results.json": "1b56ad7ec6e45a74356e297631fbac974ebbcfa96665cc40ed106dccd0bb35d7",
+    "build/tests/jobs-pty.json": "f8f2f8c1c22b50e1f64e77801e43799546124bb4c4a686984342beda743628a8",
+    "build/tests/runtime-pty.json": "fe5a378e6909866b318ed54d3f40811795315118b4c6565eab4a6d8b9c261e56",
+    "build/tests/runtime.json": "52e9c71db2b9b7fbcf8aa6102a1dbb46b79c4f754a6f4d837276e8d7db492273"
+  },
+  "helpers": {
+    "/bin/cat": "38c19fef3e9b4e6ffeee7fef5ff90119f913720b48f55ae0406b77d2beee1dab",
+    "/usr/bin/cmp": "9a4e2eaeccc87d4fe8f9d436f8d4ac0bb5a3b74b763807328daa729722a1fe03",
+    "/private/tmp/csh057-sanitizer.shWsbm/build/tests/execute_helper": "cb08e1b7ac3951196d4922065dc2cf4dd396e7cd781e91388e7c6e7c888a3e85",
+    "/private/tmp/csh057-sanitizer.shWsbm/build/tests/jobs_helper": "5e3b390f4c18c810c60d554f81d8bf03f7adf0184641d70342338e0ce4786c15",
+    "/private/tmp/csh057-sanitizer.shWsbm/build/tests/jobs_lifecycle": "f76b1e857db0248576befe95a6b0c4b0ba2ed456c195c018aea9dc4423f0daf3"
+  },
+  "os_build": {
+    "argv": [
+      "sw_vers"
+    ],
+    "status": 0,
+    "output": "ProductName:\t\tmacOS\nProductVersion:\t\t14.8.7\nBuildVersion:\t\t23J520"
+  },
+  "system_library": {
+    "argv": [
+      "ls",
+      "-l",
+      "/usr/lib/libSystem.B.dylib"
+    ],
+    "status": 1,
+    "output": "ls: /usr/lib/libSystem.B.dylib: No such file or directory"
+  }
+}

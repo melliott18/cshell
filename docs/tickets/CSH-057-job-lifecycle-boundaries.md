@@ -1,11 +1,11 @@
 # CSH-057: Verify remaining job lifecycle boundaries
 
-- Status: ready
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-034, CSH-035
-- Branch: Assigned when work starts
+- Branch: test/CSH-057-job-lifecycle-boundaries
 - Issue: [#99](https://github.com/melliott18/cshell/issues/99)
 
 ## Goal
@@ -19,22 +19,22 @@ selected wait witnesses as full jobs verification. Owns residual
 
 ## Scope and acceptance criteria
 
-- [ ] Exercise CHILD_MAX retained statuses and permitted eviction with saved and
+- [x] Exercise CHILD_MAX retained statuses and permitted eviction with saved and
   unsaved IDs, bounded sequential children, and explicit capacity assertions.
-- [ ] Show that successful `fg` consumes a known ID, while interrupted/stopped
+- [x] Show that successful `fg` consumes a known ID, while interrupted/stopped
   jobs retain the appropriate identity and result.
-- [ ] Start a controlling-session leader when another group initially owns its
+- [x] Start a controlling-session leader when another group initially owns its
   terminal; assert the standard's required ownership transition without an
   orphaned-group stop loop. Existing nested nonleader tests do not cover this.
-- [ ] Assert background pipeline and compound group membership. Classify
+- [x] Assert background pipeline and compound group membership. Classify
   suspended compound membership's permitted/unspecified portions separately.
-- [ ] Stop/resume a compound job and prove completed commands are not replayed.
-- [ ] Deliver SIGSTOP during a shell builtin, then CONT; verify continued
+- [x] Stop/resume a compound job and prove completed commands are not replayed.
+- [x] Deliver SIGSTOP during a shell builtin, then CONT; verify continued
   execution, process groups, terminal settings, and bounded teardown.
-- [ ] Assert notification timing during foreground execution with notify on/off,
+- [x] Assert notification timing during foreground execution with notify on/off,
   all applicable stop-signal variants, `jobs` formats, and completed/signal
   notification bytes. Existing idle notification witnesses are insufficient.
-- [ ] Update the forward/reverse requirement links and exact assertion map;
+- [x] Update the forward/reverse requirement links and exact assertion map;
   repair any demonstrated defects or name narrower owning tickets.
 
 ## Validation
@@ -44,3 +44,32 @@ macOS, Linux Docker, ASan/UBSan, `make test-jobs test-jobs-pty test-harness`, an
 the full suites. Use readiness/terminal predicates, never sleeps as proof of
 state. Retain every failing run and every capability skip with an owner.
 Full UP/XSI and genuinely unspecified outcomes stay separately classified.
+
+## Implementation and disposition
+
+Implemented on `test/CSH-057-job-lifecycle-boundaries`. Runtime/test commit
+`ce76d1c` repairs foreground/capacity eviction, retention alongside old live jobs,
+session-leader terminal startup, foreground notify delivery, POSIX-locale job
+output, and suspension propagation through foreground compounds. `3045124`
+corrects the retention fixture's already-reaped-child observation. `adb9e5c`
+corrects the new fixture's borrowed-state teardown, found by LeakSanitizer.
+
+The [exact assertion map](../jobs-signals-evidence.md#csh-057) distinguishes the
+controlled CHILD_MAX API fixture (32 and fallback 256) from public PTY witnesses.
+It records every acceptance condition, all four stop signals, intact
+background-first compounds, and the permitted/unspecified policy for originally
+foreground compounds. Full UP/XSI remains unselected and parent requirements
+remain implemented subsets. CSH-058 retains the separate signal edge inventory.
+
+## Validation record
+
+[Retained logs, identities, failed-before observations and final results](../evidence/csh-057/README.md)
+include the production defects, two diagnosed fixture races and a fixture state leak, loaded macOS
+transport failures, final native/Docker suites and ASan/UBSan. The source digest
+is shared across platforms; later evidence/documentation commits do not change
+runtime/test inputs. No CSH-057 capability skips are converted into passes.
+
+The Linux sanitizer batch sweep retains four five-second control-flow timeouts;
+the exact cases pass three serial reruns with unchanged limits. The record does
+not claim a clean full Linux sanitizer invocation. Native and Docker normal
+full suites, native full sanitizer, and all CSH-057 sanitizer checks pass.

@@ -1,0 +1,21 @@
+{
+  "source_revision": "adb9e5c103f7183836eb5f8f19ba180b134a004a",
+  "original_make_container_exit_status": 143,
+  "original_make_disposition": "Intentionally stopped after all prerequisites and PTY suites passed and complete runtime batches plus serial timeout rechecks finished. The original runtime recipe was incomplete.",
+  "batch_exit_statuses": [
+    1,
+    1,
+    1,
+    1
+  ],
+  "runtime_passed": 3109,
+  "runtime_timed_out": 4,
+  "runtime_skipped": 0,
+  "serial_exact_failed_cases_per_round": 4,
+  "serial_rounds": 3,
+  "serial_exit_status": 0,
+  "serial_timeout_seconds": 5,
+  "sanitizer_diagnostics_in_corrected_runs": false,
+  "clean_full_linux_sanitizer_invocation": false,
+  "cause_of_batch_timeouts": "Not established. Host/load inference; retained CSH-040/054 transport boundary."
+}
