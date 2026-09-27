@@ -5,8 +5,9 @@ case family, normative source, policy and limitation. Production changes and
 the original matrix are commit `74bcc04e67a6b42503b86d52828a00aae903c50b`, based
 on `a26053cd404ef18f8d2013eab5e5eab818aa26f0`. Commit `0dbf8d6` changes only
 fixture watchdog/environment handling, CI budgets/settings, and documentation.
-The final focused runs exercise those fixture changes; the earlier full runs
-exercise identical production code. Neither revision claims POSIX conformance.
+The native/Docker final-fixture runs and Docker sanitizer run exercise those
+fixture changes. The earlier full runs and native sanitizer run exercise the
+original matrix against identical production code. Neither revision claims POSIX conformance.
 
 ## Reproduced defects
 
@@ -38,7 +39,7 @@ without replacing user trap handlers.
 | `docker-final.log.gz` | In the retained full-run image, `make -j2 test test-pty && make test-harness`: pass; 3,113 runtime cases, 2,495 new edges, same PTY/harness counts. |
 | `native-fixture-final.log.gz` | Final fixture revision: `make -j4 test-signal-edges`: pass, 2,464 cases. |
 | `docker-fixture-final.log.gz` | Final fixture revision, Docker root: `make -j2 test-signal-edges`: pass, 2,495 cases. |
-| `sanitizer-final.log.gz` | Native instrumented source copy: `make -j2 test-traps test-jobs test-jobs-pty test-control`: running; no completed native sanitizer pass claimed yet. |
+| `sanitizer-final.log.gz` | Native instrumented source copy at `74bcc04`: `make -j2 test-traps test-jobs test-jobs-pty test-control`: pass: 2,464 edges, 361 legacy signal cases, 20 entry-ignore checks, six interposed waits, jobs/control/API/fault and 17+1 PTY checks; no sanitizer diagnostics. |
 | `docker-sanitizer-final.log.gz` | Final fixture revision, Docker root, ASan/UBSan: `make -j2 test-signal-edges`: pass, 2,495 cases, no sanitizer diagnostics. |
 
 Native is macOS 14.8.7 (23J520), arm64, Apple Clang 15.0.0, Python 3.12.2.
@@ -56,7 +57,9 @@ existing owners; they are not new signal failures.
 ## Bounds and interpretation
 
 Each signal case has a five-second outer deadline. The helper's internal
-watchdog is four seconds and is cancelled before launching the public runtime.
+watchdog is four seconds. The final fixture revision cancels it before launching
+the public runtime; revision 74bcc04 retained it, as the earlier-failure section
+explains.
 All cases run in owned sessions; PTYs use the existing bounded session cleanup.
 The stop-delivery probe's child has a separate process group with a living
 parent in the same session, so default terminal stops cannot be mistaken for
@@ -97,9 +100,8 @@ within the separate second. The initial native sanitizer portability phase
 subsequently passed all 2,206 cases with five pre-existing capability groups skipped.
 These observations do not identify a new shell semantic defect. Final native and
 Docker full runs pass their original limits; the focused native sanitizer run
-rechecks jobs, control and signal/terminal behavior. No timeout was enlarged to
-turn an individual failure into success, and arbitrary-load reliability is not
-claimed.
+rechecks jobs, control and signal/terminal behavior. No outer case or cleanup deadline was enlarged; the launcher-watchdog
+correction is described below. Arbitrary-load reliability is not claimed.
 
 `docker-sanitizer.log.gz` is the initial leak-enabled instrumented attempt. Its
 launcher alarm propagated through exec and terminated the shell after four

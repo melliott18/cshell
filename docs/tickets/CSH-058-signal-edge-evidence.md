@@ -49,6 +49,8 @@ unselected. Capability skips leave these obligations open.
 
 ## Implementation and validation record
 
+Review: [PR #108](https://github.com/melliott18/cshell/pull/108).
+
 Production/test commit `74bcc04` adds the full disposition/delivery matrix and
 fixes four defects reproduced on macOS and Linux: inherited ignored trap reset
 baselines, ignored CHLD child collection in substitutions, monitored background
@@ -60,7 +62,9 @@ The [exact assertion map](../jobs-signals-evidence.md#csh-058) links SIG-001/002
 and U-015/026/032 in both directions. [Retained evidence](../evidence/csh-058/README.md)
 includes four failing-before probes on both hosts, source/binary identities,
 full native/Docker passes (3,113 runtime cases and 71 harness tests), final
-2,464 macOS / 2,495 Linux edge cases, and sanitizer records. The map separates
+2,464 macOS / 2,495 Linux edge cases, and passing ASan/UBSan records on
+both platforms. Native sanitizer jobs/control/PTY and legacy trap checks also
+pass. The map separates
 API handler queries from exec delivery, monitored/unmonitored backgrounds,
 standalone-trap listing, public wait observation, real group delivery and
 controlled EPERM interposition. Numeric conditions remain extensions; KILL/STOP
