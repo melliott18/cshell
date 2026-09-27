@@ -109,6 +109,9 @@ def main():
     with tempfile.TemporaryDirectory(prefix='cshell-signal-edges-') as temp:
         directory = Path(temp)
         env = dict(PATH=os.defpath, HOME=temp, TMPDIR=temp, LANG='C', LC_ALL='C')
+        for option in ('ASAN_OPTIONS', 'UBSAN_OPTIONS', 'MallocNanoZone'):
+            if option in os.environ:
+                env[option] = os.environ[option]
 
         def run(label, args, stdout=b'', stderr=b'', status=0):
             nonlocal count

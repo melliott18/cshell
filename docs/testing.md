@@ -1084,3 +1084,12 @@ an elapsed delay never counts as a blocked-wait observation. Unsupported or
 unobservable hosts fail the evidence check instead of silently passing.
 See the [assertion map](jobs-signals-evidence.md#csh-058) and
 [run record](evidence/csh-058/README.md) for scope and platform identities.
+
+For this fork-heavy matrix, run address/undefined-behavior instrumentation with
+`ASAN_OPTIONS=halt_on_error=1:detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1`.
+The signal driver forwards these options (and MallocNanoZone) into its controlled
+environment. This is ASan/UBSan evidence, not LeakSanitizer evidence; leak scanning
+at every helper/shell exit can dominate the per-case deadline in Linux containers.
+CI uses the same explicit setting and budgets 45 minutes for native jobs and
+30 for Docker, retaining the five-second signal-case bounds. The launch helper
+cancels its own watchdog before exec; it does not add a pending ALRM to cshell.

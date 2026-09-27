@@ -200,6 +200,9 @@ int main(int argc, char **argv)
     } else if (!strcmp(argv[1], "launch")) {
         assert(argc == 7);
         disposition(atoi(argv[2]), atoi(argv[3]) ? SIG_IGN : SIG_DFL);
+        /* The public executable has the runner's five-second deadline. Do
+         * not inject the helper watchdog into its initial signal state. */
+        alarm(0);
         execl(argv[4], argv[4], argv[5], argv[6], (char *)NULL);
         return 99;
     } else if (!strcmp(argv[1], "probe")) {
