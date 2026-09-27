@@ -1,0 +1,20 @@
+{
+  "full_run": {
+    "Id": "sha256:1ef691f94436f025794e740522384a6fefb734e27458c74c7e6dd8ca552101d5",
+    "Created": "2026-09-27T09:21:50.292655176Z",
+    "Architecture": "arm64",
+    "Os": "linux"
+  },
+  "final_fixture": {
+    "Id": "sha256:91b04227085b7820aa717b2163c65fb482797f9a69d0192c35e7c079000dda93",
+    "Created": "2026-09-27T09:28:25.08321222Z",
+    "Architecture": "arm64",
+    "Os": "linux"
+  },
+  "baseline": {
+    "Id": "sha256:6f1ba816384fe9c8704e05b0f63314ea999d6dbac7625259e5dc079e93d037ef",
+    "Created": "2026-09-27T09:24:49.385004092Z",
+    "Architecture": "arm64",
+    "Os": "linux"
+  }
+}
