@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "name": "job-retention",
+  "kind": "module",
+  "cases": [
+    {
+      "name": "CSH-057 bounded CHILD_MAX retention and eviction",
+      "stdin": "",
+      "timeout": 60,
+      "expect": {
+        "stdout": "CHILD_MAX=32 and fallback=256: capacity, saved/unsaved IDs, foreground preservation, oldest eviction passed\n",
+        "stderr": "",
+        "status": 0
+      }
+    }
+  ]
+}

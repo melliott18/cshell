@@ -1,0 +1,291 @@
+/* CSH-057: EXEC-009, JOB-003, U-032. Production jobs.c with only its
+ * sysconf call interposed: exhaust a known, bounded CHILD_MAX with real,
+ * sequential children, independent of host limits of millions of processes. */
+#include "cshell/jobs.h"
+#include "cshell/parser.h"
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+#include <assert.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/wait.h>
+#include <time.h>
+#include <unistd.h>
+
+/* Preserve assertion diagnostics while the test captures stdout/stderr. */
+static int diagnostic_fd = STDERR_FILENO;
+#undef assert
+#define assert(test) do { if (!(test)) { \
+    dprintf(diagnostic_fd, "lifecycle assertion at line %d: %s (errno=%d)\n", \
+        __LINE__, #test, errno); abort(); } } while (0)
+
+static long capacity = 32;
+static int queries;
+long csh_lifecycle_sysconf(int name)
+{
+    assert(name == _SC_CHILD_MAX);
+    ++queries;
+    return capacity;
+}
+static struct csh_execution run(struct csh_execution_context *ctx, const char *s)
+{
+    struct csh_input *in = NULL;
+    struct csh_parser *parser = NULL;
+    struct csh_ast *tree = NULL;
+    struct csh_error error;
+    struct csh_execution result;
+    assert(csh_input_from_string(&in, s, "lifecycle", &error) == 0);
+    assert(csh_parser_create(&parser, in, &error) == 0);
+    assert(csh_parser_next(parser, &tree, &error) == CSH_PARSE_TREE);
+    assert(csh_execute_context_ast(ctx, tree, &result, &error) == 0);
+    csh_ast_destroy(tree); csh_parser_destroy(parser); csh_input_destroy(in);
+    return result;
+}
+static void retention(void)
+{
+    for (int fallback = 0; fallback < 2; ++fallback) {
+        struct csh_invocation inv = {0};
+        struct csh_execution_context ctx = {0};
+        struct csh_state_info info;
+        pid_t ids[257];
+        char script[256];
+        int n = fallback ? 256 : 32;
+        capacity = fallback ? -1 : n;
+        inv.arg0 = "retention";
+        assert(csh_state_create(&ctx.state, &inv, NULL) == CSH_STATE_OK);
+        assert(csh_jobs_create(&ctx.jobs, ctx.state, -1) == 0);
+        assert(queries == fallback + 1);
+        for (int round = 0; round < 2; ++round) {
+            /* Alternate saved $! and IDs read by the observer only. cshell
+             * creates optional unmonitored jobs, so unsaved IDs also stay
+             * known until reporting, wait, or capacity permits eviction. */
+            for (int i = 0; i < n; ++i) {
+                alarm(5);
+                snprintf(script, sizeof(script), "exit %d & %s\n", i % 100 + 1,
+                    i % 2 ? ":" : "saved=$!");
+                assert(run(&ctx, script).status == 0);
+                csh_state_get_info(ctx.state, &info);
+                ids[i] = info.background_pid;
+                assert(csh_jobs_reap(ctx.jobs, 1) == 0);
+            }
+            /* Foreground utility registration must not evict a known ID. */
+            assert(run(&ctx, "/usr/bin/true\n").status == 0);
+            if (round) {
+                assert(run(&ctx, "exit 117 & saved=$!\n").status == 0);
+                csh_state_get_info(ctx.state, &info); ids[n] = info.background_pid;
+                assert(csh_jobs_reap(ctx.jobs, 1) == 0);
+                snprintf(script, sizeof(script), "wait %ld 2>/dev/null\n", (long)ids[0]);
+                assert(run(&ctx, script).status == 127); /* selected oldest eviction */
+            }
+            for (int i = round; i < n + round; ++i) {
+                snprintf(script, sizeof(script), "wait %ld\n", (long)ids[i]);
+                assert(run(&ctx, script).status == (i == n ? 117 : i % 100 + 1));
+            }
+            assert(run(&ctx, "wait\n").status == 0);
+        }
+        csh_execution_context_destroy(&ctx); csh_state_destroy(ctx.state);
+    }
+    puts("CHILD_MAX=32 and fallback=256: capacity, saved/unsaved IDs, foreground preservation, oldest eviction passed");
+}
+static void live_retention(void)
+{
+    struct csh_invocation inv = {0};
+    struct csh_execution_context ctx = {0};
+    struct csh_job *live[2];
+    struct csh_state_info info;
+    pid_t ids[33];
+    char script[80];
+    siginfo_t event;
+    inv.arg0 = "live-retention"; capacity = 32;
+    assert(csh_state_create(&ctx.state, &inv, NULL) == CSH_STATE_OK);
+    assert(csh_jobs_create(&ctx.jobs, ctx.state, -1) == 0);
+    for (int i = 0; i < 2; ++i) {
+        live[i] = csh_jobs_add(ctx.jobs, 1, "live", 1, 0); assert(live[i]);
+        live[i]->processes[0].pid = fork(); assert(live[i]->processes[0].pid >= 0);
+        if (!live[i]->processes[0].pid) {
+            if (i) raise(SIGSTOP);
+            for (;;) pause();
+        }
+        live[i]->pgid = live[i]->processes[0].pid;
+    }
+    while (waitid(P_PID, (id_t)live[1]->pgid, &event, WSTOPPED | WNOWAIT) < 0)
+        assert(errno == EINTR);
+    assert(csh_jobs_poll(ctx.jobs) == 0 && live[1]->processes[0].stopped);
+    for (int i = 0; i < 33; ++i) {
+        alarm(5);
+        assert(run(&ctx, "exit 23 & saved=$!\n").status == 0);
+        csh_state_get_info(ctx.state, &info); ids[i] = info.background_pid;
+        while (waitid(P_PID, (id_t)ids[i], &event, WEXITED | WNOWAIT) < 0)
+            assert(errno == EINTR);
+        assert(csh_jobs_poll(ctx.jobs) == 0);
+    }
+    for (int i = 1; i < 33; ++i) {
+        snprintf(script, sizeof(script), "wait %ld\n", (long)ids[i]);
+        assert(run(&ctx, script).status == 23);
+    }
+    snprintf(script, sizeof(script), "wait %ld 2>/dev/null\n", (long)ids[0]);
+    assert(run(&ctx, script).status == 127);
+    /* These borrowed records must survive eviction. Cancel reaps both. */
+    assert(kill(live[0]->pgid, 0) == 0 && kill(live[1]->pgid, 0) == 0);
+    assert(live[1]->processes[0].stopped);
+    csh_jobs_cancel(ctx.jobs, live[0]); csh_jobs_cancel(ctx.jobs, live[1]);
+    csh_execution_context_destroy(&ctx); csh_state_destroy(ctx.state);
+}
+static void formats(void)
+{
+    struct csh_invocation inv = {0};
+    struct csh_execution_context ctx = {0};
+    struct csh_job *job;
+    int output[2], saved;
+    char actual[512], expected[512], script[80];
+    inv.arg0 = "formats";
+    assert(csh_state_create(&ctx.state, &inv, NULL) == CSH_STATE_OK);
+    assert(csh_jobs_create(&ctx.jobs, ctx.state, -1) == 0);
+    /* Real two-stage pipeline, held until all three formats are asserted. */
+    job = csh_jobs_add(ctx.jobs, 2, "pipeline", 1, 0); assert(job);
+    for (size_t i = 0; i < 2; ++i) {
+        job->processes[i].pid = fork(); assert(job->processes[i].pid >= 0);
+        if (!job->processes[i].pid) for (;;) pause();
+    }
+    job->pgid = job->processes[0].pid;
+    for (int grouped = 0; grouped < 2; ++grouped) {
+      job->grouped = grouped;
+      pid_t displayed = job->processes[grouped ? 0 : 1].pid;
+      pid_t additional = job->processes[grouped ? 1 : 0].pid;
+      for (int mode = 0; mode < 3; ++mode) {
+        assert(pipe(output) == 0); saved = dup(STDOUT_FILENO); assert(saved >= 0);
+        assert(dup2(output[1], STDOUT_FILENO) == STDOUT_FILENO); close(output[1]);
+        snprintf(script, sizeof(script), "jobs %s %%1\n", mode == 1 ? "-l" : mode == 2 ? "-p" : "");
+        assert(run(&ctx, script).status == 0);
+        assert(dup2(saved, STDOUT_FILENO) == STDOUT_FILENO); close(saved);
+        if (mode == 0) snprintf(expected, sizeof(expected), "[1] + Running pipeline\n");
+        else if (mode == 1) snprintf(expected, sizeof(expected), "[1] + %ld Running pipeline\n%ld pipeline\n",
+            (long)displayed, (long)additional);
+        else snprintf(expected, sizeof(expected), "%ld\n", (long)displayed);
+        ssize_t length = read(output[0], actual, sizeof(actual));
+        assert(length == (ssize_t)strlen(expected) && !memcmp(actual, expected, (size_t)length));
+        close(output[0]);
+      }
+    }
+    job->grouped = 0; /* The formatting fixture's children share our group. */
+    csh_jobs_cancel(ctx.jobs, job);
+    csh_execution_context_destroy(&ctx); csh_state_destroy(ctx.state);
+}
+static void notification(int notify, int outcome)
+{
+    struct csh_invocation inv = {0};
+    struct csh_execution_context ctx = {0};
+    struct csh_job *bg, *fg;
+    int messages[2], release[2], launch[2], saved, status;
+    char expected[128];
+    inv.arg0 = "notifications"; inv.options = CSH_OPT_INTERACTIVE;
+    assert(csh_state_create(&ctx.state, &inv, NULL) == CSH_STATE_OK);
+    assert(csh_jobs_create(&ctx.jobs, ctx.state, STDIN_FILENO) == 0);
+    assert(csh_jobs_monitor(ctx.jobs));
+    if (notify) csh_state_update_options(ctx.state, CSH_OPT_NOTIFY, 0);
+    assert(pipe(messages) == 0 && pipe(release) == 0 && pipe(launch) == 0);
+    saved = dup(STDERR_FILENO); assert(saved >= 0);
+    assert(dup2(messages[1], STDERR_FILENO) == STDERR_FILENO); close(messages[1]);
+    bg = csh_jobs_add(ctx.jobs, 1, "background", 1, 0); assert(bg);
+    bg->processes[0].pid = fork(); assert(bg->processes[0].pid >= 0);
+    if (!bg->processes[0].pid) {
+        char byte;
+        signal(SIGTERM, SIG_DFL);
+        signal(SIGTSTP, SIG_DFL); signal(SIGTTIN, SIG_DFL); signal(SIGTTOU, SIG_DFL);
+        assert(read(release[0], &byte, 1) == 1);
+        if (outcome < 0) raise(SIGTERM);
+        if (outcome >= 128) { raise(outcome - 128); _exit(0); }
+        _exit(outcome);
+    }
+    bg->pgid = bg->processes[0].pid;
+    assert(setpgid(bg->pgid, bg->pgid) == 0);
+    if (outcome >= 128) {
+        siginfo_t stopped;
+        assert(write(release[1], "x", 1) == 1);
+        /* Observe the kernel stop without consuming jobs.c's wait status. */
+        while (waitid(P_PID, (id_t)bg->pgid, &stopped, WSTOPPED | WNOWAIT) < 0)
+            assert(errno == EINTR);
+        assert(stopped.si_code == CLD_STOPPED && stopped.si_status == outcome - 128);
+        if (outcome == 128 + SIGTSTP)
+            snprintf(expected, sizeof(expected), "[1] + Stopped background\n");
+        else snprintf(expected, sizeof(expected), "[1] + Stopped (SIG%s) background\n",
+            csh_jobs_signal_name(outcome - 128));
+    } else snprintf(expected, sizeof(expected), "[1]   %s background\n",
+        outcome < 0 ? "Terminated (SIGTERM)" : outcome ? "Done(17)" : "Done");
+    fg = csh_jobs_add(ctx.jobs, 1, "foreground", 0, 0); assert(fg);
+    fg->processes[0].pid = fork(); assert(fg->processes[0].pid >= 0);
+    if (!fg->processes[0].pid) {
+        char output[128], ready;
+        struct timespec tick = {0, 1000000};
+        alarm(5);
+        /* Match production's launch barrier: the foreground child cannot
+         * exit before its parent assigns the group and transfers the tty. */
+        assert(read(launch[0], &ready, 1) == 1);
+        if (outcome < 128) assert(write(release[1], "x", 1) == 1);
+        /* ESRCH is proof that the foreground wait reaped the background
+         * child. Polling delay throttles the predicate, never proves it. */
+        if (outcome < 128) {
+            while (kill(bg->pgid, 0) == 0) nanosleep(&tick, NULL);
+            assert(errno == ESRCH);
+        }
+        if (notify) {
+            size_t offset = 0, length = strlen(expected);
+            while (offset < length) {
+                ssize_t count = read(messages[0], output + offset, length - offset);
+                if (count < 0 && errno == EINTR) continue;
+                assert(count > 0); offset += (size_t)count;
+            }
+            assert(memcmp(output, expected, length) == 0);
+        } else {
+            assert(fcntl(messages[0], F_SETFL, O_NONBLOCK) == 0);
+            assert(read(messages[0], output, sizeof(output)) == -1 && errno == EAGAIN);
+        }
+        _exit(0);
+    }
+    fg->pgid = fg->processes[0].pid;
+    assert(setpgid(fg->pgid, fg->pgid) == 0);
+    assert(csh_jobs_give_terminal(ctx.jobs, fg, 0) == 0);
+    assert(write(launch[1], "r", 1) == 1);
+    assert(csh_jobs_foreground(ctx.jobs, fg, 0, &status, NULL) == 0 && status == 0);
+    assert(tcgetpgrp(STDIN_FILENO) == getpgrp());
+    if (!notify) {
+        char output[128];
+        csh_jobs_notify(ctx.jobs);
+        ssize_t length = read(messages[0], output, sizeof(output));
+        assert(length == (ssize_t)strlen(expected) && !memcmp(output, expected, (size_t)length));
+    }
+    assert(run(&ctx, "wait %1\n").status == (outcome < 0 ? 128 + SIGTERM : outcome));
+    if (outcome >= 128)
+        assert(run(&ctx, "bg %1 >/dev/null; wait %1\n").status == 0);
+    assert(dup2(saved, STDERR_FILENO) == STDERR_FILENO); close(saved);
+    close(messages[0]); close(release[0]); close(release[1]);
+    close(launch[0]); close(launch[1]);
+    csh_execution_context_destroy(&ctx); csh_state_destroy(ctx.state);
+}
+int main(int argc, char **argv)
+{
+    diagnostic_fd = dup(STDERR_FILENO);
+    assert(diagnostic_fd >= 0);
+    alarm(20);
+    if (argc == 2 && !strcmp(argv[1], "notify")) {
+        const int outcomes[] = {-1, 0, 17, 128 + SIGSTOP, 128 + SIGTSTP,
+            128 + SIGTTIN, 128 + SIGTTOU};
+        for (int notify = 0; notify <= 1; ++notify)
+            for (size_t i = 0; i < sizeof(outcomes) / sizeof(*outcomes); ++i) {
+                alarm(10);
+                notification(notify, outcomes[i]);
+            }
+        puts("foreground notifications: notify off/on, zero/nonzero/signal bytes and retained results passed");
+    } else { retention(); live_retention(); formats(); }
+    /* No forgotten direct children survive either phase. */
+    int status;
+    assert(waitpid(-1, &status, WNOHANG) == -1 && errno == ECHILD);
+    alarm(0);
+    close(diagnostic_fd);
+    return 0;
+}

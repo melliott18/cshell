@@ -179,11 +179,15 @@ int csh_jobs_create(struct csh_jobs **out, struct csh_state *state, int fd)
         }
         ++jobs->installed;
     }
-    /* Do not take a terminal away from another foreground shell. A nested
-     * interactive shell stops its own group until its parent foregrounds it. */
+    /* The controlling session leader must claim its terminal first. Its
+     * orphaned group cannot stop with SIGTTIN. Nested shells instead wait for
+     * the parent to foreground them before changing their process group. */
     if (jobs->interactive && fd >= 0 && isatty(fd)) {
         pid_t foreground;
-        while ((foreground = tcgetpgrp(fd)) >= 0 && foreground != getpgrp()) {
+        if (getsid(0) == getpid() && tcgetpgrp(fd) >= 0)
+            terminal_group(fd, getpgrp());
+        while ((foreground = tcgetpgrp(fd)) >= 0 && foreground != getpgrp() &&
+            getsid(0) != getpid()) {
             struct sigaction action;
             memset(&action, 0, sizeof(action));
             sigemptyset(&action.sa_mask);
@@ -277,11 +281,16 @@ struct csh_job *csh_jobs_add(struct csh_jobs *jobs, size_t count,
 {
     struct csh_job *job;
     if (count == 0 || jobs->next_id == UINT_MAX) { errno = EOVERFLOW; return NULL; }
-    while (jobs->retained >= jobs->retention_limit) {
+    /* A foreground launch does not add a known asynchronous ID, and must
+     * not evict one of the CHILD_MAX retained background results. */
+    while (asynchronous && jobs->retained >= jobs->retention_limit) {
         struct csh_job *oldest = NULL, *candidate;
+        size_t completed = 0;
         for (candidate = jobs->head; candidate != NULL; candidate = candidate->next)
-            if (complete(candidate)) oldest = candidate;
-        if (oldest == NULL) break;
+            if (complete(candidate)) { oldest = candidate; ++completed; }
+        /* Older live/stopped jobs cannot use up slots needed for the most
+         * recent CHILD_MAX results. Keep them in addition to that capacity. */
+        if (completed < jobs->retention_limit) break;
         csh_jobs_remove(jobs, oldest);
     }
     job = calloc(1, sizeof(*job));
@@ -359,7 +368,10 @@ static int wait_job(struct csh_jobs *jobs, struct csh_job *job, int interruptibl
     if (jobs->interactive) sigdelset(&waiting, SIGINT);
     interrupted = 0;
     for (;;) {
+        struct csh_state_info info;
         if (csh_jobs_poll(jobs) == -1) { rc = -1; break; }
+        csh_state_get_info(jobs->state, &info);
+        if (info.options & CSH_OPT_NOTIFY) csh_jobs_notify(jobs);
         if (hung_up) { rc = 128 + hung_up; break; }
         if (interruptible && csh_traps_first_pending()) {
             rc = 128 + csh_traps_first_pending(); break;
@@ -420,9 +432,10 @@ static void promote_job(struct csh_jobs *jobs, struct csh_job *job)
 }
 
 int csh_jobs_foreground(struct csh_jobs *jobs, struct csh_job *job, int resume,
-    int *status)
+    int *status, int *suspended)
 {
     int rc = 0, number = 0;
+    if (suspended) *suspended = 0;
     job->background = 0;
     if (resume) {
         if (csh_jobs_give_terminal(jobs, job, 1) == -1) rc = -1;
@@ -437,7 +450,10 @@ int csh_jobs_foreground(struct csh_jobs *jobs, struct csh_job *job, int resume,
     if (rc == -1) { job->background = 1; errno = number; return -1; }
     *status = rc > 0 ? rc : job_status(job);
     if (complete(job)) csh_jobs_remove(jobs, job);
-    else { job->background = 1; job->changed = 1; promote_job(jobs, job); }
+    else {
+        if (suspended) *suspended = stopped(job);
+        job->background = 1; job->changed = 1; promote_job(jobs, job);
+    }
     return 0;
 }
 
@@ -547,23 +563,49 @@ static char marker(struct csh_jobs *jobs, struct csh_job *job)
 
 static int print_job(struct csh_jobs *jobs, struct csh_job *job, int fd, int format)
 {
-    char completed_status[40];
-    const char *state = stopped(job) ? "Stopped" : "Running";
-    if (complete(job)) {
+    char state_text[64];
+    const char *state = "Running";
+    if (stopped(job)) {
+        int number = job_status(job) - 128;
+        state = "Stopped";
+        if (number != SIGTSTP) {
+            snprintf(state_text, sizeof(state_text), "Stopped (SIG%s)",
+                csh_jobs_signal_name(number));
+            state = state_text;
+        }
+    } else if (complete(job)) {
         int status = job_status(job);
-        if (status == 0) state = "Done";
+        size_t selected = job->count - 1;
+        if (job->pipefail) {
+            for (size_t i = job->count; i > 0; --i) {
+                int candidate = job->processes[i - 1].status;
+                if (!WIFEXITED(candidate) || WEXITSTATUS(candidate) != 0) {
+                    selected = i - 1; break;
+                }
+            }
+        }
+        if (WIFSIGNALED(job->processes[selected].status)) {
+            int number = WTERMSIG(job->processes[selected].status);
+            const char *name = csh_jobs_signal_name(number);
+            if (name) snprintf(state_text, sizeof(state_text), "Terminated (SIG%s)", name);
+            else snprintf(state_text, sizeof(state_text), "Terminated (%s)", strsignal(number));
+            state = state_text;
+        } else if (status == 0) state = "Done";
         else {
-            snprintf(completed_status, sizeof(completed_status), "Done(%d)", status);
-            state = completed_status;
+            snprintf(state_text, sizeof(state_text), "Done(%d)", status);
+            state = state_text;
         }
     }
-    if (format == 'p') return outputf(fd, "%ld\n", (long)job->pgid) < 0 ? -1 : 0;
+    pid_t displayed_pid = job->grouped ? job->pgid : job->processes[job->count - 1].pid;
+    if (format == 'p') return outputf(fd, "%ld\n", (long)displayed_pid) < 0 ? -1 : 0;
     else if (format == 'l') {
-        size_t i;
-        for (i = 0; i < job->count; ++i)
-            if (outputf(fd, "[%u]%c %ld %s %s\n", job->id, marker(jobs, job),
-                (long)job->processes[i].pid, state, job->text) < 0) return -1;
-    } else if (outputf(fd, "[%u]%c %s %s\n", job->id, marker(jobs, job), state, job->text) < 0)
+        if (outputf(fd, "[%u] %c %ld %s %s\n", job->id, marker(jobs, job),
+            (long)displayed_pid, state, job->text) < 0) return -1;
+        for (size_t i = 0; i < job->count; ++i)
+            if (job->processes[i].pid != displayed_pid &&
+                outputf(fd, "%ld %s\n", (long)job->processes[i].pid, job->text) < 0)
+                return -1;
+    } else if (outputf(fd, "[%u] %c %s %s\n", job->id, marker(jobs, job), state, job->text) < 0)
         return -1;
     return 0;
 }
@@ -775,7 +817,8 @@ int csh_jobs_is_builtin(const char *name)
         strcmp(name, "kill") == 0 || strcmp(name, "set") == 0;
 }
 
-int csh_jobs_builtin(struct csh_jobs *jobs, const struct csh_command *command)
+int csh_jobs_builtin(struct csh_jobs *jobs, const struct csh_command *command,
+    int *suspended)
 {
     size_t i = 1;
     int rc = 0, format = 0;
@@ -783,6 +826,7 @@ int csh_jobs_builtin(struct csh_jobs *jobs, const struct csh_command *command)
     char *const *argv = command->argv;
     const char *name = argv[0];
     struct csh_job *job;
+    if (suspended) *suspended = 0;
     if (csh_jobs_poll(jobs) == -1) return diagnostic(name, "cannot collect child status", NULL);
     if (strcmp(name, "kill") == 0) return kill_builtin(jobs, argc, argv);
     if (strcmp(name, "set") == 0) return csh_builtin_set(jobs->state, argc, argv, jobs->tty >= 0);
@@ -840,7 +884,7 @@ int csh_jobs_builtin(struct csh_jobs *jobs, const struct csh_command *command)
         if (job == NULL || complete(job)) rc = diagnostic(name, "no such job", operand);
         else if (!job->grouped) rc = diagnostic(name, "job was started without job control", operand);
         else if (strcmp(name, "fg") == 0) {
-            if (csh_jobs_foreground(jobs, job, 1, &rc) == -1)
+            if (csh_jobs_foreground(jobs, job, 1, &rc, suspended) == -1)
                 rc = diagnostic(name, "cannot foreground job", operand);
         } else {
             if (continue_job(job) == -1) rc = diagnostic(name, "cannot continue job", operand);

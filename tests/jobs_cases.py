@@ -45,21 +45,21 @@ def cases(helper, shell):
     label = f"{helper} hold"
     terminal("Ctrl-Z jobs bg fg Ctrl-C", [
         {"expect": "$ "}, {"send": label + "\n"}, {"expect": "ready\n"},
-        {"control": "Z"}, {"expect": f"[1]+ Stopped {label}\n$ "},
+        {"control": "Z"}, {"expect": f"[1] + Stopped {label}\n$ "},
         {"foreground": "leader"}, {"send": "jobs\n"},
-        {"expect": f"[1]+ Stopped {label}\n$ "}, {"send": "bg\n"},
-        {"expect": f"[1]+ Running {label}\n$ "}, {"send": "fg\n"},
+        {"expect": f"[1] + Stopped {label}\n$ "}, {"send": "bg\n"},
+        {"expect": f"[1] + Running {label}\n$ "}, {"send": "fg\n"},
         {"expect": label + "\n"}, {"foreground": "other"}, {"control": "C"},
         {"expect": "$ "}, {"foreground": "leader"}, {"send": "exit\n"}],
-        f"$ ready\n[1]+ Stopped {label}\n$ [1]+ Stopped {label}\n$ [1]+ Running {label}\n$ {label}\n$ ", 128 + signal.SIGINT)
+        f"$ ready\n[1] + Stopped {label}\n$ [1] + Stopped {label}\n$ [1] + Running {label}\n$ {label}\n$ ", 128 + signal.SIGINT)
     # Repeat real resume notifications without sleeps or relaxed transcripts.
     # Finish each job with Ctrl-C: another immediate Ctrl-Z after fg's display
     # could precede its SIGCONT and would create a race in the fixture itself.
     steps = [{"expect": "$ "}]
     output = "$ "
     for cycle in range(32):
-        stopped = f"[{cycle + 1}]+ Stopped {label}\n$ "
-        resumed = f"[{cycle + 1}]+ Running {label}\n$ "
+        stopped = f"[{cycle + 1}] + Stopped {label}\n$ "
+        resumed = f"[{cycle + 1}] + Running {label}\n$ "
         steps.extend([
             {"send": label + "\n"}, {"expect": "ready\n"},
             {"control": "Z"}, {"expect": stopped},
@@ -73,20 +73,20 @@ def cases(helper, shell):
     label = f"{helper} producer | {helper} pipeline"
     terminal("pipeline stop resume group and wait", [
         {"expect": "$ "}, {"send": label + "\n"}, {"expect": "pipeline-ready\n"},
-        {"control": "Z"}, {"expect": f"[1]+ Stopped {label}\n$ "},
+        {"control": "Z"}, {"expect": f"[1] + Stopped {label}\n$ "},
         {"foreground": "leader"}, {"send": "fg %1\n"}, {"expect": label + "\n"},
         {"foreground": "other"}, {"control": "C"}, {"expect": "$ "},
         {"foreground": "leader"}, {"send": "exit\n"}],
-        f"$ pipeline-ready\n[1]+ Stopped {label}\n$ {label}\n$ ", 128 + signal.SIGINT)
+        f"$ pipeline-ready\n[1] + Stopped {label}\n$ {label}\n$ ", 128 + signal.SIGINT)
     label = f"{helper} modes"
     terminal("stopped job modes saved and shell modes restored", [
         {"expect": "$ "}, {"send": label + "\n"},
-        {"expect": f"modes-ready\n[1]+ Stopped {label}\n$ "},
+        {"expect": f"modes-ready\n[1] + Stopped {label}\n$ "},
         {"foreground": "leader"}, {"send": f"{helper} check\n"},
         {"expect": "terminal-ok\n$ "}, {"send": "fg %1\n"},
         {"expect": f"{label}\nmodes-resumed\n$ "}, {"send": f"{helper} check\n"},
         {"expect": "terminal-ok\n$ "}, {"send": "exit\n"}],
-        f"$ modes-ready\n[1]+ Stopped {label}\n$ terminal-ok\n$ {label}\nmodes-resumed\n$ terminal-ok\n$ ")
+        f"$ modes-ready\n[1] + Stopped {label}\n$ terminal-ok\n$ {label}\nmodes-resumed\n$ terminal-ok\n$ ")
     terminal("monitor transitions and unavailable jobs", [
         {"expect": "$ "}, {"send": "set +m\n"}, {"expect": "$ "},
         {"send": "fg\n"}, {"expect": "cshell: fg: job control unavailable\n$ "},
@@ -104,31 +104,31 @@ def cases(helper, shell):
     terminal("background terminal reader stops and fg can read", [
         {"expect": "$ "},
         {"send": f"{{ {label} >reader-output & wait %1; }} 2>/dev/null\n"},
-        {"expect": f"[1]+ Stopped {label}\n$ "}, {"foreground": "leader"},
+        {"expect": f"[1] + Stopped (SIGTTIN) {label}\n$ "}, {"foreground": "leader"},
         {"send": "fg %1\n"}, {"expect": label + "\n"}, {"foreground": "other"},
         {"send": "x\n"}, {"expect": "$ "}, {"foreground": "leader"},
-        {"send": "exit\n"}], f"$ [1]+ Stopped {label}\n$ {label}\n$ ")
+        {"send": "exit\n"}], f"$ [1] + Stopped (SIGTTIN) {label}\n$ {label}\n$ ")
     result[-1]['expect']['files'] = {'reader-output': {'type': 'file', 'content': 'reader-ready\nreader-done\n'}}
     label = f"{helper} hold"
     terminal("stopped jobs survive monitor toggles", [
         {"expect": "$ "}, {"send": label + "\n"}, {"expect": "ready\n"},
-        {"control": "Z"}, {"expect": f"[1]+ Stopped {label}\n$ "},
+        {"control": "Z"}, {"expect": f"[1] + Stopped {label}\n$ "},
         {"send": "set +m; fg %1\n"}, {"expect": "cshell: fg: job control unavailable\n$ "},
         {"send": "set -m; fg %1\n"}, {"expect": label + "\n"},
         {"foreground": "other"}, {"control": "C"}, {"expect": "$ "},
         {"send": "exit\n"}],
-        f"$ ready\n[1]+ Stopped {label}\n$ cshell: fg: job control unavailable\n$ {label}\n$ ", 128 + signal.SIGINT)
+        f"$ ready\n[1] + Stopped {label}\n$ cshell: fg: job control unavailable\n$ {label}\n$ ", 128 + signal.SIGINT)
     terminal("current previous and ambiguous job operands", [
         {"expect": "$ "}, {"send": label + "\n"}, {"expect": "ready\n"},
-        {"control": "Z"}, {"expect": f"[1]+ Stopped {label}\n$ "},
+        {"control": "Z"}, {"expect": f"[1] + Stopped {label}\n$ "},
         {"send": label + "\n"}, {"expect": "ready\n"},
-        {"control": "Z"}, {"expect": f"[2]+ Stopped {label}\n$ "},
+        {"control": "Z"}, {"expect": f"[2] + Stopped {label}\n$ "},
         {"send": f"fg %{helper}\n"},
         {"expect": f"cshell: fg: no such job: %{helper}\n$ "},
         {"send": "fg %-\n"}, {"expect": label + "\n"},
         {"control": "C"}, {"expect": "$ "},
         {"send": "kill -KILL %+; wait %2; exit 0\n"}],
-        f"$ ready\n[1]+ Stopped {label}\n$ ready\n[2]+ Stopped {label}\n$ cshell: fg: no such job: %{helper}\n$ {label}\n$ ")
+        f"$ ready\n[1] + Stopped {label}\n$ ready\n[2] + Stopped {label}\n$ cshell: fg: no such job: %{helper}\n$ {label}\n$ ")
     terminal("background completion and wait status", [
         {"expect": "$ "}, {"send": "{ exit 17 & wait %1; } 2>/dev/null\n"},
         {"expect": "$ "}, {"foreground": "leader"}, {"send": "exit\n"}], "$ $ ", 17)
@@ -138,6 +138,85 @@ def cases(helper, shell):
         {"expect": "cshell: fg: job was started without job control: %1\n$ "},
         {"foreground": "leader"}, {"send": "kill -KILL %1; wait; exit 0\n"}],
         "$ cshell: fg: job was started without job control: %1\n$ ")
+
+    # CSH-057: EXEC-009, JOB-001/002/003, U-032. Bounded PTY transport;
+    # terminal ownership and actual wait statuses supply all readiness oracles.
+    terminal("CSH-057 session leader reclaims initially foreign foreground", [
+        {"expect": "$ "}, {"send": f"exec {helper} session-start {shell}\n"},
+        {"expect": "$ "}, {"foreground": "leader"},
+        {"send": "case $- in *m*) echo monitor-on;; esac\n"},
+        {"expect": "monitor-on\n$ "},
+        {"send": f"{helper} check\n"}, {"expect": "terminal-ok\n$ "},
+        {"send": "exit\n"}], "$ $ monitor-on\n$ terminal-ok\n$ ")
+    terminal("CSH-057 SIGSTOP inside builtin then CONT", [
+        {"expect": "$ "}, {"send": f"{helper} builtin-stop {shell}\n"},
+        {"expect": "builtin-stopped\nbuiltin-resumed\nterminal-ok\n$ "},
+        {"foreground": "leader"}, {"send": "echo $?\n"}, {"expect": "0\n$ "},
+        {"send": f"{helper} check\n"}, {"expect": "terminal-ok\n$ "},
+        {"send": "exit\n"}], "$ builtin-stopped\nbuiltin-resumed\nterminal-ok\n$ 0\n$ terminal-ok\n$ ")
+    terminal("CSH-057 SIGSTOP inside builtin leaves child stopped until fg", [
+        {"expect": "$ "}, {"send": f"{helper} builtin-stop {shell} children\n"},
+        {"expect": "builtin-stopped\nbuiltin-resumed\nterminal-ok\n$ "},
+        {"foreground": "leader"}, {"send": "echo $?\n"}, {"expect": "0\n$ "},
+        {"send": f"{helper} check\n"}, {"expect": "terminal-ok\n$ "},
+        {"send": "exit\n"}], "$ builtin-stopped\nbuiltin-resumed\nterminal-ok\n$ 0\n$ terminal-ok\n$ ")
+    for shape, command, expected in (
+        ("pipeline", f"{helper} background-producer | {helper} background-pipeline", "background-pipeline-ok\n"),
+        ("compound", f"{{ {helper} compound-group; {helper} compound-group; }}", "compound-group-ok\ncompound-group-ok\n")):
+        terminal(f"CSH-057 background {shape} group membership", [
+            {"expect": "$ "}, {"send": f"{{ {command} >group-output & wait $!; }} 2>/dev/null; echo $?\n"},
+            {"expect": "0\n$ "}, {"foreground": "leader"}, {"send": "exit\n"}], "$ 0\n$ ")
+        result[-1]["expect"]["files"] = {"group-output": {"type": "file", "content": expected}}
+    for stop in ("TSTP", "TTIN", "TTOU", "STOP"):
+        label = f"{helper} stop {getattr(signal, 'SIG' + stop)}"
+        state = "Stopped" if stop == "TSTP" else f"Stopped (SIG{stop})"
+        terminal(f"CSH-057 {stop} retains ID then successful fg consumes it", [
+            {"expect": "$ "}, {"send": label + "\n"},
+            {"expect": f"[1] + {state} {label}\n$ "}, {"foreground": "leader"},
+            {"send": "wait %1; echo $?\n"}, {"expect": f"{128 + getattr(signal, 'SIG' + stop)}\n$ "},
+            {"send": "fg %1; echo $?; wait %1 2>/dev/null; echo $?\n"},
+            {"expect": f"{label}\nstop-resumed\n23\n127\n$ "},
+            {"foreground": "leader"}, {"send": "exit\n"}],
+            f"$ [1] + {state} {label}\n$ {128 + getattr(signal, 'SIG' + stop)}\n$ {label}\nstop-resumed\n23\n127\n$ ")
+    label = f"{helper} stop {signal.SIGTSTP}"
+    terminal("CSH-057 foreground compound discards pending commands on stop", [
+        {"expect": "$ "}, {"send": f"{{ echo once >>trace; {label}; echo forbidden >>trace; }}\n"},
+        {"expect": f"[2] + Stopped {label}\n$ "},
+        {"send": "fg %2; echo $?\n"}, {"expect": f"{label}\nstop-resumed\n23\n$ "},
+        {"foreground": "leader"}, {"send": "exit\n"}],
+        f"$ [2] + Stopped {label}\n$ {label}\nstop-resumed\n23\n$ ")
+    result[-1]["expect"]["files"] = {"trace": {"type": "file", "content": "once\n"}}
+    terminal("CSH-057 numeric stop-like exit still completes a compound", [
+        {"expect": "$ "},
+        {"send": f"{{ {helper} status {128 + signal.SIGTSTP}; echo after; }}\n"},
+        {"expect": "after\n$ "}, {"send": "exit\n"}], "$ after\n$ ")
+    label = f"{helper} stop {signal.SIGTSTP}"
+    terminal("CSH-057 suspension does not trigger errexit", [
+        {"expect": "$ "}, {"send": f"set -e; {label}\n"},
+        {"expect": f"[1] + Stopped {label}\n$ "},
+        {"send": "set +e; fg %1; echo $?\n"},
+        {"expect": f"{label}\nstop-resumed\n23\n$ "},
+        {"foreground": "leader"}, {"send": "exit\n"}],
+        f"$ [1] + Stopped {label}\n$ {label}\nstop-resumed\n23\n$ ")
+    # Start a complex list asynchronously, then foreground it: POSIX requires
+    # the entire job to survive suspension in this shape. Each completed step
+    # writes a line; exact file bytes prove no replay on the second fg.
+    command = f"{{ echo once >>trace; {helper} compound-reader; echo twice >>trace; }}"
+    label = f"{{ echo once; {helper} compound-reader; echo twice; }}"
+    terminal("CSH-057 compound fg stop resume without replay", [
+        {"expect": "$ "},
+        {"send": f"{{ {command} >reader-output & p=$!; wait $p; }} 2>/dev/null\n"},
+        {"expect": f"[1] + Stopped (SIGTTIN) {label}\n$ "},
+        {"send": "fg %1\n"}, {"expect": label + "\nreader-continued\n"}, {"foreground": "other"},
+        {"control": "Z"}, {"expect": f"[1] + Stopped {label}\n$ "},
+        {"send": "fg %1\n"}, {"expect": label + "\nreader-continued\n"}, {"foreground": "other"},
+        {"send": "x\n"}, {"expect": "$ "}, {"foreground": "leader"},
+        {"send": "wait $p 2>/dev/null; echo $?\n"}, {"expect": "127\n$ "},
+        {"send": "exit\n"}],
+        f"$ [1] + Stopped (SIGTTIN) {label}\n$ {label}\nreader-continued\n[1] + Stopped {label}\n$ {label}\nreader-continued\n$ 127\n$ ")
+    result[-1]["expect"]["files"] = {
+        "trace": {"type": "file", "content": "once\ntwice\n"},
+        "reader-output": {"type": "file", "content": "reader-ready\nreader-done\n"}}
     return result
 
 

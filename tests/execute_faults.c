@@ -906,8 +906,8 @@ static void terminal_job_faults(struct csh_state *state)
             struct csh_command kill_command = {0}, wait_command = {0};
             kill_command.argc = 3; kill_command.argv = kill_args;
             wait_command.argc = 1; wait_command.argv = wait_args;
-            assert(csh_jobs_builtin(context.jobs, &kill_command) == 0);
-            assert(csh_jobs_builtin(context.jobs, &wait_command) == 0);
+            assert(csh_jobs_builtin(context.jobs, &kill_command, NULL) == 0);
+            assert(csh_jobs_builtin(context.jobs, &wait_command, NULL) == 0);
         }
         arm(0);
         csh_jobs_destroy(context.jobs);
