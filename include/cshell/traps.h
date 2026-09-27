@@ -20,7 +20,8 @@ void csh_traps_add_caught(const struct csh_traps *traps, sigset_t *set);
  * The caller owns *action. EXIT is obtained separately at shell shutdown. */
 int csh_traps_take(struct csh_traps *traps, char **action);
 char *csh_traps_exit_action(struct csh_traps *traps);
-/* In a subshell, caught actions reset; ignored actions remain ignored. */
+/* In a subshell, caught actions reset; ignored actions remain ignored.
+ * asynchronous selects the implicit INT/QUIT ignores for an unmonitored list. */
 void csh_traps_after_fork(struct csh_traps *traps, int asynchronous,
     int preserve_listing);
 /* Reset caught dispositions for exec, and restore them if exec fails. */

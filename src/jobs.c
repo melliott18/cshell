@@ -119,18 +119,32 @@ void csh_jobs_hangup(struct csh_jobs *jobs)
     }
 }
 
+/* Terminal ownership/mode changes are shell bookkeeping. A user TTOU trap
+ * must not interrupt them while the foreground group belongs to the job. */
+static int terminal_change(int fd, pid_t pgid, const struct termios *modes)
+{
+    sigset_t blocked, previous;
+    int rc, number;
+    sigemptyset(&blocked);
+    sigaddset(&blocked, SIGTTOU);
+    if (sigprocmask(SIG_BLOCK, &blocked, &previous) == -1) return -1;
+    do {
+        rc = modes ? tcsetattr(fd, TCSADRAIN, modes) : tcsetpgrp(fd, pgid);
+    } while (rc == -1 && errno == EINTR);
+    number = errno;
+    if (sigprocmask(SIG_SETMASK, &previous, NULL) == -1 && rc == 0) return -1;
+    errno = number;
+    return rc;
+}
+
 static int terminal_group(int fd, pid_t pgid)
 {
-    int rc;
-    do { rc = tcsetpgrp(fd, pgid); } while (rc == -1 && errno == EINTR);
-    return rc;
+    return terminal_change(fd, pgid, NULL);
 }
 
 static int terminal_modes(int fd, const struct termios *modes)
 {
-    int rc;
-    do { rc = tcsetattr(fd, TCSADRAIN, modes); } while (rc == -1 && errno == EINTR);
-    return rc;
+    return terminal_change(fd, 0, modes);
 }
 
 int csh_jobs_monitor(const struct csh_jobs *jobs)

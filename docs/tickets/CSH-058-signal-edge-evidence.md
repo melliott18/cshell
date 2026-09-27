@@ -1,11 +1,11 @@
 # CSH-058: Complete signal inheritance and permission evidence
 
-- Status: ready
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-035
-- Branch: Assigned when work starts
+- Branch: test/CSH-058-signal-edge-evidence
 - Issue: [#100](https://github.com/melliott18/cshell/issues/100)
 
 ## Goal

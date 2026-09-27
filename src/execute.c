@@ -1721,7 +1721,7 @@ static int context_job(struct csh_execution_context *context,
             if (monitor && setpgid(0, job->pgid) == -1) _exit(1);
             csh_jobs_after_fork(context->jobs, asynchronous);
             if (prepared != NULL) csh_traps_exec_signals(context->traps, 0);
-            else csh_traps_after_fork(context->traps, asynchronous, 0);
+            else csh_traps_after_fork(context->traps, asynchronous && !monitor, 0);
             if (is_pipeline && plan->negated) {
                 struct csh_state_info info;
                 csh_state_get_info(context->state, &info);

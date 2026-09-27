@@ -393,7 +393,22 @@ build/tests/wait-jobs.o: src/jobs.c $(EXECUTE_HEADERS)
 build/tests/wait_handshake: tests/wait_handshake.c build/main.o build/invocation.o build/tests/wait-jobs.o $(EXECUTE_OBJECTS) build/character.o
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/main.o build/invocation.o build/tests/wait-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o $(LDLIBS)
 
-test-traps: cshell build/tests/execute_helper build/tests/wait_handshake
+build/tests/signal_edges_helper: tests/signal_edges_helper.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(EXECUTE_OBJECTS) build/character.o $(LDLIBS)
+
+build/tests/permission-jobs.o: src/jobs.c $(EXECUTE_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -Dkill=csh_permission_kill -c $< -o $@
+
+build/tests/kill_permission: tests/kill_permission.c build/tests/permission-jobs.o $(EXECUTE_OBJECTS) build/character.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/tests/permission-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o $(LDLIBS)
+
+.PHONY: test-signal-edges
+test-signal-edges: cshell build/tests/signal_edges_helper build/tests/kill_permission
+	$(PYTHON) tests/signal_edges.py ./cshell build/tests/signal_edges_helper build/tests/kill_permission
+
+test-traps: test-signal-edges cshell build/tests/execute_helper build/tests/wait_handshake
 	$(PYTHON) tests/traps.py ./cshell
 	$(PYTHON) tests/signal_contracts.py ./cshell build/tests/execute_helper
 	$(PYTHON) tests/wait_handshake.py build/tests/wait_handshake

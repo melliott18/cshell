@@ -170,7 +170,7 @@ Implementation: [traps.c](../src/traps.c), context and exec transitions in
 | Successful exec default/ignore handoff | `traps: exec resets caught disposition`, `traps: exec retains ignored disposition` | `default\n`/`ignored\n`; no parent EXIT action after successful exec |
 
 CSH-054 adds pipeline/background/general-substitution listing and failed
-interactive exec witnesses [below](#csh-054); broader delivery remains CSH-058.
+interactive exec witnesses [below](#csh-054); broader disposition and delivery witnesses are in [CSH-058](#csh-058).
 
 <a id="u-008"></a>
 
@@ -205,7 +205,9 @@ checked separately in traps.py. The old `-p INT` reset expectation was incorrect
 it now requires a reinput-ready default command. KILL/STOP are omitted from
 all-condition output. The implementation enumerates host-queryable signals,
 including numeric host extensions; exhaustive host-signal listing and roundtrip
-coverage, every invalid operand mix and output-failure path remain open.
+coverage is extended by [CSH-054](#csh-054) and [CSH-058](#csh-058),
+including the three listing output-failure forms and uninstallable operands.
+These named assertions do not claim every possible invalid operand mix.
 
 <a id="u-026"></a>
 
@@ -221,7 +223,7 @@ supported XSI/extension witnesses. Both host binaries are identified in the run
 record. Docker now explicitly installs `procps` to supply exec-accessible kill.
 CSH-054 fixes case-independent `-s` and adds the name/status, group-zero probe
 and operand-continuation witnesses [below](#csh-054); actual group delivery and
-permission failures remain with CSH-058. No reference-shell vote was
+permission failures are covered by [CSH-058](#csh-058). No reference-shell vote was
 used to set these expectations.
 
 <a id="u-032"></a>
@@ -237,8 +239,8 @@ and IDs diagnose and return 127. Subshell/pipeline waits cannot consume parent
 IDs. A retains completed and already-reaped statuses, leaves unrelated children
 waitable, interrupts without consuming a live child, and reports without
 consuming status. SIG-002 owns trapped-wait timing. Retention at CHILD_MAX,
-fg removal from the known-ID set and selected wait interruption need more
-coverage; all retained-status claims are limited to the exercised counts.
+fg removal from the known-ID set remain CSH-057; selected wait interruption
+is extended by [CSH-058](#csh-058); all retained-status claims are limited to the exercised counts.
 
 ## Remaining obligations
 
@@ -297,13 +299,13 @@ public-runtime observation. `P`/`A` retain the definitions above.
 
 | Requirement / condition | Exact cases and assertions | Remaining owner |
 | --- | --- | --- |
-| SIG-001 interactive defaults, overrides and reset | S `interactive TERM ignored`, `interactive NAME override and reset` for TERM/QUIT/TSTP/TTIN/TTOU; exact `alive` and `caught/alive` bytes, zero status. P `interactive ignored signals with monitor +m` and `-m` send Ctrl-Z, Ctrl-\\, TERM and direct stop/QUIT signals, then assert foreground ownership and `terminal-ok`. A `interactive_dispositions` queries actual SIG_IGN, excluding false success due to an orphaned default stop or caught no-op. | Exhaustive remaining inherited/overridden combinations: CSH-058 |
-| SIG-001/003 child inheritance and fork race | S `interactive child fork NAME defaults`, `interactive child exec NAME defaults`, `interactive explicit ignore reaches exec NAME`; 20 `traps.py` entry-ignore cases. `execute_faults.c:terminal_job_faults` injects INT/TSTP/TERM/QUIT inside the fork wrapper, before child reset; exact signal-derived result and mask/terminal restoration. | CSH-058 for additional environment/reset combinations |
-| SIG-002/U-032 selected/all wait interruption | W USR1, TERM, both USR1+USR2, with selected PID and no operand: `wait-armed` on stderr, action and wait status 128+first signal, second wait 23, consumed third wait 127. The old delay-based trapped-wait runtime case is removed. Multiple distinct actions use the documented signal-number ordering choice. | CSH-058 for uninstrumented blocked-wait observation; CSH-057 for capacity and fg consumption |
-| SIG-003 trap environments | S `caught action resets in pipeline`, `background`, `general substitution` require default USR1 listing; `failed interactive exec restores TERM action` requires the exec diagnostic, then `caught/alive`. | CSH-058 for actual delivery/disposition cross-product beyond these listings |
+| SIG-001 interactive defaults, overrides and reset | S `interactive TERM ignored`, `interactive NAME override and reset` for TERM/QUIT/TSTP/TTIN/TTOU; exact `alive` and `caught/alive` bytes, zero status. P `interactive ignored signals with monitor +m` and `-m` send Ctrl-Z, Ctrl-\\, TERM and direct stop/QUIT signals, then assert foreground ownership and `terminal-ok`. A `interactive_dispositions` queries actual SIG_IGN, excluding false success due to an orphaned default stop or caught no-op. | Inherited/overridden cross-product: [CSH-058](#csh-058) |
+| SIG-001/003 child inheritance and fork race | S `interactive child fork NAME defaults`, `interactive child exec NAME defaults`, `interactive explicit ignore reaches exec NAME`; 20 `traps.py` entry-ignore cases. `execute_faults.c:terminal_job_faults` injects INT/TSTP/TERM/QUIT inside the fork wrapper, before child reset; exact signal-derived result and mask/terminal restoration. | [CSH-058](#csh-058) adds environment/reset combinations |
+| SIG-002/U-032 selected/all wait interruption | W USR1, TERM, both USR1+USR2, with selected PID and no operand: `wait-armed` on stderr, action and wait status 128+first signal, second wait 23, consumed third wait 127. The old delay-based trapped-wait runtime case is removed. Multiple distinct actions use the documented signal-number ordering choice. | [CSH-058](#csh-058) adds uninstrumented blocked-wait observation; CSH-057 for capacity and fg consumption |
+| SIG-003 trap environments | S `caught action resets in pipeline`, `background`, `general substitution` require default USR1 listing; `failed interactive exec restores TERM action` requires the exec diagnostic, then `caught/alive`. | [CSH-058](#csh-058) adds actual delivery/disposition cross-product |
 | U-008 operands and trap status | S `exit operands 0 through 15` through `240 through 255` assert every status in all three modes. `EXIT omitted status after ...` covers true/false, function and eval; `signal action omitted exit status` and `subshell inside EXIT uses its own status` distinguish action exit from child exit. | No residual from CSH-054's stated U-008 inventory: 128+host signal is <=255 on both hosts, so there are no applicable >256 signal-derived operands. Unsupported operands remain separately classified. |
-| U-015 host listing and error continuation | S `host condition reinput NUMBER` for every catchable condition returned by host sigaction in 1..127, including numeric extensions; all `trap -p` lines checked as an exact set without duplicates against that host set plus EXIT. `mixed invalid trap operands continue` asserts both valid actions, two diagnostics and status 1; `trap output failure` asserts selected-listing status/diagnostic. | CSH-058 for other output-failure forms and uninstallable conditions |
-| U-026 names, mapping and partial failures | S `lowercase TERM delivered` terminates by TERM; `kill mixed case NAME` delivers each catchable required host symbol; `kill name/status NAME` maps native and 128+signal numbers, including KILL/STOP without delivering them. `zero signal and group operands` probes this runner-owned session's group using 0 and -$$. `mixed invalid kill operands continue` diagnoses the invalid PID and delivers USR1 to the shell. | CSH-058 for actual group delivery and permission errors; external utilities remain CSH-056 |
+| U-015 host listing and error continuation | S `host condition reinput NUMBER` for every catchable condition returned by host sigaction in 1..127, including numeric extensions; all `trap -p` lines checked as an exact set without duplicates against that host set plus EXIT. `mixed invalid trap operands continue` asserts both valid actions, two diagnostics and status 1; `trap output failure` asserts selected-listing status/diagnostic. | [CSH-058](#csh-058) adds other output-failure forms and uninstallable conditions |
+| U-026 names, mapping and partial failures | S `lowercase TERM delivered` terminates by TERM; `kill mixed case NAME` delivers each catchable required host symbol; `kill name/status NAME` maps native and 128+signal numbers, including KILL/STOP without delivering them. `zero signal and group operands` probes this runner-owned session's group using 0 and -$$. `mixed invalid kill operands continue` diagnoses the invalid PID and delivers USR1 to the shell. | [CSH-058](#csh-058) adds actual group delivery and permission errors; external utilities remain CSH-056 |
 | EXEC-009, JOB-001/002/003 | Existing CSH-050 assertions rerun; CSH-054 adds the signal-policy and launch-race assertions above. | CSH-057 explicitly owns CHILD_MAX/eviction, fg consumption, session-leader startup with another foreground group, background pipeline/compound and suspended compound membership, completed-command non-replay, builtin STOP/CONT, foreground notification timing, stop variants and jobs formats |
 
 The [CSH-054 run record](evidence/csh-054/README.md) retains baseline failures,
@@ -312,3 +314,46 @@ follow-ups [CSH-057](tickets/CSH-057-job-lifecycle-boundaries.md) and
 [CSH-058](tickets/CSH-058-signal-edge-evidence.md) explicitly own the remaining
 clauses; full UP/XSI and unspecified choices are not folded into passing base
 assertions. The conformance audit gate remains open.
+
+
+<a id="csh-058"></a>
+
+## CSH-058 — signal edge assertions
+
+[CSH-058](tickets/CSH-058-signal-edge-evidence.md) extends the CSH-054 subsets
+with `tests/signal_edges.py`, `tests/signal_edges_helper.c` and
+`tests/kill_permission.c`. [Retained validation](evidence/csh-058/README.md)
+identifies source, binaries, hosts, bounds and results. The requirements remain
+implemented subsets; these witnesses do not establish entire-family conformance.
+
+The normative sources are [shell signal handling, 2.12](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_12),
+[shell environments, 2.13](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_13),
+[trap](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/trap.html),
+[sh asynchronous events](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sh.html#tag_20_110_09),
+[kill](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/kill.html), and
+[wait](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/wait.html).
+Default/ignored inheritance and trap reset are required; terminal-stop ignore
+and 128+signal status are D-007 choices. Multiple pending trap ordering is a
+project policy within unspecified ordering. Numeric trap conditions are labeled
+extensions. KILL/STOP installation is outside POSIX guarantees and is tested
+only against the documented diagnostic/continued-processing contract.
+
+| Requirements / stable case prefix | Exact assertions and scope |
+| --- | --- |
+| SIG-001/003 `api/NAME/interactive=I/entry-ignore=E/action=A/shape=S` | Eight names: INT, HUP, CHLD, QUIT, TERM, TSTP, TTIN, TTOU; interactive/noninteractive × entry default/ignore × five action sequences × three fork modes = 480 cases. Actions 0–4 are unchanged, caught, ignored, caught-then-ignored, ignored-then-reset. Shapes 0–2 are synchronous, unmonitored asynchronous, and preserved standalone-trap table. Query actual sigaction handlers before/after fork and resets, deliver caught/ignored signals to the shell API, assert pending action number/text or absence, and retain a grandchild's exit 23 after CHLD resets. CHLD's internal no-op/notification handlers are distinguished from kernel SIG_IGN. |
+| SIG-001/003 `runtime/…/SHAPE/reset=BOOL` | Same signal/entry/action cross-product in subshell, pipeline compound, background compound, and general substitution, with/without local reset: 1,280 cases. Exec probes assert default/ignored disposition and actual delivery. A default INT/HUP/QUIT/TERM terminates by that exact signal; CHLD survives; TSTP/TTIN/TTOU stops by that exact signal and resumes with CONT; ignored conditions survive. A live parent outside the probe child's group prevents orphaned-group suppression from masquerading as ignored stops. |
+| SIG-001/003 `monitored/…/SHAPE/reset=BOOL` | 640 additional controlling-PTY cases repeat every interactive runtime combination with monitor enabled. Background INT/QUIT use entry/trap dispositions, not the unmonitored implicit ignore. Exact terminal output and status; background announcement is exactly one `[1] PID` line with a positive decimal PID; all other stderr is empty. |
+| SIG-003 `standalone-trap-exception` | The separate single-trap substitution returns the parent's caught HUP listing exactly. It is not evidence of a caught handler surviving fork. |
+| SIG-002/U-032 `wait/SIGNAL/OPERAND/MODE` | 24 public-runtime cases: INT, USR1, TERM, both USR1+USR2 × selected PID/no operand × string/file/stdin. The FIFO-held child cannot finish before signal delivery. After a builtin-only marker, observe Linux sigsuspend wchan or macOS interruptible sleep; no delay is a scheduling oracle. Assert exact trap and interrupted-wait status 128+signal, second wait 23, third wait 127, empty stderr. The two-signal case confirms STOP with waitpid, queues both while stopped, then CONT; both actions use 128+the lower signal number. CSH-054's interposition cases remain separately labeled. |
+| U-015 `host-condition/N`, `output-failure/…`, `uninstallable/NAME` | Discover host conditions across 1..1023, assert the host NSIG fits that bound, and install/list each exposed catchable value (including any beyond CSH_TRAP_LIMIT). All/plain/selected closed-output listings must fail with one diagnostic per attempted line. KILL and STOP errors must leave the surrounding valid USR1/USR2 actions installed and return 1. |
+| U-026 `group/negative=BOOL` | Two acknowledged live recipients in the fixture-owned session/group install USR1 handlers before the real kill builtin delivers to 0 or the negative group ID. Each recipient independently acknowledges delivery (A and B); both exit 0, sender/ignored supervisor survive. |
+| U-026 `permission/PID` | Test-only jobs.c syscall interposition returns EPERM for positive, negative-group, and zero synthetic operands. Assert exact diagnostic, status 1, two syscall attempts, and real USR1 delivery to the fixture's own PID after the failure. No arbitrary PID is signalled; this tests error handling, not host credential enforcement. |
+
+The fixes are in `src/traps.c` (fork reset baselines and logical CHLD ignores),
+`src/jobs.c:terminal_change` (block TTOU while changing terminal ownership/modes),
+and `src/execute.c:context_job` (only unmonitored asynchronous jobs request
+implicit INT/QUIT ignores). macOS needs SA_NOCLDWAIT cleared when replacing a
+kernel CHLD ignore with an internal handler. A default handler after exec is
+not used as proof of an internal shell handler; the API assertions cover that
+separate boundary. Full UP/XSI remain unselected. External host utility
+qualification remains CSH-056/059; job lifecycle/capacity remains CSH-057.

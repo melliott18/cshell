@@ -24,7 +24,9 @@ struct csh_traps {
     struct trap_entry entries[TRAP_LIMIT];
     char *exit_action;
     int exit_inherited;
+    int child_ignored;
     unsigned char entry_ignored[TRAP_LIMIT];
+    unsigned char original_ignored[TRAP_LIMIT];
 };
 static struct csh_traps *active;
 static volatile sig_atomic_t pending[TRAP_LIMIT];
@@ -41,6 +43,19 @@ static void record_signal(int number)
  * no-op disposition in shell processes, then restore SIG_IGN at exec. */
 static void ignore_child(int number) { (void)number; }
 
+/* A forked shell without a job manager still waits for its own children.
+ * Preserve the logical ignore for exec, without asking the kernel to reap. */
+static void preserve_child_ignore(struct csh_traps *traps)
+{
+    struct sigaction action;
+    if (sigaction(SIGCHLD, NULL, &action) == 0 && action.sa_handler == SIG_IGN) {
+        traps->child_ignored = 1;
+        action.sa_handler = ignore_child;
+        action.sa_flags &= ~SA_NOCLDWAIT;
+        sigaction(SIGCHLD, &action, NULL);
+    }
+}
+
 int csh_traps_create(struct csh_traps **out, int interactive)
 {
     struct csh_traps *traps;
@@ -52,10 +67,11 @@ int csh_traps_create(struct csh_traps **out, int interactive)
     for (i = 0; i < TRAP_LIMIT; ++i) {
         struct sigaction disposition;
         pending[i] = 0;
-        if (!interactive && i > 0 &&
-            sigaction(i, NULL, &disposition) == 0 &&
-            disposition.sa_handler == SIG_IGN)
-            traps->entry_ignored[i] = 1;
+        if (i > 0 && sigaction(i, NULL, &disposition) == 0 &&
+            disposition.sa_handler == SIG_IGN) {
+            traps->original_ignored[i] = 1;
+            if (!interactive) traps->entry_ignored[i] = 1;
+        }
     }
     active = traps;
     *out = traps;
@@ -205,6 +221,7 @@ static int install(struct csh_traps *traps, int number, const char *action)
         }
         entry->installed = 0;
         entry->ignored = 0;
+        if (number == SIGCHLD) preserve_child_ignore(traps);
         free(entry->action);
         entry->action = NULL;
         pending[number] = 0;
@@ -286,6 +303,19 @@ void csh_traps_after_fork(struct csh_traps *traps, int asynchronous,
         struct trap_entry *entry = &traps->entries[i];
         pending[i] = 0;
         if (!entry->installed) continue;
+        /* An ignored action survives fork, but its reset target must not
+         * restore the parent's interactive INT/HUP handler or ignore policy.
+         * Keep CHLD's internal notification handler for child job managers.
+         * Background INT/QUIT retain their implicit ignored baseline. */
+        if (entry->ignored) {
+            int ignored = traps->original_ignored[i] ||
+                (asynchronous && (i == SIGINT || i == SIGQUIT));
+            if (ignored || i != SIGCHLD) {
+                memset(&entry->previous, 0, sizeof(entry->previous));
+                sigemptyset(&entry->previous.sa_mask);
+                entry->previous.sa_handler = ignored ? SIG_IGN : SIG_DFL;
+            }
+        }
         disposition.sa_handler = entry->ignored ?
             (i == SIGCHLD ? ignore_child : SIG_IGN) : SIG_DFL;
         if (asynchronous && (i == SIGINT || i == SIGQUIT)) disposition.sa_handler = SIG_IGN;
@@ -294,8 +324,12 @@ void csh_traps_after_fork(struct csh_traps *traps, int asynchronous,
             free(entry->action);
             entry->action = NULL;
         }
-        if (!entry->ignored) entry->installed = 0;
+        if (!entry->ignored) {
+            entry->installed = 0;
+            if (i == SIGCHLD) traps->child_ignored = 0;
+        }
     }
+    preserve_child_ignore(traps);
 }
 
 void csh_traps_exec_signals(struct csh_traps *traps, int recover)
@@ -309,7 +343,13 @@ void csh_traps_exec_signals(struct csh_traps *traps, int recover)
     for (i = 1; i < TRAP_LIMIT; ++i) {
         struct trap_entry *entry = &traps->entries[i];
         struct sigaction current;
-        if (!entry->installed) continue;
+        if (!entry->installed) {
+            if (i == SIGCHLD && traps->child_ignored) {
+                disposition.sa_handler = recover ? ignore_child : SIG_IGN;
+                sigaction(i, &disposition, NULL);
+            }
+            continue;
+        }
         if (!recover && (i == SIGINT || i == SIGQUIT) &&
             sigaction(i, NULL, &current) == 0 &&
             current.sa_handler == SIG_IGN)
