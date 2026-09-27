@@ -46,6 +46,13 @@ static struct csh_execution run(struct csh_execution_context *ctx, const char *s
     csh_ast_destroy(tree); csh_parser_destroy(parser); csh_input_destroy(in);
     return result;
 }
+static void destroy(struct csh_execution_context *ctx)
+{
+    /* Context destruction clears borrowed pointers; retain the state owner. */
+    struct csh_state *state = ctx->state;
+    csh_execution_context_destroy(ctx);
+    csh_state_destroy(state);
+}
 static void retention(void)
 {
     for (int fallback = 0; fallback < 2; ++fallback) {
@@ -88,7 +95,7 @@ static void retention(void)
             }
             assert(run(&ctx, "wait\n").status == 0);
         }
-        csh_execution_context_destroy(&ctx); csh_state_destroy(ctx.state);
+        destroy(&ctx);
     }
     puts("CHILD_MAX=32 and fallback=256: capacity, saved/unsaved IDs, foreground preservation, oldest eviction passed");
 }
@@ -139,7 +146,7 @@ static void live_retention(void)
     assert(kill(live[0]->pgid, 0) == 0 && kill(live[1]->pgid, 0) == 0);
     assert(live[1]->processes[0].stopped);
     csh_jobs_cancel(ctx.jobs, live[0]); csh_jobs_cancel(ctx.jobs, live[1]);
-    csh_execution_context_destroy(&ctx); csh_state_destroy(ctx.state);
+    destroy(&ctx);
 }
 static void formats(void)
 {
@@ -179,7 +186,7 @@ static void formats(void)
     }
     job->grouped = 0; /* The formatting fixture's children share our group. */
     csh_jobs_cancel(ctx.jobs, job);
-    csh_execution_context_destroy(&ctx); csh_state_destroy(ctx.state);
+    destroy(&ctx);
 }
 static void notification(int notify, int outcome)
 {
@@ -270,7 +277,7 @@ static void notification(int notify, int outcome)
     assert(dup2(saved, STDERR_FILENO) == STDERR_FILENO); close(saved);
     close(messages[0]); close(release[0]); close(release[1]);
     close(launch[0]); close(launch[1]);
-    csh_execution_context_destroy(&ctx); csh_state_destroy(ctx.state);
+    destroy(&ctx);
 }
 int main(int argc, char **argv)
 {
