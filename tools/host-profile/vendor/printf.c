@@ -68,6 +68,8 @@
 		(void)printf(f, func);					\
 } while (0)
 
+/* CSH-059 local patch: preserve decoded NUL bytes in %b output. */
+static int	 printb(const char *, int, int, const char *, size_t);
 static int	 asciicode(void);
 static char	*printf_doformat(char *, int *);
 static int	 escape(char *, int, size_t *);
@@ -367,7 +369,11 @@ printf_doformat(char *fmt, int *rval)
 			return (NULL);
 		}
 		getout = escape(p, 0, &len);
-		PF(start, p);
+		if (printb(start, havewidth ? fieldwidth : 0,
+		    haveprec ? precision : -1, p, len)) {
+			free(p);
+			return (NULL);
+		}
 		/* Restore format for next loop. */
 
 		free(p);
@@ -428,6 +434,63 @@ printf_doformat(char *fmt, int *rval)
 	*fmt = nextch;
 	/* return the gargv to the next element */
 	return (fmt);
+}
+
+/* Unlike libc %s, %b counts and writes decoded bytes, including NUL.
+ * Parse only width/precision here; printf_doformat has consumed the arguments.
+ * Star widths are an upstream extension, retained by this local patch.
+ */
+static int
+printb(const char *format, int width, int precision, const char *bytes, size_t len)
+{
+	const char *cursor = format + 1;
+	char *end;
+	unsigned long value;
+	uintmax_t padding, magnitude;
+	int left = 0;
+
+	while (*cursor && strchr("#'-+ 0", *cursor)) {
+		if (*cursor == '-') left = 1;
+		cursor++;
+	}
+	if (*cursor == '*') {
+		cursor++;
+	} else if (isdigit((unsigned char)*cursor)) {
+		errno = 0;
+		value = strtoul(cursor, &end, 10);
+		if (errno == ERANGE || value > INT_MAX) goto range;
+		width = (int)value;
+		cursor = end;
+	}
+	if (*cursor == '.') {
+		cursor++;
+		if (*cursor != '*') {
+			errno = 0;
+			value = strtoul(cursor, &end, 10);
+			if (errno == ERANGE || value > INT_MAX) goto range;
+			precision = (int)value;
+		}
+	}
+	if (precision >= 0 && len > (size_t)precision) len = (size_t)precision;
+	/* Widen before negating so even an extension's INT_MIN is defined. */
+	if (width < 0) left = 1;
+	magnitude = width < 0 ? (uintmax_t)-(intmax_t)width : (uintmax_t)width;
+	padding = magnitude > len ? magnitude - len : 0;
+	if (!left)
+		while (padding) {
+			if (putchar(' ') == EOF) return (1);
+			padding--;
+		}
+	if (len && fwrite(bytes, 1, len, stdout) != len) return (1);
+	if (left)
+		while (padding) {
+			if (putchar(' ') == EOF) return (1);
+			padding--;
+		}
+	return (0);
+range:
+	warnx("%%b width or precision exceeds INT_MAX");
+	return (1);
 }
 
 static char *

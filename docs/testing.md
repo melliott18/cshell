@@ -1062,3 +1062,19 @@ and injected command-read error witnesses. It is included in `make test` and
 read wrapper; all other objects, including main, are the ordinary runtime.
 The [contract map](execution-contracts.md) identifies exact assertions, source
 alternatives, bounds, environments, and sanitizer handling for closed descriptors.
+
+
+### CSH-059 host capability evidence
+
+`make test-host-profile` includes `tests/host_capability_cases.py`: binary printf,
+UTF-8, finite argument/format sizes, private files/trees and host failure cases.
+`tests/host_capability_limits.py` records residual conditions with source,
+environment, executable identity, reason and next owner. These limitations are
+separate from failing assertions and exact stock-host `GAP` signatures; strict
+profile gaps still fail the command.
+
+The result JSON distinguishes parent system queries, actual soft/hard child
+resource limits, fixture-filesystem queries and bounded successful operations.
+See [the condition map](host-contract-profile.md) and
+[CSH-059 reproduction/evidence](evidence/csh-059/README.md) for native, non-root
+Docker/block-node and sanitizer commands. No block node is opened.

@@ -57,6 +57,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-057](CSH-057-job-lifecycle-boundaries.md) | Verify remaining job lifecycle boundaries | [CSH-034](CSH-034-job-control.md), [CSH-035](CSH-035-traps-and-signal-semantics.md) | [#99](https://github.com/melliott18/cshell/issues/99) |
 | [CSH-058](CSH-058-signal-edge-evidence.md) | Complete signal inheritance and permission evidence | [CSH-035](CSH-035-traps-and-signal-semantics.md) | [#100](https://github.com/melliott18/cshell/issues/100) |
 | [CSH-059](CSH-059-host-boundary-capabilities.md) | Extend qualified host boundary capabilities | [CSH-056](CSH-056-host-contract-gaps.md) | [#101](https://github.com/melliott18/cshell/issues/101) |
+| [CSH-060](CSH-060-extended-host-environments.md) | Qualify remaining host environments and limits | [CSH-059](CSH-059-host-boundary-capabilities.md) | [#106](https://github.com/melliott18/cshell/issues/106) |
 
 ## Child implementation tickets
 

@@ -1,11 +1,11 @@
 # CSH-059: Extend qualified host boundary capabilities
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-056
-- Branch: Assigned when work starts
+- Branch: test/CSH-059-host-boundary-capabilities
 - Issue: [#101](https://github.com/melliott18/cshell/issues/101)
 
 ## Goal
@@ -33,13 +33,13 @@ is the condition-by-condition scope, source and environment record.
 
 ## Acceptance criteria
 
-- [ ] Each scoped condition has bounded assertions or a capability limitation
+- [x] Each scoped condition has bounded assertions or a capability limitation
   naming the source, host environment, reason and next owner.
-- [ ] Record actual selected executable identities and resource/query values;
+- [x] Record actual selected executable identities and resource/query values;
   distinguish system ceilings, utility limits and harness protections.
-- [ ] Run native/Docker qualification and existing utility-dependent fixtures
+- [x] Run native/Docker qualification and existing utility-dependent fixtures
   after any profile change, with strict gaps preserved.
-- [ ] Update stable condition rows without promoting parent utility families or
+- [x] Update stable condition rows without promoting parent utility families or
   opening CSH-012 while applicable requirements remain unmet.
 
 ## Validation
@@ -48,3 +48,28 @@ Use `make test-host-profile`, the explicit non-root block-node path documented
 in CSH-056 evidence, and focused ASan/UBSan checks for changed host adapters.
 Keep default-host failures separate from the opt-in profile. The environment
 and capability limits are inherited evidence scope, not waived requirements.
+
+
+## Implementation and validation
+
+Implemented in a separate managed worktree on
+`test/CSH-059-host-boundary-capabilities`. The [condition map](../host-contract-profile.md)
+and [retained evidence](../evidence/csh-059/README.md) record 32 new bounded cases
+(96 invocation assertions), child resource and fixture-filesystem queries, and
+27 individually sourced residual limitations. Remaining work is owned by
+[CSH-060](CSH-060-extended-host-environments.md) ([#106](https://github.com/melliott18/cshell/issues/106)).
+
+The printf investigation reproduced a `%b` defect: decoded NUL bytes truncated
+libc `%s` output and corrupted padding/precision. A declared local vendor patch
+writes decoded bytes with their length; binary/numbered/precision/stop and
+UTF-8 regression assertions pass. The upstream license and pinned provenance
+remain visible. Shell runtime sources are unchanged.
+
+Native macOS 14.8.7 arm64 and Debian 12 Docker arm64 each pass 1015 strict
+profile assertions with non-root denial and stat-only block nodes. Focused
+ASan/UBSan qualification also passes 1015 assertions on both hosts. Profile
+PATH reruns pass 3113 runtime cases, 48 PTY cases and 73 harness self-tests per
+host. Stock-host runs retain their 12 native / 9 Docker known gaps separately.
+Exact commands, source/binary hashes, queried values and the corrected Docker
+evidence-collector retry are recorded in the linked evidence. No whole utility
+family is promoted and CSH-012 remains closed.
