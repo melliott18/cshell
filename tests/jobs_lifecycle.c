@@ -120,8 +120,13 @@ static void live_retention(void)
         alarm(5);
         assert(run(&ctx, "exit 23 & saved=$!\n").status == 0);
         csh_state_get_info(ctx.state, &info); ids[i] = info.background_pid;
-        while (waitid(P_PID, (id_t)ids[i], &event, WEXITED | WNOWAIT) < 0)
-            assert(errno == EINTR);
+        int observed;
+        do { observed = waitid(P_PID, (id_t)ids[i], &event, WEXITED | WNOWAIT); }
+        while (observed < 0 && errno == EINTR);
+        /* The executor polls between list entries: a fast child may already
+         * be reaped into the registry before run returns. Its exact retained
+         * result is still checked by the later numeric wait. */
+        assert(observed == 0 || errno == ECHILD);
         assert(csh_jobs_poll(ctx.jobs) == 0);
     }
     for (int i = 1; i < 33; ++i) {
