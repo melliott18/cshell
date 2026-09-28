@@ -59,6 +59,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-059](CSH-059-host-boundary-capabilities.md) | Extend qualified host boundary capabilities | [CSH-056](CSH-056-host-contract-gaps.md) | [#101](https://github.com/melliott18/cshell/issues/101) |
 | [CSH-060](CSH-060-extended-host-environments.md) | Qualify remaining host environments and limits | [CSH-059](CSH-059-host-boundary-capabilities.md) | [#106](https://github.com/melliott18/cshell/issues/106) |
 | [CSH-061](CSH-061-host-environment-residuals.md) | Resolve remaining host environment contracts | [CSH-060](CSH-060-extended-host-environments.md) | [#110](https://github.com/melliott18/cshell/issues/110) |
+| [CSH-062](CSH-062-host-contract-controlled-platforms.md) | Supply remaining controlled host platforms | [CSH-061](CSH-061-host-environment-residuals.md) | [#116](https://github.com/melliott18/cshell/issues/116) |
 
 ## Child implementation tickets
 

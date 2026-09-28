@@ -3,6 +3,7 @@ import os
 import shlex
 import stat
 import subprocess
+from host_acl_cases import cases as acl_cases, setup as setup_acl
 
 
 def cases(paths, helper, printf_faults, locales, controlled, unequal_acl=False):
@@ -70,6 +71,7 @@ def cases(paths, helper, printf_faults, locales, controlled, unequal_acl=False):
         yield case('U-040 find UTF-8 question mark', "find names -name '?' -type f", 'names/é\n'.encode(),
                    env={'LC_ALL': locales['utf8']}, input_files={'names/é': b'', 'names/aa': b''})
     if controlled:
+        yield from acl_cases(paths, helper)
         for kind in ('owner', 'group', 'acl'):
             identities = ((10001, 10001), (10002, 10002)) if kind == 'acl' and not unequal_acl else (
                 (10002, 10001), (10001, 10002))
@@ -103,6 +105,8 @@ def cases(paths, helper, printf_faults, locales, controlled, unequal_acl=False):
 
 def setup_controlled(directory, kind):
     """Root-only disposable Linux fixtures. Devices are created/stat'ed, never opened."""
+    if isinstance(kind, dict):
+        return setup_acl(directory, kind)
     directory.chmod(0o755)
     target = directory / 'controlled'
     if kind in ('block', 'character'):

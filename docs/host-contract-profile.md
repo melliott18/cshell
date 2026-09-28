@@ -67,7 +67,7 @@ allocation fault injection establishes universal host qualification.
 
 ## Explicit remaining capability limits
 
-[CSH-061](tickets/CSH-061-host-environment-residuals.md) is the next owner for
+[CSH-062](tickets/CSH-062-host-contract-controlled-platforms.md) is the next owner for
 residual conditions. The executable inventory and platform in **each run**
 identify the environment to which its limitations apply. The machine-readable
 [condition inventory](../tests/host_capability_limits.py) emits each source page,
@@ -108,3 +108,24 @@ harness protections; successful finite sizes above are not utility maxima.
 Strict gaps remain fatal in the opt-in profile; stock-host failures remain
 separate. Neither U-040 nor a parent utility family is promoted, and the CSH-012
 gate stays closed.
+
+
+## CSH-061 controlled ACL residuals
+
+[Retained evidence](evidence/csh-061/README.md) adds access/default ACLs with
+read/write/execute grants, unrelated-identity denials and mask denials for named
+users and supplementary group 10003. Test and bracket predicates are checked
+alongside independent actual read, append and private-helper execution.
+Parent/child ACLs, metadata and actual real/effective IDs/groups are recorded.
+This qualifies only the supplied Linux equal-ID fixtures and filesystem.
+
+The unequal-ID strict reproducer retains six failures with success expectations
+unchanged. Dynamic linkage and direct probes identify glibc 2.36's euidaccess
+mode-bit path: the effective-ID ACL grant succeeds through faccessat and actual
+open but fails through euidaccess. Utility/libc vendors own implementation.
+
+The machine-readable inventory preserves all 27 existing conditions and adds
+an independent unavailable privileged Darwin ACL condition. Missing root,
+locales and explicit block witnesses remain separate. The next qualification
+owner is [CSH-062](tickets/CSH-062-host-contract-controlled-platforms.md); bounded
+passes do not promote any parent family or satisfy CSH-012.
