@@ -424,12 +424,18 @@ int csh_jobs_give_terminal(struct csh_jobs *jobs, struct csh_job *job, int resum
     return 0;
 }
 
-static int continue_job(struct csh_job *job)
+static int continue_job(struct csh_jobs *jobs, struct csh_job *job)
 {
     size_t i;
     /* A terminal interrupt can finish the group after handoff/display and
-     * before SIGCONT. Collect that exit normally instead of losing its status. */
-    if (kill(-job->pgid, SIGCONT) == -1 && errno != ESRCH) return -1;
+     * before SIGCONT. Darwin can return EPERM for that exited group. Accept
+     * a failed continuation only after collecting every owned child's exit;
+     * a live job must retain the original error and its stopped state. */
+    if (kill(-job->pgid, SIGCONT) == -1) {
+        int number = errno;
+        if (csh_jobs_poll(jobs) == -1) return -1;
+        if (!complete(job)) { errno = number; return -1; }
+    }
     for (i = 0; i < job->count; ++i) job->processes[i].stopped = 0;
     job->changed = 0;
     return 0;
@@ -455,7 +461,7 @@ int csh_jobs_foreground(struct csh_jobs *jobs, struct csh_job *job, int resume,
         if (csh_jobs_give_terminal(jobs, job, 1) == -1) rc = -1;
         else {
             if (outputf(STDOUT_FILENO, "%s\n", job->text) < 0 ||
-                continue_job(job) == -1) rc = -1;
+                continue_job(jobs, job) == -1) rc = -1;
         }
     }
     if (rc == 0) rc = wait_job(jobs, job, 0);
@@ -901,7 +907,7 @@ int csh_jobs_builtin(struct csh_jobs *jobs, const struct csh_command *command,
             if (csh_jobs_foreground(jobs, job, 1, &rc, suspended) == -1)
                 rc = diagnostic(name, "cannot foreground job", operand);
         } else {
-            if (continue_job(job) == -1) rc = diagnostic(name, "cannot continue job", operand);
+            if (continue_job(jobs, job) == -1) rc = diagnostic(name, "cannot continue job", operand);
             else {
                 job->background = 1;
                 promote_job(jobs, job);

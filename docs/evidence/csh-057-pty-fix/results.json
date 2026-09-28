@@ -1,0 +1,31 @@
+{
+  "base_revision": "b1b6b15",
+  "source_revision": "33d32a7f49592db44a3aaaf88f3a4364d7565201",
+  "native_normal_jobs_pty_harness_exit": 0,
+  "native_final_jobs_pty_exit": 0,
+  "native_sanitizer_jobs_pty_exit": 0,
+  "docker_normal_jobs_pty_harness_exit": 0,
+  "docker_sanitizer_jobs_pty_exit": 0,
+  "public_forced_window_before": {
+    "status": 1,
+    "darwin_sigcont_errno": "EPERM",
+    "cycles_failed": 32
+  },
+  "public_forced_window_after": {
+    "status": 130,
+    "cycles_passed": 32
+  },
+  "regression_before_exit": 1,
+  "normal_serial_repetitions": 100,
+  "normal_serial_resume_cycles": 3200,
+  "retained_loaded_repeat_failure": {
+    "round": 76,
+    "timeout_seconds": 5,
+    "captured_bytes": 8595,
+    "exact_expected_prefix": true,
+    "foreground_error_reported": false
+  },
+  "sanitizer_serial_repetitions": 100,
+  "sanitizer_serial_resume_cycles": 3200,
+  "serial_repeat_exit_status": 0
+}

@@ -2,6 +2,7 @@
 #define CSHELL_TEST_EXECUTE_FAULTS_H
 
 #include <fcntl.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -21,6 +22,7 @@ pid_t csh_execute_fault_fork(void);
 int csh_execute_fault_setpgid(pid_t pid, pid_t group);
 int csh_execute_fault_tcsetpgrp(int fd, pid_t group);
 int csh_execute_fault_tcsetattr(int fd, int action, const struct termios *modes);
+int csh_execute_fault_kill(pid_t pid, int number);
 ssize_t csh_execute_fault_read(int fd, void *bytes, size_t length);
 pid_t csh_execute_fault_waitpid(pid_t pid, int *status, int options);
 
@@ -37,6 +39,7 @@ pid_t csh_execute_fault_waitpid(pid_t pid, int *status, int options);
 #define setpgid csh_execute_fault_setpgid
 #define tcsetpgrp csh_execute_fault_tcsetpgrp
 #define tcsetattr csh_execute_fault_tcsetattr
+#define kill csh_execute_fault_kill
 #define fork csh_execute_fault_fork
 #define read csh_execute_fault_read
 #define waitpid csh_execute_fault_waitpid

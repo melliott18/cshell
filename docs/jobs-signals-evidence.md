@@ -374,6 +374,17 @@ the notification fixture's diagnosed launch race, loaded regression, and final
 native/Docker/sanitizer outcomes. [CSH-058](#csh-058) supplies the subsequent signal
 edge cross-product assertions. No unspecified membership is promoted to a portable oracle.
 
+The [foreground-resume follow-up](evidence/csh-057-pty-fix/README.md) closes the
+hosted status-1 failure in the existing 32-cycle PTY case. For JOB-002/003 and
+U-032, `terminal_job_faults` in [execute_faults.c](../tests/execute_faults.c)
+forces an exit between foreground display and SIGCONT using real SIGINT and
+WNOWAIT, then checks real kernel, EPERM and ESRCH outcomes. Completion must
+return 130, consume the numeric identity, restore ownership/modes and reap all
+children. A confirmed stopped live child with EPERM must retain its stopped
+record and fail. The same forced scheduling window passes all 32 public PTY
+cycles with exact bytes. These are narrower race assertions, not promotion of
+the parent requirement families to complete verification.
+
 <a id="csh-058"></a>
 
 ## CSH-058 — signal edge assertions
@@ -415,4 +426,3 @@ kernel CHLD ignore with an internal handler. A default handler after exec is
 not used as proof of an internal shell handler; the API assertions cover that
 separate boundary. Full UP/XSI remain unselected. External host utility
 qualification remains CSH-056/059; job lifecycle/capacity remains CSH-057.
-

@@ -1109,6 +1109,14 @@ resume cases wait for a SIGCONT-handler readiness message before sending a
 second stop signal. See the [run record](evidence/csh-057/README.md) for the
 failed-before and loaded fixture-race observations and their fixes.
 
+The [foreground-resume follow-up](evidence/csh-057-pty-fix/README.md) extends the
+existing terminal fault fixture with a synchronized exit-before-SIGCONT case,
+portable EPERM/ESRCH branches and rejection for a stopped live child. Its
+readiness pipe retries EINTR; WNOWAIT confirms exit/stop without consuming the
+job manager's status. The existing five-second PTY limit and ten-second fault
+alarm remain unchanged. The unchanged public 32-cycle case can be repeated
+with `python3 docs/evidence/csh-057-pty-fix/repeat_pty.py`.
+
 ## Signal edge evidence (CSH-058)
 
 `make test-signal-edges` is included in `make test-traps` and `make test`.

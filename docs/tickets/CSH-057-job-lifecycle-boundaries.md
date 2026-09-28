@@ -5,7 +5,7 @@
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-034, CSH-035
-- Branch: test/CSH-057-job-lifecycle-boundaries
+- Branch: fix/CSH-057-pty-resume
 - Issue: [#99](https://github.com/melliott18/cshell/issues/99)
 
 ## Goal
@@ -77,5 +77,21 @@ full suites, native full sanitizer, and all CSH-057 sanitizer checks pass.
 Integration review on 2026-09-28: hosted run 36313722641 passed all jobs, but
 duplicate macOS job 108604370895 in run 36313720185 failed the pre-existing
 `repeated background resumes preserve prompt and terminal` assertion (status 1
-instead of 130). This intermittent failure remains unresolved; issue #99 and
-this ticket remain open for follow-up even after the scoped changes merge.
+instead of 130). The ticket remained open after the scoped changes merged to
+investigate this failure.
+
+### Foreground resume follow-up
+
+`33d32a7` fixes the reproduced continuation race. If Ctrl-C finishes a job
+between foreground display and SIGCONT, Darwin can reject the latter with
+EPERM. Previously `fg` returned 1 and reported an extra completion notice.
+It now collects owned statuses and accepts a failed continuation only for a
+fully completed job, returning 130 and consuming its identity. A live stopped
+job still rejects EPERM and retains its state.
+
+The [follow-up evidence](../evidence/csh-057-pty-fix/README.md) retains the
+hosted failure, a deterministic public PTY reproduction, the failing-before
+module regression, and final native/Docker normal and sanitizer checks.
+The public test's exact transcript, foreground predicates, 32 cycles and
+five-second deadline are unchanged. This follow-up remains at review until
+integration; the earlier general-runtime timeout records are not erased.
