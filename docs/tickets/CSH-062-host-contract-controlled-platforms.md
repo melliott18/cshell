@@ -1,6 +1,6 @@
 # CSH-062: Supply remaining controlled host platforms
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
