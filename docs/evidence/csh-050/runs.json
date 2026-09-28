@@ -1,0 +1,42 @@
+[
+  {
+    "name": "native-focused",
+    "command": "make test-jobs-signals",
+    "exit_status": 0,
+    "log_created_utc": "2026-09-28T17:30:57.256703+00:00",
+    "log_last_write_utc": "2026-09-28T17:32:42.418710+00:00",
+    "log": "native-focused.log.gz"
+  },
+  {
+    "name": "native-full",
+    "command": "make test test-pty test-harness",
+    "exit_status": 0,
+    "log_created_utc": "2026-09-28T17:32:52.697711+00:00",
+    "log_last_write_utc": "2026-09-28T17:36:22.131043+00:00",
+    "log": "native-full.log.gz"
+  },
+  {
+    "name": "docker-full",
+    "command": "make test-jobs-signals test test-harness (Docker)",
+    "exit_status": 0,
+    "log_created_utc": "2026-09-28T17:36:35.474811+00:00",
+    "log_last_write_utc": "2026-09-28T17:37:55.084162+00:00",
+    "log": "docker-full.log.gz"
+  },
+  {
+    "name": "native-sanitizer",
+    "command": "make -C build/csh050-asan test-trap-runtime (ASan/UBSan flags in README)",
+    "exit_status": 0,
+    "log_created_utc": "2026-09-28T17:38:07.008190+00:00",
+    "log_last_write_utc": "2026-09-28T17:38:33.869979+00:00",
+    "log": "native-sanitizer.log.gz"
+  },
+  {
+    "name": "docker-sanitizer",
+    "command": "make clean then make test-trap-runtime (Docker, ASan/UBSan flags in README)",
+    "exit_status": 0,
+    "log_created_utc": "2026-09-26T05:17:15.690807+00:00",
+    "log_last_write_utc": "2026-09-28T17:42:09.815889+00:00",
+    "log": "docker-sanitizer.log.gz"
+  }
+]

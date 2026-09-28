@@ -14,7 +14,14 @@ Separate base and conditional portions, map exact runtime/PTY/API cases to each 
 
 ## Explicit current limitation
 
-The retained job/signal/trap witnesses do not form complete requirement-family evidence. CSH-044/045 are integrated; their regressions are retained. The clause map and residual obligations are now explicit in [jobs/signals evidence](../jobs-signals-evidence.md) and [CSH-054](CSH-054-signal-contract-gaps.md). Base signal/asynchronous-list/wait semantics remain applicable even while the UP utility profile is unselected; implemented job-control extensions need their supported behavior and terminal capability conditions recorded separately.
+The retained witnesses remain scoped assertions rather than complete
+requirement-family evidence. CSH-044/045 and CSH-054/058 are integrated;
+CSH-057's lifecycle changes are integrated, but its reopened foreground-resume
+failure remains under review in [PR #112](https://github.com/melliott18/cshell/pull/112).
+The [current integration record](../evidence/csh-050/README.md) reconciles these
+follow-ups and retains that failure separately from fresh passing runs.
+Base signal/asynchronous-list/wait semantics remain applicable while the UP
+utility profile is unselected; terminal capability conditions remain explicit.
 
 This is an open evidence limitation found by the
 [CSH-037 independent review](../audit-review.md), not a declaration that every
@@ -84,7 +91,7 @@ limitation and complete row list above replace reliance on already-completed
 implementation tickets as owners of remaining verification work.
 
 
-### Implemented audit scope
+### Original audit scope (2026-09-26)
 
 The [eleven-family clause map](../jobs-signals-evidence.md) names normative
 sources, policies, implementation entry points, exact assertions and residual
@@ -229,3 +236,23 @@ exact fixture assertions and summarized results above are the durable record.
 The full platform acceptance box remains open while the recorded harness/load
 failures and residual requirement defects are unresolved; this audit is ready
 for review, not an assertion of complete jobs/signal conformance.
+
+
+### Integration follow-up (2026-09-28)
+
+Source/test change `bf7723f` is based on `b1b6b15`. The initial CSH-050 audit
+and CSH-054/057/058 corrections were already present in that baseline.
+This follow-up adds `make test-jobs-signals` as the combined focused entry point
+and makes `test-traps` include the original runtime trap/exit witnesses.
+`build/tests/traps.json` selects 207 unchanged cases (114 `traps:` cases and
+93 exit/signal-status cases) from the shared three-mode runtime definitions.
+A direct structural comparison confirms every selected case equals its full
+runtime counterpart, with unique names. No production C behavior or fixture
+oracle is changed.
+
+The [retained integration validation](../evidence/csh-050/README.md) supplies
+fresh source/binary identities, commands, exact results and the current residual
+inventory. The clause map now links integrated CSH-058 assertions instead of
+leaving them described as future work. The platform acceptance box remains
+open pending the CSH-057 resume correction and its integration validation;
+CSH-012 remains closed. The older failed and incomplete runs above are retained.
