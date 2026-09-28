@@ -1,7 +1,7 @@
 {
   "README.md": {
-    "bytes": 6766,
-    "sha256": "5ea1e369041a54a475139bdbf849aba2a9dcb8a81f12cf3f3b96b863faa8a119"
+    "bytes": 6795,
+    "sha256": "4cf74ccaa8153d120a7a33e6ccfda2cba2f78f7474fecdc1e898c2ac172817d6"
   },
   "asan-baseline.log.gz": {
     "bytes": 242,
@@ -19,9 +19,9 @@
     "bytes": 242,
     "sha256": "e1635ef921c5e3f392637fedad214659369ec9c4c75c0d30bbfce85be90efc52"
   },
-  "diagnostic-window.patch": {
-    "bytes": 2832,
-    "sha256": "4312a0df7b90ad25ac4e18ab0f3fc48a6840f70046f029acc8638c4f92ff8a5a"
+  "diagnostic-window.patch.gz": {
+    "bytes": 1033,
+    "sha256": "c221353874684a1b2f68f7a6548386872854c655fd948c19c11c849d067008b9"
   },
   "docker-build.log.gz": {
     "bytes": 1493,
@@ -71,9 +71,9 @@
     "bytes": 322,
     "sha256": "8816b80e5d60b9bef8af9bafd4848d5ae2cf1c998186b0f6ddc5bc3195e47467"
   },
-  "fixed-window.patch": {
-    "bytes": 861,
-    "sha256": "a702fbf7b5cf368d9d3eb85e14e39dfc95f248649784e221807eaf54eaaa2a71"
+  "fixed-window.patch.gz": {
+    "bytes": 449,
+    "sha256": "c5470a0667ddec319c7a7445b60e6f7053883956eb365ea2bb2d44c0c6dc811a"
   },
   "hosted-macos-failure.log.gz": {
     "bytes": 149020,

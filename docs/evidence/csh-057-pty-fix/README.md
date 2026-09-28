@@ -29,7 +29,7 @@ confirms the owned child's exit without consuming it. The real Darwin
 by `continue_job`. Every forced cycle produced `cannot foreground job`, an
 extra termination notification, and the final status 1. The original failure's
 signature is reproduced with a real terminal signal and real kernel error;
-no errno is fabricated in this diagnostic. `diagnostic-window.patch` and
+no errno is fabricated in this diagnostic. `diagnostic-window.patch.gz` and
 `exit-before-continue.log.gz` retain the instrumentation and complete output.
 
 `continue_job` now polls owned child statuses after a rejected continuation.
@@ -59,7 +59,7 @@ foreground predicates, 32 cycles and five-second deadline are unchanged.
 
 The new module regression failed before the production fix (`fault-before`)
 and passes after it. The same forced scheduling window in the public sanitizer
-PTY case passes all 32 cycles after the fix (`fixed-window.patch`,
+PTY case passes all 32 cycles after the fix (`fixed-window.patch.gz`,
 `exit-before-continue-fixed`). The diagnostic patches are evidence only; the
 shipping runtime has no scheduling interposition.
 
@@ -101,7 +101,7 @@ python3 docs/evidence/csh-057-pty-fix/repeat_pty.py
 
 ## Retained failed attempts
 
-Logs are compressed with `.gz` without changing their contents.
+Logs and diagnostic patches are compressed with `.gz` without changing their contents.
 
 | Record | Disposition |
 | --- | --- |
