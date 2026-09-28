@@ -1240,3 +1240,23 @@ vendor scope; the default base remains Debian 12. [CSH-062 evidence](evidence/cs
 contains complete native, overlay, ext4-volume, unsupported-tmpfs, BusyBox and
 sanitizer commands/results. [CSH-063](tickets/CSH-063-host-platform-residual-qualification.md)
 owns the individually retained residuals, including absent privileged Darwin.
+
+
+### CSH-063 owner selection and creation-mode checks
+
+The controlled profile adds 144 ACL cases (432 string/file/stdin assertions):
+owner precedence, owning-group permissions, denial without falling back to other,
+owner/other permissions outside the mask, and default ACL creation with modes
+0700 and 0777. Each test/bracket predicate has an independent actual operation.
+Numeric ACL contents and ownership are checked before utility invocation.
+
+`--unequal-acl` also tests these cases under unequal real/effective IDs; neither
+false grants nor rejected grants are allowances. Setup errors and timeouts keep
+command/status/diagnostic and mount identity in failed records. Qualification
+JSON embeds the current source-file hashes, independently of executable hashes.
+The Docker image includes its Dockerfile for that source inventory.
+
+[CSH-063 evidence](evidence/csh-063/README.md) records native, Debian 13 and newer
+Debian sid profiles, runtime/PTY integration, strict vendor failures and unsupported
+tmpfs/host-bind fixtures. [CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md)
+owns the individually retained residuals; no parent utility is promoted.

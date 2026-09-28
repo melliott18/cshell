@@ -1,7 +1,7 @@
 """Residual host contracts, emitted per run with environment and identities.
 
 These are capability limitations, never known-gap allowances or passing tests.
-CSH-063 owns the next qualification work; utility vendors own utility semantics.
+CSH-064 owns the next qualification work; utility vendors own utility semantics.
 """
 BASE = 'https://pubs.opengroup.org/onlinepubs/9799919799/utilities/'
 
@@ -14,9 +14,9 @@ RESIDUAL = [
     ('U-035/full-format', 'printf', 'Selected defined sign/base/width/precision/conversion and invalid-format cases extend the binary regression; the full combination space remains unqualified.'),
     ('U-036/alternative-policies', 'echo', 'Explicit Apple/GNU and BusyBox FEATURE_FANCY_ECHO policies have independent assertions; other builds and policies need fresh identities and expectations.'),
     ('U-036/argument-limits', 'echo', 'Single and aggregate oversized exec vectors require E2BIG with a fixed environment; exact successful thresholds and other environment sizes remain unqualified.'),
-    ('U-037/ACLs', 'test', 'Opt-in Linux-root fixtures check a named-user ACL grant and denial with equal IDs for test/bracket; combined unequal-ID ACL grants fail on Debian 12/13 (strict --unequal-acl reproducer); CSH-061/062 add access/default ACL read/write/execute controls, multiple named users, two supplementary groups, user precedence and masks; unequal combinations are strict opt-in assertions. Each run records its selected fixture filesystem; Darwin and other filesystems remain unqualified.'),
+    ('U-037/ACLs', 'test', 'Opt-in Linux-root fixtures check a named-user ACL grant and denial with equal IDs for test/bracket; combined unequal-ID ACL predicates fail on Debian 12/13 and sid coreutils 9.10/glibc 2.43 (strict --unequal-acl reproducer; includes false grants as well as rejected grants); CSH-061/062 add access/default ACL read/write/execute controls, multiple named users, two supplementary groups, user precedence and masks; unequal combinations are strict opt-in assertions. Each run records its selected fixture filesystem; CSH-063 adds owner/owning-group precedence, no fallback to other, mask-independent owner/other access and creation-mode restrictions with independent operations. Darwin and other filesystems remain unqualified.'),
     ('U-037/Darwin-ACLs', 'test', 'This run has no supplied privileged Darwin identity fixture; ordered allow/deny entries, inheritance and effective-identity access remain unqualified. Requires a disposable root-controlled Darwin environment, never a modification to real user accounts.'),
-    ('U-037/unequal-identities', 'test', 'Opt-in Linux-root fixtures check effective-owner/group reads with unequal UID/GID pairs and empty groups; CSH-062 covers two explicit supplementary groups (10003/10004), multiple ACL entries and named-user precedence; --unequal-acl requires the same grants with unequal IDs, without allowances. Other credentials and identity namespaces remain unqualified.'),
+    ('U-037/unequal-identities', 'test', 'Opt-in Linux-root fixtures check effective-owner/group reads with unequal UID/GID pairs and empty groups; CSH-062 covers two explicit supplementary groups (10003/10004), multiple ACL entries and named-user precedence; --unequal-acl requires the same grants with unequal IDs, without allowances. CSH-063 adds owner and owning-group selection and no-fallback controls under equal/unequal IDs. Other credentials and identity namespaces remain unqualified.'),
     ('U-037/device-namespaces', 'test', 'Explicit block and private Linux character/block nodes are stat-only witnesses; other namespaces and device I/O are unqualified and real disk contents are never fixtures.'),
     ('U-040/true-exec-resources', 'true', 'Oversized exec is rejected with E2BIG before utility entry; process/memory exhaustion and loader failure remain untested, with no utility capacity inferred.'),
     ('U-040/false-exec-resources', 'false', 'Oversized exec is rejected with E2BIG before utility entry; process/memory exhaustion and loader failure remain untested, with no utility capacity inferred.'),
@@ -41,7 +41,8 @@ RESIDUAL = [
 
 def limitations(environment, inventory):
     return [dict(condition=condition, source=BASE + utility + '.html',
-                 environment=environment, reason=reason, owner='CSH-063',
+                 environment=environment, reason=reason, owner='CSH-064',
+                 implementation_owner='selected utility/libc/platform vendor',
                  executable=inventory[utility],
                  related_executable=inventory['['] if utility == 'test' else None)
             for condition, utility, reason in RESIDUAL]

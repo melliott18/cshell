@@ -1,0 +1,153 @@
+{
+  "selected": {
+    "test": {
+      "path": "/usr/bin/test",
+      "sha256": "db9b57d0abd56d324776ef0e830e2cc344306ec3a5a93c088a0f316dfc90da26",
+      "linked": {
+        "argv": [
+          "ldd",
+          "/usr/bin/test"
+        ],
+        "status": 0,
+        "stdout": "\tlinux-vdso.so.1 (0x0000ffff8edce000)\n\tlibc.so.6 => /usr/lib/aarch64-linux-gnu/libc.so.6 (0x0000ffff8eba0000)\n\t/lib/ld-linux-aarch64.so.1 (0x0000ffff8ed91000)\n",
+        "stderr": ""
+      },
+      "imports": {
+        "argv": [
+          "objdump",
+          "-T",
+          "/usr/bin/test"
+        ],
+        "status": 0,
+        "stdout": "\n/usr/bin/test:     file format elf64-littleaarch64\n\nDYNAMIC SYMBOL TABLE:\n0000000000001750 l    d  .init\t0000000000000000              .init\n0000000000020000 l    d  .data\t0000000000000000              .data\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) memcpy\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) _exit\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fwrite_unlocked\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strlen\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) exit\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.34) __libc_start_main\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) program_invocation_name\n0000000000000000  w   D  *UND*\t0000000000000000              _ITM_deregisterTMCloneTable\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) getegid\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) geteuid\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) readlink\n0000000000000000  w   DF *UND*\t0000000000000000 (GLIBC_2.17) __cxa_finalize\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __cxa_atexit\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) stderr\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) euidaccess\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __fpending\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) __progname_full\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fclose\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) malloc\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strncmp\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) bindtextdomain\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) stdout\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __printf_chk\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) memset\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strerror_r\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __vfprintf_chk\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) calloc\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) realloc\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __stack_chk_fail\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strrchr\n0000000000000000  w   D  *UND*\t0000000000000000              __gmon_start__\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.33) stat\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) __stack_chk_guard\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) abort\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) mbsinit\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __overflow\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.38) __isoc23_strtol\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) memcmp\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) textdomain\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __fprintf_chk\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strcmp\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __ctype_b_loc\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) free\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __ctype_get_mb_cur_max\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strspn\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strchr\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fflush_unlocked\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fcntl\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) __progname\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) isatty\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fputc_unlocked\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) program_invocation_short_name\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) dcgettext\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fputs_unlocked\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strcoll\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) mbrtoc32\n0000000000000000  w   D  *UND*\t0000000000000000              _ITM_registerTMCloneTable\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) iswprint\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strcspn\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __assert_fail\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __errno_location\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) getenv\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) setlocale\n0000000000020118 g    DO .bss\t0000000000000004  Base        error_message_count\n0000000000002154 g    DF .text\t00000000000000a4  Base        error_at_line\n0000000000001f8c g    DF .text\t00000000000000a8  Base        error\n0000000000020120 g    DO .bss\t0000000000000008  Base        error_print_progname\n0000000000020128 g    DO .bss\t0000000000000004  Base        error_one_per_line\n\n\n",
+        "stderr": ""
+      }
+    },
+    "[": {
+      "path": "/usr/bin/[",
+      "sha256": "594575882265c4a226784acdbc7ff32e6ce99d6152c3b0a118f141958a6f6674",
+      "linked": {
+        "argv": [
+          "ldd",
+          "/usr/bin/["
+        ],
+        "status": 0,
+        "stdout": "\tlinux-vdso.so.1 (0x0000ffff955b0000)\n\tlibc.so.6 => /usr/lib/aarch64-linux-gnu/libc.so.6 (0x0000ffff95390000)\n\t/lib/ld-linux-aarch64.so.1 (0x0000ffff95573000)\n",
+        "stderr": ""
+      },
+      "imports": {
+        "argv": [
+          "objdump",
+          "-T",
+          "/usr/bin/["
+        ],
+        "status": 0,
+        "stdout": "\n/usr/bin/[:     file format elf64-littleaarch64\n\nDYNAMIC SYMBOL TABLE:\n0000000000001660 l    d  .init\t0000000000000000              .init\n0000000000020000 l    d  .data\t0000000000000000              .data\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) memcpy\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) _exit\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fwrite_unlocked\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strlen\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) exit\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.34) __libc_start_main\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) program_invocation_name\n0000000000000000  w   D  *UND*\t0000000000000000              _ITM_deregisterTMCloneTable\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) getegid\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) geteuid\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) readlink\n0000000000000000  w   DF *UND*\t0000000000000000 (GLIBC_2.17) __cxa_finalize\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __cxa_atexit\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) stderr\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) euidaccess\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __fpending\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) __progname_full\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fclose\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) malloc\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strncmp\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) bindtextdomain\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) stdout\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __printf_chk\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) memset\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strerror_r\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __vfprintf_chk\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) calloc\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) realloc\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __stack_chk_fail\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strrchr\n0000000000000000  w   D  *UND*\t0000000000000000              __gmon_start__\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.33) stat\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) __stack_chk_guard\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) abort\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) mbsinit\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __overflow\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.38) __isoc23_strtol\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) memcmp\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) textdomain\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __fprintf_chk\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strcmp\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __ctype_b_loc\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) free\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __ctype_get_mb_cur_max\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strspn\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strchr\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fflush_unlocked\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fcntl\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) __progname\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) isatty\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fputc_unlocked\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) program_invocation_short_name\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) dcgettext\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fputs_unlocked\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strcoll\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) mbrtoc32\n0000000000000000  w   D  *UND*\t0000000000000000              _ITM_registerTMCloneTable\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) iswprint\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strcspn\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __assert_fail\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __errno_location\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) getenv\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) setlocale\n00000000000200a8 g    DO .bss\t0000000000000004  Base        error_message_count\n0000000000002054 g    DF .text\t00000000000000a4  Base        error_at_line\n0000000000001e8c g    DF .text\t00000000000000a8  Base        error\n00000000000200b0 g    DO .bss\t0000000000000008  Base        error_print_progname\n00000000000200b8 g    DO .bss\t0000000000000004  Base        error_one_per_line\n\n\n",
+        "stderr": ""
+      }
+    }
+  },
+  "helper": {
+    "path": "/work/build/tests/host_utility_helper_sanitized",
+    "sha256": "4286f49f1c035f5a3441f57f2f89d0ee3fd53188d18b2cc1d149895111768b11"
+  },
+  "linked": {
+    "argv": [
+      "ldd",
+      "/usr/bin/test"
+    ],
+    "status": 0,
+    "stdout": "\tlinux-vdso.so.1 (0x0000ffffb0a0a000)\n\tlibc.so.6 => /usr/lib/aarch64-linux-gnu/libc.so.6 (0x0000ffffb07e0000)\n\t/lib/ld-linux-aarch64.so.1 (0x0000ffffb09cd000)\n",
+    "stderr": ""
+  },
+  "libc": {
+    "path": "/usr/lib/aarch64-linux-gnu/libc.so.6",
+    "sha256": "014abbdc427b80a09816a4336c4172e2de53e591ebac1b8c69235713268d1772"
+  },
+  "versions": {
+    "argv": [
+      "dpkg-query",
+      "-W",
+      "coreutils",
+      "libc6"
+    ],
+    "status": 0,
+    "stdout": "coreutils\t9.10-1\nlibc6:arm64\t2.43-6\n",
+    "stderr": ""
+  },
+  "imports": {
+    "argv": [
+      "objdump",
+      "-T",
+      "/usr/bin/test"
+    ],
+    "status": 0,
+    "stdout": "\n/usr/bin/test:     file format elf64-littleaarch64\n\nDYNAMIC SYMBOL TABLE:\n0000000000001750 l    d  .init\t0000000000000000              .init\n0000000000020000 l    d  .data\t0000000000000000              .data\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) memcpy\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) _exit\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fwrite_unlocked\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strlen\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) exit\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.34) __libc_start_main\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) program_invocation_name\n0000000000000000  w   D  *UND*\t0000000000000000              _ITM_deregisterTMCloneTable\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) getegid\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) geteuid\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) readlink\n0000000000000000  w   DF *UND*\t0000000000000000 (GLIBC_2.17) __cxa_finalize\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __cxa_atexit\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) stderr\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) euidaccess\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __fpending\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) __progname_full\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fclose\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) malloc\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strncmp\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) bindtextdomain\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) stdout\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __printf_chk\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) memset\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strerror_r\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __vfprintf_chk\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) calloc\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) realloc\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __stack_chk_fail\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strrchr\n0000000000000000  w   D  *UND*\t0000000000000000              __gmon_start__\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.33) stat\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) __stack_chk_guard\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) abort\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) mbsinit\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __overflow\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.38) __isoc23_strtol\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) memcmp\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) textdomain\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __fprintf_chk\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strcmp\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __ctype_b_loc\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) free\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __ctype_get_mb_cur_max\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strspn\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strchr\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fflush_unlocked\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fcntl\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) __progname\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) isatty\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fputc_unlocked\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) program_invocation_short_name\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) dcgettext\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fputs_unlocked\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strcoll\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) mbrtoc32\n0000000000000000  w   D  *UND*\t0000000000000000              _ITM_registerTMCloneTable\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) iswprint\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strcspn\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __assert_fail\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __errno_location\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) getenv\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) setlocale\n0000000000020118 g    DO .bss\t0000000000000004  Base        error_message_count\n0000000000002154 g    DF .text\t00000000000000a4  Base        error_at_line\n0000000000001f8c g    DF .text\t00000000000000a8  Base        error\n0000000000020120 g    DO .bss\t0000000000000008  Base        error_print_progname\n0000000000020128 g    DO .bss\t0000000000000004  Base        error_one_per_line\n\n\n",
+    "stderr": ""
+  },
+  "cases": [
+    {
+      "argv": [
+        "/work/build/tests/host_utility_helper_sanitized",
+        "identity",
+        "10001",
+        "10001",
+        "/work/build/tests/host_utility_helper_sanitized",
+        "acl-probe",
+        "/tmp/csh-acl-diagnosis-1ubfyly9/controlled"
+      ],
+      "status": 0,
+      "stdout": "uid=10001 euid=10001 gid=10001 egid=10001 groups=0\neuidaccess=0 faccessat=0 open=0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/work/build/tests/host_utility_helper_sanitized",
+        "identity",
+        "10002",
+        "10001",
+        "/work/build/tests/host_utility_helper_sanitized",
+        "acl-probe",
+        "/tmp/csh-acl-diagnosis-1ubfyly9/controlled"
+      ],
+      "status": 0,
+      "stdout": "uid=10002 euid=10001 gid=10002 egid=10001 groups=0\neuidaccess=-1 faccessat=0 open=0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/work/build/tests/host_utility_helper_sanitized",
+        "identity",
+        "10001",
+        "10002",
+        "/work/build/tests/host_utility_helper_sanitized",
+        "acl-probe",
+        "/tmp/csh-acl-diagnosis-1ubfyly9/controlled"
+      ],
+      "status": 0,
+      "stdout": "uid=10001 euid=10002 gid=10001 egid=10002 groups=0\neuidaccess=-1 faccessat=-1 open=-1\n",
+      "stderr": ""
+    }
+  ],
+  "fixture": {
+    "kind": "acl",
+    "uid": 0,
+    "gid": 0,
+    "mode": "0o100040",
+    "rdev": 0,
+    "acl": "user::---\nuser:10001:r--\ngroup::---\nmask::r--\nother::---\n\n"
+  },
+  "filesystem": {
+    "path": "/tmp/csh-acl-diagnosis-1ubfyly9",
+    "device": 250,
+    "platform": "Linux",
+    "mount": {
+      "mountpoint": "/",
+      "type": "overlay",
+      "source": "overlay",
+      "options": "rw,relatime",
+      "device": "0:250",
+      "root": "/"
+    }
+  }
+}

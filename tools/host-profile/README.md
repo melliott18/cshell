@@ -159,3 +159,22 @@ results, and unsupported tmpfs ACLs. Every residual is individually retained
 with its source, actual environment/executable identity, reason and next owner
 [CSH-063](../../docs/tickets/CSH-063-host-platform-residual-qualification.md).
 The privileged Darwin environment and physical terminal remain unavailable.
+
+
+## CSH-063 ACL selection and creation modes
+
+Controlled Linux cases additionally check owner precedence, owning-group grants,
+matching-group denial without falling back to other, and owner/other permissions
+outside the ACL mask. Default ACL creation with mode 0700 must suppress a named
+user grant; mode 0777 retains it. All three permissions have test/bracket and
+independent read/write/execute controls in string/file/stdin modes. Setup checks
+the actual numeric ACL and file ownership before testing the selected utilities.
+The optional unequal-ID run preserves both grants and denials as strict assertions.
+
+Qualification JSON now embeds hashes of the build/test source inputs. Setup
+errors and timeouts retain diagnostics as failures, with the actual fixture mount.
+[CSH-063 evidence](../../docs/evidence/csh-063/README.md) compares Debian 13 and
+newer Debian sid vendors and retains unsupported filesystem results separately.
+[CSH-064](../../docs/tickets/CSH-064-host-platform-external-prerequisites.md)
+owns every remaining condition; utility/libc/platform vendors own implementation.
+No privileged Darwin environment or physical terminal has been supplied.

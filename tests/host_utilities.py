@@ -28,6 +28,18 @@ def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def source_identity():
+    """Hash the actual build/test inputs, including uncommitted worktree edits."""
+    root = Path(__file__).resolve().parent.parent
+    paths = [root / 'Makefile', root / 'Dockerfile']
+    for directory in ('src', 'include', 'tests', 'tools'):
+        paths.extend(p for p in (root / directory).rglob('*')
+                     if p.is_file() and '__pycache__' not in p.parts and p.suffix != '.pyc')
+    hashes = {str(p.relative_to(root)): sha(p) for p in sorted(paths)}
+    digest = hashlib.sha256(json.dumps(hashes, sort_keys=True).encode()).hexdigest()
+    return dict(sha256=digest, files=hashes)
+
+
 def inventory(search_path=os.defpath):
     result = {}
     for name in HOSTS:
@@ -141,8 +153,9 @@ def known_gap(case, status, output):
 
 def setup_failure(name, case, error):
     return dict(name=name, verdict='FAIL', phase='setup', case=serial(case),
-                reason=str(error), owner='CSH-063', source=BASE + 'test.html',
+                reason=str(error), owner='CSH-064', source=case.get('source', BASE + 'test.html'),
                 actual=serial(dict(errno=getattr(error, 'errno', None),
+                    timeout_seconds=getattr(error, 'timeout', None),
                     argv=getattr(error, 'cmd', None), status=getattr(error, 'returncode', None),
                     stdout=getattr(error, 'stdout', None), stderr=getattr(error, 'stderr', None))))
 
@@ -262,7 +275,8 @@ def main():
             ('U-037/permission-denial', capabilities['permission_denial'], 'effective UID 0 bypasses mode-bit denial'),
             ('U-037/block-device', capabilities['block_device'], 'no explicit stat-only block-device witness supplied')):
             if not available:
-                limitations.append(dict(condition=condition, reason=reason, owner='CSH-063',
+                limitations.append(dict(condition=condition, reason=reason, owner='CSH-064',
+                                        implementation_owner='selected utility/libc/platform vendor',
                                         environment=environment, source=BASE +
                                         ('test.html' if condition.startswith('U-037') else 'V3_chap01.html'),
                                         executable=tools['test' if condition.startswith('U-037') else
@@ -292,10 +306,11 @@ def main():
                         connection = setup(directory, case.get('input_files'))
                         controlled = (setup_controlled(directory, case['controlled_fixture'])
                                       if case.get('controlled_fixture') else None)
-                    except (OSError, subprocess.CalledProcessError) as error:
+                    except (OSError, subprocess.SubprocessError) as error:
                         # Unsupported ACL/filesystem operations are failed setup,
                         # never a passing assertion or an absent/stale record.
                         record = setup_failure(name, case, error)
+                        record['filesystem'] = filesystem
                         records.append(record)
                         totals['failed'] += 1
                         print('FAIL: host: ' + name + ' (fixture setup)', flush=True)
@@ -371,7 +386,7 @@ def main():
             raise RuntimeError('child resource query failed: ' + repr((status, output, errors)))
         child_resources = json.loads(bytes(output['stdout']))
         filesystem_query_path = str(directory)
-    result = {'platform': platform.platform(), 'libc': platform.libc_ver(), 'path': args.path, 'inventory': tools,
+    result = {'platform': platform.platform(), 'libc': platform.libc_ver(), 'source_identity': source_identity(), 'path': args.path, 'inventory': tools,
               'capabilities': capabilities, 'limitations': limitations,
               'echo_policy': args.echo_policy,
               'echo_policy_source': {

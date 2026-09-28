@@ -1,4 +1,5 @@
-"""CSH-061/062 private Linux ACL witnesses with independent I/O controls."""
+"""CSH-061/062/063 private Linux ACL witnesses with independent I/O controls."""
+import errno
 import os
 from pathlib import Path
 import shlex
@@ -38,6 +39,8 @@ def cases(paths, helper, unequal=False):
                                    controlled_fixture=fixture, files=files)
 
     yield from combinations(paths, helper, unequal)
+    from host_acl_residual_cases import cases as residual_cases
+    yield from residual_cases(paths, helper, unequal)
 
 
 def combinations(paths, helper, unequal=False):
@@ -89,23 +92,54 @@ def setup(directory, spec):
     subject = 'u:10001' if spec['subject'] == 'user' else 'g:10003'
     entries = 'u::---,g::---,o::---,' + spec.get('entries', subject + ':' + perms) + ',m::' + (
         '---' if spec['masked'] else perms)
+    entries = spec.get('acl_entries', entries)
     def acl(path, default=False):
         subprocess.run(['setfacl', '-m', ','.join(('d:' if default else '') + entry
                         for entry in entries.split(',')), str(path)],
                        check=True, capture_output=True, timeout=5)
     if spec['inherited']:
         acl(parent, True)
-    # Explicit creation mode allows all inherited permissions; umask cannot
-    # mask a default ACL. No chmod after creation, which would change its mask.
-    fd = os.open(target, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o777)
+    # Default creation allows every inherited permission; CSH-063 also
+    # explicitly restricts the creation mode. Never chmod the inherited child.
+    fd = os.open(target, os.O_CREAT | os.O_EXCL | os.O_WRONLY, spec.get('create_mode', 0o777))
     with os.fdopen(fd, 'wb') as stream:
         stream.write(Path(spec['helper']).read_bytes() if spec['permission'] == 'x' else b'private\n')
+    if 'owner' in spec or 'group' in spec:
+        os.chown(target, spec.get('owner', 0), spec.get('group', 0))
     if not spec['inherited']:
         acl(target)
     (directory / 'controlled').symlink_to('acl-parent/child')
     observed = target.stat()
     def record(path):
         return subprocess.check_output(['getfacl', '-cpn', str(path)], timeout=5).decode()
+    actual_acl = record(target)
+    if spec['subject'] == 'residual':
+        verify_residual_acl(spec, actual_acl, observed)
     return dict(kind=spec, uid=observed.st_uid, gid=observed.st_gid,
                 mode=oct(observed.st_mode), rdev=observed.st_rdev,
-                acl=record(target), parent_acl=record(parent))
+                acl=actual_acl, parent_acl=record(parent))
+
+
+def verify_residual_acl(spec, actual, observed):
+    """Reject malformed/ignored setup before attributing results to a utility."""
+    tags = {'u': 'user', 'g': 'group', 'm': 'mask', 'o': 'other'}
+    expected = {}
+    for entry in spec['acl_entries'].split(','):
+        tag, qualifier, perms = entry.split(':')
+        expected[tags[tag] + ':' + qualifier] = perms
+    if spec['inherited']:
+        mode = spec.get('create_mode', 0o777)
+        for key, shift in (('user:', 6), ('mask:', 3), ('other:', 0)):
+            expected[key] = ''.join(char if mode & (bit << shift) else '-'
+                                    for char, bit in zip(expected[key], (4, 2, 1)))
+    entries = {}
+    for line in actual.splitlines():
+        line = line.split('#', 1)[0].strip()
+        if line:
+            tag, qualifier, perms = line.split(':')
+            entries[tag + ':' + qualifier] = perms
+    if (entries != expected or observed.st_uid != spec.get('owner', 0) or
+            observed.st_gid != spec.get('group', 0)):
+        raise OSError(errno.EINVAL, 'ACL fixture mismatch: expected ' + repr(expected) +
+                      ', observed ' + repr(entries) +
+                      f', owner={observed.st_uid}:{observed.st_gid}')
