@@ -252,7 +252,7 @@ build/tests/assignment_fixture: tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/assignment_fixture.c $(EXECUTE_OBJECTS) build/character.o $(LDLIBS)
 
-build/tests/runtime.json build/tests/runtime-pty.json build/tests/control-flow.json build/tests/evaluation.json build/tests/options.json build/tests/syntax.json build/tests/execution.json build/tests/state-builtins.json build/tests/expansion.json: tests/expansion_cases.py tests/state_builtin_cases.py tests/runtime_cases.py tests/execution_cases.py tests/syntax_cases.py tests/trap_cases.py tests/option_cases.py tests/option_evidence_cases.py tests/substitution_cases.py tests/control_flow_cases.py tests/evaluation_cases.py build/tests/execute_helper
+build/tests/runtime.json build/tests/runtime-pty.json build/tests/traps.json build/tests/control-flow.json build/tests/evaluation.json build/tests/options.json build/tests/syntax.json build/tests/execution.json build/tests/state-builtins.json build/tests/expansion.json: tests/expansion_cases.py tests/state_builtin_cases.py tests/runtime_cases.py tests/execution_cases.py tests/syntax_cases.py tests/trap_cases.py tests/option_cases.py tests/option_evidence_cases.py tests/substitution_cases.py tests/control_flow_cases.py tests/evaluation_cases.py build/tests/execute_helper
 	$(PYTHON) tests/runtime_cases.py --helper build/tests/execute_helper --output $@
 
 .PHONY: test-control
@@ -408,10 +408,19 @@ build/tests/kill_permission: tests/kill_permission.c build/tests/permission-jobs
 test-signal-edges: cshell build/tests/signal_edges_helper build/tests/kill_permission
 	$(PYTHON) tests/signal_edges.py ./cshell build/tests/signal_edges_helper build/tests/kill_permission
 
-test-traps: test-signal-edges cshell build/tests/execute_helper build/tests/wait_handshake
+test-traps: test-trap-runtime test-signal-edges cshell build/tests/execute_helper build/tests/wait_handshake
 	$(PYTHON) tests/traps.py ./cshell
 	$(PYTHON) tests/signal_contracts.py ./cshell build/tests/execute_helper
 	$(PYTHON) tests/wait_handshake.py build/tests/wait_handshake
+
+# CSH-050: retain the original trap/EXIT witnesses in focused validation.
+.PHONY: test-trap-runtime test-jobs-signals
+test-trap-runtime: cshell build/tests/traps.json
+	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/traps.json
+
+# All jobs, trap, signal, and terminal witnesses, including lifecycle APIs.
+# Use serial make for evidence runs to avoid concurrent PTY/snapshot load.
+test-jobs-signals: test-jobs test-traps test-jobs-pty test-runtime-pty
 
 build/tests/substitution_fixture: tests/substitution_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o
 	mkdir -p $(dir $@)
