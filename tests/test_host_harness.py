@@ -55,7 +55,7 @@ class HostEvidenceTests(unittest.TestCase):
         self.assertEqual(len({row['condition'] for row in rows}), len(RESIDUAL))
         for row in rows:
             self.assertEqual(row['environment'], 'test environment')
-            self.assertEqual(row['owner'], 'CSH-063')
+            self.assertEqual(row['owner'], 'CSH-064')
             self.assertTrue(row['source'].startswith('https://pubs.opengroup.org/'))
             self.assertTrue(row['reason'])
             self.assertTrue(row['executable']['sha256'])
@@ -85,7 +85,7 @@ class HostEvidenceTests(unittest.TestCase):
         from host_acl_cases import cases
         paths = {name: '/selected/' + name for name in HOSTS}
         rows = list(cases(paths, '/helper'))
-        self.assertEqual(len(rows), 216)
+        self.assertEqual(len(rows), 360)
         for row in rows:
             output = dict(stdout=row['stdout'], stderr=b'')
             if row['status'] == 0:
@@ -140,3 +140,46 @@ class HostEvidenceTests(unittest.TestCase):
         self.assertEqual(result['case']['status'], 0)
         self.assertTrue(result['owner'])
         self.assertTrue(result['source'])
+
+
+    def test_acl_residual_precedence_and_creation_grants_remain_strict(self):
+        from host_acl_residual_cases import cases
+        paths = {name: '/selected/' + name for name in HOSTS}
+        rows = list(cases(paths, '/helper', True))
+        self.assertEqual(len(rows), 144)
+        for row in rows:
+            self.assertNotIn('gap', row)
+            self.assertIn(b'uid=10001 euid=10002', row['stdout'])
+            self.assertFalse(matches_case(row, 1 if row['status'] == 0 else 0,
+                                          dict(stdout=row['stdout'], stderr=b'')))
+            self.assertFalse(known_gap(row, 1, dict(stdout=row['stdout'], stderr=b'')))
+        creation = [row for row in rows if 'creation-mode-700' in row['name']]
+        self.assertEqual(len(creation), 9)
+        self.assertTrue(all(row['status'] != 0 for row in creation))
+        self.assertTrue(all(row['controlled_fixture']['inherited'] for row in creation))
+
+
+    def test_acl_setup_mismatch_cannot_be_utility_evidence(self):
+        from types import SimpleNamespace
+        from host_acl_cases import verify_residual_acl
+        spec = dict(acl_entries='u::---,u:10002:r--,g::---,m::r--,o::---',
+                    inherited=True, create_mode=0o700)
+        observed = SimpleNamespace(st_uid=0, st_gid=0)
+        actual = 'user::---\nuser:10002:r--\ngroup::---\nmask::---\nother::---\n'
+        verify_residual_acl(spec, actual, observed)
+        with self.assertRaises(OSError):
+            verify_residual_acl(spec, actual.replace('mask::---', 'mask::r--'), observed)
+        with self.assertRaises(OSError):
+            verify_residual_acl(spec, actual, SimpleNamespace(st_uid=1, st_gid=0))
+
+    def test_setup_timeout_retains_diagnostic_and_cannot_pass(self):
+        import subprocess
+        from host_utilities import setup_failure
+        error = subprocess.TimeoutExpired(['setfacl', 'private'], 5,
+                                          output=b'partial', stderr=b'setup stalled')
+        result = setup_failure('grant', dict(status=0), error)
+        self.assertEqual(result['verdict'], 'FAIL')
+        self.assertEqual(result['phase'], 'setup')
+        self.assertEqual(result['actual']['timeout_seconds'], 5)
+        self.assertEqual(result['actual']['stderr'], {'hex': b'setup stalled'.hex()})
+        self.assertEqual(result['case']['status'], 0)

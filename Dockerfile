@@ -16,7 +16,7 @@ RUN echo 'path-include=/usr/share/locale/fr/*' > /etc/dpkg/dpkg.cfg.d/zz-cshell-
     && chown cshell:cshell /work
 
 WORKDIR /work
-COPY --chown=cshell:cshell Makefile ./
+COPY --chown=cshell:cshell Makefile Dockerfile ./
 COPY --chown=cshell:cshell include/ include/
 COPY --chown=cshell:cshell src/ src/
 COPY --chown=cshell:cshell tests/ tests/

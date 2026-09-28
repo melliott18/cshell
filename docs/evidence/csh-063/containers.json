@@ -1,0 +1,29 @@
+{
+  "csh063-validation": {
+    "Id": "eaff397a5edd396957a46fe9803c224db5fa4c97fda9e978ee521ef3a220e0c4",
+    "Image": "sha256:7df05c97dbb9287c6acfeeb9b3a5a7f6a7eb10430d6aa36826d9da5a89d454ed",
+    "Created": "2026-09-28T23:17:00.423650419Z",
+    "Mounts": []
+  },
+  "csh063-sid-validation": {
+    "Id": "def900d698a164106c7e7dde7f488aada8135e9d1a5956668b39d22c286299b3",
+    "Image": "sha256:fda4e2035f7ea606a6b0b014f7a34a6149362cb9c3a2d5b4bbba655ad19fb605",
+    "Created": "2026-09-28T23:18:33.056419128Z",
+    "Mounts": []
+  },
+  "csh063-bind-validation": {
+    "Id": "745b172d0dbfde973029b74edc0036e464377d43b016cd6947a5e737d23d6166",
+    "Image": "sha256:fda4e2035f7ea606a6b0b014f7a34a6149362cb9c3a2d5b4bbba655ad19fb605",
+    "Created": "2026-09-28T23:19:24.067475097Z",
+    "Mounts": [
+      {
+        "Type": "bind",
+        "Source": "/Users/mitchell/.codex/worktrees/csh-063-host-platform/cshell/build/csh063-disposable-fixtures",
+        "Destination": "/fixtures",
+        "Mode": "",
+        "RW": true,
+        "Propagation": "rprivate"
+      }
+    ]
+  }
+}
