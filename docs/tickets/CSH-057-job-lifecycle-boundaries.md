@@ -73,3 +73,9 @@ The Linux sanitizer batch sweep retains four five-second control-flow timeouts;
 the exact cases pass three serial reruns with unchanged limits. The record does
 not claim a clean full Linux sanitizer invocation. Native and Docker normal
 full suites, native full sanitizer, and all CSH-057 sanitizer checks pass.
+
+Integration review on 2026-09-28: hosted run 36313722641 passed all jobs, but
+duplicate macOS job 108604370895 in run 36313720185 failed the pre-existing
+`repeated background resumes preserve prompt and terminal` assertion (status 1
+instead of 130). This intermittent failure remains unresolved; issue #99 and
+this ticket remain open for follow-up even after the scoped changes merge.
