@@ -5,7 +5,7 @@
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-034, CSH-035
-- Branch: fix/CSH-057-pty-resume
+- Branch: fix/CSH-057-timeout-diagnostics
 - Issue: [#99](https://github.com/melliott18/cshell/issues/99)
 
 ## Goal
@@ -103,3 +103,27 @@ Hosted duplicate run 36455644289 also timed out in the 60-second retention
 fixture; run 36455693791 passed all hosted jobs. Keep issue #99 open to track
 these timeout observations without weakening assertions or claiming that the
 continuation fix resolves every scheduling failure.
+
+### Timeout diagnosis follow-up
+
+The [timeout investigation](../evidence/csh-057-timeouts/README.md) supersedes
+classification of the retained PTY timeouts as load failures. New traces show
+normal progress ending within milliseconds, followed by a whole-case timeout.
+They reproduce concurrent parent/child process-group assignment losing terminal
+signal delivery, inherited blocked INT/CHLD after a Darwin signal-aware wait,
+and a continuation refusal during the gap between group departure and a
+reportable child exit. The separate hosted retention timeout remains
+unclassified; passing local probes do not establish its historical cause.
+
+The launch barrier now makes the parent the sole process-group writer. Darwin
+wait cleanup clears deferred mask restoration before restoring the caller's
+mask. After a rejected continuation, only an owned child whose `getpgid`
+returns ESRCH may be waited for synchronously; live job errors remain errors.
+Regression coverage includes pending launch signals, the exit-status gap,
+unchanged live-EPERM rejection, and an explicit mask check in the PTY helper.
+
+Timeout diagnostics retain progress timing and both ends of long output.
+The retention fixture flushes exact phase/capacity checkpoints while keeping
+its 60-second outer deadline, five-second phase alarms, and all assertions.
+Validation and failed attempts are recorded with the follow-up evidence. Keep
+issue #99 open for review and the unclassified hosted retention observation.

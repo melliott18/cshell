@@ -1747,7 +1747,10 @@ static int context_job(struct csh_execution_context *context,
             ssize_t received;
             int monitor = job->grouped;
             close(gate[1]);
-            if (monitor && setpgid(0, job->pgid) == -1) _exit(1);
+            /* The parent assigns every process group before releasing this
+             * barrier. A second setpgid here can race that assignment on
+             * Darwin, leaving terminal signals aimed at an empty group even
+             * when tcgetpgrp reports the child's PGID. */
             csh_jobs_after_fork(context->jobs, asynchronous);
             if (prepared != NULL) csh_traps_exec_signals(context->traps, 0);
             else csh_traps_after_fork(context->traps, asynchronous && !monitor, 0);

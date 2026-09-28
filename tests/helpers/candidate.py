@@ -71,8 +71,10 @@ def main():
     if mode == "symlink":
         Path(arguments[0]).symlink_to(arguments[1])
         return 0
-    if mode == "hang":
+    if mode in ("hang", "progress-hang"):
         record_processes(arguments[0] if arguments else None)
+        if mode == "progress-hang":
+            print("checkpoint before stall", flush=True)
         wait_forever()
     if mode in ("fork-hang", "fork-exit"):
         # The child keeps inherited output descriptors and deliberately ignores

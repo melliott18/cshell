@@ -68,6 +68,8 @@ static void retention(void)
         assert(csh_jobs_create(&ctx.jobs, ctx.state, -1) == 0);
         assert(queries == fallback + 1);
         for (int round = 0; round < 2; ++round) {
+            printf("retention capacity=%d round=%d completed=0\n", n, round + 1);
+            assert(fflush(stdout) == 0);
             /* Alternate saved $! and IDs read by the observer only. cshell
              * creates optional unmonitored jobs, so unsaved IDs also stay
              * known until reporting, wait, or capacity permits eviction. */
@@ -79,6 +81,12 @@ static void retention(void)
                 csh_state_get_info(ctx.state, &info);
                 ids[i] = info.background_pid;
                 assert(csh_jobs_reap(ctx.jobs, 1) == 0);
+                /* Unbuffered checkpoints localize an outer-runner timeout;
+                 * they do not reset or extend either deadline. */
+                if ((i + 1) % 64 == 0 || i + 1 == n) {
+                    printf("retention capacity=%d round=%d completed=%d\n", n, round + 1, i + 1);
+                    assert(fflush(stdout) == 0);
+                }
             }
             /* Foreground utility registration must not evict a known ID. */
             assert(run(&ctx, "/usr/bin/true\n").status == 0);
@@ -293,7 +301,14 @@ int main(int argc, char **argv)
                 notification(notify, outcomes[i]);
             }
         puts("foreground notifications: notify off/on, zero/nonzero/signal bytes and retained results passed");
-    } else { retention(); live_retention(); formats(); }
+    } else {
+        retention();
+        puts("retention live records"); assert(fflush(stdout) == 0);
+        live_retention();
+        puts("retention formatting"); assert(fflush(stdout) == 0);
+        formats();
+        puts("retention complete"); assert(fflush(stdout) == 0);
+    }
     /* No forgotten direct children survive either phase. */
     int status;
     assert(waitpid(-1, &status, WNOHANG) == -1 && errno == ECHILD);

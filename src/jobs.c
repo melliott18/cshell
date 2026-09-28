@@ -372,6 +372,20 @@ static void block_events(sigset_t *old)
     sigprocmask(SIG_BLOCK, &blocked, old);
 }
 
+/* Darwin keeps a saved mask for signal-aware waits. Clear any deferred
+ * restoration while event signals are still blocked, before restoring the
+ * caller's mask. Otherwise a later handler can reinstate the internal mask. */
+static void restore_events(const sigset_t *old)
+{
+#ifdef __APPLE__
+    const struct timespec zero = {0};
+    int number = errno;
+    while (pselect(0, NULL, NULL, NULL, &zero, NULL) < 0 && errno == EINTR) {}
+    errno = number;
+#endif
+    sigprocmask(SIG_SETMASK, old, NULL);
+}
+
 static int wait_job(struct csh_jobs *jobs, struct csh_job *job, int interruptible)
 {
     sigset_t old, waiting;
@@ -394,7 +408,7 @@ static int wait_job(struct csh_jobs *jobs, struct csh_job *job, int interruptibl
         if (complete(job) || (job->grouped && stopped(job))) break;
         sigsuspend(&waiting);
     }
-    sigprocmask(SIG_SETMASK, &old, NULL);
+    restore_events(&old);
     return rc;
 }
 
@@ -434,6 +448,21 @@ static int continue_job(struct csh_jobs *jobs, struct csh_job *job)
     if (kill(-job->pgid, SIGCONT) == -1) {
         int number = errno;
         if (csh_jobs_poll(jobs) == -1) return -1;
+        for (i = 0; i < job->count; ++i) {
+            struct csh_job_process *process = &job->processes[i];
+            pid_t observed;
+            if (process->pid <= 0 || process->done) continue;
+            /* Darwin can remove an exiting child from its group before its
+             * wait status is available. A positive owned PID returning ESRCH
+             * from getpgid proves departure; only then may we wait for its
+             * final status. A live member (including EPERM) never waits here. */
+            if (getpgid(process->pid) != -1 || errno != ESRCH) continue;
+            do { observed = waitpid(process->pid, &process->status, 0); }
+            while (observed < 0 && errno == EINTR);
+            if (observed < 0) return -1;
+            process->done = 1;
+            process->stopped = 0;
+        }
         if (!complete(job)) { errno = number; return -1; }
     }
     for (i = 0; i < job->count; ++i) job->processes[i].stopped = 0;
@@ -677,7 +706,7 @@ int csh_jobs_read_ready(void *context, int fd, int defer_pending)
         if (rc >= 0 || errno != EINTR || interrupted || hung_up ||
             (!defer_pending && csh_traps_pending())) break;
     }
-    sigprocmask(SIG_SETMASK, &old, NULL);
+    restore_events(&old);
     return rc < 0 ? -1 : 0;
 }
 

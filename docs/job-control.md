@@ -47,7 +47,9 @@ capacity; foreground launches never evict retained asynchronous statuses.
 
 If a foreground job exits before its continuation signal can be delivered,
 `fg` collects and returns that job's exit status. A rejected SIGCONT is accepted
-only after every owned child has completed; errors for live or stopped jobs
+only after every owned child has completed. On Darwin, group departure can
+precede a reportable exit: `getpgid` returning ESRCH for an owned PID permits a
+final blocking wait for that child. Errors for live or stopped jobs
 still fail without discarding their state.
 
 Job builtins execute under the executor's normal assignment/redirection rules.
@@ -150,3 +152,9 @@ all supported jobs formats, controlling-session startup, background/compound
 membership, non-replay, builtin STOP/CONT, and notification timing during an
 active foreground wait. [Retained runs](evidence/csh-057/README.md) distinguish
 controlled API tests from public PTY observations.
+
+Internal job waits preserve the caller's signal mask. On Darwin, cleanup uses
+a zero-time terminal-independent `pselect` to clear deferred mask restoration
+before restoring that mask; it does not clear intentionally inherited blocks.
+The parent assigns new process groups before releasing the launch barrier,
+avoiding concurrent parent/child assignments on affected Darwin kernels.

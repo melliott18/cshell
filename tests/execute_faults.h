@@ -20,6 +20,7 @@ int csh_execute_fault_fcntl(int fd, int operation, ...);
 int csh_execute_fault_pipe(int ends[2]);
 pid_t csh_execute_fault_fork(void);
 int csh_execute_fault_setpgid(pid_t pid, pid_t group);
+pid_t csh_execute_fault_getpgid(pid_t pid);
 int csh_execute_fault_tcsetpgrp(int fd, pid_t group);
 int csh_execute_fault_tcsetattr(int fd, int action, const struct termios *modes);
 int csh_execute_fault_kill(pid_t pid, int number);
@@ -37,6 +38,7 @@ pid_t csh_execute_fault_waitpid(pid_t pid, int *status, int options);
 #define fcntl csh_execute_fault_fcntl
 #define pipe csh_execute_fault_pipe
 #define setpgid csh_execute_fault_setpgid
+#define getpgid csh_execute_fault_getpgid
 #define tcsetpgrp csh_execute_fault_tcsetpgrp
 #define tcsetattr csh_execute_fault_tcsetattr
 #define kill csh_execute_fault_kill

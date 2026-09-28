@@ -153,7 +153,7 @@ class HarnessTests(unittest.TestCase):
         # Hosted macOS can spend more than 0.3s launching Python under load;
         # the candidate must reach setup before its intentional hang is timed.
         result = self.run_suite([item], extra=("--timeout", "1"))
-        self.assert_failure(result, "self test", "time")
+        self.assert_failure(result, "self test", "time", "no output received", "0 bytes captured")
         self.assertLess(time.monotonic() - started, 5, result.stdout)
         self.assert_not_running(self.process_record(marker)["parent"])
 
@@ -166,6 +166,18 @@ class HarnessTests(unittest.TestCase):
         record = self.process_record(marker)
         self.assert_not_running(record["parent"])
         self.assert_not_running(record["child"])
+
+    def test_timeout_retains_progress_before_stall(self):
+        item = case(args=["progress-hang"], timeout=1)
+        result = self.run_suite([item])
+        self.assert_failure(result, "timeout", "last output at", "no output for",
+                            "checkpoint before stall")
+
+    def test_long_output_diagnostic_keeps_failure_tail(self):
+        item = case(stdin="initial context\n" + "x" * 4000 + "\nlate failure detail")
+        result = self.run_suite([item])
+        self.assert_failure(result, "initial context", "bytes omitted", "late failure detail")
+        self.assertLess(len(result.stdout), 2000)
 
     def test_cleanup_kills_descendant_after_successful_parent_exit(self):
         marker = self.directory / "processes.json"

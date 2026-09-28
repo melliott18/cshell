@@ -202,7 +202,17 @@ int main(int argc, char **argv)
     } else if (strcmp(argv[1], "producer") == 0) {
         pid_t group = getpgrp();
         if (write(STDOUT_FILENO, &group, sizeof(group)) != sizeof(group)) return 10;
-    } else if (strcmp(argv[1], "hold") == 0) dprintf(STDOUT_FILENO, "ready\n");
+    } else if (strcmp(argv[1], "hold") == 0) {
+        sigset_t mask;
+        /* These controlled terminal cases start with INT/CHLD unblocked.
+         * Diagnose a leaked shell bookkeeping mask before waiting for input. */
+        if (sigprocmask(SIG_SETMASK, NULL, &mask) < 0) return 40;
+        if (sigismember(&mask, SIGINT) || sigismember(&mask, SIGCHLD)) {
+            dprintf(STDERR_FILENO, "jobs_helper: inherited blocked INT/CHLD\n");
+            return 41;
+        }
+        dprintf(STDOUT_FILENO, "ready\n");
+    }
     else return 2;
     for (;;) pause();
 }
