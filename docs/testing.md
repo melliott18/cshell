@@ -1218,3 +1218,18 @@ exact assertions, input modes and distinction between real filesystem behavior
 and injected syscall errors. The fault executable instruments only redirect.c;
 production cshell has no added test hooks. No deadlines or expected results in
 existing tests change.
+
+### CSH-062 filesystem and multiple-identity host checks
+
+The controlled host profile adds multiple named users and two supplementary
+groups, with read/write/execute, inheritance, precedence and mask controls.
+`--unequal-acl` keeps grants strict under unequal real/effective IDs.
+`--fixture-root /fixtures` places private fixtures and filesystem queries on an
+explicitly supplied disposable filesystem. Failed setup records are failures,
+including the actual command/status/diagnostic, and do not erase the run record.
+
+Use `docker build --build-arg BASE_IMAGE=debian:trixie-slim` for the updated
+vendor scope; the default base remains Debian 12. [CSH-062 evidence](evidence/csh-062/README.md)
+contains complete native, overlay, ext4-volume, unsupported-tmpfs, BusyBox and
+sanitizer commands/results. [CSH-063](tickets/CSH-063-host-platform-residual-qualification.md)
+owns the individually retained residuals, including absent privileged Darwin.

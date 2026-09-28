@@ -60,6 +60,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-060](CSH-060-extended-host-environments.md) | Qualify remaining host environments and limits | [CSH-059](CSH-059-host-boundary-capabilities.md) | [#106](https://github.com/melliott18/cshell/issues/106) |
 | [CSH-061](CSH-061-host-environment-residuals.md) | Resolve remaining host environment contracts | [CSH-060](CSH-060-extended-host-environments.md) | [#110](https://github.com/melliott18/cshell/issues/110) |
 | [CSH-062](CSH-062-host-contract-controlled-platforms.md) | Supply remaining controlled host platforms | [CSH-061](CSH-061-host-environment-residuals.md) | [#116](https://github.com/melliott18/cshell/issues/116) |
+| [CSH-063](CSH-063-host-platform-residual-qualification.md) | Qualify remaining supplied host platforms | [CSH-062](CSH-062-host-contract-controlled-platforms.md) | [#122](https://github.com/melliott18/cshell/issues/122) |
 
 ## Child implementation tickets
 

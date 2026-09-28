@@ -1,4 +1,5 @@
-FROM debian:bookworm-slim
+ARG BASE_IMAGE=debian:bookworm-slim
+FROM ${BASE_IMAGE}
 
 # Debian slim excludes message catalogs by default; retain French libc
 # diagnostics so CSH-042 exercises LC_MESSAGES as well as locale names.

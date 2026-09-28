@@ -134,3 +134,28 @@ Darwin's privileged ACL environment is unavailable in the retained native run
 and is an individual limitation; Linux results do not qualify Darwin ACLs.
 See [CSH-061 evidence](../../docs/evidence/csh-061/README.md) for the unequal-ID
 libc investigation and unchanged strict failure expectations.
+
+
+## CSH-062 supplied filesystem and credential combinations
+
+`--controlled-identities` additionally checks multiple named-user ACL entries,
+first/second supplementary-group grants (groups 10003 and 10004), named-user
+precedence over group grants, unrelated groups and masked grants. Each has
+read/write/execute operations and test/bracket predicates, for both access and
+inherited ACLs. `--unequal-acl` changes these new combinations to unequal
+real/effective UID/GID pairs and preserves every success expectation.
+
+Use `--fixture-root /fixtures` only with an explicitly supplied disposable
+filesystem directory. All private cases and filesystem queries use that root;
+records include the actual device and Linux mount type/options. Setup errors
+retain the command, status and diagnostic as failures and still write the
+qualification JSON. An unsupported ACL filesystem is never qualified by a
+partial run. Temporary files are cleaned up even on setup failure.
+
+The Dockerfile accepts `--build-arg BASE_IMAGE=debian:trixie-slim` for an updated
+vendor recheck; its default remains Debian 12. The [CSH-062 evidence](../../docs/evidence/csh-062/README.md)
+records exact images, coreutils/libc identities, overlay and disposable-volume
+results, and unsupported tmpfs ACLs. Every residual is individually retained
+with its source, actual environment/executable identity, reason and next owner
+[CSH-063](../../docs/tickets/CSH-063-host-platform-residual-qualification.md).
+The privileged Darwin environment and physical terminal remain unavailable.

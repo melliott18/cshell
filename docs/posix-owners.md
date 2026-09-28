@@ -99,3 +99,11 @@ U-035/U-036/U-037/U-040 conditions are individually recorded in
 `tests/host_capability_limits.py` and now owned by
 [CSH-061](tickets/CSH-061-host-environment-residuals.md), including the retained
 unequal-ID ACL grant failure. This ownership does not close a parent family.
+
+CSH-062 extends the host-contract evidence with multiple ACL subjects and
+supplementary groups, updated GNU/libc identities and supplied filesystem
+selection. [CSH-062 results](evidence/csh-062/README.md) retain strict unequal-ID
+grant failures and unsupported tmpfs ACL setup independently of passing scopes.
+[CSH-063](tickets/CSH-063-host-platform-residual-qualification.md) owns every
+remaining sourced host residual and missing supplied environment; this does not
+promote U-034 through U-037, U-040, or the CSH-012 gate.

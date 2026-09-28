@@ -14,6 +14,8 @@ import locale
 import subprocess
 import tempfile
 
+from host_platform import filesystem_identity
+
 import smoke
 from host_utility_cases import HOSTS, INTRINSICS, cases
 from host_boundary_cases import cases as boundary_cases
@@ -137,11 +139,21 @@ def known_gap(case, status, output):
     return False
 
 
+def setup_failure(name, case, error):
+    return dict(name=name, verdict='FAIL', phase='setup', case=serial(case),
+                reason=str(error), owner='CSH-063', source=BASE + 'test.html',
+                actual=serial(dict(errno=getattr(error, 'errno', None),
+                    argv=getattr(error, 'cmd', None), status=getattr(error, 'returncode', None),
+                    stdout=getattr(error, 'stdout', None), stderr=getattr(error, 'stderr', None))))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('binary', type=Path)
     parser.add_argument('helper', type=Path)
     parser.add_argument('--record', type=Path)
+    parser.add_argument('--fixture-root', type=Path,
+                        help='Existing disposable fixture directory (for a supplied alternate filesystem)')
     parser.add_argument('--path', default=os.environ.get('CSH_TEST_PATH', os.defpath),
                         help='Explicit utility search path, also used inside the shell')
     parser.add_argument('--strict-gaps', action='store_true')
@@ -163,6 +175,10 @@ def main():
         parser.error('--controlled-identities requires --boundaries and Linux root')
     if args.unequal_acl and not args.controlled_identities:
         parser.error('--unequal-acl requires --controlled-identities')
+    fixture_root = args.fixture_root.resolve() if args.fixture_root else Path(tempfile.gettempdir())
+    if not fixture_root.is_dir():
+        parser.error('--fixture-root must be an existing directory')
+    filesystem = filesystem_identity(fixture_root)
     binary = args.binary.resolve()
     helper = shlex.quote(str(args.helper.resolve()))
     tools = inventory(args.path)
@@ -234,7 +250,7 @@ def main():
                          args.printf_faults.resolve() if args.printf_faults else None,
                          dict(german=capabilities['german_locale'], gb18030=capabilities['gb18030_locale'],
                               utf8=capabilities['utf8_locale']), args.controlled_identities, args.unequal_acl))
-        environment = dict(platform=platform.platform(), capabilities=capabilities)
+        environment = dict(platform=platform.platform(), capabilities=capabilities, filesystem=filesystem)
         limitations.extend(residual_limitations(environment, tools))
         for condition, available, reason in (
             ('U-035/allocation-injection', args.printf_faults, 'No test-only printf allocation helper supplied'),
@@ -246,9 +262,13 @@ def main():
             ('U-037/permission-denial', capabilities['permission_denial'], 'effective UID 0 bypasses mode-bit denial'),
             ('U-037/block-device', capabilities['block_device'], 'no explicit stat-only block-device witness supplied')):
             if not available:
-                limitations.append(dict(condition=condition, reason=reason, owner='CSH-062',
+                limitations.append(dict(condition=condition, reason=reason, owner='CSH-063',
                                         environment=environment, source=BASE +
-                                        ('test.html' if condition.startswith('U-037') else 'V3_chap01.html')))
+                                        ('test.html' if condition.startswith('U-037') else 'V3_chap01.html'),
+                                        executable=tools['test' if condition.startswith('U-037') else
+                                                         'sed' if condition == 'U-040/GB18030-locale' else
+                                                         'find' if condition == 'U-040/UTF-8-locale' else 'printf'],
+                                        related_executable=tools['['] if condition.startswith('U-037') else None))
         for limitation in limitations:
             print('LIMITATION: ' + json.dumps(limitation), flush=True)
     totals = dict(passed=0, failed=0, gaps=0)
@@ -264,12 +284,22 @@ def main():
                                 'reason': 'Missing host executable; CSH-056/U-034-host-ed'})
                 print(('GAP' if known else 'FAIL') + ': host: ' + name + ' (missing executable)', flush=True)
                 continue
-            with tempfile.TemporaryDirectory(prefix='csh-host-') as temporary:
+            with tempfile.TemporaryDirectory(prefix='csh-host-', dir=fixture_root) as temporary:
                 directory = Path(temporary)
-                connection = setup(directory, case.get('input_files'))
+                connection = None
                 try:
-                    controlled = (setup_controlled(directory, case['controlled_fixture'])
-                                  if case.get('controlled_fixture') else None)
+                    try:
+                        connection = setup(directory, case.get('input_files'))
+                        controlled = (setup_controlled(directory, case['controlled_fixture'])
+                                      if case.get('controlled_fixture') else None)
+                    except (OSError, subprocess.CalledProcessError) as error:
+                        # Unsupported ACL/filesystem operations are failed setup,
+                        # never a passing assertion or an absent/stale record.
+                        record = setup_failure(name, case, error)
+                        records.append(record)
+                        totals['failed'] += 1
+                        print('FAIL: host: ' + name + ' (fixture setup)', flush=True)
+                        continue
                     fixture = {'args': [], 'stdin': '', 'env': {'PATH': args.path}}
                     fixture['env'].update(case.get('env', {}))
                     if args.sanitizer:
@@ -324,9 +354,10 @@ def main():
                     if not ok:
                         print(json.dumps(record['actual']), flush=True)
                 finally:
-                    connection.close()
+                    if connection is not None:
+                        connection.close()
     # Query the filesystem that actually hosts fixtures, not the source checkout.
-    with tempfile.TemporaryDirectory(prefix='csh-host-query-') as temporary:
+    with tempfile.TemporaryDirectory(prefix='csh-host-query-', dir=fixture_root) as temporary:
         directory = Path(temporary)
         filesystem_limits = {name: os.pathconf(directory, name) for name in
                              ('PC_NAME_MAX', 'PC_PATH_MAX', 'PC_PIPE_BUF')}
@@ -350,7 +381,7 @@ def main():
               }[args.echo_policy],
               'host_limits': {name: os.sysconf(name) for name in
                               ('SC_ARG_MAX', 'SC_OPEN_MAX', 'SC_LINE_MAX')},
-              'filesystem_limits': filesystem_limits,
+              'filesystem_limits': filesystem_limits, 'filesystem': filesystem,
               'filesystem_query_path': filesystem_query_path,
               'child_resources': child_resources,
               'binary_sha256': sha(binary), 'helper_sha256': sha(args.helper),

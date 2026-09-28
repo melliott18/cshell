@@ -71,7 +71,7 @@ def cases(paths, helper, printf_faults, locales, controlled, unequal_acl=False):
         yield case('U-040 find UTF-8 question mark', "find names -name '?' -type f", 'names/é\n'.encode(),
                    env={'LC_ALL': locales['utf8']}, input_files={'names/é': b'', 'names/aa': b''})
     if controlled:
-        yield from acl_cases(paths, helper)
+        yield from acl_cases(paths, helper, unequal_acl)
         for kind in ('owner', 'group', 'acl'):
             identities = ((10001, 10001), (10002, 10002)) if kind == 'acl' and not unequal_acl else (
                 (10002, 10001), (10001, 10002))

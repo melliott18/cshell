@@ -82,25 +82,29 @@ int main(int argc, char **argv)
         return 2;
     }
 #ifdef __linux__
-    if (argc >= 5 && (!strcmp(argv[1], "identity") || !strcmp(argv[1], "identity-group"))) {
+    if (argc >= 5 && (!strcmp(argv[1], "identity") || !strcmp(argv[1], "identity-group") ||
+                      !strcmp(argv[1], "identity-groups"))) {
         /* Explicit Linux-root fixtures: replace inherited groups with the
          * requested set and drop saved root credentials before utility exec. */
         uid_t real, effective;
-        gid_t group = 10003, observed_group;
-        int groups = !strcmp(argv[1], "identity-group");
+        gid_t groups_requested[] = {10003, 10004}, observed_groups[2];
+        int groups = !strcmp(argv[1], "identity-groups") ? 2 :
+                     !strcmp(argv[1], "identity-group");
         if (geteuid() != 0 ||
             (strcmp(argv[2], "10001") && strcmp(argv[2], "10002")) ||
             (strcmp(argv[3], "10001") && strcmp(argv[3], "10002"))) return 2;
         real = (uid_t)strtoul(argv[2], NULL, 10);
         effective = (uid_t)strtoul(argv[3], NULL, 10);
-        if (setgroups(groups, groups ? &group : NULL) || setresgid(real, effective, effective) ||
+        if (setgroups(groups, groups ? groups_requested : NULL) || setresgid(real, effective, effective) ||
             setresuid(real, effective, effective)) return 2;
         if (getuid() != real || geteuid() != effective || getgid() != real ||
             getegid() != effective || getgroups(0, NULL) != groups ||
-            (groups && (getgroups(1, &observed_group) != 1 || observed_group != group))) return 2;
+            (groups && (getgroups(groups, observed_groups) != groups ||
+                        observed_groups[0] != groups_requested[0] ||
+                        (groups == 2 && observed_groups[1] != groups_requested[1])))) return 2;
         printf("uid=%lu euid=%lu gid=%lu egid=%lu groups=%s\n",
                (unsigned long)getuid(), (unsigned long)geteuid(),
-               (unsigned long)getgid(), (unsigned long)getegid(), groups ? "1:10003" : "0");
+               (unsigned long)getgid(), (unsigned long)getegid(), groups == 2 ? "2:10003:10004" : groups ? "1:10003" : "0");
         if (fflush(stdout)) return 2;
         execvp(argv[4], argv + 4);
         perror("identity exec");

@@ -1,11 +1,11 @@
-"""CSH-061 private Linux ACL witnesses with independent I/O controls."""
+"""CSH-061/062 private Linux ACL witnesses with independent I/O controls."""
 import os
 from pathlib import Path
 import shlex
 import subprocess
 
 
-def cases(paths, helper):
+def cases(paths, helper, unequal=False):
     for inherited in (False, True):
         for subject in ('user', 'group'):
             for permission in ('r', 'w', 'x'):
@@ -37,6 +37,47 @@ def cases(paths, helper):
                                    status=0 if allowed else (2 if utility == 'operation' and permission == 'x' else 1),
                                    controlled_fixture=fixture, files=files)
 
+    yield from combinations(paths, helper, unequal)
+
+
+def combinations(paths, helper, unequal=False):
+    """Multiple entries, named-user precedence, and actual supplementary sets."""
+    for inherited in (False, True):
+        for permission, perms in (("r", "r--"), ("w", "-w-"), ("x", "--x")):
+            scenarios = [
+                ("second-user", 10002, False, f"u:10001:---,u:10002:{perms}", True),
+                ("first-group", 10002, True, f"g:10003:{perms},g:10004:---", True),
+                ("second-group", 10002, True, f"g:10003:---,g:10004:{perms}", True),
+                ("user-precedence", 10001, True, f"u:10001:---,g:10003:{perms},g:10004:{perms}", False),
+                ("unrelated-groups", 10002, True, f"g:10005:{perms}", False),
+                ("masked-groups", 10002, True, f"g:10003:{perms},g:10004:{perms}", False),
+            ]
+            for label, effective, groups, entries, allowed in scenarios:
+                real = (10001 if effective == 10002 else 10002) if unequal else effective
+                identity = "identity-groups" if groups else "identity"
+                prefix = f"{helper} {identity} {real} {effective} "
+                output = (f"uid={real} euid={effective} gid={real} egid={effective} groups=" +
+                          ("2:10003:10004\n" if groups else "0\n")).encode()
+                fixture = dict(subject="multiple", entries=entries, permission=permission,
+                               inherited=inherited, masked=label == "masked-groups",
+                               helper=shlex.split(helper)[0])
+                for utility in ("test", "[", "operation"):
+                    command = (shlex.quote(paths[utility]) + f" -{permission} controlled" +
+                               (" ]" if utility == "[" else "")) if utility != "operation" else {
+                        "r": shlex.quote(paths["cat"]) + " controlled",
+                        "w": helper + " acl-write controlled",
+                        "x": "./controlled acl-executed",
+                    }[permission]
+                    out = output + (dict(r=b"private\n", w=b"", x=b"executed\n")[permission]
+                                    if utility == "operation" and allowed else b"")
+                    files = ({"controlled": b"private\n" + (b"written\n" if allowed else b"")}
+                             if utility == "operation" and permission == "w" else {})
+                    yield dict(name=f"U-037 ACL combinations {label} {permission} inherited={inherited} unequal={unequal} {utility}",
+                               script=prefix + command + "\n", stdout=out, files=files,
+                               stderr="nonempty" if utility == "operation" and not allowed else b"",
+                               status=0 if allowed else (2 if utility == "operation" and permission == "x" else 1),
+                               controlled_fixture=fixture)
+
 
 def setup(directory, spec):
     """Inherit defaults at creation; never reapply an access ACL to the child."""
@@ -46,7 +87,7 @@ def setup(directory, spec):
     target = parent / 'child'
     perms = {'r': 'r--', 'w': '-w-', 'x': '--x'}[spec['permission']]
     subject = 'u:10001' if spec['subject'] == 'user' else 'g:10003'
-    entries = 'u::---,g::---,o::---,' + subject + ':' + perms + ',m::' + (
+    entries = 'u::---,g::---,o::---,' + spec.get('entries', subject + ':' + perms) + ',m::' + (
         '---' if spec['masked'] else perms)
     def acl(path, default=False):
         subprocess.run(['setfacl', '-m', ','.join(('d:' if default else '') + entry
