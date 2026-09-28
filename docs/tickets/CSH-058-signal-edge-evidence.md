@@ -1,6 +1,6 @@
 # CSH-058: Complete signal inheritance and permission evidence
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
@@ -75,3 +75,8 @@ recorded failures. Final ASan/UBSan runs use the scoped settings described in
 the evidence record; no Linux LeakSanitizer result is claimed. Existing host
 utility gaps and invocation/locale capability skips retain their owners.
 These scoped passes do not promote whole requirement families to verified.
+
+Integrated on 2026-09-28 with CSH-057/059. The permission fixture now supplies
+the jobs API suspension argument. Combined native macOS and Linux/Docker
+`make -j4 test test-pty test-harness test-host-profile` passed, including 3,113
+runtime cases per host and 2,464/2,495 signal-edge cases respectively.
