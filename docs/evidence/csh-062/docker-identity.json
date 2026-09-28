@@ -1,0 +1,59 @@
+{
+  "recorded_utc": "2026-09-28T22:46:39.543512+00:00",
+  "source_revision": "faf2e9525dfe2c2c2cba4598a1d63d49552fc1d7",
+  "source_note": "Source digest covers Makefile, Dockerfile, src, include, tests and tools, excluding Python caches. Subsequent evidence documentation is outside that digest.",
+  "source_sha256": "01d7b6e58496421f0d714bfc0df73625c4d497fddd212cf76a0a5ea47cced9fe",
+  "binary": {
+    "path": "/work/cshell",
+    "realpath": "/work/cshell",
+    "sha256": "8025a3a7b75910fed77b8c7892963853b9d4db6c05e7280143b8361810c81f9a"
+  },
+  "compiler": {
+    "argv": [
+      "cc",
+      "--version"
+    ],
+    "status": 0,
+    "output": "cc (Debian 14.2.0-19) 14.2.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+  },
+  "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.41",
+  "uname": [
+    "Linux",
+    "e65959cbcdf7",
+    "6.4.16-linuxkit",
+    "#1 SMP PREEMPT Thu Nov 16 10:49:20 UTC 2023",
+    "aarch64",
+    ""
+  ],
+  "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+  "libc": [
+    "glibc",
+    "2.41"
+  ],
+  "flags": {
+    "CPPFLAGS": "-D_POSIX_C_SOURCE=200809L -Iinclude",
+    "CFLAGS": "-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2",
+    "LDFLAGS": "",
+    "LDLIBS": ""
+  },
+  "generated_suites": {
+    "build/tests/host-profile-results.json": "7e33e1c7892bc927dddb59877e5e3342dbb03abc20da95b9b8970b95d6f5eea9",
+    "build/tests/jobs-pty.json": "f1b274b9c847dee58fcf76fb710838c35c428c196db7cf9cb86bd41348b145bc",
+    "build/tests/runtime-pty.json": "6375cbefd47504d9f14372c0a9aa925cc35e008c1b331f58acda0e4fab7a8436",
+    "build/tests/runtime.json": "9028f25df5426d10839cae1543c8eba5d0cd85a934b45722de5446add2118e3a"
+  },
+  "helpers": {
+    "/bin/cat": "0d5a5dd543ed8d31220320eb513e4680ab303e48cb22a5edbf27a5a91561a71e",
+    "/usr/bin/cmp": "42555d3db07aeb2f12acf4085e8a5fee605abf394fe8473508fa279718cd95dd",
+    "/work/build/tests/execute_helper": "3addfd1254b92904d994ccd887a5e56fd56225af16b63a2445d1997ff673d0a2"
+  },
+  "os_release": "PRETTY_NAME=\"Debian GNU/Linux 13 (trixie)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"13\"\nVERSION=\"13 (trixie)\"\nVERSION_CODENAME=trixie\nDEBIAN_VERSION_FULL=13.7\nID=debian\nHOME_URL=\"https://www.debian.org/\"\nSUPPORT_URL=\"https://www.debian.org/support\"\nBUG_REPORT_URL=\"https://bugs.debian.org/\"\n",
+  "libc_build": {
+    "argv": [
+      "ldd",
+      "--version"
+    ],
+    "status": 0,
+    "output": "ldd (Debian GLIBC 2.41-12+deb13u4) 2.41\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nWritten by Roland McGrath and Ulrich Drepper."
+  }
+}

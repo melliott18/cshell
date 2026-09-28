@@ -55,7 +55,7 @@ class HostEvidenceTests(unittest.TestCase):
         self.assertEqual(len({row['condition'] for row in rows}), len(RESIDUAL))
         for row in rows:
             self.assertEqual(row['environment'], 'test environment')
-            self.assertEqual(row['owner'], 'CSH-062')
+            self.assertEqual(row['owner'], 'CSH-063')
             self.assertTrue(row['source'].startswith('https://pubs.opengroup.org/'))
             self.assertTrue(row['reason'])
             self.assertTrue(row['executable']['sha256'])
@@ -85,7 +85,7 @@ class HostEvidenceTests(unittest.TestCase):
         from host_acl_cases import cases
         paths = {name: '/selected/' + name for name in HOSTS}
         rows = list(cases(paths, '/helper'))
-        self.assertEqual(len(rows), 108)
+        self.assertEqual(len(rows), 216)
         for row in rows:
             output = dict(stdout=row['stdout'], stderr=b'')
             if row['status'] == 0:
@@ -95,3 +95,48 @@ class HostEvidenceTests(unittest.TestCase):
                 self.assertFalse(matches_case(row, 0, output))
             if row['name'].endswith('operation') and row['controlled_fixture']['permission'] == 'w':
                 self.assertEqual(row['files']['controlled'], b'private\nwritten\n' if row['status'] == 0 else b'private\n')
+
+    def test_multiple_group_unequal_grants_remain_strict(self):
+        from host_acl_cases import combinations
+        paths = {name: '/selected/' + name for name in HOSTS}
+        rows = list(combinations(paths, '/helper', True))
+        grants = [row for row in rows if row['status'] == 0]
+        self.assertEqual(len(grants), 54)
+        for row in grants:
+            self.assertFalse(matches_case(row, 1, dict(stdout=row['stdout'], stderr=b'')))
+            self.assertFalse(known_gap(row, 1, dict(stdout=row['stdout'], stderr=b'')))
+        for row in rows:
+            if 'group' in row['name'] or 'user-precedence' in row['name']:
+                self.assertIn(b'groups=2:10003:10004', row['stdout'])
+            self.assertNotIn(b'uid=10002 euid=10002', row['stdout'])
+            self.assertNotIn(b'uid=10001 euid=10001', row['stdout'])
+
+    def test_fixture_mount_identity_uses_longest_component_match(self):
+        import tempfile
+        from pathlib import Path
+        from host_platform import filesystem_identity
+        with tempfile.TemporaryDirectory(prefix='acl fs ') as root:
+            root = str(Path(root).resolve())
+            encoded = root.replace(' ', r'\040')
+            mounts = ('1 0 0:1 / / rw - overlay overlay rw\n' +
+                      f'2 1 0:2 / {encoded} rw - tmpfs tmpfs rw\n' +
+                      f'3 1 0:3 / {encoded}-other rw - ext4 other rw\n')
+            result = filesystem_identity(Path(root), mounts)
+            self.assertEqual(result['mount']['type'], 'tmpfs')
+            self.assertEqual(result['mount']['mountpoint'], root)
+            self.assertEqual(result['device'], Path(root).stat().st_dev)
+
+    def test_setup_failure_retains_acl_diagnostic_and_cannot_pass(self):
+        import subprocess
+        from host_utilities import setup_failure
+        case = dict(name='grant', status=0, stdout=b'', stderr=b'')
+        error = subprocess.CalledProcessError(1, ['setfacl', '-m', 'u:10001:r--', 'private'],
+                                            output=b'', stderr=b'Operation not supported\n')
+        result = setup_failure('grant (string)', case, error)
+        self.assertEqual(result['verdict'], 'FAIL')
+        self.assertEqual(result['phase'], 'setup')
+        self.assertEqual(result['actual']['status'], 1)
+        self.assertEqual(result['actual']['stderr'], {'hex': error.stderr.hex()})
+        self.assertEqual(result['case']['status'], 0)
+        self.assertTrue(result['owner'])
+        self.assertTrue(result['source'])

@@ -129,3 +129,27 @@ an independent unavailable privileged Darwin ACL condition. Missing root,
 locales and explicit block witnesses remain separate. The next qualification
 owner is [CSH-062](tickets/CSH-062-host-contract-controlled-platforms.md); bounded
 passes do not promote any parent family or satisfy CSH-012.
+
+## CSH-062 supplied platforms
+
+[CSH-062](tickets/CSH-062-host-contract-controlled-platforms.md) adds 108
+controlled ACL cases (324 string/file/stdin assertions) for multiple named
+users, two supplementary groups, named-user precedence and masks, across
+access/default ACL read/write/execute. The strict unequal-ID option applies
+the same success expectations to the new combinations. Actual read bytes,
+appended bytes and executable markers remain independent controls.
+
+`--fixture-root` selects an explicitly supplied disposable filesystem for both
+cases and queries. Records include device and Linux mount identity; setup
+errors retain command/status/diagnostic failures instead of losing the result.
+Debian 13 overlay and an ext4 Docker volume pass the equal-ID profile; tmpfs
+ACL setup is unsupported on the recorded Docker kernel. The GNU 9.7/glibc 2.41
+strict unequal-ID run still fails 114 grant assertions, with actual operations
+passing. Native macOS does not supply a privileged Darwin ACL environment.
+
+[Retained results and reproduction](evidence/csh-062/README.md) include vendor
+identities, sanitizers and native/Docker/BusyBox runtime/PTY integration.
+All 28 residual rows remain individually sourced; conditional missing-root,
+locale and stat-only block witnesses remain separate and now also carry
+selected executable identities. [CSH-063](tickets/CSH-063-host-platform-residual-qualification.md)
+owns the remaining conditions. Utility families remain open and the CSH-012 gate stays closed.
