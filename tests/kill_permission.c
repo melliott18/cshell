@@ -45,7 +45,7 @@ int main(int argc, char **argv)
     args[4] = argv[1];
     command.argc = 6;
     command.argv = args;
-    assert(csh_jobs_builtin(jobs, &command) == 1);
+    assert(csh_jobs_builtin(jobs, &command, NULL) == 1);
     assert(calls == 2 && delivered == SIGUSR1);
     puts("EPERM; continued; delivered");
     csh_jobs_destroy(jobs);
