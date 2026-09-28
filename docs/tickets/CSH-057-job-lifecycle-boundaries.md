@@ -5,7 +5,7 @@
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-034, CSH-035
-- Branch: fix/CSH-057-timeout-diagnostics
+- Branch: fix/CSH-057-retention-timeout
 - Issue: [#99](https://github.com/melliott18/cshell/issues/99)
 
 ## Goal
@@ -128,3 +128,25 @@ The retention fixture flushes exact phase/capacity checkpoints while keeping
 its 60-second outer deadline, five-second phase alarms, and all assertions.
 Validation and failed attempts are recorded with the follow-up evidence. Keep
 issue #99 open for review and the unclassified hosted retention observation.
+
+### Merged repair review and retention timing
+
+PR #121 merged as `87fdfe8`. Review at `faf2e95` found no actionable correctness
+regression in the three runtime repairs; the complete hosted integration run
+passed Ubuntu, Docker, and macOS normal/sanitizer checks.
+
+The [retention review evidence](../evidence/csh-057-retention-review/README.md)
+records hosted sanitizer passes in 40.556, 54.911 and 41.413 seconds against the
+unchanged 60-second deadline. Local timing and stack sampling show progressing
+fork/child-wait work across the 619-child fixture. Cumulative sanitizer process
+cost is the leading hypothesis, but the original buffered failure log cannot
+establish its cause and the timeout has not reproduced. A diagnostic-only skip
+of redundant completed-record waits did not materially shorten the probe and
+was not applied to the runtime.
+
+The separate concurrent diagnostic launcher now uses spawned single-threaded
+processes instead of threads around Python `preexec_fn`. Controlled success and
+failure cases verify process isolation and retained outcomes; two actual normal
+retention probes pass. This diagnostic defect did not affect hosted CI. Keep
+the historical retention observation under this ticket without claiming it is
+fixed, extending deadlines, or treating another passing rerun as a diagnosis.

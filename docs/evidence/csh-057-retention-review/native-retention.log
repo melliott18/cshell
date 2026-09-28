@@ -1,0 +1,7 @@
+python3 tests/smoke.py ./build/tests/jobs_lifecycle --suite tests/fixtures/job-retention.json --timeout 60
+Suite: job-retention [module] candidate=/Users/mitchell/.codex/worktrees/csh-057-retention/cshell/build/tests/jobs_lifecycle
+PASS: CSH-057 bounded CHILD_MAX retention and eviction
+Result: 1 passed, 0 failed, 0 skipped
+real 0.92
+user 0.18
+sys 0.25

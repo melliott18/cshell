@@ -78,6 +78,13 @@ will carry useful evidence. It retains the 60-second outer bound and original
 five-second alarms. No load classification or deadline increase is substituted
 for a diagnosis.
 
+The [merged-repair review](../csh-057-retention-review/README.md) adds hosted
+timings and local fork/wait measurements. It also corrects this directory's
+`diagnose_retention.py`: the historical concurrent probes used threads around
+a runner with `preexec_fn`; future probes use independent spawned processes.
+The historical results remain unchanged. The diagnostic-launch defect did not
+affect the single-threaded hosted runner and does not explain its timeout.
+
 ## Reproduction and provenance
 
 Build the normal target with `make -j4 test-jobs test-pty test-harness`.

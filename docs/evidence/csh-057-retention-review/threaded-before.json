@@ -1,0 +1,29 @@
+{
+  "command": [
+    "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+    "/Users/mitchell/.codex/worktrees/csh-057-retention/cshell/docs/evidence/csh-057-retention-review/check_spawn_runner.py",
+    "--root",
+    "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-threaded-before-nolsihwz",
+    "--output",
+    "/Users/mitchell/.codex/worktrees/csh-057-retention/cshell/build/retention-review/threaded-before-verified"
+  ],
+  "returncode": 1,
+  "output": "Traceback (most recent call last):\n  File \"/Users/mitchell/.codex/worktrees/csh-057-retention/cshell/docs/evidence/csh-057-retention-review/check_spawn_runner.py\", line 135, in <module>\n    main()\n  File \"/Users/mitchell/.codex/worktrees/csh-057-retention/cshell/docs/evidence/csh-057-retention-review/check_spawn_runner.py\", line 100, in main\n    completed = subprocess.run(command, check=True, text=True,\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py\", line 571, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['/Library/Frameworks/Python.framework/Versions/3.12/bin/python3', '/private/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-threaded-before-nolsihwz/docs/evidence/csh-057-timeouts/diagnose_retention.py', '/Users/mitchell/.codex/worktrees/csh-057-retention/cshell/build/retention-review/threaded-before-verified/fixture', '/Users/mitchell/.codex/worktrees/csh-057-retention/cshell/build/retention-review/threaded-before-verified/pass', '--workers', '2']' returned non-zero exit status 1.\n",
+  "workers": [
+    {
+      "pid": 47437,
+      "threads": 3,
+      "method": "spawn",
+      "timeout": 60,
+      "output_limit": 65536
+    },
+    {
+      "pid": 47437,
+      "threads": 3,
+      "method": "spawn",
+      "timeout": 60,
+      "output_limit": 65536
+    }
+  ],
+  "expected": "old threaded launcher rejected by single-threaded/spawn worker assertions; no deadlock needed"
+}

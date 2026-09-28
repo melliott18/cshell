@@ -1,7 +1,7 @@
 {
   "README.md": {
-    "bytes": 10581,
-    "sha256": "f5681709eebf72b1f62b3954f92dcaacba23b2b56ccd9a4f5732f373bc5554c7"
+    "bytes": 11044,
+    "sha256": "0ee2334bd4b6e3493ea72b3c634a4308c6f3399412706a403043243f97ca5bd9"
   },
   "diagnose_group.py": {
     "bytes": 5053,
@@ -16,8 +16,8 @@
     "sha256": "9c186e0f64ed81309e21eb2b71e741580185fc1d156e887b35296dc94d05757f"
   },
   "diagnose_retention.py": {
-    "bytes": 1204,
-    "sha256": "7423de643d441d67eff8e73818ecf0048eb913d7095075463b42362daa6bbe35"
+    "bytes": 1743,
+    "sha256": "c30fa6f3d7db19f12c215aac452c41bc553c8188b6978f31acaffc9c7fdf5c70"
   },
   "diagnostic-tests-final.log.gz": {
     "bytes": 2082,
