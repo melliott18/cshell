@@ -68,9 +68,12 @@ static void prompt(void *context, int continuation)
 {
     struct prompt_context *prompt_data = context;
     const struct csh_invocation *invocation = prompt_data->invocation;
+    struct csh_variable_view secondary;
     csh_jobs_poll(prompt_data->jobs);
     csh_jobs_notify(prompt_data->jobs);
-    const char *text = csh_invocation_prompt(invocation, continuation, "$ ", "> ");
+    csh_state_get_variable(prompt_data->state, "PS2", &secondary);
+    const char *text = csh_invocation_prompt(invocation, continuation, "$ ",
+        secondary.value ? secondary.value : "> ");
     /* SIGCHLD from bg can interrupt even this short terminal write. Retry
      * interrupted/partial output before entering the next input wait. */
     if (text != NULL) (void)csh_write_text(STDERR_FILENO, text);

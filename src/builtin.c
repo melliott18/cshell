@@ -1,3 +1,7 @@
+/* Linux exposes its search-only directory handle as O_PATH. */
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
 #include "cshell/builtin.h"
 #include "cshell/output.h"
 #include <errno.h>
@@ -46,11 +50,18 @@ static int compare_names(const void *a, const void *b)
 
 static int quoted(const char *value)
 {
-    const char *s;
-    if (dprintf(1, "'") < 0) return -1;
-    for (s = value; *s; ++s)
-        if ((*s == '\'' ? dprintf(1, "'\\''") : dprintf(1, "%c", *s)) < 0) return -1;
-    return dprintf(1, "'") < 0 ? -1 : 0;
+    const char *s = value;
+    if (csh_write_text(1, "'") < 0) return -1;
+    while (*s) {
+        size_t n = strcspn(s, "'");
+        if (csh_write_bytes(1, s, n) < 0) return -1;
+        s += n;
+        if (*s) {
+            if (csh_write_text(1, "'\\''") < 0) return -1;
+            ++s;
+        }
+    }
+    return csh_write_text(1, "'");
 }
 
 static int listing(struct csh_state *state, const char *name, unsigned mask)
@@ -65,8 +76,9 @@ static int listing(struct csh_state *state, const char *name, unsigned mask)
         struct csh_variable_view v;
         csh_state_get_variable(state, names[i], &v);
         if (mask ? !(v.attributes & mask) : v.value == NULL) continue;
-        if ((mask && dprintf(1, "%s ", name) < 0) || dprintf(1, "%s", names[i]) < 0 ||
-            (v.value && (dprintf(1, "=") < 0 || quoted(v.value) < 0)) || dprintf(1, "\n") < 0) {
+        if ((mask && (csh_write_text(1, name) < 0 || csh_write_text(1, " ") < 0)) ||
+            csh_write_text(1, names[i]) < 0 ||
+            (v.value && (csh_write_text(1, "=") < 0 || quoted(v.value) < 0)) || csh_write_text(1, "\n") < 0) {
             status = problem(name, "cannot write output"); break;
         }
     }
@@ -239,9 +251,32 @@ static int directory(struct csh_state *state, size_t argc, char *const argv[])
         }
         if (target[0] == '/' && normalize(target) < 0) goto done;
     }
+    /* Saving a rollback handle must not add a directory read-permission
+     * requirement to cd. O_SEARCH is POSIX Issue 8; Linux uses O_PATH. */
+#if defined(O_SEARCH)
+    fd = open(".", O_SEARCH);
+#elif defined(O_PATH)
+    fd = open(".", O_PATH | O_DIRECTORY);
+#else
     fd = open(".", O_RDONLY);
+#endif
     if (fd < 0 || csh_state_save(state, &checkpoint) != CSH_STATE_OK) goto done;
-    if (chdir(target) < 0) goto done;
+    {
+        const char *change = target;
+        /* cd step 9: a logical absolute path can exceed the pathname syscall
+         * limit even when the operand fits. Strip the current directory prefix
+         * when possible, retaining the full logical value for PWD. */
+        long maximum = pathconf(".", _PC_PATH_MAX);
+        if (!physical && old && maximum > 0 && strlen(target) >= (size_t)maximum) {
+            size_t prefix = strlen(old);
+            if (!strncmp(target, old, prefix) && (target[prefix] == '/' || target[prefix] == 0)) {
+                change = target + prefix;
+                while (*change == '/') ++change;
+                if (!*change) change = ".";
+            }
+        }
+        if (chdir(change) < 0) goto done;
+    }
     newpwd = !physical && target[0] == '/' ? strdup(target) : cwd();
     if (!newpwd) {
         /* Without -e, POSIX permits success when physical cwd is unavailable. */

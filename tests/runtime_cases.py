@@ -303,6 +303,17 @@ def terminal_cases(helper):
         {"expect": "> "}, {"send": "two\n"}, {"expect": "$ "},
         {"send": "echo \"$value\"\n"}, {"expect": "onetwo\n$ "}, {"send": "exit\n"}],
         "$ > $ onetwo\n$ ", 0)
+    terminal("terminal read literal PS2 and raw suppression", [
+        {"expect": "$ "}, {"send": "PS2='next $value> '; read value\n"}, {"send": "one\\\n"},
+        {"expect": "next $value> "}, {"send": "two\n"}, {"expect": "$ "},
+        {"send": 'read -r value\n'}, {"send": "raw\\\n"}, {"expect": "$ "},
+        {"send": 'printf \"<%s>\\n\" \"$value\"\n'}, {"expect": "<raw\\>\n$ "}, {"send": "exit\n"}],
+        "$ next $value> $ $ <raw\\>\n$ ", 0)
+    terminal("terminal heredoc literal PS2", [
+        {"expect": "$ "}, {"send": "PS2='more> '\n"}, {"expect": "$ "},
+        {"send": "cat <<END\n"}, {"expect": "more> "}, {"send": "data\n"},
+        {"expect": "more> "}, {"send": "END\n"}, {"expect": "data\n$ "}, {"send": "exit\n"}],
+        "$ $ more> more> data\n$ ", 0)
     terminal("terminal command foreground interrupt", [
         {"expect": "$ "}, { "send": "command /bin/sh -c 'echo ready; exec sleep 20'\n"}, {"expect": "ready\n"},
         {"control": "C"}, {"expect": "$ "}, {"send": "echo \"$?\"\n"},

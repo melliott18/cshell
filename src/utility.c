@@ -1,5 +1,6 @@
 /* Utilities which mutate or inspect the current shell environment. */
 #include "cshell/builtin.h"
+#include "cshell/output.h"
 #include <errno.h>
 #include <inttypes.h>
 #include <stdint.h>
@@ -14,7 +15,11 @@
 
 static int problem(const char *name, const char *message)
 {
-    dprintf(2, "cshell: %s: %s\n", name, message);
+    csh_write_text(2, "cshell: ");
+    csh_write_text(2, name);
+    csh_write_text(2, ": ");
+    csh_write_text(2, message);
+    csh_write_text(2, "\n");
     return 2;
 }
 static int assign(struct csh_state *state, const char *name, const char *value)
@@ -73,11 +78,6 @@ static int read_builtin(struct csh_state *state, size_t argc, char *const argv[]
         }
     }
     if (first == argc) return problem("read", "variable required");
-    for (i = first; i < argc; ++i) {
-        if (csh_state_get_variable(state, argv[i], &view) != CSH_STATE_OK)
-            return problem("read", "invalid variable name");
-        if (view.attributes & CSH_VAR_READONLY) return problem("read", "readonly variable");
-    }
     csh_state_get_variable(state, "IFS", &view);
     ifs = strdup(view.value ? view.value : " \t\n");
     line = malloc(capacity); quoted = malloc(capacity);
@@ -95,7 +95,9 @@ static int read_builtin(struct csh_state *state, size_t argc, char *const argv[]
             csh_state_get_info(state, &info);
             if ((info.options & CSH_OPT_INTERACTIVE) && isatty(0)) {
                 csh_state_get_variable(state, "PS2", &view);
-                dprintf(2, "%s", view.value ? view.value : "> ");
+                if (csh_write_text(2, view.value ? view.value : "> ") < 0) {
+                    status = problem("read", "cannot write prompt"); break;
+                }
             }
             escaped = 0; continue;
         }
@@ -125,7 +127,15 @@ static int read_builtin(struct csh_state *state, size_t argc, char *const argv[]
     }
     line[used] = 0;
     if (status <= 1) for (i = first; i < argc; ++i) {
-        size_t start, finish, next;
+        size_t start, finish;
+        /* Issue 8 requires earlier operands to be assigned before an error
+         * in a later operand. Stop at the failing operand (permitted policy). */
+        if (csh_state_get_variable(state, argv[i], &view) != CSH_STATE_OK) {
+            status = problem("read", "invalid variable name"); break;
+        }
+        if (view.attributes & CSH_VAR_READONLY) {
+            status = problem("read", "readonly variable"); break;
+        }
         while (pos < used && white((unsigned char)line[pos]) &&
             delimiter(ifs, line + pos, used - pos, quoted + pos)) ++pos;
         start = pos;
@@ -133,21 +143,12 @@ static int read_builtin(struct csh_state *state, size_t argc, char *const argv[]
             pos += character_bytes(line + pos, used - pos);
         finish = pos;
         if (i + 1 == argc) {
-            /* Last variable receives the remaining fields and intervening separators.
-             * A lone terminating separator is removed just as for one field. */
-            next = pos;
-            while (next < used && white((unsigned char)line[next]) &&
-                delimiter(ifs, line + next, used - next, quoted + next)) ++next;
-            if (next < used)
-                next += delimiter(ifs, line + next, used - next, quoted + next);
-            while (next < used && white((unsigned char)line[next]) &&
-                delimiter(ifs, line + next, used - next, quoted + next)) ++next;
-            if (next < used) {
-                finish = used;
-                while (finish > start && white((unsigned char)line[finish-1]) &&
-                    delimiter(ifs, line + finish - 1, used - finish + 1,
-                        quoted + finish - 1)) --finish;
-            }
+            /* The last operand receives unsplit input, stripping only IFS
+             * white space, even when it is the sole operand. */
+            finish = used;
+            while (finish > start && white((unsigned char)line[finish-1]) &&
+                delimiter(ifs, line + finish - 1, used - finish + 1,
+                    quoted + finish - 1)) --finish;
         } else {
             while (pos < used && white((unsigned char)line[pos]) &&
                 delimiter(ifs, line + pos, used - pos, quoted + pos)) ++pos;
@@ -200,14 +201,20 @@ static int getopts_builtin(struct csh_state *state, size_t argc, char *const arg
     if (!found) {
         output[0] = '?';
         if (silent) value = bad;
-        else dprintf(2, "cshell: getopts: illegal option -- %c\n", bad[0]);
+        else {
+            csh_write_text(2, "cshell: getopts: illegal option -- ");
+            csh_write_text(2, bad); csh_write_text(2, "\n");
+        }
     } else if (found[1] == ':') {
         if (offset) { value = arg + offset; ++index; offset = 0; }
         else { value = option_argument(state, argc, argv, first, index); if (value) ++index; }
         if (!value) {
             output[0] = silent ? ':' : '?';
             if (silent) value = bad;
-            else dprintf(2, "cshell: getopts: option requires an argument -- %c\n", bad[0]);
+            else {
+                csh_write_text(2, "cshell: getopts: option requires an argument -- ");
+                csh_write_text(2, bad); csh_write_text(2, "\n");
+            }
         }
     }
 publish:
@@ -228,12 +235,14 @@ static int umask_builtin(size_t argc, char *const argv[])
     if (argc - first > 1) return problem("umask", "too many operands");
     old = umask(0); umask(old);
     if (first == argc) {
-        if (!symbolic) return dprintf(1, "%04o\n", (unsigned)old) < 0;
+        char output[64];
         mode = ~old;
-        return dprintf(1, "u=%s%s%s,g=%s%s%s,o=%s%s%s\n",
+        if (!symbolic) snprintf(output, sizeof(output), "%04o\n", (unsigned)old);
+        else snprintf(output, sizeof(output), "u=%s%s%s,g=%s%s%s,o=%s%s%s\n",
             mode&0400?"r":"", mode&0200?"w":"", mode&0100?"x":"",
             mode&0040?"r":"", mode&0020?"w":"", mode&0010?"x":"",
-            mode&0004?"r":"", mode&0002?"w":"", mode&0001?"x":"") < 0;
+            mode&0004?"r":"", mode&0002?"w":"", mode&0001?"x":"");
+        return csh_write_text(1, output) < 0 ? problem("umask", "cannot write output") : 0;
     }
     { const char *p = argv[first];
       if (*p >= '0' && *p <= '7') {
@@ -289,7 +298,11 @@ static int times_builtin(size_t argc, char *const argv[])
     for (i = 0; i < 4; ++i) {
         double seconds = (double)values[i] / ticks;
         long minutes = (long)(seconds / 60);
-        if (dprintf(1, "%ldm%fs%c", minutes, seconds - minutes * 60, i % 2 ? '\n' : ' ') < 0) return 1;
+        char output[128];
+        int length = snprintf(output, sizeof(output), "%ldm%fs%c", minutes,
+            seconds - minutes * 60, i % 2 ? '\n' : ' ');
+        if (length < 0 || (size_t)length >= sizeof(output) || csh_write_text(1, output) < 0)
+            return problem("times", "cannot write output");
     }
     return 0;
 }
@@ -342,10 +355,13 @@ static int ulimit_builtin(size_t argc, char *const argv[])
             if (soft || !hard) limit.rlim_cur = value;
             if (setrlimit(r->resource, &limit)) return problem("ulimit", "cannot set resource limit");
         } else {
+            char output[128], number[64];
             value = hard ? limit.rlim_max : limit.rlim_cur;
-            if (all && dprintf(1, "-%c %s: ", r->option, r->description) < 0) return 1;
-            if ((value == RLIM_INFINITY ? dprintf(1, "unlimited\n") :
-                dprintf(1, "%ju\n", (uintmax_t)value / r->unit)) < 0) return 1;
+            if (value == RLIM_INFINITY) strcpy(number, "unlimited");
+            else snprintf(number, sizeof(number), "%ju", (uintmax_t)value / r->unit);
+            if (all) snprintf(output, sizeof(output), "-%c %s: %s\n", r->option, r->description, number);
+            else snprintf(output, sizeof(output), "%s\n", number);
+            if (csh_write_text(1, output) < 0) return problem("ulimit", "cannot write output");
         }
     }
     return 0;

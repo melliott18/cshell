@@ -86,7 +86,7 @@ def cases(case, selected, data, skips):
         for label, line, variables, expected in (
             ("whole characters", "èéaééb\n", "a b c d", "<è>\n<a>\n<>\n<b>\n"),
             ("last variable remainder", "aébécé\n", "a b", "<a>\n<bécé>\n"),
-            ("single trailing delimiter", "aé\n", "a", "<a>\n"),
+            ("single trailing delimiter", "aé\n", "a", "<aé>\n"),
             ("escaped delimiter", "a\\ébéc\n", "a b", "<aéb>\n<c>\n"),
         ):
             values = " ".join('"$' + v + '"' for v in variables.split())

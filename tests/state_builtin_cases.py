@@ -127,3 +127,106 @@ def add_state_builtin_cases(cross, helper):
          'v=initial; { v=brace; }; printf "%s\\n" "$v"; . ./source; printf "%s\\n" "$v"; '
          'eval "v=eval"; printf "%s\\n" "$v"; f() { v=function; }; f; printf "%s\\n" "$v"',
          'brace\ndot\neval\nfunction\n', setup={'source': 'v=dot\n'})
+    # Issue 8 read assigns the last operand the unsplit remainder, trimming only
+    # IFS white space. Earlier operands survive a later assignment error.
+    for label, ifs, line, names, expected in (
+        ('one trailing separator', ':', 'one:\n', 'a', '[one:]\n'),
+        ('only separator', ':', ':\n', 'a', '[:]\n'),
+        ('last trailing separator', ':', 'one:two:\n', 'a b', '[one]\n[two:]\n'),
+        ('last empty field', ':', 'one::\n', 'a b', '[one]\n[:]\n'),
+        ('mixed trailing whitespace', ' :', ' one : two:  \n', 'a b', '[one]\n[two:]\n'),
+        ('escaped trailing whitespace', ' ', ' one\\ \n', 'a', '[one ]\n'),
+        ('repeated operand clears', ' ', 'one\n', 'a a', '[]\n'),
+        ('empty IFS extra operands', '', ' one two \n', 'a b', '[ one two ]\n[]\n'),
+    ):
+        values = ' '.join('"$' + name + '"' for name in dict.fromkeys(names.split()))
+        case('read ' + label, f'IFS={shlex.quote(ifs)}; read {names} <data; {helper} args {values}',
+             expected, setup={'data': line})
+    for bad, diagnostic in [('b', 'readonly variable'), ('1bad', 'invalid variable name')]:
+        case('read ordered assignment ' + bad,
+             f'a=old; readonly b=locked; c=untouched; exec 3<data; read a {bad} c <&3; '
+             f'{helper} args "$?" "$a" "$b" "$c"; read rest <&3; {helper} args "$rest"',
+             '[2]\n[one]\n[locked]\n[untouched]\n[next]\n',
+             setup={'data': 'one two three\nnext\n'}, stderr=f'cshell: read: {diagnostic}\n')
+    case('read EOF ordered assignment',
+         f'a=old; readonly b=locked; read a b <data; {helper} args "$?" "$a" "$b"',
+         '[2]\n[one]\n[locked]\n', setup={'data': 'one two'}, stderr='cshell: read: readonly variable\n')
+    # The error status and diagnostics are project choices within the required
+    # nonzero class; command and -i must recover from special-builtin errors.
+    for utility, setup, status in [('export -p', 'export A=x;', 1), ('readonly -p', 'readonly A=x;', 1),
+                                    ('set', 'A=x;', 1), ('times', '', 2), ('umask', '', 2),
+                                    ('umask -S', '', 2), ('ulimit -a', '', 2), ('ulimit -f', '', 2)]:
+        name = utility.split()[0]
+        diagnostic = f'cshell: {name}: cannot write output\n'
+        case(utility + ' output failure suppressed',
+             f'{setup} command {utility} >&-; printf "%s\\n" "$?"', f'{status}\n', stderr=diagnostic)
+        if name in ('export', 'readonly', 'set', 'times'):
+            case(utility + ' output failure fatal', f'{setup} {utility} >&-; : >unreached',
+                 status=status, stderr=diagnostic, files={'unreached': {'type': 'absent'}})
+            script = f'{setup} {utility} >&-; printf "%s\\n" "$?"'
+            case(utility + ' output failure interactive', f'{shell} -i -c {shlex.quote(script)}',
+                 f'{status}\n', stderr=diagnostic)
+    for name in ('export', 'readonly'):
+        case(name + ' reinput attributes',
+             f'{name} A=original B; {name} -p >saved; '
+             f'{shell} -c ' + shlex.quote(
+                 '. ./saved; command export A=changed B=changed; printf "%s:%s:%s\\n" "$?" "$A" "${B-unset}"'
+                 if name == 'readonly' else
+                 f'. ./saved; {helper} environment A B; B=now; {helper} environment B'),
+             '1:original:unset\n' if name == 'readonly' else 'A=original\nB=<unset>\nB=now\n',
+             stderr='cshell: export: readonly variable\ncshell: export: readonly variable\n' if name == 'readonly' else '')
+    case('readonly repeat preserves protection',
+         'readonly A=x; readonly A; command readonly A=x; printf "%s:%s\\n" "$?" "$A"',
+         '1:x\n', stderr='cshell: readonly: readonly variable\n')
+    for operand, error in [('-z', 'invalid option'), ('-v -f x', 'invalid option'), ('1bad', 'invalid operand')]:
+        case('unset error ' + operand, f'command unset {operand}; printf "%s\\n" "$?"',
+             '1\n', stderr=f'cshell: unset: {error}\n')
+    case('unset end options and absent function', 'unset -v -- absent; unset -f -- absent; echo "$?"', '0\n')
+    for variable, value, expected in [('OPTARG', 'keep', '[a]\n[keep]\n[1]\n'),
+                                      ('OPTIND', '1', '[a]\n[value]\n[1]\n')]:
+        case('getopts partial readonly ' + variable,
+             f'readonly {variable}={value}; getopts a: opt -a value; {helper} args "$?" "$opt" "$OPTARG" "$OPTIND"',
+             '[2]\n' + expected, stderr=f'cshell: {variable}: readonly variable\n')
+    case('getopts invalid name leaves cursor',
+         f'getopts a 1bad -a; {helper} args "$?" "$OPTIND" "${{OPTARG-unset}}"',
+         '[2]\n[1]\n[unset]\n', stderr='cshell: 1bad: invalid variable name\n')
+    for value in ('184467440737095516160', '-1', '1x', ''):
+        case('ulimit rejects ' + repr(value),
+             f'before=$(ulimit -f); ulimit -f -- {shlex.quote(value)}; printf "%s\\n" "$?"; '
+             'test "$(ulimit -f)" = "$before"', '2\n', stderr='cshell: ulimit: invalid limit\n')
+    for operand, expected in [('u=rw,g=r,o=', 'u=rw,g=r,o=\n'), ('a+r-w', 'u=rx,g=rx,o=rx\n'),
+                               ('u=rwx,g=u,o=g', 'u=rwx,g=rwx,o=rwx\n'), ('u=,g=,o=', 'u=,g=,o=\n'),
+                               ('=rw', 'u=rw,g=rw,o=rw\n'), ('u-x,g+w', 'u=rw,g=rwx,o=rx\n')]:
+        case('umask symbolic ' + operand, f'umask 022; umask {shlex.quote(operand)}; umask -S', expected)
+    for operand in ('888', '1000', 'u=bad', 'u+r,', 'u', ',u=r', ''):
+        case('umask invalid ' + repr(operand),
+             f'umask 027; umask {shlex.quote(operand)}; echo "$?"; umask -S',
+             '2\nu=rwx,g=rx,o=\n', stderr='cshell: umask: invalid mask\n')
+    for utility, operand, diagnostic in [('pwd', '-e', 'invalid option'), ('pwd', 'extra', 'too many operands'),
+                                        ('cd', '-z', 'invalid option'), ('cd', 'a b', 'too many operands')]:
+        case(utility + ' operand ' + operand,
+             f'before=$PWD; {utility} {operand}; echo "$?"; test "$PWD" = "$before"',
+             '1\n', stderr=f'cshell: {utility}: {diagnostic}\n')
+    case('cd deleted cwd recovery',
+         'base=$PWD; mkdir gone; cd gone; rmdir "$base/gone"; pwd -P; echo "$?"; '
+         'cd "$base"; test "$PWD" = "$base"', '1\n', stderr='cshell: pwd: cannot determine current directory\n')
+    case('startup deleted cwd selects unset',
+         f'base=$PWD; mkdir gone; cd gone; rmdir "$base/gone"; {shell} -c '\
+         "'test \"${PWD-unset}\" = unset; cd \"$1\"; test \"$PWD\" = \"$1\"' child \"$base\"")
+    case('cd output error keeps changed cwd',
+         'base=$PWD; mkdir dest; cd dest; cd - >&-; echo "$?"; test "$PWD" = "$base"', '1\n',
+         stderr='cshell: cd: cannot change directory or update directory state\n')
+    # Descriptor ownership across nested current/child contexts and failure.
+    case('nested context descriptors and state',
+         'exec 3>parent; v=parent; f() { (exec 3>child; v=child; echo child >&3); '
+         'eval \'echo eval >&3; command export 1bad=x\'; echo function >&3; }; '
+         'f 4>temporary; echo "$v" >&3; exec 3>&-; cat parent child',
+         'eval\nfunction\nparent\nchild\n', stderr='cshell: export: invalid operand\n',
+         files={'temporary': {'type': 'file', 'content': ''}})
+    for label, command, diagnostic, expected_status in (
+        ('permission', 'exec ./denied', f'cshell: ./denied: cannot execute: {os.strerror(errno.EACCES)}\n', 126),
+        ('redirection', 'exec >missing/output', f'cshell: cannot apply redirection: {os.strerror(errno.ENOENT)}\n', 1),
+    ):
+        script = command + '; printf "%s\\n" "$?"'
+        case('exec interactive ' + label, f'{shell} -i -c {shlex.quote(script)}',
+             f'{expected_status}\n', stderr=diagnostic, setup={'denied': 'exit 0\n'})
