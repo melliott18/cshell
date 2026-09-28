@@ -95,3 +95,11 @@ module regression, and final native/Docker normal and sanitizer checks.
 The public test's exact transcript, foreground predicates, 32 cycles and
 five-second deadline are unchanged. This follow-up remains at review until
 integration; the earlier general-runtime timeout records are not erased.
+
+During combined integration with CSH-048/050/060 on 2026-09-28, a concurrent
+native/Docker run hit the unchanged five-second public PTY deadline at step
+157. This was a timeout, not the previously diagnosed status-1/EPERM result.
+Hosted duplicate run 36455644289 also timed out in the 60-second retention
+fixture; run 36455693791 passed all hosted jobs. Keep issue #99 open to track
+these timeout observations without weakening assertions or claiming that the
+continuation fix resolves every scheduling failure.
