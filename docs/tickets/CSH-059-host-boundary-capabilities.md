@@ -1,6 +1,6 @@
 # CSH-059: Extend qualified host boundary capabilities
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
