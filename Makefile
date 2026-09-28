@@ -545,6 +545,7 @@ build/tests/kill_job_state: tests/kill_job_state.c build/tests/permission-jobs.o
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/tests/permission-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o $(LDLIBS)
 
 build/tests/kill-job-state.json: tests/kill_job_state_cases.py
+	mkdir -p $(dir $@)
 	$(PYTHON) $< $@
 
 .PHONY: test-kill-job-state
