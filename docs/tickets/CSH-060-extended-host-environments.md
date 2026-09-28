@@ -1,6 +1,6 @@
 # CSH-060: Qualify remaining host environments and limits
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
