@@ -1,0 +1,40 @@
+--- src/execute.c
++++ src/execute.c
+@@ -1595,6 +1595,21 @@
+     int asynchronous, struct csh_execution *result, struct csh_error *error,
+     struct csh_pipeline_result *details);
+ 
++
++static void mask_probe(const char *where)
++{
++    sigset_t mask;
++    sigprocmask(SIG_SETMASK, NULL, &mask);
++    if (sigismember(&mask, SIGINT)) {
++        int fd = open("/tmp/csh057-mask-leak.log", O_WRONLY | O_CREAT | O_APPEND, 0600);
++        if (fd >= 0) {
++            dprintf(fd, "pid=%ld where=%s INT=%d CHLD=%d\n", (long)getpid(), where,
++                sigismember(&mask, SIGINT), sigismember(&mask, SIGCHLD));
++            close(fd);
++        }
++    }
++}
++
+ static void background_setup(int redirect_input)
+ {
+     if (redirect_input) {
+@@ -1719,6 +1734,7 @@
+     /* A terminal signal arriving immediately after handoff must not run the
+      * shell's inherited handler in a child that has not reset it yet. Keep
+      * it pending across fork and the barrier, then restore the caller's mask. */
++    mask_probe("launch-entry");
+     sigemptyset(&launch_signals);
+     sigaddset(&launch_signals, SIGINT);
+     sigaddset(&launch_signals, SIGQUIT);
+@@ -1790,6 +1806,7 @@
+     }
+     sigprocmask(SIG_SETMASK, &prior_mask, NULL);
+     masked = 0;
++    mask_probe("launch-exit");
+     if (asynchronous) {
+         csh_state_set_background(context->state, job->processes[count - 1].pid);
+         csh_jobs_announce(context->jobs, job);

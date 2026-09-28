@@ -1,0 +1,196 @@
+diff --git a/src/jobs.c b/src/jobs.c
+index 6fb8a71..d02c719 100644
+--- a/src/jobs.c
++++ b/src/jobs.c
+@@ -458,10 +458,15 @@ int csh_jobs_foreground(struct csh_jobs *jobs, struct csh_job *job, int resume,
+     if (suspended) *suspended = 0;
+     job->background = 0;
+     if (resume) {
++        size_t i;
++        int needs_continue = 0;
++        for (i = 0; i < job->count; ++i)
++            if (!job->processes[i].done && job->processes[i].stopped)
++                needs_continue = 1;
+         if (csh_jobs_give_terminal(jobs, job, 1) == -1) rc = -1;
+         else {
+             if (outputf(STDOUT_FILENO, "%s\n", job->text) < 0 ||
+-                continue_job(jobs, job) == -1) rc = -1;
++                (needs_continue && continue_job(jobs, job) == -1)) rc = -1;
+         }
+     }
+     if (rc == 0) rc = wait_job(jobs, job, 0);
+diff --git a/tests/execute_faults.c b/tests/execute_faults.c
+index c2d2b58..c4ced33 100644
+--- a/tests/execute_faults.c
++++ b/tests/execute_faults.c
+@@ -20,7 +20,9 @@ static unsigned wait_calls;
+ static int fail_pipe, fail_wait, fail_setfd, fork_calls, fail_read, interrupt_read;
+ static int target_stage, child_fault;
+ static int fail_group, fail_terminal, fail_modes, launch_signal;
++static int launch_ready[2];
+ static int exit_before_continue, continue_error;
++static int forbid_continue, foreground_release = -1;
+ static pid_t fault_owner;
+ static pid_t launched[16];
+ static size_t launched_count;
+@@ -153,6 +155,7 @@ pid_t csh_execute_fault_fork(void)
+     pid_t child;
+     ++fork_calls;
+     if (fail_fork && --fail_fork == 0) { errno = EAGAIN; return -1; }
++    if (launch_signal) assert(pipe(launch_ready) == 0);
+     child = fork();
+     if (child > 0) {
+         assert(launched_count < sizeof(launched) / sizeof(launched[0]));
+@@ -176,10 +179,16 @@ pid_t csh_execute_fault_fork(void)
+         }
+     }
+     if (child == 0 && launch_signal) {
+-        /* Join the new, non-orphaned job group before generating TSTP. */
+-        assert(setpgid(0, 0) == 0);
+-        raise(launch_signal);
++        char byte;
++        ssize_t count;
++        /* Stay before the child's disposition reset until the parent has
++         * assigned its group and delivered the blocked launch signal. */
++        close(launch_ready[1]);
++        do { count = read(launch_ready[0], &byte, 1); } while (count < 0 && errno == EINTR);
++        assert(count == 0);
++        close(launch_ready[0]);
+     }
++    if (child > 0 && launch_signal) close(launch_ready[0]);
+     return child;
+ }
+ 
+@@ -201,14 +210,30 @@ pid_t csh_execute_fault_waitpid(pid_t pid, int *status, int options)
+ 
+ int csh_execute_fault_setpgid(pid_t pid, pid_t group)
+ {
++    int rc;
++    /* The launch barrier makes the parent the sole group writer. A child
++     * writer would recreate the Darwin concurrent-setpgid regression. */
++    if (launch_signal) assert(getpid() == fault_owner && pid > 0);
+     if (getpid() == fault_owner && fail_group && --fail_group == 0) { errno = EIO; return -1; }
+-    return setpgid(pid, group);
++    rc = setpgid(pid, group);
++    if (launch_signal) {
++        assert(rc == 0 && getpgid(pid) == group);
++        assert(kill(pid, launch_signal) == 0);
++        close(launch_ready[1]);
++    }
++    return rc;
+ }
+ 
+ int csh_execute_fault_tcsetpgrp(int fd, pid_t group)
+ {
++    int rc;
+     if (fail_terminal && --fail_terminal == 0) { errno = EIO; return -1; }
+-    return tcsetpgrp(fd, group);
++    rc = tcsetpgrp(fd, group);
++    if (rc == 0 && foreground_release >= 0 && group != getpgrp()) {
++        close(foreground_release);
++        foreground_release = -1;
++    }
++    return rc;
+ }
+ 
+ int csh_execute_fault_tcsetattr(int fd, int action, const struct termios *modes)
+@@ -219,6 +244,7 @@ int csh_execute_fault_tcsetattr(int fd, int action, const struct termios *modes)
+ 
+ int csh_execute_fault_kill(pid_t pid, int number)
+ {
++    assert(!forbid_continue || number != SIGCONT);
+     if (number == SIGCONT && exit_before_continue) {
+         siginfo_t event;
+         int rc;
+@@ -243,7 +269,7 @@ static void arm(size_t allocation)
+     allocation_calls = 0;
+     fault_owner = getpid();
+     fail_group = fail_terminal = fail_modes = launch_signal = 0;
+-    exit_before_continue = continue_error = 0;
++    exit_before_continue = continue_error = forbid_continue = 0;
+     fail_allocation = allocation;
+     fail_open = fail_dup = fail_dup2 = fail_temp = fail_fork = interrupt_wait = 0;
+     wait_calls = 0;
+@@ -907,8 +933,9 @@ static void terminal_job_faults(struct csh_state *state)
+     }
+     csh_ast_destroy(tree);
+     tree = parse("/usr/bin/true\n");
+-    /* Deliver terminal signals inside the fork wrapper, before the child can
+-     * reset inherited shell handlers. They must remain pending until reset. */
++    /* Hold the child inside fork while the parent assigns its group and sends
++     * a signal. It must remain pending through reset and the launch barrier;
++     * the child must never race the parent's process-group assignment. */
+     for (int i = 0; i < 4; ++i) {
+         sigset_t original_mask, after_mask;
+         int sent = i == 0 ? SIGINT : i == 1 ? SIGTSTP : i == 2 ? SIGTERM : SIGQUIT;
+@@ -939,6 +966,42 @@ static void terminal_job_faults(struct csh_state *state)
+         assert(live == baseline && fd_count() == before);
+     }
+     csh_ast_destroy(tree);
++    /* Foregrounding a running job must not deliver an extra CONT to its
++     * application. Release its completion gate at the real terminal handoff;
++     * the signal wrapper rejects any redundant continuation deterministically. */
++    {
++        struct csh_job *job;
++        int ready[2], finish[2], saved, sink, suspended = -1;
++        pid_t child;
++        char byte;
++        ssize_t count;
++        arm(0);
++        assert(csh_jobs_create(&context.jobs, state, 0) == 0);
++        job = csh_jobs_add(context.jobs, 1, "running-job", 1, 0);
++        assert(job && job->grouped && pipe(ready) == 0 && pipe(finish) == 0);
++        child = fork(); assert(child >= 0);
++        if (!child) {
++            close(finish[1]);
++            assert(setpgid(0, 0) == 0 && write(ready[1], "r", 1) == 1);
++            do { count = read(finish[0], &byte, 1); } while (count < 0 && errno == EINTR);
++            _exit(count == 0 && tcgetpgrp(0) == getpgrp() ? 23 : 42);
++        }
++        job->pgid = job->processes[0].pid = child;
++        do { count = read(ready[0], &byte, 1); } while (count < 0 && errno == EINTR);
++        assert(count == 1);
++        close(ready[0]); close(ready[1]); close(finish[0]);
++        saved = dup(STDOUT_FILENO); sink = open("/dev/null", O_WRONLY);
++        assert(saved >= 0 && sink >= 0 && dup2(sink, STDOUT_FILENO) == STDOUT_FILENO);
++        close(sink);
++        foreground_release = finish[1]; forbid_continue = 1;
++        assert(csh_jobs_foreground(context.jobs, job, 1, &status, &suspended) == 0);
++        assert(status == 23 && !suspended && foreground_release == -1);
++        assert(dup2(saved, STDOUT_FILENO) == STDOUT_FILENO); close(saved);
++        assert(tcgetpgrp(0) == getpgrp());
++        arm(0); csh_jobs_destroy(context.jobs); context.jobs = NULL;
++        assert(waitpid(-1, &status, WNOHANG) == -1 && errno == ECHILD);
++        assert(live == baseline && fd_count() == before);
++    }
+     /* Darwin can reject SIGCONT with EPERM for an exited process group.
+      * Exercise the real kernel result, both known error forms portably, and
+      * an actual refusal to continue a still-live job. */
+@@ -957,7 +1020,7 @@ static void terminal_job_faults(struct csh_state *state)
+             assert(setpgid(0, 0) == 0);
+             assert(signal(SIGINT, SIG_DFL) != SIG_ERR);
+             assert(write(ready[1], "r", 1) == 1);
+-            if (scenario == 3) raise(SIGSTOP);
++            raise(SIGSTOP);
+             for (;;) pause();
+         }
+         job->pgid = job->processes[0].pid = child;
+@@ -965,13 +1028,17 @@ static void terminal_job_faults(struct csh_state *state)
+         do { count = read(ready[0], &byte, 1); } while (count < 0 && errno == EINTR);
+         assert(count == 1);
+         close(ready[0]); close(ready[1]);
+-        if (scenario == 3) {
++        {
+             siginfo_t event;
+             int observed;
+             do { observed = waitid(P_PID, (id_t)child, &event, WSTOPPED | WNOWAIT); }
+             while (observed < 0 && errno == EINTR);
+             assert(observed == 0 && event.si_code == CLD_STOPPED && event.si_status == SIGSTOP);
+             assert(csh_jobs_poll(context.jobs) == 0 && job->processes[0].stopped);
++            /* An external continuation can race fg before its next poll.
++             * Preserve the known stop while making the child able to take
++             * INT before the attempted continuation on every host. */
++            if (scenario != 3) assert(kill(child, SIGCONT) == 0);
+         }
+         saved = dup(STDOUT_FILENO);
+         sink = open("/dev/null", O_WRONLY);

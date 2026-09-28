@@ -108,7 +108,7 @@ Logs and diagnostic patches are compressed with `.gz` without changing their con
 | `fault-before` | Deterministic regression fails the status-130 assertion before the runtime fix. |
 | `exit-before-continue` | Diagnostic forces the real Darwin EPERM race in all 32 public cycles; status 1 and extra notifications. |
 | `final-fault`, `native-sanitizer-fixed` | An intermediate regression revision did not retry its readiness-pipe read after the child's stop generated SIGCHLD. Fixed that fixture's EINTR handling; final native and Linux checks retain the original limits. |
-| `native-repeat-final` | During concurrent native sanitizer and Docker work, round 76 exceeded the whole-case five-second budget at cycle 29. All 8,595 captured bytes exactly match the expected prefix; no foregrounding diagnostic occurred. It remains a failed loaded run under the CSH-040 transport/load boundary, separate from the diagnosed EPERM defect. Later serial repetitions do not erase it. |
+| `native-repeat-final` | During concurrent native sanitizer and Docker work, round 76 exceeded the whole-case five-second budget at cycle 29. All 8,595 captured bytes exactly match the expected prefix; no foregrounding diagnostic occurred. That run remains failed. The earlier load classification was unsupported: a matching output prefix does not distinguish slow progress from a stalled child. The [timeout investigation](../csh-057-timeouts/README.md) reproduces blocked-SIGINT stalls with the same signature. The old log alone cannot identify which defect caused that historical run. |
 
 The follow-up validates the changed jobs path and existing terminal/harness
 suites. It does not claim a new full general-runtime conformance sweep or

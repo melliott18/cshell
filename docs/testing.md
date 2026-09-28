@@ -1114,7 +1114,12 @@ Only that fixture's jobs object substitutes `_SC_CHILD_MAX` (32 and unknown,
 falling back to 256); the public runtime keeps the host limit. It uses real
 sequential children and retains one running and one stopped record while
 checking eviction. Each progress phase has a five-second alarm and retention
-has a 60-second outer bound. Notification scenarios have ten-second phase
+has a 60-second outer bound. Flushed capacity/round/completion checkpoints
+localize a timeout without changing those limits. Pipe timeouts report when
+output last arrived; PTY timeouts report the last completed step and elapsed
+time without advancement. Long output mismatches retain a bounded prefix and
+tail so late runtime diagnostics remain visible. These observations do not
+automatically classify a timeout as load. Notification scenarios have ten-second phase
 alarms, a five-second foreground-child alarm, and a 30-second outer bound.
 
 Notification correctness uses pipes, kernel stop status with WNOWAIT, and the

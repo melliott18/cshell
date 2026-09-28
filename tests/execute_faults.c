@@ -20,7 +20,10 @@ static unsigned wait_calls;
 static int fail_pipe, fail_wait, fail_setfd, fork_calls, fail_read, interrupt_read;
 static int target_stage, child_fault;
 static int fail_group, fail_terminal, fail_modes, launch_signal;
+static int launch_ready[2];
 static int exit_before_continue, continue_error;
+static int simulate_exit_gap, exit_gap_seen;
+static pid_t exit_gap_child;
 static pid_t fault_owner;
 static pid_t launched[16];
 static size_t launched_count;
@@ -153,6 +156,7 @@ pid_t csh_execute_fault_fork(void)
     pid_t child;
     ++fork_calls;
     if (fail_fork && --fail_fork == 0) { errno = EAGAIN; return -1; }
+    if (launch_signal) assert(pipe(launch_ready) == 0);
     child = fork();
     if (child > 0) {
         assert(launched_count < sizeof(launched) / sizeof(launched[0]));
@@ -176,10 +180,16 @@ pid_t csh_execute_fault_fork(void)
         }
     }
     if (child == 0 && launch_signal) {
-        /* Join the new, non-orphaned job group before generating TSTP. */
-        assert(setpgid(0, 0) == 0);
-        raise(launch_signal);
+        char byte;
+        ssize_t count;
+        /* Stay before the child's disposition reset until the parent has
+         * assigned its group and delivered the blocked launch signal. */
+        close(launch_ready[1]);
+        do { count = read(launch_ready[0], &byte, 1); } while (count < 0 && errno == EINTR);
+        assert(count == 0);
+        close(launch_ready[0]);
     }
+    if (child > 0 && launch_signal) close(launch_ready[0]);
     return child;
 }
 
@@ -193,6 +203,11 @@ ssize_t csh_execute_fault_read(int fd, void *bytes, size_t length)
 pid_t csh_execute_fault_waitpid(pid_t pid, int *status, int options)
 {
     assert(pid > 0); /* Never consume children owned by another subsystem. */
+    if (pid == exit_gap_child) {
+        if (options & WNOHANG) { exit_gap_seen = 1; return 0; }
+        assert(exit_gap_seen && options == 0);
+        exit_gap_child = 0;
+    }
     ++wait_calls;
     if (interrupt_wait) { interrupt_wait = 0; errno = EINTR; return -1; }
     if (fail_wait && --fail_wait == 0) { errno = EIO; return -1; }
@@ -201,8 +216,28 @@ pid_t csh_execute_fault_waitpid(pid_t pid, int *status, int options)
 
 int csh_execute_fault_setpgid(pid_t pid, pid_t group)
 {
+    int rc;
+    /* The launch barrier makes the parent the sole group writer. A child
+     * writer would recreate the Darwin concurrent-setpgid regression. */
+    if (launch_signal) assert(getpid() == fault_owner && pid > 0);
     if (getpid() == fault_owner && fail_group && --fail_group == 0) { errno = EIO; return -1; }
-    return setpgid(pid, group);
+    rc = setpgid(pid, group);
+    if (launch_signal) {
+        assert(rc == 0 && getpgid(pid) == group);
+        assert(kill(pid, launch_signal) == 0);
+        close(launch_ready[1]);
+    }
+    return rc;
+}
+
+pid_t csh_execute_fault_getpgid(pid_t pid)
+{
+    if (pid == exit_gap_child) {
+        assert(exit_gap_seen);
+        errno = ESRCH;
+        return -1;
+    }
+    return getpgid(pid);
 }
 
 int csh_execute_fault_tcsetpgrp(int fd, pid_t group)
@@ -228,6 +263,7 @@ int csh_execute_fault_kill(pid_t pid, int number)
          * consuming the job manager's status or using a scheduling delay. */
         do { rc = waitid(P_PID, (id_t)-pid, &event, WEXITED | WNOWAIT); }
         while (rc < 0 && errno == EINTR);
+        if (simulate_exit_gap) exit_gap_child = -pid;
         assert(rc == 0 && event.si_code == CLD_KILLED && event.si_status == SIGINT);
     }
     if (number == SIGCONT && continue_error) {
@@ -244,6 +280,7 @@ static void arm(size_t allocation)
     fault_owner = getpid();
     fail_group = fail_terminal = fail_modes = launch_signal = 0;
     exit_before_continue = continue_error = 0;
+    simulate_exit_gap = exit_gap_seen = 0; exit_gap_child = 0;
     fail_allocation = allocation;
     fail_open = fail_dup = fail_dup2 = fail_temp = fail_fork = interrupt_wait = 0;
     wait_calls = 0;
@@ -907,8 +944,9 @@ static void terminal_job_faults(struct csh_state *state)
     }
     csh_ast_destroy(tree);
     tree = parse("/usr/bin/true\n");
-    /* Deliver terminal signals inside the fork wrapper, before the child can
-     * reset inherited shell handlers. They must remain pending until reset. */
+    /* Hold the child inside fork while the parent assigns its group and sends
+     * a signal. It must remain pending through reset and the launch barrier;
+     * the child must never race the parent's process-group assignment. */
     for (int i = 0; i < 4; ++i) {
         sigset_t original_mask, after_mask;
         int sent = i == 0 ? SIGINT : i == 1 ? SIGTSTP : i == 2 ? SIGTERM : SIGQUIT;
@@ -942,7 +980,7 @@ static void terminal_job_faults(struct csh_state *state)
     /* Darwin can reject SIGCONT with EPERM for an exited process group.
      * Exercise the real kernel result, both known error forms portably, and
      * an actual refusal to continue a still-live job. */
-    for (int scenario = 0; scenario < 4; ++scenario) {
+    for (int scenario = 0; scenario < 5; ++scenario) {
         struct csh_job *job;
         int ready[2], saved, sink, suspended = -1;
         pid_t child;
@@ -978,12 +1016,14 @@ static void terminal_job_faults(struct csh_state *state)
         assert(saved >= 0 && sink >= 0 && dup2(sink, STDOUT_FILENO) == STDOUT_FILENO);
         close(sink);
         exit_before_continue = scenario != 3;
+        simulate_exit_gap = scenario == 4;
         continue_error = scenario == 0 ? 0 : scenario == 2 ? ESRCH : EPERM;
         int rc = csh_jobs_foreground(context.jobs, job, 1, &status, &suspended);
         int error_number = errno;
         assert(dup2(saved, STDOUT_FILENO) == STDOUT_FILENO);
         close(saved);
         assert(exit_before_continue == 0 && continue_error == 0);
+        if (scenario == 4) assert(exit_gap_seen && exit_gap_child == 0);
         assert(tcgetpgrp(0) == getpgrp() && tcgetattr(0, &after) == 0);
         assert(original.c_lflag == after.c_lflag);
         if (scenario == 3) {

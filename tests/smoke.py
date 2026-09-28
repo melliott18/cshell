@@ -195,7 +195,9 @@ def capture(binary, case, directory, timeout, output_limit, file_size_limit=None
     data = case["stdin"].encode("utf-8")
     output = {"stdout": bytearray(), "stderr": bytearray()}
     failures = []
-    deadline = time.monotonic() + timeout
+    started = time.monotonic()
+    deadline = started + timeout
+    last_output = None
     process = subprocess.Popen(
         [str(binary)] + case.get("args", []), cwd=directory, env=environment,
         stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -223,7 +225,11 @@ def capture(binary, case, directory, timeout, output_limit, file_size_limit=None
                     exited = True
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
-                    failures.append(f"timeout after {timeout:g}s (process group killed)")
+                    progress = "no output received" if last_output is None else (
+                        f"last output at {last_output - started:.3f}s; "
+                        f"no output for {time.monotonic() - last_output:.3f}s")
+                    failures.append(f"timeout after {timeout:g}s ({progress}; "
+                                    f"{captured} bytes captured; process group killed)")
                     break
                 for key, _ in selector.select(min(remaining, 0.05)):
                     stream, name = key.fileobj, key.data
@@ -246,6 +252,7 @@ def capture(binary, case, directory, timeout, output_limit, file_size_limit=None
                             selector.unregister(stream)
                             stream.close()
                             continue
+                        last_output = time.monotonic()
                         available = output_limit - captured
                         output[name].extend(chunk[:available])
                         captured += min(len(chunk), available)
@@ -313,6 +320,15 @@ def compare_file(directory, relative, assertion):
     return None
 
 
+def diagnostic_bytes(data):
+    """Keep both the initial context and the failure tail within one bound."""
+    if len(data) <= DIAGNOSTIC_LIMIT:
+        return repr(data)
+    half = DIAGNOSTIC_LIMIT // 2
+    return (f"{data[:half]!r} ... <{len(data) - 2 * half} bytes omitted> ... "
+            f"{data[-half:]!r}")
+
+
 def run_case(binary, case, timeout, output_limit):
     timeout = min(timeout, case.get("timeout", timeout))
     output_limit = min(output_limit, case.get("output_limit", output_limit))
@@ -330,7 +346,7 @@ def run_case(binary, case, timeout, output_limit):
             actual = bytes(output[name])
             wanted = expected[name].encode("utf-8")
             if actual != wanted:
-                failures.append(f"{name}: expected {wanted[:DIAGNOSTIC_LIMIT]!r} ({len(wanted)} bytes), got {actual[:DIAGNOSTIC_LIMIT]!r} ({len(actual)} captured bytes)")
+                failures.append(f"{name}: expected {diagnostic_bytes(wanted)} ({len(wanted)} bytes), got {diagnostic_bytes(actual)} ({len(actual)} captured bytes)")
         for relative, assertion in expected.get("files", {}).items():
             failure = compare_file(directory, relative, assertion)
             if failure:

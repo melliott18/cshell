@@ -184,7 +184,8 @@ class PtyHarnessTests(unittest.TestCase):
                     steps=[{"expect": "hanging\n"}, {"expect": "never emitted"}])
         started = time.monotonic()
         result = self.run_suite([item], extra=("--timeout", "0.3"))
-        self.assert_failure(result, "terminal self test", "time", "never emitted")
+        self.assert_failure(result, "terminal self test", "time", "never emitted",
+                            "last completed step 1 at", "no step advancement for")
         self.assertLess(time.monotonic() - started, 3, result.stdout)
         self.assert_recorded_processes_stopped(marker)
 

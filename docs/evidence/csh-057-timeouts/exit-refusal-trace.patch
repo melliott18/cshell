@@ -1,0 +1,17 @@
+--- src/jobs.c
++++ src/jobs.c
+@@ -448,7 +448,13 @@
+     if (kill(-job->pgid, SIGCONT) == -1) {
+         int number = errno;
+         if (csh_jobs_poll(jobs) == -1) return -1;
+-        if (!complete(job)) { errno = number; return -1; }
++        if (!complete(job)) {
++            pid_t child=job->processes[0].pid;
++            int pg=getpgid(child), pe=errno, alive=kill(child,0), ae=errno;
++            siginfo_t event={0}; int w=waitid(P_PID,(id_t)child,&event,WEXITED|WNOHANG|WNOWAIT),we=errno;
++            dprintf(2,"continue-refusal errno=%d pid=%ld pg=%d pgerrno=%d alive=%d aerrno=%d wait=%d werrno=%d eventpid=%ld code=%d status=%d\n",number,(long)child,pg,pe,alive,ae,w,we,(long)event.si_pid,event.si_code,event.si_status);
++            errno = number; return -1;
++        }
+     }
+     for (i = 0; i < job->count; ++i) job->processes[i].stopped = 0;
+     job->changed = 0;

@@ -1,0 +1,56 @@
+--- src/jobs.c
++++ src/jobs.c
+@@ -14,6 +14,21 @@
+ #include <sys/select.h>
+ #include <sys/wait.h>
+ #include <unistd.h>
++
++
++static void mask_probe(const char *where)
++{
++    sigset_t mask;
++    sigprocmask(SIG_SETMASK, NULL, &mask);
++    if (sigismember(&mask, SIGINT)) {
++        int fd = open("/tmp/csh057-mask-leak.log", O_WRONLY | O_CREAT | O_APPEND, 0600);
++        if (fd >= 0) {
++            dprintf(fd, "pid=%ld where=%s INT=%d CHLD=%d\n", (long)getpid(), where,
++                sigismember(&mask, SIGINT), sigismember(&mask, SIGCHLD));
++            close(fd);
++        }
++    }
++}
+ 
+ static const int signals[] = {SIGCHLD, SIGINT, SIGQUIT, SIGTSTP, SIGTTIN, SIGTTOU, SIGHUP, SIGTERM};
+ #define SIGNAL_COUNT (sizeof(signals) / sizeof(signals[0]))
+@@ -376,6 +391,7 @@
+ {
+     sigset_t old, waiting;
+     int rc = 0;
++    mask_probe("before-block-events");
+     block_events(&old);
+     waiting = old;
+     sigdelset(&waiting, SIGCHLD);
+@@ -395,6 +411,7 @@
+         sigsuspend(&waiting);
+     }
+     sigprocmask(SIG_SETMASK, &old, NULL);
++    mask_probe("after-restore-events");
+     return rc;
+ }
+ 
+@@ -656,6 +673,7 @@
+     sigset_t old, waiting;
+     int rc;
+     if (fd >= FD_SETSIZE) { errno = EINVAL; return -1; }
++    mask_probe("before-block-events");
+     block_events(&old);
+     waiting = old;
+     sigdelset(&waiting, SIGCHLD);
+@@ -678,6 +696,7 @@
+             (!defer_pending && csh_traps_pending())) break;
+     }
+     sigprocmask(SIG_SETMASK, &old, NULL);
++    mask_probe("after-restore-events");
+     return rc < 0 ? -1 : 0;
+ }
+ 

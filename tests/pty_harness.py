@@ -247,9 +247,19 @@ def capture(binary, case, directory, timeout, output_limit, environment, limit_f
 
 def _interact(process, master, steps, output, failures, deadline, timeout, output_limit):
     index = cursor = 0
+    last_advance = deadline - timeout
     pending = b""
     sent = 0
     eof = False
+
+    def timed_out():
+        waiting = f"step {index + 1}: {str(steps[index])[:200]}" if index < len(steps) else "process exit"
+        progress = "no step completed" if index == 0 else (
+            f"last completed step {index} at {last_advance - (deadline - timeout):.3f}s; "
+            f"no step advancement for {time.monotonic() - last_advance:.3f}s")
+        failures.append(f"PTY timeout after {timeout:g}s waiting for {waiting}; "
+                        f"{progress}; session cleanup requested")
+
     with selectors.DefaultSelector() as selector:
         selector.register(master, selectors.EVENT_READ)
         while True:
@@ -257,7 +267,7 @@ def _interact(process, master, steps, output, failures, deadline, timeout, outpu
             # from the final exact transcript, just advances a search cursor.
             while index < len(steps) and not pending:
                 if time.monotonic() >= deadline:
-                    failures.append(f"PTY timeout after {timeout:g}s waiting for step {index + 1}: {str(steps[index])[:200]}; session cleanup requested")
+                    timed_out()
                     return
                 action, value = next(iter(steps[index].items()))
                 if action == "expect":
@@ -284,6 +294,7 @@ def _interact(process, master, steps, output, failures, deadline, timeout, outpu
                         return
                     os.killpg(group, SIGNALS[value])
                 index += 1
+                last_advance = time.monotonic()
             if eof:
                 if index < len(steps):
                     failures.append(f"PTY closed before step {index + 1}: {str(steps[index])[:200]}")
@@ -299,8 +310,7 @@ def _interact(process, master, steps, output, failures, deadline, timeout, outpu
                 return
             remaining = deadline - time.monotonic()
             if remaining <= 0:
-                waiting = f"step {index + 1}: {str(steps[index])[:200]}" if index < len(steps) else "process exit"
-                failures.append(f"PTY timeout after {timeout:g}s waiting for {waiting}; session cleanup requested")
+                timed_out()
                 return
             if not eof:
                 selector.modify(master, selectors.EVENT_READ | (selectors.EVENT_WRITE if pending else 0))
@@ -318,6 +328,7 @@ def _interact(process, master, steps, output, failures, deadline, timeout, outpu
                     if sent == len(pending):
                         pending = b""
                         index += 1
+                        last_advance = time.monotonic()
             if failures:
                 return
 

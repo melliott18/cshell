@@ -1,0 +1,5 @@
+{
+  "exit_status": 142,
+  "signal": "SIGALRM",
+  "interpretation": "The exploratory sender filled its pipe while the parent awaited another signal. Both sigsuspend flood variants reached the ten-second alarm; they did not reproduce a mask leak and are not successful checks."
+}
