@@ -1,0 +1,22 @@
+{
+  "base_revision": "8ffb99e73cfd21bb1b5ad66829544350f78b69ae",
+  "source_revision": "fe989b10530bbfc5e98b4b1243448c601599594b",
+  "source_sha256": "7a8ce2b56a28b07a26ba0d92d0e64afaed326015d6e1dcb5fc45fc2e9291433a",
+  "native_jobs_pty_harness_exit": 0,
+  "native_sanitizer_jobs_pty_exit": 0,
+  "docker_jobs_pty_harness_exit": 0,
+  "docker_sanitizer_jobs_pty_exit": 0,
+  "native_trap_runtime_signal_edges_wait_handshake_inherited_ignores_exit": 0,
+  "native_pty_repetitions": 1000,
+  "native_sanitizer_pty_repetitions": 200,
+  "public_resume_cycles": 38400,
+  "native_group_single_writer_rounds": 200,
+  "native_group_single_writer_launches": 12800,
+  "group_assignment_regression_before_exit": 1,
+  "exit_gap_regression_before_exit": 1,
+  "mask_workaround_removed_failure_round": 30,
+  "hosted_retention_timeout": "not reproduced; historical cause unclassified; issue #99 remains open",
+  "limits_changed": false,
+  "capability_skips": 0,
+  "scope": "focused jobs, terminal, trap runtime, signal edges and harness; not a full unrelated general-runtime sweep"
+}

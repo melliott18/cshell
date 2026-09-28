@@ -1,0 +1,1742 @@
+{
+  "mask-before": {
+    "rounds": 30,
+    "passed": 29,
+    "failed": 1,
+    "case_elapsed_min": 0.07963962503708899,
+    "case_elapsed_max": 5.002082749968395,
+    "failed_snapshots": [
+      {
+        "round": 30,
+        "start": 1557596.560236875,
+        "pid": 88494,
+        "case_elapsed": 5.002082749968395,
+        "deadline_failures": [
+          "PTY timeout after 5s waiting for step 341: {'expect': 'ready\\n'}; last completed step 340 at 0.063s; no step advancement for 4.939s; session cleanup requested"
+        ],
+        "bytes_at_deadline": 7748,
+        "output_at_deadline": "$ ready\n[1] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [1] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[2] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [2] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[3] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [3] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[4] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [4] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[5] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [5] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[6] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [6] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[7] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [7] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[8] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [8] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[9] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [9] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[10] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [10] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[11] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [11] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[12] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [12] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[13] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [13] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[14] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [14] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[15] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [15] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[16] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [16] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[17] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [17] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[18] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [18] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[19] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [19] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[20] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [20] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[21] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [21] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[22] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [22] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[23] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [23] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[24] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [24] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[25] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [25] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[26] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [26] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ jobs_helper: inherited blocked INT/CHLD\n$ ",
+        "foreground": 88494,
+        "members": [
+          [
+            88494,
+            88494
+          ]
+        ],
+        "ps": "88494 85705 88494 Ss+  -        0:00.02        0        0    0 88494\n",
+        "termios_at_deadline": "[256, 0, 35584, 384, 9600, 9600, [b'\\x04', b'\\xff', b'\\xff', b'\\x7f', b'\\x17', b'\\x15', b'\\x12', b'\\xff', b'\\x03', b'\\x1c', b'\\x1a', b'\\x19', b'\\x11', b'\\x13', b'\\x16', b'\\x0f', b'\\x01', b'\\x00', b'\\x14', b'\\xff']]",
+        "signal_snapshot": "pid=88494 ignore=1872c004 catch=80003 pending=0 mask=0 flags=4006\n",
+        "output_after_snapshot": "",
+        "post_snapshot_elapsed": 5.053655875148252,
+        "total_elapsed": 5.158547084080055,
+        "last_events": [
+          [
+            0.06242366600781679,
+            336,
+            7704
+          ],
+          [
+            0.062433124985545874,
+            337,
+            7704
+          ],
+          [
+            0.062457208056002855,
+            338,
+            7704
+          ],
+          [
+            0.06259541609324515,
+            339,
+            7706
+          ],
+          [
+            0.06261591613292694,
+            340,
+            7706
+          ]
+        ],
+        "last_writes": [
+          {
+            "elapsed": 0.062013624934479594,
+            "data": "\u001a",
+            "foreground": 88546,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.06222254107706249,
+            "data": "bg\n",
+            "foreground": 88494,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.06232245801948011,
+            "data": "fg\n",
+            "foreground": 88494,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.062444166047498584,
+            "data": "\u0003",
+            "foreground": 88546,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.06260287505574524,
+            "data": "/Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+            "foreground": 88494,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          }
+        ],
+        "failures": [
+          "PTY timeout after 5s waiting for step 341: {'expect': 'ready\\n'}; last completed step 340 at 0.063s; no step advancement for 4.939s; session cleanup requested",
+          "status: expected 130, got -9"
+        ]
+      }
+    ]
+  },
+  "minimal-both": {
+    "rounds": 38,
+    "passed": 37,
+    "failed": 1,
+    "case_elapsed_min": 0.02371295797638595,
+    "case_elapsed_max": 5.002069625072181,
+    "failed_snapshots": [
+      {
+        "round": 38,
+        "start": 1555738.501735375,
+        "pid": 34917,
+        "case_elapsed": 5.002069625072181,
+        "deadline_failures": [
+          "PTY timeout after 5s waiting for step 138: {'expect': 'stopped\\n'}; session cleanup requested"
+        ],
+        "bytes_at_deadline": 636,
+        "output_at_deadline": "ready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\nstopped\nready\n",
+        "foreground": 34963,
+        "members": [
+          [
+            34917,
+            34917
+          ],
+          [
+            34963,
+            34963
+          ]
+        ],
+        "ps": "34917 32436 34917 Ss   -        0:00.01        0        0    0 34963\n34963 34917 34963 S+   -        0:00.00        0        0    1 34963\n",
+        "termios_at_deadline": "[256, 0, 35584, 384, 9600, 9600, [b'\\x04', b'\\xff', b'\\xff', b'\\x7f', b'\\x17', b'\\x15', b'\\x12', b'\\xff', b'\\x03', b'\\x1c', b'\\x1a', b'\\x19', b'\\x11', b'\\x13', b'\\x16', b'\\x0f', b'\\x01', b'\\x00', b'\\x14', b'\\xff']]",
+        "second-control": {
+          "elapsed": 5.404283666051924,
+          "output": "",
+          "foreground": 34963
+        },
+        "direct-signal": {
+          "elapsed": 5.404648874886334,
+          "output": "stopped\n",
+          "foreground": 34917
+        },
+        "output_after_snapshot": "",
+        "post_snapshot_elapsed": 5.404707083012909,
+        "total_elapsed": 6.067930166842416,
+        "last_events": [
+          [
+            0.01844008290208876,
+            133,
+            622
+          ],
+          [
+            0.018455083016306162,
+            134,
+            622
+          ],
+          [
+            0.018578165909275413,
+            135,
+            630
+          ],
+          [
+            0.018855958012863994,
+            136,
+            636
+          ],
+          [
+            0.018870291067287326,
+            137,
+            636
+          ]
+        ],
+        "last_writes": [
+          {
+            "elapsed": 0.017402082914486527,
+            "data": "\u001a",
+            "foreground": 34959,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.017788375029340386,
+            "data": "\u001a",
+            "foreground": 34960,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.01813954091630876,
+            "data": "\u001a",
+            "foreground": 34961,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.01844670786522329,
+            "data": "\u001a",
+            "foreground": 34962,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.018863582983613014,
+            "data": "\u001a",
+            "foreground": 34963,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          }
+        ],
+        "failures": [
+          "PTY timeout after 5s waiting for step 138: {'expect': 'stopped\\n'}; session cleanup requested",
+          "status: expected 0, got -9"
+        ]
+      }
+    ]
+  },
+  "minimal-parent": {
+    "rounds": 200,
+    "passed": 200,
+    "failed": 0,
+    "case_elapsed_min": 0.02227633399888873,
+    "case_elapsed_max": 0.08882074989378452
+  },
+  "minimal-resume-both": {
+    "rounds": 200,
+    "passed": 200,
+    "failed": 0,
+    "case_elapsed_min": 0.02440045797266066,
+    "case_elapsed_max": 0.19205825007520616
+  },
+  "minimal-resume-exec": {
+    "rounds": 1000,
+    "passed": 1000,
+    "failed": 0,
+    "case_elapsed_min": 0.09257370908744633,
+    "case_elapsed_max": 1.217339124996215
+  },
+  "minimal-resume-helper-error": {
+    "rounds": 1,
+    "passed": 0,
+    "failed": 1,
+    "case_elapsed_min": 0.18895724997855723,
+    "case_elapsed_max": 0.18895724997855723,
+    "failed_snapshots": [
+      {
+        "round": 1,
+        "start": 1556072.851595208,
+        "pid": 63710,
+        "case_elapsed": 0.18895724997855723,
+        "deadline_failures": [
+          "PTY closed before step 6: {'expect': 'ready\\n'}"
+        ],
+        "total_elapsed": 0.28659066604450345,
+        "last_events": [
+          [
+            0.17346920794807374,
+            1,
+            6
+          ],
+          [
+            0.17356441705487669,
+            2,
+            6
+          ],
+          [
+            0.17363641690462828,
+            3,
+            17
+          ],
+          [
+            0.17368775000795722,
+            4,
+            17
+          ],
+          [
+            0.17386758304201066,
+            5,
+            129
+          ]
+        ],
+        "last_writes": [
+          {
+            "elapsed": 0.1735196248628199,
+            "data": "\u001a",
+            "foreground": 63711,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.17366633284837008,
+            "data": "\u0003",
+            "foreground": 63711,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          }
+        ],
+        "failures": [
+          "PTY closed before step 6: {'expect': 'ready\\n'}",
+          "status: expected 0, got -6"
+        ]
+      }
+    ]
+  },
+  "minimal-resume-window": {
+    "rounds": 1000,
+    "passed": 1000,
+    "failed": 0,
+    "case_elapsed_min": 0.09390304191038013,
+    "case_elapsed_max": 0.8179621668532491
+  },
+  "pty-baseline": {
+    "rounds": 22,
+    "passed": 21,
+    "failed": 1,
+    "case_elapsed_min": 0.08952433313243091,
+    "case_elapsed_max": 5.001066749915481,
+    "failed_snapshots": [
+      {
+        "round": 22,
+        "start": 1555212.905585458,
+        "pid": 91038,
+        "case_elapsed": 5.001066749915481,
+        "deadline_failures": [
+          "PTY timeout after 5s waiting for step 187: {'expect': '[15] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\\n$ '}; session cleanup requested"
+        ],
+        "bytes_at_deadline": 4148,
+        "output_at_deadline": "$ ready\n[1] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [1] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[2] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [2] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[3] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [3] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[4] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [4] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[5] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [5] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[6] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [6] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[7] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [7] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[8] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [8] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[9] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [9] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[10] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [10] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[11] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [11] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[12] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [12] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[13] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [13] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[14] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [14] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n",
+        "foreground": 91053,
+        "members": [
+          [
+            91038,
+            91038
+          ],
+          [
+            91053,
+            91053
+          ]
+        ],
+        "ps": "91038 89141 91038 Ss   -        0:00.01        0        0\n91053 91038 91053 S+   -        0:00.00        0        0\n",
+        "snapshot_error": "Command '['/usr/bin/sample', '91038', '1', '1', '-file', '/Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/docs/evidence/csh-057-timeouts/pty-baseline/round-22-pid-91038.sample.txt']' timed out after 3 seconds",
+        "total_elapsed": 8.315362999914214,
+        "last_events": [
+          [
+            0.05883975001052022,
+            182,
+            4140
+          ],
+          [
+            0.05902066687121987,
+            183,
+            4142
+          ],
+          [
+            0.05903416685760021,
+            184,
+            4142
+          ],
+          [
+            0.06122970790602267,
+            185,
+            4148
+          ],
+          [
+            0.06125354184769094,
+            186,
+            4148
+          ]
+        ],
+        "last_writes": [],
+        "failures": [
+          "PTY timeout after 5s waiting for step 187: {'expect': '[15] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\\n$ '}; session cleanup requested",
+          "status: expected 130, got -9"
+        ]
+      }
+    ]
+  },
+  "pty-complete": {
+    "rounds": 1000,
+    "passed": 1000,
+    "failed": 0,
+    "case_elapsed_min": 0.06772883399389684,
+    "case_elapsed_max": 1.3289580829441547
+  },
+  "pty-dispositions": {
+    "rounds": 325,
+    "passed": 324,
+    "failed": 1,
+    "case_elapsed_min": 0.0638806251809001,
+    "case_elapsed_max": 5.00108641711995,
+    "failed_snapshots": [
+      {
+        "round": 325,
+        "start": 1556574.407512833,
+        "pid": 68663,
+        "case_elapsed": 5.00108641711995,
+        "deadline_failures": [
+          "PTY timeout after 5s waiting for step 235: {'expect': '$ '}; last completed step 234 at 0.041s; no step advancement for 4.960s; session cleanup requested"
+        ],
+        "bytes_at_deadline": 5328,
+        "output_at_deadline": "$ ready\n[1] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [1] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[2] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [2] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[3] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [3] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[4] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [4] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[5] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [5] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[6] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [6] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[7] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [7] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[8] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [8] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[9] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [9] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[10] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [10] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[11] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [11] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[12] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [12] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[13] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [13] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[14] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [14] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[15] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [15] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[16] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [16] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[17] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [17] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[18] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [18] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+        "foreground": 68682,
+        "members": [
+          [
+            68663,
+            68663
+          ],
+          [
+            68682,
+            68682
+          ]
+        ],
+        "ps": "68663 55019 68663 Ss   -        0:00.01        0        0    0 68682\n68682 68663 68682 S+   -        0:00.00        0        0    1 68682\n",
+        "termios_at_deadline": "[256, 0, 35584, 384, 9600, 9600, [b'\\x04', b'\\xff', b'\\xff', b'\\x7f', b'\\x17', b'\\x15', b'\\x12', b'\\xff', b'\\x03', b'\\x1c', b'\\x1a', b'\\x19', b'\\x11', b'\\x13', b'\\x16', b'\\x0f', b'\\x01', b'\\x00', b'\\x14', b'\\xff']]",
+        "signal_snapshot": "pid=68663 ignore=1872c004 catch=80003 pending=0 mask=0 flags=4006\npid=68682 ignore=18488000 catch=0 pending=0 mask=0 flags=4006\n",
+        "second-control": {
+          "elapsed": 5.553187208017334,
+          "output": "",
+          "foreground": 68682
+        },
+        "direct-signal": {
+          "elapsed": 5.808347792131826,
+          "output": "",
+          "foreground": 68682
+        },
+        "output_after_snapshot": "",
+        "post_snapshot_elapsed": 5.808437458006665,
+        "total_elapsed": 5.93582004099153,
+        "last_events": [
+          [
+            0.04056795802898705,
+            230,
+            5243
+          ],
+          [
+            0.04058150015771389,
+            231,
+            5243
+          ],
+          [
+            0.04061516700312495,
+            232,
+            5328
+          ],
+          [
+            0.04062308301217854,
+            233,
+            5328
+          ],
+          [
+            0.04063729220069945,
+            234,
+            5328
+          ]
+        ],
+        "last_writes": [
+          {
+            "elapsed": 0.03728695819154382,
+            "data": "/Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+            "foreground": 68663,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.04042895813472569,
+            "data": "\u001a",
+            "foreground": 68682,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.04052279214374721,
+            "data": "bg\n",
+            "foreground": 68663,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.04057462513446808,
+            "data": "fg\n",
+            "foreground": 68663,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.04062987514771521,
+            "data": "\u0003",
+            "foreground": 68682,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          }
+        ],
+        "failures": [
+          "PTY timeout after 5s waiting for step 235: {'expect': '$ '}; last completed step 234 at 0.041s; no step advancement for 4.960s; session cleanup requested",
+          "status: expected 130, got -9"
+        ]
+      }
+    ]
+  },
+  "pty-exit-refusal": {
+    "rounds": 500,
+    "passed": 500,
+    "failed": 0,
+    "case_elapsed_min": 0.06768129183910787,
+    "case_elapsed_max": 0.44058104208670557
+  },
+  "pty-exit-refusal-2": {
+    "rounds": 424,
+    "passed": 423,
+    "failed": 1,
+    "case_elapsed_min": 0.06726162484847009,
+    "case_elapsed_max": 5.000897833146155,
+    "failed_snapshots": [
+      {
+        "round": 424,
+        "start": 1557375.307044583,
+        "pid": 61588,
+        "case_elapsed": 5.000897833146155,
+        "deadline_failures": [
+          "PTY timeout after 5s waiting for step 148: {'expect': '[12] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\\n$ '}; last completed step 147 at 0.051s; no step advancement for 4.950s; session cleanup requested"
+        ],
+        "bytes_at_deadline": 3616,
+        "output_at_deadline": "$ ready\n[1] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [1] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[2] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [2] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[3] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [3] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[4] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [4] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[5] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [5] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[6] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [6] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[7] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [7] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[8] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [8] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[9] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [9] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[10] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [10] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[11] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [11] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\ncontinue-refusal errno=1 pid=61599 pg=-1 pgerrno=3 alive=0 aerrno=3 wait=0 werrno=3 eventpid=0 code=0 status=0\ncshell: fg: cannot foreground job\n$ ready\n[12] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n[11]   Terminated (SIGINT) /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ",
+        "foreground": 61588,
+        "members": [
+          [
+            61588,
+            61588
+          ],
+          [
+            61600,
+            61600
+          ]
+        ],
+        "ps": "61588 45057 61588 Ss+  -        0:00.01        0        0    0 61588\n61600 61588 61600 T    -        0:00.00        0        0    1 61588\n",
+        "termios_at_deadline": "[256, 0, 35584, 384, 9600, 9600, [b'\\x04', b'\\xff', b'\\xff', b'\\x7f', b'\\x17', b'\\x15', b'\\x12', b'\\xff', b'\\x03', b'\\x1c', b'\\x1a', b'\\x19', b'\\x11', b'\\x13', b'\\x16', b'\\x0f', b'\\x01', b'\\x00', b'\\x14', b'\\xff']]",
+        "signal_snapshot": "pid=61588 ignore=1872c004 catch=80003 pending=0 mask=0 flags=4006\npid=61600 ignore=18488000 catch=0 pending=0 mask=0 flags=4006\n",
+        "output_after_snapshot": "",
+        "post_snapshot_elapsed": 5.184378292178735,
+        "total_elapsed": 5.298751375172287,
+        "last_events": [
+          [
+            0.048426583176478744,
+            143,
+            3249
+          ],
+          [
+            0.04850804200395942,
+            144,
+            3396
+          ],
+          [
+            0.048536333022639155,
+            145,
+            3396
+          ],
+          [
+            0.051282749976962805,
+            146,
+            3402
+          ],
+          [
+            0.05134179210290313,
+            147,
+            3402
+          ]
+        ],
+        "last_writes": [
+          {
+            "elapsed": 0.04807612509466708,
+            "data": "bg\n",
+            "foreground": 61588,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.0482103331014514,
+            "data": "fg\n",
+            "foreground": 61588,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.04840770806185901,
+            "data": "\u0003",
+            "foreground": 61599,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.04851879202760756,
+            "data": "/Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+            "foreground": 61588,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.05130512500181794,
+            "data": "\u001a",
+            "foreground": 61600,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          }
+        ],
+        "failures": [
+          "PTY timeout after 5s waiting for step 148: {'expect': '[12] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\\n$ '}; last completed step 147 at 0.051s; no step advancement for 4.950s; session cleanup requested",
+          "status: expected 130, got -9"
+        ]
+      }
+    ]
+  },
+  "pty-fence-clean": {
+    "rounds": 94,
+    "passed": 93,
+    "failed": 1,
+    "case_elapsed_min": 0.08334199991077185,
+    "case_elapsed_max": 5.001560208154842,
+    "failed_snapshots": [
+      {
+        "round": 94,
+        "start": 1557133.615319958,
+        "pid": 15011,
+        "case_elapsed": 5.001560208154842,
+        "deadline_failures": [
+          "PTY timeout after 5s waiting for step 187: {'expect': '[15] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\\n$ '}; last completed step 186 at 0.058s; no step advancement for 4.944s; session cleanup requested"
+        ],
+        "bytes_at_deadline": 4396,
+        "output_at_deadline": "$ ready\n[1] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [1] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[2] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [2] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[3] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [3] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[4] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [4] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[5] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [5] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[6] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [6] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[7] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [7] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[8] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [8] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[9] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [9] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[10] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [10] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[11] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [11] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[12] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [12] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[13] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [13] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[14] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [14] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\ncshell: fg: cannot foreground job\n$ ready\n[15] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n[14]   Terminated (SIGINT) /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ",
+        "foreground": 15011,
+        "members": [
+          [
+            15011,
+            15011
+          ],
+          [
+            15027,
+            15027
+          ]
+        ],
+        "ps": "15011  5898 15011 Ss+  -        0:00.01        0        0    0 15011\n15027 15011 15027 T    -        0:00.00        0        0    1 15011\n",
+        "termios_at_deadline": "[256, 0, 35584, 384, 9600, 9600, [b'\\x04', b'\\xff', b'\\xff', b'\\x7f', b'\\x17', b'\\x15', b'\\x12', b'\\xff', b'\\x03', b'\\x1c', b'\\x1a', b'\\x19', b'\\x11', b'\\x13', b'\\x16', b'\\x0f', b'\\x01', b'\\x00', b'\\x14', b'\\xff']]",
+        "signal_snapshot": "pid=15011 ignore=1872c004 catch=80003 pending=0 mask=0 flags=4006\npid=15027 ignore=18488000 catch=0 pending=0 mask=0 flags=4006\n",
+        "second-control": {
+          "elapsed": 5.480508333072066,
+          "output": "",
+          "foreground": 15011
+        },
+        "direct-signal": {
+          "elapsed": 5.733888291986659,
+          "output": "",
+          "foreground": 15011
+        },
+        "mask-probe": {
+          "elapsed": 5.734271458117291,
+          "output": "",
+          "foreground": 0
+        },
+        "output_after_snapshot": "",
+        "post_snapshot_elapsed": 5.734290082938969,
+        "total_elapsed": 5.831567291170359,
+        "last_events": [
+          [
+            0.05491029215045273,
+            182,
+            4140
+          ],
+          [
+            0.054999666986986995,
+            183,
+            4176
+          ],
+          [
+            0.05502637499012053,
+            184,
+            4176
+          ],
+          [
+            0.05772583303041756,
+            185,
+            4182
+          ],
+          [
+            0.0577678750269115,
+            186,
+            4182
+          ]
+        ],
+        "last_writes": [
+          {
+            "elapsed": 0.05446208314970136,
+            "data": "bg\n",
+            "foreground": 15011,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.05471449997276068,
+            "data": "fg\n",
+            "foreground": 15011,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.05489783314988017,
+            "data": "\u0003",
+            "foreground": 15026,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.05500987498089671,
+            "data": "/Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+            "foreground": 15011,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.057746542152017355,
+            "data": "\u001a",
+            "foreground": 15027,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          }
+        ],
+        "failures": [
+          "PTY timeout after 5s waiting for step 187: {'expect': '[15] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\\n$ '}; last completed step 186 at 0.058s; no step advancement for 4.944s; session cleanup requested",
+          "status: expected 130, got -30"
+        ]
+      }
+    ]
+  },
+  "pty-fixed": {
+    "rounds": 17,
+    "passed": 16,
+    "failed": 1,
+    "case_elapsed_min": 0.06706358399242163,
+    "case_elapsed_max": 5.002066958928481,
+    "failed_snapshots": [
+      {
+        "round": 17,
+        "start": 1555923.984811916,
+        "pid": 58872,
+        "case_elapsed": 5.002066958928481,
+        "deadline_failures": [
+          "PTY timeout after 5s waiting for step 378: {'expect': '$ '}; session cleanup requested"
+        ],
+        "bytes_at_deadline": 8595,
+        "output_at_deadline": "$ ready\n[1] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [1] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[2] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [2] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[3] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [3] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[4] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [4] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[5] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [5] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[6] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [6] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[7] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [7] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[8] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [8] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[9] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [9] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[10] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [10] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[11] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [11] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[12] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [12] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[13] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [13] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[14] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [14] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[15] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [15] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[16] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [16] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[17] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [17] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[18] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [18] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[19] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [19] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[20] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [20] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[21] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [21] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[22] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [22] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[23] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [23] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[24] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [24] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[25] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [25] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[26] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [26] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[27] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [27] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[28] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [28] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[29] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [29] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+        "foreground": 58914,
+        "members": [
+          [
+            58872,
+            58872
+          ],
+          [
+            58914,
+            58914
+          ]
+        ],
+        "ps": "58872 58279 58872 Ss   -        0:00.02        0        0    0 58914\n58914 58872 58914 S+   -        0:00.00        0        0    1 58914\n",
+        "termios_at_deadline": "[256, 0, 35584, 384, 9600, 9600, [b'\\x04', b'\\xff', b'\\xff', b'\\x7f', b'\\x17', b'\\x15', b'\\x12', b'\\xff', b'\\x03', b'\\x1c', b'\\x1a', b'\\x19', b'\\x11', b'\\x13', b'\\x16', b'\\x0f', b'\\x01', b'\\x00', b'\\x14', b'\\xff']]",
+        "second-control": {
+          "elapsed": 5.152817541966215,
+          "output": "[29] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ",
+          "foreground": 58872
+        },
+        "output_after_snapshot": "",
+        "post_snapshot_elapsed": 5.152860749978572,
+        "total_elapsed": 5.250116625102237,
+        "last_events": [
+          [
+            0.07830079202540219,
+            373,
+            8510
+          ],
+          [
+            0.07831804198212922,
+            374,
+            8510
+          ],
+          [
+            0.07836899999529123,
+            375,
+            8595
+          ],
+          [
+            0.07837716699577868,
+            376,
+            8595
+          ],
+          [
+            0.0783954169601202,
+            377,
+            8595
+          ]
+        ],
+        "last_writes": [
+          {
+            "elapsed": 0.07484712498262525,
+            "data": "/Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+            "foreground": 58872,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.07812220905907452,
+            "data": "\u001a",
+            "foreground": 58914,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.07823037495836616,
+            "data": "bg\n",
+            "foreground": 58872,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.07830895902588964,
+            "data": "fg\n",
+            "foreground": 58872,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.07838520896621048,
+            "data": "\u0003",
+            "foreground": 58914,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          }
+        ],
+        "failures": [
+          "PTY timeout after 5s waiting for step 378: {'expect': '$ '}; session cleanup requested",
+          "status: expected 130, got -9"
+        ]
+      }
+    ]
+  },
+  "pty-mask-fence": {
+    "rounds": 194,
+    "passed": 193,
+    "failed": 1,
+    "case_elapsed_min": 0.0667821248061955,
+    "case_elapsed_max": 5.002150750020519,
+    "failed_snapshots": [
+      {
+        "round": 194,
+        "start": 1556969.592458333,
+        "pid": 93550,
+        "case_elapsed": 5.002150750020519,
+        "deadline_failures": [
+          "PTY timeout after 5s waiting for step 18: {'expect': '[2] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\\n$ '}; last completed step 17 at 0.008s; no step advancement for 4.994s; session cleanup requested"
+        ],
+        "bytes_at_deadline": 549,
+        "output_at_deadline": "$ ready\n[1] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [1] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\ncshell: fg: cannot foreground job\n$ ready\n[2] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n[1]   Terminated (SIGINT) /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ",
+        "foreground": 93550,
+        "members": [
+          [
+            93550,
+            93550
+          ],
+          [
+            93552,
+            93552
+          ]
+        ],
+        "ps": "93550 85892 93550 Ss+  -        0:00.00        0        0    0 93550\n93552 93550 93552 T    -        0:00.00        0        0    1 93550\n",
+        "termios_at_deadline": "[256, 0, 35584, 384, 9600, 9600, [b'\\x04', b'\\xff', b'\\xff', b'\\x7f', b'\\x17', b'\\x15', b'\\x12', b'\\xff', b'\\x03', b'\\x1c', b'\\x1a', b'\\x19', b'\\x11', b'\\x13', b'\\x16', b'\\x0f', b'\\x01', b'\\x00', b'\\x14', b'\\xff']]",
+        "signal_snapshot": "pid=93550 ignore=1872c004 catch=80003 pending=0 mask=0 flags=4006\npid=93552 ignore=18488000 catch=20000000 pending=0 mask=0 flags=4006\n",
+        "second-control": {
+          "elapsed": 5.512791250133887,
+          "output": "",
+          "foreground": 93550
+        },
+        "direct-signal": {
+          "elapsed": 5.771333333104849,
+          "output": "",
+          "foreground": 93550
+        },
+        "mask-probe": {
+          "elapsed": 5.771965042222291,
+          "output": "",
+          "foreground": 0
+        },
+        "output_after_snapshot": "",
+        "post_snapshot_elapsed": 5.771981375059113,
+        "total_elapsed": 6.035194166004658,
+        "last_events": [
+          [
+            0.005247625056654215,
+            13,
+            295
+          ],
+          [
+            0.005406083073467016,
+            14,
+            331
+          ],
+          [
+            0.005431583151221275,
+            15,
+            331
+          ],
+          [
+            0.007927583064883947,
+            16,
+            337
+          ],
+          [
+            0.007971708197146654,
+            17,
+            337
+          ]
+        ],
+        "last_writes": [
+          {
+            "elapsed": 0.005099792033433914,
+            "data": "bg\n",
+            "foreground": 93550,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.005173792131245136,
+            "data": "fg\n",
+            "foreground": 93550,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.005237458040937781,
+            "data": "\u0003",
+            "foreground": 93551,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.0054150421638041735,
+            "data": "/Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+            "foreground": 93550,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.007947250036522746,
+            "data": "\u001a",
+            "foreground": 93552,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          }
+        ],
+        "failures": [
+          "PTY timeout after 5s waiting for step 18: {'expect': '[2] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\\n$ '}; last completed step 17 at 0.008s; no step advancement for 4.994s; session cleanup requested",
+          "status: expected 130, got -30"
+        ]
+      }
+    ]
+  },
+  "pty-mask-origin": {
+    "rounds": 34,
+    "passed": 33,
+    "failed": 1,
+    "case_elapsed_min": 0.08678487502038479,
+    "case_elapsed_max": 5.001575417118147,
+    "failed_snapshots": [
+      {
+        "round": 34,
+        "start": 1556801.303598333,
+        "pid": 30235,
+        "case_elapsed": 5.001575417118147,
+        "deadline_failures": [
+          "PTY timeout after 5s waiting for step 339: {'expect': '$ '}; last completed step 338 at 0.098s; no step advancement for 4.904s; session cleanup requested"
+        ],
+        "bytes_at_deadline": 7704,
+        "output_at_deadline": "$ ready\n[1] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [1] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[2] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [2] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[3] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [3] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[4] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [4] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[5] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [5] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[6] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [6] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[7] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [7] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[8] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [8] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[9] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [9] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[10] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [10] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[11] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [11] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[12] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [12] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[13] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [13] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[14] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [14] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[15] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [15] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[16] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [16] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[17] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [17] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[18] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [18] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[19] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [19] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[20] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [20] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[21] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [21] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[22] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [22] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[23] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [23] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[24] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [24] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[25] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [25] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[26] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [26] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+        "foreground": 30279,
+        "members": [
+          [
+            30235,
+            30235
+          ],
+          [
+            30279,
+            30279
+          ]
+        ],
+        "ps": "30235 26430 30235 Ss   -        0:00.03        0        0    0 30279\n30279 30235 30279 S+   -        0:00.00        0        0    1 30279\n",
+        "termios_at_deadline": "[256, 0, 35584, 384, 9600, 9600, [b'\\x04', b'\\xff', b'\\xff', b'\\x7f', b'\\x17', b'\\x15', b'\\x12', b'\\xff', b'\\x03', b'\\x1c', b'\\x1a', b'\\x19', b'\\x11', b'\\x13', b'\\x16', b'\\x0f', b'\\x01', b'\\x00', b'\\x14', b'\\xff']]",
+        "signal_snapshot": "pid=30235 ignore=1872c004 catch=80003 pending=0 mask=0 flags=4006\npid=30279 ignore=18488000 catch=20000000 pending=0 mask=0 flags=4006\n",
+        "second-control": {
+          "elapsed": 5.470193125074729,
+          "output": "",
+          "foreground": 30279
+        },
+        "direct-signal": {
+          "elapsed": 5.729671458015218,
+          "output": "",
+          "foreground": 30279
+        },
+        "mask-probe": {
+          "elapsed": 5.730017750058323,
+          "output": "probe initial_int=1 current_int=1 pending_int=1 ignored_int=0\n",
+          "foreground": 30279
+        },
+        "output_after_snapshot": "",
+        "post_snapshot_elapsed": 5.730060500092804,
+        "total_elapsed": 6.897207082947716,
+        "last_events": [
+          [
+            0.09735212498344481,
+            334,
+            7619
+          ],
+          [
+            0.09737833309918642,
+            335,
+            7619
+          ],
+          [
+            0.09786687511950731,
+            336,
+            7704
+          ],
+          [
+            0.09787720814347267,
+            337,
+            7704
+          ],
+          [
+            0.09789854218252003,
+            338,
+            7704
+          ]
+        ],
+        "last_writes": [
+          {
+            "elapsed": 0.08858716697432101,
+            "data": "/Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+            "foreground": 30235,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.09685554215684533,
+            "data": "\u001a",
+            "foreground": 30279,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.09709141706116498,
+            "data": "bg\n",
+            "foreground": 30235,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.09736620797775686,
+            "data": "fg\n",
+            "foreground": 30235,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.09788808319717646,
+            "data": "\u0003",
+            "foreground": 30279,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          }
+        ],
+        "failures": [
+          "PTY timeout after 5s waiting for step 339: {'expect': '$ '}; last completed step 338 at 0.098s; no step advancement for 4.904s; session cleanup requested",
+          "PTY cleanup could not reap leader within 1s",
+          "status: expected 130, got None"
+        ]
+      }
+    ]
+  },
+  "pty-mask-probe": {
+    "rounds": 80,
+    "passed": 79,
+    "failed": 1,
+    "case_elapsed_min": 0.0699135409668088,
+    "case_elapsed_max": 5.0005687919911,
+    "failed_snapshots": [
+      {
+        "round": 80,
+        "start": 1556660.640312916,
+        "pid": 86692,
+        "case_elapsed": 5.0005687919911,
+        "deadline_failures": [
+          "PTY timeout after 5s waiting for step 248: {'expect': '$ '}; last completed step 247 at 0.048s; no step advancement for 4.953s; session cleanup requested"
+        ],
+        "bytes_at_deadline": 5625,
+        "output_at_deadline": "$ ready\n[1] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [1] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[2] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [2] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[3] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [3] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[4] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [4] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[5] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [5] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[6] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [6] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[7] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [7] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[8] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [8] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[9] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [9] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[10] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [10] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[11] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [11] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[12] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [12] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[13] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [13] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[14] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [14] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[15] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [15] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[16] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [16] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[17] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [17] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[18] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [18] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[19] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [19] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+        "foreground": 86717,
+        "members": [
+          [
+            86692,
+            86692
+          ],
+          [
+            86717,
+            86717
+          ]
+        ],
+        "ps": "86692 79500 86692 Ss   -        0:00.01        0        0    0 86717\n86717 86692 86717 S+   -        0:00.00        0        0    1 86717\n",
+        "termios_at_deadline": "[256, 0, 35584, 384, 9600, 9600, [b'\\x04', b'\\xff', b'\\xff', b'\\x7f', b'\\x17', b'\\x15', b'\\x12', b'\\xff', b'\\x03', b'\\x1c', b'\\x1a', b'\\x19', b'\\x11', b'\\x13', b'\\x16', b'\\x0f', b'\\x01', b'\\x00', b'\\x14', b'\\xff']]",
+        "signal_snapshot": "pid=86692 ignore=1872c004 catch=80003 pending=0 mask=0 flags=4006\npid=86717 ignore=18488000 catch=20000000 pending=0 mask=0 flags=4006\n",
+        "second-control": {
+          "elapsed": 5.416100084083155,
+          "output": "",
+          "foreground": 86717
+        },
+        "direct-signal": {
+          "elapsed": 5.676178666995838,
+          "output": "",
+          "foreground": 86717
+        },
+        "mask-probe": {
+          "elapsed": 5.676411792170256,
+          "output": "probe initial_int=1 current_int=1 pending_int=1 ignored_int=0\n",
+          "foreground": 86717
+        },
+        "output_after_snapshot": "",
+        "post_snapshot_elapsed": 5.676438042195514,
+        "total_elapsed": 6.7817804999649525,
+        "last_events": [
+          [
+            0.047467834083363414,
+            243,
+            5540
+          ],
+          [
+            0.047482124995440245,
+            244,
+            5540
+          ],
+          [
+            0.04752037511207163,
+            245,
+            5625
+          ],
+          [
+            0.04752770904451609,
+            246,
+            5625
+          ],
+          [
+            0.047542584128677845,
+            247,
+            5625
+          ]
+        ],
+        "last_writes": [
+          {
+            "elapsed": 0.04544416698627174,
+            "data": "/Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+            "foreground": 86692,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.04732308420352638,
+            "data": "\u001a",
+            "foreground": 86717,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.047409625025466084,
+            "data": "bg\n",
+            "foreground": 86692,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.04747387510724366,
+            "data": "fg\n",
+            "foreground": 86692,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.04753370909020305,
+            "data": "\u0003",
+            "foreground": 86717,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          }
+        ],
+        "failures": [
+          "PTY timeout after 5s waiting for step 248: {'expect': '$ '}; last completed step 247 at 0.048s; no step advancement for 4.953s; session cleanup requested",
+          "PTY cleanup could not reap leader within 1s",
+          "status: expected 130, got None"
+        ]
+      }
+    ]
+  },
+  "pty-parent-mask": {
+    "rounds": 17,
+    "passed": 16,
+    "failed": 1,
+    "case_elapsed_min": 0.06829954101704061,
+    "case_elapsed_max": 5.000260374974459,
+    "failed_snapshots": [
+      {
+        "round": 17,
+        "start": 1556744.108622958,
+        "pid": 2167,
+        "case_elapsed": 5.000260374974459,
+        "deadline_failures": [
+          "PTY timeout after 5s waiting for step 300: {'expect': '$ '}; last completed step 299 at 0.062s; no step advancement for 4.938s; session cleanup requested"
+        ],
+        "bytes_at_deadline": 6813,
+        "output_at_deadline": "$ ready\n[1] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [1] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[2] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [2] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[3] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [3] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[4] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [4] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[5] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [5] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[6] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [6] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[7] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [7] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[8] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [8] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[9] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [9] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[10] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [10] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[11] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [11] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[12] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [12] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[13] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [13] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[14] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [14] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[15] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [15] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[16] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [16] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[17] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [17] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[18] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [18] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[19] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [19] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[20] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [20] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[21] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [21] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[22] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [22] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[23] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [23] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+        "foreground": 2205,
+        "members": [
+          [
+            2167,
+            2167
+          ],
+          [
+            2205,
+            2205
+          ]
+        ],
+        "ps": " 2167   682  2167 Ss   -        0:00.02        0        0    0 2205\n 2205  2167  2205 S+   -        0:00.00        0        0    1 2205\n",
+        "termios_at_deadline": "[256, 0, 35584, 384, 9600, 9600, [b'\\x04', b'\\xff', b'\\xff', b'\\x7f', b'\\x17', b'\\x15', b'\\x12', b'\\xff', b'\\x03', b'\\x1c', b'\\x1a', b'\\x19', b'\\x11', b'\\x13', b'\\x16', b'\\x0f', b'\\x01', b'\\x00', b'\\x14', b'\\xff']]",
+        "signal_snapshot": "pid=2167 ignore=1872c004 catch=80003 pending=0 mask=0 flags=4006\npid=2205 ignore=18488000 catch=20000000 pending=0 mask=0 flags=4006\n",
+        "second-control": {
+          "elapsed": 5.408001125091687,
+          "output": "",
+          "foreground": 2205
+        },
+        "direct-signal": {
+          "elapsed": 5.666368625126779,
+          "output": "",
+          "foreground": 2205
+        },
+        "mask-probe": {
+          "elapsed": 5.666589083150029,
+          "output": "probe initial_int=1 current_int=1 pending_int=1 ignored_int=0\n",
+          "foreground": 2205
+        },
+        "output_after_snapshot": "",
+        "post_snapshot_elapsed": 5.666624207980931,
+        "total_elapsed": 6.777665292145684,
+        "last_events": [
+          [
+            0.06187858316116035,
+            295,
+            6728
+          ],
+          [
+            0.06189295812509954,
+            296,
+            6728
+          ],
+          [
+            0.062246124958619475,
+            297,
+            6813
+          ],
+          [
+            0.06225375016219914,
+            298,
+            6813
+          ],
+          [
+            0.06227491702884436,
+            299,
+            6813
+          ]
+        ],
+        "last_writes": [
+          {
+            "elapsed": 0.053494625026360154,
+            "data": "/Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+            "foreground": 2167,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.0614958330988884,
+            "data": "\u001a",
+            "foreground": 2205,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.061636833008378744,
+            "data": "bg\n",
+            "foreground": 2167,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.06188550009392202,
+            "data": "fg\n",
+            "foreground": 2167,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.06226587505079806,
+            "data": "\u0003",
+            "foreground": 2205,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          }
+        ],
+        "failures": [
+          "PTY timeout after 5s waiting for step 300: {'expect': '$ '}; last completed step 299 at 0.062s; no step advancement for 4.938s; session cleanup requested",
+          "PTY cleanup could not reap leader within 1s",
+          "status: expected 130, got None"
+        ]
+      }
+    ]
+  },
+  "pty-running-fg": {
+    "rounds": 458,
+    "passed": 457,
+    "failed": 1,
+    "case_elapsed_min": 0.06393812503665686,
+    "case_elapsed_max": 5.0010720829013735,
+    "failed_snapshots": [
+      {
+        "round": 458,
+        "start": 1556430.661936125,
+        "pid": 36042,
+        "case_elapsed": 5.0010720829013735,
+        "deadline_failures": [
+          "PTY timeout after 5s waiting for step 144: {'expect': '$ '}; last completed step 143 at 0.028s; no step advancement for 4.973s; session cleanup requested"
+        ],
+        "bytes_at_deadline": 3249,
+        "output_at_deadline": "$ ready\n[1] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [1] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[2] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [2] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[3] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [3] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[4] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [4] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[5] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [5] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[6] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [6] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[7] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [7] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[8] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [8] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[9] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [9] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[10] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [10] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[11] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [11] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+        "foreground": 36068,
+        "members": [
+          [
+            36042,
+            36042
+          ],
+          [
+            36068,
+            36068
+          ]
+        ],
+        "ps": "36042 78768 36042 Ss   -        0:00.01        0        0    0 36068\n36068 36042 36068 S+   -        0:00.00        0        0    1 36068\n",
+        "termios_at_deadline": "[256, 0, 35584, 384, 9600, 9600, [b'\\x04', b'\\xff', b'\\xff', b'\\x7f', b'\\x17', b'\\x15', b'\\x12', b'\\xff', b'\\x03', b'\\x1c', b'\\x1a', b'\\x19', b'\\x11', b'\\x13', b'\\x16', b'\\x0f', b'\\x01', b'\\x00', b'\\x14', b'\\xff']]",
+        "second-control": {
+          "elapsed": 5.39155983296223,
+          "output": "",
+          "foreground": 36068
+        },
+        "direct-signal": {
+          "elapsed": 5.644326499896124,
+          "output": "",
+          "foreground": 36068
+        },
+        "output_after_snapshot": "",
+        "post_snapshot_elapsed": 5.644412915920839,
+        "total_elapsed": 5.735187208047137,
+        "last_events": [
+          [
+            0.02802058309316635,
+            139,
+            3164
+          ],
+          [
+            0.028046875027939677,
+            140,
+            3164
+          ],
+          [
+            0.02808799990452826,
+            141,
+            3249
+          ],
+          [
+            0.02809308306314051,
+            142,
+            3249
+          ],
+          [
+            0.028107207966968417,
+            143,
+            3249
+          ]
+        ],
+        "last_writes": [
+          {
+            "elapsed": 0.026150749996304512,
+            "data": "/Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+            "foreground": 36042,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.027827957877889276,
+            "data": "\u001a",
+            "foreground": 36068,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.027926540933549404,
+            "data": "bg\n",
+            "foreground": 36042,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.028034500079229474,
+            "data": "fg\n",
+            "foreground": 36042,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.028100499883294106,
+            "data": "\u0003",
+            "foreground": 36068,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          }
+        ],
+        "failures": [
+          "PTY timeout after 5s waiting for step 144: {'expect': '$ '}; last completed step 143 at 0.028s; no step advancement for 4.973s; session cleanup requested",
+          "status: expected 130, got -9"
+        ]
+      }
+    ]
+  },
+  "pty-signal-probe": {
+    "rounds": 95,
+    "passed": 94,
+    "failed": 1,
+    "case_elapsed_min": 0.07066108286380768,
+    "case_elapsed_max": 5.002070249989629,
+    "failed_snapshots": [
+      {
+        "round": 95,
+        "start": 1555383.534331375,
+        "pid": 20421,
+        "case_elapsed": 5.002070249989629,
+        "deadline_failures": [
+          "PTY timeout after 5s waiting for step 276: {'expect': 'ready\\n'}; session cleanup requested"
+        ],
+        "bytes_at_deadline": 6277,
+        "output_at_deadline": "$ ready\n[1] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [1] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[2] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [2] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[3] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [3] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[4] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [4] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[5] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [5] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[6] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [6] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[7] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [7] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[8] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [8] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[9] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [9] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[10] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [10] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[11] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [11] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[12] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [12] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[13] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [13] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[14] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [14] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[15] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [15] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[16] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [16] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[17] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [17] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[18] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [18] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[19] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [19] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[20] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [20] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[21] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [21] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ cshell: cannot give terminal to job: Invalid argument\n$ ",
+        "foreground": 20421,
+        "members": [
+          [
+            20421,
+            20421
+          ]
+        ],
+        "ps": "20421 16820 20421 Ss+  -        0:00.01        0        0    0 20421\n",
+        "termios_at_deadline": "[256, 0, 35584, 384, 9600, 9600, [b'\\x04', b'\\xff', b'\\xff', b'\\x7f', b'\\x17', b'\\x15', b'\\x12', b'\\xff', b'\\x03', b'\\x1c', b'\\x1a', b'\\x19', b'\\x11', b'\\x13', b'\\x16', b'\\x0f', b'\\x01', b'\\x00', b'\\x14', b'\\xff']]",
+        "second-control": {
+          "elapsed": 5.3127000408712775,
+          "output": "",
+          "foreground": 20421
+        },
+        "direct-signal": {
+          "elapsed": 5.565281582996249,
+          "output": "",
+          "foreground": 20421
+        },
+        "output_after_snapshot": "",
+        "post_snapshot_elapsed": 5.565372749930248,
+        "total_elapsed": 5.674529999960214,
+        "last_events": [
+          [
+            0.05050316592678428,
+            271,
+            6219
+          ],
+          [
+            0.050511375069618225,
+            272,
+            6219
+          ],
+          [
+            0.05053195799700916,
+            273,
+            6219
+          ],
+          [
+            0.05067454092204571,
+            274,
+            6221
+          ],
+          [
+            0.050693958066403866,
+            275,
+            6221
+          ]
+        ],
+        "last_writes": [
+          {
+            "elapsed": 0.05027108290232718,
+            "data": "\u001a",
+            "foreground": 20442,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.050369458040222526,
+            "data": "bg\n",
+            "foreground": 20421,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.050433458061888814,
+            "data": "fg\n",
+            "foreground": 20421,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.05052166595123708,
+            "data": "\u0003",
+            "foreground": 20442,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.05068170791491866,
+            "data": "/Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+            "foreground": 20421,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          }
+        ],
+        "failures": [
+          "PTY timeout after 5s waiting for step 276: {'expect': 'ready\\n'}; session cleanup requested",
+          "status: expected 130, got -9"
+        ]
+      }
+    ]
+  },
+  "pty-signal-probe-2": {
+    "rounds": 3,
+    "passed": 2,
+    "failed": 1,
+    "case_elapsed_min": 0.09514350001700222,
+    "case_elapsed_max": 5.002082125050947,
+    "failed_snapshots": [
+      {
+        "round": 3,
+        "start": 1555618.263363083,
+        "pid": 28381,
+        "case_elapsed": 5.002082125050947,
+        "deadline_failures": [
+          "PTY timeout after 5s waiting for step 57: {'expect': '[5] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\\n$ '}; session cleanup requested"
+        ],
+        "bytes_at_deadline": 1188,
+        "output_at_deadline": "$ ready\n[1] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [1] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[2] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [2] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[3] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [3] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n[4] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ [4] + Running /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ready\n",
+        "foreground": 28386,
+        "members": [
+          [
+            28381,
+            28381
+          ],
+          [
+            28386,
+            28386
+          ]
+        ],
+        "ps": "28381 28304 28381 Ss   -        0:00.00        0        0    0 28386\n28386 28381 28386 S+   -        0:00.00        0        0    1 28386\n",
+        "termios_at_deadline": "[256, 0, 35584, 384, 9600, 9600, [b'\\x04', b'\\xff', b'\\xff', b'\\x7f', b'\\x17', b'\\x15', b'\\x12', b'\\xff', b'\\x03', b'\\x1c', b'\\x1a', b'\\x19', b'\\x11', b'\\x13', b'\\x16', b'\\x0f', b'\\x01', b'\\x00', b'\\x14', b'\\xff']]",
+        "second-control": {
+          "elapsed": 5.4025450421031564,
+          "output": "",
+          "foreground": 28386
+        },
+        "direct-signal": {
+          "elapsed": 5.402752333087847,
+          "output": "[5] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n$ ",
+          "foreground": 28381
+        },
+        "output_after_snapshot": "",
+        "post_snapshot_elapsed": 5.402770542073995,
+        "total_elapsed": 5.51163295796141,
+        "last_events": [
+          [
+            0.012677667196840048,
+            52,
+            1180
+          ],
+          [
+            0.012847500154748559,
+            53,
+            1182
+          ],
+          [
+            0.012868083082139492,
+            54,
+            1182
+          ],
+          [
+            0.015146624995395541,
+            55,
+            1188
+          ],
+          [
+            0.015183167066425085,
+            56,
+            1188
+          ]
+        ],
+        "last_writes": [
+          {
+            "elapsed": 0.012504667043685913,
+            "data": "bg\n",
+            "foreground": 28381,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.012598750181496143,
+            "data": "fg\n",
+            "foreground": 28381,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.01266733300872147,
+            "data": "\u0003",
+            "foreground": 28385,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.012855625012889504,
+            "data": "/Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\n",
+            "foreground": 28381,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          },
+          {
+            "elapsed": 0.015168625162914395,
+            "data": "\u001a",
+            "foreground": 28386,
+            "lflag": 384,
+            "intr": "b'\\x03'",
+            "susp": "b'\\x1a'"
+          }
+        ],
+        "failures": [
+          "PTY timeout after 5s waiting for step 57: {'expect': '[5] + Stopped /Users/mitchell/.codex/worktrees/csh-057-timeout/cshell/build/tests/jobs_helper hold\\n$ '}; session cleanup requested",
+          "status: expected 130, got -9"
+        ]
+      }
+    ]
+  },
+  "pty-single-writer-probe": {
+    "rounds": 200,
+    "passed": 200,
+    "failed": 0,
+    "case_elapsed_min": 0.06428874982520938,
+    "case_elapsed_max": 0.14937079208903015
+  },
+  "pty-sanitizer-complete": {
+    "rounds": 200,
+    "passed": 200,
+    "failed": 0,
+    "case_elapsed_min": 1.7089792911428958,
+    "case_elapsed_max": 2.2757407089229673
+  }
+}

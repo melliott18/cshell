@@ -1,0 +1,35 @@
+--- tests/jobs_helper.c
++++ tests/jobs_helper.c
+@@ -9,6 +9,21 @@
+ #include <unistd.h>
+ #include <sys/wait.h>
+ 
++static int initial_int_mask;
++static void inspect_signals(int number)
++{
++    sigset_t mask, pending;
++    struct sigaction action;
++    (void)number;
++    sigprocmask(SIG_SETMASK, NULL, &mask);
++    sigpending(&pending);
++    sigaction(SIGINT, NULL, &action);
++    dprintf(2, "probe initial_int=%d current_int=%d pending_int=%d ignored_int=%d\n",
++        initial_int_mask, sigismember(&mask, SIGINT), sigismember(&pending, SIGINT),
++        action.sa_handler == SIG_IGN);
++    sigemptyset(&mask); sigaddset(&mask, SIGINT);
++    sigprocmask(SIG_UNBLOCK, &mask, NULL);
++}
+ static int continue_tty = -1;
+ static void continued(int number)
+ {
+@@ -23,6 +38,10 @@
+     struct termios modes;
+     int tty;
+     char byte;
++    sigset_t initial;
++    sigprocmask(SIG_SETMASK, NULL, &initial);
++    initial_int_mask = sigismember(&initial, SIGINT);
++    signal(SIGUSR1, inspect_signals);
+     if (argc < 2) return 2;
+     if (strcmp(argv[1], "status") == 0) return argc > 2 ? atoi(argv[2]) : 0;
+     if (strcmp(argv[1], "gate") == 0) {

@@ -1,0 +1,140 @@
+{
+  "mask-before": {
+    "raw_sha256": "2007707b8f01ce68da985de0682ae3cc1e5c868f01d55e93cd452b5eaf45dcbb",
+    "raw_bytes": 1136432,
+    "local_raw": "build/csh057-diagnostic-traces/mask-before.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "minimal-both": {
+    "raw_sha256": "397865ada4972d6c2a8520108e78d751f87ca424c804499e8f49e0c4c5f5ce1e",
+    "raw_bytes": 559259,
+    "local_raw": "build/csh057-diagnostic-traces/minimal-both.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "minimal-parent": {
+    "raw_sha256": "ba24b2dda30b57dc5fd0c65060836ac83d93b06766c00834cf288ca4d627b23b",
+    "raw_bytes": 2943960,
+    "local_raw": "build/csh057-diagnostic-traces/minimal-parent.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "minimal-resume-both": {
+    "raw_sha256": "7b2b5a48268cc60a4c19626c069effa3b46ce376c64bb6384ea7b6b9a4bacbd3",
+    "raw_bytes": 5472236,
+    "local_raw": "build/csh057-diagnostic-traces/minimal-resume-both.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "minimal-resume-exec": {
+    "raw_sha256": "745001d9d294f037282be4ec0b5005c7b689c5e01d90811b1181a10063bfe224",
+    "raw_bytes": 27075126,
+    "local_raw": "build/csh057-diagnostic-traces/minimal-resume-exec.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "minimal-resume-helper-error": {
+    "raw_sha256": "d187d52c73a8bbdc41fdfce06127a82db96088070e7d04f3014bad3be29c3dd4",
+    "raw_bytes": 3176,
+    "local_raw": "build/csh057-diagnostic-traces/minimal-resume-helper-error.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "minimal-resume-window": {
+    "raw_sha256": "a6527a5b10ad3eca9dbfbe81a3e1956f8b9263cf48ceee332e99c6b62aa82c2a",
+    "raw_bytes": 27094060,
+    "local_raw": "build/csh057-diagnostic-traces/minimal-resume-window.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "pty-baseline": {
+    "raw_sha256": "beacf7f9a20a4289e3ad2de3f1eb4d5e9569b27c372ab7efcf4617e67cf34d85",
+    "raw_bytes": 325647,
+    "local_raw": "build/csh057-diagnostic-traces/pty-baseline.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "pty-complete": {
+    "raw_sha256": "645ea0d847d3ae513d65602c5691d5d7c8de5d2bef5361b4edcde5efc5b934f9",
+    "raw_bytes": 37279506,
+    "local_raw": "build/csh057-diagnostic-traces/pty-complete.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "pty-dispositions": {
+    "raw_sha256": "3438a1611a6010d7bc85fb3e8a6fd7ef3340cb9da6d8d75fac8d95ccfd45f7cc",
+    "raw_bytes": 12143909,
+    "local_raw": "build/csh057-diagnostic-traces/pty-dispositions.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "pty-exit-refusal": {
+    "raw_sha256": "7c18b53757259009212b7cb6641bc967b6258bd7f19af601911779dbaf6b74c0",
+    "raw_bytes": 18665432,
+    "local_raw": "build/csh057-diagnostic-traces/pty-exit-refusal.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "pty-exit-refusal-2": {
+    "raw_sha256": "7538bd93acb40fbba2cd13a61f71c043cf7396b3fa75dd3bf915d193a7180463",
+    "raw_bytes": 15824575,
+    "local_raw": "build/csh057-diagnostic-traces/pty-exit-refusal-2.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "pty-fence-clean": {
+    "raw_sha256": "60146ffae3a0ec7debc915a8a53896c63889b6e5ef00a7c9f9f27dd172ac857d",
+    "raw_bytes": 3493569,
+    "local_raw": "build/csh057-diagnostic-traces/pty-fence-clean.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "pty-fixed": {
+    "raw_sha256": "c0ea61034b34969506608a3e66b5ba41b3c98b6a64913f4b37a55a219c5e6dbb",
+    "raw_bytes": 659517,
+    "local_raw": "build/csh057-diagnostic-traces/pty-fixed.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "pty-mask-fence": {
+    "raw_sha256": "a558bf2caa7fce42954e350176403bf26442dd50052fd8e42be12629af84a7a6",
+    "raw_bytes": 7220914,
+    "local_raw": "build/csh057-diagnostic-traces/pty-mask-fence.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "pty-mask-origin": {
+    "raw_sha256": "4676b2a1dbc62134898329fe1097d5774bbd3a85a7a551fae6ef6561b32e81b1",
+    "raw_bytes": 1286088,
+    "local_raw": "build/csh057-diagnostic-traces/pty-mask-origin.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "pty-mask-probe": {
+    "raw_sha256": "02bdc0622a95251fcb54af567d313f71dd54a1cb15f4eb89d015834b026c4b2d",
+    "raw_bytes": 2991627,
+    "local_raw": "build/csh057-diagnostic-traces/pty-mask-probe.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "pty-parent-mask": {
+    "raw_sha256": "7c0eb323f7a7be388bf47bef6db83bbb715106432f7d116544b9754195e2bfa6",
+    "raw_bytes": 646095,
+    "local_raw": "build/csh057-diagnostic-traces/pty-parent-mask.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "pty-running-fg": {
+    "raw_sha256": "c31188d159873eddf538952010b19baf08fbfe47bbed58a923222af7d3216aa9",
+    "raw_bytes": 17087532,
+    "local_raw": "build/csh057-diagnostic-traces/pty-running-fg.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "pty-signal-probe": {
+    "raw_sha256": "f6a23bfd0c5a8a9625a508f1a506c3399363fa7678535d589e57c40400bfd5dc",
+    "raw_bytes": 3557791,
+    "local_raw": "build/csh057-diagnostic-traces/pty-signal-probe.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "pty-signal-probe-2": {
+    "raw_sha256": "90f325365a2a5cbe1c4da78cfb3b122a162fc6bfc5dfb3baa78b3e444f2cbd43",
+    "raw_bytes": 93324,
+    "local_raw": "build/csh057-diagnostic-traces/pty-signal-probe-2.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "pty-single-writer-probe": {
+    "raw_sha256": "84394388ff51bab2a1dbcd461912abe8b56ee0af180afa4aebe57076253c242d",
+    "raw_bytes": 7470979,
+    "local_raw": "build/csh057-diagnostic-traces/pty-single-writer-probe.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  },
+  "pty-sanitizer-complete": {
+    "raw_sha256": "67103a622316dc99e8f5200d3b5bd527d723e581794b28258f4bac04722689dc",
+    "raw_bytes": 7506844,
+    "local_raw": "build/csh057-diagnostic-traces/pty-sanitizer-complete.jsonl.gz",
+    "retained": "all failed lines unchanged; successful rounds retain identity, timings and outcomes"
+  }
+}

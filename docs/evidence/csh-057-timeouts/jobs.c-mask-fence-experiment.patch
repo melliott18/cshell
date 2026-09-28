@@ -1,0 +1,66 @@
+--- src/jobs.c
++++ src/jobs.c
+@@ -14,6 +14,21 @@
+ #include <sys/select.h>
+ #include <sys/wait.h>
+ #include <unistd.h>
++
++
++static void mask_probe(const char *where, int saved_int)
++{
++    sigset_t mask;
++    sigprocmask(SIG_SETMASK, NULL, &mask);
++    if (sigismember(&mask, SIGINT)) {
++        int fd = open("/tmp/csh057-mask-leak.log", O_WRONLY | O_CREAT | O_APPEND, 0600);
++        if (fd >= 0) {
++            dprintf(fd, "pid=%ld where=%s INT=%d CHLD=%d savedINT=%d\n", (long)getpid(), where,
++                sigismember(&mask, SIGINT), sigismember(&mask, SIGCHLD), saved_int);
++            close(fd);
++        }
++    }
++}
+ 
+ static const int signals[] = {SIGCHLD, SIGINT, SIGQUIT, SIGTSTP, SIGTTIN, SIGTTOU, SIGHUP, SIGTERM};
+ #define SIGNAL_COUNT (sizeof(signals) / sizeof(signals[0]))
+@@ -376,6 +391,7 @@
+ {
+     sigset_t old, waiting;
+     int rc = 0;
++    mask_probe(__func__, -1);
+     block_events(&old);
+     waiting = old;
+     sigdelset(&waiting, SIGCHLD);
+@@ -394,7 +410,12 @@
+         if (complete(job) || (job->grouped && stopped(job))) break;
+         sigsuspend(&waiting);
+     }
++    {
++        struct timespec zero = {0};
++        pselect(0, NULL, NULL, NULL, &zero, NULL);
++    }
+     sigprocmask(SIG_SETMASK, &old, NULL);
++    mask_probe(__func__, sigismember(&old, SIGINT));
+     return rc;
+ }
+ 
+@@ -656,6 +677,7 @@
+     sigset_t old, waiting;
+     int rc;
+     if (fd >= FD_SETSIZE) { errno = EINVAL; return -1; }
++    mask_probe(__func__, -1);
+     block_events(&old);
+     waiting = old;
+     sigdelset(&waiting, SIGCHLD);
+@@ -677,7 +699,12 @@
+         if (rc >= 0 || errno != EINTR || interrupted || hung_up ||
+             (!defer_pending && csh_traps_pending())) break;
+     }
++    {
++        struct timespec zero = {0};
++        pselect(0, NULL, NULL, NULL, &zero, NULL);
++    }
+     sigprocmask(SIG_SETMASK, &old, NULL);
++    mask_probe(__func__, sigismember(&old, SIGINT));
+     return rc < 0 ? -1 : 0;
+ }
+ 
