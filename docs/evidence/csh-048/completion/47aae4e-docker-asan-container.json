@@ -1,0 +1,34 @@
+{
+  "Id": "11a954a9ace17715273d95262cb75914b0f7d729b5d2e6d10da993a7fbe72089",
+  "Created": "2026-09-28T17:48:20.952364209Z",
+  "Image": "sha256:3a5bb1c3a296026e905463319dd40b24d5b303240584de587c6f383fe37bf10a",
+  "Path": "sh",
+  "Args": [
+    "-c",
+    "make clean && make test-state-builtins test-builtins test-state test-execute test-evaluation test-control test-portability test-prompt test-runtime-pty; result=$?; EVIDENCE_CFLAGS=\"$CFLAGS\" EVIDENCE_LDFLAGS=\"$LDFLAGS\" python3 /identity.py > /work/identity.json; exit \"$result\""
+  ],
+  "State": {
+    "Status": "exited",
+    "Running": false,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 0,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-09-28T17:48:21.437849376Z",
+    "FinishedAt": "2026-09-28T18:19:04.051102965Z"
+  },
+  "environment": [
+    "LDFLAGS=-fsanitize=address,undefined",
+    "EVIDENCE_SOURCE_BASE=b1b6b15",
+    "EVIDENCE_SOURCE_REVISION=47aae4e",
+    "ASAN_OPTIONS=halt_on_error=1",
+    "UBSAN_OPTIONS=halt_on_error=1",
+    "CFLAGS=-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  ],
+  "user": "cshell",
+  "working_directory": "/work"
+}

@@ -38,7 +38,14 @@ update failures roll back both cwd and variable state; a failure to restore cwd
 is diagnosed. For `cd -P` without `-e`, failure to obtain the new cwd may succeed
 with PWD unset, unless output is required. With `-e`, failure is reported and cwd
 is restored. Output errors after a successful change return failure without
-undoing the change. No fixed PATH_MAX buffer is imposed.
+undoing the change. No fixed PATH_MAX buffer is imposed. Logical targets beyond
+the host pathname limit use a relative chdir operand when the current-directory
+prefix can be removed, preserving the full logical PWD. Directory lookups
+that still exceed the syscall limit walk components with search handles; fchdir
+changes cwd only after the target has been resolved. This also handles logical
+parents and symlinks in deeply nested directories. Saving a rollback handle
+uses search permission (Darwin O_SEARCH, Linux O_PATH), so leaving a searchable
+but unreadable directory does not require read permission.
 
 All handlers run under the executor's temporary redirections and in the caller's
 state/cwd. They never exit. The executor identifies special builtins before

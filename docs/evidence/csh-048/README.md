@@ -59,3 +59,7 @@ it against the normal image and run the same targets. Its normal base digest
 and sanitizer image ID are recorded. All sanitizer runs retain five-second
 case deadlines and halt-on-error. The kernel/system libraries differ between
 native macOS and Docker/Linux; neither run substitutes for the other.
+
+The [2026-09-28 continuation records](completion/README.md) retain expanded runtime,
+startup/fault, directory/permission and PTY evidence on newer source revisions.
+They supplement, rather than replace, the failed and successful initial runs.
