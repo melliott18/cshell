@@ -344,8 +344,10 @@ lexical enclosure are application preconditions, and non-lexical enclosure is
 unspecified. `eval loop transfer` is therefore not a mandatory oracle for every
 shell. [CSH-055](execution-contracts.md) adds while/until condition continues, nested
 lexical transfers and explicit nonlexical policies. Signal interruption evidence is retained under CSH-054/058; the
-distinct PTY/retention timeout observations remain CSH-057; the continuation
-defect is fixed in PR #112.
+continuation and PTY timeout repairs are integrated through CSH-057 PRs #112
+and #121. Its historical retention failure remains unknown-cause under the
+[formal disposition](evidence/csh-057-retention-disposition/README.md), with
+unchanged test enforcement and same-ticket recurrence ownership.
 
 ## Remaining obligations
 

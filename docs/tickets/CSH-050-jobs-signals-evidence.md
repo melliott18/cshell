@@ -16,9 +16,12 @@ Separate base and conditional portions, map exact runtime/PTY/API cases to each 
 
 The retained witnesses remain scoped assertions rather than complete
 requirement-family evidence. CSH-044/045 and CSH-054/058 are integrated;
-CSH-057's lifecycle changes and foreground-resume correction are integrated
-([PR #112](https://github.com/melliott18/cshell/pull/112), `19cd70e`). Separate
-PTY and retention timeout observations remain open under CSH-057.
+CSH-057's lifecycle changes, foreground-resume and PTY timeout repairs, and
+diagnostic-worker isolation are integrated (PRs #109/#112/#121/#124).
+Its [formal retention disposition](../evidence/csh-057-retention-disposition/README.md)
+accepts the unknown-cause historical timeout for scoped CSH-057 completion;
+the unchanged test remains enforced and #99 owns any recurrence. This does not
+complete CSH-050's separate platform acceptance.
 The [baseline integration record](../evidence/csh-050/README.md) retains the
 original failure. The [unmet-criteria review](../evidence/csh-050-acceptance/README.md)
 records the current correction and remaining timeout ownership.
@@ -264,14 +267,17 @@ CSH-012 remains closed. The older failed and incomplete runs above are retained.
 PR #114 integrated this evidence as `9f05719`; PR #112 subsequently integrated
 the continuation correction as `19cd70e`. The [review and reproduction record](../evidence-reconciliation.md)
 accepts the focused-suite wiring and scoped evidence, with no fixture or runtime
-change requested. Status remains `review`: the platform criterion is still open
-for CSH-057's distinct timeout observations and the clause map's residual limits.
+change requested. At that review, the platform criterion stayed open for
+CSH-057's distinct timeout observations and the clause map's residual limits.
+CSH-057's later formal disposition does not complete CSH-050's independent
+platform acceptance, which retains status `review`.
 
 ### Unmet-criteria review and partial-delivery correction
 
 The review starts from integrated `8ffb99e`; PR #112's continuation-status
-correction is present. Separate CSH-057 terminal and retention timeout work
-remains under investigation, not resolved by the older correction.
+correction is present. At that review, separate CSH-057 terminal and retention
+timeout work remained under investigation. The later timeout repairs and
+formal retention disposition are linked in the current limitation above.
 
 A new U-026/JOB-003/U-032 defect was reproduced: an earlier invalid `kill`
 operand left subsequent successfully continued/killed jobs marked stopped.

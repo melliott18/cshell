@@ -1,5 +1,11 @@
 # CSH-057 merged repair review and retention investigation
 
+Historical investigation snapshot. The later
+[formal disposition](../csh-057-retention-disposition/README.md) accepts the
+unknown-cause historical failure as non-blocking for scoped CSH-057 completion
+and defines reopening conditions. It supersedes this snapshot's temporary
+open-ticket hold without changing any result or claiming a confirmed cause.
+
 Reviewed `main` at `faf2e9525dfe2c2c2cba4598a1d63d49552fc1d7`, including
 PR #121 merged as `87fdfe8`. No actionable correctness regression was found
 in the three runtime repairs. This review changes the diagnostic worker

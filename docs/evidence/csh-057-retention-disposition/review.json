@@ -1,0 +1,186 @@
+{
+  "reviewed_at_utc": "2026-09-28T23:19:35.300661+00:00",
+  "source_commit": "66f8900420525f54b2b53d7342b336f0d7656a5f",
+  "previous_full_green_commit": "faf2e9525dfe2c2c2cba4598a1d63d49552fc1d7",
+  "compared_unchanged_paths": [
+    "src",
+    "include",
+    "tests/jobs_lifecycle.c",
+    "tests/fixtures/job-retention.json",
+    "tests/smoke.py",
+    "tests/pty_harness.py",
+    "Makefile",
+    ".github/workflows/tests.yml"
+  ],
+  "changed_compared_paths": [],
+  "changed_other_test_or_image_inputs": [
+    "Dockerfile",
+    "tests/host_acl_cases.py",
+    "tests/host_capability_limits.py",
+    "tests/host_environment_cases.py",
+    "tests/host_platform.py",
+    "tests/host_utilities.py",
+    "tests/host_utility_helper.c",
+    "tests/test_host_harness.py"
+  ],
+  "integrated_repair_commits": [
+    "ab0c77919271cd7794ef20bb14cd5f92e7cef51d",
+    "19cd70e75c71b3adbbf5aac8b1273473e1493685",
+    "87fdfe8375e7a30693bde9d6d15c551c81e09623",
+    "893b10bc9e1a17bcdbf2b83bbd9ebda272197965"
+  ],
+  "checked_acceptance_criteria": 8,
+  "verified_evidence_inventories": {
+    "csh-057-timeouts": 114,
+    "csh-057-retention-review": 34
+  },
+  "hosted_runs": [
+    {
+      "run": 36487917937,
+      "headSha": "faf2e9525dfe2c2c2cba4598a1d63d49552fc1d7",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "Docker (Linux)",
+          "databaseId": 109149227737,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36487917937/job/109149227737",
+          "startedAt": "2026-09-28T21:42:52Z",
+          "completedAt": "2026-09-28T21:50:18Z"
+        },
+        {
+          "name": "Native (ubuntu-24.04, gcc)",
+          "databaseId": 109149227798,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36487917937/job/109149227798",
+          "startedAt": "2026-09-28T21:42:51Z",
+          "completedAt": "2026-09-28T21:49:28Z"
+        },
+        {
+          "name": "Native (macos-15, clang)",
+          "databaseId": 109149227930,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36487917937/job/109149227930",
+          "startedAt": "2026-09-28T21:42:56Z",
+          "completedAt": "2026-09-28T22:27:27Z"
+        }
+      ]
+    },
+    {
+      "run": 36494608216,
+      "headSha": "d466c2d3d75233f45a8f4ca0a246f4a80d790569",
+      "status": "in_progress",
+      "conclusion": "",
+      "jobs": [
+        {
+          "name": "Docker (Linux)",
+          "databaseId": 109171126144,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36494608216/job/109171126144",
+          "startedAt": "2026-09-28T22:49:20Z",
+          "completedAt": "2026-09-28T22:57:49Z"
+        },
+        {
+          "name": "Native (ubuntu-24.04, gcc)",
+          "databaseId": 109171126355,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36494608216/job/109171126355",
+          "startedAt": "2026-09-28T22:49:20Z",
+          "completedAt": "2026-09-28T22:55:37Z"
+        },
+        {
+          "name": "Native (macos-15, clang)",
+          "databaseId": 109171126365,
+          "status": "in_progress",
+          "conclusion": "",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36494608216/job/109171126365",
+          "startedAt": "2026-09-28T22:49:25Z",
+          "completedAt": "0001-01-01T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "run": 36494648441,
+      "headSha": "d466c2d3d75233f45a8f4ca0a246f4a80d790569",
+      "status": "in_progress",
+      "conclusion": "",
+      "jobs": [
+        {
+          "name": "Native (macos-15, clang)",
+          "databaseId": 109171251209,
+          "status": "in_progress",
+          "conclusion": "",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36494648441/job/109171251209",
+          "startedAt": "2026-09-28T22:49:51Z",
+          "completedAt": "0001-01-01T00:00:00Z"
+        },
+        {
+          "name": "Native (ubuntu-24.04, gcc)",
+          "databaseId": 109171251389,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36494648441/job/109171251389",
+          "startedAt": "2026-09-28T22:49:44Z",
+          "completedAt": "2026-09-28T22:56:25Z"
+        },
+        {
+          "name": "Docker (Linux)",
+          "databaseId": 109171251439,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36494648441/job/109171251439",
+          "startedAt": "2026-09-28T22:49:44Z",
+          "completedAt": "2026-09-28T22:57:17Z"
+        }
+      ]
+    },
+    {
+      "run": 36495093736,
+      "headSha": "66f8900420525f54b2b53d7342b336f0d7656a5f",
+      "status": "in_progress",
+      "conclusion": "",
+      "jobs": [
+        {
+          "name": "Native (macos-15, clang)",
+          "databaseId": 109172693007,
+          "status": "in_progress",
+          "conclusion": "",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36495093736/job/109172693007",
+          "startedAt": "2026-09-28T22:54:41Z",
+          "completedAt": "0001-01-01T00:00:00Z"
+        },
+        {
+          "name": "Docker (Linux)",
+          "databaseId": 109172693193,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36495093736/job/109172693193",
+          "startedAt": "2026-09-28T22:54:33Z",
+          "completedAt": "2026-09-28T23:02:39Z"
+        },
+        {
+          "name": "Native (ubuntu-24.04, gcc)",
+          "databaseId": 109172693214,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36495093736/job/109172693214",
+          "startedAt": "2026-09-28T22:54:33Z",
+          "completedAt": "2026-09-28T23:00:49Z"
+        }
+      ]
+    }
+  ],
+  "validation": "Documentation/link/source/evidence review; no new runtime executions. Current in-progress checks are not counted as passes.",
+  "documentation_checks": {
+    "local_links_and_anchors": 394,
+    "evidence_inventories": 3,
+    "diff_whitespace_check": "passed",
+    "independent_review": "Accepted same-ticket disposition; corrected stale current references and uncertainty wording."
+  }
+}
