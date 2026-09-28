@@ -1,0 +1,59 @@
+--- src/jobs.c
++++ jobs-window.c
+@@ -353,7 +353,7 @@
+                     if (process->done) break;
+                 }
+             } while (pid > 0 || (pid < 0 && errno == EINTR));
+-            if (pid < 0 && !process->done) return -1;
++            if (pid < 0 && !process->done) { int saved = errno; dprintf(2, "TRACE poll errno=%d\n", saved); errno = saved; return -1; }
+         }
+         if (was_done != complete(job) || was_stopped != stopped(job)) job->changed = 1;
+     }
+@@ -416,7 +416,7 @@
+ int csh_jobs_give_terminal(struct csh_jobs *jobs, struct csh_job *job, int resume)
+ {
+     if (!job->grouped) return 0;
+-    if (tcgetattr(jobs->tty, &jobs->shell_modes) == -1) return -1;
++    if (tcgetattr(jobs->tty, &jobs->shell_modes) == -1) { int saved = errno; dprintf(2, "TRACE getmodes errno=%d\n", saved); errno = saved; return -1; }
+     jobs->modes_valid = 1;
+     if (terminal_group(jobs->tty, job->pgid) == -1) return -1;
+     if (resume && job->modes_valid && terminal_modes(jobs->tty, &job->modes) == -1)
+@@ -429,10 +429,20 @@
+     size_t i;
+     /* A terminal interrupt can finish the group after handoff/display and
+      * before SIGCONT. Collect that exit normally instead of losing its status. */
+-    if (kill(-job->pgid, SIGCONT) == -1 && errno != ESRCH) return -1;
++    if (kill(-job->pgid, SIGCONT) == -1 && errno != ESRCH) { int saved = errno; dprintf(2, "TRACE continue errno=%d\n", saved); errno = saved; return -1; }
+     for (i = 0; i < job->count; ++i) job->processes[i].stopped = 0;
+     job->changed = 0;
+     return 0;
++}
++
++static int exit_before_continue(struct csh_job *job)
++{
++    siginfo_t event;
++    int rc;
++    do { rc = waitid(P_PID, (id_t)job->processes[0].pid, &event, WEXITED | WNOWAIT); }
++    while (rc < 0 && errno == EINTR);
++    if (rc < 0) { dprintf(2, "TRACE observe exit errno=%d\n", errno); return -1; }
++    return continue_job(job);
+ }
+ 
+ static void promote_job(struct csh_jobs *jobs, struct csh_job *job)
+@@ -455,13 +465,13 @@
+         if (csh_jobs_give_terminal(jobs, job, 1) == -1) rc = -1;
+         else {
+             if (outputf(STDOUT_FILENO, "%s\n", job->text) < 0 ||
+-                continue_job(job) == -1) rc = -1;
++                exit_before_continue(job) == -1) rc = -1;
+         }
+     }
+     if (rc == 0) rc = wait_job(jobs, job, 0);
+-    if (rc == -1) number = errno;
++    if (rc == -1) { number = errno; dprintf(2, "TRACE before-restore errno=%d\n", number); errno = number; }
+     if (restore_terminal(jobs, job) == -1) { rc = -1; number = errno; }
+-    if (rc == -1) { job->background = 1; errno = number; return -1; }
++    if (rc == -1) { dprintf(2, "TRACE foreground errno=%d\n", number); job->background = 1; errno = number; return -1; }
+     *status = rc > 0 ? rc : job_status(job);
+     if (complete(job)) csh_jobs_remove(jobs, job);
+     else {

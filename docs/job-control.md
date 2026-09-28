@@ -45,6 +45,11 @@ registry retains at least the platform's `_SC_CHILD_MAX` completed results
 asynchronous launch. Running/stopped records are kept in addition to this
 capacity; foreground launches never evict retained asynchronous statuses.
 
+If a foreground job exits before its continuation signal can be delivered,
+`fg` collects and returns that job's exit status. A rejected SIGCONT is accepted
+only after every owned child has completed; errors for live or stopped jobs
+still fail without discarding their state.
+
 Job builtins execute under the executor's normal assignment/redirection rules.
 `set` is a special builtin; the others are regular builtins. Invalid `set`
 operands are validated before changing options or positional parameters.
