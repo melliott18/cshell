@@ -1,0 +1,92 @@
+Analysis of sampling jobs_lifecycle-baseline (pid 26199) every 10 milliseconds
+Process:         jobs_lifecycle-baseline [26199]
+Path:            /private/tmp/*/jobs_lifecycle-baseline
+Load Address:    0x10234c000
+Identifier:      jobs_lifecycle-baseline
+Version:         ???
+Code Type:       ARM64
+Platform:        macOS
+Parent Process:  Python [26196]
+
+Date/Time:       2026-09-28 15:42:12.648 -0700
+Launch Time:     2026-09-28 15:42:12.393 -0700
+OS Version:      macOS 14.8.7 (23J520)
+Report Version:  7
+Analysis Tool:   /usr/bin/sample
+
+Physical footprint:         39.5M
+Physical footprint (peak):  39.5M
+Idle exit:                  untracked
+----
+
+Call graph:
+    104 Thread_139909574   DispatchQueue_1: com.apple.main-thread  (serial)
+      104 start  (in dyld) + 2476  [0x18e43b154]
+        51 main  (in jobs_lifecycle-baseline) + 1896  [0x10234fca0]
+        + 51 csh_jobs_reap  (in jobs_lifecycle-baseline) + 132  [0x10235ef34]
+        +   51 wait_job  (in jobs_lifecycle-baseline) + 832  [0x10235d098]
+        +     51 __sigsuspend  (in libsystem_kernel.dylib) + 8  [0x18e793c20]
+        49 main  (in jobs_lifecycle-baseline) + 1760  [0x10234fc18]
+        + 48 run  (in jobs_lifecycle-baseline) + 448  [0x102356d58]
+        + ! 48 csh_execute_context_ast  (in jobs_lifecycle-baseline) + 692  [0x1023845a8]
+        + !   48 execute_plan  (in jobs_lifecycle-baseline) + 3264  [0x102387b18]
+        + !     48 context_fork  (in jobs_lifecycle-baseline) + 348  [0x1023a0234]
+        + !       46 context_job  (in jobs_lifecycle-baseline) + 2168  [0x10239cdd0]
+        + !       : 46 fork  (in libsystem_c.dylib) + 56  [0x18e67f62c]
+        + !       :   46 __fork  (in libsystem_kernel.dylib) + 20  [0x18e78d94c]
+        + !       1 context_job  (in jobs_lifecycle-baseline) + 868  [0x10239c8bc]
+        + !       : 1 plan_text  (in jobs_lifecycle-baseline) + 664  [0x10239f398]
+        + !       :   1 wrap_fwrite  (in libclang_rt.asan_osx_dynamic.dylib) + 124  [0x102d30d98]
+        + !       :     1 fwrite  (in libsystem_c.dylib) + 152  [0x18e67cad8]
+        + !       :       1 __sfvwrite  (in libsystem_c.dylib) + 84  [0x18e661bdc]
+        + !       :         1 __swsetup  (in libsystem_c.dylib) + 188  [0x18e67cbec]
+        + !       :           1 __smakebuf  (in libsystem_c.dylib) + 388  [0x18e670ecc]
+        + !       :             1 wrap_malloc  (in libclang_rt.asan_osx_dynamic.dylib) + 252  [0x102d6718c]
+        + !       :               1 __asan::asan_malloc(unsigned long, __sanitizer::BufferedStackTrace*)  (in libclang_rt.asan_osx_dynamic.dylib) + 48  [0x102d18730]
+        + !       :                 1 __asan::Allocator::Allocate(unsigned long, unsigned long, __sanitizer::BufferedStackTrace*, __asan::AllocType, bool)  (in libclang_rt.asan_osx_dynamic.dylib) + 888  [0x102d18ad4]
+        + !       :                   1 _platform_memset  (in libsystem_platform.dylib) + 108  [0x18e7f6f3c]
+        + !       1 context_job  (in jobs_lifecycle-baseline) + 1788  [0x10239cc54]
+        + !         1 wrap_sigprocmask  (in libclang_rt.asan_osx_dynamic.dylib) + 0  [0x102d4b8a8]
+        + 1 run  (in jobs_lifecycle-baseline) + 416  [0x102356d38]
+        +   1 csh_parser_next  (in jobs_lifecycle-baseline) + 960  [0x1023b0cf0]  parser.c:1485
+        +     1 parse_list  (in jobs_lifecycle-baseline) + 972  [0x1023b402c]  parser.c:1318
+        +       1 parse_pipeline  (in jobs_lifecycle-baseline) + 536  [0x1023bb928]  parser.c:1157
+        +         1 parse_command  (in jobs_lifecycle-baseline) + 904  [0x1023bc58c]  parser.c:1077
+        +           1 csh_ast_create  (in jobs_lifecycle-baseline) + 168  [0x1023c4410]  ast.c:63
+        +             1 wrap_malloc  (in libclang_rt.asan_osx_dynamic.dylib) + 252  [0x102d6718c]
+        +               1 __asan::asan_malloc(unsigned long, __sanitizer::BufferedStackTrace*)  (in libclang_rt.asan_osx_dynamic.dylib) + 48  [0x102d18730]
+        +                 1 __asan::Allocator::Allocate(unsigned long, unsigned long, __sanitizer::BufferedStackTrace*, __asan::AllocType, bool)  (in libclang_rt.asan_osx_dynamic.dylib) + 660  [0x102d189f0]
+        2 main  (in jobs_lifecycle-baseline) + 2132  [0x10234fd8c]
+        + 2 run  (in jobs_lifecycle-baseline) + 448  [0x102356d58]
+        +   2 csh_execute_context_ast  (in jobs_lifecycle-baseline) + 692  [0x1023845a8]
+        +     2 execute_plan  (in jobs_lifecycle-baseline) + 3364  [0x102387b7c]
+        +       2 execute_plan  (in jobs_lifecycle-baseline) + 4236  [0x102387ee4]
+        +         2 runtime_simple  (in jobs_lifecycle-baseline) + 3080  [0x1023918fc]
+        +           1 context_job  (in jobs_lifecycle-baseline) + 2168  [0x10239cdd0]
+        +           ! 1 fork  (in libsystem_c.dylib) + 56  [0x18e67f62c]
+        +           !   1 __fork  (in libsystem_kernel.dylib) + 20  [0x18e78d94c]
+        +           1 context_job  (in jobs_lifecycle-baseline) + 5640  [0x10239db60]
+        +             1 csh_jobs_foreground  (in jobs_lifecycle-baseline) + 292  [0x10235ba14]
+        +               1 wait_job  (in jobs_lifecycle-baseline) + 832  [0x10235d098]
+        +                 1 __sigsuspend  (in libsystem_kernel.dylib) + 8  [0x18e793c20]
+        1 main  (in jobs_lifecycle-baseline) + 2188  [0x10234fdc4]
+        + 1 run  (in jobs_lifecycle-baseline) + 448  [0x102356d58]
+        +   1 csh_execute_context_ast  (in jobs_lifecycle-baseline) + 692  [0x1023845a8]
+        +     1 execute_plan  (in jobs_lifecycle-baseline) + 3264  [0x102387b18]
+        +       1 context_fork  (in jobs_lifecycle-baseline) + 348  [0x1023a0234]
+        +         1 context_job  (in jobs_lifecycle-baseline) + 2168  [0x10239cdd0]
+        +           1 fork  (in libsystem_c.dylib) + 56  [0x18e67f62c]
+        +             1 __fork  (in libsystem_kernel.dylib) + 20  [0x18e78d94c]
+        1 main  (in jobs_lifecycle-baseline) + 2312  [0x10234fe40]
+          1 csh_jobs_reap  (in jobs_lifecycle-baseline) + 132  [0x10235ef34]
+            1 wait_job  (in jobs_lifecycle-baseline) + 832  [0x10235d098]
+              1 __sigsuspend  (in libsystem_kernel.dylib) + 8  [0x18e793c20]
+
+Total number in stack (recursive counted multiple, when >=5):
+
+Sort by top of stack, same collapsed (when >= 5):
+        __sigsuspend  (in libsystem_kernel.dylib)        53
+        __fork  (in libsystem_kernel.dylib)        48
+
+Binary images description not available
+

@@ -1,0 +1,95 @@
+{
+  "root": "/Users/mitchell/.codex/worktrees/csh-057-retention/cshell",
+  "output": "/Users/mitchell/.codex/worktrees/csh-057-retention/cshell/build/csh057-spawn-runner-review",
+  "runs": [
+    {
+      "label": "pass",
+      "command": [
+        "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+        "/Users/mitchell/.codex/worktrees/csh-057-retention/cshell/docs/evidence/csh-057-timeouts/diagnose_retention.py",
+        "/Users/mitchell/.codex/worktrees/csh-057-retention/cshell/build/csh057-spawn-runner-review/fixture",
+        "/Users/mitchell/.codex/worktrees/csh-057-retention/cshell/build/csh057-spawn-runner-review/pass",
+        "--workers",
+        "2"
+      ],
+      "returncode": 0,
+      "stdout": "{\"index\": 0, \"elapsed\": 0.034190208185464144, \"failures\": []}\n{\"index\": 1, \"elapsed\": 0.04427795810624957, \"failures\": []}\n",
+      "stderr": "",
+      "rows": [
+        {
+          "index": 0,
+          "elapsed": 0.034190208185464144,
+          "failures": []
+        },
+        {
+          "index": 1,
+          "elapsed": 0.04427795810624957,
+          "failures": []
+        }
+      ],
+      "workers": [
+        {
+          "pid": 30526,
+          "threads": 1,
+          "method": "spawn",
+          "timeout": 60,
+          "output_limit": 65536
+        },
+        {
+          "pid": 30527,
+          "threads": 1,
+          "method": "spawn",
+          "timeout": 60,
+          "output_limit": 65536
+        }
+      ]
+    },
+    {
+      "label": "failure",
+      "command": [
+        "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+        "/Users/mitchell/.codex/worktrees/csh-057-retention/cshell/docs/evidence/csh-057-timeouts/diagnose_retention.py",
+        "/Users/mitchell/.codex/worktrees/csh-057-retention/cshell/build/csh057-spawn-runner-review/fixture",
+        "/Users/mitchell/.codex/worktrees/csh-057-retention/cshell/build/csh057-spawn-runner-review/failure",
+        "--workers",
+        "2"
+      ],
+      "returncode": 0,
+      "stdout": "{\"index\": 0, \"elapsed\": 0.044277832843363285, \"failures\": [\"stdout: expected b'deliberate mismatch\\\\n' (20 bytes), got b'helper passed\\\\n' (14 captured bytes)\"]}\n{\"index\": 1, \"elapsed\": 0.05502329207956791, \"failures\": [\"stdout: expected b'deliberate mismatch\\\\n' (20 bytes), got b'helper passed\\\\n' (14 captured bytes)\"]}\n",
+      "stderr": "",
+      "rows": [
+        {
+          "index": 0,
+          "elapsed": 0.044277832843363285,
+          "failures": [
+            "stdout: expected b'deliberate mismatch\\n' (20 bytes), got b'helper passed\\n' (14 captured bytes)"
+          ]
+        },
+        {
+          "index": 1,
+          "elapsed": 0.05502329207956791,
+          "failures": [
+            "stdout: expected b'deliberate mismatch\\n' (20 bytes), got b'helper passed\\n' (14 captured bytes)"
+          ]
+        }
+      ],
+      "workers": [
+        {
+          "pid": 30532,
+          "threads": 1,
+          "method": "spawn",
+          "timeout": 60,
+          "output_limit": 65536
+        },
+        {
+          "pid": 30533,
+          "threads": 1,
+          "method": "spawn",
+          "timeout": 60,
+          "output_limit": 65536
+        }
+      ]
+    }
+  ],
+  "result": "passed"
+}

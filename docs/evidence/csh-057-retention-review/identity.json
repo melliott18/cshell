@@ -1,0 +1,16 @@
+{
+  "source_commit": "faf2e9525dfe2c2c2cba4598a1d63d49552fc1d7",
+  "branch": "fix/CSH-057-retention-timeout",
+  "platform": "macOS-14.8.7-arm64-arm-64bit",
+  "uname": "Darwin Mitchells-MacBook-Pro-2.local 23.6.0 Darwin Kernel Version 23.6.0: Tue Apr 21 20:21:28 PDT 2026; root:xnu-10063.141.1.712.16~1/RELEASE_ARM64_T6000 arm64",
+  "compiler": "Apple clang version 15.0.0 (clang-1500.3.9.4)\nTarget: arm64-apple-darwin23.6.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin",
+  "python": "3.12.2",
+  "sanitizer_flags": "-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+  "linker_flags": "-fsanitize=address,undefined",
+  "case_environment": "smoke.capture controlled environment; MallocNanoZone=0; ASAN_OPTIONS and UBSAN_OPTIONS absent; trace path only when recorded",
+  "deadline_seconds": 60,
+  "phase_alarm_seconds": 5,
+  "baseline_binary_sha256": "da0537e0090ed27412e16ed510fb483c0a44a1280c0fc7f65c44aa2cb03c7d8a",
+  "normal_binary_sha256": "6303bca4fc91a703c1c8fca5c3b008a60b4d391ff0354498a3e646a8e2b8d4e5",
+  "note": "Instrumented intermediate binaries were overwritten during the experiments; reconstruct their source with the retained cumulative patches and build flags. Only baseline/normal binary hashes were retained."
+}

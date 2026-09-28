@@ -1,0 +1,83 @@
+{
+  "binary": "/private/tmp/csh057-retention-asan.Jmvn4t/build/tests/jobs_lifecycle",
+  "env": {
+    "CSH_RETENTION_TRACE": "/Users/mitchell/.codex/worktrees/csh-057-retention/cshell/build/retention-review/skip-complete-phases.log"
+  },
+  "seconds": 32.46500554098748,
+  "status": 0,
+  "failures": [],
+  "events": [
+    {
+      "elapsed": 0.32897924981079996,
+      "data": "retention capacity=32 round=1 completed=0\n"
+    },
+    {
+      "elapsed": 1.7513643328566104,
+      "data": "retention capacity=32 round=1 completed=32\n"
+    },
+    {
+      "elapsed": 1.7995997909456491,
+      "data": "retention capacity=32 round=2 completed=0\n"
+    },
+    {
+      "elapsed": 3.273415957810357,
+      "data": "retention capacity=32 round=2 completed=32\n"
+    },
+    {
+      "elapsed": 3.372921082889661,
+      "data": "retention capacity=256 round=1 completed=0\n"
+    },
+    {
+      "elapsed": 6.31750995782204,
+      "data": "retention capacity=256 round=1 completed=64\n"
+    },
+    {
+      "elapsed": 9.168978499947116,
+      "data": "retention capacity=256 round=1 completed=128\n"
+    },
+    {
+      "elapsed": 12.349907540949062,
+      "data": "retention capacity=256 round=1 completed=192\n"
+    },
+    {
+      "elapsed": 15.953770374879241,
+      "data": "retention capacity=256 round=1 completed=256\n"
+    },
+    {
+      "elapsed": 16.039537457982078,
+      "data": "retention capacity=256 round=2 completed=0\n"
+    },
+    {
+      "elapsed": 20.641699082916602,
+      "data": "retention capacity=256 round=2 completed=64\n"
+    },
+    {
+      "elapsed": 24.203519582981244,
+      "data": "retention capacity=256 round=2 completed=128\n"
+    },
+    {
+      "elapsed": 27.69368083286099,
+      "data": "retention capacity=256 round=2 completed=192\n"
+    },
+    {
+      "elapsed": 31.10033924994059,
+      "data": "retention capacity=256 round=2 completed=256\n"
+    },
+    {
+      "elapsed": 31.23392583290115,
+      "data": "CHILD_MAX=32 and fallback=256: capacity, saved/unsaved IDs, foreground preservation, oldest eviction passed\nretention live records\n"
+    },
+    {
+      "elapsed": 32.37808279087767,
+      "data": "retention formatting\n"
+    },
+    {
+      "elapsed": 32.4437094158493,
+      "data": "retention complete\n"
+    }
+  ],
+  "output": {
+    "stdout": "retention capacity=32 round=1 completed=0\nretention capacity=32 round=1 completed=32\nretention capacity=32 round=2 completed=0\nretention capacity=32 round=2 completed=32\nretention capacity=256 round=1 completed=0\nretention capacity=256 round=1 completed=64\nretention capacity=256 round=1 completed=128\nretention capacity=256 round=1 completed=192\nretention capacity=256 round=1 completed=256\nretention capacity=256 round=2 completed=0\nretention capacity=256 round=2 completed=64\nretention capacity=256 round=2 completed=128\nretention capacity=256 round=2 completed=192\nretention capacity=256 round=2 completed=256\nCHILD_MAX=32 and fallback=256: capacity, saved/unsaved IDs, foreground preservation, oldest eviction passed\nretention live records\nretention formatting\nretention complete\n",
+    "stderr": ""
+  }
+}

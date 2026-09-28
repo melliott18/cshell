@@ -1,0 +1,5 @@
+{
+  "initial_skip_variant_attempt": "No process found: diagnostic lookup compared /tmp path against canonical /private/tmp command. No sample collected; the fixture still passed.",
+  "baseline_retry": "Canonicalized path; sample completed successfully; fixture passed.",
+  "gh_log_retrieval": "gh run view --log produced empty successful output for two older jobs; direct jobs logs API returned complete PR/passing-peer logs. Historical failing log remains in ../csh-057-timeouts/hosted-retention-timeout.log.gz."
+}

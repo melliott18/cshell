@@ -1,0 +1,11 @@
+--- a/src/jobs.c
++++ b/src/jobs.c
+@@ -530,7 +530,7 @@
+     struct csh_job *job;
+     if (csh_jobs_poll(jobs) == -1) return -1;
+     if (wait) for (job = jobs->head; job != NULL; job = job->next)
+-        if (wait_job(jobs, job, 0) == -1) return -1;
++        if (!complete(job) && wait_job(jobs, job, 0) == -1) return -1;
+     return 0;
+ }
+ 
