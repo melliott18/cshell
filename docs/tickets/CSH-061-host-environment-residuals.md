@@ -1,6 +1,6 @@
 # CSH-061: Resolve remaining host environment contracts
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
