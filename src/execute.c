@@ -142,8 +142,15 @@ nomem:
 
 static void diagnose(const char *name, const char *message, int number)
 {
-    if (number) dprintf(STDERR_FILENO, "cshell: %s: %s: %s\n", name, message, strerror(number));
-    else dprintf(STDERR_FILENO, "cshell: %s: %s\n", name, message);
+    csh_write_text(STDERR_FILENO, "cshell: ");
+    csh_write_text(STDERR_FILENO, name);
+    csh_write_text(STDERR_FILENO, ": ");
+    csh_write_text(STDERR_FILENO, message);
+    if (number) {
+        csh_write_text(STDERR_FILENO, ": ");
+        csh_write_text(STDERR_FILENO, strerror(number));
+    }
+    csh_write_text(STDERR_FILENO, "\n");
 }
 
 /* Return only when every exec attempt failed; caller decides whether to exit. */
@@ -970,9 +977,13 @@ static int job_handler(struct csh_state *state, const struct csh_command *comman
 static void report_error(struct csh_error *error)
 {
     if (error->reported) return;
-    dprintf(STDERR_FILENO, "cshell: %s", csh_error_message(error));
-    if (error->system_errno) dprintf(STDERR_FILENO, ": %s", strerror(error->system_errno));
-    dprintf(STDERR_FILENO, "\n");
+    csh_write_text(STDERR_FILENO, "cshell: ");
+    csh_write_text(STDERR_FILENO, csh_error_message(error));
+    if (error->system_errno) {
+        csh_write_text(STDERR_FILENO, ": ");
+        csh_write_text(STDERR_FILENO, strerror(error->system_errno));
+    }
+    csh_write_text(STDERR_FILENO, "\n");
     error->reported = 1;
 }
 
@@ -1242,7 +1253,7 @@ static char *lookup_path(struct csh_state *state, const char *name, int defaults
     }
     return path;
 }
-static int lookup_report(struct csh_state *state, const char *name, int verbose,
+static int lookup_report(struct csh_state *state, const char *utility, const char *name, int verbose,
     int defaults, struct csh_error *error)
 {
     const char *alias = csh_aliases_get(csh_state_aliases(state), name);
@@ -1252,16 +1263,24 @@ static int lookup_report(struct csh_state *state, const char *name, int verbose,
     size_t i;
     if (alias) {
         const char *argv[] = {"alias", name};
-        if (verbose && printf("%s is an alias: ", name) < 0) return 1;
-        if (!verbose && printf("alias ") < 0) return 1;
+        if (verbose && (csh_write_text(1, name) < 0 || csh_write_text(1, " is an alias: ") < 0)) goto output_error;
+        if (!verbose && csh_write_text(1, "alias ") < 0) goto output_error;
         return csh_builtin_alias(csh_state_aliases(state), 2, argv, stdout, stderr) || fflush(stdout) == EOF;
     }
     for (i = 0; i < sizeof(reserved)/sizeof(*reserved); ++i)
-        if (!strcmp(name, reserved[i])) return dprintf(1, verbose ? "%s is a reserved word\n" : "%s\n", name) < 0;
+        if (!strcmp(name, reserved[i])) {
+            if (csh_write_text(1, name) < 0 ||
+                (verbose && csh_write_text(1, " is a reserved word") < 0) || csh_write_text(1, "\n") < 0)
+                goto output_error;
+            return 0;
+        }
     if ((category != CSH_EXEC_EXTERNAL || csh_jobs_is_builtin(name)) &&
         (strcmp(name, "pwd") || category == CSH_EXEC_FUNCTION)) {
-        return dprintf(1, verbose ? "%s is a %s\n" : "%s\n", name,
-            category == CSH_EXEC_FUNCTION ? "function" : "shell builtin") < 0;
+        if (csh_write_text(1, name) < 0 || (verbose &&
+            (csh_write_text(1, " is a ") < 0 || csh_write_text(1,
+                category == CSH_EXEC_FUNCTION ? "function" : "shell builtin") < 0)) ||
+            csh_write_text(1, "\n") < 0) goto output_error;
+        return 0;
     }
     { char *path = lookup_path(state, name, defaults, 0, NULL, error);
       int rc;
@@ -1269,9 +1288,15 @@ static int lookup_report(struct csh_state *state, const char *name, int verbose,
           if (verbose) diagnose(name, "not found", 0);
           return 1;
       }
-      rc = (verbose ? dprintf(1, "%s is %s\n", name, path) : dprintf(1, "%s\n", path)) < 0;
-      free(path); return rc;
+      rc = (verbose && (csh_write_text(1, name) < 0 || csh_write_text(1, " is ") < 0)) ||
+          csh_write_text(1, path) < 0 || csh_write_text(1, "\n") < 0;
+      free(path);
+      if (rc) goto output_error;
+      return 0;
     }
+output_error:
+    diagnose(utility, "cannot write output", 0);
+    return 1;
 }
 
 void csh_execute_input_line(void *state, const unsigned char *bytes, size_t length)
@@ -1509,7 +1534,7 @@ static int evaluation_handler(struct csh_state *state, const struct csh_command 
         result->status = 0;
         if (report) {
             for (i = first; i < command->argc; ++i)
-                if (lookup_report(state, command->argv[i], verbose, defaults, error)) result->status = 1;
+                if (lookup_report(state, name, command->argv[i], verbose, defaults, error)) result->status = 1;
         } else if (first < command->argc) {
             struct csh_command target = *command;
             enum csh_execution_category category;
@@ -1544,7 +1569,11 @@ static int evaluation_handler(struct csh_state *state, const struct csh_command 
             if (csh_state_hash_names(state, &names) != CSH_STATE_OK) return fail(error, "cannot list command cache", ENOMEM, 1);
             for (i = 0; names[i]; ++i)
                 if (command_category(state, names[i], NULL) == CSH_EXEC_EXTERNAL &&
-                    dprintf(1, "%s\n", csh_state_hash_get(state, names[i])) < 0) result->status = 1;
+                    (csh_write_text(1, csh_state_hash_get(state, names[i])) < 0 || csh_write_text(1, "\n") < 0)) {
+                    diagnose("hash", "cannot write output", 0);
+                    result->status = 1;
+                    break;
+                }
             csh_state_environment_destroy(names);
         }
         for (i = first; i < command->argc; ++i) {

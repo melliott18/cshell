@@ -230,3 +230,14 @@ def add_state_builtin_cases(cross, helper):
         script = command + '; printf "%s\\n" "$?"'
         case('exec interactive ' + label, f'{shell} -i -c {shlex.quote(script)}',
              f'{expected_status}\n', stderr=diagnostic, setup={'denied': 'exit 0\n'})
+
+    case('hash output failure', 'hash cat; hash >&-; echo "$?"', '1\n',
+         stderr='cshell: hash: cannot write output\n')
+    for option in ('-v', '-V'):
+        for name in ('read', 'f', 'if', 'cat', 'probe'):
+            case('command lookup output failure ' + option + ' ' + name,
+                 f"f() {{ :; }}; alias probe='echo okay'; command {option} {name} >&-; echo \"$?\"",
+                 '1\n', stderr='cshell: command: cannot write output\n')
+    case('lookup diagnostic on closed stderr',
+         'command -v read >&- 2>&-; echo "$?"; no-such-cshell-command 2>&-; echo "$?"',
+         '1\n127\n')
