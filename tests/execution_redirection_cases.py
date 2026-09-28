@@ -52,7 +52,7 @@ def add_redirection_cases(cross, helper):
             actual = '>' if op == 'noclobber' else op
             check(f'empty target {expansion} {op}', prefix +
                   ('set -C; ' if op == 'noclobber' else '') +
-                  f'{helper} args forbidden >early {actual}{operand} >"$(touch expanded; printf later)"; '
+                  f'{helper} args forbidden >|early {actual}{operand} >"$(touch expanded; printf later)"; '
                   f'{helper} args "$?" restored', setup={'early': 'old'},
                   stdout='[1]\n[restored]\n',
                   stderr='cshell: cannot apply redirection: ' + os.strerror(errno.ENOENT) + '\n',
