@@ -92,16 +92,20 @@ run('malformed environment policy',
     f'{shlex.quote(str(helper))} malformed-environment {shlex.quote(str(binary))} -c ' + shlex.quote(
         'printf "%s:%s\\n" "$DUPLICATE" "$VALID"; '
         'case "$(export -p)" in *1bad*|*NOEQUAL*|*invalid*) exit 9;; esac'), stdout='last:okay\n')
-run('over PATH_MAX imported PWD permitted normalization',
+run('over PATH_MAX imported PWD retained',
     # Use redundant slash prefix, not repeated pathname components.
     'slashes=/; n=0; while test "$n" -lt 14; do slashes=$slashes$slashes; n=$((n+1)); done; '
-    f'PWD=$slashes$PWD {shlex.quote(str(binary))} -c ' + shlex.quote('test "$PWD" = "$(pwd -P)"'))
+    f'LONG_EXPECT=$slashes$PWD PWD=$slashes$PWD {shlex.quote(str(binary))} -c ' + shlex.quote('test "$PWD" = "$LONG_EXPECT"'))
 
 run('actual cwd beyond PATH_MAX',
     f'{shlex.quote(str(helper))} deep-directory {shlex.quote(str(binary))} -c ' + shlex.quote(
         'test "$PWD" = "$EXPECTED_CWD" || exit 9; test "$(pwd -P)" = "$EXPECTED_CWD" || exit 8; '
         'mkdir child; cd -L child || exit 7; test "$PWD" = "$EXPECTED_CWD/child" || exit 6; '
-        'cd -P ..; test "$PWD" = "$EXPECTED_CWD"'))
+        'cd -L .. || exit 5; test "$PWD" = "$EXPECTED_CWD" || exit 4; '
+        'cd -L child/../child || exit 3; cd -P .. || exit 2; '
+        'ln -s child link; cd -L link || exit 7; test "$PWD" = "$EXPECTED_CWD/link" || exit 6; '
+        'cd -L .. || exit 5; cd missing/.. 2>error; test "$?" != 0 || exit 4; '
+        'test "$PWD" = "$EXPECTED_CWD"'))
 for operation, value in (('limit-units', '7'), ('limit-unlimited', 'unlimited')):
     run(operation + ' all base resources',
         '; '.join(f'ulimit -S -{option} {value} || exit 9' for option in 'cdfnsv'),

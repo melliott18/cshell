@@ -99,6 +99,56 @@ static char *cwd(void)
     }
 }
 
+/* Open a directory for search/fchdir without requiring read permission. Walk
+ * overlong paths component by component, keeping the process cwd unchanged. */
+static int directory_handle(const char *path)
+{
+#if defined(O_SEARCH)
+    const int flags = O_SEARCH;
+#elif defined(O_PATH)
+    const int flags = O_PATH | O_DIRECTORY;
+#else
+    const int flags = O_RDONLY;
+#endif
+    int fd = open(path, flags);
+    char *copy, *part;
+    if (fd >= 0 || errno != ENAMETOOLONG) return fd;
+    copy = strdup(path);
+    if (!copy) return -1;
+    fd = open(*path == '/' ? (path[1] == '/' && path[2] != '/' ? "//" : "/") : ".", flags);
+    part = copy;
+    while (fd >= 0 && *part) {
+        char *end;
+        int next, saved_errno;
+        while (*part == '/') ++part;
+        if (!*part) break;
+        end = part + strcspn(part, "/");
+        if (*end) *end++ = 0;
+        next = openat(fd, part, flags);
+        saved_errno = errno;
+        close(fd);
+        errno = saved_errno;
+        fd = next;
+        part = end;
+    }
+    free(copy);
+    return fd;
+}
+
+static int directory_stat(const char *path, struct stat *st)
+{
+    int fd, rc, saved_errno;
+    if (stat(path, st) == 0) return 0;
+    if (errno != ENAMETOOLONG) return -1;
+    fd = directory_handle(path);
+    if (fd < 0) return -1;
+    rc = fstat(fd, st);
+    saved_errno = errno;
+    close(fd);
+    errno = saved_errno;
+    return rc;
+}
+
 static int logical_valid(const char *s)
 {
     struct stat a, b;
@@ -111,7 +161,7 @@ static int logical_valid(const char *s)
         if ((n == 1 && t[0] == '.') || (n == 2 && t[0] == '.' && t[1] == '.')) return 0;
         t += n;
     }
-    return stat(s, &a) == 0 && stat(".", &b) == 0 && a.st_dev == b.st_dev && a.st_ino == b.st_ino;
+    return directory_stat(s, &a) == 0 && stat(".", &b) == 0 && a.st_dev == b.st_dev && a.st_ino == b.st_ino;
 }
 
 static char *current(struct csh_state *state, int physical)
@@ -171,7 +221,7 @@ static int normalize(char *s)
             struct stat st;
             char saved = s[used];
             s[used] = 0;
-            if (stat(s, &st) < 0 || !S_ISDIR(st.st_mode)) { s[used] = saved; return -1; }
+            if (directory_stat(s, &st) < 0 || !S_ISDIR(st.st_mode)) { s[used] = saved; return -1; }
             s[used] = saved;
             if (used > 1) {
                 while (used > 1 && s[used-1] != '/') --used;
@@ -251,15 +301,7 @@ static int directory(struct csh_state *state, size_t argc, char *const argv[])
         }
         if (target[0] == '/' && normalize(target) < 0) goto done;
     }
-    /* Saving a rollback handle must not add a directory read-permission
-     * requirement to cd. O_SEARCH is POSIX Issue 8; Linux uses O_PATH. */
-#if defined(O_SEARCH)
-    fd = open(".", O_SEARCH);
-#elif defined(O_PATH)
-    fd = open(".", O_PATH | O_DIRECTORY);
-#else
-    fd = open(".", O_RDONLY);
-#endif
+    fd = directory_handle(".");
     if (fd < 0 || csh_state_save(state, &checkpoint) != CSH_STATE_OK) goto done;
     {
         const char *change = target;
@@ -275,7 +317,17 @@ static int directory(struct csh_state *state, size_t argc, char *const argv[])
                 if (!*change) change = ".";
             }
         }
-        if (chdir(change) < 0) goto done;
+        if (chdir(change) < 0) {
+            int target_fd, rc, saved_errno;
+            if (errno != ENAMETOOLONG) goto done;
+            target_fd = directory_handle(change);
+            if (target_fd < 0) goto done;
+            rc = fchdir(target_fd);
+            saved_errno = errno;
+            close(target_fd);
+            errno = saved_errno;
+            if (rc < 0) goto done;
+        }
     }
     newpwd = !physical && target[0] == '/' ? strdup(target) : cwd();
     if (!newpwd) {
