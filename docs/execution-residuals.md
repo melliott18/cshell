@@ -28,7 +28,7 @@ and resource-limit probes remain required alongside the new tests.
 ## New production-runtime partitions
 
 [execution_redirection_cases.py](../tests/execution_redirection_cases.py) adds
-492 cases to both the complete runtime suite and `test-execution-evidence`.
+564 cases to both the complete runtime suite and `test-execution-evidence`.
 Case names start with `execution: residual `; each has exact stdout, stderr,
 status and relevant file content/absence assertions. No existing expected
 result or deadline is weakened.
@@ -37,6 +37,7 @@ result or deadline is weakened.
 | --- | --- |
 | RED-001 target expansions | `target {expansion} {operator}`: eight operand forms (quote removal, parameter, command substitution, backquote, arithmetic, tilde, pattern removal and concatenation) × six operations (`<`, `>`, `>\|`, `>>`, `<>`, noclobber `>`) × three invocation modes = 144. Existing glob matches and IFS bytes expose accidental splitting/globbing. Arithmetic side effects occur once. Reads preserve input, output truncates, append ignores a helper seek, and read/write shares the current offset. |
 | RED-001 interactive policy | `interactive target ...`: the same 48 semantic scenarios in `-ic` and `-i file` = 96. Assert cshell's selected no-globbing behavior when interactive; this is a permitted policy, not a requirement that all shells choose it. Interactive stdin/prompt behavior remains in the existing PTY suites. |
+| RED-001 zero-length targets | `empty target {expansion} {operator}`: quoted empty, unset parameter, empty parameter and empty substitution × six operations × three modes = 72. The operand must remain an empty pathname and fail, preserving earlier effects while preventing later expansion/command effects. |
 | RED-005 dynamic descriptors | `duplicate {expansion} {operator}`: parameter, command, arithmetic and quoted operands × `<&`/`>&` × three modes = 24. Exact copied/written bytes establish the selected source descriptor. Existing close, direction, overflow and inherited-mask cases remain in the original map/API suites. |
 | RED-001–003/006 real open errors | `filesystem {kind} {operator}`: directory, non-directory parent, missing parent and cyclic symlink × four write-capable operators × three modes = 48. Earlier files truncate, failed command output and later operand-expansion files remain absent, diagnostic/status are exact, and parent stdout restores. |
 | RED-002/003/006 aliases and creation | `filesystem symbolic/hard ...`, `noclobber symbolic/hard`, `dangling link creates ...` = 42. Underlying file content distinguishes truncate/append/read-write, aliases to existing regular files are protected by noclobber, and ordinary opens create dangling-link referents. Existing dangling-noclobber rejection remains a separately documented permitted choice. |
@@ -44,8 +45,8 @@ result or deadline is weakened.
 | RED-001/EXEC-003/006/008/010–014 contexts | `context {name}` covers brace, subshell, function body, function-definition redirect, eval, dot, if, for, while, until, case, pipeline, substitution and background × three modes = 42. Target arithmetic runs once, file content is exact, and parent mutation versus child isolation is explicit. `unwind break/continue/return 7` adds nine cases checking skipped effects, restored stdout and transfer status. |
 | RED-002/003/006 creation permissions | `creation permissions {operator} mask={mask} existing={bool}` = 81. Operators × umasks 000/027/077 × existing/missing file, excluding the already-covered noclobber rejection. An external stat observer asserts creation mode after umask and unchanged permissions for existing files; content asserts truncation/preservation independently. |
 
-These counts sum to 492. The 319 previous execution witnesses remain unchanged,
-so the focused JSON suite contains 811 cases. The original 51 CSH-055 public
+These counts sum to 564. The 319 previous execution witnesses remain unchanged,
+so the focused JSON suite contains 883 cases. The original 51 CSH-055 public
 read/descriptor probes remain selected by the same Make target.
 
 ## Controlled error and race boundaries

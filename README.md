@@ -64,6 +64,7 @@ make test-state-builtins # Clause-mapped runtime state and utility evidence
 make test-state-edges # Startup/fault, directory, permission and locale evidence
 make test-state    # Replacement shell-state API checks only
 make test-execution-evidence # Clause-mapped execution/redirection/control witnesses
+make test-redirection-edges # Controlled open errors, retries and noclobber races
 make test-execute  # Replacement command, assignment, and redirection API checks
 make test-pipeline # Concurrent pipeline, stage-status, and failure-cleanup checks
 make test-control  # Conditionals, loops, case, functions, and failure cleanup

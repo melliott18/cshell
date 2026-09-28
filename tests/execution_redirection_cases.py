@@ -43,6 +43,21 @@ def add_redirection_cases(cross, helper):
                   setup=setup, stdout=output + '[0]\n' + ('[1]\n' if expansion == 'arithmetic' else '[unset]\n'),
                   files={path: file(content), 'out match': file('decoy')})
 
+    # Empty scalar targets are errors; they must not disappear as zero fields.
+    for expansion, prefix, operand in (
+        ('quoted', '', "''"), ('unset', 'unset dest; ', '$dest'),
+        ('empty', 'dest=; ', '$dest'), ('substitution', '', '$(printf "")'),
+    ):
+        for op in ('<', '>', '>|', '>>', '<>', 'noclobber'):
+            actual = '>' if op == 'noclobber' else op
+            check(f'empty target {expansion} {op}', prefix +
+                  ('set -C; ' if op == 'noclobber' else '') +
+                  f'{helper} args forbidden >early {actual}{operand} >"$(touch expanded; printf later)"; '
+                  f'{helper} args "$?" restored', setup={'early': 'old'},
+                  stdout='[1]\n[restored]\n',
+                  stderr='cshell: cannot apply redirection: ' + os.strerror(errno.ENOENT) + '\n',
+                  files={'early': file(''), 'expanded': absent, 'later': absent})
+
     # Descriptor operands use the same expansions but must remain a single number.
     for expansion, prefix, operand in (
         ('parameter', 'fd=7; ', '$fd'), ('command', '', '$(printf 7)'),
