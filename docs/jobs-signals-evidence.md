@@ -1,7 +1,9 @@
-# Jobs, signals and traps: CSH-050, CSH-054 and CSH-057 evidence
+# Jobs, signals and traps: CSH-050 and follow-up evidence
 
 This is the clause/condition map for [CSH-050](tickets/CSH-050-jobs-signals-evidence.md),
-reviewed against POSIX.1-2024 on 2026-09-26, with [CSH-054 corrections](#csh-054) and [CSH-057 lifecycle evidence](#csh-057). It supersedes broad coverage claims,
+reviewed against POSIX.1-2024 on 2026-09-26, with
+[CSH-054 corrections](#csh-054), [CSH-057 lifecycle evidence](#csh-057), and
+[CSH-058 signal edge evidence](#csh-058). It supersedes broad coverage claims,
 not the implementation histories of CSH-034/035. The eleven parent requirements
 remain **implemented subsets**. Only the assertions below have run evidence;
 [remaining obligations](#remaining-obligations) keep the CSH-012 gate closed.
@@ -166,7 +168,7 @@ Implementation: [traps.c](../src/traps.c), context and exec transitions in
 | Successful exec default/ignore handoff | `traps: exec resets caught disposition`, `traps: exec retains ignored disposition` | `default\n`/`ignored\n`; no parent EXIT action after successful exec |
 
 CSH-054 adds pipeline/background/general-substitution listing and failed
-interactive exec witnesses [below](#csh-054); broader delivery remains CSH-058.
+interactive exec witnesses [below](#csh-054); the [CSH-058 matrix](#csh-058) supplies the subsequent delivery assertions.
 
 <a id="u-008"></a>
 
@@ -200,8 +202,9 @@ status 1 and `alive`, with no special-builtin abort. Entry-ignore listing is
 checked separately in traps.py. The old `-p INT` reset expectation was incorrect:
 it now requires a reinput-ready default command. KILL/STOP are omitted from
 all-condition output. The implementation enumerates host-queryable signals,
-including numeric host extensions; exhaustive host-signal listing and roundtrip
-coverage, every invalid operand mix and output-failure path remain open.
+including numeric host extensions; the [CSH-054](#csh-054) and [CSH-058](#csh-058) assertions extend this with
+host-signal roundtrips, mixed invalid operands, and all/plain/selected
+output-failure forms. These are scoped assertions, not all possible inputs.
 
 <a id="u-026"></a>
 
@@ -217,7 +220,7 @@ supported XSI/extension witnesses. Both host binaries are identified in the run
 record. Docker now explicitly installs `procps` to supply exec-accessible kill.
 CSH-054 fixes case-independent `-s` and adds the name/status, group-zero probe
 and operand-continuation witnesses [below](#csh-054); actual group delivery and
-permission failures remain with CSH-058. No reference-shell vote was
+permission failure handling are exercised by [CSH-058](#csh-058). No reference-shell vote was
 used to set these expectations.
 
 <a id="u-032"></a>
@@ -238,13 +241,24 @@ and fg removal from known IDs. Claims remain limited to their exact cases.
 
 ## Remaining obligations
 
-[CSH-054](#csh-054) fixes the two reproduced defects and assigns each remaining
-clause to CSH-057 or CSH-058 in the historical map below. The
-[CSH-057 disposition](#csh-057) supersedes its job-lifecycle entries. This is a concrete residual inventory,
-not a waiver and not a claim that all untested behavior is defective. CSH-050
-supplies a reviewable map and run record; the CSH-012 conformance gate remains closed. The parent rows
-are intentionally not promoted to verified, so no broad row obscures a narrower
-failure. Stable anchors in this document separate each family's evidence.
+[CSH-054](#csh-054), [CSH-057](#csh-057), and [CSH-058](#csh-058)
+now supply the scoped corrections and assertions assigned in the historical
+map below. CSH-054 and CSH-058 are integrated; CSH-057's lifecycle changes are
+integrated but its reopened foreground-resume failure still prevents closure.
+The current dispositions and fresh run identities are retained in the
+[CSH-050 integration record](evidence/csh-050/README.md).
+
+| Residual condition | Current disposition / owner |
+| --- | --- |
+| Foreground resume intermittently returns 1 instead of 130 | CSH-057 retains the hosted failure; [PR #112](https://github.com/melliott18/cshell/pull/112) proposes a fix. It is not part of this worktree's baseline. Later passing runs do not close that failure. |
+| Inheritance/delivery, public interrupted waits, listing failures, group delivery and permission diagnostics | CSH-058 is integrated; its [exact matrix](#csh-058) supersedes the corresponding open entries in the historical CSH-054 table. Permission evidence uses syscall interposition, not host credential enforcement. |
+| External kill status mapping | Stock Debian failure remains a stock-host gap under CSH-052. CSH-056's opt-in qualified profile resolves that selected case; CSH-059/060 own wider host capability boundaries. Builtin kill results do not qualify the external binary. |
+| Loaded transport deadlines and incomplete sanitizer runs | Retain the failed/not-run records under CSH-040/054 and CSH-057/058; serial passing results establish only their own observations. |
+
+CSH-050 supplies a reviewable map and run record; its platform acceptance stays
+open while the foreground-resume defect remains unresolved in the baseline.
+The CSH-012 conformance gate stays closed. Parent rows remain implemented
+subsets, with stable family anchors; no entire family is promoted to verified.
 
 CSH-044 and CSH-045 were integrated by PR #85 before this work's baseline. Their
 old failures remain historical failures; this work reruns the fixed regressions
@@ -357,8 +371,8 @@ pending foreground commands without treating a suspension as an errexit failure.
 
 The [run record](evidence/csh-057/README.md) retains all failing development runs,
 the notification fixture's diagnosed launch race, loaded regression, and final
-native/Docker/sanitizer outcomes. CSH-058 continues to own the remaining signal
-edge cross-products. No unspecified membership is promoted to a portable oracle.
+native/Docker/sanitizer outcomes. [CSH-058](#csh-058) supplies the subsequent signal
+edge cross-product assertions. No unspecified membership is promoted to a portable oracle.
 
 <a id="csh-058"></a>
 

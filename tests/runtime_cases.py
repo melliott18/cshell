@@ -364,6 +364,11 @@ def main():
     helper = shlex.quote(str(args.helper.resolve()))
     suite = {"version": 1, "name": "cshell runtime", "kind": "replacement",
              "cases": terminal_cases(helper) if args.output.name == "runtime-pty.json" else cases(helper)}
+    if args.output.name == "traps.json":
+        suite["name"] = "cshell trap and exit evidence"
+        suite["cases"] = [case for case in suite["cases"] if
+                          case["name"].startswith(("traps: ", "exit ", "signal ",
+                                                    "subshell exit ", "brace exit "))]
     if args.output.name == "control-flow.json":
         suite["name"] = "cshell control flow"
         suite["cases"] = [case for case in suite["cases"] if case["name"].startswith("control: ")]

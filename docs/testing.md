@@ -1047,6 +1047,27 @@ precedence. The production shell receives no special profile logic.
 The runner's `--path` selects and inventories the same PATH used in its child
 shells; `--echo-policy` must match a documented Apple/GNU selection.
 
+### CSH-050 combined jobs, signals and traps
+
+`make test-jobs-signals` runs the jobs/API/fault/retention checks, trap and signal
+suites, job notification/PTY checks, and runtime PTY cases. Run it serially for
+evidence collection; `-j` permits concurrent suites and can add PTY/process
+snapshot load. It uses the same bounded runners and assertions as the full
+suite, with no retries or relaxed deadlines.
+
+`make test-traps` now includes `test-trap-runtime`, which materializes
+`build/tests/traps.json` directly from the existing runtime case definitions.
+It selects the `traps: `, `exit `, `signal `, `subshell exit ` and `brace exit `
+name prefixes, preserving every selected input and expectation in string,
+file and stdin modes. This retains the original CSH-050 trap/EXIT assertions
+in focused runs; previously they ran only through `test-runtime`/`test`.
+The selected invalid exit operands remain policy witnesses, not portable
+requirements. Terminal trap cases remain in `test-runtime-pty`.
+
+The [current evidence record](evidence/csh-050/README.md) distinguishes integrated
+follow-up coverage, fresh runs and unresolved dependencies. `test-harness` and
+the stock/qualified external utility audits remain separate validation commands.
+
 ### CSH-054 signal contracts
 
 `make test-traps` also runs `tests/signal_contracts.py` in all three input modes
