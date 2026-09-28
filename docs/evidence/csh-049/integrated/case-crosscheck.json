@@ -1,0 +1,23 @@
+{
+  "note": "Case-name comparison only: absolute execute_helper paths mapped to <execute_helper>. Raw logs and all runtime output assertions are unchanged. Three passes are normal, qualified-PATH runtime, and sanitizer runtime.",
+  "hosted": {
+    "macos": {
+      "execution_cases": 319,
+      "passes_per_case": 3,
+      "contract_suite_passes": 2,
+      "contract_probes_per_suite": 51
+    },
+    "ubuntu": {
+      "execution_cases": 319,
+      "passes_per_case": 3,
+      "contract_suite_passes": 2,
+      "contract_probes_per_suite": 51
+    },
+    "docker": {
+      "execution_cases": 319,
+      "passes_per_case": 3,
+      "contract_suite_passes": 2,
+      "contract_probes_per_suite": 51
+    }
+  }
+}

@@ -4,7 +4,8 @@ This is the clause/condition map for [CSH-049](tickets/CSH-049-execution-evidenc
 reviewed against POSIX.1-2024 on 2026-09-26. Parent requirements remain
 **implemented subsets**. The assertions below are narrower than the full
 families; the [run record](tickets/CSH-049-execution-evidence.md#validation-record)
-identifies the actual revisions and environments. No reference shell supplies
+identifies the actual revisions and environments. The [2026-09-28 integration record](tickets/CSH-049-execution-evidence.md#integrated-validation-2026-09-28)
+reconciles CSH-055 and reruns the original strict lookup reproducer. No reference shell supplies
 an oracle. [Residual obligations](#remaining-obligations) keep CSH-012 closed.
 
 ## Sources and policies
@@ -209,7 +210,7 @@ Implementation: execute.c `context_pipeline`, `context_job`, `pipeline_connect`,
 | EXEC-006/isolation | R `pipeline builtin state is isolated`, `pipeline builtin assignment is isolated`; pipeline.py `exit`/`cd` in both stage positions | All children and wait-all are selected permitted policies; singleton stateful commands remain in caller |
 | EXEC-007/status-table | E `pipefail=False/True negate=False/True statuses=(...)`: 16 combinations select last or rightmost nonzero, then invert; empty stderr/stdout and exact process statuses | No inference from completion order; earlier pipeline.py API stage-status checks preserve ordered statuses |
 | EXEC-007/option-snapshot | E `option sampled before launch`: changing pipefail inside the final stage leaves results 0 then 9 | Setting at pipeline launch controls status |
-| EXEC-007/signal | E `EXEC-016 signal selected by pipefail`: 128+TERM, empty output; R `negated pipeline` and pipeline.py final-signal negation | Host TERM mapping; exhaustive signal cases remain CSH-054 |
+| EXEC-007/signal | E `EXEC-016 signal selected by pipefail`: 128+TERM, empty output; R `negated pipeline` and pipeline.py final-signal negation | Host TERM mapping; the [CSH-058 signal matrix](tickets/CSH-058-signal-edge-evidence.md) adds disposition/delivery witnesses without claiming all host signals |
 
 <a id="exec-008"></a><a id="exec-010"></a>
 
@@ -243,7 +244,7 @@ matching. All C fixtures are runtime cases in three input modes.
 | EXEC-012/pattern semantics | C `case quoted and unquoted patterns`, `case subject scalar and pattern substitution`, `case bracket slash dot`; E `subject once and later clauses skipped` | No field splitting of subject; subject once, first matching clause, no evaluation of later clauses |
 | EXEC-012/status and fallthrough | C `case no match and empty body` yields 0/0; `case selected status` returns 21; `case fallthrough skips patterns` prints first/second; empty fallthrough retains 19 | Required `;;` termination and Issue 8 `;&` behavior |
 | EXEC-012/unspecified ordering | C `case alternatives lazy expansion` selects the first matching alternative in cshell | Within-clause pattern evaluation order is unspecified; this fixture is policy evidence |
-| EXEC-012/locales | [locale_cases.py](../tests/locale_cases.py) `locale UTF-8 case classes and quoted patterns` and host-qualified collation cases | CSH-042 results retained; [CSH-053](tickets/CSH-053-multibyte-lexical-boundaries.md) owns lexical non-UTF-8 gaps. Locale skips name installed-data conditions |
+| EXEC-012/locales | [locale_cases.py](../tests/locale_cases.py) `locale UTF-8 case classes and quoted patterns` and host-qualified collation cases | CSH-042 results retained; [CSH-053](tickets/CSH-053-multibyte-lexical-boundaries.md) adds multibyte lexical witnesses. Unavailable encodings and raw pathname support remain explicit capability limits |
 | EXEC-013/if | C `if elif else selection`, `unselected expansions`, `if no branch status`, `selected branch status`: selected branch only, absent side effects, zero or 17 | Required selection/status conditions |
 | EXEC-013/while-until | C `zero loops`, `while until arithmetic`, `loop body status`; E `until body status and condition visibility`: failed condition visible as 1, final body status 19 | Required last-body/zero-iteration status; no claim about unbounded nesting |
 
@@ -314,9 +315,9 @@ command`, `found but unexecutable`, and `signal retained ...` assert 37, retaine
 `signal parent continues` assert one subsequent output. E `signal selected by
 pipefail` connects the D-007 status choice with Issue 8 pipeline selection.
 A command deliberately returning 126/127 is not itself proof of a lookup error;
-these two error cases also require the corresponding diagnostic. Complete
-signal and wait/kill mapping remains CSH-054/052, especially platform-specific
-signal numbers. Exit values outside portable 0–255 are separate policy cases.
+these two error cases also require the corresponding diagnostic. The [CSH-058 signal edge record](tickets/CSH-058-signal-edge-evidence.md)
+and [qualified host boundaries](tickets/CSH-059-host-boundary-capabilities.md) add signal/wait/kill
+witnesses; their capability limits still apply to platform-specific signal numbers. Exit values outside portable 0–255 are separate policy cases.
 
 <a id="u-003"></a><a id="u-004"></a>
 
@@ -336,16 +337,19 @@ are project robustness/policy witnesses: positive operands and same-environment
 lexical enclosure are application preconditions, and non-lexical enclosure is
 unspecified. `eval loop transfer` is therefore not a mandatory oracle for every
 shell. [CSH-055](execution-contracts.md) adds while/until condition continues, nested
-lexical transfers and explicit nonlexical policies. Signal interruption remains
-CSH-054.
+lexical transfers and explicit nonlexical policies. Signal interruption evidence is retained under CSH-054/058; the
+intermittent terminal lifecycle failure remains CSH-057.
 
 ## Remaining obligations
 
 [CSH-055](execution-contracts.md) fixes the prefix PATH/builtin lookup defect
 and supplies assertions for its named execution conditions. CSH-047
 owns expansion/declaration combinations; CSH-048 owns full environment/utility
-state; CSH-053 owns multibyte lexical boundaries; CSH-054 owns residual signal,
-job and loaded-PTY cleanup failures; CSH-052 owns host utilities and fallback
-shell provisioning. CSH-049 retains cross-platform reruns and the evidence map.
+state; CSH-053 records multibyte lexical coverage and host capability limits.
+CSH-054/058 record signal contracts; [CSH-057](tickets/CSH-057-job-lifecycle-boundaries.md)
+retains the unresolved intermittent terminal lifecycle failure. CSH-052/056/059
+record host utilities, fallback shell provisioning and their qualified limits.
+CSH-049 retains the evidence map, wider filesystem/target-expansion combinations
+and [cross-platform integration results](tickets/CSH-049-execution-evidence.md#integrated-validation-2026-09-28).
 These are applicable open obligations. Neither CSH-042 nor CSH-043's completed
 narrow scope verifies the entire execution/case/redirection family.

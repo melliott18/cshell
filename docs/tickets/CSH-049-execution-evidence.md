@@ -5,7 +5,7 @@
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-036, CSH-039
-- Branch: test/CSH-049-execution-evidence
+- Branch: test/CSH-049-integrated-evidence
 - Issue: [#81](https://github.com/melliott18/cshell/issues/81)
 
 ## Goal
@@ -14,7 +14,16 @@ Map existing exact fixtures and their implementation revisions; decompose orderi
 
 ## Explicit current limitation
 
-The [25-row clause map](../execution-evidence.md) now identifies exact assertions, policies and narrower gaps. [CSH-055](CSH-055-execution-contract-gaps.md) owns a confirmed prefix-PATH/builtin lookup defect and residual execution contracts. CSH-043’s completed offset evidence and CSH-042’s locale witnesses retain their bounded scope; CSH-053 owns non-UTF-8 lexical gaps. Full family verification remains open.
+The [25-row clause map](../execution-evidence.md) identifies exact assertions,
+policies and narrower gaps. The original audit merged in [PR #93](https://github.com/melliott18/cshell/pull/93).
+[CSH-055](CSH-055-execution-contract-gaps.md) subsequently fixed prefix-PATH
+lookup and added the residual execution contracts; its strict reproducer now
+passes. [CSH-053](CSH-053-multibyte-lexical-boundaries.md) added multibyte lexical
+coverage with explicit host capability limits. The [integrated validation](#integrated-validation-2026-09-28)
+below supplements the historical runs without erasing their failures.
+CSH-043 offset and CSH-042 locale evidence retain their bounded scope.
+Full family verification remains open, including the intermittent terminal
+failure retained by [CSH-057](CSH-057-job-lifecycle-boundaries.md).
 
 This is an open evidence limitation found by the
 [CSH-037 independent review](../audit-review.md), not a declaration that every
@@ -100,7 +109,7 @@ limitation and complete row list above replace reliance on already-completed
 implementation tickets as owners of remaining verification work.
 
 
-## Implemented audit scope
+## Original implemented audit scope (PR #93)
 
 Added 66 three-mode execution scenarios (198 cases) and ten error-consequence
 categories in three noninteractive plus two interactive modes (50 cases).
@@ -119,8 +128,10 @@ The audit reproduced the prefix-PATH/builtin selection failure on native macOS
 and Docker Linux. [CSH-055 / #92](https://github.com/melliott18/cshell/issues/92)
 contains the diagnosis and remaining runtime obligations. The separate strict
 `execution-known-gaps.json` reproducer asserts the required `custom-pwd\n`
-output and **fails** on both hosts; it is not a passing regression or a default
-suite case. This audit is ready for review with that limitation explicitly open.
+output and **failed at the audit baseline** on both hosts; those failed runs
+are not passing regressions. CSH-055 later fixed the defect and added the
+required behavior to the default suite in all three modes. The original
+fixture remains available for an independent strict rerun.
 
 ## Validation record
 
@@ -228,3 +239,63 @@ expectations or limits.
 Hosted logs are supplementary integration evidence: runner image/build commands
 are recorded, but these CI jobs do not publish binary hashes. They do not
 replace the detailed local binary identities or promote any broad matrix row.
+
+## Integrated validation (2026-09-28)
+
+Follow-up branch: `test/CSH-049-integrated-evidence`, from
+`b1b6b1583a883e7fbb5616a317c1633bf85052b4`. The execution audit and CSH-055
+implementation were already integrated at this revision. This follow-up changes
+only evidence/documentation; no runtime, fixture, expected output, deadline or
+capability rule changes. Status remains `review` pending integration of this
+record. The completed platform runs below resolve the missing successful
+integration evidence for the named execution cases, not every remaining
+requirement in their parent families.
+
+[Retained integration artifacts](../evidence/csh-049/README.md#integrated-rerun-2026-09-28)
+include raw compressed logs, local binary/source identities, hosted job metadata,
+a case-name cross-check and SHA-256 hashes. Native and Docker source manifests
+agree: `8fffdf0690bfd24d9a3da766cf61f0fc50ca91e663772a539afe0626c96dccc4`.
+This digest includes Dockerfile in addition to Makefile/src/include/tests;
+it must not be compared directly with the original audit's narrower digest.
+Local collection timestamps are recorded in the identities; hosted logs contain
+per-line UTC timestamps and job start/completion times.
+
+| Environment / command | Result |
+| --- | --- |
+| Native macOS 14.8.7, Darwin 23.6.0 arm64, Apple Clang 15.0.0, Python 3.12.2; `make -j4 test test-execution-evidence` | PASS: 3,113 runtime cases, 319 focused execution cases, 51 descriptor/read contracts, 36 offset cases and all scheduled module/API/fault/control/pipeline/context checks. |
+| Same native binary; `make test-pty`, then `make test-harness` | PASS: 30 jobs PTY, job fault/retention/notification checks and 30 runtime PTY cases; 73 harness tests in 19.978s. |
+| Debian bookworm Docker, Linux 6.4.16-linuxkit aarch64, GCC 12.2.0, glibc 2.36, Python 3.11.2; `make -j2 test test-execution-evidence && make test-pty && make test-harness` | PASS: 3,113 runtime, 319 execution, 51 contracts, 36 offset and all scheduled API/fault suites; 30 jobs and 30 runtime PTY plus supporting fixtures; 73 harness tests in 9.255s. |
+| Native and Docker; `python3 tests/smoke.py ./cshell --suite tests/fixtures/execution-known-gaps.json` | PASS: `EXEC-004 prefix PATH selects external pwd`, exact `custom-pwd\n`, empty stderr, status 0. Historical failing artifacts remain unchanged. |
+| [Hosted run 36449808979, attempt 1](https://github.com/melliott18/cshell/actions/runs/36449808979/attempts/1), exact base `b1b6b1583a883e7fbb5616a317c1633bf85052b4` | PASS on native Ubuntu 24.04/GCC, macOS 15/Clang and Docker Linux: full normal, PTY, host-profile, harness and full ASan/UBSan stages. Each environment passes all 319 execution cases in normal, qualified-PATH and sanitizer runtime suites, plus all 51 contracts in normal and sanitizer builds. |
+
+Normal local flags are unchanged from the original validation record. Native
+binary SHA-256 is `c93fe130300682e04ba722dd93041d6be319b25c7a03e06667e81fde00cfa71e`;
+Docker is `9e0f389c7c1482a855cf9ef5fd22ed59ea6f9491ae8bcadadd139ac7bd10a36f`.
+The Docker identity was collected from a snapshot of the completed test container,
+including its actual built binaries and generated suites. It is not a rebuild.
+The image and snapshot identities are retained. No scanner/runtime generator
+is used.
+
+The hosted workflow records sanitizer flags and `detect_leaks=0`, with no
+sanitizer findings in those runs. Hosted jobs do not publish binary hashes;
+they supplement local identities and do not substitute for leak-check evidence.
+No additional local sanitizer run is claimed for this documentation-only change.
+The unchanged runtime/test bytes were tested by the linked hosted revision.
+
+There are no execution-case skips. Local broader-suite limitations remain:
+two Linux-root identity skips per unprivileged run (CSH-046); four raw-pathname
+encoding capability skips on macOS and three unavailable encodings in Docker
+(CSH-053); untranslated libc diagnostic on macOS (CSH-042); 12 stock-host utility
+gaps on macOS and nine in Docker (CSH-052/056/059). The hosted Docker root step
+separately covers unequal identities. Logs retain the exact capability reasons;
+none count as passed requirements.
+
+The passing offset, harness and terminal runs supplement the earlier failed
+attempts. They do not diagnose or erase those failures. In particular,
+[CSH-057](CSH-057-job-lifecycle-boundaries.md) still owns the intermittent
+`repeated background resumes preserve prompt and terminal` failure. Wider
+filesystem/target-expansion combinations and linked environment/utility limits
+remain open in the clause map. Therefore the broad remaining-applicable-cases
+acceptance box above stays unchecked; this record closes the stale lookup and
+missing successful integration evidence, not the entire family-verification gate.
+CSH-012 remains closed and no matrix family is promoted to verified.
