@@ -1,5 +1,5 @@
 /* Standalone FreeBSD printf, with GNU getopt and output-error adapters.
- * The upstream implementation and its BSD license remain unchanged in vendor/.
+ * The upstream BSD license is retained in vendor/; CSH-059 patches binary %b.
  */
 #define _GNU_SOURCE
 #include <stdio.h>

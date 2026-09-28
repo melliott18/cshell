@@ -23,42 +23,64 @@ invocation modes. `make test-host-profile` enables them and strict-gap handling.
 | U-040/locale-input | French LC_NUMERIC/LC_MESSAGES with empty LC_ALL preserve cat's ordered operands and all 256 input bytes. |
 | U-040/limits | Each result records host ARG_MAX, OPEN_MAX, LINE_MAX and filesystem NAME_MAX, PATH_MAX, PIPE_BUF. These are system/path queries, not invented per-tool maxima. Cat and sed preserve an 8192-byte line. The child harness still caps descriptors at 64, file size at 1 MiB, output at 65536 bytes, and CPU at six seconds; those are test protections. |
 
+## CSH-059 bounded extensions
+
+[CSH-059](tickets/CSH-059-host-boundary-capabilities.md) extends the profile with
+[case definitions](../tests/host_capability_cases.py) and
+[retained native/Docker evidence](evidence/csh-059/README.md). Each ordinary
+case runs through string, file and stdin invocation. Expectations are authored
+independently; no selected utility supplies its own expected bytes.
+
+| Stable condition / source | Bounded assertion; remaining scope |
+| --- | --- |
+| U-035/byte-format — [printf](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/printf.html) | All 256 byte values from format octals and `%b`; embedded NUL with precision, left/right padding, numbered reuse and `\c`; UTF-8 precision is measured in bytes. CSH-059 found and corrected upstream `%b` truncation at NUL. This is not a whole-page claim. |
+| U-035/format-allocation-limits — printf | 8192-byte format, `%b` operand and width; 256 conversions. Allocation failure, stack exhaustion and maximum format sizes remain limited. Literal `%b` width/precision above `INT_MAX` are rejected by the local adapter; that is a declared implementation limit, not a system ceiling. |
+| U-035/locale-catalogs — printf | C, French numeric/messages and the recorded UTF-8 locale only. The standalone implementation has no message-catalog lookup; no translated diagnostic wording is required by these assertions. Other locales and full format combinations remain unqualified. |
+| U-036/alternative-policies — [echo](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/echo.html) | Existing explicit Apple/GNU policies retained; 8192-byte operand, 256 arguments and UTF-8 operands checked. Other implementations and actual exec-size boundaries remain limited. |
+| U-037/extended-permissions — [test/bracket](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html) | Dedicated non-root mode-000 denial and stat-only block-node witnesses retained. ACLs, unequal real/effective identities and other device namespaces are separate limitations. Missing French/UTF-8 locale, root identity and absent block node are independently emitted per run. |
+| U-040/host-boundaries — [§1.4](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap01.html#tag_18_04), [§1.6](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap01.html#tag_18_06) | Per-utility bounded operations and residual conditions below; no family promotion. |
+
 ## Explicit remaining capability limits
 
-[CSH-059](tickets/CSH-059-host-boundary-capabilities.md) owns the conditions
-below. They are **unverified**, not known passing or inapplicable. Each utility
-page is reachable from the [POSIX utility index](https://pubs.opengroup.org/onlinepubs/9799919799/idx/utilities.html);
-XCU [§1.4](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap01.html#tag_18_04)
-and [§1.6](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap01.html#tag_18_06)
-continue to apply.
+[CSH-060](tickets/CSH-060-extended-host-environments.md) is the next owner for
+residual conditions. The executable inventory and platform in **each run**
+identify the environment to which its limitations apply. The machine-readable
+[condition inventory](../tests/host_capability_limits.py) emits each source page,
+reason, next owner and selected executable identity, including both test and
+bracket. Conditions are **unverified**, never passes or inapplicability decisions.
+The following table maps the remaining U-040 inventory; each linked page is its
+normative source. CSH-060 owns every residual in this table.
 
-The following inventory applies to the recorded macOS 14.8.7 / Debian 12
-profiles. Process argv/environment size is bounded by the recorded ARG_MAX;
-pathname operands by the recorded filesystem limits. Neither value proves a
-tool's complete maximum accepted input. Exhausting host memory/disk or changing
-global terminal/device state is outside the bounded test environment.
-
-| Scoped utility / source page | Evidence boundary and remaining capability, owned by CSH-059 |
+| Utility / source page | Evidence boundary and remaining capability |
 | --- | --- |
-| [printf](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/printf.html) | 64-bit numeric saturation, French decimal point and descriptor failure checked; allocation/format-size exhaustion and all other locale catalogs unverified. |
-| [echo](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/echo.html) | Named Apple/GNU environment policies and descriptor failure checked; arbitrary replacement policies and multibyte/large-argv boundaries unverified. |
-| [test and bracket](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html) | Basic mode permissions and stat-only block nodes checked; ACLs, unequal effective/real credentials and other device namespaces unverified. Both tools share this limitation. |
-| [true](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/true.html), [false](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/false.html) | No required input or output; no utility-specific line/output maximum is claimed. System exec-resource failure remains unverified. |
-| [pwd](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html) | Absolute output checked; deleted/inaccessible cwd and pathname-limit behavior require a separate environment. Shell prefix-PATH behavior remains CSH-055. |
-| [kill](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/kill.html) | Number/status mapping and owned-child delivery checked; cross-user permission failures and process-limit exhaustion need additional identities. Internal kill remains CSH-054. |
-| [cat](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cat.html) | Arbitrary-byte input, 8192-byte line, French environment and bad output fd checked; filesystem I/O faults and maximum file size remain unverified. |
-| [env](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/env.html) | Environment clearing/argv and exec error checked; ARG_MAX boundary not reached. |
-| [find](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html) | Simple tree, absent path and write error checked; depth/descriptor exhaustion and locale ordering require dedicated trees. |
-| [ls](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html) | Single entry, absent path and write error checked; large directories and locale collation remain unverified. |
-| [stty](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/stty.html) | Controlled PTY roundtrip/nonterminal error checked; physical terminal capabilities are unavailable in the PTY environment. |
-| [ed](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html) | Package availability and line-print operation checked; edit-buffer/temp-file limits and signal recovery require separate bounded scenarios. |
-| [sed](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sed.html) | 8192-byte line, early seekable offset, absent file and write error checked; maximum pattern/hold-space size and multibyte expressions unverified. |
-| [head](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/head.html) | One-line/seekable offset, option error, absent input and write error checked; very large count limits and interrupted input unverified. |
-| [cmp](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cmp.html) | Equal files and absent input checked; large offsets, differing data diagnostics and interrupted input unverified. |
-| [chmod](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/chmod.html) | Mode update success and absent input checked; ACL/cross-user/filesystem capability boundaries unverified. |
-| [rm](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html) | Removal and absent input checked; recursive-depth, protected mounts and interactive prompt boundaries unverified. |
-| [sleep](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sleep.html) | Zero delay, invalid operand and owned-child TERM checked; maximum duration cannot be demonstrated by waiting within a five-second fixture budget. |
-| [sh](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sh.html) | Explicit exit and missing script checked; host sh's parser/resource/locale semantics are not cshell qualification and need separate host evidence. |
+| [true](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/true.html), [false](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/false.html) | Required status/no-output witnesses retained; system exec-resource failure untested. Neither utility has a claimed input/output maximum. |
+| [pwd](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html) | Deleted cwd fails diagnostically using the inventoried external pathname. Inaccessible ancestors and pathname limits need controlled permissions/filesystems. |
+| [kill](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/kill.html) | Owned-child delivery retained; cross-user failure and process exhaustion need additional identities/resources. |
+| [cat](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cat.html) | All 256 values repeated in a 64-KiB file preserved; I/O faults and maximum file size untested. |
+| [env](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/env.html) | Environment/exec-error witnesses retained; aggregate ARG_MAX and per-argument boundaries not reached. |
+| [find](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html) | File found under 32 nested `d` directories; descriptor/depth exhaustion and locale-sensitive matching untested. |
+| [ls](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html) | 256 ordered C-locale entries and one UTF-8 filename; larger directories and locale collation untested. |
+| [stty](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/stty.html) | Controlled PTY roundtrip retained; physical serial/terminal capabilities unavailable in a PTY. |
+| [ed](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html) | 1024-line edit buffer printed exactly; maximum buffer/temp-file limits and signal recovery untested. |
+| [sed](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sed.html) | 32768-byte line preserved through pattern/hold space; UTF-8 dot matches one character. Maximum space sizes and other multibyte expressions untested. |
+| [head](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/head.html) | Count 2147483647 on two lines succeeds; maximum accepted count and interrupted input untested. |
+| [cmp](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cmp.html) | Silent difference at byte 65537 returns 1; EOF difference requires status 1 and a diagnostic. Larger offsets and interrupted input untested. |
+| [chmod](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/chmod.html) | Mode update/error witnesses retained; ACL/cross-user/filesystem effects need controlled environments. |
+| [rm](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html) | Owned 32-level tree removed; exhaustion, protected mounts and interactive prompts untested. |
+| [sleep](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sleep.html) | Owned-child TERM retained; maximum duration cannot be established within a five-second fixture. |
+| [sh](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sh.html) | Invocation/status witnesses retained; host parser/resource/locale semantics need separate qualification. |
 
-This inventory does not promote U-040 or any broad utility family to verified.
-The CSH-012 gate stays closed.
+The sleep interruption witness does not establish interrupted I/O or signal
+recovery for other utilities. No operation opens a real block device, reads real
+disk contents, or signals unrelated processes. Trees and data files are private
+fixtures removed by the harness.
+
+`host_limits` records parent ARG_MAX/OPEN_MAX/LINE_MAX. `child_resources` records
+actual soft/hard RLIMIT_CORE/CPU/FSIZE/NOFILE after the harness applies its bounds,
+plus child ARG_MAX/OPEN_MAX. `filesystem_limits` queries the filesystem where
+temporary fixtures run, not the source checkout. These are system queries and
+harness protections; successful finite sizes above are not utility maxima.
+
+Strict gaps remain fatal in the opt-in profile; stock-host failures remain
+separate. Neither U-040 nor a parent utility family is promoted, and the CSH-012
+gate stays closed.

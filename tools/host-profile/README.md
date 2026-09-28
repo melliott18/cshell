@@ -49,16 +49,42 @@ universal capability coverage.
 
 ## Standalone printf provenance
 
-`vendor/printf.c` is unchanged FreeBSD source at commit
+`vendor/printf.c` is derived from FreeBSD source at commit
 [`0b8224d1cc9dc6c9778ba04a75b2c8d47e5d7481`](https://github.com/freebsd/freebsd-src/blob/0b8224d1cc9dc6c9778ba04a75b2c8d47e5d7481/usr.bin/printf/printf.c).
-Its BSD-3-Clause license is retained in the file. This is a host executable,
+Its BSD-3-Clause license is retained in the file. CSH-059 adds one local
+`printb` function and replaces the `%b` libc `%s` call with it. This is a host executable,
 never linked into cshell, and builds offline from the checked-in source.
 
 `printf.c` contains two local adapters: GNU getopt must stop at the first
 operand as BSD getopt does, and the standalone process must flush/check stdout
 before returning success. The latter also addresses the newly reproduced
-macOS system printf closed-stdout success. Formatting and argument conversion
-remain in the upstream implementation. The qualification scope does not
+macOS system printf closed-stdout success. The CSH-059 local `%b` correction writes the decoded byte count instead of
+passing it to libc `%s`, which truncated output at embedded NULs. Width and
+precision count bytes, including NUL, and numbered reuse and `\c` retain their
+upstream control flow. Literal `%b` width/precision above `INT_MAX` fail with a
+diagnostic; this adapter limit is distinct from ARG_MAX and fixture limits.
+Other formatting and argument conversion remain in the upstream implementation. The qualification scope does not
 certify every extension or input accepted by that source. The underlying libc
 implements numeric conversion (`intmax_t` is 64 bits on the recorded hosts),
 locale behavior, and allocation limits.
+
+
+## Extended boundary evidence
+
+CSH-059 adds all 256 byte values through format octals and `%b`, binary
+precision/padding/recycling, bounded 8192-byte format/operand/width checks,
+256 arguments/conversions, and an independently detected UTF-8 locale. It also
+checks finite files, edit buffers and trees for cat/sed/head/cmp/ed/find/ls/rm
+and deleted-cwd failure in the explicitly selected external pwd.
+See the [condition map](../../docs/host-contract-profile.md) and
+[run evidence](../../docs/evidence/csh-059/README.md).
+
+Each boundary run emits the residual conditions in
+`tests/host_capability_limits.py` with the source page, actual host/executable,
+reason and next owner (CSH-060). Missing French/UTF-8 locales, a root identity
+and an absent explicit block-node witness remain separate limitations.
+`host_limits` are parent system queries; `child_resources` are actual soft/hard
+limits measured after the harness applies its protections (`-1` means infinity).
+`filesystem_limits` query a temporary directory on the fixture filesystem.
+None of these are per-utility capacity measurements. Successful bounded sizes
+are recorded in the individual cases; they are not advertised maxima.

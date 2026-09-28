@@ -17,6 +17,8 @@ import tempfile
 import smoke
 from host_utility_cases import HOSTS, INTRINSICS, cases
 from host_boundary_cases import cases as boundary_cases
+from host_capability_cases import cases as capability_cases
+from host_capability_limits import limitations as residual_limitations, BASE
 
 
 def sha(path):
@@ -42,16 +44,17 @@ def inventory(search_path=os.defpath):
     return result
 
 
-def setup(directory):
+def setup(directory, extra_files=None):
     contents = {'data': b'one\ntwo\n', 'edit': b'edit\n', 'remove': b'',
                 'first': b'first\n', 'second': b'second\n', 'tree/leaf': b'',
                 'old': b'', 'new': b'', 'setuid': b'', 'setgid': b'',
                 'executable': b'', 'high': bytes(range(128, 256)),
                 'binary': bytes(range(256)), 'denied': b'private',
                 'long': b'x' * 8192 + b'\n'}
+    contents.update(extra_files or {})
     for name, content in contents.items():
         path = directory / name
-        path.parent.mkdir(exist_ok=True)
+        path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(content)
     os.utime(directory / 'old', (1000000000, 1000000000))
     os.utime(directory / 'new', (1000000002, 1000000002))
@@ -154,9 +157,10 @@ def main():
     tools = inventory(args.path)
     paths = {name: entry['path'] for name, entry in tools.items()}
     records = []
-    capabilities = {'euid': os.geteuid(), 'egid': os.getegid(),
+    capabilities = {'uid': os.getuid(), 'gid': os.getgid(),
+                    'euid': os.geteuid(), 'egid': os.getegid(),
                     'groups': os.getgroups(), 'permission_denial': os.geteuid() != 0,
-                    'block_device': None, 'numeric_locale': None}
+                    'block_device': None, 'numeric_locale': None, 'utf8_locale': None}
     if args.block_device:
         if not stat.S_ISBLK(args.block_device.stat().st_mode):
             parser.error('--block-device must name a block device')
@@ -174,6 +178,19 @@ def main():
                     break
         finally:
             locale.setlocale(locale.LC_NUMERIC, previous)
+    if args.boundaries:
+        previous = locale.setlocale(locale.LC_CTYPE)
+        try:
+            for candidate in ('en_US.UTF-8', 'en_US.utf8', 'C.UTF-8'):
+                try:
+                    locale.setlocale(locale.LC_CTYPE, candidate)
+                except locale.Error:
+                    continue
+                if locale.nl_langinfo(locale.CODESET).lower().replace('-', '') == 'utf8':
+                    capabilities['utf8_locale'] = candidate
+                    break
+        finally:
+            locale.setlocale(locale.LC_CTYPE, previous)
     selected = list(cases(paths, helper, args.echo_policy))
     limitations = []
     if args.boundaries:
@@ -181,12 +198,17 @@ def main():
                                        capabilities['numeric_locale'],
                                        capabilities['block_device'],
                                        capabilities['permission_denial']))
+        selected.extend(capability_cases(paths, capabilities['utf8_locale']))
+        limitations.extend(residual_limitations(platform.platform(), tools))
         for condition, available, reason in (
+            ('U-040/UTF-8-locale', capabilities['utf8_locale'], 'UTF-8 test locale unavailable'),
             ('U-035/locale-errors', capabilities['numeric_locale'], 'French numeric locale unavailable'),
             ('U-037/permission-denial', capabilities['permission_denial'], 'effective UID 0 bypasses mode-bit denial'),
             ('U-037/block-device', capabilities['block_device'], 'no explicit stat-only block-device witness supplied')):
             if not available:
-                limitations.append(dict(condition=condition, reason=reason, owner='CSH-059'))
+                limitations.append(dict(condition=condition, reason=reason, owner='CSH-060',
+                                        environment=platform.platform(), source=BASE +
+                                        ('test.html' if condition.startswith('U-037') else 'V3_chap01.html')))
         for limitation in limitations:
             print('LIMITATION: ' + json.dumps(limitation), flush=True)
     totals = dict(passed=0, failed=0, gaps=0)
@@ -204,7 +226,7 @@ def main():
                 continue
             with tempfile.TemporaryDirectory(prefix='csh-host-') as temporary:
                 directory = Path(temporary)
-                connection = setup(directory)
+                connection = setup(directory, case.get('input_files'))
                 try:
                     fixture = {'args': [], 'stdin': '', 'env': {'PATH': args.path}}
                     fixture['env'].update(case.get('env', {}))
@@ -245,13 +267,29 @@ def main():
                         print(json.dumps(record['actual']), flush=True)
                 finally:
                     connection.close()
+    # Query the filesystem that actually hosts fixtures, not the source checkout.
+    with tempfile.TemporaryDirectory(prefix='csh-host-query-') as temporary:
+        directory = Path(temporary)
+        filesystem_limits = {name: os.pathconf(directory, name) for name in
+                             ('PC_NAME_MAX', 'PC_PATH_MAX', 'PC_PIPE_BUF')}
+        query = dict(args=['limits'], stdin='', env={'PATH': args.path})
+        if args.sanitizer:
+            query['env'].update(ASAN_OPTIONS='halt_on_error=1' +
+                               (':detect_leaks=0' if platform.system() == 'Linux' else ''),
+                               UBSAN_OPTIONS='halt_on_error=1')
+        status, output, errors = smoke.capture(args.helper.resolve(), query, directory, 5, 65536)
+        if status != 0 or errors or output['stderr']:
+            raise RuntimeError('child resource query failed: ' + repr((status, output, errors)))
+        child_resources = json.loads(bytes(output['stdout']))
+        filesystem_query_path = str(directory)
     result = {'platform': platform.platform(), 'path': args.path, 'inventory': tools,
               'capabilities': capabilities, 'limitations': limitations,
               'echo_policy': args.echo_policy,
               'host_limits': {name: os.sysconf(name) for name in
                               ('SC_ARG_MAX', 'SC_OPEN_MAX', 'SC_LINE_MAX')},
-              'filesystem_limits': {name: os.pathconf('.', name) for name in
-                                    ('PC_NAME_MAX', 'PC_PATH_MAX', 'PC_PIPE_BUF')},
+              'filesystem_limits': filesystem_limits,
+              'filesystem_query_path': filesystem_query_path,
+              'child_resources': child_resources,
               'binary_sha256': sha(binary), 'helper_sha256': sha(args.helper),
               'limits': {'timeout_seconds': 5, 'combined_output_bytes': 65536,
                          'child_resources': 'smoke.child_limits'},

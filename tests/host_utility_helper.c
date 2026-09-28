@@ -11,6 +11,21 @@
 
 int main(int argc, char **argv)
 {
+    if (argc == 2 && !strcmp(argv[1], "limits")) {
+        const int kinds[] = {RLIMIT_CORE, RLIMIT_CPU, RLIMIT_FSIZE, RLIMIT_NOFILE};
+        const char *names[] = {"core_bytes", "cpu_seconds", "file_size_bytes", "open_files"};
+        size_t index;
+        if (printf("{") < 0) return 1;
+        for (index = 0; index < sizeof(kinds) / sizeof(kinds[0]); index++) {
+            struct rlimit limit;
+            if (getrlimit(kinds[index], &limit)) return 1;
+            if (printf("%s\"%s\": [%lld, %lld]", index ? "," : "", names[index],
+                       limit.rlim_cur == RLIM_INFINITY ? -1LL : (long long)limit.rlim_cur,
+                       limit.rlim_max == RLIM_INFINITY ? -1LL : (long long)limit.rlim_max) < 0) return 1;
+        }
+        return printf(",\"ARG_MAX\": %ld, \"OPEN_MAX\": %ld}\n",
+                      sysconf(_SC_ARG_MAX), sysconf(_SC_OPEN_MAX)) < 0;
+    }
     if (argc == 3 && !strcmp(argv[1], "env")) {
         const char *value = getenv(argv[2]);
         return value && printf("%s\n", value) >= 0 ? 0 : 1;

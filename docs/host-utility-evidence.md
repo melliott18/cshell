@@ -20,18 +20,19 @@ platforms in the retained run record.
 | U-026/host-status-map | Verified in the CSH-056 qualified profile; Debian stock-host gap retained |
 | U-034/scoped-access | Verified: listed exec/lookup operations and PTY stty, including provisioned ed in CSH-056 |
 | U-034/host-ed | Verified: CSH-056 provisions ed; CSH-052 missing-package record retained |
+| U-035/byte-format | Verified selected all-byte, embedded-NUL, precision and reuse cases in CSH-059; no full-format claim |
 | U-035/core-format | Verified: named format/conversion/error witnesses below |
 | U-035/numbered, U-035/b-precision | Verified in the CSH-056 qualified profile; Debian stock-host gap retained |
-| U-035/locale-errors | Verified selected conversion/continuation and French-locale witnesses; broader catalogs/limits CSH-059 |
+| U-035/locale-errors | Verified selected conversion/continuation and French-locale witnesses; broader catalogs/limits recorded by CSH-059, next owner CSH-060 |
 | U-036/base-operands | Verified: ordinary operands, newline and literal -- |
 | U-036/selected-policy | Verified for the named C-locale host choices |
-| U-036/host-environment | Verified named Apple/GNU POSIXLY_CORRECT policies and explicit policy selection; arbitrary alternatives CSH-059 |
+| U-036/host-environment | Verified named Apple/GNU POSIXLY_CORRECT policies and explicit policy selection; arbitrary alternatives recorded by CSH-059, next owner CSH-060 |
 | U-037/expressions | Verified: named base argument-count/primary/error witnesses |
 | U-037/missing-timestamps | Verified in the CSH-056 qualified profile; macOS stock-host gap retained |
-| U-037/capabilities | Verified positive block-node and non-root denial in dedicated native/Docker runs; extended identities/ACLs CSH-059 |
+| U-037/capabilities | Verified positive block-node and non-root denial in dedicated native/Docker runs; extended identities/ACLs recorded by CSH-059, next owner CSH-060 |
 | U-038/base, U-039/base | Verified: no output, required status and unused stdin |
 | U-040/dispatch-defaults | Verified: named argv/input/order/offset/environment/resource cases |
-| U-040/host-boundaries | Selected failures/locales/system limits verified by CSH-056; individual remaining capabilities CSH-059 |
+| U-040/host-boundaries | CSH-056 failures plus CSH-059 finite file/tree/UTF-8 witnesses and child resource measurements; residual capabilities CSH-060 |
 | U-041/selected-set | Verified: all 15 implemented names and named non-intrinsic controls |
 | U-041/fc | Inapplicable: UP not selected; absent lookup is a profile witness |
 

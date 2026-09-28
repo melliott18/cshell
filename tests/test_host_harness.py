@@ -2,6 +2,8 @@
 import unittest
 from unittest.mock import patch
 
+from host_capability_limits import RESIDUAL, limitations
+from host_utility_cases import HOSTS
 from host_utilities import known_gap, match, matches_case, sanitizer_diagnostic
 
 
@@ -45,3 +47,25 @@ class HostEvidenceTests(unittest.TestCase):
         self.assertFalse(matches_case(case, 0, dict(stdout=b'', stderr=b'missing')))
         self.assertFalse(matches_case(case, 1, dict(stdout=b':a\n', stderr=b'')))
         self.assertFalse(matches_case(case, -11, dict(stdout=b'', stderr=b'crash')))
+
+    def test_residual_capabilities_are_distinct_and_have_provenance(self):
+        inventory = {name: {'path': '/selected/' + name, 'sha256': name} for name in HOSTS}
+        rows = limitations('test environment', inventory)
+        self.assertEqual(len({row['condition'] for row in rows}), len(RESIDUAL))
+        for row in rows:
+            self.assertEqual(row['environment'], 'test environment')
+            self.assertEqual(row['owner'], 'CSH-060')
+            self.assertTrue(row['source'].startswith('https://pubs.opengroup.org/'))
+            self.assertTrue(row['reason'])
+            self.assertTrue(row['executable']['sha256'])
+            self.assertNotIn('verdict', row)
+        for row in rows:
+            if row['condition'].startswith('U-037/'):
+                self.assertEqual(row['related_executable'], inventory['['])
+
+    def test_binary_printf_regression_has_no_known_gap_allowance(self):
+        case = {'name': 'U-035 b all bytes', 'stdout': bytes(range(256)),
+                'stderr': b'', 'status': 0}
+        output = {'stdout': b'', 'stderr': b''}
+        self.assertFalse(matches_case(case, 0, output))
+        self.assertFalse(known_gap(case, 0, output))

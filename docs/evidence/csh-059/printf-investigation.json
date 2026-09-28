@@ -1,0 +1,63 @@
+{
+  "baseline": "HEAD vendor and adapter compiled under build/upstream-printf; see source baseline in identity records",
+  "compiler": "clang -std=c99 -Wall -Wextra -O2",
+  "cases": [
+    {
+      "argv": [
+        "%b",
+        "a\\000b"
+      ],
+      "expected_hex": "610062",
+      "before": {
+        "binary_sha256": "a4e644b9bacf152cacb6e78ca203841cd7ce4b509edc01fe60eb822415a58736",
+        "stdout_hex": "61",
+        "stderr_hex": "",
+        "status": 0
+      },
+      "after": {
+        "binary_sha256": "2cdb4cbfb9f554184fdd5cfc010bc03f9db13743a22a4920d7ecd015ddec5295",
+        "stdout_hex": "610062",
+        "stderr_hex": "",
+        "status": 0
+      }
+    },
+    {
+      "argv": [
+        "[%5.3b]",
+        "a\\000bZ"
+      ],
+      "expected_hex": "5b20206100625d",
+      "before": {
+        "binary_sha256": "a4e644b9bacf152cacb6e78ca203841cd7ce4b509edc01fe60eb822415a58736",
+        "stdout_hex": "5b20202020615d",
+        "stderr_hex": "",
+        "status": 0
+      },
+      "after": {
+        "binary_sha256": "2cdb4cbfb9f554184fdd5cfc010bc03f9db13743a22a4920d7ecd015ddec5295",
+        "stdout_hex": "5b20206100625d",
+        "stderr_hex": "",
+        "status": 0
+      }
+    },
+    {
+      "argv": [
+        "%b:after",
+        "a\\000b\\cignored"
+      ],
+      "expected_hex": "610062",
+      "before": {
+        "binary_sha256": "a4e644b9bacf152cacb6e78ca203841cd7ce4b509edc01fe60eb822415a58736",
+        "stdout_hex": "61",
+        "stderr_hex": "",
+        "status": 0
+      },
+      "after": {
+        "binary_sha256": "2cdb4cbfb9f554184fdd5cfc010bc03f9db13743a22a4920d7ecd015ddec5295",
+        "stdout_hex": "610062",
+        "stderr_hex": "",
+        "status": 0
+      }
+    }
+  ]
+}
