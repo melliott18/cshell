@@ -55,7 +55,7 @@ class HostEvidenceTests(unittest.TestCase):
         self.assertEqual(len({row['condition'] for row in rows}), len(RESIDUAL))
         for row in rows:
             self.assertEqual(row['environment'], 'test environment')
-            self.assertEqual(row['owner'], 'CSH-061')
+            self.assertEqual(row['owner'], 'CSH-062')
             self.assertTrue(row['source'].startswith('https://pubs.opengroup.org/'))
             self.assertTrue(row['reason'])
             self.assertTrue(row['executable']['sha256'])
@@ -80,3 +80,18 @@ class HostEvidenceTests(unittest.TestCase):
             output = dict(stdout=case['stdout'], stderr=b'')
             self.assertFalse(matches_case(case, 1, output))
             self.assertFalse(known_gap(case, 1, output))
+
+    def test_acl_matrix_denials_and_operations_are_independent(self):
+        from host_acl_cases import cases
+        paths = {name: '/selected/' + name for name in HOSTS}
+        rows = list(cases(paths, '/helper'))
+        self.assertEqual(len(rows), 108)
+        for row in rows:
+            output = dict(stdout=row['stdout'], stderr=b'')
+            if row['status'] == 0:
+                self.assertFalse(matches_case(row, 1, output))
+                self.assertFalse(known_gap(row, 1, output))
+            else:
+                self.assertFalse(matches_case(row, 0, output))
+            if row['name'].endswith('operation') and row['controlled_fixture']['permission'] == 'w':
+                self.assertEqual(row['files']['controlled'], b'private\nwritten\n' if row['status'] == 0 else b'private\n')

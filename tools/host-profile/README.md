@@ -43,7 +43,7 @@ For positive block-device predicates, pass
 Mac with that node. Only `stat` is performed; the device is never opened. The
 Linux evidence uses a disposable block node created inside a container, then
 runs the suite as UID 10001. Missing device access, root-only execution, and
-missing French locales are individually recorded limitations owned by CSH-061;
+missing French locales are individually recorded limitations owned by CSH-062;
 these do not become passes. `--strict-gaps` concerns unmet assertions, not
 universal capability coverage.
 
@@ -81,7 +81,7 @@ See the [condition map](../../docs/host-contract-profile.md) and
 
 Each boundary run emits the residual conditions in
 `tests/host_capability_limits.py` with the source page, actual host/executable,
-reason and next owner (CSH-061). Missing French/UTF-8 locales, a root identity
+reason and next owner (CSH-062). Missing French/UTF-8 locales, a root identity
 and an absent explicit block-node witness remain separate limitations.
 `host_limits` are parent system queries; `child_resources` are actual soft/hard
 limits measured after the harness applies its protections (`-1` means infinity).
@@ -106,7 +106,7 @@ stat operations. Run ordinary non-root block qualification separately.
 for the recorded Debian 12 GNU test/bracket ACL grant with unequal IDs. Its
 expected grant stays success; no known-gap allowance is added. The passing
 controlled subset checks ACLs with equal IDs and unequal owner/group identities
-separately. The combined condition remains owned by CSH-061.
+separately. The combined condition remains owned by CSH-062.
 
 For an alternative BusyBox echo profile, create a private directory containing
 `echo -> /bin/busybox`, prepend it to the qualified PATH, and select
@@ -117,3 +117,20 @@ Other BusyBox configurations require their own policy and do not inherit this
 claim. Every run records the actual echo binary hash and policy source.
 
 See [CSH-060 evidence and reproduction](../../docs/evidence/csh-060/README.md).
+
+
+## CSH-061 ACL extension
+
+The Linux-root `--controlled-identities` scope also checks access and inherited
+(default) ACLs for read, write and execute, both named users and supplementary
+group 10003. Each has grant, unrelated-identity and masked-denial witnesses for
+test/bracket and actual read/append/exec operations. Defaults are applied to a
+private parent before child creation; no child chmod rewrites its inherited
+mask. Execute controls copy the test helper, never execute a shell script that
+could change credentials. The helper verifies and prints actual supplementary
+groups, real/effective IDs, and drops saved root credentials before exec.
+
+Darwin's privileged ACL environment is unavailable in the retained native run
+and is an individual limitation; Linux results do not qualify Darwin ACLs.
+See [CSH-061 evidence](../../docs/evidence/csh-061/README.md) for the unequal-ID
+libc investigation and unchanged strict failure expectations.

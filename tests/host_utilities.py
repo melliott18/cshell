@@ -246,7 +246,7 @@ def main():
             ('U-037/permission-denial', capabilities['permission_denial'], 'effective UID 0 bypasses mode-bit denial'),
             ('U-037/block-device', capabilities['block_device'], 'no explicit stat-only block-device witness supplied')):
             if not available:
-                limitations.append(dict(condition=condition, reason=reason, owner='CSH-061',
+                limitations.append(dict(condition=condition, reason=reason, owner='CSH-062',
                                         environment=environment, source=BASE +
                                         ('test.html' if condition.startswith('U-037') else 'V3_chap01.html')))
         for limitation in limitations:
@@ -340,7 +340,7 @@ def main():
             raise RuntimeError('child resource query failed: ' + repr((status, output, errors)))
         child_resources = json.loads(bytes(output['stdout']))
         filesystem_query_path = str(directory)
-    result = {'platform': platform.platform(), 'path': args.path, 'inventory': tools,
+    result = {'platform': platform.platform(), 'libc': platform.libc_ver(), 'path': args.path, 'inventory': tools,
               'capabilities': capabilities, 'limitations': limitations,
               'echo_policy': args.echo_policy,
               'echo_policy_source': {

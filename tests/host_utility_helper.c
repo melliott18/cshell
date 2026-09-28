@@ -49,6 +49,27 @@ static int exec_size(const char *path, int single)
 
 int main(int argc, char **argv)
 {
+    if (argc == 2 && !strcmp(argv[1], "acl-executed")) {
+        puts("executed");
+        return 0;
+    }
+    if (argc == 3 && !strcmp(argv[1], "acl-write")) {
+        int fd = open(argv[2], O_WRONLY | O_APPEND);
+        if (fd < 0) { perror("acl-write"); return 1; }
+        if (write(fd, "written\n", 8) != 8) { close(fd); return 2; }
+        return close(fd) ? 2 : 0;
+    }
+#ifdef __linux__
+    if (argc == 3 && !strcmp(argv[1], "acl-probe")) {
+        int legacy, kernel, fd;
+        legacy = euidaccess(argv[2], R_OK);
+        kernel = faccessat(AT_FDCWD, argv[2], R_OK, AT_EACCESS);
+        fd = open(argv[2], O_RDONLY);
+        printf("euidaccess=%d faccessat=%d open=%d\n", legacy, kernel, fd < 0 ? -1 : 0);
+        if (fd >= 0) close(fd);
+        return 0;
+    }
+#endif
     if (argc == 4 && !strcmp(argv[1], "exec-size") &&
         (!strcmp(argv[2], "single") || !strcmp(argv[2], "aggregate")))
         return exec_size(argv[3], !strcmp(argv[2], "single"));
@@ -61,22 +82,25 @@ int main(int argc, char **argv)
         return 2;
     }
 #ifdef __linux__
-    if (argc >= 5 && !strcmp(argv[1], "identity")) {
-        /* Explicit Linux-root fixture opt-in only; drop all supplementary
-         * groups and saved root credentials before entering the utility. */
+    if (argc >= 5 && (!strcmp(argv[1], "identity") || !strcmp(argv[1], "identity-group"))) {
+        /* Explicit Linux-root fixtures: replace inherited groups with the
+         * requested set and drop saved root credentials before utility exec. */
         uid_t real, effective;
+        gid_t group = 10003, observed_group;
+        int groups = !strcmp(argv[1], "identity-group");
         if (geteuid() != 0 ||
             (strcmp(argv[2], "10001") && strcmp(argv[2], "10002")) ||
             (strcmp(argv[3], "10001") && strcmp(argv[3], "10002"))) return 2;
         real = (uid_t)strtoul(argv[2], NULL, 10);
         effective = (uid_t)strtoul(argv[3], NULL, 10);
-        if (setgroups(0, NULL) || setresgid(real, effective, effective) ||
+        if (setgroups(groups, groups ? &group : NULL) || setresgid(real, effective, effective) ||
             setresuid(real, effective, effective)) return 2;
         if (getuid() != real || geteuid() != effective || getgid() != real ||
-            getegid() != effective || getgroups(0, NULL) != 0) return 2;
-        printf("uid=%lu euid=%lu gid=%lu egid=%lu groups=0\n",
+            getegid() != effective || getgroups(0, NULL) != groups ||
+            (groups && (getgroups(1, &observed_group) != 1 || observed_group != group))) return 2;
+        printf("uid=%lu euid=%lu gid=%lu egid=%lu groups=%s\n",
                (unsigned long)getuid(), (unsigned long)geteuid(),
-               (unsigned long)getgid(), (unsigned long)getegid());
+               (unsigned long)getgid(), (unsigned long)getegid(), groups ? "1:10003" : "0");
         if (fflush(stdout)) return 2;
         execvp(argv[4], argv + 4);
         perror("identity exec");

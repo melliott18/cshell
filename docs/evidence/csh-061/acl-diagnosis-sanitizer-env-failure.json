@@ -1,0 +1,88 @@
+{
+  "linked": {
+    "argv": [
+      "ldd",
+      "/usr/bin/test"
+    ],
+    "status": 0,
+    "stdout": "\tlinux-vdso.so.1 (0x0000ffffae2bb000)\n\tlibc.so.6 => /lib/aarch64-linux-gnu/libc.so.6 (0x0000ffffae0a0000)\n\t/lib/ld-linux-aarch64.so.1 (0x0000ffffae27e000)\n",
+    "stderr": ""
+  },
+  "libc": {
+    "path": "/lib/aarch64-linux-gnu/libc.so.6",
+    "sha256": "e4ac8ae1d81e4865e3aadedb962879cf9415903b3f2ba81ec75e9962b86ab8b0"
+  },
+  "versions": {
+    "argv": [
+      "dpkg-query",
+      "-W",
+      "coreutils",
+      "libc6"
+    ],
+    "status": 0,
+    "stdout": "coreutils\t9.1-1\nlibc6:arm64\t2.36-9+deb12u14\n",
+    "stderr": ""
+  },
+  "imports": {
+    "argv": [
+      "objdump",
+      "-T",
+      "/usr/bin/test"
+    ],
+    "status": 0,
+    "stdout": "\n/usr/bin/test:     file format elf64-littleaarch64\n\nDYNAMIC SYMBOL TABLE:\n0000000000001530 l    d  .init\t0000000000000000              .init\n00000000000201a0 l    d  .data\t0000000000000000              .data\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) mbrtowc\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) memcpy\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) _exit\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strlen\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) exit\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.34) __libc_start_main\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) error\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) program_invocation_name\n0000000000000000  w   D  *UND*\t0000000000000000  Base        _ITM_deregisterTMCloneTable\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) getegid\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) geteuid\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.26) reallocarray\n0000000000000000  w   DF *UND*\t0000000000000000 (GLIBC_2.17) __cxa_finalize\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __cxa_atexit\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) stderr\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) euidaccess\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) lseek\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __fpending\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fileno\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __snprintf_chk\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) __progname_full\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fclose\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) nl_langinfo\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) malloc\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strncmp\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) bindtextdomain\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) stdout\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __printf_chk\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) memset\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) calloc\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.33) lstat\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) realloc\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __stack_chk_fail\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strrchr\n0000000000000000  w   D  *UND*\t0000000000000000  Base        __gmon_start__\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.33) stat\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) __stack_chk_guard\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) abort\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) mbsinit\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) memcmp\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) textdomain\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __fprintf_chk\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strcmp\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __ctype_b_loc\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) strtol\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fseeko\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) free\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __ctype_get_mb_cur_max\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fwrite\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fflush\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) __progname\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) isatty\n0000000000000000      DO *UND*\t0000000000000000 (GLIBC_2.17) program_invocation_short_name\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) dcgettext\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) fputs_unlocked\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __freading\n0000000000000000  w   D  *UND*\t0000000000000000  Base        _ITM_registerTMCloneTable\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) iswprint\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) __errno_location\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) error_at_line\n0000000000000000      DF *UND*\t0000000000000000 (GLIBC_2.17) setlocale\n\n\n",
+    "stderr": ""
+  },
+  "cases": [
+    {
+      "argv": [
+        "/work/build/sanitized/helper",
+        "identity",
+        "10001",
+        "10001",
+        "/work/build/sanitized/helper",
+        "acl-probe",
+        "/tmp/csh-acl-diagnosis-gn4qutyg/controlled"
+      ],
+      "status": 0,
+      "stdout": "uid=10001 euid=10001 gid=10001 egid=10001 groups=0\neuidaccess=0 faccessat=0 open=0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/work/build/sanitized/helper",
+        "identity",
+        "10002",
+        "10001",
+        "/work/build/sanitized/helper",
+        "acl-probe",
+        "/tmp/csh-acl-diagnosis-gn4qutyg/controlled"
+      ],
+      "status": 1,
+      "stdout": "uid=10002 euid=10001 gid=10002 egid=10001 groups=0\n",
+      "stderr": "==34556==LeakSanitizer has encountered a fatal error.\n==34556==HINT: For debugging, try setting environment variable LSAN_OPTIONS=verbosity=1:log_threads=1\n==34556==HINT: LeakSanitizer does not work under ptrace (strace, gdb, etc)\n"
+    },
+    {
+      "argv": [
+        "/work/build/sanitized/helper",
+        "identity",
+        "10001",
+        "10002",
+        "/work/build/sanitized/helper",
+        "acl-probe",
+        "/tmp/csh-acl-diagnosis-gn4qutyg/controlled"
+      ],
+      "status": 1,
+      "stdout": "uid=10001 euid=10002 gid=10001 egid=10002 groups=0\n",
+      "stderr": "==34558==LeakSanitizer has encountered a fatal error.\n==34558==HINT: For debugging, try setting environment variable LSAN_OPTIONS=verbosity=1:log_threads=1\n==34558==HINT: LeakSanitizer does not work under ptrace (strace, gdb, etc)\n"
+    }
+  ],
+  "fixture": {
+    "kind": "acl",
+    "uid": 0,
+    "gid": 0,
+    "mode": "0o100040",
+    "rdev": 0,
+    "acl": "user::---\nuser:10001:r--\ngroup::---\nmask::r--\nother::---\n\n"
+  }
+}

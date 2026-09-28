@@ -1,0 +1,59 @@
+{
+  "recorded_utc": "2026-09-28T19:17:25.687764+00:00",
+  "source_revision": "8ffb99e-plus-CSH-061-working-tree",
+  "source_note": "Source digest covers Makefile, Dockerfile, src, include, tests and tools, excluding Python caches. Subsequent evidence documentation is outside that digest.",
+  "source_sha256": "e854cd09f896458d7b9ff6a645609a2cb9101d21ebc747ce3f3fe00288e4a444",
+  "binary": {
+    "path": "/work/cshell",
+    "realpath": "/work/cshell",
+    "sha256": "f36f3ed537616d6f96fad2e5b9909f1a99f47c051a38474536fdd9bd72e595cb"
+  },
+  "compiler": {
+    "argv": [
+      "cc",
+      "--version"
+    ],
+    "status": 0,
+    "output": "cc (Debian 12.2.0-14+deb12u1) 12.2.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+  },
+  "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+  "uname": [
+    "Linux",
+    "21c6c27f6986",
+    "6.4.16-linuxkit",
+    "#1 SMP PREEMPT Thu Nov 16 10:49:20 UTC 2023",
+    "aarch64",
+    ""
+  ],
+  "python": "3.11.2 (main, May 12 2026, 05:17:27) [GCC 12.2.0]",
+  "libc": [
+    "glibc",
+    "2.36"
+  ],
+  "flags": {
+    "CPPFLAGS": "-D_POSIX_C_SOURCE=200809L -Iinclude",
+    "CFLAGS": "-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2",
+    "LDFLAGS": "",
+    "LDLIBS": ""
+  },
+  "generated_suites": {
+    "build/tests/host-profile-results.json": "5c9b6b06b7fd0d4fb62a485ffff2bdd8d95acda3c181b69274df1bf04d54dcc6",
+    "build/tests/jobs-pty.json": "f1b274b9c847dee58fcf76fb710838c35c428c196db7cf9cb86bd41348b145bc",
+    "build/tests/runtime-pty.json": "6375cbefd47504d9f14372c0a9aa925cc35e008c1b331f58acda0e4fab7a8436",
+    "build/tests/runtime.json": "0b6d6b225497d027bdfea20a0c642e886b61259aafc4e5cb9d77d3f52c6f2220"
+  },
+  "helpers": {
+    "/bin/cat": "491ea6f9b1804d893d660477e6873855b28271c018b13f086c2fc419d51560bb",
+    "/usr/bin/cmp": "2f7b69a504f687fdc54ea05e3d89c16d13c79a9078036e0bfca7792d2ae3846c",
+    "/work/build/tests/execute_helper": "5220da03345bba53230fc8758174f9295adb6c446b0efa4c1667d945f5a70b73"
+  },
+  "os_release": "PRETTY_NAME=\"Debian GNU/Linux 12 (bookworm)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"12\"\nVERSION=\"12 (bookworm)\"\nVERSION_CODENAME=bookworm\nID=debian\nHOME_URL=\"https://www.debian.org/\"\nSUPPORT_URL=\"https://www.debian.org/support\"\nBUG_REPORT_URL=\"https://bugs.debian.org/\"\n",
+  "libc_build": {
+    "argv": [
+      "ldd",
+      "--version"
+    ],
+    "status": 0,
+    "output": "ldd (Debian GLIBC 2.36-9+deb12u14) 2.36\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nWritten by Roland McGrath and Ulrich Drepper."
+  }
+}
