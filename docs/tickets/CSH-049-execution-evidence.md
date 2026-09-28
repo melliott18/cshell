@@ -1,11 +1,11 @@
 # CSH-049: Close execution, redirection and control-flow evidence gaps
 
-- Status: review
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-036, CSH-039
-- Branch: test/CSH-049-integrated-evidence
+- Branch: test/CSH-049-residual-contracts
 - Issue: [#81](https://github.com/melliott18/cshell/issues/81)
 
 ## Goal
@@ -13,6 +13,11 @@
 Map existing exact fixtures and their implementation revisions; decompose ordering, descriptors, concurrency/status, lookup, loops/functions and error consequences. Document and test descriptor, assignment, pipeline and signal-status policies; integrate CSH-043 boundary evidence and CSH-042 relevant case findings without treating those fixes as complete family verification.
 
 ## Explicit current limitation
+
+The [residual execution review](../execution-residuals.md) now defines and tests
+the concrete filesystem, expansion, context and error-handling omissions.
+Cross-platform validation of those additions is in progress.
+
 
 The [25-row clause map](../execution-evidence.md) identifies exact assertions,
 policies and narrower gaps. The original audit merged in [PR #93](https://github.com/melliott18/cshell/pull/93).
