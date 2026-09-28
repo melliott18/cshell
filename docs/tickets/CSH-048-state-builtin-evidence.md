@@ -1,6 +1,6 @@
 # CSH-048: Close shell state and builtin integration evidence gaps
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
