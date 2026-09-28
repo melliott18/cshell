@@ -1,6 +1,6 @@
 # CSH-063: Qualify remaining supplied host platforms
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
