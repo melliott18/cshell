@@ -1,6 +1,6 @@
 # CSH-046: Close invocation, lexical, grammar and alias evidence gaps
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
@@ -22,8 +22,13 @@ also identifies API-only source-read-error and heredoc end-of-string boundaries
 and encoding/cross-feature coverage owned by related tickets. No broad family
 is promoted to verified and the CSH-012 compliance gate remains closed.
 
+Implementation was integrated through [PR #89](https://github.com/melliott18/cshell/pull/89)
+on 2026-09-26 as `daa1be1547d27759d0cc4d1f678074d1cee48e59`.
+The ticket's completed evidence inventory does not close the narrower
+limitations recorded above or change any requirement's evidence state.
+
 This is the implementation/evidence record for the
-[CSH-037 independent review](../audit-review.md) follow-up. Ticket review status
+[CSH-037 independent review](../audit-review.md) follow-up. Ticket completion
 does not assert unrestricted grammar support or complete POSIX conformance.
 
 ## Scope
