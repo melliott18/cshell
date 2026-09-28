@@ -347,8 +347,11 @@ and supplies assertions for its named execution conditions. CSH-047
 owns expansion/declaration combinations; CSH-048 owns full environment/utility
 state; CSH-053 records multibyte lexical coverage and host capability limits.
 CSH-054/058 record signal contracts; [CSH-057](tickets/CSH-057-job-lifecycle-boundaries.md)
-retains the unresolved intermittent terminal lifecycle failure. CSH-052/056/059
-record host utilities, fallback shell provisioning and their qualified limits.
+retains the unresolved PTY/retention timeouts; its status-1 continuation defect
+was corrected in PR #112. The [post-integration review](evidence-reconciliation.md)
+records these distinct dispositions. CSH-052/056/059/060 record host utilities,
+fallback shell provisioning and their qualified limits; CSH-061 owns the
+remaining host conditions.
 CSH-049 retains the evidence map, wider filesystem/target-expansion combinations
 and [cross-platform integration results](tickets/CSH-049-execution-evidence.md#integrated-validation-2026-09-28).
 These are applicable open obligations. Neither CSH-042 nor CSH-043's completed

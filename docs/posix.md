@@ -42,9 +42,12 @@ example. Unimplemented requirements and pending scope decisions remain open.
 Reference-shell output does not establish expected results or cshell conformance.
 Ticket lifecycle status continues to live in the [ticket files](tickets/README.md).
 The [independent CSH-037 review](audit-review.md) accounts for all 131 rows:
-115 applicable rows have explicit remaining coverage owners in CSH-046–CSH-052,
+115 applicable rows were allocated to evidence owners CSH-046–CSH-052,
 and 16 rows retain the documented UP/XSI exclusions. Completing this audit does
 not turn those open evidence limitations into passing conformance requirements.
+The [2026-09-28 reconciliation](evidence-reconciliation.md) distinguishes
+completed scoped audits from the still-open CSH-049/050, CSH-057, CSH-061 and
+CSH-012 obligations; the original allocation is not a current ticket-status list.
 
 ## Runtime baseline
 

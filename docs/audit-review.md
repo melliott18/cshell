@@ -1,5 +1,9 @@
 # CSH-037 independent evidence review
 
+For current integration dispositions and residual owners, see the
+[2026-09-28 evidence reconciliation](evidence-reconciliation.md). The findings
+and run records below retain their original reviewed revisions.
+
 This review was performed separately from the CSH-037 implementation and the
 CSH-044/045 fixes on 2026-09-26 UTC. The reviewed source and matrix revision is
 `58ca5c3dd1cea8d3af41a0ca83000c571327bca3`. The independent build used an archive

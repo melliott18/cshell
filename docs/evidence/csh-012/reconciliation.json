@@ -1,0 +1,70 @@
+{
+  "checked_utc": "2026-09-28T19:20:29.593054+00:00",
+  "reviewed_revision": "8ffb99e73cfd21bb1b5ad66829544350f78b69ae",
+  "requirement_count": 131,
+  "forward_reverse_pairs": 416,
+  "ownership_matches": true,
+  "scopes": {
+    "CSH-049": {
+      "rows": 25,
+      "scope_matches_ownership": true,
+      "all_clause_anchors_exist": true,
+      "ids": [
+        "EXEC-001",
+        "EXEC-002",
+        "EXEC-003",
+        "EXEC-004",
+        "EXEC-005",
+        "EXEC-006",
+        "EXEC-007",
+        "EXEC-008",
+        "EXEC-010",
+        "EXEC-011",
+        "EXEC-012",
+        "EXEC-013",
+        "EXEC-014",
+        "EXEC-015",
+        "EXEC-016",
+        "O-026",
+        "RED-001",
+        "RED-002",
+        "RED-003",
+        "RED-004",
+        "RED-005",
+        "RED-006",
+        "SH-009",
+        "U-003",
+        "U-004"
+      ]
+    },
+    "CSH-050": {
+      "rows": 11,
+      "scope_matches_ownership": true,
+      "all_clause_anchors_exist": true,
+      "ids": [
+        "EXEC-009",
+        "JOB-001",
+        "JOB-002",
+        "JOB-003",
+        "SIG-001",
+        "SIG-002",
+        "SIG-003",
+        "U-008",
+        "U-015",
+        "U-026",
+        "U-032"
+      ]
+    }
+  },
+  "historical_artifacts": {
+    "docs/evidence/csh-049/integrated": {
+      "count": 15,
+      "all_hashes_match": true
+    },
+    "docs/evidence/csh-050": {
+      "count": 17,
+      "all_hashes_match": true
+    }
+  },
+  "method": "Read scope tables and explicit clause anchors; split unescaped Markdown table delimiters; compare forward owner cells with reverse link destination anchors, preserving descriptive labels; SHA-256 every listed artifact."
+}
