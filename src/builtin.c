@@ -1,3 +1,7 @@
+/* Linux exposes its search-only directory handle as O_PATH. */
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
 #include "cshell/builtin.h"
 #include "cshell/output.h"
 #include <errno.h>
@@ -46,11 +50,18 @@ static int compare_names(const void *a, const void *b)
 
 static int quoted(const char *value)
 {
-    const char *s;
-    if (dprintf(1, "'") < 0) return -1;
-    for (s = value; *s; ++s)
-        if ((*s == '\'' ? dprintf(1, "'\\''") : dprintf(1, "%c", *s)) < 0) return -1;
-    return dprintf(1, "'") < 0 ? -1 : 0;
+    const char *s = value;
+    if (csh_write_text(1, "'") < 0) return -1;
+    while (*s) {
+        size_t n = strcspn(s, "'");
+        if (csh_write_bytes(1, s, n) < 0) return -1;
+        s += n;
+        if (*s) {
+            if (csh_write_text(1, "'\\''") < 0) return -1;
+            ++s;
+        }
+    }
+    return csh_write_text(1, "'");
 }
 
 static int listing(struct csh_state *state, const char *name, unsigned mask)
@@ -65,8 +76,9 @@ static int listing(struct csh_state *state, const char *name, unsigned mask)
         struct csh_variable_view v;
         csh_state_get_variable(state, names[i], &v);
         if (mask ? !(v.attributes & mask) : v.value == NULL) continue;
-        if ((mask && dprintf(1, "%s ", name) < 0) || dprintf(1, "%s", names[i]) < 0 ||
-            (v.value && (dprintf(1, "=") < 0 || quoted(v.value) < 0)) || dprintf(1, "\n") < 0) {
+        if ((mask && (csh_write_text(1, name) < 0 || csh_write_text(1, " ") < 0)) ||
+            csh_write_text(1, names[i]) < 0 ||
+            (v.value && (csh_write_text(1, "=") < 0 || quoted(v.value) < 0)) || csh_write_text(1, "\n") < 0) {
             status = problem(name, "cannot write output"); break;
         }
     }
@@ -87,6 +99,56 @@ static char *cwd(void)
     }
 }
 
+/* Open a directory for search/fchdir without requiring read permission. Walk
+ * overlong paths component by component, keeping the process cwd unchanged. */
+static int directory_handle(const char *path)
+{
+#if defined(O_SEARCH)
+    const int flags = O_SEARCH;
+#elif defined(O_PATH)
+    const int flags = O_PATH | O_DIRECTORY;
+#else
+    const int flags = O_RDONLY;
+#endif
+    int fd = open(path, flags);
+    char *copy, *part;
+    if (fd >= 0 || errno != ENAMETOOLONG) return fd;
+    copy = strdup(path);
+    if (!copy) return -1;
+    fd = open(*path == '/' ? (path[1] == '/' && path[2] != '/' ? "//" : "/") : ".", flags);
+    part = copy;
+    while (fd >= 0 && *part) {
+        char *end;
+        int next, saved_errno;
+        while (*part == '/') ++part;
+        if (!*part) break;
+        end = part + strcspn(part, "/");
+        if (*end) *end++ = 0;
+        next = openat(fd, part, flags);
+        saved_errno = errno;
+        close(fd);
+        errno = saved_errno;
+        fd = next;
+        part = end;
+    }
+    free(copy);
+    return fd;
+}
+
+static int directory_stat(const char *path, struct stat *st)
+{
+    int fd, rc, saved_errno;
+    if (stat(path, st) == 0) return 0;
+    if (errno != ENAMETOOLONG) return -1;
+    fd = directory_handle(path);
+    if (fd < 0) return -1;
+    rc = fstat(fd, st);
+    saved_errno = errno;
+    close(fd);
+    errno = saved_errno;
+    return rc;
+}
+
 static int logical_valid(const char *s)
 {
     struct stat a, b;
@@ -99,7 +161,7 @@ static int logical_valid(const char *s)
         if ((n == 1 && t[0] == '.') || (n == 2 && t[0] == '.' && t[1] == '.')) return 0;
         t += n;
     }
-    return stat(s, &a) == 0 && stat(".", &b) == 0 && a.st_dev == b.st_dev && a.st_ino == b.st_ino;
+    return directory_stat(s, &a) == 0 && stat(".", &b) == 0 && a.st_dev == b.st_dev && a.st_ino == b.st_ino;
 }
 
 static char *current(struct csh_state *state, int physical)
@@ -159,7 +221,7 @@ static int normalize(char *s)
             struct stat st;
             char saved = s[used];
             s[used] = 0;
-            if (stat(s, &st) < 0 || !S_ISDIR(st.st_mode)) { s[used] = saved; return -1; }
+            if (directory_stat(s, &st) < 0 || !S_ISDIR(st.st_mode)) { s[used] = saved; return -1; }
             s[used] = saved;
             if (used > 1) {
                 while (used > 1 && s[used-1] != '/') --used;
@@ -239,9 +301,34 @@ static int directory(struct csh_state *state, size_t argc, char *const argv[])
         }
         if (target[0] == '/' && normalize(target) < 0) goto done;
     }
-    fd = open(".", O_RDONLY);
+    fd = directory_handle(".");
     if (fd < 0 || csh_state_save(state, &checkpoint) != CSH_STATE_OK) goto done;
-    if (chdir(target) < 0) goto done;
+    {
+        const char *change = target;
+        /* cd step 9: a logical absolute path can exceed the pathname syscall
+         * limit even when the operand fits. Strip the current directory prefix
+         * when possible, retaining the full logical value for PWD. */
+        long maximum = pathconf(".", _PC_PATH_MAX);
+        if (!physical && old && maximum > 0 && strlen(target) >= (size_t)maximum) {
+            size_t prefix = strlen(old);
+            if (!strncmp(target, old, prefix) && (target[prefix] == '/' || target[prefix] == 0)) {
+                change = target + prefix;
+                while (*change == '/') ++change;
+                if (!*change) change = ".";
+            }
+        }
+        if (chdir(change) < 0) {
+            int target_fd, rc, saved_errno;
+            if (errno != ENAMETOOLONG) goto done;
+            target_fd = directory_handle(change);
+            if (target_fd < 0) goto done;
+            rc = fchdir(target_fd);
+            saved_errno = errno;
+            close(target_fd);
+            errno = saved_errno;
+            if (rc < 0) goto done;
+        }
+    }
     newpwd = !physical && target[0] == '/' ? strdup(target) : cwd();
     if (!newpwd) {
         /* Without -e, POSIX permits success when physical cwd is unavailable. */

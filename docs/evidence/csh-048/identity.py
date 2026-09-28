@@ -36,6 +36,10 @@ identity = {
     'source_sha256': hashlib.sha256(json.dumps(manifest, sort_keys=True).encode()).hexdigest(),
     'binary': {'path': str(root / 'cshell'), 'realpath': str((root / 'cshell').resolve()),
                'sha256': sha(root / 'cshell')},
+    'fault_binaries': {str(p.relative_to(root)): sha(p) for p in
+                      [root / 'build/tests/state_builtin_faults', root / 'build/tests/prompt_faults',
+                       root / 'build/tests/execute_faults', root / 'build/tests/state_faults']
+                      if p.exists()},
     'compiler': command('cc', '--version'),
     'platform': platform.platform(), 'uname': list(platform.uname()),
     'python': sys.version, 'libc': platform.libc_ver(),

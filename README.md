@@ -61,6 +61,7 @@ make test-host-profile   # Opt-in qualified utilities, strict gaps and boundarie
 make test-evaluation # Evaluation, lookup, aliases, and remaining utilities
 make test-builtins # Replacement state builtins and executor integration
 make test-state-builtins # Clause-mapped runtime state and utility evidence
+make test-state-edges # Startup/fault, directory, permission and locale evidence
 make test-state    # Replacement shell-state API checks only
 make test-execution-evidence # Clause-mapped execution/redirection/control witnesses
 make test-execute  # Replacement command, assignment, and redirection API checks

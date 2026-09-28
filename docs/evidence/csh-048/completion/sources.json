@@ -1,0 +1,26 @@
+{
+  "reviewed_date": "2026-09-28",
+  "edition": "POSIX.1-2024",
+  "sources": {
+    "read": {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/read.html",
+      "sha256": "2eec6366229acb50ba5cc984e972172033bbd9077f37af7d1c6fd2e5f5aea6e1"
+    },
+    "shell": {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html",
+      "sha256": "0889867a53fe12508a71e8739ec23ecdddc95e6f67697c98e26acc8ff0ec1acd"
+    },
+    "ulimit": {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ulimit.html",
+      "sha256": "c63de22080fec37644b6381f4345533091ed70380e2652d02b542de8b8fcd01a"
+    },
+    "command": {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/command.html",
+      "sha256": "43db4a94e14a93d7c3afff243853d0d5a5e284ef2b19324805660fa83b50e1ab"
+    },
+    "cd": {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cd.html",
+      "sha256": "6c62adc698387aa20c6331a59c069c520cce58868f1f36adb4eb1a26972d41ee"
+    }
+  }
+}

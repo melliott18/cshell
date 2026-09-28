@@ -1,0 +1,23 @@
+{
+  "Id": "sha256:d40ba1e0175b31706ec8a5e15dc013f9000a17c9937a217219309b54c283f8af",
+  "Created": "2026-09-28T18:15:55.956124878Z",
+  "Architecture": "arm64",
+  "Os": "linux",
+  "RepoTags": [
+    "cshell-test:csh-048-output-final"
+  ],
+  "RootFS": {
+    "Type": "layers",
+    "Layers": [
+      "sha256:055ab12bd547e17a0630037f06a186cf405e3f61bb03a614562ca8f5ab52a8be",
+      "sha256:eb5e41cca7d4758b591475ad8e67502740994d8b007c0e5d2a4680fddbd70fcb",
+      "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+      "sha256:4893f083a580cf33db67c28e1f69303d42e4659d7331a35947030731c28ca4e1",
+      "sha256:5f754bdb1c75535b5b1fffcbc05fa562a220275d2b42a2cdc7ace72b063fde33",
+      "sha256:1ee10a65cdd3cb4b30684e5544011bf09a805ffa04dd31fd2c60a947e9abfc68",
+      "sha256:6c14e30da7479cc73f548f55b5a5a6571c311816b12ea0052ee9c1b0dee2d892",
+      "sha256:9c48e24445d95374e6903a9a64c79c50c6957b8282f526068a2509d369fa5b2c",
+      "sha256:ca9358a69fd6215ec438011115463cbcd98d50fb6376d537431ba99d5a27e732"
+    ]
+  }
+}

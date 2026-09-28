@@ -508,3 +508,21 @@ test-jobs-pty: test-job-notifications
 .PHONY: test-job-notifications
 test-job-notifications: build/tests/jobs_lifecycle
 	$(PYTHON) tests/smoke.py ./build/tests/jobs_lifecycle --suite tests/fixtures/job-notifications.json --timeout 30
+
+STATE_BUILTIN_FAULT_OBJECTS = build/tests/state-builtin-fault-builtin.o build/tests/state-builtin-fault-utility.o build/tests/state-builtin-fault-state.o
+$(STATE_BUILTIN_FAULT_OBJECTS): build/tests/state-builtin-fault-%.o: src/%.c tests/state_builtin_faults.h $(EXECUTE_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/state_builtin_faults.h -c $< -o $@
+
+build/tests/state-builtin-fault-main.o: src/main.c tests/state_builtin_faults.h $(EXECUTE_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -DCSHELL_STATE_FAULT_MAIN -include tests/state_builtin_faults.h -c $< -o $@
+
+build/tests/state_builtin_faults: tests/state_builtin_faults.c tests/state_builtin_faults.h build/tests/state-builtin-fault-main.o $(STATE_BUILTIN_FAULT_OBJECTS) $(OBJECTS) build/character.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/state_builtin_faults.c build/tests/state-builtin-fault-main.o $(STATE_BUILTIN_FAULT_OBJECTS) $(filter-out build/main.o build/builtin.o build/utility.o build/state.o,$(OBJECTS)) build/character.o $(LDLIBS)
+
+.PHONY: test-state-edges
+test-state-edges: cshell build/tests/state_builtin_faults build/tests/state_builtin_helper
+	$(PYTHON) tests/state_builtin_edges.py ./cshell build/tests/state_builtin_faults build/tests/state_builtin_helper
+
+test-state-builtins test: test-state-edges

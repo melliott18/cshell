@@ -1,0 +1,30 @@
+{
+  "Id": "bce8b4d2c949f7125985baa34ad874da2ba6807b90739d78c30cc3b0d69b1050",
+  "Created": "2026-09-28T18:17:11.400310843Z",
+  "Image": "sha256:d40ba1e0175b31706ec8a5e15dc013f9000a17c9937a217219309b54c283f8af",
+  "Path": "sh",
+  "Args": [
+    "-c",
+    "make test test-pty test-harness; result=$?; python3 /identity.py > /work/identity.json; exit \"$result\""
+  ],
+  "State": {
+    "Status": "exited",
+    "Running": false,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 0,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-09-28T18:17:11.748465177Z",
+    "FinishedAt": "2026-09-28T18:18:25.729057211Z"
+  },
+  "environment": [
+    "EVIDENCE_SOURCE_BASE=b1b6b15",
+    "EVIDENCE_SOURCE_REVISION=4144945",
+    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  ],
+  "user": "cshell",
+  "working_directory": "/work"
+}

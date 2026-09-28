@@ -961,10 +961,15 @@ owns that host gap. It is not counted as a passing status-mapping assertion.
 
 ## Shell state and builtin clause evidence
 
-`make test-state-builtins` runs CSH-048's 144 exact cross-mode cases plus 36
-predicate observations for times, limits, listing order and hash invariants.
+`make test-state-builtins` runs CSH-048's 372 exact cross-mode cases, 102 runtime
+edge/fault checks on the recorded non-root hosts, plus 36 predicate observations for times, limits, listing order and hash invariants.
 The exact cases also run in the default runtime suite; predicate observations
-are a prerequisite of `make test`. See the [clause map](state-builtin-evidence.md)
+and edge checks are prerequisites of `make test`. `make test-state-edges` selects
+startup allocation sweeps, syscall faults, permissions, long paths and non-C
+collation. Its public-entry fault binary is separately linked; no production
+fault hooks are installed. Each injected run verifies its selected path was
+reached. Permission checks report scoped skips on root hosts. Two additional
+PTY cases check literal PS2 and raw-read suppression. See the [clause map](state-builtin-evidence.md)
 for reused tests, source conditions, policies, native/Docker identities and
 remaining evidence gaps. Resource limits are changed only in disposable
 processes. The helper reports host `getrlimit` state and burns bounded CPU for

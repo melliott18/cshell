@@ -1,0 +1,34 @@
+{
+  "Id": "e42f3e330fc67de0e9541a32e377e49db13b7926a168aa20fa3bfa1cadf226c6",
+  "Created": "2026-09-28T18:17:12.561855719Z",
+  "Image": "sha256:d40ba1e0175b31706ec8a5e15dc013f9000a17c9937a217219309b54c283f8af",
+  "Path": "sh",
+  "Args": [
+    "-c",
+    "make clean && make test-state-builtins test-builtins test-execute test-evaluation; result=$?; EVIDENCE_CFLAGS=\"$CFLAGS\" EVIDENCE_LDFLAGS=\"$LDFLAGS\" python3 /identity.py > /work/identity.json; exit \"$result\""
+  ],
+  "State": {
+    "Status": "exited",
+    "Running": false,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 0,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-09-28T18:17:12.930716344Z",
+    "FinishedAt": "2026-09-28T18:32:18.525978305Z"
+  },
+  "environment": [
+    "UBSAN_OPTIONS=halt_on_error=1",
+    "CFLAGS=-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+    "LDFLAGS=-fsanitize=address,undefined",
+    "EVIDENCE_SOURCE_BASE=b1b6b15",
+    "EVIDENCE_SOURCE_REVISION=4144945",
+    "ASAN_OPTIONS=halt_on_error=1",
+    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  ],
+  "user": "cshell",
+  "working_directory": "/work"
+}

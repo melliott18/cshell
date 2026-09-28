@@ -14,7 +14,7 @@ Map and reproduce existing tests by utility option/operand/status/environment cl
 
 ## Explicit current limitation
 
-The [clause/condition map](../state-builtin-evidence.md) now links all 24 families to exact assertions, implementation and selected policies. Startup IFS/PPID/PWD, times formatting and ulimit resource descriptions are corrected. Residual permissions, allocation/I/O errors, locale, prompt, signal and option combinations remain explicitly identified in that map; those limitations prevent whole-family verification. ENV-005 now separates source-conditional UP/XSI variable processing from applicable base consumers.
+The [clause/condition map](../state-builtin-evidence.md) links all 24 families to exact assertions, implementation and selected policies. The 2026-09-28 continuation closes the named startup-allocation, directory/permission, listing/error, read-assignment, prompt and resource-unit partitions. Broader expansion, signal, option and host conditions retain CSH-047/054/051/060 ownership, and no row is promoted to whole-family verification. ENV-005 separates source-conditional UP/XSI processing from the applicable base prompt/trace consumers.
 
 This is an open evidence limitation found by the
 [CSH-037 independent review](../audit-review.md), not a declaration that every
@@ -74,7 +74,7 @@ add or split fixtures only for a concrete coverage gap.
 - [x] Every requirement above has a clause/condition map naming the reviewed
   normative source, selected policies, implementation, exact fixture assertions
   and any narrower unresolved defect or limitation.
-- [ ] Remaining applicable runtime cases pass on supported native macOS and
+- [x] Remaining applicable runtime cases pass on supported native macOS and
   Linux/Docker configurations; required PTY/capability or locale skips name
   the reason, scope and follow-up owner.
 - [x] Results record the source/suite revision, binary identity, compiler,
@@ -97,7 +97,7 @@ Allocated by the CSH-037 follow-up audit at baseline `58ca5c3`. The explicit
 limitation and complete row list above replace reliance on already-completed
 implementation tickets as owners of remaining verification work.
 
-### Implemented audit scope
+### Initial audit scope (2026-09-26)
 
 The [24-family clause map](../state-builtin-evidence.md) reconciles existing
 state/builtin/assignment APIs and public runtime cases, adds 144 exact cross-mode
@@ -111,8 +111,9 @@ Raw storage import remains unchanged. `times` emits the POSIX-locale `%f`
 precision and `ulimit -a` includes resource descriptions and units. The map
 retains narrower untested permission/I/O/allocation/locale/option conditions;
 those are not silently closed by this audit. CSH-012 remains closed to a
-conformance claim. The second acceptance criterion remains open for those
-residual applicable conditions and the recorded initial validation failures. The Linux LSan directory-output leak found during
+conformance claim. At the end of this initial audit, the second acceptance criterion remained open
+for those residual conditions and the recorded validation failures. The
+continuation below adds their concrete runtime partitions and fresh run records. The Linux LSan directory-output leak found during
 validation is fixed, with the original failed run retained.
 
 ### Validation record
@@ -163,3 +164,71 @@ locales have no translation (CSH-042); Docker exercises them. Source-owned
 UP/XSI exclusions are detailed under ENV-005, not inferred from these skips.
 Logs preserve names and failure details; a retry never changes the outcome of
 the original run.
+
+### Continuation implementation (2026-09-28)
+
+Implemented on the separate `test/CSH-048-state-builtin-evidence` worktree,
+starting at `b1b6b15`. Source commits `47aae4e`, `7d50b61` and `4144945` add 228 exact
+cross-mode cases (372 total), 102 public-entry edge/fault checks, and two PTY
+cases. The 36 predicate observations are retained. New checks also run through
+`make test`; `make test-state-edges` selects the edge/fault partitions.
+
+The added evidence exposed and fixes:
+
+- `read` discarded a trailing non-whitespace separator from the last variable
+  and prevalidated later readonly operands before assigning earlier ones.
+  Issue 8 requires the unsplit remainder and ordered assignments; later operands
+  remain unchanged after failure under the selected permitted policy.
+- Here-document continuation prompts ignored PS2. They now use its current
+  literal value under the selected base profile; read's -r suppression and
+  literal PS2 are asserted on a controlling terminal.
+- Listing/utility output used dprintf on closed descriptors, and times/umask/
+  ulimit output errors could lack diagnostics. Checked writes handle EINTR,
+  short writes and zero/error writes, with fatal/suppressed/interactive checks.
+- cd's rollback descriptor incorrectly required read permission on cwd. Search
+  handles allow leaving searchable but unreadable directories. Logical paths
+  beyond PATH_MAX now use relative syscall operands or component-wise directory
+  handles, preserving full PWD and resolving logical parents/symlinks before
+  changing cwd; nonexistent components before /.. still fail.
+
+The [expanded map](../state-builtin-evidence.md#additional-runtime-partitions-2026-09-28)
+reconciles existing CSH-055 dot-read failures and allocation/context witnesses,
+adds exact error/attribute/locale/limit assertions, and distinguishes required
+behavior from malformed-environment and invalid-syntax policies. It does not
+claim the full cross-product of arbitrary programs or kernel resource
+implementation behavior. CSH-012 remains closed to a conformance claim.
+
+### Continuation validation
+
+See [complete logs, identities, source hashes and reproduction commands](../evidence/csh-048/completion/README.md).
+Source/test manifests distinguish the initial continuation (`47aae4e`) from
+the final lookup-output correction (`4144945`), which includes the intermediate
+long-path correction (`7d50b61`); documentation was added afterward.
+The earlier 2026-09-26 failures above remain failures, and the three development
+fixture mistakes in the new dot permission probe are also retained explicitly.
+
+Final results are recorded in `completion/runs.json` alongside immutable binary
+and image identities. Native and Docker normal runs each exercise the full
+3,341-case runtime suite, module/API/fault tests, 30 job PTY cases, one job fault
+PTY case, 32 runtime PTY cases and 73 harness self-tests. CSH-048's focused
+partitions comprise 372 exact cases, 36 predicate observations and 102 edge/fault
+checks. Permission and non-C locale checks have no skips on these non-root hosts.
+
+The final normal and focused sanitizer builds share source/test digest
+`cf5caf1ffa9f0989ff974b2bad237b7d863e4b74935e91348a5b6a3ee19c9698`.
+The final native/Docker ASan+UBSan focused runs pass `test-state-builtins`,
+`test-builtins`, `test-execute` and `test-evaluation` with leak detection enabled and no sanitizer
+report. Native uses Apple Clang 15.0.0 / libSystem 1345.120.2 on macOS 14.8.7 arm64;
+Docker uses GCC 12.2.0 / glibc 2.36 on Debian 12 aarch64. Complete flags, executable
+hashes and preceding broader sanitizer results are in the linked identities and
+run manifest. Non-UTF-8 pathname/locale skips remain CSH-053, catalog availability
+CSH-042, and non-root unequal-ID skips CSH-046; none applies to the 102 state edge
+checks. All ticket acceptance criteria are ready for review; integration into
+main, rather than this branch, changes the ticket status to done.
+
+An additional closed-stdout hash probe on `47aae4e` reproduced an 8,192-byte
+glibc dprintf leak under Linux LSan. `4144945` extends checked writes and output
+diagnostics to hash, command/type reports and executor diagnostics. Twelve new
+cross-mode scenarios cover hash, -v/-V reports of builtins/functions/reserved
+words/paths/aliases, and closed stderr. The original failed probe and its source
+identity are retained separately from the passing regression suites.
