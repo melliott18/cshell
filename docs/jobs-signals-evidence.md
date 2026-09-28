@@ -244,21 +244,28 @@ and fg removal from known IDs. Claims remain limited to their exact cases.
 [CSH-054](#csh-054), [CSH-057](#csh-057), and [CSH-058](#csh-058)
 now supply the scoped corrections and assertions assigned in the historical
 map below. CSH-054, CSH-058 and CSH-057's lifecycle/foreground-resume corrections
-are integrated. CSH-057 remains open for distinct timeout observations.
+are integrated, including the PTY repairs in PR #121 (`87fdfe8`).
+CSH-057 retains the separate, unclassified historical retention timeout.
 The [CSH-050 integration record](evidence/csh-050/README.md) identifies its
 pre-correction baseline; the [post-integration review](evidence-reconciliation.md)
-records the current disposition without rewriting those historical artifacts.
+records its earlier disposition. The [current acceptance review](evidence/csh-050-review/README.md)
+supersedes that snapshot for CSH-050 without rewriting historical artifacts.
 
 | Residual condition | Current disposition / owner |
 | --- | --- |
 | Foreground resume intermittently returned 1 instead of 130 | Corrected by CSH-057, integrated in [PR #112](https://github.com/melliott18/cshell/pull/112) as `19cd70e`. The [deterministic before/after evidence](evidence/csh-057-pty-fix/README.md) diagnoses the continuation race; this disposition does not rely on an intermittent passing retry. |
-| Public resume PTY and retained-status deadlines | CSH-057 retains the separate five-second PTY and 60-second retention timeouts observed during combined integration. The continuation correction does not establish their cause or resolution. |
+| Public resume PTY failures | Diagnosed and corrected in [PR #121](https://github.com/melliott18/cshell/pull/121), `87fdfe8`: parent-only process-group assignment, Darwin saved-mask restoration, and the departure/status gap after rejected continuation. [Before/after regressions and unchanged-bound repetitions](evidence/csh-057-timeouts/README.md) support the repairs. |
+| Historical 60-second retention timeout | Still unclassified under CSH-057. [Hosted timing and local profiling](evidence/csh-057-retention-review/README.md) support cumulative sanitizer process cost as a hypothesis, not a proven cause. PR #124 (`893b10b`) repairs a separate diagnostic launcher; hosted CI did not use that launcher. Passing reruns do not close the original failure. |
+| Partial `kill` delivery left successful stages stopped | Corrected in [PR #120](https://github.com/melliott18/cshell/pull/120), `6498859`; eight failing-before cases and all 14 passing-after cases distinguish cumulative command errors from per-stage state. See [partial-delivery assertions](#csh-050-partial-delivery-review). |
 | Inheritance/delivery, public interrupted waits, listing failures, group delivery and permission diagnostics | CSH-058 is integrated; its [exact matrix](#csh-058) supersedes the corresponding open entries in the historical CSH-054 table. Permission evidence uses syscall interposition, not host credential enforcement. |
-| External kill status mapping | Stock Debian failure remains a stock-host gap under CSH-052. CSH-056's opt-in qualified profile resolves that selected case; CSH-059/060 record wider host boundaries and CSH-061 owns their residual conditions. Builtin kill results do not qualify the external binary. |
+| External kill status mapping | Stock Debian failure remains a stock-host gap under CSH-052. CSH-056's opt-in qualified profile resolves that selected case; CSH-059/060 record wider host boundaries and CSH-061/062 add scoped evidence; [CSH-063](tickets/CSH-063-host-platform-residual-qualification.md) owns the remaining host-platform conditions. Builtin kill results do not qualify the external binary. |
 | Loaded transport deadlines and incomplete sanitizer runs | Retain the failed/not-run records under CSH-040/054 and CSH-057/058; serial passing results establish only their own observations. |
 
 CSH-050 supplies a reviewable map and run record; its platform acceptance stays
-open for the retained timeout observations and scoped host/capability limits.
+open for the unclassified historical retention failure; current-main macOS
+sanitizer CI was also pending at the retained review snapshot. Host/capability
+limits retain explicit reasons and owners; a documented skip is not a failure
+repair or a whole-platform qualification.
 The CSH-012 conformance gate stays closed. Parent rows remain implemented
 subsets, with stable family anchors; no entire family is promoted to verified.
 
@@ -446,5 +453,7 @@ The eight baseline failures showed that cumulative command failure incorrectly
 prevented successful delivery from clearing stopped state. `src/jobs.c` now
 updates successful group/stage deliveries individually and preserves the
 aggregate error. [Retained review results](evidence/csh-050-acceptance/README.md)
-identify the exact tested revision and environments. Existing CSH-057 timeout
-observations remain separate, and no whole requirement family is promoted.
+identify the exact tested revision and environments. This fix is merged as
+`6498859`. The [current review](evidence/csh-050-review/README.md) distinguishes
+repaired PTY failures from CSH-057's remaining historical retention observation;
+no whole requirement family is promoted.

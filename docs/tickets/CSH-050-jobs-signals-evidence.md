@@ -5,7 +5,7 @@
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-036, CSH-039
-- Branch: fix/CSH-050-acceptance-closure
+- Branch: docs/CSH-050-acceptance-review
 - Issue: [#82](https://github.com/melliott18/cshell/issues/82)
 
 ## Goal
@@ -16,12 +16,17 @@ Separate base and conditional portions, map exact runtime/PTY/API cases to each 
 
 The retained witnesses remain scoped assertions rather than complete
 requirement-family evidence. CSH-044/045 and CSH-054/058 are integrated;
-CSH-057's lifecycle changes and foreground-resume correction are integrated
-([PR #112](https://github.com/melliott18/cshell/pull/112), `19cd70e`). Separate
-PTY and retention timeout observations remain open under CSH-057.
-The [baseline integration record](../evidence/csh-050/README.md) retains the
-original failure. The [unmet-criteria review](../evidence/csh-050-acceptance/README.md)
-records the current correction and remaining timeout ownership.
+CSH-057's lifecycle, continuation and PTY repairs are integrated through
+[PR #121](https://github.com/melliott18/cshell/pull/121), `87fdfe8`.
+CSH-050's partial-delivery correction is integrated through
+[PR #120](https://github.com/melliott18/cshell/pull/120), `6498859`.
+The remaining CSH-057 observation is the historical 60-second sanitizer
+retention timeout, whose cause remains unclassified. The diagnostic launcher
+repair in [PR #124](https://github.com/melliott18/cshell/pull/124), `893b10b`,
+does not explain that hosted failure. The [current acceptance review](../evidence/csh-050-review/README.md)
+separates these dispositions and current validation from the immutable
+[baseline](../evidence/csh-050/README.md) and
+[partial-delivery](../evidence/csh-050-acceptance/README.md) records.
 Base signal/asynchronous-list/wait semantics remain applicable while the UP
 utility profile is unselected; terminal capability conditions remain explicit.
 
@@ -284,3 +289,22 @@ retaining stopped state for denied deliveries.
 and pipe handshakes and only EPERM interposed. Eight cases fail before the fix;
 all 14 pass afterward. The [review evidence](../evidence/csh-050-acceptance/README.md)
 records full validation, exact boundaries and remaining acceptance ownership.
+
+
+### Merged-fix acceptance reconciliation (2026-09-28)
+
+Reviewed integrated `66f8900`. The [criterion-by-criterion review](../evidence/csh-050-review/README.md)
+accepts the merged partial-delivery and PTY repairs and retains three checked
+criteria. Platform acceptance remains unchecked because the historical
+retention failure still lacks a supported disposition; it is not an ongoing
+reproduction or a demonstrated new semantic defect. A passing retry alone
+cannot meet this ticket's explicit failure-accounting rule.
+
+The last complete hosted integration run at `faf2e95` passed all three jobs.
+At the retained exact-`66f8900` snapshot, native Ubuntu and Docker passed;
+macOS normal/PTY/profile/harness stages passed and its sanitizer stage was
+still running. Pending validation is not a pass. No fresh local runtime or
+sanitizer run is claimed by this documentation review. All 184 entries in
+four retained artifact manifests match, and all 11 forward/reverse scope IDs
+agree. CSH-063 now owns the residual host-platform inventory after CSH-061/062;
+qualified external utilities remain distinct from stock-host gaps.

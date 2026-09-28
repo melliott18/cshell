@@ -5,6 +5,15 @@ Reviewed on 2026-09-28 against integrated main
 review with an independently built, scoped runtime reproduction. It is not a
 fresh sentence-by-sentence POSIX audit or a complete runtime code review.
 
+Current CSH-050 disposition is superseded by the
+[merged-fix acceptance review at `66f8900`](evidence/csh-050-review/README.md):
+PR #120's partial-delivery and PR #121's PTY repairs are integrated; only the
+historical retention timeout remains unclassified under CSH-057. CSH-049 and
+CSH-061/062 have since reached scoped completion, with host residuals assigned
+to [CSH-063](tickets/CSH-063-host-platform-residual-qualification.md).
+The tables and validation below remain the original `8ffb99e` snapshot, not
+the current lifecycle inventory. CSH-012's conformance gate remains closed.
+
 ## Review dispositions
 
 | Ticket / integrated change | Review result | Remaining acceptance work |

@@ -1,0 +1,47 @@
+{
+  "reviewed_commit": "66f8900420525f54b2b53d7342b336f0d7656a5f",
+  "checked_at": "2026-09-28T23:17:55.261170+00:00",
+  "manifests": {
+    "csh-050": {
+      "entries": 17,
+      "mismatches": []
+    },
+    "csh-050-acceptance": {
+      "entries": 19,
+      "mismatches": []
+    },
+    "csh-057-timeouts": {
+      "entries": 114,
+      "mismatches": []
+    },
+    "csh-057-retention-review": {
+      "entries": 34,
+      "mismatches": []
+    }
+  },
+  "merged_ancestors": {
+    "9f05719": true,
+    "19cd70e": true,
+    "6498859": true,
+    "87fdfe8": true,
+    "893b10b": true
+  },
+  "forward_reverse_ids": [
+    "EXEC-009",
+    "JOB-001",
+    "JOB-002",
+    "JOB-003",
+    "SIG-001",
+    "SIG-002",
+    "SIG-003",
+    "U-008",
+    "U-015",
+    "U-026",
+    "U-032"
+  ],
+  "documentation_validation": {
+    "local_link_targets_checked": 109,
+    "missing_targets": [],
+    "git_diff_check": "pass"
+  }
+}
