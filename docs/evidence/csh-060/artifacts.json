@@ -1,0 +1,74 @@
+{
+  "busybox-integration.log.gz": {
+    "sha256": "628237a4e441c20e9a6d4bdf94a1c5246630cf16011cbc528dc9a01c8b5b5463",
+    "uncompressed_sha256": "df63dc176ab3c32fe42bd734845065358d84ce03745250c22b0ff16e838c6537"
+  },
+  "docker-busybox.json.gz": {
+    "sha256": "185cb5d6f54a69d57c84cf0cc782b40ca36758fd8258d4751fba77a85a5c3efd",
+    "uncompressed_sha256": "d3cff2a215512f1dfc10cc06b9689832ca19fecb10ee59d73bc497eacf49b63d"
+  },
+  "docker-controlled.json.gz": {
+    "sha256": "451546f12dd5e96aefa8644ec5a7b53071d2fee3bc34dff8534ffd9d5ae89f91",
+    "uncompressed_sha256": "faa877edfaf7f662f3ff8ff41ba7ecd169ca351b8602d62f3166ee7294c46d61"
+  },
+  "docker-final.log.gz": {
+    "sha256": "194e544dc1095243b0d9b4294e7cb1fbeda1a5d05bfa5f928a8040051024e30e",
+    "uncompressed_sha256": "bf7e1b52c274c1e0be770096c65a4dfae59fb6a4d667ff9e6f671f42f9dba83c"
+  },
+  "docker-identity.json.gz": {
+    "sha256": "e9d5b089dfb0d46f6adef6cf5c1041ba03b1fd7006e8516fdbda8f6c5aed6721",
+    "uncompressed_sha256": "b5abc61ab0913694cd41195b283166abe2fef976c11c8b582f2bbfd76b3998b5"
+  },
+  "docker-profile.json.gz": {
+    "sha256": "0f0ae2210649f84fd589cc1f628889904275f24ffc9d154ffeb3294c2b2d70f4",
+    "uncompressed_sha256": "aa3e5bb2eef14c576d3d02e3bdf1fcf74939564073eca1ab1f4ebf65b1e036a5"
+  },
+  "docker-sanitizer.json.gz": {
+    "sha256": "684452330db63046e9293ab912736a99e0dfd67a33be614363d623a1de55bdc9",
+    "uncompressed_sha256": "b77ce368996cda74f276e00f63c1406ff6d1fb899f64de3cf1203823d8b41fce"
+  },
+  "docker-sanitizer.log.gz": {
+    "sha256": "7e1435d6947fdc42c1c67fcb5ce6563e3ba2159bbf7a1c4c6727033317881c10",
+    "uncompressed_sha256": "32ed42bc2766298ab4c3cd2a9eed88364ca9cffd7d450101d90ef0236d89e357"
+  },
+  "docker-unequal-acl.json.gz": {
+    "sha256": "e339d266036b89d2ab1a3ee8995103d3d289324434ebab7efc16886e6a3d1d71",
+    "uncompressed_sha256": "afa7387d9e657855bc3b651c3693646ef71145de56f99ce09eaa401c4f44f1f6"
+  },
+  "docker-unequal-acl.log.gz": {
+    "sha256": "8770935e675ff21f0ee7de04b74192a64b0a96aa813c829ab84e6a02d859c4e1",
+    "uncompressed_sha256": "f45fdfb8bc508834df2940bafe86dc64abf8bc83d02eb4bc5b5ef54242b9963c"
+  },
+  "docker.log.gz": {
+    "sha256": "580c092c307ce2b70b905ddf82de564e0d827048a0605ac0c022ca9a22c1c4fc",
+    "uncompressed_sha256": "e530c9a107bd223bfec7a5b6777f1cb542cab17364736cef093780d4e6494395"
+  },
+  "native-harness.log.gz": {
+    "sha256": "eb623a3f15d0e756f8ceca9da71a4f53c28e80b31758145d8bd23ba94951cd3d",
+    "uncompressed_sha256": "3533b8d6019fc90917c858596e36c66a5fa7bdc0f5339ab526c7fa0b0890f28c"
+  },
+  "native-identity.json.gz": {
+    "sha256": "c6c71a72cf4997577305b8f23dbc4bdc63443f3a6428c78225bf5d0e959ba283",
+    "uncompressed_sha256": "f2f9b1ea2f5716ca52ce88040b10bd274685a317912cf91444e619dd8225199b"
+  },
+  "native-integration.log.gz": {
+    "sha256": "1c49aef5fd9d2db110063f7596f605d4576f847e0890a1d31b44b0343357ca15",
+    "uncompressed_sha256": "caf26c74a6ec41e548640a579d460f6f9c62ac93c372d37d3e7d0727eed670b9"
+  },
+  "native-profile.json.gz": {
+    "sha256": "6c1cbd1f86196057fe0b8ff7545ae67244d8609ecddede46fd34d8e26ca2f9e8",
+    "uncompressed_sha256": "61fdbd164bfa66114e091a4c3a7618073e009d4140924861f2329288d940e0e6"
+  },
+  "native-sanitizer.json.gz": {
+    "sha256": "224d8e5fc2df7614cf7b26d6d1c626021f961c8c461e04ef486b8c519da121e5",
+    "uncompressed_sha256": "d2f445c07a67f30900af07c57108146804a6941a8fc38e461ae861b54c8296e0"
+  },
+  "native-sanitizer.log.gz": {
+    "sha256": "777abb1fbd7ff05ec3cbfa20371c4af3f1a20cf759e35846f36037bf99a671e2",
+    "uncompressed_sha256": "6648234ce16c657be895ca96a26ec3c9a0e3f10addfb10c979b9e2563cff10d3"
+  },
+  "native.log.gz": {
+    "sha256": "f56719a7979257e439c624069593750a3fb43c808711624f5d6488f56b312997",
+    "uncompressed_sha256": "41d4ca72420a075d38a6d3428427a84b62b402fd68e85154d4c812f10fb7c43f"
+  }
+}

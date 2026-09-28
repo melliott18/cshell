@@ -25,12 +25,15 @@ def cases(helper, echo_policy, numeric_locale, block_device, permission_denial):
         yield case('U-040 non-C eight bit input', 'cat binary >bytes',
                    files={'bytes': bytes(range(256))}, env=env)
         yield case('U-040 non-C operand order', 'cat second first', b'second\nfirst\n', env=env)
-    for operand, gnu, darwin in [
-            (r"-e 'a\nb'", b'-e a\nb\n', b'-e a\nb\n'),
-            (r"-n 'a\nb'", b'a\nb', b'-n a\nb\n'),
-            (r"'a\nb'", b'a\nb\n', b'a\nb\n')]:
+    # BusyBox FEATURE_FANCY_ECHO ignores POSIXLY_CORRECT; select this policy
+    # explicitly, never infer it from whichever output a utility produced.
+    for operand, gnu, darwin, busybox in [
+            (r"-e 'a\nb'", b'-e a\nb\n', b'-e a\nb\n', b'a\nb\n'),
+            (r"-n 'a\nb'", b'a\nb', b'-n a\nb\n', b'a\\nb'),
+            (r"'a\nb'", b'a\nb\n', b'a\nb\n', b'a\\nb\n')]:
         yield case('U-036 POSIXLY_CORRECT ' + operand, 'echo ' + operand,
-                   gnu if echo_policy == 'gnu' else darwin, env={'POSIXLY_CORRECT': '1'})
+                   {'gnu': gnu, 'darwin': darwin, 'busybox-fancy': busybox}[echo_policy],
+                   env={'POSIXLY_CORRECT': '1'})
     for utility in ('test', '['):
         end = ' ]' if utility == '[' else ''
         if permission_denial:

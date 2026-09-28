@@ -1129,3 +1129,24 @@ resource limits, fixture-filesystem queries and bounded successful operations.
 See [the condition map](host-contract-profile.md) and
 [CSH-059 reproduction/evidence](evidence/csh-059/README.md) for native, non-root
 Docker/block-node and sanitizer commands. No block node is opened.
+
+### CSH-060 controlled host environments
+
+`make test-host-profile` now builds the test-only printf allocation helper and
+runs `tests/host_environment_cases.py`. Native and Docker assertions cover
+bounded format/failure, available German/GB18030 locale, oversized exec,
+file-limit and prompt conditions; all existing binary regressions remain strict.
+
+Linux root can explicitly select `HOST_PROFILE_FLAGS=--controlled-identities`
+for disposable ACL, unequal-ID owner/group, cross-user chmod and stat-only
+private-device fixtures. Run the normal suite as non-root with an explicit
+block node separately. The combined unequal-ID ACL grant has a separate strict
+`--unequal-acl` reproducer that fails on the recorded Debian 12 host; it is not
+an allowance in the passing subset. Missing environments remain limitations.
+
+Use `--echo-policy busybox-fancy` only with an explicitly selected configured
+BusyBox echo executable. No output-based policy detection is performed.
+[CSH-060 evidence](evidence/csh-060/README.md) records commands, results, exact
+identities and the new ACL failure; [CSH-061](tickets/CSH-061-host-environment-residuals.md)
+owns every remaining condition. Neither parent utility families nor CSH-012
+are promoted by these results.

@@ -18,6 +18,7 @@ import smoke
 from host_utility_cases import HOSTS, INTRINSICS, cases
 from host_boundary_cases import cases as boundary_cases
 from host_capability_cases import cases as capability_cases
+from host_environment_cases import cases as environment_cases, setup_controlled
 from host_capability_limits import limitations as residual_limitations, BASE
 
 
@@ -145,13 +146,23 @@ def main():
                         help='Explicit utility search path, also used inside the shell')
     parser.add_argument('--strict-gaps', action='store_true')
     parser.add_argument('--boundaries', action='store_true')
-    parser.add_argument('--echo-policy', choices=('darwin', 'gnu'),
+    parser.add_argument('--printf-faults', type=Path,
+                        help='Test-only instrumented copy of the profile printf source')
+    parser.add_argument('--controlled-identities', action='store_true',
+                        help='Linux root opt-in: private ACL, credential and device fixtures')
+    parser.add_argument('--unequal-acl', action='store_true',
+                        help='Also require ACL access with unequal IDs (strict known-failure reproducer on Debian 12)')
+    parser.add_argument('--echo-policy', choices=('darwin', 'gnu', 'busybox-fancy'),
                         default='darwin' if platform.system() == 'Darwin' else 'gnu')
     parser.add_argument('--block-device', type=Path,
                         help='Stat-only positive predicate witness; never opened')
     parser.add_argument('--sanitizer', action='store_true',
                         help='Set ASan/UBSan in the actual case environment; disable Linux leak scanning')
     args = parser.parse_args()
+    if args.controlled_identities and (not args.boundaries or platform.system() != 'Linux' or os.geteuid() != 0):
+        parser.error('--controlled-identities requires --boundaries and Linux root')
+    if args.unequal_acl and not args.controlled_identities:
+        parser.error('--unequal-acl requires --controlled-identities')
     binary = args.binary.resolve()
     helper = shlex.quote(str(args.helper.resolve()))
     tools = inventory(args.path)
@@ -160,7 +171,10 @@ def main():
     capabilities = {'uid': os.getuid(), 'gid': os.getgid(),
                     'euid': os.geteuid(), 'egid': os.getegid(),
                     'groups': os.getgroups(), 'permission_denial': os.geteuid() != 0,
-                    'block_device': None, 'numeric_locale': None, 'utf8_locale': None}
+                    'block_device': None, 'numeric_locale': None, 'utf8_locale': None,
+                    'controlled_identities': args.controlled_identities,
+                    'unequal_acl': args.unequal_acl,
+                    'german_locale': None, 'gb18030_locale': None}
     if args.block_device:
         if not stat.S_ISBLK(args.block_device.stat().st_mode):
             parser.error('--block-device must name a block device')
@@ -191,6 +205,23 @@ def main():
                     break
         finally:
             locale.setlocale(locale.LC_CTYPE, previous)
+        previous = locale.setlocale(locale.LC_ALL)
+        try:
+            for key, names in (
+                    ('german_locale', ('de_DE.UTF-8', 'de_DE.utf8')),
+                    ('gb18030_locale', ('zh_CN.GB18030', 'zh_CN.gb18030'))):
+                for candidate in names:
+                    try:
+                        locale.setlocale(locale.LC_ALL, candidate)
+                    except locale.Error:
+                        continue
+                    valid = (locale.localeconv()['decimal_point'] == ',' if key == 'german_locale'
+                             else locale.nl_langinfo(locale.CODESET).lower() == 'gb18030')
+                    if valid:
+                        capabilities[key] = candidate
+                        break
+        finally:
+            locale.setlocale(locale.LC_ALL, previous)
     selected = list(cases(paths, helper, args.echo_policy))
     limitations = []
     if args.boundaries:
@@ -199,15 +230,24 @@ def main():
                                        capabilities['block_device'],
                                        capabilities['permission_denial']))
         selected.extend(capability_cases(paths, capabilities['utf8_locale']))
-        limitations.extend(residual_limitations(platform.platform(), tools))
+        selected.extend(environment_cases(paths, helper,
+                         args.printf_faults.resolve() if args.printf_faults else None,
+                         dict(german=capabilities['german_locale'], gb18030=capabilities['gb18030_locale'],
+                              utf8=capabilities['utf8_locale']), args.controlled_identities, args.unequal_acl))
+        environment = dict(platform=platform.platform(), capabilities=capabilities)
+        limitations.extend(residual_limitations(environment, tools))
         for condition, available, reason in (
+            ('U-035/allocation-injection', args.printf_faults, 'No test-only printf allocation helper supplied'),
+            ('U-035/German-locale', capabilities['german_locale'], 'German numeric locale unavailable'),
+            ('U-040/GB18030-locale', capabilities['gb18030_locale'], 'GB18030 multibyte locale unavailable'),
+            ('U-037/controlled-environment', args.controlled_identities, 'Linux root ACL/credential/private-node fixtures not requested'),
             ('U-040/UTF-8-locale', capabilities['utf8_locale'], 'UTF-8 test locale unavailable'),
             ('U-035/locale-errors', capabilities['numeric_locale'], 'French numeric locale unavailable'),
             ('U-037/permission-denial', capabilities['permission_denial'], 'effective UID 0 bypasses mode-bit denial'),
             ('U-037/block-device', capabilities['block_device'], 'no explicit stat-only block-device witness supplied')):
             if not available:
-                limitations.append(dict(condition=condition, reason=reason, owner='CSH-060',
-                                        environment=platform.platform(), source=BASE +
+                limitations.append(dict(condition=condition, reason=reason, owner='CSH-061',
+                                        environment=environment, source=BASE +
                                         ('test.html' if condition.startswith('U-037') else 'V3_chap01.html')))
         for limitation in limitations:
             print('LIMITATION: ' + json.dumps(limitation), flush=True)
@@ -228,6 +268,8 @@ def main():
                 directory = Path(temporary)
                 connection = setup(directory, case.get('input_files'))
                 try:
+                    controlled = (setup_controlled(directory, case['controlled_fixture'])
+                                  if case.get('controlled_fixture') else None)
                     fixture = {'args': [], 'stdin': '', 'env': {'PATH': args.path}}
                     fixture['env'].update(case.get('env', {}))
                     if args.sanitizer:
@@ -248,6 +290,20 @@ def main():
                         output = {'stdout': output['output'], 'stderr': b''}
                     if sanitizer_diagnostic(output):
                         errors.append('sanitizer diagnostic')
+                    exec_boundary = None
+                    if case.get('exec_boundary'):
+                        try:
+                            exec_boundary = json.loads((directory / 'exec-boundary.json').read_text())
+                            if (exec_boundary['operand_string_bytes_with_nuls'] <= exec_boundary['ARG_MAX'] or
+                                    exec_boundary['environment_bytes_with_nuls'] != 9):
+                                errors.append('invalid exec boundary measurements')
+                        except (OSError, ValueError, KeyError, TypeError) as error:
+                            errors.append('missing/invalid exec boundary record: ' + str(error))
+                    if controlled:
+                        observed = (directory / 'controlled').stat()
+                        if (observed.st_uid, observed.st_gid, oct(observed.st_mode), observed.st_rdev) != (
+                                controlled['uid'], controlled['gid'], controlled['mode'], controlled['rdev']):
+                            errors.append('controlled fixture changed unexpectedly')
                     actual_files = {}
                     for path, expected in case.get('files', {}).items():
                         target = directory / path
@@ -258,6 +314,8 @@ def main():
                     verdict = 'PASS' if ok else 'GAP' if gap else 'FAIL'
                     totals['passed' if ok else 'gaps' if gap else 'failed'] += 1
                     record = {'name': name, 'verdict': verdict, 'case': serial(case),
+                              'controlled_fixture': controlled,
+                              'exec_boundary': exec_boundary,
                               'invocation': fixture, 'actual': serial(dict(status=status,
                                   stdout=bytes(output['stdout']), stderr=bytes(output['stderr']),
                                   files=actual_files, errors=errors))}
@@ -285,12 +343,19 @@ def main():
     result = {'platform': platform.platform(), 'path': args.path, 'inventory': tools,
               'capabilities': capabilities, 'limitations': limitations,
               'echo_policy': args.echo_policy,
+              'echo_policy_source': {
+                  'darwin': 'https://github.com/apple-oss-distributions/shell_cmds/blob/main/echo/echo.c',
+                  'gnu': 'https://github.com/coreutils/coreutils/blob/v9.1/src/echo.c',
+                  'busybox-fancy': 'https://git.busybox.net/busybox/tree/coreutils/echo.c?h=1_35_0',
+              }[args.echo_policy],
               'host_limits': {name: os.sysconf(name) for name in
                               ('SC_ARG_MAX', 'SC_OPEN_MAX', 'SC_LINE_MAX')},
               'filesystem_limits': filesystem_limits,
               'filesystem_query_path': filesystem_query_path,
               'child_resources': child_resources,
               'binary_sha256': sha(binary), 'helper_sha256': sha(args.helper),
+              'printf_faults': ({'path': str(args.printf_faults.resolve()), 'sha256': sha(args.printf_faults)}
+                                if args.printf_faults else None),
               'limits': {'timeout_seconds': 5, 'combined_output_bytes': 65536,
                          'child_resources': 'smoke.child_limits'},
               'setup': 'tests/host_utilities.py:setup', 'totals': totals, 'cases': records}

@@ -40,16 +40,40 @@ independently; no selected utility supplies its own expected bytes.
 | U-037/extended-permissions — [test/bracket](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html) | Dedicated non-root mode-000 denial and stat-only block-node witnesses retained. ACLs, unequal real/effective identities and other device namespaces are separate limitations. Missing French/UTF-8 locale, root identity and absent block node are independently emitted per run. |
 | U-040/host-boundaries — [§1.4](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap01.html#tag_18_04), [§1.6](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap01.html#tag_18_06) | Per-utility bounded operations and residual conditions below; no family promotion. |
 
+## CSH-060 controlled environments
+
+[CSH-060](tickets/CSH-060-extended-host-environments.md) adds
+[environment cases](../tests/host_environment_cases.py) and
+[retained evidence](evidence/csh-060/README.md). Expectations remain independent
+of selected utility output. Ordinary cases run through string/file/stdin modes.
+
+| Condition / source | Bounded assertion and remaining scope |
+| --- | --- |
+| U-035/format-allocation-limits, full-format — [printf](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/printf.html) | 27 authored format combinations, four malformed/adapter-range cases, and test-only `strdup`/`realloc` ENOMEM injection with successful controls. The instrumented executable includes the exact production adapter/vendor source; it is never installed into the profile. libc failures, stack exhaustion and full format combinations remain unqualified. The CSH-059 binary regression and provenance are unchanged. |
+| U-035/other-locales — printf | Independently probed German numeric locale produces `1,50`; available GB18030 preserves authored two/four-byte characters through `%b`. Catalog lookup is still absent. Missing German and GB18030 locales are separate limitations. |
+| U-036/alternative-policies — [BusyBox source](https://git.busybox.net/busybox/tree/coreutils/echo.c?h=1_35_0) | Explicit `busybox-fancy` policy covers the configured `FEATURE_FANCY_ECHO` build, including ignored POSIXLY_CORRECT. `-e` enables escapes, `-n` suppresses newline, and default backslashes stay literal. Actual selected executable/hash and policy source are recorded. Other configurations remain unqualified. |
+| U-036/argument-limits; U-040/true-exec-resources, false-exec-resources, env-ARG_MAX — [exec](https://pubs.opengroup.org/onlinepubs/9799919799/functions/exec.html) | Single and aggregate oversized vectors require kernel E2BIG before entering echo/env/true/false. The helper records child ARG_MAX, operand count/bytes and fixed environment bytes. It caps allocation independently at about 16 MiB. These are oversized rejection witnesses, not exact successful thresholds or utility limits. |
+| U-037/ACLs, unequal-identities — [test](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html) | Linux-root opt-in checks named ACL read grants/denials with equal IDs, and owner/group reads with unequal real/effective IDs in both directions. Actual IDs/empty supplementary groups, numeric ACL and stat metadata are recorded. The combined unequal-ID ACL grant fails for Debian 12 coreutils 9.1; `--unequal-acl` retains the strict failure with no allowance. Darwin, inherited ACLs and further credential combinations remain limited. |
+| U-037/device-namespaces — test | Private Linux character/block nodes are created and stat'ed only. Dedicated non-root runs retain a separate supplied block node. No device is opened. Other namespaces remain limited. |
+| U-040/cat-filesystem-limits, sed-space-limits — [cat](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cat.html), [sed](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sed.html) | Child-only 1024-byte RLIMIT_FSIZE and ignored SIGXFSZ require diagnostic failure and exactly 1024 bytes of retained output. UTF-8 and GB18030 character witnesses supplement finite spaces. Real filesystem I/O faults, maxima and broader locale expressions remain limited. |
+| U-040/find-depth-locale-limits, chmod-ACL-identity-filesystem, rm-depth-mount-prompt — [find](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html), [chmod](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/chmod.html), [rm](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html) | UTF-8 `?` matches one character; a non-owner chmod fails without changing metadata; explicit `rm -i` yes/no input requires a prompt and independently checked file state. Other filesystem/depth/terminal conditions remain limited. |
+
+The remaining inventory retains all 27 stable residual rows with updated reasons,
+actual platform/capabilities, source and next owner CSH-061. Root identity,
+absent explicit block node, unavailable locales and absent controlled-environment
+opt-in remain separate run-specific limitations. Root controlled runs do not
+claim ordinary non-root mode-000 denial. Neither strict subset success nor an
+allocation fault injection establishes universal host qualification.
+
 ## Explicit remaining capability limits
 
-[CSH-060](tickets/CSH-060-extended-host-environments.md) is the next owner for
+[CSH-061](tickets/CSH-061-host-environment-residuals.md) is the next owner for
 residual conditions. The executable inventory and platform in **each run**
 identify the environment to which its limitations apply. The machine-readable
 [condition inventory](../tests/host_capability_limits.py) emits each source page,
 reason, next owner and selected executable identity, including both test and
-bracket. Conditions are **unverified**, never passes or inapplicability decisions.
-The following table maps the remaining U-040 inventory; each linked page is its
-normative source. CSH-060 owns every residual in this table.
+bracket. Conditions remain **unqualified**, never passes or inapplicability decisions. The unequal-ID ACL grant additionally has a retained failing reproducer.
+The following table records the CSH-059 boundary snapshot; the CSH-060 additions above and the machine-readable inventory are the current scope. Each linked page is its normative source. CSH-061 owns the remaining portions of these conditions.
 
 | Utility / source page | Evidence boundary and remaining capability |
 | --- | --- |

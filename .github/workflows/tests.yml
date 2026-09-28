@@ -34,9 +34,10 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential locales ed busybox
+          sudo apt-get install -y build-essential locales ed busybox acl
           sudo localedef -i en_US -f UTF-8 en_US.UTF-8
           sudo localedef -i fr_FR -f UTF-8 fr_FR.UTF-8
+          sudo localedef -i de_DE -f UTF-8 de_DE.UTF-8
           sudo localedef -i zh_CN -f GB18030 zh_CN.GB18030
       - name: Install macOS profile dependencies
         if: runner.os == 'macOS'
@@ -78,8 +79,28 @@ jobs:
           'make test-host-profile && CSH_TEST_PATH="/work/build/host-profile/bin:$(getconf PATH)" make test-runtime test-pty'
       - name: Test harness failure handling in Linux image
         run: docker run --rm --init cshell-test:local make test-harness
+      - name: Qualify controlled host identities and private devices
+        run: >-
+          docker run --rm --init --user 0 cshell-test:local sh -c
+          'mknod /tmp/csh060-block b 7 255 &&
+          runuser -u cshell -- make test-host-profile HOST_PROFILE_FLAGS="--block-device /tmp/csh060-block" &&
+          make test-host-profile HOST_PROFILE_FLAGS="--controlled-identities" &&
+          mkdir -p build/busybox-echo && ln -s /bin/busybox build/busybox-echo/echo &&
+          python3 tests/host_utilities.py ./cshell build/tests/host_utility_helper
+          --path "/work/build/busybox-echo:/work/build/host-profile/bin:$(getconf PATH)"
+          --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults
+          --echo-policy busybox-fancy --record build/tests/host-busybox-results.json &&
+          CSH_TEST_PATH="/work/build/busybox-echo:/work/build/host-profile/bin:$(getconf PATH)"
+          make test-runtime test-pty'
       - name: Test unequal invocation identities in Linux image
         run: docker run --rm --init --user 0 cshell-test:local python3 tests/invocation.py ./cshell
+      - name: Check controlled host helpers with ASan and UBSan
+        run: >-
+          docker run --rm --init --user 0
+          -e ASAN_OPTIONS=halt_on_error=1:detect_leaks=0 -e UBSAN_OPTIONS=halt_on_error=1
+          cshell-test:local make -j2 test-host-profile HOST_PROFILE_FLAGS=--controlled-identities
+          CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer'
+          LDFLAGS='-fsanitize=address,undefined'
       - name: Check Linux build with ASan and UBSan
         run: >-
           docker run --rm --init -e ASAN_OPTIONS=halt_on_error=1:detect_leaks=0 -e UBSAN_OPTIONS=halt_on_error=1
