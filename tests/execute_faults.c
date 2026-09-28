@@ -20,6 +20,7 @@ static unsigned wait_calls;
 static int fail_pipe, fail_wait, fail_setfd, fork_calls, fail_read, interrupt_read;
 static int target_stage, child_fault;
 static int fail_group, fail_terminal, fail_modes, launch_signal;
+static int exit_before_continue, continue_error;
 static pid_t fault_owner;
 static pid_t launched[16];
 static size_t launched_count;
@@ -216,11 +217,33 @@ int csh_execute_fault_tcsetattr(int fd, int action, const struct termios *modes)
     return tcsetattr(fd, action, modes);
 }
 
+int csh_execute_fault_kill(pid_t pid, int number)
+{
+    if (number == SIGCONT && exit_before_continue) {
+        siginfo_t event;
+        int rc;
+        exit_before_continue = 0;
+        assert(pid < 0 && kill(pid, SIGINT) == 0);
+        /* Put Ctrl-C's exit between fg's display and its SIGCONT, without
+         * consuming the job manager's status or using a scheduling delay. */
+        do { rc = waitid(P_PID, (id_t)-pid, &event, WEXITED | WNOWAIT); }
+        while (rc < 0 && errno == EINTR);
+        assert(rc == 0 && event.si_code == CLD_KILLED && event.si_status == SIGINT);
+    }
+    if (number == SIGCONT && continue_error) {
+        errno = continue_error;
+        continue_error = 0;
+        return -1;
+    }
+    return kill(pid, number);
+}
+
 static void arm(size_t allocation)
 {
     allocation_calls = 0;
     fault_owner = getpid();
     fail_group = fail_terminal = fail_modes = launch_signal = 0;
+    exit_before_continue = continue_error = 0;
     fail_allocation = allocation;
     fail_open = fail_dup = fail_dup2 = fail_temp = fail_fork = interrupt_wait = 0;
     wait_calls = 0;
@@ -916,6 +939,81 @@ static void terminal_job_faults(struct csh_state *state)
         assert(live == baseline && fd_count() == before);
     }
     csh_ast_destroy(tree);
+    /* Darwin can reject SIGCONT with EPERM for an exited process group.
+     * Exercise the real kernel result, both known error forms portably, and
+     * an actual refusal to continue a still-live job. */
+    for (int scenario = 0; scenario < 4; ++scenario) {
+        struct csh_job *job;
+        int ready[2], saved, sink, suspended = -1;
+        pid_t child;
+        char byte;
+        arm(0);
+        assert(csh_jobs_create(&context.jobs, state, 0) == 0);
+        job = csh_jobs_add(context.jobs, 1, "resume-race", 1, 0);
+        assert(job && job->grouped && pipe(ready) == 0);
+        child = fork();
+        assert(child >= 0);
+        if (!child) {
+            assert(setpgid(0, 0) == 0);
+            assert(signal(SIGINT, SIG_DFL) != SIG_ERR);
+            assert(write(ready[1], "r", 1) == 1);
+            if (scenario == 3) raise(SIGSTOP);
+            for (;;) pause();
+        }
+        job->pgid = job->processes[0].pid = child;
+        ssize_t count;
+        do { count = read(ready[0], &byte, 1); } while (count < 0 && errno == EINTR);
+        assert(count == 1);
+        close(ready[0]); close(ready[1]);
+        if (scenario == 3) {
+            siginfo_t event;
+            int observed;
+            do { observed = waitid(P_PID, (id_t)child, &event, WSTOPPED | WNOWAIT); }
+            while (observed < 0 && errno == EINTR);
+            assert(observed == 0 && event.si_code == CLD_STOPPED && event.si_status == SIGSTOP);
+            assert(csh_jobs_poll(context.jobs) == 0 && job->processes[0].stopped);
+        }
+        saved = dup(STDOUT_FILENO);
+        sink = open("/dev/null", O_WRONLY);
+        assert(saved >= 0 && sink >= 0 && dup2(sink, STDOUT_FILENO) == STDOUT_FILENO);
+        close(sink);
+        exit_before_continue = scenario != 3;
+        continue_error = scenario == 0 ? 0 : scenario == 2 ? ESRCH : EPERM;
+        int rc = csh_jobs_foreground(context.jobs, job, 1, &status, &suspended);
+        int error_number = errno;
+        assert(dup2(saved, STDOUT_FILENO) == STDOUT_FILENO);
+        close(saved);
+        assert(exit_before_continue == 0 && continue_error == 0);
+        assert(tcgetpgrp(0) == getpgrp() && tcgetattr(0, &after) == 0);
+        assert(original.c_lflag == after.c_lflag);
+        if (scenario == 3) {
+            assert(rc == -1 && error_number == EPERM && kill(child, 0) == 0);
+            assert(job->processes[0].stopped && !job->processes[0].done);
+            csh_jobs_cancel(context.jobs, job);
+        } else {
+            assert(rc == 0 && status == 128 + SIGINT && !suspended);
+            char *args[] = {"wait", NULL};
+            struct csh_command command = {0};
+            char operand[32];
+            char *selected[] = {"wait", operand, NULL};
+            snprintf(operand, sizeof(operand), "%ld", (long)child);
+            command.argc = 2; command.argv = selected;
+            int stderr_copy = dup(STDERR_FILENO);
+            sink = open("/dev/null", O_WRONLY);
+            assert(stderr_copy >= 0 && sink >= 0 && dup2(sink, STDERR_FILENO) == STDERR_FILENO);
+            close(sink);
+            assert(csh_jobs_builtin(context.jobs, &command, NULL) == 127);
+            assert(dup2(stderr_copy, STDERR_FILENO) == STDERR_FILENO);
+            close(stderr_copy);
+            command.argc = 1; command.argv = args;
+            assert(csh_jobs_builtin(context.jobs, &command, NULL) == 0);
+        }
+        arm(0);
+        csh_jobs_destroy(context.jobs);
+        context.jobs = NULL;
+        assert(waitpid(-1, &status, WNOHANG) == -1 && errno == ECHILD);
+        assert(live == baseline && fd_count() == before);
+    }
     puts("terminal job failure cleanup passed");
 }
 
