@@ -1,0 +1,12 @@
+{
+  "runtime_cases": 3905,
+  "focused_cases": 883,
+  "new_runtime_cases": 564,
+  "controlled_redirection_cases": 204,
+  "existing_descriptor_read_probes": 51,
+  "unique_focused_names": true,
+  "focused_equals_full_runtime_selection": true,
+  "old_focused_cases": 811,
+  "additive_empty_target_cases": 72,
+  "compiled_code_changed_after_initial_revision": false
+}

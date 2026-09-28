@@ -135,7 +135,7 @@ prepare.c expansion, redirect.c temporary descriptor delivery.
 | Unquoted expansions and backslash rules | S `unquoted heredoc body rules`, `heredoc continuations and tab stripping`: exact quote/backslash/tab/result bytes | No seekability requirement on the delivered descriptor |
 | Multiple documents and evaluation timing | S `ordered expanded heredocs`, `skipped heredoc does not parse or expand body`; C `function definition heredoc invocation` prints call-time `hello world\n` | Delimiter collection is distinct from deferred expansion |
 | Large body and failures | S `large expanded heredoc`, `heredoc expansion error prevents execution`, `heredoc diagnostic follows earlier redirects` | Fault runner covers cleanup, not every host write error |
-| Interactive PS2 | P `terminal heredoc prompts`: each input line synchronized to `> `; exact combined terminal transcript | Prompt expansion ownership remains CSH-048; supported PTY capability required |
+| Interactive PS2 | P `terminal heredoc prompts`: each input line synchronized to `> `; exact combined terminal transcript | [CSH-048 ENV-005](state-builtin-evidence.md#env-005) separates base literal prompting from UP processing; supported PTY capability required |
 
 <a id="red-005"></a>
 
@@ -174,7 +174,7 @@ Implementation: prepare.c `csh_command_arguments/assignments`, execute.c
 | Stable scope | Condition and exact assertions | Qualification |
 | --- | --- | --- |
 | EXEC-001/order | E `EXEC-001 expansion redirection assignment phases` sees `old` in argv and redirect target despite prefix `new`; parent remains `old`. `argument failure precedes redirection` leaves effect absent, status 2 | Regular command order required; permitted alternatives for empty/special commands documented above |
-| EXEC-001/assignment-context | S `assignment expansion is scalar and sequential`, `assignment tilde sites`, `declaration operands use assignment context` compare scalar spaces/globs and sequential visibility; `assignment substitution sees preceding redirects` captures stderr in file | Sequential visibility includes D-006 policy; expanded declaration recognition remains CSH-047 |
+| EXEC-001/assignment-context | S `assignment expansion is scalar and sequential`, `assignment tilde sites`, `declaration operands use assignment context` compare scalar spaces/globs and sequential visibility; `assignment substitution sees preceding redirects` captures stderr in file | Sequential visibility includes D-006 policy; [CSH-047 EXP-011](expansion-evidence.md#exp-011) records literal declaration requirements and expanded-name policies |
 | EXEC-002/no-name | E `EXEC-003 vanished command keeps assignments`: unset expansion yields no command, value persists, status 0 | Same category after expansion as a syntactically empty command |
 | EXEC-002/external | E `external export and restore`: child `v=child`, next child unset, shell unset | Prefix exported only for command; [assignment_fixture.c](../tests/assignment_fixture.c) also asserts restored attributes/repeated names/rollback |
 | EXEC-002/regular | E `regular builtin restores prefix only`: `read` restores `v=old`, preserves unrelated `answer=kept` | Regular standard utility assignment scope |
@@ -182,7 +182,7 @@ Implementation: prepare.c `csh_command_arguments/assignments`, execute.c
 | EXEC-002/function | E `function export policy`: child sees prefix, parent old/unexported restored; C `function state and prefix lifetime` retains unrelated mutation | D-006 unspecified persistence/export choices |
 | EXEC-002/readonly | E `readonly category empty`, `:`, `read answer`, helper `status 0`, `f`: status 1, diagnostic, no body/later files | All five categories, noninteractive; interactive recovery under EXEC-015 |
 | EXEC-003/last-status | E `last substitution status`: statuses 7 (last assignment substitution), 9 (redirection substitution), 0 (no substitution), exact created files | Last status obtained, not assumed first or rightmost textual nesting |
-| EXEC-003/environment | S `empty command redirection environment isolated`: `${made:=created}` creates file but does not set parent variable | Disposal covers this mutation; [CSH-055](execution-contracts.md) adds no-name trap/substitution combinations; full environment combinations remain CSH-048 |
+| EXEC-003/environment | S `empty command redirection environment isolated`: `${made:=created}` creates file but does not set parent variable | Disposal covers this mutation; [CSH-055](execution-contracts.md) adds no-name trap/substitution combinations; [CSH-048 ENV-006](state-builtin-evidence.md#env-006) records current/subshell state partitions and their limits |
 
 <a id="exec-004"></a><a id="exec-005"></a>
 
@@ -230,8 +230,10 @@ expansions` requires `end` and no effect file or expansion diagnostic.
 EXEC-010: R `brace state persists`, `subshell state isolated`, `subshell exit
 isolated`, `brace exit stops list` distinguish the environments and exit scope.
 contexts.py literal nested-group redirects assert exact files and restored
-stdout; cwd tests assert parent persistence versus isolation. This is not the
-full ENV-006 inventory (umask, traps, options, aliases, IDs), owned by CSH-048/054.
+stdout; cwd tests assert parent persistence versus isolation. The
+[CSH-048 ENV-006 inventory](state-builtin-evidence.md#env-006) supplies combined
+umask/options/alias/cwd/function isolation and nested descriptor witnesses;
+CSH-050/054/058 retain job-ID and trap inheritance conditions.
 
 <a id="exec-011"></a><a id="exec-012"></a><a id="exec-013"></a>
 
@@ -342,17 +344,20 @@ lexical enclosure are application preconditions, and non-lexical enclosure is
 unspecified. `eval loop transfer` is therefore not a mandatory oracle for every
 shell. [CSH-055](execution-contracts.md) adds while/until condition continues, nested
 lexical transfers and explicit nonlexical policies. Signal interruption evidence is retained under CSH-054/058; the
-intermittent terminal lifecycle failure remains CSH-057.
+distinct PTY/retention timeout observations remain CSH-057; the continuation
+defect is fixed in PR #112.
 
 ## Remaining obligations
 
 [CSH-055](execution-contracts.md) fixes the prefix PATH/builtin lookup defect
-and supplies assertions for its named execution conditions. CSH-047
-owns expansion/declaration combinations; CSH-048 owns full environment/utility
-state; CSH-053 records multibyte lexical coverage and host capability limits.
+and supplies assertions for its named execution conditions. [CSH-047](expansion-evidence.md)
+and [CSH-048](state-builtin-evidence.md) record expansion/declaration and
+environment/utility partitions with explicit limits; CSH-053 records multibyte lexical coverage and host capability limits.
 CSH-054/058 record signal contracts; [CSH-057](tickets/CSH-057-job-lifecycle-boundaries.md)
-retains the unresolved intermittent terminal lifecycle failure. CSH-052/056/059
-record host utilities, fallback shell provisioning and their qualified limits.
+retains the distinct PTY/retention timeouts; PR #112 fixed its status-1
+continuation defect. CSH-052/056/059/060 record host utilities, fallback shell
+provisioning and their qualified limits; [CSH-061](tickets/CSH-061-host-environment-residuals.md)
+owns the remaining host conditions.
 CSH-049 adds [explicit filesystem/target-expansion and context partitions](execution-residuals.md)
 and retains [cross-platform integration results](tickets/CSH-049-execution-evidence.md#integrated-validation-2026-09-28).
 These are applicable open obligations. Neither CSH-042 nor CSH-043's completed

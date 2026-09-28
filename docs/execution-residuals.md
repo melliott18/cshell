@@ -81,7 +81,7 @@ the existing bounded cleanup. No capability skip is added.
 
 ## Review of the remaining criterion
 
-The sole unchecked criterion in CSH-049 requires remaining applicable runtime
+The originally unchecked criterion in CSH-049 requires remaining applicable runtime
 cases to pass on supported platforms, with capability reasons and owners.
 Its concrete untested execution conditions are now represented above. The
 original 25 rows still supply ordering, here-documents, assignment categories,
@@ -102,5 +102,5 @@ privilege and raw-pathname capability limits retain their owners. These are
 cross-project residuals, not silently converted into CSH-049 passing cases or
 waived requirements. Full-family verification and CSH-012 remain open.
 
-Validation results and source/binary identities will be recorded in the
+Validation results and source/binary identities are recorded in the
 [CSH-049 ticket](tickets/CSH-049-execution-evidence.md).
