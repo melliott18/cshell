@@ -1,6 +1,6 @@
 # CSH-049: Close execution, redirection and control-flow evidence gaps
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
