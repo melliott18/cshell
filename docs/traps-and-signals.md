@@ -62,7 +62,12 @@ for the supported macOS and Linux platforms.
 Functions, `eval`, and dot scripts share the caller's trap table. Forked
 subshells, pipeline stages, background commands, and command substitutions
 start with caught actions reset to default and ignored dispositions retained.
-They may install local actions, including EXIT. A command substitution that
+They may install local actions, including EXIT. Resetting an ignored action
+inside a forked environment restores that environment's baseline, including
+unmonitored background INT/QUIT ignores, rather than a parent-only interactive
+handler or ignore policy. Ignored CHLD uses an internal no-op handler while a
+shell may still collect children; external programs receive SIG_IGN. This also
+applies in command substitutions without a job manager. A command substitution that
 contains only one `trap` command can list the parent's saved actions without
 executing them. External utilities and a successful `exec` receive default
 dispositions for caught signals and inherited ignored dispositions. A failed
@@ -81,7 +86,10 @@ The executor blocks launch signals and temporarily prepares default actions
 around fork so a child cannot discard a signal solely because it inherited the
 interactive shell's ignore. Before unblocking, the parent restores its actions
 and the child establishes its own actions. This also applies on failed launch.
-The API fixture inspects actual dispositions, the fault fixture delivers signals
+Terminal ownership and mode changes temporarily block TTOU so a user trap
+does not prevent the shell reclaiming its terminal. Monitored background
+compounds retain normal entry/trap dispositions; implicit INT/QUIT ignores
+apply only with monitor disabled. The API fixture inspects actual dispositions, the fault fixture delivers signals
 inside fork, and PTY cases exercise direct and terminal-generated delivery with
 monitor both enabled and disabled. See [exact evidence](jobs-signals-evidence.md#csh-054).
 
@@ -119,4 +127,6 @@ for the combined native and Linux-container evidence.
 [CSH-050 clause evidence](jobs-signals-evidence.md) maps exact cases and platform
 results. [CSH-054](jobs-signals-evidence.md#csh-054) fixes interactive TERM, lowercase
 kill and omitted trap exit status, and establishes the unmonitored stop policy.
-CSH-057/058 retain the explicitly listed remaining obligations.
+[CSH-058](jobs-signals-evidence.md#csh-058) extends actual disposition/delivery,
+inherited-ignore reset, public blocked-wait, group delivery and permission-error
+evidence. CSH-057 retains the jobs lifecycle obligations.

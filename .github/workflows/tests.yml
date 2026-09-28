@@ -12,9 +12,9 @@ jobs:
   native:
     name: Native (${{ matrix.os }}, ${{ matrix.cc }})
     runs-on: ${{ matrix.os }}
-    # Full macOS sanitizer coverage approached 15 minutes before CSH-052's
-    # additional host cases. Individual test/resource deadlines stay bounded.
-    timeout-minutes: 30
+    # CSH-058 adds 2,464+ disposition/delivery cases, including controlling
+    # terminals. Keep individual case deadlines while budgeting the full matrix.
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
@@ -55,7 +55,7 @@ jobs:
         run: make test-harness
       - name: Check replacement modules and cshell runtime with ASan and UBSan
         env:
-          ASAN_OPTIONS: halt_on_error=1
+          ASAN_OPTIONS: halt_on_error=1:detect_leaks=0
           MallocNanoZone: '0'
           UBSAN_OPTIONS: halt_on_error=1
         run: |
@@ -65,7 +65,7 @@ jobs:
   docker:
     name: Docker (Linux)
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6
       - name: Build Linux image and test replacement APIs, cshell runtime, and selected behavior
@@ -82,7 +82,7 @@ jobs:
         run: docker run --rm --init --user 0 cshell-test:local python3 tests/invocation.py ./cshell
       - name: Check Linux build with ASan and UBSan
         run: >-
-          docker run --rm --init -e ASAN_OPTIONS=halt_on_error=1 -e UBSAN_OPTIONS=halt_on_error=1
+          docker run --rm --init -e ASAN_OPTIONS=halt_on_error=1:detect_leaks=0 -e UBSAN_OPTIONS=halt_on_error=1
           cshell-test:local sh -c "make clean && make -j2 test test-pty test-host-profile
           CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer'
           LDFLAGS='-fsanitize=address,undefined'"

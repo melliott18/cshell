@@ -1082,3 +1082,34 @@ captured. The normal bounded session teardown still applies. Public compound
 resume cases wait for a SIGCONT-handler readiness message before sending a
 second stop signal. See the [run record](evidence/csh-057/README.md) for the
 failed-before and loaded fixture-race observations and their fixes.
+
+## Signal edge evidence (CSH-058)
+
+`make test-signal-edges` is included in `make test-traps` and `make test`.
+`tests/signal_edges.py` drives the C API/disposition helper and the public
+executable with five-second case bounds. It covers the inherited disposition
+matrix, reset and delivery in forked environments, host trap listing errors,
+isolated group delivery, and selected/no-operand waits in all three input modes.
+The permission helper interposes only jobs.c's kill syscall, forces EPERM on
+synthetic operands, and then delivers USR1 to itself to assert continuation.
+It does not probe arbitrary PIDs or require privileged identities.
+
+The unmodified executable's wait marker is emitted by builtin `trap -p`, after
+launching a child held on a FIFO. Linux observes `/proc/PID/wchan` sigsuspend;
+macOS observes interruptible sleep after the builtin-only marker path. There
+are no external commands or other blocking operations between that marker and
+wait. Signal delivery must then produce the exact action/wait status, retained
+second status 23, and consumed third status 127. Poll intervals are only pacing;
+an elapsed delay never counts as a blocked-wait observation. Unsupported or
+unobservable hosts fail the evidence check instead of silently passing.
+See the [assertion map](jobs-signals-evidence.md#csh-058) and
+[run record](evidence/csh-058/README.md) for scope and platform identities.
+
+For this fork-heavy matrix, run address/undefined-behavior instrumentation with
+`ASAN_OPTIONS=halt_on_error=1:detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1`.
+The signal driver forwards these options (and MallocNanoZone) into its controlled
+environment. This is ASan/UBSan evidence, not LeakSanitizer evidence; leak scanning
+at every helper/shell exit can dominate the per-case deadline in Linux containers.
+CI uses the same explicit setting and budgets 45 minutes for native jobs and
+30 for Docker, retaining the five-second signal-case bounds. The launch helper
+cancels its own watchdog before exec; it does not add a pending ALRM to cshell.
