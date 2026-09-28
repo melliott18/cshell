@@ -1068,6 +1068,23 @@ The [current evidence record](evidence/csh-050/README.md) distinguishes integrat
 follow-up coverage, fresh runs and unresolved dependencies. `test-harness` and
 the stock/qualified external utility audits remain separate validation commands.
 
+### CSH-050 partial job-signal failures
+
+`make test-kill-job-state` runs 14 deterministic module cases and is included
+in `test-jobs`, `test-jobs-signals`, and `test`. Two real children first stop
+with SIGSTOP; `waitid(WSTOPPED | WNOWAIT)` and the job manager establish their
+stopped state. Cases cross CONT/KILL with grouped/ungrouped delivery, an invalid
+job operand before/after a valid job, and interposed EPERM for the group or one
+pipeline stage. Only the EPERM response is simulated. Successful signals reach
+owned children. No terminal or extra identity is required.
+
+Each case asserts immediate per-stage stopped flags, aggregate nonzero status,
+exact diagnostics, subsequent final-stage wait status and complete reaping.
+The children wait on pipes; no delay establishes their state. A four-second
+helper alarm and the ordinary five-second runner deadline bound each case.
+The [acceptance review](evidence/csh-050-acceptance/README.md) retains the eight
+failing-before observations separately from final validation.
+
 ### CSH-054 signal contracts
 
 `make test-traps` also runs `tests/signal_contracts.py` in all three input modes
