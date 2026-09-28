@@ -5,7 +5,7 @@
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-036, CSH-039
-- Branch: test/CSH-050-jobs-signals-evidence
+- Branch: fix/CSH-050-acceptance-closure
 - Issue: [#82](https://github.com/melliott18/cshell/issues/82)
 
 ## Goal
@@ -16,10 +16,12 @@ Separate base and conditional portions, map exact runtime/PTY/API cases to each 
 
 The retained witnesses remain scoped assertions rather than complete
 requirement-family evidence. CSH-044/045 and CSH-054/058 are integrated;
-CSH-057's lifecycle changes are integrated, but its reopened foreground-resume
-failure remains under review in [PR #112](https://github.com/melliott18/cshell/pull/112).
-The [current integration record](../evidence/csh-050/README.md) reconciles these
-follow-ups and retains that failure separately from fresh passing runs.
+CSH-057's lifecycle changes and foreground-resume correction are integrated
+([PR #112](https://github.com/melliott18/cshell/pull/112), `19cd70e`). Separate
+PTY and retention timeout observations remain open under CSH-057.
+The [baseline integration record](../evidence/csh-050/README.md) retains the
+original failure. The [unmet-criteria review](../evidence/csh-050-acceptance/README.md)
+records the current correction and remaining timeout ownership.
 Base signal/asynchronous-list/wait semantics remain applicable while the UP
 utility profile is unselected; terminal capability conditions remain explicit.
 
@@ -253,6 +255,25 @@ oracle is changed.
 The [retained integration validation](../evidence/csh-050/README.md) supplies
 fresh source/binary identities, commands, exact results and the current residual
 inventory. The clause map now links integrated CSH-058 assertions instead of
-leaving them described as future work. The platform acceptance box remains
-open pending the CSH-057 resume correction and its integration validation;
+leaving them described as future work. At that baseline the platform acceptance
+box remained open pending the CSH-057 resume correction and its integration validation;
 CSH-012 remains closed. The older failed and incomplete runs above are retained.
+
+
+### Unmet-criteria review and partial-delivery correction
+
+The review starts from integrated `8ffb99e`; PR #112's continuation-status
+correction is present. Separate CSH-057 terminal and retention timeout work
+remains under investigation, not resolved by the older correction.
+
+A new U-026/JOB-003/U-032 defect was reproduced: an earlier invalid `kill`
+operand left subsequent successfully continued/killed jobs marked stopped.
+An EPERM on one stage of an ungrouped pipeline also suppressed the state update
+for successful siblings. `kill_builtin` now records each successful delivery
+independently while preserving the command's cumulative nonzero status and
+retaining stopped state for denied deliveries.
+
+`test-kill-job-state` adds 14 real-child module cases with deterministic stop
+and pipe handshakes and only EPERM interposed. Eight cases fail before the fix;
+all 14 pass afterward. The [review evidence](../evidence/csh-050-acceptance/README.md)
+records full validation, exact boundaries and remaining acceptance ownership.

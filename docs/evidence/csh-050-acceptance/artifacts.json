@@ -1,0 +1,78 @@
+{
+  "README.md": {
+    "sha256": "df4913d308bb80a51897551e59d4ba94f6e3d9b428e3fe5b8823f2c46aa54e88",
+    "bytes": 7944
+  },
+  "docker-before.log.gz": {
+    "sha256": "7d7c8ba9566f2e4f0a942bc9336e5f54850aebaa211480b296b304caa13c9f4c",
+    "bytes": 918
+  },
+  "docker-engine.json": {
+    "sha256": "489361a544d1dcd4b29e2749c280cdf75582ff5330fe9d309979485f8295faa8",
+    "bytes": 1078
+  },
+  "docker-full.log.gz": {
+    "sha256": "8ccc6877d60b0f6b43adec1d5eb9be92c6f127b5f1fb926a9a2ddbb4d8cd9570",
+    "bytes": 61311
+  },
+  "docker-host-profile.json": {
+    "sha256": "beb1879b6e90e69084dcf106a01f4da050dcf5798b4474b3108bf5f8ae4f32d9",
+    "bytes": 4135
+  },
+  "docker-identity.json": {
+    "sha256": "20298b858c89dd1ddf7d2309be0f19de777765c1836deee220c37dd3ce94c02e",
+    "bytes": 24702
+  },
+  "docker-image.json": {
+    "sha256": "1d4dd266f62b323ad4bebafb04ce7e4a4ae9260362ae83d946f13731b82b4feb",
+    "bytes": 2547
+  },
+  "docker-sanitizer-identity.json": {
+    "sha256": "03addaa29b615a6d58db717915ee342cc56171325b7287e41fc11d4864b26ab3",
+    "bytes": 20194
+  },
+  "docker-sanitizer.log.gz": {
+    "sha256": "2c379e0898ea07bd321b5fcfc003caa4935a784f0d6a8549a067dd07a4341888",
+    "bytes": 2966
+  },
+  "generator-check.log.gz": {
+    "sha256": "60774da33789dd440dd2f325411d7d4883c0368fb74ecc9321a3826d076def32",
+    "bytes": 91
+  },
+  "native-after.log.gz": {
+    "sha256": "1646a4a27de773548c7aaa4125859a4a24e19b2e5a2dab3c984e2c63ba45d510",
+    "bytes": 519
+  },
+  "native-before.log.gz": {
+    "sha256": "547d9d2f33f9202053c20380fc08d3144c71b320f789ce99ef341c9d0fa8c157",
+    "bytes": 844
+  },
+  "native-focused.log.gz": {
+    "sha256": "a592e8f89120a13e62f145a15b2fc812643382d841f5fc1de7a8c3365c9a8c53",
+    "bytes": 17108
+  },
+  "native-full.log.gz": {
+    "sha256": "04289d9239f98a37fd5e190811fa89e0d1e1b80bcd5b6aaf78e4b953e06cb633",
+    "bytes": 58544
+  },
+  "native-host-profile.json": {
+    "sha256": "5560cd926b55e4cae78c85641fa458fcf38159a249ec2b93fcb31d27c2f015c2",
+    "bytes": 4348
+  },
+  "native-identity.json": {
+    "sha256": "8893af9b546dbf85cb5261b1e7588590ae4f68bb46a423e2d021bfe61d51fad8",
+    "bytes": 29160
+  },
+  "native-sanitizer-identity.json": {
+    "sha256": "fe8a533b725703217688e1dd851d865e029f83a0acfd4627e1c39cf550678022",
+    "bytes": 22986
+  },
+  "native-sanitizer.log.gz": {
+    "sha256": "50bd306b4beece03d8c0207dc71c20d98883369525f6ecad3f725cbe082b48b5",
+    "bytes": 2809
+  },
+  "runs.json": {
+    "sha256": "6bf1e7a7bc60dfff684cab265776e3b361e51ea3a6c75ae274ee8ef38dd93e92",
+    "bytes": 1972
+  }
+}

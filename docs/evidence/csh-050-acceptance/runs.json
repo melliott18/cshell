@@ -1,0 +1,58 @@
+[
+  {
+    "name": "native-focused",
+    "command": "make test-jobs-signals test-harness",
+    "exit_status": 0,
+    "log": "native-focused.log.gz",
+    "log_created_utc": "2026-09-28T19:38:08.878247+00:00",
+    "log_last_write_utc": "2026-09-28T19:39:54.618329+00:00"
+  },
+  {
+    "name": "native-full",
+    "command": "make test test-pty test-host-profile",
+    "exit_status": 0,
+    "log": "native-full.log.gz",
+    "log_created_utc": "2026-09-28T19:39:58.691160+00:00",
+    "log_last_write_utc": "2026-09-28T19:43:49.344357+00:00"
+  },
+  {
+    "name": "docker-full",
+    "command": "make test test-pty test-harness test-host-profile (Docker)",
+    "exit_status": 0,
+    "log": "docker-full.log.gz",
+    "log_created_utc": "2026-09-28T19:44:15.717920+00:00",
+    "log_last_write_utc": "2026-09-28T19:45:48.953455+00:00"
+  },
+  {
+    "name": "native-sanitizer",
+    "command": "make test-jobs test-jobs-pty (ASan/UBSan)",
+    "exit_status": 0,
+    "log": "native-sanitizer.log.gz",
+    "log_created_utc": "2026-09-28T19:46:13.665069+00:00",
+    "log_last_write_utc": "2026-09-28T19:47:55.995619+00:00"
+  },
+  {
+    "name": "docker-sanitizer",
+    "command": "make test-jobs test-jobs-pty (Docker ASan/UBSan)",
+    "exit_status": 0,
+    "log": "docker-sanitizer.log.gz",
+    "log_created_utc": "2026-09-28T19:48:32.931205+00:00",
+    "log_last_write_utc": "2026-09-28T19:52:07.871886+00:00"
+  },
+  {
+    "name": "native-before",
+    "command": "make test-kill-job-state before production correction",
+    "exit_status": 2,
+    "log": "native-before.log.gz",
+    "log_created_utc": "2026-09-28T19:37:23.715468+00:00",
+    "log_last_write_utc": "2026-09-28T19:37:26.809061+00:00"
+  },
+  {
+    "name": "docker-before",
+    "command": "make test-kill-job-state with baseline jobs.c (Docker)",
+    "exit_status": 2,
+    "log": "docker-before.log.gz",
+    "log_created_utc": "2026-09-28T19:41:29.846553+00:00",
+    "log_last_write_utc": "2026-09-28T19:41:31.789100+00:00"
+  }
+]
