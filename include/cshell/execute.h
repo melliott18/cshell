@@ -39,6 +39,7 @@ struct csh_execution {
     int redirection_failed; /* Parent command could not apply redirections. */
     int special_builtin_error; /* Runtime applies context-dependent error policy. */
     int errexit_ignored; /* Failure originated in an exempt command context. */
+    int job_suspended; /* Unwind this foreground list; retain its stopped pipeline. */
     int exit_requested; /* Caller leaves its input loop; library never exits. */
     enum csh_execution_category category;
 };

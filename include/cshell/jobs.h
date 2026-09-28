@@ -51,9 +51,10 @@ void csh_jobs_cancel(struct csh_jobs *jobs, struct csh_job *job);
 /* Give the terminal before opening the launch barrier. */
 int csh_jobs_give_terminal(struct csh_jobs *jobs, struct csh_job *job, int resume);
 /* Wait and reclaim the terminal. Success consumes a completed job; a stopped
- * job remains owned. Errors retain ownership for cancellation or retry. */
+ * job remains owned. Optional suspended output distinguishes stops from exits
+ * with the same numeric status. Errors retain ownership for cancellation or retry. */
 int csh_jobs_foreground(struct csh_jobs *jobs, struct csh_job *job, int resume,
-    int *status);
+    int *status, int *suspended);
 /* Collection preserves shell status/$!. wait=1 also waits until completion
  * or a monitored stop; statuses remain available for the wait builtin. */
 int csh_jobs_poll(struct csh_jobs *jobs);
@@ -65,7 +66,8 @@ void csh_jobs_notify(struct csh_jobs *jobs);
  * actions raised by an action can be deferred to the next command boundary. */
 int csh_jobs_read_ready(void *jobs, int fd, int defer_pending);
 int csh_jobs_is_builtin(const char *name);
-int csh_jobs_builtin(struct csh_jobs *jobs, const struct csh_command *command);
+int csh_jobs_builtin(struct csh_jobs *jobs, const struct csh_command *command,
+    int *suspended);
 /* Temporarily restore inherited signal actions around exec; recover on failure. */
 void csh_jobs_exec_signals(struct csh_jobs *jobs, int recover);
 /* Caller blocks QUIT/TERM/TSTP/TTIN/TTOU before prepare and restores them only

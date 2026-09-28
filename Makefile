@@ -475,3 +475,21 @@ build/character.o: src/character.c include/cshell/character.h
 build/tests/character_fixture: tests/character_fixture.c build/lexer.o $(LEXER_SUPPORT_OBJECTS) build/character.o $(LEXER_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/character_fixture.c build/lexer.o $(LEXER_SUPPORT_OBJECTS) build/character.o $(LDLIBS)
+
+# CSH-057 bounded CHILD_MAX injection; production executable keeps host sysconf.
+build/tests/lifecycle-jobs.o: src/jobs.c $(EXECUTE_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -Dsysconf=csh_lifecycle_sysconf -c $< -o $@
+
+build/tests/jobs_lifecycle: tests/jobs_lifecycle.c build/tests/lifecycle-jobs.o $(EXECUTE_OBJECTS) build/character.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/tests/lifecycle-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o $(LDLIBS)
+
+test-jobs: test-job-retention
+.PHONY: test-job-retention
+test-job-retention: build/tests/jobs_lifecycle
+	$(PYTHON) tests/smoke.py ./build/tests/jobs_lifecycle --suite tests/fixtures/job-retention.json --timeout 60
+
+test-jobs-pty: test-job-notifications
+.PHONY: test-job-notifications
+test-job-notifications: build/tests/jobs_lifecycle
+	$(PYTHON) tests/smoke.py ./build/tests/jobs_lifecycle --suite tests/fixtures/job-notifications.json --timeout 30

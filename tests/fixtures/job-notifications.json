@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "name": "job-notifications",
+  "kind": "module",
+  "cases": [
+    {
+      "name": "CSH-057 notification timing during foreground execution",
+      "transport": "pty",
+      "args": [
+        "notify"
+      ],
+      "steps": [],
+      "timeout": 30,
+      "expect": {
+        "output": "foreground notifications: notify off/on, zero/nonzero/signal bytes and retained results passed\n",
+        "status": 0
+      }
+    }
+  ]
+}

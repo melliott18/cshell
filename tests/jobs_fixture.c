@@ -277,7 +277,7 @@ int main(int argc, char **argv)
         length = read(messages[0], output, sizeof(output) - 1);
         assert(length > 0);
         output[length] = '\0';
-        snprintf(expected, sizeof(expected), "[%d]  Done(17) exit 17\n", notify + 2);
+        snprintf(expected, sizeof(expected), "[%d]   Done(17) exit 17\n", notify + 2);
         assert(strcmp(output, expected) == 0);
         snprintf(script, sizeof(script), "wait %%%d\n", notify + 2);
         assert(run(&context, script).status == 17);

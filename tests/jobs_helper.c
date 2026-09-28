@@ -9,6 +9,15 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+static int continue_tty = -1;
+static void continued(int number)
+{
+    int saved = errno;
+    (void)number;
+    while (write(continue_tty, "reader-continued\n", 17) < 0 && errno == EINTR) {}
+    errno = saved;
+}
+
 int main(int argc, char **argv)
 {
     struct termios modes;
@@ -25,6 +34,96 @@ int main(int argc, char **argv)
     }
     tty = open("/dev/tty", O_RDWR);
     if (tty < 0 || tcgetattr(tty, &modes) < 0) return 3;
+    /* CSH-057 / JOB-001: exec preserves the controlling session leader.
+     * Another live group owns the terminal before cshell starts. */
+    if (strcmp(argv[1], "session-start") == 0) {
+        int ready[2];
+        pid_t child;
+        if (argc != 3 || getsid(0) != getpid() || pipe(ready) < 0) return 21;
+        child = fork();
+        if (child < 0) return 22;
+        if (child == 0) {
+            if (setpgid(0, 0) < 0 || write(ready[1], "r", 1) != 1) _exit(23);
+            for (;;) pause();
+        }
+        if (read(ready[0], &byte, 1) != 1 || tcsetpgrp(tty, child) < 0 ||
+            tcgetpgrp(tty) != child) return 24;
+        close(ready[0]); close(ready[1]); close(tty);
+        execl(argv[2], argv[2], (char *)NULL);
+        return 25;
+    }
+    /* SIGSTOP is delivered by kill itself while a builtin executes in the
+     * current shell. The parent observes WIFSTOPPED before sending CONT. */
+    if (strcmp(argv[1], "child-stop") == 0) {
+        raise(SIGSTOP);
+        if (tcgetpgrp(tty) != getpgrp()) return 37;
+        return 23;
+    }
+    if (strcmp(argv[1], "builtin-stop") == 0) {
+        pid_t child;
+        int status;
+        struct termios stopped_modes;
+        if (argc != 3 && argc != 4) return 2;
+        child = fork();
+        if (child < 0) return 26;
+        if (!child) {
+            char script[512];
+            if (argc == 4) snprintf(script, sizeof(script),
+                "{ \"$1\" child-stop & wait %%1; } 2>/dev/null; "
+                "kill -s STOP $$; wait %%1; case $? in %d) ;; *) exit 38;; esac; "
+                "fg %%1 >/dev/null; case $? in 23) ;; *) exit 39;; esac; "
+                "echo builtin-resumed; \"$1\" check", 128 + SIGSTOP);
+            else snprintf(script, sizeof(script),
+                "kill -s STOP $$; echo builtin-resumed; \"$1\" check");
+            execl(argv[2], argv[2], "-ic", script,
+                "builtin-stop", argv[0], (char *)NULL);
+            _exit(27);
+        }
+        /* The nested foreground shell makes its own group at startup. */
+        pid_t got;
+        do { got = waitpid(child, &status, WUNTRACED); } while (got < 0 && errno == EINTR);
+        if (got != child || !WIFSTOPPED(status) || WSTOPSIG(status) != SIGSTOP ||
+            getpgid(child) != child || tcgetpgrp(tty) != child ||
+            tcgetattr(tty, &stopped_modes) < 0 ||
+            stopped_modes.c_lflag != modes.c_lflag) return 28;
+        puts("builtin-stopped"); fflush(stdout);
+        if (kill(child, SIGCONT) < 0) return 29;
+        do { got = waitpid(child, &status, 0); } while (got < 0 && errno == EINTR);
+        signal(SIGTTOU, SIG_IGN);
+        if (got != child || !WIFEXITED(status) || WEXITSTATUS(status) != 0 ||
+            tcsetpgrp(tty, getpgrp()) < 0 || tcgetattr(tty, &stopped_modes) < 0 ||
+            stopped_modes.c_lflag != modes.c_lflag) return 30;
+        return 0;
+    }
+    if (strcmp(argv[1], "stop") == 0) {
+        int number = argc > 2 ? atoi(argv[2]) : SIGTSTP;
+        if (tcgetpgrp(tty) != getpgrp()) return 31;
+        raise(number);
+        if (tcgetpgrp(tty) != getpgrp()) return 32;
+        puts("stop-resumed");
+        return 23;
+    }
+    /* PID/PGID assertions are inside the helper, never normalized out of a
+     * transcript. The producer's group is checked by the pipeline consumer. */
+    if (strcmp(argv[1], "background-producer") == 0) {
+        pid_t group = getpgrp();
+        if (tcgetpgrp(tty) == group || getpid() != group ||
+            write(STDOUT_FILENO, &group, sizeof(group)) != sizeof(group)) return 33;
+        return 0;
+    }
+    if (strcmp(argv[1], "background-pipeline") == 0) {
+        pid_t group;
+        if (tcgetpgrp(tty) == getpgrp() ||
+            read(STDIN_FILENO, &group, sizeof(group)) != sizeof(group) ||
+            group != getpgrp()) return 34;
+        puts("background-pipeline-ok");
+        return 0;
+    }
+    if (strcmp(argv[1], "compound-group") == 0) {
+        if (getpgrp() != getppid() || tcgetpgrp(tty) == getpgrp()) return 35;
+        puts("compound-group-ok");
+        return 0;
+    }
     /* CSH-050 / JOB-001: exercise a nested shell both in the inherited
      * foreground group (not its leader) and in a separate background group.
      * The PTY runner bounds and cleans the whole session on any failure. */
@@ -67,7 +166,14 @@ int main(int argc, char **argv)
             (modes.c_lflag & ECHO)) return 4;
         puts("terminal-ok"); return 0;
     }
-    if (strcmp(argv[1], "reader") == 0) {
+    if (strcmp(argv[1], "reader") == 0 || strcmp(argv[1], "compound-reader") == 0) {
+        if (!strcmp(argv[1], "compound-reader")) {
+            struct sigaction action = {0};
+            continue_tty = tty;
+            action.sa_handler = continued;
+            sigemptyset(&action.sa_mask);
+            if (sigaction(SIGCONT, &action, NULL) < 0) return 36;
+        }
         /* Opening the terminal is harmless in the background; reading stops
          * with TTIN until fg returns ownership to this process group. */
         dprintf(STDOUT_FILENO, "reader-ready\n");

@@ -11,14 +11,14 @@ interactive error behavior but does not enable monitor mode.
 
 | Command | Supported behavior |
 | --- | --- |
-| `jobs [-l\|-p] [--] [%job ...]` | Show running, stopped, and newly completed jobs; `-l` includes every direct stage PID, `-p` prints the job leader PID. |
+| `jobs [-l\|-p] [--] [%job ...]` | Show running, stopped, and newly completed jobs; `-l` includes direct stage PIDs, `-p` prints the group leader PID (the associated final-stage PID for unmonitored jobs). |
 | `fg [--] [%job]` | Give a monitored job the terminal, restore its saved terminal settings, continue it, and return its foreground status. |
 | `bg [--] [%job ...]` | Continue monitored jobs without giving them the terminal. |
 | `wait [--] [pid\|%job ...]` | Return the last requested job's status. With no operands, wait for all jobs and return zero. Unknown operands return 127; SIGINT interrupting an interactive wait returns 130 without discarding the job. |
 | `kill [-s signal\|-signal] [--] pid\|%job ...` | Signal a monitored job's process group, an unmonitored job's direct stages, or numeric process/group operands. The default signal is TERM; zero checks existence/permission. |
 | `kill -l [status ...]` | List supported symbolic signal names, or convert a signal number or shell signal status to a name. |
 | `set -m`, `set +m`, `set -o monitor`, `set +o monitor` | Enable/disable grouping for subsequent launches. Enabling monitor requires a usable terminal. |
-| `set -b`, `set +b`, `set -o notify`, `set +o notify` | Enable/disable reporting background status changes while waiting for input. Otherwise changes are reported before the next prompt. |
+| `set -b`, `set +b`, `set -o notify`, `set +o notify` | Enable/disable reporting background status changes during foreground waits and while waiting for input. Otherwise changes are reported before the next prompt. |
 | `set -o`, `set +o` | Show all implemented shell options, or print commands restoring their settings (CSH-032). |
 
 `%number`, `%%`, `%+`, `%-`, `%prefix`, and `%?substring` select jobs. Omitted
@@ -34,12 +34,16 @@ The runtime expands `$!`; module clients can also read it from shell state.
 Interactive asynchronous launches print `[job-number] last-stage-pid` to stderr.
 Job descriptions use prepared argument text and pipeline/group separators; they
 are display text, not a round-trippable shell command. Status lines show
-`Running`, `Stopped`, `Done`, or `Done(status)` with current/previous markers.
+`Running`, `Stopped` (TSTP), `Stopped (SIGSTOP/SIGTTIN/SIGTTOU)`,
+`Done`, `Done(status)`, or `Terminated (SIGname)` with current/previous markers.
+The default format is `[number] marker state command`; `-l` inserts the leader
+or associated PID before the state and lists additional stages on `PID command` lines.
 Completed jobs disappear from listings after reporting, while their result
 remains available to `wait`. Explicit waits consume completed results. The
-registry retains at least the platform's `_SC_CHILD_MAX` jobs (256 if unknown),
-then may discard older completed results; running/stopped records are never
-removed to meet that limit.
+registry retains at least the platform's `_SC_CHILD_MAX` completed results
+(256 if unknown), then may discard older completed results on a new
+asynchronous launch. Running/stopped records are kept in addition to this
+capacity; foreground launches never evict retained asynchronous statuses.
 
 Job builtins execute under the executor's normal assignment/redirection rules.
 `set` is a special builtin; the others are regular builtins. Invalid `set`
@@ -47,6 +51,14 @@ operands are validated before changing options or positional parameters.
 CSH-032 integrates [the shared option parser](shell-options.md), including
 invocation `-m`/`-b` and disabling forms. Job tables are isolated in subshells, background compound commands,
 and pipeline stages. A `wait` in one cannot consume its parent's statuses.
+
+A stopped compound originally launched in the background remains intact when
+foregrounded and resumed. For a compound originally launched in the foreground,
+cshell retains its stopped pipeline and discards other pending commands in that
+foreground list. This is the selected membership policy within POSIX's permitted
+and unspecified choices. Completed commands are not replayed. A suspended job
+has a separate internal flag from its numeric status, so an ordinary command
+exiting with 128+stop-signal does not discard subsequent commands.
 
 ## Process and terminal ownership
 
@@ -56,7 +68,9 @@ registers each direct child in source order, and delegates all collection to
 `src/jobs.c`. `waitpid` always targets a positive, owned PID. No handler reaps
 children or accesses the registry.
 
-For monitored jobs both parent and child call `setpgid`. A close-on-exec pipe
+A controlling session leader claims its terminal even when another group
+initially owns it. A nested nonleader instead stops with TTIN until its parent
+foregrounds it. For monitored jobs both parent and child call `setpgid`. A close-on-exec pipe
 barrier holds every child until all stages share the group and foreground
 terminal transfer succeeds. This prevents fast leaders from exiting before
 later stages join and prevents early terminal reads from stopping a foreground
@@ -124,5 +138,10 @@ injects both faults into primary and continuation prompts. The
 [CSH-037 follow-up record](tickets/CSH-037-portability-audit.md) links the
 CSH-044/045 regressions and platform results. The
 [CSH-050 clause map](jobs-signals-evidence.md) adds nested startup,
-notification timing and numeric-PID coverage, with residual obligations under
-[CSH-054](tickets/CSH-054-signal-contract-gaps.md).
+notification timing and numeric-PID coverage, with [CSH-054 signal corrections](tickets/CSH-054-signal-contract-gaps.md) and
+[CSH-057 lifecycle boundaries](jobs-signals-evidence.md#csh-057).
+The latter adds bounded CHILD_MAX/fallback exhaustion, old live/stopped records,
+all supported jobs formats, controlling-session startup, background/compound
+membership, non-replay, builtin STOP/CONT, and notification timing during an
+active foreground wait. [Retained runs](evidence/csh-057/README.md) distinguish
+controlled API tests from public PTY observations.

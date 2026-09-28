@@ -942,7 +942,7 @@ static void apply_errexit(struct csh_state *state, enum csh_ast_kind kind,
     if (info.errexit_ignored) result->errexit_ignored = 1;
     if ((info.options & CSH_OPT_ERREXIT) && result->status != 0 &&
         !info.errexit_ignored && !result->errexit_ignored &&
-        result->control == CSH_CONTROL_NONE &&
+        result->control == CSH_CONTROL_NONE && !result->job_suspended &&
         kind != CSH_AST_LIST && kind != CSH_AST_AND && kind != CSH_AST_OR)
         result->exit_requested = 1;
 }
@@ -1194,7 +1194,7 @@ static int context_stopped(struct csh_execution_context *context,
 {
     struct csh_state_info info;
     csh_state_get_info(context->state, &info);
-    return result->control != CSH_CONTROL_NONE || result->exit_requested || (result->special_builtin_error &&
+    return result->job_suspended || result->control != CSH_CONTROL_NONE || result->exit_requested || (result->special_builtin_error &&
         !(info.options & CSH_OPT_INTERACTIVE));
 }
 
@@ -1525,7 +1525,7 @@ static int evaluation_handler(struct csh_state *state, const struct csh_command 
             if (context->jobs && csh_jobs_is_builtin(target.argv[0]) &&
                 (strcmp(target.argv[0], "set") ||
                     (target.argc > 1 && strcmp(target.argv[1], "--"))))
-                result->status = csh_jobs_builtin(context->jobs, &target);
+                result->status = csh_jobs_builtin(context->jobs, &target, &result->job_suspended);
             else if (context->jobs && category == CSH_EXEC_EXTERNAL)
                 rc = context_job(context, NULL, NULL, &target, 0, result, error);
             else rc = execute_resolved(state, &target, category,
@@ -1762,7 +1762,7 @@ static int context_job(struct csh_execution_context *context,
         csh_state_set_background(context->state, job->processes[count - 1].pid);
         csh_jobs_announce(context->jobs, job);
         result->status = 0;
-    } else if (csh_jobs_foreground(context->jobs, job, 0, &result->status) == -1) {
+    } else if (csh_jobs_foreground(context->jobs, job, 0, &result->status, &result->job_suspended) == -1) {
         fail(error, "cannot wait for foreground job", errno, 1); goto cancel;
     }
     rc = 0;
@@ -1790,7 +1790,7 @@ static int job_handler(struct csh_state *state, const struct csh_command *comman
     struct csh_execution *result, struct csh_error *error, void *context)
 {
     (void)state; (void)error;
-    result->status = csh_jobs_builtin(context, command);
+    result->status = csh_jobs_builtin(context, command, &result->job_suspended);
     return 0;
 }
 

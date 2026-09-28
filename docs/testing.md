@@ -772,7 +772,6 @@ with `-DNDEBUG`. The shared decoder's standalone target is
 engine. See [Value expansion](value-expansions.md) for supported contexts,
 locale/unspecified choices, ownership, and remaining integration requirements.
 
-
 `make test-fields` builds `build/tests/fields_fixture` and
 `build/tests/fields_faults` independently of the runtime entry point. `tests/fields.py`
 creates temporary directory trees with whitespace, wildcard characters, dotfiles,
@@ -791,7 +790,6 @@ special assignments) and `tests/builtins.py` (24 replacement execution cases).
 It is included in `make test` and `make docker-test`. For sanitizer validation,
 clean first and run `make test-builtins test-execute test-state` with the Clang
 AddressSanitizer/UndefinedBehaviorSanitizer flags documented above.
-
 
 ## List, group, and background execution checks
 
@@ -1062,3 +1060,25 @@ and injected command-read error witnesses. It is included in `make test` and
 read wrapper; all other objects, including main, are the ordinary runtime.
 The [contract map](execution-contracts.md) identifies exact assertions, source
 alternatives, bounds, environments, and sanitizer handling for closed descriptors.
+
+### CSH-057 job lifecycle boundaries
+
+`make test-jobs` includes `test-job-retention`; `make test-jobs-pty` includes
+`test-job-notifications`. Both are included in the full suites and existing CI.
+The [exact requirement map](jobs-signals-evidence.md#csh-057) distinguishes
+public PTY cases from the controlled API fixture in `tests/jobs_lifecycle.c`.
+Only that fixture's jobs object substitutes `_SC_CHILD_MAX` (32 and unknown,
+falling back to 256); the public runtime keeps the host limit. It uses real
+sequential children and retains one running and one stopped record while
+checking eviction. Each progress phase has a five-second alarm and retention
+has a 60-second outer bound. Notification scenarios have ten-second phase
+alarms, a five-second foreground-child alarm, and a 30-second outer bound.
+
+Notification correctness uses pipes, kernel stop status with WNOWAIT, and the
+ESRCH reaping predicate, never elapsed delays. A launch barrier prevents fast
+foreground test children from exiting before group assignment. Assertion
+messages retain a separate diagnostic descriptor while stdout/stderr are
+captured. The normal bounded session teardown still applies. Public compound
+resume cases wait for a SIGCONT-handler readiness message before sending a
+second stop signal. See the [run record](evidence/csh-057/README.md) for the
+failed-before and loaded fixture-race observations and their fixes.

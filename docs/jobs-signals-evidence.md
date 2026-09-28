@@ -1,7 +1,7 @@
-# Jobs, signals and traps: CSH-050 and CSH-054 evidence
+# Jobs, signals and traps: CSH-050, CSH-054 and CSH-057 evidence
 
 This is the clause/condition map for [CSH-050](tickets/CSH-050-jobs-signals-evidence.md),
-reviewed against POSIX.1-2024 on 2026-09-26, with [CSH-054 corrections](#csh-054). It supersedes broad coverage claims,
+reviewed against POSIX.1-2024 on 2026-09-26, with [CSH-054 corrections](#csh-054) and [CSH-057 lifecycle evidence](#csh-057). It supersedes broad coverage claims,
 not the implementation histories of CSH-034/035. The eleven parent requirements
 remain **implemented subsets**. Only the assertions below have run evidence;
 [remaining obligations](#remaining-obligations) keep the CSH-012 gate closed.
@@ -57,7 +57,7 @@ Implementation: [execute.c](../src/execute.c) asynchronous launch and redirectio
 | Clause / condition | Exact witnesses and assertions | Limit |
 | --- | --- | --- |
 | Launch without waiting; zero list status | J `/bin/sleep 60 & p=$!; echo "$?"; kill "$p"; wait "$p"` prints `0\n`, ends 128+TERM within 5 seconds | Sending TERM after launch also proves subsequent commands execute before the sleeper finishes |
-| Known ID, final pipeline status and consumption | J `exit 23 & p=$!; wait "$p"` returns 23; repeat wait returns 127; `exit 11 \| exit 31 & wait %1` returns 31; A retained pipeline status 23 | CHILD_MAX exhaustion/eviction remains unverified |
+| Known ID, final pipeline status and consumption | J `exit 23 & p=$!; wait "$p"` returns 23; repeat wait returns 127; `exit 11 \| exit 31 & wait %1` returns 31; A retained pipeline status 23 | Bounded CHILD_MAX/fallback and eviction assertions are added in [CSH-057](#csh-057) |
 | Unmonitored stdin is empty before explicit redirection | J `/bin/cat & wait "$!"; echo after` prints only `after\n`; redirected input case prints `x` | All three invocation modes, including script bytes arriving on stdin |
 | Interactive launch message to stderr | A notification phases compare `[2] PID\n` and `[3] PID\n` against the actual published background PID | Exact format and PID predicate, not a normalized transcript |
 
@@ -77,8 +77,7 @@ the helper checks PID/PGID equality after `exec`. Both require nested status 0,
 outer foreground restoration and `terminal-ok`. See [jobs_helper.c](../tests/jobs_helper.c).
 Explicit `-i` without a terminal is covered by J `fg`, `set -m` and the existing
 `invalid options are atomic` case: unavailable monitor is diagnosed, not skipped.
-The unusual controlling-session-leader startup with an initially different
-foreground group remains untested.
+[CSH-057](#csh-057) adds interactive controlling-session-leader startup with an initially different foreground group.
 
 <a id="job-002"></a>
 
@@ -97,9 +96,7 @@ in [jobs.c](../src/jobs.c), pipeline barriers in [execute.c](../src/execute.c).
 
 The fault PTY case in [jobs-fault-pty.json](../tests/fixtures/jobs-fault-pty.json)
 asserts group/terminal restoration, descriptor counts and child cleanup under
-injected failures. Compound lists, background multi-stage group membership,
-SIGSTOP of a shell executing a builtin, and completed-command non-replay still
-need separate assertions; these pipeline passes do not close those clauses.
+injected failures. [CSH-057](#csh-057) adds separate compound, background membership, builtin SIGSTOP/CONT and non-replay assertions; the pipeline tests alone do not establish those clauses.
 
 <a id="job-003"></a>
 
@@ -118,8 +115,7 @@ notifications. The 32-cycle `repeated background resumes preserve prompt and
 terminal` plus [prompt-faults.json](../tests/fixtures/prompt-faults.json) retain
 CSH-044's deterministic retry and real PTY regressions. A 150-pipeline loop and
 its deliberate watchdog stall retain CSH-045's progress and cleanup regression.
-Notification timing during a running foreground utility, every jobs output form,
-and every stop signal are not established by the idle-input tests.
+[CSH-057](#csh-057) adds foreground notification timing, all three supported jobs output forms, and every applicable stop signal; the idle-input tests alone do not establish them.
 
 <a id="sig-001"></a>
 
@@ -236,16 +232,17 @@ two-child no-operand wait and final pipeline wait assert 0/0/31. Unknown syntax
 and IDs diagnose and return 127. Subshell/pipeline waits cannot consume parent
 IDs. A retains completed and already-reaped statuses, leaves unrelated children
 waitable, interrupts without consuming a live child, and reports without
-consuming status. SIG-002 owns trapped-wait timing. Retention at CHILD_MAX,
-fg removal from the known-ID set and selected wait interruption need more
-coverage; all retained-status claims are limited to the exercised counts.
+consuming status. SIG-002 owns trapped-wait timing. CSH-054 adds selected
+interruption assertions; [CSH-057](#csh-057) adds controlled CHILD_MAX capacity
+and fg removal from known IDs. Claims remain limited to their exact cases.
 
 ## Remaining obligations
 
 [CSH-054](#csh-054) fixes the two reproduced defects and assigns each remaining
-clause to CSH-057 or CSH-058 in the exact map below. This is a concrete residual inventory,
+clause to CSH-057 or CSH-058 in the historical map below. The
+[CSH-057 disposition](#csh-057) supersedes its job-lifecycle entries. This is a concrete residual inventory,
 not a waiver and not a claim that all untested behavior is defective. CSH-050
-supplies a reviewable map and run record; CSH-012 remains closed. The parent rows
+supplies a reviewable map and run record; the CSH-012 conformance gate remains closed. The parent rows
 are intentionally not promoted to verified, so no broad row obscures a narrower
 failure. Stable anchors in this document separate each family's evidence.
 
@@ -312,3 +309,53 @@ follow-ups [CSH-057](tickets/CSH-057-job-lifecycle-boundaries.md) and
 [CSH-058](tickets/CSH-058-signal-edge-evidence.md) explicitly own the remaining
 clauses; full UP/XSI and unspecified choices are not folded into passing base
 assertions. The conformance audit gate remains open.
+
+<a id="csh-057"></a>
+
+## CSH-057 lifecycle boundaries
+
+Normative review: POSIX.1-2024 [2.9.3.1](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_09_03_02),
+[2.11](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_11),
+[jobs STDOUT](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/jobs.html#tag_20_62_10),
+and [wait](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/wait.html),
+2026-09-27. These are required base asynchronous rules and conditional supported
+job-control behavior. Full UP/XSI remains unselected. The parent requirement
+families remain **implemented subsets**, not blanket conformance claims.
+
+`L` below identifies functions in [jobs_lifecycle.c](../tests/jobs_lifecycle.c).
+Its only production-code interposition replaces jobs.c's `_SC_CHILD_MAX` query
+with 32 or -1 (the documented fallback 256), and asserts the query occurred.
+These are explicit bounded capacity assertions with real sequential children,
+not exhaustion of the potentially multi-million-entry host limit. No production
+limit is lowered. Notification tests use real process groups, a controlling PTY,
+and the production foreground wait. Other registry setup is through the internal
+API; this is not described as an uninstrumented public-shell invocation.
+`P` below identifies exact names in [jobs_cases.py](../tests/jobs_cases.py), all
+prefixed `CSH-057 `. The two module suite names are
+`CSH-057 bounded CHILD_MAX retention and eviction` and
+`CSH-057 notification timing during foreground execution`.
+
+| Requirement / condition | Exact assertion / oracle | Classification |
+| --- | --- | --- |
+| EXEC-009 / U-032 capacity and permitted eviction | L `retention`: 32 and fallback 256 sequential children, alternating expanded/saved `$!` and unexpanded IDs observed by the fixture; every result at capacity survives a foreground utility. The next asynchronous launch evicts only the oldest completed result (127); every newer result is exact. L `live_retention`: one running and one stopped old child survive while the most recent 32 completed results remain waitable. Both are explicitly cancelled/reaped. | Required minimum retention; oldest completed eviction and retaining unsaved optional job IDs are cshell policies within permitted alternatives |
+| U-032 / JOB-003 successful fg consumes identity | P `TSTP retains ID then successful fg consumes it` and TTIN/TTOU/STOP variants: stopped wait gives 128+signal, fg resumes under terminal ownership and returns 23, a later wait gives 127. P `compound fg stop resume without replay` checks numeric saved `$!` consumption. The pre-existing interrupted-wait API case and CSH-054 W cases retain interruption/second-wait evidence. | Conditional job control; D-007 numeric status policy |
+| JOB-001 controlling session leader | P `session leader reclaims initially foreign foreground`: helper is exec'd in the PTY session leader; another live group owns the terminal before shell exec. A second prompt, monitor option, shell foreground predicate and `terminal-ok` prove reclaim without an orphaned SIGTTIN loop. Existing nested foreground/background tests still require nonleader behavior. | Required in tested interactive controlling-session case |
+| JOB-002 background membership | P `background pipeline group membership`: producer checks PID=PGID and background terminal status, sends its PGID through the pipeline; consumer compares its group and background state. P `background compound group membership`: both successive children compare PGID with their wrapper parent's PID and check that it is not the terminal foreground. Exact output files and final wait status 0 are required. | Required grouping for the tested forms |
+| JOB-002 intact suspension and non-replay | P `compound fg stop resume without replay`: a background brace stops reading the terminal, is foregrounded, confirms CONT delivery, stops again with TSTP, then resumes to read input. Exact trace is `once\ntwice\n`; reader trace is `reader-ready\nreader-done\n`. Saved PID is consumed on completion. | Required intact background-first compound; completed commands must not replay |
+| JOB-002 original foreground compound | P `foreground compound discards pending commands on stop`: trace contains only `once\n`; fg resumes the stopped external pipeline, returns 23, and pending `echo forbidden` never runs. P `numeric stop-like exit still completes a compound` distinguishes ordinary exit 128+TSTP from an actual stop. P `suspension does not trigger errexit` preserves the shell through an actual stop. | The original compound's full suspended membership is unspecified. Retain the stopped pipeline and discard other pending commands is the selected policy; this test does not impose that choice on other shells |
+| JOB-002 builtin STOP/CONT | P `SIGSTOP inside builtin then CONT` and `SIGSTOP inside builtin leaves child stopped until fg`: nested shell calls its own kill builtin with STOP. Supervisor requires WIFSTOPPED/SIGSTOP, PID=PGID, foreground ownership and saved terminal flags before sending CONT to that PID. The second case leaves a child stopped, verifies its stop status, then fg resumes it and returns 23. Both require `builtin-stopped`, `builtin-resumed`, zero nested exit, restored outer ownership and terminal settings. | Required applicable STOP/CONT branches, no attempt to trap STOP |
+| JOB-003 foreground notification timing | L `notification`: notify off/on crossed with exit 0, exit 17, TERM, STOP/TSTP/TTIN/TTOU (14 scenarios). For completion, foreground child releases background child and waits for ESRCH proving parent reaping. With notify on it cannot finish until it reads exact notification bytes; with notify off it requires EAGAIN, and the parent later checks bytes at the before-prompt hook. For stops, WSTOPPED/WNOWAIT establishes kernel suspension before the foreground wait polls it; same on/off byte checks apply. Status remains waitable; stopped jobs resume and finish 0. | Immediate completion notification is required with notify. Immediate stop notification is cshell's permitted choice; POSIX also permits deferral for stops with notify on |
+| JOB-003 jobs output and notification bytes | L `formats`: default, -l, -p, both grouped and ungrouped metadata, actual two-child PIDs, exact spacing, leader/associated PID and continuation line fields. L `notification`: exact `Done`, `Done(17)`, `Terminated (SIGTERM)`, `Stopped`, and `Stopped (SIGSTOP/SIGTTIN/SIGTTOU)` states. P variants require the same stop states through public execution. | POSIX-locale required output structure; the signal-termination wording is a permitted project choice, visibly distinct from normal completion |
+
+Fixes in [jobs.c](../src/jobs.c) preserve completed-result capacity independently
+of old live/stopped jobs, avoid eviction by foreground launches, claim a session
+leader's terminal, report notify events during foreground waits, and format
+job states and PID fields. [execute.c](../src/execute.c) propagates an explicit
+suspension flag through compounds, functions/evaluation and fg instead of
+confusing a stop with a numerically identical normal exit. The flag unwinds
+pending foreground commands without treating a suspension as an errexit failure.
+
+The [run record](evidence/csh-057/README.md) retains all failing development runs,
+the notification fixture's diagnosed launch race, loaded regression, and final
+native/Docker/sanitizer outcomes. CSH-058 continues to own the remaining signal
+edge cross-products. No unspecified membership is promoted to a portable oracle.

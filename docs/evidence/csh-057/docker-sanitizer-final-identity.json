@@ -1,0 +1,79 @@
+{
+  "recorded_utc": "2026-09-27T10:46:59.425440+00:00",
+  "source_revision": "adb9e5c103f7183836eb5f8f19ba180b134a004a",
+  "source_note": "Source digest covers Makefile, Dockerfile, src, include, tests and tools, excluding Python caches. Subsequent evidence documentation is outside that digest.",
+  "source_sha256": "d284b8e7eb5c9c08281af0bff25a1cd590ab8d3e32a04f097c4ef688843f06d8",
+  "binary": {
+    "path": "/work/cshell",
+    "realpath": "/work/cshell",
+    "sha256": "d848c411213c2c8403ccbe996df4e43833941b7d8dbf63820e38b2735667fe8c"
+  },
+  "child_max": -1,
+  "environment": {
+    "ASAN_OPTIONS": "halt_on_error=1",
+    "UBSAN_OPTIONS": "halt_on_error=1",
+    "MallocNanoZone": null,
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "LANG": null,
+    "LC_ALL": null
+  },
+  "git_status": {
+    "note": "exported source snapshot"
+  },
+  "compiler": {
+    "argv": [
+      "cc",
+      "--version"
+    ],
+    "status": 0,
+    "output": "cc (Debian 12.2.0-14+deb12u1) 12.2.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+  },
+  "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+  "uname": [
+    "Linux",
+    "15e55de587ce",
+    "6.4.16-linuxkit",
+    "#1 SMP PREEMPT Thu Nov 16 10:49:20 UTC 2023",
+    "aarch64",
+    ""
+  ],
+  "python": "3.11.2 (main, May 12 2026, 05:17:27) [GCC 12.2.0]",
+  "libc": [
+    "glibc",
+    "2.36"
+  ],
+  "flags": {
+    "CPPFLAGS": "-D_POSIX_C_SOURCE=200809L -Iinclude",
+    "CFLAGS": "-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+    "LDFLAGS": "-fsanitize=address,undefined",
+    "LDLIBS": ""
+  },
+  "generated_suites": {
+    "build/tests/control-flow.json": "60ddd6b126c498886cd73c7634ef1fe4506d2b60551b88d7ea9129f816118f97",
+    "build/tests/csh057-runtime-batch-0.json": "50b652dba3ec81c704489c184ecb529403bbecb41d6e83e307ea547ea9b6e60a",
+    "build/tests/csh057-runtime-batch-1.json": "effa91ace72a98ae624fe29af60a47621bfa99dd7d97ee309ee2766c29422ab0",
+    "build/tests/csh057-runtime-batch-2.json": "d74c2a04e339ffe21e25a06008ab85850dad2287e587d9d021d1c00ad25d6e4f",
+    "build/tests/csh057-runtime-batch-3.json": "3fa306aacb10cf072338f21c7ad2d1c95f06ded0400df2c7fc0dad733067af76",
+    "build/tests/csh057-timeouts.json": "4b6b00947c8e4d3a008bab0dc4367b356c8d03ddc04bc89ad51dcc7626435cba",
+    "build/tests/host-utilities-results.json": "57c92fb4661b6a3cc510ebd99724c8ef7fb28fcf0ba67472ecf7e8ea6ff1b37c",
+    "build/tests/jobs-pty.json": "f1b274b9c847dee58fcf76fb710838c35c428c196db7cf9cb86bd41348b145bc",
+    "build/tests/runtime-pty.json": "09f9b5484187fac7b9265bef641008d8048f69756eaed03262b76d6f4e5933a3",
+    "build/tests/runtime.json": "60e3eae571d881b8cdce1e20a5d139363f977a95749aaa682b8fea1959eea1ef"
+  },
+  "helpers": {
+    "/bin/cat": "491ea6f9b1804d893d660477e6873855b28271c018b13f086c2fc419d51560bb",
+    "/usr/bin/cmp": "2f7b69a504f687fdc54ea05e3d89c16d13c79a9078036e0bfca7792d2ae3846c",
+    "/work/build/tests/execute_helper": "8d70c62b742b84b08269f45ea602ef984635e614ad50c2c99030e7a2c89ed84a",
+    "/work/build/tests/jobs_helper": "f81f170f742c3b236f5835040aa69bd937c9685358f8d6677a78d2df1fd07dff",
+    "/work/build/tests/jobs_lifecycle": "a0076306ad082c023bd7176fccc789823d5ac34a30e47f5dd1bed12a94a4b301"
+  },
+  "os_release": "PRETTY_NAME=\"Debian GNU/Linux 12 (bookworm)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"12\"\nVERSION=\"12 (bookworm)\"\nVERSION_CODENAME=bookworm\nID=debian\nHOME_URL=\"https://www.debian.org/\"\nSUPPORT_URL=\"https://www.debian.org/support\"\nBUG_REPORT_URL=\"https://bugs.debian.org/\"\n",
+  "libc_build": {
+    "argv": [
+      "ldd",
+      "--version"
+    ],
+    "status": 0,
+    "output": "ldd (Debian GLIBC 2.36-9+deb12u14) 2.36\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nWritten by Roland McGrath and Ulrich Drepper."
+  }
+}
