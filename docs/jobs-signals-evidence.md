@@ -243,8 +243,11 @@ and fg removal from known IDs. Claims remain limited to their exact cases.
 
 [CSH-054](#csh-054), [CSH-057](#csh-057), and [CSH-058](#csh-058)
 now supply the scoped corrections and assertions assigned in the historical
-map below. CSH-054, CSH-058 and CSH-057's lifecycle/foreground-resume corrections
-are integrated. CSH-057 remains open for distinct timeout observations.
+map below. CSH-054, CSH-058 and CSH-057's lifecycle/runtime corrections and
+diagnostic-worker repair are integrated. CSH-057's
+[formal disposition](evidence/csh-057-retention-disposition/README.md) accepts the
+historical retention failure as unknown-cause and non-blocking for its scoped
+completion, with the same ticket owning the record and any recurrence.
 The [CSH-050 integration record](evidence/csh-050/README.md) identifies its
 pre-correction baseline; the [post-integration review](evidence-reconciliation.md)
 records the current disposition without rewriting those historical artifacts.
@@ -252,13 +255,15 @@ records the current disposition without rewriting those historical artifacts.
 | Residual condition | Current disposition / owner |
 | --- | --- |
 | Foreground resume intermittently returned 1 instead of 130 | Corrected by CSH-057, integrated in [PR #112](https://github.com/melliott18/cshell/pull/112) as `19cd70e`. The [deterministic before/after evidence](evidence/csh-057-pty-fix/README.md) diagnoses the continuation race; this disposition does not rely on an intermittent passing retry. |
-| Public resume PTY and retained-status deadlines | CSH-057 retains the separate five-second PTY and 60-second retention timeouts observed during combined integration. The continuation correction does not establish their cause or resolution. |
+| Public resume PTY deadlines | CSH-057's [timeout diagnosis](evidence/csh-057-timeouts/README.md) reproduces and repairs the process-group, inherited-mask and exit-status-gap races; PR #121 integrated them as `87fdfe8`. |
+| Historical retained-status deadline | The original 60-second hosted failure remains failed and unclassified. CSH-057's [formal disposition](evidence/csh-057-retention-disposition/README.md) accepts that uncertainty for scoped completion; the unchanged CI case remains enforced and a new relevant failure reopens #99. |
 | Inheritance/delivery, public interrupted waits, listing failures, group delivery and permission diagnostics | CSH-058 is integrated; its [exact matrix](#csh-058) supersedes the corresponding open entries in the historical CSH-054 table. Permission evidence uses syscall interposition, not host credential enforcement. |
 | External kill status mapping | Stock Debian failure remains a stock-host gap under CSH-052. CSH-056's opt-in qualified profile resolves that selected case; CSH-059/060 record wider host boundaries and CSH-061 owns their residual conditions. Builtin kill results do not qualify the external binary. |
 | Loaded transport deadlines and incomplete sanitizer runs | Retain the failed/not-run records under CSH-040/054 and CSH-057/058; serial passing results establish only their own observations. |
 
-CSH-050 supplies a reviewable map and run record; its platform acceptance stays
-open for the retained timeout observations and scoped host/capability limits.
+CSH-050 supplies a reviewable map and run record; its separate platform
+acceptance and scoped host/capability limits still require its own review.
+CSH-057's disposition does not complete that broader ticket.
 The CSH-012 conformance gate stays closed. Parent rows remain implemented
 subsets, with stable family anchors; no entire family is promoted to verified.
 
@@ -386,6 +391,12 @@ children. A confirmed stopped live child with EPERM must retain its stopped
 record and fail. The same forced scheduling window passes all 32 public PTY
 cycles with exact bytes. These are narrower race assertions, not promotion of
 the parent requirement families to complete verification.
+
+PR #121 subsequently integrated the separate timeout repairs and PR #124
+integrated safe diagnostic-worker isolation. The
+[formal retention disposition](evidence/csh-057-retention-disposition/README.md)
+closes the scoped CSH-057 review while preserving the original unknown-cause
+failure, exact test enforcement and same-ticket reopening ownership.
 
 <a id="csh-058"></a>
 

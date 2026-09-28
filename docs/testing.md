@@ -1131,6 +1131,13 @@ resume cases wait for a SIGCONT-handler readiness message before sending a
 second stop signal. See the [run record](evidence/csh-057/README.md) for the
 failed-before and loaded fixture-race observations and their fixes.
 
+The [formal retention disposition](evidence/csh-057-retention-disposition/README.md)
+retains one unknown-cause historical hosted timeout while allowing scoped
+CSH-057 completion. It grants no test allowance: any new retention timeout,
+unexpected termination, sanitizer, status, ownership or cleanup failure remains
+a failure and reopens [CSH-057 / #99](tickets/CSH-057-job-lifecycle-boundaries.md).
+Preserve its source and logs before rerunning; a successful retry does not erase it.
+
 The [foreground-resume follow-up](evidence/csh-057-pty-fix/README.md) extends the
 existing terminal fault fixture with a synchronized exit-before-SIGCONT case,
 portable EPERM/ESRCH branches and rejection for a stopped live child. Its

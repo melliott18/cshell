@@ -29,8 +29,10 @@ coverage with explicit host capability limits. The [integrated validation](#inte
 below supplements the historical runs without erasing their failures.
 CSH-043 offset and CSH-042 locale evidence retain their bounded scope.
 Full family verification remains open. [CSH-057](CSH-057-job-lifecycle-boundaries.md)
-fixed the status-1 continuation defect and retains its separate timeout
-investigation; those outcomes must not be conflated.
+integrated the continuation and PTY timeout repairs. Its historical retention
+failure remains unknown-cause under the
+[formal disposition](../evidence/csh-057-retention-disposition/README.md);
+scoped completion does not classify that failure as fixed or passed.
 
 This is an open evidence limitation found by the
 [CSH-037 independent review](../audit-review.md), not a declaration that every
@@ -300,8 +302,9 @@ none count as passed requirements.
 
 The passing offset, harness and terminal runs supplement the earlier failed
 attempts. They do not diagnose or erase those failures. In particular,
-[CSH-057](CSH-057-job-lifecycle-boundaries.md) still owns the intermittent
-`repeated background resumes preserve prompt and terminal` failure. Wider
+[CSH-057](CSH-057-job-lifecycle-boundaries.md) owned the intermittent
+`repeated background resumes preserve prompt and terminal` failure at that
+review; its later repairs and retention disposition are linked above. Wider
 filesystem/target-expansion combinations and linked environment/utility limits
 remain open in the clause map. Therefore the broad remaining-applicable-cases
 acceptance box above stays unchecked; this record closes the stale lookup and

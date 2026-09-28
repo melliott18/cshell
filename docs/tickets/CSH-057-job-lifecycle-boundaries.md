@@ -1,12 +1,29 @@
 # CSH-057: Verify remaining job lifecycle boundaries
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-034, CSH-035
-- Branch: fix/CSH-057-retention-timeout
+- Branch: docs/CSH-057-retention-disposition
 - Issue: [#99](https://github.com/melliott18/cshell/issues/99)
+
+## Final review disposition
+
+The scoped lifecycle implementation and all demonstrated repairs are integrated:
+PR #109 (`ab0c779`), PR #112 (`19cd70e`), PR #121 (`87fdfe8`), and the diagnostic
+worker repair in PR #124 (`893b10b`). All eight acceptance criteria below have
+their mapped evidence. Review at `66f8900` accepts the historical hosted
+retention timeout as **unknown-cause, non-blocking for this scoped completion**.
+Its failed result is retained; it is not declared fixed, passed, or proven load.
+
+The [formal disposition](../evidence/csh-057-retention-disposition/README.md)
+records the rationale, remaining risk, unchanged CI enforcement, and reopening
+criteria. Issue #99 remains the owner of the historical record and any
+recurrence. A new retention timeout, unexpected termination, sanitizer finding,
+status/ownership error or cleanup failure reopens this ticket; successful retries
+do not erase that failure. CSH-050 and CSH-012 retain their independent acceptance
+gates, and the requirement families remain implemented subsets.
 
 ## Goal
 
@@ -94,16 +111,17 @@ hosted failure, a deterministic public PTY reproduction, the failing-before
 module regression, and final native/Docker normal and sanitizer checks.
 The public test's exact transcript, foreground predicates, 32 cycles and
 five-second deadline are unchanged. PR #112 integrated that follow-up as
-`19cd70e`; the ticket remains at review for the distinct timeout observations
-below. The earlier general-runtime timeout records are not erased.
+`19cd70e`; the ticket then remained at review for the distinct timeout
+observations below. The earlier general-runtime timeout records are not erased.
 
 During combined integration with CSH-048/050/060 on 2026-09-28, a concurrent
 native/Docker run hit the unchanged five-second public PTY deadline at step
 157. This was a timeout, not the previously diagnosed status-1/EPERM result.
 Hosted duplicate run 36455644289 also timed out in the 60-second retention
-fixture; run 36455693791 passed all hosted jobs. Keep issue #99 open to track
-these timeout observations without weakening assertions or claiming that the
-continuation fix resolves every scheduling failure.
+fixture; run 36455693791 passed all hosted jobs. Issue #99 stayed open to track
+these observations without weakening assertions or claiming that the
+continuation fix resolved every scheduling failure. The final disposition above
+supersedes that temporary hold; the observations remain in the record.
 
 ### Timeout diagnosis follow-up
 
@@ -126,8 +144,9 @@ unchanged live-EPERM rejection, and an explicit mask check in the PTY helper.
 Timeout diagnostics retain progress timing and both ends of long output.
 The retention fixture flushes exact phase/capacity checkpoints while keeping
 its 60-second outer deadline, five-second phase alarms, and all assertions.
-Validation and failed attempts are recorded with the follow-up evidence. Keep
-issue #99 open for review and the unclassified hosted retention observation.
+Validation and failed attempts are recorded with the follow-up evidence. At that
+stage, issue #99 remained open for review and the unclassified hosted retention
+observation; its later formal disposition is recorded above.
 
 ### Merged repair review and retention timing
 
@@ -147,6 +166,6 @@ was not applied to the runtime.
 The separate concurrent diagnostic launcher now uses spawned single-threaded
 processes instead of threads around Python `preexec_fn`. Controlled success and
 failure cases verify process isolation and retained outcomes; two actual normal
-retention probes pass. This diagnostic defect did not affect hosted CI. Keep
-the historical retention observation under this ticket without claiming it is
+retention probes pass. This diagnostic defect did not affect hosted CI. The
+historical retention observation remains owned here without claiming it is
 fixed, extending deadlines, or treating another passing rerun as a diagnosis.

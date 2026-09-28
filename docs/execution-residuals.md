@@ -96,8 +96,11 @@ that every representable offset can be written on every filesystem. Likewise,
 “all target combinations” is not treated as a finite proof over every shell
 program. The tables identify exactly which semantic dimensions were reviewed.
 
-CSH-057 retains its separate PTY/retention timeout investigation; its continuation
-bug is already fixed. CSH-061 owns host-profile/ACL conditions. Existing locale,
+CSH-057's continuation and PTY timeout repairs are integrated. Its historical
+retention failure remains unknown-cause under the
+[formal disposition](evidence/csh-057-retention-disposition/README.md), with
+unchanged test enforcement and same-ticket recurrence ownership. CSH-061 owns
+host-profile/ACL conditions. Existing locale,
 privilege and raw-pathname capability limits retain their owners. These are
 cross-project residuals, not silently converted into CSH-049 passing cases or
 waived requirements. Full-family verification and CSH-012 remain open.

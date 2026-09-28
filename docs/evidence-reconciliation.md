@@ -5,6 +5,13 @@ Reviewed on 2026-09-28 against integrated main
 review with an independently built, scoped runtime reproduction. It is not a
 fresh sentence-by-sentence POSIX audit or a complete runtime code review.
 
+This is a retained review snapshot. The subsequent
+[CSH-057 formal retention disposition](evidence/csh-057-retention-disposition/README.md)
+supersedes its open-timeout hold for that scoped ticket: the repaired PTY races
+are integrated and the historical retention failure remains unknown-cause with
+same-ticket reopening ownership. It does not complete CSH-050 or CSH-012 or
+rewrite the older failed runs and accounting below.
+
 ## Review dispositions
 
 | Ticket / integrated change | Review result | Remaining acceptance work |

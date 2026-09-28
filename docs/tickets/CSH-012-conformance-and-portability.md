@@ -77,7 +77,8 @@ The classification/claim-policy boxes above reflect the existing base-profile,
 D-001–D-008 and clause-map documentation. Remaining boxes still need a combined
 requirement-level review: scoped passing fixtures and completed implementation
 tickets are not complete-family evidence. CSH-049/050 retain their unchecked
-platform criterion; CSH-057 owns the unresolved integration timeouts and CSH-061
+platform criterion; CSH-057 retains its historical timeout under the later
+[formal disposition](../evidence/csh-057-retention-disposition/README.md), and CSH-061
 owns the host residual inventory, including the unequal-ID ACL failure.
 The linked review distinguishes historical CI passes from current-source
 validation and preserves capability skips. No compliance claim is authorized.
