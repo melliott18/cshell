@@ -252,7 +252,7 @@ build/tests/assignment_fixture: tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/assignment_fixture.c $(EXECUTE_OBJECTS) build/character.o $(LDLIBS)
 
-build/tests/runtime.json build/tests/runtime-pty.json build/tests/traps.json build/tests/control-flow.json build/tests/evaluation.json build/tests/options.json build/tests/syntax.json build/tests/execution.json build/tests/state-builtins.json build/tests/expansion.json: tests/expansion_cases.py tests/state_builtin_cases.py tests/runtime_cases.py tests/execution_cases.py tests/syntax_cases.py tests/trap_cases.py tests/option_cases.py tests/option_evidence_cases.py tests/substitution_cases.py tests/control_flow_cases.py tests/evaluation_cases.py build/tests/execute_helper
+build/tests/runtime.json build/tests/runtime-pty.json build/tests/traps.json build/tests/control-flow.json build/tests/evaluation.json build/tests/options.json build/tests/syntax.json build/tests/execution.json build/tests/state-builtins.json build/tests/expansion.json: tests/expansion_cases.py tests/state_builtin_cases.py tests/runtime_cases.py tests/execution_redirection_cases.py tests/execution_cases.py tests/syntax_cases.py tests/trap_cases.py tests/option_cases.py tests/option_evidence_cases.py tests/substitution_cases.py tests/control_flow_cases.py tests/evaluation_cases.py build/tests/execute_helper
 	$(PYTHON) tests/runtime_cases.py --helper build/tests/execute_helper --output $@
 
 .PHONY: test-control
@@ -539,3 +539,17 @@ test-state-edges: cshell build/tests/state_builtin_faults build/tests/state_buil
 	$(PYTHON) tests/state_builtin_edges.py ./cshell build/tests/state_builtin_faults build/tests/state_builtin_helper
 
 test-state-builtins test: test-state-edges
+
+# CSH-049: public main with only redirection open/fstat calls instrumented.
+build/tests/redirection-fault-redirect.o: src/redirect.c tests/redirection_faults.h $(EXECUTE_HEADERS)
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/redirection_faults.h -c $< -o $@
+
+build/tests/redirection_faults: tests/redirection_faults.c build/tests/redirection-fault-redirect.o $(OBJECTS) build/character.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/redirection_faults.c build/tests/redirection-fault-redirect.o $(filter-out build/redirect.o,$(OBJECTS)) build/character.o $(LDLIBS)
+
+.PHONY: test-redirection-edges
+test-redirection-edges: build/tests/redirection_faults build/tests/execute_helper
+	$(PYTHON) tests/redirection_edges.py build/tests/redirection_faults build/tests/execute_helper
+
+test-execution-evidence test: test-redirection-edges

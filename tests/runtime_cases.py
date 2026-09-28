@@ -22,6 +22,7 @@ from expansion_cases import add_expansion_cases
 
 from state_builtin_cases import add_state_builtin_cases
 
+from execution_redirection_cases import add_redirection_cases, add_interactive_redirections
 from execution_cases import add_execution_cases, add_execution_errors
 
 
@@ -52,6 +53,8 @@ def cases(helper):
     add_expansion_cases(cross, helper)
 
     add_execution_cases(cross, helper)
+    add_redirection_cases(cross, helper)
+    add_interactive_redirections(result)
     add_execution_errors(cross, result)
     add_option_cases(cross, helper)
     result.extend(invocation_cases())

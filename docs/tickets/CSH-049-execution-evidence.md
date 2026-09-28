@@ -5,7 +5,7 @@
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-036, CSH-039
-- Branch: test/CSH-049-integrated-evidence
+- Branch: test/CSH-049-residual-contracts
 - Issue: [#81](https://github.com/melliott18/cshell/issues/81)
 
 ## Goal
@@ -13,6 +13,12 @@
 Map existing exact fixtures and their implementation revisions; decompose ordering, descriptors, concurrency/status, lookup, loops/functions and error consequences. Document and test descriptor, assignment, pipeline and signal-status policies; integrate CSH-043 boundary evidence and CSH-042 relevant case findings without treating those fixes as complete family verification.
 
 ## Explicit current limitation
+
+The [residual execution review](../execution-residuals.md) defines the concrete
+filesystem, expansion, context and error-handling conditions missing from the
+original audit. It adds 564 production-runtime cases and 204 controlled
+public-main cases; the final platform results are recorded below.
+
 
 The [25-row clause map](../execution-evidence.md) identifies exact assertions,
 policies and narrower gaps. The original audit merged in [PR #93](https://github.com/melliott18/cshell/pull/93).
@@ -22,8 +28,9 @@ passes. [CSH-053](CSH-053-multibyte-lexical-boundaries.md) added multibyte lexic
 coverage with explicit host capability limits. The [integrated validation](#integrated-validation-2026-09-28)
 below supplements the historical runs without erasing their failures.
 CSH-043 offset and CSH-042 locale evidence retain their bounded scope.
-Full family verification remains open, including the intermittent terminal
-failure retained by [CSH-057](CSH-057-job-lifecycle-boundaries.md).
+Full family verification remains open. [CSH-057](CSH-057-job-lifecycle-boundaries.md)
+fixed the status-1 continuation defect and retains its separate timeout
+investigation; those outcomes must not be conflated.
 
 This is an open evidence limitation found by the
 [CSH-037 independent review](../audit-review.md), not a declaration that every
@@ -85,7 +92,7 @@ add or split fixtures only for a concrete coverage gap.
 - [x] Every requirement above has a clause/condition map naming the reviewed
   normative source, selected policies, implementation, exact fixture assertions
   and any narrower unresolved defect or limitation.
-- [ ] Remaining applicable runtime cases pass on supported native macOS and
+- [x] Remaining applicable runtime cases pass on supported native macOS and
   Linux/Docker configurations; required PTY/capability or locale skips name
   the reason, scope and follow-up owner.
 - [x] Results record the source/suite revision, binary identity, compiler,
@@ -310,3 +317,97 @@ continuation defect is now corrected; its separate timeout observations remain
 open. CSH-049 stays at `review` for wider filesystem/target-expansion evidence
 and the documented cross-feature limits. Passing selected cases does not
 satisfy its unchecked broad platform criterion.
+
+
+## Residual acceptance review (2026-09-28)
+
+The earlier integrated-evidence PR only reran existing witnesses. This follow-up
+adds the missing tests on `test/CSH-049-residual-contracts`, based on integrated
+main `8ffb99e73cfd21bb1b5ad66829544350f78b69ae`. Runtime behavior is unchanged.
+[The residual map](../execution-residuals.md) identifies each concrete condition,
+its assertion, normative/policy classification and instrumentation boundary.
+
+The new inventory covers eight scalar operand forms across six file operations,
+interactive no-globbing, empty targets, dynamic descriptor operands, filesystem
+object/error categories, creation permissions, fourteen execution contexts and
+three control transfers. The controlled executable adds six open errors across
+all command categories, EINTR retry, deterministic noclobber replacement and
+opened-fd stat failure. The 319 original cases plus 564 additions yield **883**
+focused runtime cases; the 51 CSH-055 contracts and 204 new probes also run from
+`make test-execution-evidence`. Default and sanitizer CI select every addition.
+
+This resolves the previously unnamed “wider combinations” backlog with a
+reviewed condition inventory. It does not treat every possible byte string,
+filesystem capacity or scheduling interleaving as a separately enumerated test,
+or promote a parent matrix family. Physical filesystem capacity remains
+host-qualified by CSH-043; synthetic ENOSPC/EROFS/descriptor-limit results prove
+error handling, not that a real disk or descriptor table was exhausted.
+CSH-057/061 and existing capability owners retain their distinct obligations.
+
+Implementation/test revisions: `6c3e602` introduces 492 production cases and
+204 controlled cases; `a8c35cd` adds 72 empty-target cases; `990e706` corrects
+their noclobber setup. The first empty-target run passed 60 and failed 12 because
+`>early` hit the deliberately enabled noclobber before the target under test.
+Changing that *earlier* redirect to `>|early` makes the intended truncation
+explicit and reaches the empty operand. Expected target diagnostics, status,
+side effects and all deadlines remain unchanged. This was a fixture defect,
+not a production redirection defect; its failed log is retained.
+
+The original 811 generated execution cases are structurally unchanged by the
+last 72 additions (only absolute helper build roots differ in sanitizer copies).
+The final 883-case focused selection has unique names and exactly matches its
+counterparts in the 3,905-case full runtime suite. This allows the initial full
+normal/sanitizer runs and final additive reruns to be distinguished without
+misrepresenting their source revisions.
+
+### Residual validation record
+
+[Retained logs, source/binary identities and fixture checks](../evidence/csh-049-residuals/README.md)
+separate initial `6c3e602` full runs from final `990e706` additions. The initial
+source digest is `30dea68a2be29a017675a2c7708bb1260ac25385e50869ad5ea3af1919e2e60a`;
+final is `dcc8247cf5015e582e7af79aaf22d091a488e477efd2d7cdec29cf30d53bce86`.
+Both cover Makefile/Dockerfile/src/include/tests; later evidence-only edits do
+not change those bytes. No scanner generator or scanner runtime is used.
+
+| Environment and scope | Result |
+| --- | --- |
+| Native macOS 14.8.7 / Darwin 23.6.0 arm64, Apple Clang 15.0.0, Python 3.12.2; initial `make -j4 test-execution-evidence`, `make -j2 test`, `make test-pty`, `make test-harness` | PASS: 811 execution cases, 204 new probes, 51 existing contracts, 3,833 full runtime cases, all selected API/fault/offset/control/pipeline/context checks, 30 jobs and 32 runtime PTY cases plus supporting fixtures, 74 harness tests. |
+| Debian bookworm Docker, Linux 6.4.16-linuxkit aarch64, GCC 12.2.0, glibc 2.36, Python 3.11.2; initial `make -j2 test test-execution-evidence && make test-pty && make test-harness` | PASS: same 811/204/51 focused inventory, 3,833 runtime cases, all normal/API/terminal checks and 74 harness tests. |
+| Native final normal | PASS: all 72 added empty-target cases, then `make test-runtime` with all 3,905 cases. The earlier 811 fixtures and compiled code are unchanged. |
+| Docker final normal; `make -j2 test-runtime test-execution-evidence` | PASS: 3,905 full runtime cases, all 883 focused execution cases, 204 probes and 51 existing contracts. |
+| Native ASan/UBSan | PASS: initial focused execution, 204 probes, 51 contracts, execute/pipeline/context API and fault checks, 210 control cases and 36 offset cases; all 72 final additions also pass on the unchanged sanitizer binary. No sanitizer finding. |
+| Local Docker ASan/UBSan | PASS: initial 811 execution cases, 204 probes, 51 contracts, execute/pipeline/context API and fault checks, 210 control and 36 offset cases; final 72 additions pass on the retained sanitizer binary. No sanitizer finding. |
+| [Native Ubuntu job 109104973473](https://github.com/melliott18/cshell/actions/runs/36474588179/job/109104973473), final `990e706` | PASS: full normal, terminal, qualified-host, harness and full ASan/UBSan stages. All 883 execution names pass normal, qualified-PATH and sanitizer runtime runs; all 204 probes and 51 existing contracts pass normal and sanitizer builds. Raw log, job metadata and case-name cross-check retained; hosted binary hashes are unavailable. |
+
+[Hosted Docker job 109104973603](https://github.com/melliott18/cshell/actions/runs/36474588179/job/109104973603)
+also passes the final `990e706` full normal, terminal, controlled-host, harness
+and ASan/UBSan stages. All 883 execution cases pass four runtime selections
+(normal, qualified PATH, controlled BusyBox PATH, sanitizer); the 204 probes
+and 51 contracts pass both normal and sanitizer builds. Its raw log, metadata
+and case-name cross-check are retained separately from local arm64 Docker.
+
+Normal flags remain `-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2`,
+CPPFLAGS `-D_POSIX_C_SOURCE=200809L -Iinclude`, empty extra link flags/libraries.
+Sanitizer flags, runner environment distinctions and complementary-run commands
+are in the artifact README. Native normal binary SHA-256 is
+`f72d4cfa4cf624b9e7a1c09f271e76989a828d23bc89a24b3ed8bddda3421bc9`; Docker normal
+is `f36f3ed537616d6f96fad2e5b9909f1a99f47c051a38474536fdd9bd72e595cb`.
+Compiled code is unchanged by the last 72 cases; initial/final binary hashes
+agree within each local environment. Identity timestamps are collection times.
+
+No new case skips are allowed or observed. Existing full-suite limits remain
+explicit: two unequal-ID Linux-root skips in each unprivileged local run
+(CSH-046); four unsupported raw pathname encodings on macOS and three unavailable
+encoding decoders in Docker (CSH-053); macOS translated-libc diagnostic
+(CSH-042); 12 stock-host gaps on macOS and nine in Docker (CSH-052/056/061).
+These are scoped limits, not passes or profile exclusions. Separate CSH-057
+PTY/retention timeout observations remain open; these successful runs do not
+diagnose them. No entire matrix family or CSH-012 gate is marked verified.
+
+
+Acceptance disposition: all four ticket criteria now have concrete evidence.
+The new residual inventory and platform runs satisfy the formerly unchecked
+runtime criterion without changing its wording or promoting parent families.
+Status is `review` until this follow-up is integrated. Historical unchecked
+statements above describe their original revisions; this section supersedes
+that disposition for CSH-049. Wider conformance work retains its named owners.

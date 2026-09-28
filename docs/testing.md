@@ -1184,3 +1184,15 @@ BusyBox echo executable. No output-based policy detection is performed.
 identities and the new ACL failure; [CSH-061](tickets/CSH-061-host-environment-residuals.md)
 owns every remaining condition. Neither parent utility families nor CSH-012
 are promoted by these results.
+
+
+## Residual execution and redirection boundaries
+
+`make test-execution-evidence` includes the 883-case runtime selection, the 51
+CSH-055 descriptor/read probes, and `make test-redirection-edges` (204 controlled
+public-main cases). All are also selected by `make test`, Docker and sanitizer CI.
+The [residual map](execution-residuals.md) describes the semantic partitions,
+exact assertions, input modes and distinction between real filesystem behavior
+and injected syscall errors. The fault executable instruments only redirect.c;
+production cshell has no added test hooks. No deadlines or expected results in
+existing tests change.

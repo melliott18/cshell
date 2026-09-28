@@ -1,0 +1,84 @@
+{
+  "note": "Statuses are completed command results, not inferred from a grep. Identity timestamps are collection times. Sanitizer builds/flags and bounded-runner environments are in README.",
+  "runs": [
+    {
+      "log": "native-focused.log.gz",
+      "revision": "6c3e602",
+      "command": "make -j4 test-execution-evidence",
+      "status": 0
+    },
+    {
+      "log": "native-full.log.gz",
+      "revision": "6c3e602",
+      "command": "make -j2 test",
+      "status": 0
+    },
+    {
+      "log": "native-pty.log.gz",
+      "revision": "6c3e602",
+      "command": "make test-pty",
+      "status": 0
+    },
+    {
+      "log": "native-harness.log.gz",
+      "revision": "6c3e602",
+      "command": "make test-harness",
+      "status": 0
+    },
+    {
+      "log": "docker-normal.log.gz",
+      "revision": "6c3e602",
+      "command": "make -j2 test test-execution-evidence && make test-pty && make test-harness",
+      "status": 0
+    },
+    {
+      "log": "native-asan.log.gz",
+      "revision": "6c3e602",
+      "command": "make -j2 test-execution-evidence test-execute test-pipeline test-context test-control test-redirection-offset (sanitizer flags in README)",
+      "status": 0
+    },
+    {
+      "log": "native-empty.log.gz",
+      "revision": "a8c35cd",
+      "command": "python3 tests/smoke.py ./cshell --suite build/tests/execution-empty-targets.json",
+      "status": 1,
+      "result": "60 passed; 12 faulty noclobber setups corrected in 990e706"
+    },
+    {
+      "log": "native-empty-final.log.gz",
+      "revision": "990e706",
+      "command": "python3 tests/smoke.py ./cshell --suite build/tests/execution-empty-targets.json",
+      "status": 0
+    },
+    {
+      "log": "native-final-runtime.log.gz",
+      "revision": "990e706",
+      "command": "make test-runtime",
+      "status": 0
+    },
+    {
+      "log": "docker-final-normal.log.gz",
+      "revision": "990e706",
+      "command": "make -j2 test-runtime test-execution-evidence",
+      "status": 0
+    },
+    {
+      "log": "native-asan-empty.log.gz",
+      "revision": "990e706",
+      "command": "python3 build/asan/tests/smoke.py build/asan/cshell --suite build/asan/build/tests/execution-empty-targets.json",
+      "status": 0
+    },
+    {
+      "log": "docker-asan.log.gz",
+      "revision": "6c3e602",
+      "command": "make -j2 test-execution-evidence test-execute test-pipeline test-context test-control test-redirection-offset (sanitizer flags in README)",
+      "status": 0
+    },
+    {
+      "log": "docker-asan-empty.log.gz",
+      "revision": "990e706",
+      "command": "regenerate execution.json, select the 72 empty-target additions, and run tests/smoke.py on the retained sanitizer binary",
+      "status": 0
+    }
+  ]
+}

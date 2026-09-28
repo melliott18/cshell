@@ -1,0 +1,18 @@
+{
+  "source_revision": "990e7061f01bffa8e4cd78b6d1e855d4b0d8aa7e",
+  "job": 109104973473,
+  "execution_cases": 883,
+  "passes_per_case": 3,
+  "redirection_edge_cases": 204,
+  "redirection_edge_suite_passes": 2,
+  "descriptor_read_probes": 51,
+  "descriptor_read_suite_passes": 2,
+  "note": "Compare case names after substituting only the absolute helper build root. No runtime assertion or raw log is normalized.",
+  "docker": {
+    "job": 109104973603,
+    "execution_cases": 883,
+    "passes_per_case": 4,
+    "redirection_edge_suite_passes": 2,
+    "descriptor_read_suite_passes": 2
+  }
+}

@@ -6,7 +6,9 @@ reviewed against POSIX.1-2024 on 2026-09-26. Parent requirements remain
 families; the [run record](tickets/CSH-049-execution-evidence.md#validation-record)
 identifies the actual revisions and environments. The [2026-09-28 integration record](tickets/CSH-049-execution-evidence.md#integrated-validation-2026-09-28)
 reconciles CSH-055 and reruns the original strict lookup reproducer. No reference shell supplies
-an oracle. [Residual obligations](#remaining-obligations) keep CSH-012 closed.
+an oracle. The [residual execution partitions](execution-residuals.md) add the
+previously missing filesystem, target-expansion and error/context boundaries.
+[Residual obligations](#remaining-obligations) keep CSH-012 closed.
 
 ## Sources and policies
 
@@ -74,7 +76,7 @@ Implementation: [pathname.c](../src/pathname.c), [redirect.c](../src/redirect.c)
 | --- | --- | --- |
 | File size must not cause glob failure | [portability.py](../tests/portability.py) `sparse file pathname expansion` matches a sparse file above 2 GiB; name bytes and status are checked | A representative large file, not all filesystem capabilities |
 | Native offset maximum, duplication and boundary errors | [redirection_offsets.py](../tests/redirection_offsets.py), all 36 mode-specific cases: positioned last-byte success, EFBIG and unchanged tail, partial write, SIGXFSZ, builtin failure/restoration, shared offsets, truncation recovery | [CSH-043](tickets/CSH-043-redirection-offset.md#validation-record) supplies exact helper statuses and native/Linux differences; current runs retain them |
-| Filesystem seek limit vs RLIMIT_FSIZE | Native syscall probe separates native off_t maximum, actual seek boundary and controlled file-size limit; shell append is compared with a direct syscall under the same conditions | APFS append behavior is host-qualified, not inferred to be portable. Absolute writable limits of every filesystem are unverified, CSH-049 |
+| Filesystem seek limit vs RLIMIT_FSIZE | Native syscall probe separates native off_t maximum, actual seek boundary and controlled file-size limit; shell append is compared with a direct syscall under the same conditions | APFS append behavior is host-qualified, not inferred to be portable. The [residual review](execution-residuals.md) distinguishes host capacity from shell open/error semantics; no universal writable limit is promised |
 
 <a id="red-001"></a>
 
@@ -89,7 +91,7 @@ in [redirect.c](../src/redirect.c).
 | Left-to-right open/dup and restore | R `ordered redirections`: file `out\nerr\n`, later stdout `[restored]\n`; E `EXEC-006 pipe connected before output redirection`: stdout `err\n`, file `out\n` | Different descriptor order has different destinations |
 | At least 0–9, not argv | E `RED-001 numeric descriptor 0` through `9`: helper writes `fd\n` into each target; subsequent stdout restored | Source/API validates larger integers; descriptor exhaustion stays an error, not an exclusion |
 | Failure stops later redirects but preserves earlier file effects | E `RED-001 rollback retains file effects`: first file truncated, last file absent, status 1 then restored stdout | No filesystem rollback is promised |
-| Expansion context and timing | S `redirection operands do not split or glob`, `redirection expansion observes previous redirection`; literal filename `two words *` and ordered target contents | Interactive optional globbing is not selected; exhaustive target-expansion combinations remain CSH-047/049 |
+| Expansion context and timing | S `redirection operands do not split or glob`, `redirection expansion observes previous redirection`; literal filename `two words *` and ordered target contents | [Residual partitions](execution-residuals.md) cover eight operand forms across six operations, including interactive no-globbing policy and context/unwind boundaries |
 | Restore flags, closures and no private-fd exposure | [execute_fixture.c](../tests/execute_fixture.c) assertions for fd 40/41 preserve FD_CLOEXEC/count after success and failure; S `private group descriptor cannot become expanded dup source 3` through generated descriptors | API assertions, plus selected runtime witnesses; CSH-055 adds [public-runtime descriptor masks and inherited flags](execution-contracts.md#descriptor-and-command-read-witnesses); arbitrary layouts are not inferred |
 
 <a id="red-002"></a>
@@ -104,7 +106,9 @@ and override` preserves an existing file on `>`, permits `>|`, and appends;
 cover creation and nonregular targets. Dangling-link rejection is permitted.
 `O-004 concurrent exclusive creation` requires exactly one successful creator
 among eight contenders and one winner record. It is evidence for the selected
-atomic-creation case, not an exhaustive adversarial symlink-race proof.
+atomic-creation case. The [controlled replacement boundary](execution-residuals.md#controlled-error-and-race-boundaries)
+additionally replaces a nonregular target after stat, requiring rejection of the
+opened regular file without truncation. Neither is a proof over every schedule.
 Special versus regular error consequences are in EXEC-015.
 
 <a id="red-003"></a>
@@ -131,7 +135,7 @@ prepare.c expansion, redirect.c temporary descriptor delivery.
 | Unquoted expansions and backslash rules | S `unquoted heredoc body rules`, `heredoc continuations and tab stripping`: exact quote/backslash/tab/result bytes | No seekability requirement on the delivered descriptor |
 | Multiple documents and evaluation timing | S `ordered expanded heredocs`, `skipped heredoc does not parse or expand body`; C `function definition heredoc invocation` prints call-time `hello world\n` | Delimiter collection is distinct from deferred expansion |
 | Large body and failures | S `large expanded heredoc`, `heredoc expansion error prevents execution`, `heredoc diagnostic follows earlier redirects` | Fault runner covers cleanup, not every host write error |
-| Interactive PS2 | P `terminal heredoc prompts`: each input line synchronized to `> `; exact combined terminal transcript | Prompt expansion ownership remains CSH-048; supported PTY capability required |
+| Interactive PS2 | P `terminal heredoc prompts`: each input line synchronized to `> `; exact combined terminal transcript | [CSH-048 ENV-005](state-builtin-evidence.md#env-005) separates base literal prompting from UP processing; supported PTY capability required |
 
 <a id="red-005"></a>
 
@@ -170,7 +174,7 @@ Implementation: prepare.c `csh_command_arguments/assignments`, execute.c
 | Stable scope | Condition and exact assertions | Qualification |
 | --- | --- | --- |
 | EXEC-001/order | E `EXEC-001 expansion redirection assignment phases` sees `old` in argv and redirect target despite prefix `new`; parent remains `old`. `argument failure precedes redirection` leaves effect absent, status 2 | Regular command order required; permitted alternatives for empty/special commands documented above |
-| EXEC-001/assignment-context | S `assignment expansion is scalar and sequential`, `assignment tilde sites`, `declaration operands use assignment context` compare scalar spaces/globs and sequential visibility; `assignment substitution sees preceding redirects` captures stderr in file | Sequential visibility includes D-006 policy; expanded declaration recognition remains CSH-047 |
+| EXEC-001/assignment-context | S `assignment expansion is scalar and sequential`, `assignment tilde sites`, `declaration operands use assignment context` compare scalar spaces/globs and sequential visibility; `assignment substitution sees preceding redirects` captures stderr in file | Sequential visibility includes D-006 policy; [CSH-047 EXP-011](expansion-evidence.md#exp-011) records literal declaration requirements and expanded-name policies |
 | EXEC-002/no-name | E `EXEC-003 vanished command keeps assignments`: unset expansion yields no command, value persists, status 0 | Same category after expansion as a syntactically empty command |
 | EXEC-002/external | E `external export and restore`: child `v=child`, next child unset, shell unset | Prefix exported only for command; [assignment_fixture.c](../tests/assignment_fixture.c) also asserts restored attributes/repeated names/rollback |
 | EXEC-002/regular | E `regular builtin restores prefix only`: `read` restores `v=old`, preserves unrelated `answer=kept` | Regular standard utility assignment scope |
@@ -178,7 +182,7 @@ Implementation: prepare.c `csh_command_arguments/assignments`, execute.c
 | EXEC-002/function | E `function export policy`: child sees prefix, parent old/unexported restored; C `function state and prefix lifetime` retains unrelated mutation | D-006 unspecified persistence/export choices |
 | EXEC-002/readonly | E `readonly category empty`, `:`, `read answer`, helper `status 0`, `f`: status 1, diagnostic, no body/later files | All five categories, noninteractive; interactive recovery under EXEC-015 |
 | EXEC-003/last-status | E `last substitution status`: statuses 7 (last assignment substitution), 9 (redirection substitution), 0 (no substitution), exact created files | Last status obtained, not assumed first or rightmost textual nesting |
-| EXEC-003/environment | S `empty command redirection environment isolated`: `${made:=created}` creates file but does not set parent variable | Disposal covers this mutation; [CSH-055](execution-contracts.md) adds no-name trap/substitution combinations; full environment combinations remain CSH-048 |
+| EXEC-003/environment | S `empty command redirection environment isolated`: `${made:=created}` creates file but does not set parent variable | Disposal covers this mutation; [CSH-055](execution-contracts.md) adds no-name trap/substitution combinations; [CSH-048 ENV-006](state-builtin-evidence.md#env-006) records current/subshell state partitions and their limits |
 
 <a id="exec-004"></a><a id="exec-005"></a>
 
@@ -226,8 +230,10 @@ expansions` requires `end` and no effect file or expansion diagnostic.
 EXEC-010: R `brace state persists`, `subshell state isolated`, `subshell exit
 isolated`, `brace exit stops list` distinguish the environments and exit scope.
 contexts.py literal nested-group redirects assert exact files and restored
-stdout; cwd tests assert parent persistence versus isolation. This is not the
-full ENV-006 inventory (umask, traps, options, aliases, IDs), owned by CSH-048/054.
+stdout; cwd tests assert parent persistence versus isolation. The
+[CSH-048 ENV-006 inventory](state-builtin-evidence.md#env-006) supplies combined
+umask/options/alias/cwd/function isolation and nested descriptor witnesses;
+CSH-050/054/058 retain job-ID and trap inheritance conditions.
 
 <a id="exec-011"></a><a id="exec-012"></a><a id="exec-013"></a>
 
@@ -338,21 +344,21 @@ lexical enclosure are application preconditions, and non-lexical enclosure is
 unspecified. `eval loop transfer` is therefore not a mandatory oracle for every
 shell. [CSH-055](execution-contracts.md) adds while/until condition continues, nested
 lexical transfers and explicit nonlexical policies. Signal interruption evidence is retained under CSH-054/058; the
-intermittent terminal lifecycle failure remains CSH-057.
+distinct PTY/retention timeout observations remain CSH-057; the continuation
+defect is fixed in PR #112.
 
 ## Remaining obligations
 
 [CSH-055](execution-contracts.md) fixes the prefix PATH/builtin lookup defect
-and supplies assertions for its named execution conditions. CSH-047
-owns expansion/declaration combinations; CSH-048 owns full environment/utility
-state; CSH-053 records multibyte lexical coverage and host capability limits.
+and supplies assertions for its named execution conditions. [CSH-047](expansion-evidence.md)
+and [CSH-048](state-builtin-evidence.md) record expansion/declaration and
+environment/utility partitions with explicit limits; CSH-053 records multibyte lexical coverage and host capability limits.
 CSH-054/058 record signal contracts; [CSH-057](tickets/CSH-057-job-lifecycle-boundaries.md)
-retains the unresolved PTY/retention timeouts; its status-1 continuation defect
-was corrected in PR #112. The [post-integration review](evidence-reconciliation.md)
-records these distinct dispositions. CSH-052/056/059/060 record host utilities,
-fallback shell provisioning and their qualified limits; CSH-061 owns the
-remaining host conditions.
-CSH-049 retains the evidence map, wider filesystem/target-expansion combinations
-and [cross-platform integration results](tickets/CSH-049-execution-evidence.md#integrated-validation-2026-09-28).
+retains the distinct PTY/retention timeouts; PR #112 fixed its status-1
+continuation defect. CSH-052/056/059/060 record host utilities, fallback shell
+provisioning and their qualified limits; [CSH-061](tickets/CSH-061-host-environment-residuals.md)
+owns the remaining host conditions.
+CSH-049 adds [explicit filesystem/target-expansion and context partitions](execution-residuals.md)
+and retains [cross-platform integration results](tickets/CSH-049-execution-evidence.md#integrated-validation-2026-09-28).
 These are applicable open obligations. Neither CSH-042 nor CSH-043's completed
 narrow scope verifies the entire execution/case/redirection family.
