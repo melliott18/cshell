@@ -93,8 +93,9 @@ The [follow-up evidence](../evidence/csh-057-pty-fix/README.md) retains the
 hosted failure, a deterministic public PTY reproduction, the failing-before
 module regression, and final native/Docker normal and sanitizer checks.
 The public test's exact transcript, foreground predicates, 32 cycles and
-five-second deadline are unchanged. This follow-up remains at review until
-integration; the earlier general-runtime timeout records are not erased.
+five-second deadline are unchanged. PR #112 integrated this follow-up as
+`19cd70e`; the ticket remains at review for the distinct timeout observations
+below. The earlier general-runtime timeout records are not erased.
 
 During combined integration with CSH-048/050/060 on 2026-09-28, a concurrent
 native/Docker run hit the unchanged five-second public PTY deadline at step

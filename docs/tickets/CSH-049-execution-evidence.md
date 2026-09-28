@@ -246,8 +246,9 @@ Follow-up branch: `test/CSH-049-integrated-evidence`, from
 `b1b6b1583a883e7fbb5616a317c1633bf85052b4`. The execution audit and CSH-055
 implementation were already integrated at this revision. This follow-up changes
 only evidence/documentation; no runtime, fixture, expected output, deadline or
-capability rule changes. Status remains `review` pending integration of this
-record. The completed platform runs below resolve the missing successful
+capability rule changes. PR #113 integrated this record as `04c5230`.
+Status remains `review` for the residual acceptance criterion, not pending
+integration. The completed platform runs below resolve the missing successful
 integration evidence for the named execution cases, not every remaining
 requirement in their parent families.
 
@@ -299,3 +300,13 @@ remain open in the clause map. Therefore the broad remaining-applicable-cases
 acceptance box above stays unchecked; this record closes the stale lookup and
 missing successful integration evidence, not the entire family-verification gate.
 CSH-012 remains closed and no matrix family is promoted to verified.
+
+### Post-integration review (2026-09-28)
+
+The [review and reproduction record](../evidence-reconciliation.md) accepts
+the retained artifacts and 25-row scope mapping. The strict prefix-PATH
+regression passes again at integrated main `8ffb99e`. CSH-057's status-1
+continuation defect is now corrected; its separate timeout observations remain
+open. CSH-049 stays at `review` for wider filesystem/target-expansion evidence
+and the documented cross-feature limits. Passing selected cases does not
+satisfy its unchecked broad platform criterion.

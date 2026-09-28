@@ -16,10 +16,12 @@ Separate base and conditional portions, map exact runtime/PTY/API cases to each 
 
 The retained witnesses remain scoped assertions rather than complete
 requirement-family evidence. CSH-044/045 and CSH-054/058 are integrated;
-CSH-057's lifecycle changes are integrated, but its reopened foreground-resume
-failure remains under review in [PR #112](https://github.com/melliott18/cshell/pull/112).
-The [current integration record](../evidence/csh-050/README.md) reconciles these
-follow-ups and retains that failure separately from fresh passing runs.
+CSH-057's lifecycle changes and foreground-resume correction are integrated
+([PR #112](https://github.com/melliott18/cshell/pull/112), `19cd70e`). CSH-057
+remains open for the separate PTY and retention timeouts observed during
+integration. The [baseline integration record](../evidence/csh-050/README.md)
+retains the earlier failure; the [post-integration review](../evidence-reconciliation.md)
+distinguishes that corrected status defect from the unresolved timeout evidence.
 Base signal/asynchronous-list/wait semantics remain applicable while the UP
 utility profile is unselected; terminal capability conditions remain explicit.
 
@@ -253,6 +255,14 @@ oracle is changed.
 The [retained integration validation](../evidence/csh-050/README.md) supplies
 fresh source/binary identities, commands, exact results and the current residual
 inventory. The clause map now links integrated CSH-058 assertions instead of
-leaving them described as future work. The platform acceptance box remains
-open pending the CSH-057 resume correction and its integration validation;
+leaving them described as future work. At that baseline, the platform acceptance
+box remained open pending the CSH-057 resume correction and its integration validation;
 CSH-012 remains closed. The older failed and incomplete runs above are retained.
+
+### Post-integration review (2026-09-28)
+
+PR #114 integrated this evidence as `9f05719`; PR #112 subsequently integrated
+the continuation correction as `19cd70e`. The [review and reproduction record](../evidence-reconciliation.md)
+accepts the focused-suite wiring and scoped evidence, with no fixture or runtime
+change requested. Status remains `review`: the platform criterion is still open
+for CSH-057's distinct timeout observations and the clause map's residual limits.

@@ -30,6 +30,7 @@ Start with the [project README](../README.md) for installation and current statu
 | [Utilities and options](posix-utilities.md) | Required shell utilities, host boundary, options, and profile decisions |
 | [Evidence conventions](posix-evidence.md) | Fixture provenance, smoke limits, and differential example |
 | [Independent audit review](audit-review.md) | Reproduced runtime sample, matrix findings, and explicit remaining evidence owners |
+| [Post-integration evidence review](evidence-reconciliation.md) | CSH-049/050 dispositions, current ownership and CSH-012 completion gates |
 | [Requirements by ticket](posix-owners.md) | Reverse lookup from implementation tickets to requirements |
 | [Ticket index](tickets/README.md) | Implementation order and dependencies |
 | [Ticket template](tickets/TEMPLATE.md) | Format for new implementation work |

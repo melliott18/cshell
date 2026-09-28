@@ -243,20 +243,22 @@ and fg removal from known IDs. Claims remain limited to their exact cases.
 
 [CSH-054](#csh-054), [CSH-057](#csh-057), and [CSH-058](#csh-058)
 now supply the scoped corrections and assertions assigned in the historical
-map below. CSH-054 and CSH-058 are integrated; CSH-057's lifecycle changes are
-integrated but its reopened foreground-resume failure still prevents closure.
-The current dispositions and fresh run identities are retained in the
-[CSH-050 integration record](evidence/csh-050/README.md).
+map below. CSH-054, CSH-058 and CSH-057's lifecycle/foreground-resume corrections
+are integrated. CSH-057 remains open for distinct timeout observations.
+The [CSH-050 integration record](evidence/csh-050/README.md) identifies its
+pre-correction baseline; the [post-integration review](evidence-reconciliation.md)
+records the current disposition without rewriting those historical artifacts.
 
 | Residual condition | Current disposition / owner |
 | --- | --- |
-| Foreground resume intermittently returns 1 instead of 130 | CSH-057 retains the hosted failure; [PR #112](https://github.com/melliott18/cshell/pull/112) proposes a fix. It is not part of this worktree's baseline. Later passing runs do not close that failure. |
+| Foreground resume intermittently returned 1 instead of 130 | Corrected by CSH-057, integrated in [PR #112](https://github.com/melliott18/cshell/pull/112) as `19cd70e`. The [deterministic before/after evidence](evidence/csh-057-pty-fix/README.md) diagnoses the continuation race; this disposition does not rely on an intermittent passing retry. |
+| Public resume PTY and retained-status deadlines | CSH-057 retains the separate five-second PTY and 60-second retention timeouts observed during combined integration. The continuation correction does not establish their cause or resolution. |
 | Inheritance/delivery, public interrupted waits, listing failures, group delivery and permission diagnostics | CSH-058 is integrated; its [exact matrix](#csh-058) supersedes the corresponding open entries in the historical CSH-054 table. Permission evidence uses syscall interposition, not host credential enforcement. |
-| External kill status mapping | Stock Debian failure remains a stock-host gap under CSH-052. CSH-056's opt-in qualified profile resolves that selected case; CSH-059/060 own wider host capability boundaries. Builtin kill results do not qualify the external binary. |
+| External kill status mapping | Stock Debian failure remains a stock-host gap under CSH-052. CSH-056's opt-in qualified profile resolves that selected case; CSH-059/060 record wider host boundaries and CSH-061 owns their residual conditions. Builtin kill results do not qualify the external binary. |
 | Loaded transport deadlines and incomplete sanitizer runs | Retain the failed/not-run records under CSH-040/054 and CSH-057/058; serial passing results establish only their own observations. |
 
 CSH-050 supplies a reviewable map and run record; its platform acceptance stays
-open while the foreground-resume defect remains unresolved in the baseline.
+open for the retained timeout observations and scoped host/capability limits.
 The CSH-012 conformance gate stays closed. Parent rows remain implemented
 subsets, with stable family anchors; no entire family is promoted to verified.
 

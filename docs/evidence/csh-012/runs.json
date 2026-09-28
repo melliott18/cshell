@@ -1,0 +1,55 @@
+[
+  {
+    "command": [
+      "make",
+      "-j4"
+    ],
+    "status": 0,
+    "start_utc": "2026-09-28T19:13:47.591190+00:00",
+    "end_utc": "2026-09-28T19:13:52.257876+00:00",
+    "log": "build.log.gz"
+  },
+  {
+    "command": [
+      "make",
+      "test-execution-evidence"
+    ],
+    "status": 0,
+    "start_utc": "2026-09-28T19:13:52.258321+00:00",
+    "end_utc": "2026-09-28T19:14:01.586272+00:00",
+    "log": "execution.log.gz"
+  },
+  {
+    "command": [
+      "python3",
+      "tests/smoke.py",
+      "./cshell",
+      "--suite",
+      "tests/fixtures/execution-known-gaps.json"
+    ],
+    "status": 0,
+    "start_utc": "2026-09-28T19:14:01.586674+00:00",
+    "end_utc": "2026-09-28T19:14:01.804273+00:00",
+    "log": "lookup.log.gz"
+  },
+  {
+    "command": [
+      "make",
+      "test-jobs-signals"
+    ],
+    "status": 0,
+    "start_utc": "2026-09-28T19:14:01.804673+00:00",
+    "end_utc": "2026-09-28T19:15:41.070810+00:00",
+    "log": "jobs-signals.log.gz"
+  },
+  {
+    "command": [
+      "make",
+      "test-harness"
+    ],
+    "status": 0,
+    "start_utc": "2026-09-28T19:15:41.071908+00:00",
+    "end_utc": "2026-09-28T19:16:02.062502+00:00",
+    "log": "harness.log.gz"
+  }
+]
