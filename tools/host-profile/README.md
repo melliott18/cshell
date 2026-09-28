@@ -8,7 +8,7 @@ cshell's builtin allocation. All tools are real exec-accessible programs;
 | Host | Selected replacements | Provisioning |
 | --- | --- | --- |
 | macOS | Standalone FreeBSD printf with adapters; Homebrew `gtest` and `g[` | `brew install coreutils`; prefixed binaries must be on the provisioning process's PATH |
-| Debian/Ubuntu | Standalone FreeBSD printf with adapters; BusyBox kill | `apt-get install build-essential python3 ed busybox locales`; generate `fr_FR.UTF-8` |
+| Debian/Ubuntu | Standalone FreeBSD printf with adapters; BusyBox kill | `apt-get install build-essential python3 ed busybox locales acl`; generate `fr_FR.UTF-8` |
 
 Other scoped commands use `os.defpath` without additional symlinks, preserving
 cshell's PATH-associated pwd builtin selection. In particular, echo remains the system
@@ -43,7 +43,7 @@ For positive block-device predicates, pass
 Mac with that node. Only `stat` is performed; the device is never opened. The
 Linux evidence uses a disposable block node created inside a container, then
 runs the suite as UID 10001. Missing device access, root-only execution, and
-missing French locales are individually recorded limitations owned by CSH-059;
+missing French locales are individually recorded limitations owned by CSH-061;
 these do not become passes. `--strict-gaps` concerns unmet assertions, not
 universal capability coverage.
 
@@ -81,10 +81,39 @@ See the [condition map](../../docs/host-contract-profile.md) and
 
 Each boundary run emits the residual conditions in
 `tests/host_capability_limits.py` with the source page, actual host/executable,
-reason and next owner (CSH-060). Missing French/UTF-8 locales, a root identity
+reason and next owner (CSH-061). Missing French/UTF-8 locales, a root identity
 and an absent explicit block-node witness remain separate limitations.
 `host_limits` are parent system queries; `child_resources` are actual soft/hard
 limits measured after the harness applies its protections (`-1` means infinity).
 `filesystem_limits` query a temporary directory on the fixture filesystem.
 None of these are per-utility capacity measurements. Successful bounded sizes
 are recorded in the individual cases; they are not advertised maxima.
+
+## CSH-060 environment qualification
+
+`make test-host-profile` includes defined-format, error, locale, file-limit,
+exec-size and explicit rm prompt witnesses. It builds `host_printf_faults`, a
+test-only copy of the unchanged adapter/vendor source with local allocation
+interposition; it never changes production printf or its provenance.
+
+On a disposable Linux container, install `acl` and opt in to root-owned private
+fixtures with `HOST_PROFILE_FLAGS=--controlled-identities`. The helper drops
+supplementary groups and saved root credentials, records actual real/effective
+UID/GID, and execs the inventoried utility. Private device nodes receive only
+stat operations. Run ordinary non-root block qualification separately.
+
+`--controlled-identities --unequal-acl` is a separate **strict failing reproducer**
+for the recorded Debian 12 GNU test/bracket ACL grant with unequal IDs. Its
+expected grant stays success; no known-gap allowance is added. The passing
+controlled subset checks ACLs with equal IDs and unequal owner/group identities
+separately. The combined condition remains owned by CSH-061.
+
+For an alternative BusyBox echo profile, create a private directory containing
+`echo -> /bin/busybox`, prepend it to the qualified PATH, and select
+`--echo-policy busybox-fancy`. This explicitly selects FEATURE_FANCY_ECHO as
+specified by the [1.35.0 source](https://git.busybox.net/busybox/tree/coreutils/echo.c?h=1_35_0).
+It ignores POSIXLY_CORRECT; the expected bytes are authored independently.
+Other BusyBox configurations require their own policy and do not inherit this
+claim. Every run records the actual echo binary hash and policy source.
+
+See [CSH-060 evidence and reproduction](../../docs/evidence/csh-060/README.md).

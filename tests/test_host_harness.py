@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import patch
 
 from host_capability_limits import RESIDUAL, limitations
+from host_environment_cases import cases as environment_cases
 from host_utility_cases import HOSTS
 from host_utilities import known_gap, match, matches_case, sanitizer_diagnostic
 
@@ -54,7 +55,7 @@ class HostEvidenceTests(unittest.TestCase):
         self.assertEqual(len({row['condition'] for row in rows}), len(RESIDUAL))
         for row in rows:
             self.assertEqual(row['environment'], 'test environment')
-            self.assertEqual(row['owner'], 'CSH-060')
+            self.assertEqual(row['owner'], 'CSH-061')
             self.assertTrue(row['source'].startswith('https://pubs.opengroup.org/'))
             self.assertTrue(row['reason'])
             self.assertTrue(row['executable']['sha256'])
@@ -69,3 +70,13 @@ class HostEvidenceTests(unittest.TestCase):
         output = {'stdout': b'', 'stderr': b''}
         self.assertFalse(matches_case(case, 0, output))
         self.assertFalse(known_gap(case, 0, output))
+
+    def test_unequal_acl_grant_failure_stays_fatal(self):
+        paths = {name: '/selected/' + name for name in HOSTS}
+        cases = list(environment_cases(paths, '/helper', None, {}, True, True))
+        grants = [case for case in cases if 'acl ' in case['name'] and 'effective=10001' in case['name']]
+        self.assertEqual(len(grants), 2)  # test and bracket, each run in three modes
+        for case in grants:
+            output = dict(stdout=case['stdout'], stderr=b'')
+            self.assertFalse(matches_case(case, 1, output))
+            self.assertFalse(known_gap(case, 1, output))

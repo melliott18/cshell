@@ -58,6 +58,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-058](CSH-058-signal-edge-evidence.md) | Complete signal inheritance and permission evidence | [CSH-035](CSH-035-traps-and-signal-semantics.md) | [#100](https://github.com/melliott18/cshell/issues/100) |
 | [CSH-059](CSH-059-host-boundary-capabilities.md) | Extend qualified host boundary capabilities | [CSH-056](CSH-056-host-contract-gaps.md) | [#101](https://github.com/melliott18/cshell/issues/101) |
 | [CSH-060](CSH-060-extended-host-environments.md) | Qualify remaining host environments and limits | [CSH-059](CSH-059-host-boundary-capabilities.md) | [#106](https://github.com/melliott18/cshell/issues/106) |
+| [CSH-061](CSH-061-host-environment-residuals.md) | Resolve remaining host environment contracts | [CSH-060](CSH-060-extended-host-environments.md) | [#110](https://github.com/melliott18/cshell/issues/110) |
 
 ## Child implementation tickets
 

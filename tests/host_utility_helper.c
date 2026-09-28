@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <errno.h>
@@ -8,9 +9,80 @@
 #include <string.h>
 #include <sys/resource.h>
 #include <unistd.h>
+#include <grp.h>
+
+/* A rejected exec is a kernel boundary, not a utility failure or maximum.
+ * Cap allocation independently of the queried system limit. No child is
+ * needed: if exec unexpectedly succeeds, the expected E2BIG marker is absent. */
+static int exec_size(const char *path, int single)
+{
+    long ceiling = sysconf(_SC_ARG_MAX);
+    size_t bytes, count, index;
+    char *operand, **args;
+    char *env[] = {"LC_ALL=C", NULL};
+    FILE *record;
+    int saved;
+    if (ceiling < 1 || ceiling > 16 * 1024 * 1024) return 2;
+    bytes = single ? (size_t)ceiling + 65536 : 1024;
+    count = single ? 1 : (size_t)ceiling / bytes + 65;
+    operand = malloc(bytes + 1);
+    args = calloc(count + 2, sizeof(*args));
+    if (!operand || !args) { free(operand); free(args); return 2; }
+    memset(operand, 'x', bytes);
+    operand[bytes] = '\0';
+    args[0] = (char *)path;
+    for (index = 1; index <= count; index++) args[index] = operand;
+    record = fopen("exec-boundary.json", "w");
+    if (!record) { free(args); free(operand); return 2; }
+    fprintf(record, "{\"ARG_MAX\":%ld,\"operand_bytes\":%zu,\"operand_count\":%zu,"
+            "\"operand_string_bytes_with_nuls\":%zu,\"environment_bytes_with_nuls\":9}\n",
+            ceiling, bytes, count, (bytes + 1) * count);
+    if (fclose(record)) { free(args); free(operand); return 2; }
+    execve(path, args, env);
+    saved = errno;
+    free(args);
+    free(operand);
+    if (saved != E2BIG) { errno = saved; perror("exec-size"); return 2; }
+    puts("E2BIG");
+    return 0;
+}
 
 int main(int argc, char **argv)
 {
+    if (argc == 4 && !strcmp(argv[1], "exec-size") &&
+        (!strcmp(argv[2], "single") || !strcmp(argv[2], "aggregate")))
+        return exec_size(argv[3], !strcmp(argv[2], "single"));
+    if (argc >= 3 && !strcmp(argv[1], "small-file")) {
+        struct rlimit limit = {1024, 1024};
+        if (setrlimit(RLIMIT_FSIZE, &limit) || signal(SIGXFSZ, SIG_IGN) == SIG_ERR)
+            return 2;
+        execvp(argv[2], argv + 2);
+        perror("small-file exec");
+        return 2;
+    }
+#ifdef __linux__
+    if (argc >= 5 && !strcmp(argv[1], "identity")) {
+        /* Explicit Linux-root fixture opt-in only; drop all supplementary
+         * groups and saved root credentials before entering the utility. */
+        uid_t real, effective;
+        if (geteuid() != 0 ||
+            (strcmp(argv[2], "10001") && strcmp(argv[2], "10002")) ||
+            (strcmp(argv[3], "10001") && strcmp(argv[3], "10002"))) return 2;
+        real = (uid_t)strtoul(argv[2], NULL, 10);
+        effective = (uid_t)strtoul(argv[3], NULL, 10);
+        if (setgroups(0, NULL) || setresgid(real, effective, effective) ||
+            setresuid(real, effective, effective)) return 2;
+        if (getuid() != real || geteuid() != effective || getgid() != real ||
+            getegid() != effective || getgroups(0, NULL) != 0) return 2;
+        printf("uid=%lu euid=%lu gid=%lu egid=%lu groups=0\n",
+               (unsigned long)getuid(), (unsigned long)geteuid(),
+               (unsigned long)getgid(), (unsigned long)getegid());
+        if (fflush(stdout)) return 2;
+        execvp(argv[4], argv + 4);
+        perror("identity exec");
+        return 2;
+    }
+#endif
     if (argc == 2 && !strcmp(argv[1], "limits")) {
         const int kinds[] = {RLIMIT_CORE, RLIMIT_CPU, RLIMIT_FSIZE, RLIMIT_NOFILE};
         const char *names[] = {"core_bytes", "cpu_seconds", "file_size_bytes", "open_files"};

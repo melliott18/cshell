@@ -92,3 +92,10 @@ U-026/host-status-map, U-034/host-ed, U-035/numbered, U-035/b-precision,
 U-035/locale-errors, U-036/host-environment, U-037/missing-timestamps,
 U-037/capabilities, U-040/host-boundaries. Passing subconditions stay linked to
 [the CSH-052 clause map](host-utility-evidence.md); none closes CSH-012.
+
+The host qualification follow-ups are [CSH-059](tickets/CSH-059-host-boundary-capabilities.md)
+and [CSH-060](tickets/CSH-060-extended-host-environments.md). Their remaining
+U-035/U-036/U-037/U-040 conditions are individually recorded in
+`tests/host_capability_limits.py` and now owned by
+[CSH-061](tickets/CSH-061-host-environment-residuals.md), including the retained
+unequal-ID ACL grant failure. This ownership does not close a parent family.
