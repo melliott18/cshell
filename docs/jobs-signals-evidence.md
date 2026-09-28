@@ -428,3 +428,23 @@ kernel CHLD ignore with an internal handler. A default handler after exec is
 not used as proof of an internal shell handler; the API assertions cover that
 separate boundary. Full UP/XSI remain unselected. External host utility
 qualification remains CSH-056/059; job lifecycle/capacity remains CSH-057.
+
+
+## CSH-050 partial-delivery review
+
+`tests/kill_job_state.c` and `tests/kill_job_state_cases.py` add U-026, JOB-003
+and U-032 boundary assertions to the existing signal/error-continuation
+contract. Stable names are `kill state: SHAPE/SIGNAL/FAILURE`: grouped or
+ungrouped; CONT or KILL; invalid operand before/after the real job, a refused
+group, or the first/last refused ungrouped stage. All 14 cases use two real
+stopped children. The API assertions distinguish immediate manager state from
+later kernel WCONTINUED collection and verify final-stage wait status and ECHILD.
+Only permission failure is interposed; this is not evidence of cross-user
+kernel enforcement or a public PTY invocation.
+
+The eight baseline failures showed that cumulative command failure incorrectly
+prevented successful delivery from clearing stopped state. `src/jobs.c` now
+updates successful group/stage deliveries individually and preserves the
+aggregate error. [Retained review results](evidence/csh-050-acceptance/README.md)
+identify the exact tested revision and environments. Existing CSH-057 timeout
+observations remain separate, and no whole requirement family is promoted.

@@ -553,3 +553,17 @@ test-redirection-edges: build/tests/redirection_faults build/tests/execute_helpe
 	$(PYTHON) tests/redirection_edges.py build/tests/redirection_faults build/tests/execute_helper
 
 test-execution-evidence test: test-redirection-edges
+
+# CSH-050: real stopped jobs with only permission failure interposed.
+build/tests/kill_job_state: tests/kill_job_state.c build/tests/permission-jobs.o $(EXECUTE_OBJECTS) build/character.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/tests/permission-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o $(LDLIBS)
+
+build/tests/kill-job-state.json: tests/kill_job_state_cases.py
+	mkdir -p $(dir $@)
+	$(PYTHON) $< $@
+
+.PHONY: test-kill-job-state
+test-kill-job-state: build/tests/kill_job_state build/tests/kill-job-state.json
+	$(PYTHON) tests/smoke.py ./build/tests/kill_job_state --suite build/tests/kill-job-state.json
+
+test-jobs: test-kill-job-state

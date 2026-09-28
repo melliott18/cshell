@@ -69,6 +69,7 @@ make test-execute  # Replacement command, assignment, and redirection API checks
 make test-pipeline # Concurrent pipeline, stage-status, and failure-cleanup checks
 make test-control  # Conditionals, loops, case, functions, and failure cleanup
 make test-context  # Lists, groups, background ownership, and cleanup checks
+make test-kill-job-state # Partial signal failures preserve correct per-stage state
 make test-jobs     # Job builtins, retained statuses, idle reaping, and failure checks
 make test-signal-edges # Inheritance/delivery matrix, public waits, group and permission edges
 make test-traps    # Trap/exit runtime, signal contracts, inherited ignores and waits
