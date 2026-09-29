@@ -24,8 +24,8 @@
     "sha256": "4e7ad4b7779fc9167f50fd8e27e01ac79983dab25b08a15fa610f3223f3177b4"
   },
   "attempts.json": {
-    "bytes": 783,
-    "sha256": "01cff4170022f5093ee750764b7e3a464b92c654da510194b7876e076470794e"
+    "bytes": 1047,
+    "sha256": "500b5d728aba9d33a9f83abf311628621ce39cc45001939be537e946e7ec16e7"
   },
   "binaries.json": {
     "bytes": 390,
@@ -92,15 +92,15 @@
     "sha256": "a1369749cce49415a2b18520bdb363147f2624ea5b91a2321daddbb2e99aaa81"
   },
   "profile.patch": {
-    "bytes": 2932,
-    "sha256": "93f859b1ec8e6cfd2653c382046a888f046ccf3456276b3f0df6077496133ffc"
+    "bytes": 2931,
+    "sha256": "fe23d6bed718568234e5134dae23d4249f28d667506e87443bee65b0b8939fb2"
   },
   "serial.progress.gz": {
     "bytes": 8432,
     "sha256": "b62d2e73e0b5f98cef7e4206e7f973bfb4cae77978383157c3cbfb6d9a4fa176"
   },
   "validation.json": {
-    "bytes": 575,
-    "sha256": "e77804f988a00df28e09637d4a23ef13f04b859bc6239d24d8dbd84bd238d722"
+    "bytes": 705,
+    "sha256": "7b879b0ea7fcb1998df0fafea379b6b1d91e8b5fa2aa87bf68d7dd97b51dafe9"
   }
 }

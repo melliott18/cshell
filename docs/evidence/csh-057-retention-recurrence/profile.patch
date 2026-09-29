@@ -29,7 +29,7 @@ index 4b94789..79a92b6 100644
 @@ -24,6 +24,9 @@ static int diagnostic_fd = STDERR_FILENO;
      dprintf(diagnostic_fd, "lifecycle assertion at line %d: %s (errno=%d)\n", \
          __LINE__, #test, errno); abort(); } } while (0)
- 
+
 +int trace_fd = -1;
 +static double now(void) { struct timespec t; assert(clock_gettime(CLOCK_MONOTONIC, &t)==0); return t.tv_sec+t.tv_nsec/1e9; }
 +static void trace(const char *phase, int n, int round, int i, double start) { if(trace_fd>=0) dprintf(trace_fd, "%s %d %d %d %.9f\n", phase,n,round,i,now()-start); }

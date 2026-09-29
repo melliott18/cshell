@@ -14,5 +14,6 @@
     "MallocNanoZone": "0",
     "ASAN_OPTIONS": "not passed to candidate by smoke.capture",
     "UBSAN_OPTIONS": "not passed to candidate by smoke.capture"
-  }
+  },
+  "artifact_validation_note": "The staged whitespace check flagged a blank context line in profile.patch. Its single-space context marker was normalized to an empty line; git apply --check still accepts the patch and the complete change passes git diff --check."
 }
