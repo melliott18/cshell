@@ -99,3 +99,38 @@ check that an owned slow executable is killed/reaped while an unrelated owned
 control process survives. Temporary fixture directories are removed and the
 result records that check. The Darwin kernel-stuck attempt is explicitly a
 cleanup failure, not covered up by passing ordinary timeout regression checks.
+
+## Continued format, policy and failure qualification
+
+[Additional evidence](evidence/csh-070-contracts/README.md) extends the selected
+contract without replacing the initial records. `make test-host-formatted-contracts`
+runs ordinary format/catalog assertions and the bounded failures below while
+explicitly omitting the existing stack/memory and exec-capacity searches. This
+allows contract work on a host where stress configurations remain unqualified.
+The complete `test-host-formatted` target includes the new cases as well.
+
+| Contract | Added independently authored assertions |
+| --- | --- |
+| Format numbering and reuse | Ninth-operand selection, gaps, repeated numbered integer/base conversions, highest-consumed-operand reuse, missing numbered operands under the selected default policy. |
+| Required numeric and byte formats | Sign/base and width/precision reuse, zero-precision suppression, literal octal percent, binary NUL padding/precision and stop during format reuse. The selected optional floats cover decimal/hexadecimal strtod input and locale hexadecimal radix. |
+| Conversion diagnostics | Multiple invalid operands continue with accumulated values, partial integers/floats, trailing quoted Unicode characters, and the provider's declared rejection of suffixed constants. Exact output/status/diagnostics in all five invocation modes. |
+| Echo policy | Repeated n/e/E combinations, embedded newline/tab/carriage return, quote/percent/backslash and empty operands remain literal, including the final newline. |
+| Catalog paths and failures | `%l`, `%L`, `%N` substitution, search past a missing first entry, and fallback from absent message sets. Empty, non-catalog and directory inputs have independently declared platform policies. |
+| ASYNCHRONOUS EVENTS and output failures | Default SIGPIPE and SIGXFSZ terminate with the actual signal; inherited ignores instead produce status 1 and exact diagnostics. Broken pipes have no readers before exec. A child-only 1024-byte file limit requires exactly 1024 retained `x` bytes. Printf literal, `%s` and `%b` writers and literal echo all run directly and through public replacing `exec`. |
+| Local allocation failures | `CSH_PRINTF_FAIL_SITE` selects conversion-workspace realloc, numeric-format realloc or `%b` strdup independently. Every failure has a nonmatching-site success control and exact diagnostic/status in direct and replacing-exec modes. This does not substitute for the separately retained Linux libc exhaustion probe. |
+
+Apple's [published catalog loader](https://github.com/apple-oss-distributions/Libc/blob/Libc-1592.100.35/nls/FreeBSD/msgcat.c)
+emits a corruption diagnostic before returning an error for malformed inputs;
+the declared Darwin oracle includes it. The glibc policy expects silent loader
+fallback. Neither policy is inferred from observed output during a test.
+The initial quiet-fallback oracle failed on Darwin and remains in the evidence.
+These are selected libc policies, not a portable diagnostic-wording requirement.
+
+The I/O supervisor accepts only the selected non-forking C providers and the
+shell's process-replacing exec path. It owns/reaps one PID, caps CPU/output/file
+size, and enforces a five-second execution plus two-second reap deadline.
+Dedicated regressions check timeout reaping, preservation of an unrelated child,
+and setup failures that must not be mistaken for signal termination. It does
+not replace the general smoke/PTY descendant supervisor or qualify its retained
+native cleanup failures. CSH-079 still owns other signals, interrupted writes,
+Darwin libc allocation controls, broader locales and unsafe exec configurations.

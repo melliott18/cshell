@@ -237,7 +237,8 @@
     "U-035/locale-catalogs": {
       "ticket": "CSH-070",
       "evidence": "docs/evidence/csh-070/README.md",
-      "boundary": "French/German catalog lookup and exact translated diagnostics supplied; additional catalogs/search patterns remain open."
+      "boundary": "French/German catalogs, NLSPATH %l/%L/%N and search-list lookup, missing-set fallback and explicit Darwin/glibc malformed-catalog policies supplied; additional encodings and unreadable catalogs remain open.",
+      "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
     },
     "U-035/other-locales": {
       "ticket": "CSH-070",
@@ -247,17 +248,20 @@
     "U-035/format-allocation-limits": {
       "ticket": "CSH-070",
       "evidence": "docs/evidence/csh-070/README.md",
-      "boundary": "Linux libc ENOMEM and post-startup 64 KiB stack controls supplied; Darwin libc allocation controls remain open."
+      "boundary": "Linux libc ENOMEM and post-startup 64 KiB stack controls retained; workspace, numeric-format and %b allocation failures isolated by call site. SIGPIPE and 1024-byte file limits checked with default/ignored dispositions and partial-byte effects. Darwin libc allocation controls remain open.",
+      "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
     },
     "U-035/full-format": {
       "ticket": "CSH-070",
       "evidence": "docs/evidence/csh-070/README.md",
-      "boundary": "New conversion interactions and four provider repairs have strict regressions; complete combinations and signal/interruption contracts remain open."
+      "boundary": "Numbered reuse through operand nine, flags/bases/precision, binary stop/reuse, locale floats and diagnostic continuation checked. Default/ignored SIGPIPE and SIGXFSZ checked through direct and replacing exec paths. Further ranges/combinations and other signal/interruption contracts remain open.",
+      "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
     },
     "U-036/alternative-policies": {
       "ticket": "CSH-070",
       "evidence": "docs/evidence/csh-070/README.md",
-      "boundary": "New repository-built literal echo policy selected and checked separately; other builds remain open."
+      "boundary": "Repository literal echo policy checks n/e/E combinations, control bytes, catalogs, default/ignored SIGPIPE and SIGXFSZ; stock Apple/GNU/BusyBox builds keep separately recorded scopes.",
+      "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
     },
     "U-036/argument-limits": {
       "ticket": "CSH-070",

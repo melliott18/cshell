@@ -6,6 +6,7 @@ import tempfile
 import unittest
 
 from host_echo_threshold import threshold
+from host_formatted_failures import run_owned
 
 
 class ThresholdFailures(unittest.TestCase):
@@ -34,6 +35,32 @@ class ThresholdFailures(unittest.TestCase):
         finally:
             unrelated.terminate()
             unrelated.wait(timeout=2)
+
+
+class ProviderFailureCleanup(unittest.TestCase):
+    def test_owned_timeout_reaped_without_touching_unrelated_child(self):
+        unrelated = subprocess.Popen(['/bin/sleep', '20'])
+        try:
+            with tempfile.TemporaryFile() as output, tempfile.TemporaryFile() as diagnostic:
+                record = run_owned(['/bin/sleep', '20'], {'LC_ALL': 'C'}, output,
+                                   diagnostic, timeout=0.1)
+            self.assertEqual(record['errors'], ['execution timeout'])
+            self.assertTrue(record['reaped'])
+            with self.assertRaises(ProcessLookupError):
+                os.kill(record['pid'], 0)
+            self.assertIsNone(unrelated.poll())
+        finally:
+            unrelated.terminate()
+            unrelated.wait(timeout=2)
+
+    def test_exec_setup_failure_cannot_be_a_signal_pass(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            with tempfile.TemporaryFile() as output, tempfile.TemporaryFile() as diagnostic:
+                record = run_owned([temporary + '/missing'], {'LC_ALL': 'C'}, output, diagnostic)
+        self.assertIsNone(record['status'])
+        self.assertIsNone(record['pid'])
+        self.assertFalse(record['reaped'])
+        self.assertTrue(record['errors'][0].startswith('setup:'))
 
 
 if __name__ == '__main__':

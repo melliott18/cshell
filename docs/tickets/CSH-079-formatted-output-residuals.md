@@ -81,3 +81,16 @@ queued runtime/PTY integration was not observed to start. Complete these stages
 and verify owned-container cleanup after the engine becomes usable. Native
 ASan/UBSan and both completed host-profile suites remain separate positive
 evidence; no diagnosis of the engine failure is inferred.
+
+### Additional CSH-070 evidence
+
+[Further contract assertions](../evidence/csh-070-contracts/README.md) now supply
+catalog search/substitution and malformed-input policy witnesses; numbered
+format reuse through operand nine; independently selected local allocation
+failure sites; and default/ignored SIGPIPE/SIGXFSZ plus exact partial-file output
+for literal/%s/%b printf and literal echo. Those finite paths are no longer
+missing capabilities. Remaining signals/interruption combinations, permissions,
+encodings, Darwin libc exhaustion and unsafe exec configurations stay open.
+Passing hosted Linux CI at the original PR source additionally supplies runtime,
+PTY and sanitizer integration; it does not repair the local Docker engine or
+native cleanup failures. New assertion revisions retain separate validation.

@@ -109,3 +109,14 @@ for exact results, cleanup limitations and not-run stages.
 
 This ticket is ready for review of its supplied subset and individual transfers,
 not full utility/system conformance. Mark done only after integration.
+
+### Continued contract qualification
+
+The [additional qualification record](../evidence/csh-070-contracts/README.md)
+adds numbering/reuse, numeric/binary and echo policy interactions, catalog search
+and malformed-input policies, independent allocation-site controls, and actual
+SIGPIPE/SIGXFSZ/file-size boundaries through direct and public replacing exec.
+No selected provider implementation changes are needed for these new assertions.
+The initial Darwin catalog oracle failure is retained and corrected using the
+vendor's published policy. `test-host-formatted-contracts` runs this subset
+without repeating stack/memory or exec-capacity probes.

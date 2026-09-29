@@ -632,7 +632,7 @@ build/tests/host_printf_resources: tests/host_printf_resources.c tools/host-prof
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(filter-out -fsanitize=%,$(CFLAGS)) $(filter-out -fsanitize=%,$(LDFLAGS)) -o $@ $< $(LDLIBS)
 
-test-host-formatted: cshell host-profile build/host-echo-literal build/tests/host_printf_resources build/host-profile/catalogs/fr.cat build/host-profile/catalogs/de.cat
+test-host-formatted: cshell host-profile build/host-echo-literal build/tests/host_printf_resources build/host-profile/catalogs/fr.cat build/host-profile/catalogs/de.cat build/host-profile/catalogs/incomplete.cat build/tests/host_printf_faults
 	$(PYTHON) tests/test_host_formatted.py
 	$(PYTHON) tests/host_formatted.py --record build/tests/host-formatted.json
 
@@ -647,5 +647,10 @@ build/host-formatted-sanitizer/echo: tools/host-profile/echo.c
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) -std=c99 -Wall -Wextra -Wpedantic -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -o $@ $< $(LDLIBS)
 
-test-host-formatted-sanitize: cshell build/host-formatted-sanitizer/printf build/host-formatted-sanitizer/echo build/tests/host_printf_resources build/host-profile/catalogs/fr.cat build/host-profile/catalogs/de.cat
+test-host-formatted-sanitize: cshell build/host-formatted-sanitizer/printf build/host-formatted-sanitizer/echo build/tests/host_printf_resources build/host-profile/catalogs/fr.cat build/host-profile/catalogs/de.cat build/host-profile/catalogs/incomplete.cat build/tests/host_printf_faults
 	$(PYTHON) tests/host_formatted.py --sanitizer --record build/tests/host-formatted-sanitize.json
+
+.PHONY: test-host-formatted-contracts
+test-host-formatted-contracts: cshell build/host-printf build/host-echo-literal build/tests/host_printf_resources build/tests/host_printf_faults build/host-profile/catalogs/fr.cat build/host-profile/catalogs/de.cat build/host-profile/catalogs/incomplete.cat
+	$(PYTHON) tests/test_host_formatted.py
+	$(PYTHON) tests/host_formatted.py --scope contracts --record build/tests/host-formatted-contracts.json

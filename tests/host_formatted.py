@@ -6,13 +6,13 @@ import json
 import os
 from pathlib import Path
 import platform
-import resource
 import shlex
 import subprocess
 import tempfile
 
 import smoke
-from host_formatted_cases import cases
+from host_formatted_cases import cases, additional_cases
+from host_formatted_failures import io_cases, allocation_cases
 from host_echo_threshold import threshold
 from host_utilities import serial, sha, source_identity
 
@@ -38,12 +38,20 @@ def capture(target, fixture, parent, output_limit):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--record', type=Path, required=True)
+    parser.add_argument('--scope', choices=('all', 'contracts'), default='all',
+                        help='contracts omits existing stack/memory and exec-capacity probes')
     parser.add_argument('--sanitizer', action='store_true', help='Use instrumented providers; resource/threshold scopes run separately')
     args = parser.parse_args()
     providers = {'printf': ROOT / 'build/host-printf', 'echo': ROOT / 'build/host-echo-literal'}
     if args.sanitizer:
         providers = {name: ROOT / 'build/host-formatted-sanitizer' / name for name in providers}
+    catalog_policy = 'darwin' if platform.system() == 'Darwin' else 'glibc'
     binary = ROOT / 'cshell'
+    input_sources = source_identity()
+    input_paths = [binary, *providers.values(), ROOT / 'build/tests/host_printf_resources',
+                   ROOT / 'build/tests/host_printf_faults',
+                   *sorted((ROOT / 'build/host-profile/catalogs').glob('*.cat'))]
+    input_hashes = {str(path): sha(path) for path in input_paths}
     records = []
     limitations = []
     with tempfile.TemporaryDirectory(prefix='csh-formatted-') as temporary:
@@ -53,7 +61,20 @@ def main():
         for name, path in providers.items():
             (prefix / name).symlink_to(path)
         search = str(prefix) + ':' + os.defpath
-        for case in cases(ROOT / 'build/host-profile/catalogs'):
+        catalogs = directory / 'catalogs'
+        catalogs.mkdir()
+        for lang, locale in [('fr', 'fr_FR.UTF-8'), ('de', 'de_DE.UTF-8')]:
+            data = (ROOT / 'build/host-profile/catalogs' / (lang + '.cat')).read_bytes()
+            for folder in (lang, locale):
+                (catalogs / folder).mkdir()
+                for utility in ('printf', 'echo'):
+                    (catalogs / folder / ('cshell-' + utility + '.cat')).write_bytes(data)
+        (catalogs / 'empty.cat').write_bytes(b'')
+        (catalogs / 'invalid.cat').write_bytes(b'not a message catalog\n')
+        (catalogs / 'directory.cat').mkdir()
+        (catalogs / 'incomplete.cat').write_bytes((ROOT / 'build/host-profile/catalogs/incomplete.cat').read_bytes())
+        selected_cases = list(cases(ROOT / 'build/host-profile/catalogs')) + list(additional_cases(catalogs, catalog_policy))
+        for case in selected_cases:
             for mode in ('direct', 'exec', 'string', 'file', 'stdin'):
                 fixture = dict(env=dict(PATH=search, **case['env']), args=[], stdin='')
                 if args.sanitizer:
@@ -108,7 +129,13 @@ def main():
             ok = not errors and status == 1 and not output['stdout'] and output['stderr'] == expected.encode()
             records.append(dict(name='echo catalog ' + lang, verdict='PASS' if ok else 'FAIL',
                                 invocation=fixture, actual=serial(dict(status=status, **output, errors=errors))))
-        for kind in (() if args.sanitizer else ('stack', 'memory')):
+        if not args.sanitizer:
+            records.extend(io_cases(binary, prefix))
+            records.extend(allocation_cases(binary, prefix, ROOT / 'build/tests/host_printf_faults'))
+        if args.scope == 'contracts':
+            limitations.append(dict(scope='stack/memory and exec capacities', verdict='NOT-RUN',
+                                     reason='Explicit contracts scope; previous full-profile measurements remain separate'))
+        for kind in (() if args.sanitizer or args.scope == 'contracts' else ('stack', 'memory')):
             if kind == 'memory' and platform.system() != 'Linux':
                 limitations.append(dict(condition='U-035/format-allocation-limits',
                                          reason='Darwin libc memory exhaustion is not supplied by Linux RLIMIT_AS',
@@ -127,10 +154,12 @@ def main():
                                             stdout_sha256=hashlib.sha256(output['stdout']).hexdigest(),
                                             stderr_hex=output['stderr'].hex(), errors=errors)))
         stacks = (1024 * 1024, 8 * 1024 * 1024) if platform.system() == 'Linux' else (8 * 1024 * 1024,)
+        if args.scope == 'contracts':
+            stacks = ()
         if args.sanitizer:
             stacks = ()
-            limitations.append(dict(scope='resources and thresholds', verdict='NOT-RUN',
-                                     reason='Sanitizer address-space/stack use invalidates normal resource controls'))
+            limitations.append(dict(scope='resources, exec capacities and I/O/allocation failures', verdict='NOT-RUN',
+                                     reason='Run separately with normal providers/helpers; sanitizer startup changes resource/process behavior'))
         if platform.system() == 'Darwin' and not args.sanitizer:
             limitations.append(dict(condition='U-036/argument-limits', owner='CSH-079',
                                      verdict='UNQUALIFIED', reason='1 MiB stack near ARG_MAX retained stuck execs after SIGKILL; only 8 MiB selected'))
@@ -140,23 +169,31 @@ def main():
                     result = threshold(providers['echo'], shape, padding, stack)
                     result['name'] = f'echo threshold {shape} pad={padding} stack={stack}'
                     records.append(result)
-    result = dict(sanitizer=args.sanitizer, platform=platform.platform(), uname=list(platform.uname()), libc=platform.libc_ver(),
-                  source_identity=source_identity(), path=search, binary_sha256=sha(binary),
+    final_sources = source_identity()
+    changed_inputs = [str(path) for path in input_paths if sha(path) != input_hashes[str(path)]]
+    stable = input_sources == final_sources and not changed_inputs
+    records.append(dict(name='qualification input stability', verdict='PASS' if stable else 'FAIL',
+                        source_changed=input_sources != final_sources, changed_inputs=changed_inputs))
+    result = dict(scope=args.scope, sanitizer=args.sanitizer, catalog_failure_policy=catalog_policy, platform=platform.platform(), uname=list(platform.uname()), libc=platform.libc_ver(),
+                  source_identity=input_sources, final_source_identity=final_sources, input_hashes=input_hashes, path=search, binary_sha256=sha(binary),
                   providers={name: dict(path=str(path), realpath=str(path.resolve()), sha256=sha(path),
                                        package='repository source build; see source_identity')
                              for name, path in providers.items()},
                   catalogs={str(p.relative_to(ROOT)): sha(p) for p in (ROOT / 'build/host-profile/catalogs').glob('*.cat')},
                   resource_helper_sha256=sha(ROOT / 'build/tests/host_printf_resources'),
-                  locale_inventory=subprocess.check_output(['locale', '-a'], text=True),
-                  compiler=subprocess.check_output(['cc', '--version'], text=True),
+                  allocation_helper_sha256=sha(ROOT / 'build/tests/host_printf_faults'),
+                  locale_inventory=subprocess.check_output(['locale', '-a'], text=True, timeout=5),
+                  compiler=subprocess.check_output(['cc', '--version'], text=True, timeout=5),
                   limits=dict(timeout_seconds=5, threshold_cap_bytes=4194304, cleanup_seconds=2),
                   temporary_directory_removed=not directory.exists(), limitations=limitations,
                   totals={v: sum(r['verdict'] == v for r in records) for v in ('PASS', 'FAIL')}, cases=records)
     if platform.system() == 'Linux':
-        result['package_versions'] = subprocess.check_output(['dpkg-query', '-W', '-f=${Package} ${Version}\n'], text=True)
+        result['package_versions'] = subprocess.check_output(['dpkg-query', '-W', '-f=${Package} ${Version}\n'], text=True, timeout=5)
     args.record.parent.mkdir(parents=True, exist_ok=True)
     args.record.write_text(json.dumps(result, indent=2) + '\n')
-    print('CSH-070:', result['totals'], 'unqualified:', len(limitations))
+    print('CSH-070:', result['totals'], 'limitations:',
+          {verdict: sum(item['verdict'] == verdict for item in limitations)
+           for verdict in ('UNQUALIFIED', 'NOT-RUN')})
     return int(bool(result['totals']['FAIL']))
 
 
