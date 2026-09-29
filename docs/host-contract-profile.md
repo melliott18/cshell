@@ -205,8 +205,8 @@ gate is promoted.
 
 
 The [CSH-064 acceptance reconciliation](evidence/csh-064-acceptance/README.md)
-retains the passing evidence but holds ticket acceptance for a project-owned
-probe timeout defect: the nested selected utility can survive its Python wrapper.
-The implementation is integrated; CSH-064 / #127 remains in progress until
-process-tree cleanup and a regression are implemented and validated. This repair
-is independent of the external capabilities required for vendor requalification.
+retains the passing evidence and the historical project-owned probe timeout
+defect. [The completion record](evidence/csh-064-completion/README.md) validates
+process-group cleanup and descendant reaping through the actual nested path.
+The ticket records acceptance; this repair is independent of the external
+capabilities required for vendor requalification.

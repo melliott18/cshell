@@ -1,11 +1,11 @@
 # CSH-064: Supply external prerequisites for remaining host contracts
 
-- Status: in-progress
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-063
-- Branch: docs/CSH-064-acceptance-reconciliation
+- Branch: fix/CSH-064-probe-timeout-cleanup
 - Issue: [#127](https://github.com/melliott18/cshell/issues/127)
 
 ## Goal
@@ -40,7 +40,7 @@ or open the CSH-012 gate.
 - [x] Claimed profiles pass runtime/PTY integration; changed C receives ASan/UBSan.
 - [x] Queries, measured credentials, fixture bounds and unmet requirements stay
   separate, with no parent utility promotion.
-- [ ] Acceptance-review regression: a probe timeout terminates and reaps the
+- [x] Acceptance-review regression: a probe timeout terminates and reaps the
   complete owned process tree before reporting or removing fixtures, with a
   regression through the nested `_chmod-child`/selected-utility path.
 
@@ -105,8 +105,8 @@ agrees with their records. Fresh review checks pass 86 native harness self-tests
 and eight focused Linux overlay controls. Original runtime/PTY results retain
 their original provenance; this review does not claim another full profile run.
 
-Acceptance is held for **P2: the probe timeout leaves its selected utility
-running**. `tests/host_platform_probe.py:command` kills only its direct child.
+The review held acceptance for **P2: the probe timeout leaves its selected
+utility running**, subsequently repaired as recorded below. `tests/host_platform_probe.py:command` kills only its direct child.
 The outer `_chmod-child` wrapper's deadline starts before its nested selected
 chmod deadline, so the wrapper can die while chmod survives. The disposable
 Linux reproducer records a five-second timeout and the still-sleeping utility's
@@ -119,10 +119,39 @@ to fix. Use one deadline and cleanup owner for the complete process tree,
 terminate/reap descendants before returning or removing fixtures, retain a
 strict timeout failure, and add a regression through the actual nested path.
 
-The original four criteria retain their supported evidence; the newly discovered
-cleanup regression is an explicit additional open acceptance gate. Status is
-`in-progress` and #127 stays open until the repair, regression and validation are
-integrated. A merged implementation, passing ordinary cases or hosted check
-completion do not discharge this gate. External capability/vendor ownership and the
-closed CSH-012 completion gate remain unchanged. This reconciliation records the
-review; it does not implement the repair.
+The original four criteria retain their supported evidence. The review added
+an explicit cleanup acceptance gate; the repair below satisfies its validation.
+External capability/vendor ownership and the closed CSH-012 completion gate
+remain unchanged. The historical review and failing reproduction remain intact.
+
+
+## Cleanup repair and acceptance
+
+[Completion evidence](../evidence/csh-064-completion/README.md) records the fix,
+regression and fresh integration. The privileged Linux runner now owns one
+five-second watchdog and an inherited process group, temporarily acts as a child
+subreaper, kills that group and reaps its adopted descendants before returning.
+Cleanup has a separate two-second bound, errors force a failed record, and the
+prior subreaper setting is restored. The credential wrapper no longer races an
+inner timeout against its supervisor. Unrelated children are neither killed nor
+reaped.
+
+The same regression fails two cases on the original implementation and passes
+all three after the repair: slow selected utility, forking slow selected utility,
+and ordinary completion. It verifies measured IDs, strict timeout results,
+disappearance of all owned PIDs (including zombies), and survival of an unrelated
+child. `make test-host-probe-timeout` also runs in the Docker CI job.
+
+Fresh native macOS and Docker Linux validation each passes 3905 runtime
+assertions, 64 terminal checks and 86 harness self-tests. The fixed overlay
+probe passes all eight checks; fakeowner retains three passes and five strict
+failures. No C source changed in the repair. All five scoped acceptance criteria
+now have supporting evidence; the repair is ready for integration.
+
+Acceptance is bounded to the supplied capability work and the repaired harness.
+The original scope explicitly permits individually retained external conditions.
+The thirty vendor/platform conditions and their required capabilities remain
+recorded with their owners; closure does not qualify failed profiles, erase
+vendor failures, supply Darwin/hardware, or promote a POSIX utility family.
+Future qualification must supply a concrete new capability and reference those
+records; it is not an unperformed requirement of this completed bounded work.

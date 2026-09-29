@@ -56,6 +56,7 @@ so the information remains accessible in a plain Markdown reader.
 
 - [Qualified host contracts](host-contract-profile.md): CSH-056 profile, residual assertions and per-utility capability limits.
 - [External host prerequisites](evidence/csh-064/README.md): CSH-064 namespace qualification, fakeowner diagnosis and individually retained requirements.
-- [Host acceptance reconciliation](evidence/csh-064-acceptance/README.md): retained validation and the open project-owned probe timeout cleanup gate.
+- [Host acceptance reconciliation](evidence/csh-064-acceptance/README.md): retained validation and the historical project-owned probe timeout cleanup gate.
+- [Host acceptance completion](evidence/csh-064-completion/README.md): validated timeout cleanup repair and scoped acceptance.
 
 - [Residual execution contracts (CSH-055)](execution-contracts.md): prefix PATH, inherited descriptors, read errors, and nested control evidence.

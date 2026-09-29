@@ -92,6 +92,8 @@ jobs:
           --echo-policy busybox-fancy --record build/tests/host-busybox-results.json &&
           CSH_TEST_PATH="/work/build/busybox-echo:/work/build/host-profile/bin:$(getconf PATH)"
           make test-runtime test-pty'
+      - name: Test host probe timeout ownership
+        run: docker run --rm --init --user 0 cshell-test:local make test-host-probe-timeout
       - name: Test unequal invocation identities in Linux image
         run: docker run --rm --init --user 0 cshell-test:local python3 tests/invocation.py ./cshell
       - name: Check controlled host helpers with ASan and UBSan

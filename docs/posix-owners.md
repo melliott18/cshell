@@ -101,10 +101,10 @@ implementation owners. [CSH-064 evidence](evidence/csh-064/README.md) preserves
 ACL setup and the separate `fakeowner` bind failures. Missing privileged Darwin,
 locales, controlled credentials and physical terminals remain capability limits.
 [CSH-064 acceptance reconciliation](evidence/csh-064-acceptance/README.md) also
-retains a project-owned probe timeout cleanup defect. CSH-064 / #127 owns its
-repair; its implementation owner is the cshell test harness, separately from
-the vendor-owned utility/libc/platform conditions. The implementation is merged
-but the cleanup acceptance gate remains open.
+retains the historical project-owned probe timeout cleanup defect.
+[The validated cleanup repair](evidence/csh-064-completion/README.md) satisfies
+that acceptance gate; it remains separate from the vendor-owned
+utility/libc/platform conditions. The ticket owns the current acceptance status.
 
 The [current CSH-012 reconciliation](evidence-reconciliation-current.md) records
 completed scoped tickets and the remaining milestone gates. Qualification
