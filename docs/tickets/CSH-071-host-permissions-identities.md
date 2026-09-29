@@ -115,3 +115,20 @@ Darwin environment is available. Full page contracts, all original residual
 conditions, and the new vendor failures retain this concrete open owner; no
 completion is inferred from selected passing assertions. CSH-064 remains done
 for its original bounded capability work and cleanup repair.
+
+## Predicate, ACL, credential and ownership follow-up
+
+[Follow-up evidence](../evidence/csh-071-acl-qualification/README.md) qualifies the
+changed adapter's effective-ID r/w/x checks. Native owner ACL ordering/inheritance
+and independent operations pass 496 assertions, also under ASan/UBSan. A fresh
+native profile passes 980 permission assertions and 1,162 existing host assertions.
+Hosted Linux passes all 2,260 strict unequal-ID ACL/host assertions, 22 focused
+credential/non-owner assertions and 16 ordinary ownership assertions. No failed
+grant/denial is allowed in these declared subsets.
+
+The CI workflow supplies a traversable disposable source tree and existing
+accounts rather than modifying any account database. Its privileged Darwin job
+remains queued, so that boundary is still unqualified. Earlier local Docker and
+process-cleanup failures and vendor profiles remain unchanged in the original
+evidence directory. The full ticket remains open for its individually recorded
+page, alternate namespace/filesystem, fakeowner and session/vendor obligations.

@@ -245,11 +245,13 @@ Only private files and processes are used. See
 
 ## CSH-071 predicates and identities
 
-`test.c` adds POSIX.1-2024 locale-aware `<`/`>` and delegates other expressions
-to the absolute GNU test provider selected during the build. Both adapter and
+`test.c` adds POSIX.1-2024 locale-aware `<`/`>` and effective-credential r/w/x
+predicates, delegating remaining expressions to the absolute GNU test provider
+selected during the build. Both adapter and
 backend hashes are retained. `build/host-test-provider.h` records the provider;
-`make host-profile` regenerates it when the selected path changes. Neither
-ACL behavior nor any system executable is replaced by this adapter.
+`make host-profile` regenerates it when the selected path changes. No
+system executable is replaced. The adapter now uses effective-credential
+`faccessat` for r/w/x predicates; remaining expressions retain their vendor backend.
 
 `make test-host-permissions` is included in `make test-host-profile`. Its
 [clause map](../../docs/host-permissions-identities.md) records the exact subset,

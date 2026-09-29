@@ -203,15 +203,23 @@ def run_case(binary, tools, search_path, case, mode, fixture_root, sanitizer=Fal
     finally:
         if connection is not None:
             connection.close()
-        if case.get('acl'):
-            clear_acls(root)
-        # A tested chmod may remove search permission from our private directories.
-        for directory in ('tree', 'outside'):
-            if (root / directory).is_dir():
-                (root / directory).chmod(0o700)
-        temporary.cleanup()
+        cleanup_errors = []
+        try:
+            if case.get('acl'):
+                clear_acls(root)
+        except (OSError, subprocess.SubprocessError) as error:
+            cleanup_errors.append('ACL cleanup: ' + repr(error))
+        try:
+            # A tested chmod may remove search permission from private directories.
+            for directory in ('tree', 'outside'):
+                if (root / directory).is_dir():
+                    (root / directory).chmod(0o700)
+            temporary.cleanup()
+        except (OSError, subprocess.SubprocessError) as error:
+            cleanup_errors.append('fixture cleanup: ' + repr(error))
         record['cleanup'] = not root.exists()
-        if not record['cleanup']:
+        record['cleanup_errors'] = cleanup_errors
+        if not record['cleanup'] or cleanup_errors:
             record['verdict'] = 'FAIL'
     return record
 
@@ -233,6 +241,8 @@ def main():
     args = parser.parse_args()
     if (args.controlled_identities or args.session_controls) and (platform.system() != 'Linux' or os.geteuid() != 0):
         parser.error('controlled identities/sessions require a disposable Linux root environment')
+    if (args.darwin_acls or args.darwin_credentials) and not args.qualification_only:
+        parser.error('Darwin ACL/credential flags require --qualification-only')
     if args.darwin_acls and platform.system() != 'Darwin':
         parser.error('--darwin-acls requires Darwin')
     if args.darwin_credentials and (not args.darwin_acls or os.geteuid() != 0 or not os.environ.get('SUDO_USER')):

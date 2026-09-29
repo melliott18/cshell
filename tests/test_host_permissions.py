@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from host_permission_cases import case
 from host_permissions import run_case
@@ -42,6 +43,14 @@ class PermissionsEvidenceTests(unittest.TestCase):
         pid = int(bytes.fromhex(result['actual']['stdout']['hex']))
         with self.assertRaises(ProcessLookupError):
             os.kill(pid, 0)
+
+    def test_acl_cleanup_failure_is_retained(self):
+        with patch('host_permissions.setup_acl', return_value='fixture ACL'), \
+                patch('host_permissions.clear_acls', side_effect=OSError('cleanup rejected')):
+            result = self.run_provider('exit 0\n', case('chmod', 'cleanup', [], acl={'fixture': True},
+                access={'permission': 'r', 'allowed': True}))
+        self.assertEqual(result['verdict'], 'FAIL')
+        self.assertIn('cleanup rejected', result['cleanup_errors'][0])
 
     def test_missing_provider_is_setup_failure(self):
         with tempfile.TemporaryDirectory() as name:

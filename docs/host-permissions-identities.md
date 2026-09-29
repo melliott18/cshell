@@ -31,12 +31,16 @@ cleanup. No reference utility supplies expected values.
 
 The opt-in profile now selects the repository's `host-test` adapter for `test`
 and `[`. It implements Issue 8 `<` and `>` using `strcoll`, including equal operands
-and four-argument negation, and delegates other expressions to the selected GNU
-`test`. Darwin selects Homebrew `gtest`; Linux selects `test` from `os.defpath`.
+and four-argument negation. It checks r/w/x with effective-credential `faccessat`
+and delegates remaining expressions to the selected GNU `test`. Darwin selects
+Homebrew `gtest`; Linux selects `test` from `os.defpath`.
 The build embeds its absolute path, and inventories record both adapter and
 backend realpaths/hashes, generated header, source inputs, package observations
 and OS identity. The adapter checks/removes the bracket terminator and delegates
-with argv[0] `test`. It does not repair the retained ACL/unequal-ID vendor failures.
+with argv[0] `test`. Effective-credential permission checks are now supplied by
+the adapter; the
+[follow-up evidence](evidence/csh-071-acl-qualification/README.md) records the
+strict Linux unequal-ID ACL qualification. The original vendor failures remain retained.
 `command -p` and stock-host evidence continue to use the system search path.
 
 Use `--path`, `--fixture-root`, and `--record` on `tests/host_permissions.py` for
@@ -97,13 +101,13 @@ with CSH-071 and utility/libc/filesystem vendors retain implementation ownership
 
 | Condition | Current disposition and required next evidence |
 | --- | --- |
-| U-037/ACLs | Open: adapter delegates ACL predicates. Existing Linux controlled ACL assertions remain strict; require changed vendor implementation or additional ACL filesystem with independent r/w/x operations. |
-| U-037/Darwin-ACLs | Unavailable: user confirmed no disposable privileged Darwin environment. Ordered deny/allow, inheritance and controlled identities require that environment. |
-| U-037/unequal-identities | Open: new id witnesses do not repair ACL predicates. Preserve the original mapped-namespace false/rejected grants and rerun after a vendor/mapping change. |
+| U-037/ACLs | Selected adapter qualified on measured Linux ext4 and native Darwin owned ACL fixtures, including independent r/w/x operations. Additional filesystems and full utility contracts remain open. |
+| U-037/Darwin-ACLs | Native owner ACL ordering/inheritance qualifies without root. A disposable hosted workflow now supplies the controlled-identity plan; its Darwin job is queued, so privileged Darwin qualification remains open. |
+| U-037/unequal-identities | The changed adapter passes the strict swapped real/effective-ID ACL matrix on the measured Linux initial namespace. Original mapped-namespace failures remain retained; that additional mapping and all other credentials are not automatically qualified. |
 | U-037/fakeowner-socket-type | Open: no changed fakeowner implementation supplied. Ordinary socket type assertions do not repair its retained EINVAL; successful metadata and actual AF_UNIX transfer are both required there. |
 | U-040/fakeowner-chmod | Open: overlay non-owner denial cannot qualify fakeowner. Changed implementation must deny both syscall and selected utility under measured IDs/capabilities. |
 | U-037/device-namespaces | Existing disposable Linux controlled-node profile is rerun, stat only. Additional namespaces remain unqualified. |
-| U-040/chmod-ACL-identity-filesystem | Open: real non-owner denial and mode metadata augment, but do not complete, ACL/identity/filesystem qualification. |
+| U-040/chmod-ACL-identity-filesystem | Qualified selected non-owner chmod/chown/chgrp denials, set-ID clearing, group changes and ctime updates. Chmod interactions with every ACL/filesystem remain open. |
 | U-037/controlled-environment | Available only in the explicitly selected Linux-root controlled run; unavailable natively. |
 | U-037/permission-denial | Mode-000 native non-root and explicitly dropped Linux IDs supply bounded denial controls. Root baseline alone cannot demonstrate denial. |
 | U-037/block-device | Linux controlled profile creates a private stat-only node; no additional native block witness supplied. |
@@ -142,3 +146,6 @@ in getgroups(); no other unsupplied supplementary groups are accepted.
 Ordinary ownership checks include nonprivileged set-ID clearing, a real change
 to a supplied supplementary group, and strict file-status timestamp updates.
 Full user-namespace/fakeowner and remaining page contracts are still separate.
+
+[Follow-up results and retained failures](evidence/csh-071-acl-qualification/README.md)
+record native, sanitizer and hosted Linux qualification independently.

@@ -54,7 +54,9 @@
           "--vendor-residuals --case-prefix chmod/original-X",
           "--session-controls --case-prefix newgrp/"
         ],
-        "full_contracts": "open; all retained conditions remain assigned to CSH-071"
+        "full_contracts": "open; all retained conditions remain assigned to CSH-071",
+        "focused_evidence": "docs/evidence/csh-071-acl-qualification/README.md",
+        "focused_workflow": ".github/workflows/host-permissions.yml"
       }
     },
     {
