@@ -97,11 +97,13 @@ after CTYPE change` retains UTF-8 literal bytes across eval/subshell parsing.
 See [locale contract](locales.md) for the full original inventory.
 
 These are conditional locale witnesses. Unavailable UTF-8, distinct collation
-or translated libc catalogs remain reasoned skips owned by CSH-042. The
+or translated libc catalogs remain reasoned skips owned by CSH-067. The
 startup lexical requirement is **not established for all encodings**:
 CSH-053 adds [raw-byte witnesses](locales.md#raw-byte-lexical-witnesses-csh-053)
 for syntax-valued constituent bytes and related quotation paths in installed
-Shift-JIS, Big5, GBK and GB18030; stateful encodings remain unestablished. Internal cshell diagnostics have no translated catalogs. Invalid-locale
+Shift-JIS, Big5, GBK and GB18030. [CSH-067](locale-pathname-qualification.md)
+adds EUC-JP single-shift evidence and distinguishes the unsupported
+implementation-defined locking-shift case. Internal cshell diagnostics have no translated catalogs. Invalid-locale
 C fallback is a project policy tested by L, not evidence for valid locale
 semantics. Neither a missing locale nor an invalid-byte probe is inapplicability.
 
@@ -190,9 +192,9 @@ substitution/class quotation. L `locale UTF-8 parameter removal character
 boundaries` asserts length 3 and all four removals for `éaé`.
 
 V `multibyte()` also checks invalid-byte fallback, a project choice, not a
-portable expectation. Non-C multi-character collating elements and equivalence
-classes remain unverified; special `#`/`@`/`*` forms have source-specific
-unspecified conditions. CSH-042 owns unavailable locale capabilities and
+portable expectation. [CSH-067](locale-pathname-qualification.md) now exercises supplied-locale
+multicharacter elements and equivalence classes on Linux (Darwin prerequisite P2); special `#`/`@`/`*` forms have source-specific
+unspecified conditions. CSH-067 owns unavailable locale capabilities and
 CSH-053 the bounded constituent-byte witnesses; CSH-047 retains pattern breadth.
 
 <a id="exp-005"></a>
@@ -269,7 +271,7 @@ D-003: only space/tab/newline are IFS whitespace. N `IFS policy extra whitespace
 is nonwhite` checks vertical-tab delimiters with empty fields. Invalid IFS byte
 sequences have unspecified results; bytewise fallback is documented, not used
 to verify valid-character behavior. F's multibyte capability may skip if neither
-UTF-8 locale exists; CSH-042 owns the capability (the native/Docker runs here
+UTF-8 locale exists; CSH-067 owns the capability (the native/Docker runs here
 execute it). All other encodings and boundary permutations remain unverified.
 
 <a id="exp-008"></a>
@@ -285,9 +287,10 @@ slash traversal, nonmatches, no resplitting and noglob. Ignoring dot/dot-dot
 entries is a permitted project choice, not a mandatory interpretation of `.*`.
 F `directory symlink traversal`, `dangling symlink is pathname match`, `trailing
 slash filters files`, `allocation, I/O, interruption and ownership failures`
-are API-only additional cases. L collation witnesses are host-qualified.
-Permission/search-denial combinations and arbitrary file-system errors are not
-fully mapped to public-runtime cases; CSH-047 retains this narrower gap.
+remain separate API evidence. [CSH-067](locale-pathname-qualification.md) adds
+public symlink/trailing-slash/read-versus-search witnesses and instrumented
+partial-directory-read consequences. Actual failing filesystems retain P4.
+L collation witnesses are host-qualified.
 
 <a id="exp-009"></a>
 ### EXP-009 — quote removal
@@ -318,7 +321,8 @@ leading dots/slashes across contexts. F `quoted character class name is literal`
 and `bracket dot cannot introduce dotfile` supplement runtime witnesses;
 the latter is a selected result where explicit bracket-dot matching is
 unspecified. L `locale UTF-8 case classes and quoted patterns` covers a UTF-8
-character and quotation. Multi-character/non-C equivalence classes, ambiguous
+character and quotation. Supplied multicharacter/non-C equivalence cases now have
+[CSH-067 witnesses and prerequisites](locale-pathname-qualification.md). Ambiguous
 invalid brackets, trailing pattern backslashes and source-unspecified `^`
 negation are not assigned portable oracles; CSH-047 retains breadth and CSH-053
 records the bounded constituent-byte pattern fix and raw pathname witnesses.
@@ -352,3 +356,7 @@ summarizes those runs. Stable matrix IDs remain broad **implemented subsets**;
 this document supplies their condition partitions without falsely converting
 selected witnesses into whole-family verification. Remaining scope has explicit
 owners above, and reference agreement never opens the compliance gate.
+
+The [CSH-067 finite qualification map](locale-pathname-qualification.md) owns
+remaining shell locale/pathname capabilities P1–P6, including the locale
+conditions under EXP-007 and EXP-009. No broad family is promoted.

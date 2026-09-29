@@ -192,7 +192,10 @@ def capture(binary, case, directory, timeout, output_limit, file_size_limit=None
     if case.get("transport") == "pty":
         return pty_harness.capture(binary, case, directory, timeout, output_limit,
                                    environment, child_limits)
-    data = case["stdin"].encode("utf-8")
+    # Internal byte fixtures bypass JSON validation and preserve source bytes.
+    data = case["stdin"]
+    if isinstance(data, str):
+        data = data.encode("utf-8")
     output = {"stdout": bytearray(), "stderr": bytearray()}
     failures = []
     started = time.monotonic()

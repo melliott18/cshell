@@ -39,6 +39,8 @@ jobs:
           sudo localedef -i fr_FR -f UTF-8 fr_FR.UTF-8
           sudo localedef -i de_DE -f UTF-8 de_DE.UTF-8
           sudo localedef -i zh_CN -f GB18030 zh_CN.GB18030
+          sudo localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP
+          sudo localedef -i tests/locales/csh_067 -f UTF-8 csh_067.UTF-8
       - name: Install macOS profile dependencies
         if: runner.os == 'macOS'
         run: brew list coreutils >/dev/null 2>&1 || brew install coreutils

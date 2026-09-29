@@ -39,7 +39,9 @@ stateless encodings. Native macOS witnesses cover Shift-JIS, Big5, GBK and
 GB18030; Linux provisions GB18030. A split lexer feed waits for the complete
 character, while positions and fragment offsets remain byte based. Invalid or
 final incomplete sequences use a one-byte fallback (project policy, not a
-portable oracle). Stateful encodings are not established by these witnesses.
+portable oracle). CSH-067 adds EUC-JP SS2/SS3 single-shift witnesses. Locking-shift encodings
+are unsupported (implementation-defined by XBD §6.2); these witnesses do not
+establish every self-contained encoding.
 Dollar-single-quote source decoding and delimiter/backquote quote removal use
 the saved lexical context; the representability check for generated control
 escapes still uses current LC_CTYPE. Expansion, IFS, pattern construction and
@@ -129,3 +131,7 @@ fallback policy; valid-character witnesses are the specification-derived
 preservation assertions. Run `make test-portability` (included in `make test`).
 These tests add ENV-004, LEX-002/004 and EXP-010 evidence without declaring any
 whole requirement family verified.
+
+[CSH-067 finite locale/pathname qualification](locale-pathname-qualification.md)
+records the normative diagnostic-language decision, supplied collation definition,
+public filesystem witnesses and remaining external prerequisites P1–P6.

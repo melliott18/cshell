@@ -1,0 +1,15 @@
+{
+  "Makefile": "faf48a04e93a508072ea38acfe6acd81dec97c28a114172c85b1b6b26d4dd8d0",
+  "Dockerfile": "286dae0ff1d8bc4b5d99b5d9707d8d46f57601db67f7374da876b48b212a030f",
+  ".github/workflows/tests.yml": "23254077096d73dec00ae50245c49e87342321a5cef44037d173c94210623c34",
+  "tests/locale_pathname.py": "b86424bbd7ab5e446a1bd89a5a6145a1d3bb01f26881497512a0d8afa2f1c715",
+  "tests/locale_probe.c": "424dc0f0268e3975c9097a597625d06775be9214f203a277c4c23f8ffa9f24e3",
+  "tests/locales/csh_067": "35b2eefe5519b049c8b6cf48e1547689f0edeca3ee8f0ff5fda56416cfbe5f1e",
+  "tests/pathname_runtime_faults.c": "9fe9c91ac468ea8fedb5ba08bb57257a07579570faa1449cb59ae4ea3efed57a",
+  "tests/pathname_runtime_faults.h": "4a7142d9175e439921ac8088b8c04bdc970d416d8dd65256767797cfa9b69a22",
+  "tests/portability.py": "7c338080e9298a92e8c677367563abe4c5acfc8f11fd0dfd75f998b3752af9bf",
+  "tests/multibyte_cases.py": "d33ee35186b833ce29fbeb0ba1b5dbb063c4042564d8766a3cefefad509a548c",
+  "tests/locale_cases.py": "d6ff41df9773fded289d9dcf9f5fa5e0c3dd92b5c771e8bd2588e25cf7b82b09",
+  "tests/character_fixture.c": "9716ace50ef353a5d601b9984e3dd964fac2c7bed8525b7816e582d9898ed1ec",
+  "tests/smoke.py": "35bb08d95cd621bb79f90138e31395cc28b1900ec986395256d465fcd5e286ab"
+}

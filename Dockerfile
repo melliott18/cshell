@@ -16,6 +16,9 @@ RUN echo 'path-include=/usr/share/locale/fr/*' > /etc/dpkg/dpkg.cfg.d/zz-cshell-
     && chown cshell:cshell /work
 
 WORKDIR /work
+COPY tests/locales/csh_067 /tmp/csh_067
+RUN localedef -i /tmp/csh_067 -f UTF-8 csh_067.UTF-8 \
+    && localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP
 COPY --chown=cshell:cshell Makefile Dockerfile ./
 COPY --chown=cshell:cshell include/ include/
 COPY --chown=cshell:cshell src/ src/

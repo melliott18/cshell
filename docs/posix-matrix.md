@@ -340,3 +340,8 @@ assignment effects. Arithmetic evaluation errors retain arithmetic precedence.
 These selected cases retain the signed-long model and do not close the full
 EXP-005/EXP-006 audit. The [CSH-008 closure record](tickets/CSH-008-word-expansion.md)
 records the completed implementation milestone and combined evidence.
+
+[CSH-067](locale-pathname-qualification.md) qualifies the finite shell locale
+and pathname residuals, including case, read and alias utilities. Its condition
+map assigns external prerequisites P1–P6 without promoting whole families or
+counting unavailable capabilities as passes.

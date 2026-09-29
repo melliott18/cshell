@@ -1294,3 +1294,28 @@ Run the same target with the documented ASan/UBSan flags. The stack helper uses
 a native frame address, so ASan fake-stack addresses cannot bypass its bounds.
 Linux stack queries use `pthread_getattr_np`; macOS uses the native pthread
 stack address and size APIs. Building with Clang or GCC and `-pthread` is required.
+
+## Shell locale/pathname qualification
+
+`make test-locale-pathname` runs CSH-067's public three-mode witnesses and
+separately labeled instrumented directory-read failures. It is included in
+`make test-portability` and therefore normal and sanitizer CI. The JSON record
+at `build/tests/locale-pathname-results.json` retains raw source/output hex,
+credentials, locale names/definition hashes, filesystem mount and binary hashes.
+`tests/smoke.py` accepts byte stdin for these internal (non-JSON) fixtures, with
+the same output/deadline/process-group bounds as ordinary cases.
+
+Linux CI and Docker provision the supplied `tests/locales/csh_067` definition
+as `csh_067.UTF-8` and `ja_JP.EUC-JP`. On a Linux host with glibc locale sources:
+
+```sh
+sudo localedef -i tests/locales/csh_067 -f UTF-8 csh_067.UTF-8
+sudo localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP
+make test-portability test-fields test-harness
+```
+
+Missing locales, catalogs, raw filename support or enforcing credentials remain
+explicit skips owned by CSH-067. The instrumented runtime replaces only
+`pathname.c` directory calls; it is not an actual failing-filesystem witness.
+See the [finite qualification map](locale-pathname-qualification.md) and
+[run records](evidence/csh-067/README.md).

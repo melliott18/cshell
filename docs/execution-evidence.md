@@ -369,3 +369,8 @@ CSH-049 is done for that scoped inventory. The
 completion from remaining CSH-012 requirement-level review and CSH-064 host
 qualification. Neither CSH-042 nor CSH-043's completed narrow scope verifies the
 entire execution/case/redirection family.
+
+[CSH-067](locale-pathname-qualification.md) qualifies the finite shell locale
+and pathname residuals, including case, read and alias utilities. Its condition
+map assigns external prerequisites P1–P6 without promoting whole families or
+counting unavailable capabilities as passes.

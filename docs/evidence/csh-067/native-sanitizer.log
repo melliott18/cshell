@@ -1,0 +1,274 @@
+mkdir -p build/
+mkdir -p build/
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/main.c -o build/main.o
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/jobs.c -o build/jobs.o
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/traps.c -o build/traps.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/builtin.c -o build/builtin.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/utility.c -o build/utility.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/execute.c -o build/execute.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/prepare.c -o build/prepare.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/redirect.c -o build/redirect.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/parser.c -o build/parser.o
+mkdir -p build/
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/ast.c -o build/ast.o
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/lexer.c -o build/lexer.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/input.c -o build/input.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/quote.c -o build/quote.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/state.c -o build/state.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/alias.c -o build/alias.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/expand.c -o build/expand.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/arithmetic.c -o build/arithmetic.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/fields.c -o build/fields.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/pathname.c -o build/pathname.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/invocation.c -o build/invocation.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/character.c -o build/character.o
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -fsanitize=address,undefined -o build/tests/locale_probe tests/locale_probe.c
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -include tests/pathname_runtime_faults.h -c src/pathname.c -o build/tests/pathname-runtime-pathname.o
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -include tests/fields_faults.h -c src/fields.c -o build/tests/fields-fault-fields.o
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -include tests/fields_faults.h -c src/pathname.c -o build/tests/fields-fault-pathname.o
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -fsanitize=address,undefined -o build/tests/fields_faults tests/fields_faults.c build/tests/fields-fault-fields.o build/tests/fields-fault-pathname.o build/state.o build/alias.o build/character.o
+cc -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -fsanitize=address,undefined -o cshell build/main.o build/jobs.o build/traps.o build/builtin.o build/utility.o build/execute.o build/prepare.o build/redirect.o build/parser.o build/ast.o build/lexer.o build/input.o build/quote.o build/state.o build/alias.o build/expand.o build/arithmetic.o build/fields.o build/pathname.o build/invocation.o build/character.o
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -fsanitize=address,undefined -o build/tests/pathname_runtime_faults tests/pathname_runtime_faults.c build/tests/pathname-runtime-pathname.o build/main.o build/jobs.o build/traps.o build/builtin.o build/utility.o build/execute.o build/prepare.o build/redirect.o build/parser.o build/ast.o build/lexer.o build/input.o build/quote.o build/state.o build/alias.o build/expand.o build/arithmetic.o build/fields.o build/invocation.o build/character.o
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -fsanitize=address,undefined -o build/tests/fields_fixture tests/fields_fixture.c build/fields.o build/pathname.o build/expand.o build/quote.o build/arithmetic.o build/state.o build/alias.o build/lexer.o build/character.o
+python3 tests/fields.py build/tests/fields_fixture --fault-binary build/tests/fields_faults
+python3 tests/locale_pathname.py ./cshell build/tests/locale_probe build/tests/pathname_runtime_faults --record build/tests/locale-pathname-results.json
+PASS: symlink and trailing slash (string)
+PASS: symlink and trailing slash (file)
+PASS: symlink and trailing slash (stdin)
+PASS: quoted prefix and repeated slash (string)
+PASS: quoted prefix and repeated slash (file)
+PASS: quoted prefix and repeated slash (stdin)
+PASS: owned read versus search permissions (string)
+PASS: owned read versus search permissions (file)
+PASS: owned read versus search permissions (stdin)
+PASS: SH-003 unreadable unreadable (file)
+PASS: SH-003 unreadable ./unreadable (file)
+PASS: partial readdir EACCES (string)
+PASS: partial readdir EACCES (file)
+PASS: partial readdir EACCES (stdin)
+PASS: partial readdir ENOENT (string)
+PASS: partial readdir ENOENT (file)
+PASS: partial readdir ENOENT (stdin)
+PASS: readdir EIO project failure policy (string)
+PASS: readdir EIO project failure policy (file)
+PASS: readdir EIO project failure policy (stdin)
+SKIP: controlled collation elements/equivalence: localedef -i tests/locales/csh_067 -f UTF-8 csh_067.UTF-8 (supplied Linux locale) (owner CSH-067)
+PASS: single-shift source expansion read 8eb6 (string)
+PASS: single-shift source expansion read 8eb6 (file)
+PASS: single-shift source expansion read 8eb6 (stdin)
+PASS: single-shift alias reusable output 8eb6 (string)
+PASS: single-shift alias reusable output 8eb6 (file)
+PASS: single-shift alias reusable output 8eb6 (stdin)
+PASS: single-shift dollar escape protection 8eb6 (string)
+PASS: single-shift dollar escape protection 8eb6 (file)
+PASS: single-shift dollar escape protection 8eb6 (stdin)
+PASS: single-shift source expansion read 8fa2af (string)
+PASS: single-shift source expansion read 8fa2af (file)
+PASS: single-shift source expansion read 8fa2af (stdin)
+PASS: single-shift alias reusable output 8fa2af (string)
+PASS: single-shift alias reusable output 8fa2af (file)
+PASS: single-shift alias reusable output 8fa2af (stdin)
+PASS: single-shift dollar escape protection 8fa2af (string)
+PASS: single-shift dollar escape protection 8fa2af (file)
+PASS: single-shift dollar escape protection 8fa2af (stdin)
+PASS: alias diagnostic language policy C (string)
+PASS: alias diagnostic language policy C (file)
+PASS: alias diagnostic language policy C (stdin)
+PASS: unalias diagnostic language policy C (string)
+PASS: unalias diagnostic language policy C (file)
+PASS: unalias diagnostic language policy C (stdin)
+PASS: alias diagnostic language policy fr_FR.UTF-8 (string)
+PASS: alias diagnostic language policy fr_FR.UTF-8 (file)
+PASS: alias diagnostic language policy fr_FR.UTF-8 (stdin)
+PASS: unalias diagnostic language policy fr_FR.UTF-8 (string)
+PASS: unalias diagnostic language policy fr_FR.UTF-8 (file)
+PASS: unalias diagnostic language policy fr_FR.UTF-8 (stdin)
+CSH-067: 50 passed, 0 failed, 1 capability skips
+PASS: unset IFS trims and folds whitespace
+PASS: explicit default IFS
+PASS: empty IFS keeps whitespace
+PASS: whitespace-only IFS subset
+PASS: tab-only IFS retains spaces
+PASS: nonwhitespace delimiter empties
+PASS: single nonwhitespace delimiter
+PASS: two nonwhitespace delimiters
+PASS: mixed IFS trims around separators
+PASS: multiple nonwhitespace delimiters
+PASS: non-IFS whitespace is data
+PASS: literal delimiter never splits
+PASS: literal punctuation between expansions
+PASS: adjacent expansion whitespace
+PASS: adjacent expansion punctuation
+PASS: literal prefix and suffix
+PASS: literal prefix before leading delimiter
+PASS: literal suffix after trailing delimiter
+PASS: unset parameter disappears
+PASS: empty parameter disappears
+PASS: empty IFS still removes implicit null
+PASS: whitespace parameter disappears
+PASS: single quoted empty
+PASS: double quoted empty
+PASS: quoted empty parameter
+PASS: quoted absent parameter
+PASS: trailing quoted empty has position
+PASS: leading quoted empty has position
+PASS: quoted empty after nonwhite separator
+PASS: quoted empty before nonwhite separator
+PASS: empty between two split expansions
+PASS: quoted whitespace remains
+PASS: escaped whitespace remains
+PASS: quoted at preserves boundaries
+PASS: quoted at prefix and suffix
+PASS: quoted at without parameters
+PASS: quoted at absent between literals
+PASS: unquoted at splits each parameter
+PASS: quoted star joins with first IFS
+PASS: quoted star with empty IFS
+PASS: quoted star without parameters
+PASS: arithmetic eligible for splitting
+PASS: tilde result protected
+PASS: parameter default splitting
+PASS: quoted parameter default
+PASS: star matches sorted names and whitespace
+PASS: question mark
+PASS: bracket range
+PASS: bracket character class
+PASS: negated bracket
+PASS: quoted bracket member
+PASS: unquoted character class remains active
+PASS: quoted character class name is literal
+PASS: quoted class opening marker is literal
+PASS: quoted class closing marker is literal
+PASS: unquoted collating element remains active
+PASS: quoted collating marker is literal
+PASS: unquoted equivalence class remains active
+PASS: quoted equivalence marker is literal
+PASS: unmatched bracket literal
+PASS: no matching pathname preserved
+PASS: quoted star remains literal
+PASS: escaped star remains literal
+PASS: quoted question with active star
+PASS: quoted bracket text
+PASS: unmatched mixed quote pattern restores bytes
+PASS: expansion backslash escapes pattern metacharacter
+PASS: quoted literal backslash with active pattern
+PASS: expanded escaped star with active question
+PASS: pending expansion escape before quoted star
+PASS: escaped slash remains a pathname separator
+PASS: unmatched bracket leaves expansion backslash raw
+PASS: quoted variable suppresses pattern
+PASS: expanded pattern remains active
+PASS: splitting before pathname expansion
+PASS: set f suppresses only globbing
+PASS: set f removes quote syntax
+PASS: dotfiles require literal initial dot
+PASS: bracket dot cannot introduce dotfile
+PASS: quoted initial dot enables hidden match
+PASS: multiple wildcard directory components
+PASS: literal missing directory retains pattern
+PASS: nondirectory prefix retains pattern
+PASS: hidden directory not entered implicitly
+PASS: trailing slash filters files
+PASS: matching final literal must exist
+PASS: matching final literal remains sorted
+PASS: slash runs retained
+PASS: dot relative prefix retained
+PASS: absolute path matching
+PASS: directory symlink traversal
+PASS: directory symlink with trailing slash
+PASS: dangling symlink is pathname match
+PASS: dangling symlink cannot take trailing slash
+PASS: assignment suppresses splitting and globbing
+PASS: assignment preserves empty scalar
+PASS: pattern suppresses splitting and globbing
+PASS: pattern preserves empty scalar
+PASS: assignment removes protection syntax
+PASS: pattern retains quoted wildcard protection
+PASS: pattern protects bracket punctuation
+PASS: pattern protects quoted class name
+PASS: pattern preserves active syntax
+PASS: pattern preserves active expansion backslash
+PASS: pattern protects quoted expansion backslash
+PASS: pattern keeps pending escape before quoted star
+PASS: assignment preserves expansion backslash
+PASS: invalid API and idempotent cleanup
+PASS: multibyte IFS expansion boundaries
+PASS: allocation, I/O, interruption and ownership failures
+110/110 final-field checks passed
+python3 tests/locale_pathname.py ./cshell build/tests/locale_probe build/tests/pathname_runtime_faults --record build/tests/locale-pathname-results.json
+PASS: symlink and trailing slash (string)
+PASS: symlink and trailing slash (file)
+PASS: symlink and trailing slash (stdin)
+PASS: quoted prefix and repeated slash (string)
+PASS: quoted prefix and repeated slash (file)
+PASS: quoted prefix and repeated slash (stdin)
+PASS: owned read versus search permissions (string)
+PASS: owned read versus search permissions (file)
+PASS: owned read versus search permissions (stdin)
+PASS: SH-003 unreadable unreadable (file)
+PASS: SH-003 unreadable ./unreadable (file)
+PASS: partial readdir EACCES (string)
+PASS: partial readdir EACCES (file)
+PASS: partial readdir EACCES (stdin)
+PASS: partial readdir ENOENT (string)
+PASS: partial readdir ENOENT (file)
+PASS: partial readdir ENOENT (stdin)
+PASS: readdir EIO project failure policy (string)
+PASS: readdir EIO project failure policy (file)
+PASS: readdir EIO project failure policy (stdin)
+SKIP: controlled collation elements/equivalence: localedef -i tests/locales/csh_067 -f UTF-8 csh_067.UTF-8 (supplied Linux locale) (owner CSH-067)
+PASS: single-shift source expansion read 8eb6 (string)
+PASS: single-shift source expansion read 8eb6 (file)
+PASS: single-shift source expansion read 8eb6 (stdin)
+PASS: single-shift alias reusable output 8eb6 (string)
+PASS: single-shift alias reusable output 8eb6 (file)
+PASS: single-shift alias reusable output 8eb6 (stdin)
+PASS: single-shift dollar escape protection 8eb6 (string)
+PASS: single-shift dollar escape protection 8eb6 (file)
+PASS: single-shift dollar escape protection 8eb6 (stdin)
+PASS: single-shift source expansion read 8fa2af (string)
+PASS: single-shift source expansion read 8fa2af (file)
+PASS: single-shift source expansion read 8fa2af (stdin)
+PASS: single-shift alias reusable output 8fa2af (string)
+PASS: single-shift alias reusable output 8fa2af (file)
+PASS: single-shift alias reusable output 8fa2af (stdin)
+PASS: single-shift dollar escape protection 8fa2af (string)
+PASS: single-shift dollar escape protection 8fa2af (file)
+PASS: single-shift dollar escape protection 8fa2af (stdin)
+PASS: alias diagnostic language policy C (string)
+PASS: alias diagnostic language policy C (file)
+PASS: alias diagnostic language policy C (stdin)
+PASS: unalias diagnostic language policy C (string)
+PASS: unalias diagnostic language policy C (file)
+PASS: unalias diagnostic language policy C (stdin)
+PASS: alias diagnostic language policy fr_FR.UTF-8 (string)
+PASS: alias diagnostic language policy fr_FR.UTF-8 (file)
+PASS: alias diagnostic language policy fr_FR.UTF-8 (stdin)
+PASS: unalias diagnostic language policy fr_FR.UTF-8 (string)
+PASS: unalias diagnostic language policy fr_FR.UTF-8 (file)
+PASS: unalias diagnostic language policy fr_FR.UTF-8 (stdin)
+CSH-067: 50 passed, 0 failed, 1 capability skips
