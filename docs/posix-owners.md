@@ -94,12 +94,17 @@ and exact assertions, not whole utility families.
 
 The current qualification owner is
 [CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md).
-All 28 stable conditions in `tests/host_capability_limits.py` retain individual
+All 30 stable conditions in `tests/host_capability_limits.py` retain individual
 sources, actual environments, executable identities, reasons and separate
-implementation owners. [CSH-063 evidence](evidence/csh-063/README.md) preserves
+implementation owners. [CSH-064 evidence](evidence/csh-064/README.md) preserves
 204 strict unequal-ID predicate failures per tested vendor, unsupported tmpfs
 ACL setup and the separate `fakeowner` bind failures. Missing privileged Darwin,
 locales, controlled credentials and physical terminals remain capability limits.
+[CSH-064 acceptance reconciliation](evidence/csh-064-acceptance/README.md) also
+retains the historical project-owned probe timeout cleanup defect.
+[The validated cleanup repair](evidence/csh-064-completion/README.md) satisfies
+that acceptance gate; it remains separate from the vendor-owned
+utility/libc/platform conditions. The ticket owns the current acceptance status.
 
 The [current CSH-012 reconciliation](evidence-reconciliation-current.md) records
 completed scoped tickets and the remaining milestone gates. Qualification

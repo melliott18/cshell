@@ -4,16 +4,19 @@
 This supplements host_utilities.py; it never qualifies a complete host profile.
 """
 import argparse
+import ctypes
 import errno
 import json
 import os
 from pathlib import Path
 import platform
 import socket
+import signal
 import stat
 import subprocess
 import sys
 import tempfile
+import time
 
 from host_capability_limits import BASE
 from host_platform import credential_namespace, filesystem_identity
@@ -37,14 +40,66 @@ def credentials():
 
 
 def command(argv):
+    """One Linux watchdog owns the wrapper and its inherited process group.
+
+    Subreaping lets this single-threaded runner wait for adopted grandchildren,
+    instead of leaving them to container init after killing the wrapper. Waits
+    target only this invocation's group, never unrelated children of the runner.
+    """
+    libc = ctypes.CDLL(None, use_errno=True)
+    previous = ctypes.c_int()
+    if libc.prctl(37, ctypes.byref(previous), 0, 0, 0) != 0:  # PR_GET_CHILD_SUBREAPER
+        raise OSError(ctypes.get_errno(), 'get child subreaper')
+    if libc.prctl(36, 1, 0, 0, 0) != 0:  # PR_SET_CHILD_SUBREAPER
+        raise OSError(ctypes.get_errno(), 'enable child subreaper')
+    process = None
+    output, errors = b'', b''
+    status, timed_out = None, False
+    cleanup_errors = []
     try:
-        result = subprocess.run(argv, capture_output=True, timeout=5,
-                                env={'PATH': os.defpath, 'LC_ALL': 'C'})
-        return serial(dict(argv=argv, status=result.returncode,
-                           stdout=result.stdout, stderr=result.stderr))
-    except subprocess.TimeoutExpired as error:
-        return serial(dict(argv=argv, status=None, timeout_seconds=5,
-                           stdout=error.stdout, stderr=error.stderr))
+        process = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                   stdin=subprocess.DEVNULL, start_new_session=True,
+                                   env={'PATH': os.defpath, 'LC_ALL': 'C'})
+        try:
+            output, errors = process.communicate(timeout=5)
+            status = process.returncode
+        except subprocess.TimeoutExpired as error:
+            timed_out = True
+            output, errors = error.stdout or b'', error.stderr or b''
+    finally:
+        try:
+            if process is not None:
+                deadline = time.monotonic() + 2
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+                process.wait(timeout=max(0, deadline - time.monotonic()))
+                # The wrapper has exited, so its descendants are now adopted.
+                while True:
+                    try:
+                        pid, _ = os.waitpid(-process.pid, os.WNOHANG)
+                    except ChildProcessError:
+                        break
+                    if not pid:
+                        if time.monotonic() >= deadline:
+                            raise TimeoutError('could not reap probe descendants within 2s')
+                        time.sleep(0.01)
+        except (OSError, subprocess.SubprocessError) as error:
+            cleanup_errors.append(str(error))
+        finally:
+            if process is not None:
+                process.stdout.close()
+                process.stderr.close()
+            if libc.prctl(36, previous.value, 0, 0, 0) != 0:
+                cleanup_errors.append('restore child subreaper: ' + os.strerror(ctypes.get_errno()))
+    result = dict(argv=argv, status=None if cleanup_errors else status,
+                  stdout=output, stderr=errors)
+    if timed_out:
+        result['timeout_seconds'] = 5
+    if cleanup_errors:
+        result['cleanup_errors'] = cleanup_errors
+    return serial(result)
 
 
 def chmod_child(uid, target, utility):
@@ -61,7 +116,12 @@ def chmod_child(uid, target, utility):
             result['errno'] = error.errno
             result['diagnostic'] = str(error)
     else:
-        result['utility'] = command([utility, '600', target])
+        # Inherit the outer watchdog's group and deadline. A second watchdog
+        # here would race the privileged parent and orphan the selected utility.
+        completed = subprocess.run([utility, '600', target], capture_output=True)
+        result['utility'] = serial(dict(argv=[utility, '600', target],
+                                        status=completed.returncode,
+                                        stdout=completed.stdout, stderr=completed.stderr))
     result['after'] = metadata(target)
     print(json.dumps(result))
 

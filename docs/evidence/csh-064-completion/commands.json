@@ -1,0 +1,42 @@
+[
+  {
+    "command": "make -j4 cshell host-profile",
+    "environment": "native",
+    "status": 0
+  },
+  {
+    "command": "CSH_TEST_PATH=\"$PWD/build/host-profile/bin:$(getconf PATH)\" make test-runtime test-pty test-harness",
+    "environment": "native",
+    "status": 0
+  },
+  {
+    "command": "make -j4 cshell host-profile build/tests/host_utility_helper build/tests/host_printf_faults",
+    "environment": "Linux",
+    "status": 0
+  },
+  {
+    "command": "CSH_TEST_PATH=/work/build/host-profile/bin:/bin:/usr/bin make test-runtime test-pty test-harness test-host-probe-timeout",
+    "environment": "Linux",
+    "status": 0
+  },
+  {
+    "command": "python3 tests/host_probe_timeout.py --record /records/timeout.json",
+    "environment": "Linux original c0e61ef plus regression",
+    "status": 1
+  },
+  {
+    "command": "python3 tests/host_platform_probe.py --fixture-root /tmp --path /work/build/host-profile/bin:/bin:/usr/bin --record /tmp/overlay-fixed.json",
+    "environment": "Linux",
+    "status": 0
+  },
+  {
+    "command": "python3 tests/host_platform_probe.py --fixture-root /fixtures --path /work/build/host-profile/bin:/bin:/usr/bin --record /tmp/bind-fixed.json",
+    "environment": "Linux fakeowner",
+    "status": 1
+  },
+  {
+    "command": "docker run --rm --init --user 0 --mount \"type=bind,source=$PWD,target=/review,readonly\" --workdir /review cshell-test:local sh -c 'python3 --version >&2; python3 tests/host_probe_timeout.py --record /tmp/timeout.json >&2 && cat /tmp/timeout.json'",
+    "environment": "Debian 12, Python 3.11.2",
+    "status": 0
+  }
+]
