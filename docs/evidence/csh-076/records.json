@@ -1,0 +1,70 @@
+[
+  {
+    "file": "native-qualified.json.gz",
+    "uncompressed_sha256": "640745314302d770794ba8df925e6445e08c400eecb3dedd49ee1e59a23926c8",
+    "platform": "macOS-14.8.7-arm64-arm-64bit",
+    "totals": {
+      "passed": 355,
+      "failed": 0
+    },
+    "source_sha256": "fbe0c7096cd992b10ddeba90a74e947c4aeb0551b2994c3cd71d09802eed918f"
+  },
+  {
+    "file": "native-contracts.json.gz",
+    "uncompressed_sha256": "47a827b746b7c86bae7208b392b53c81183c411b6b0759d37b8ead9d002e7e89",
+    "platform": "macOS-14.8.7-arm64-arm-64bit",
+    "totals": {
+      "passed": 355,
+      "failed": 20
+    },
+    "source_sha256": "fbe0c7096cd992b10ddeba90a74e947c4aeb0551b2994c3cd71d09802eed918f"
+  },
+  {
+    "file": "native-profile.json.gz",
+    "uncompressed_sha256": "7a60694d232dde42760aae25ff384c4e627156171ef6c41d8ef4274013599a66",
+    "platform": "macOS-14.8.7-arm64-arm-64bit",
+    "totals": {
+      "passed": 1162,
+      "failed": 0,
+      "gaps": 0
+    },
+    "source_sha256": "47eb44d055573a327abd54ad5b094f6bc5c625e69f1ef480d5278f7725456e33"
+  },
+  {
+    "file": "native-first.json.gz",
+    "uncompressed_sha256": "c325b1953b18b1b2a65ba3cf804e814db6033f7baeda42f0171718e2cf9b8ff9",
+    "platform": "macOS-14.8.7-arm64-arm-64bit",
+    "totals": {
+      "passed": 340,
+      "failed": 30
+    },
+    "source_sha256": "81cfc3a607fd53bad81198e4fcc666ad7eb5ca74382cc7b610ba70ea2595b820"
+  },
+  {
+    "file": "linux-first.json.gz",
+    "uncompressed_sha256": "a85ede7c60c61468ada1b6b9fb78d3b92192ef2696ff55d7084361d4ff74fe50",
+    "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+    "totals": {
+      "passed": 350,
+      "failed": 50
+    },
+    "source_sha256": "81cfc3a607fd53bad81198e4fcc666ad7eb5ca74382cc7b610ba70ea2595b820"
+  },
+  {
+    "file": "linux-qualified-intermediate.json.gz",
+    "uncompressed_sha256": "17dcacf23af3389a91d859ba6a3209966421051e9ccd2eab0c80c4abb142d688",
+    "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+    "totals": {
+      "passed": 395,
+      "failed": 0
+    },
+    "source_sha256": "81b590fe78e0c552ec9a65fb20a4fdd12ecb99463c8d62bf8783dbb056a1d783"
+  },
+  {
+    "file": "linux-locales-intermediate.json.gz",
+    "uncompressed_sha256": "e933d7c2404915f1c0f3c000b878af651a20d43288f41b1e094a6ba1577597ca",
+    "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+    "totals": null,
+    "source_sha256": null
+  }
+]

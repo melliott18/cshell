@@ -1337,3 +1337,13 @@ rows and unassigned conditional prerequisite reports. Regression checks exercise
 these failure cases and the runner's emitted ownership without invoking utilities.
 This is an accounting check, not a conformance suite. See the
 [current individual contracts](host-system-inventory.md#current-contract-ownership).
+
+## Locale and message catalog providers
+
+`make test-host-catalogs` verifies the CSH-076 bounded subset and is included in
+`test-host-profile`. Setup requires GNU gettext in the provisioning PATH; Linux
+needs the locales package's sources and charmaps. The runner uses private Linux
+locales and independently checks installed Darwin locale identities.
+`make test-host-catalog-contracts` additionally runs the strict vendor-gap
+reproducers and currently fails on both recorded hosts. See the
+[clause map, bounds, providers and open contracts](host-locale-catalogs.md).

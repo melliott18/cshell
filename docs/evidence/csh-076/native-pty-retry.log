@@ -1,0 +1,47 @@
+python3 tests/smoke.py ./build/tests/jobs_lifecycle --suite tests/fixtures/job-notifications.json --timeout 30
+Suite: job-notifications [module] candidate=/Users/mitchell/.codex/worktrees/csh-076-locale-catalogs/cshell/build/tests/jobs_lifecycle
+PASS: CSH-057 notification timing during foreground execution
+Result: 1 passed, 0 failed, 0 skipped
+python3 tests/smoke.py ./cshell --suite build/tests/jobs-pty.json
+Suite: shell job control [replacement] candidate=/Users/mitchell/.codex/worktrees/csh-076-locale-catalogs/cshell/cshell
+PASS: interactive ignored signals with monitor +m
+PASS: interactive ignored signals with monitor -m
+PASS: nested foreground startup and restoration
+PASS: nested background startup and restoration
+PASS: foreground Ctrl-C and restored terminal
+PASS: pipeline shares foreground group and Ctrl-C
+PASS: Ctrl-Z jobs bg fg Ctrl-C
+PASS: repeated background resumes preserve prompt and terminal
+PASS: pipeline stop resume group and wait
+PASS: stopped job modes saved and shell modes restored
+PASS: monitor transitions and unavailable jobs
+PASS: terminal descriptor survives redirection operands
+PASS: background terminal reader stops and fg can read
+PASS: stopped jobs survive monitor toggles
+PASS: current previous and ambiguous job operands
+PASS: background completion and wait status
+PASS: unmonitored job stays unmonitored after enabling monitor
+PASS: CSH-057 session leader reclaims initially foreign foreground
+PASS: CSH-057 SIGSTOP inside builtin then CONT
+PASS: CSH-057 SIGSTOP inside builtin leaves child stopped until fg
+PASS: CSH-057 background pipeline group membership
+PASS: CSH-057 background compound group membership
+PASS: CSH-057 TSTP retains ID then successful fg consumes it
+PASS: CSH-057 TTIN retains ID then successful fg consumes it
+PASS: CSH-057 TTOU retains ID then successful fg consumes it
+PASS: CSH-057 STOP retains ID then successful fg consumes it
+PASS: CSH-057 foreground compound discards pending commands on stop
+PASS: CSH-057 numeric stop-like exit still completes a compound
+PASS: CSH-057 suspension does not trigger errexit
+PASS: CSH-057 compound fg stop resume without replay
+Result: 30 passed, 0 failed, 0 skipped
+python3 tests/smoke.py ./build/tests/execute_faults --suite tests/fixtures/jobs-fault-pty.json
+Suite: job terminal failure cleanup [module] candidate=/Users/mitchell/.codex/worktrees/csh-076-locale-catalogs/cshell/build/tests/execute_faults
+FAIL: process group and terminal handoff restoration failures
+  PTY timeout after 5s waiting for process exit; no step completed; session cleanup requested
+  PTY cleanup failed: Command '['/bin/ps', '-axo', 'pid=,stat=']' timed out after 0.020194916985929012 seconds
+  PTY cleanup could not kill group 99031: [Errno 1] Operation not permitted
+  status: expected 0, got -9
+  output: expected b'terminal job failure cleanup passed\n' (36 bytes), got b'' (0 captured bytes)
+Result: 0 passed, 1 failed, 0 skipped
+make: *** [test-jobs-pty] Error 1

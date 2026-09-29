@@ -174,6 +174,7 @@ def main():
     parser.add_argument('--path', default=os.environ.get('CSH_TEST_PATH', os.defpath),
                         help='Explicit utility search path, also used inside the shell')
     parser.add_argument('--strict-gaps', action='store_true')
+    parser.add_argument('--locale-path', type=Path, help='Private Linux locale directory from host-locales')
     parser.add_argument('--boundaries', action='store_true')
     parser.add_argument('--printf-faults', type=Path,
                         help='Test-only instrumented copy of the profile printf source')
@@ -188,6 +189,8 @@ def main():
     parser.add_argument('--sanitizer', action='store_true',
                         help='Set ASan/UBSan in the actual case environment; disable Linux leak scanning')
     args = parser.parse_args()
+    if args.locale_path and platform.system() == 'Linux':
+        os.environ['LOCPATH'] = str(args.locale_path.resolve())
     if args.controlled_identities and (not args.boundaries or platform.system() != 'Linux' or os.geteuid() != 0):
         parser.error('--controlled-identities requires --boundaries and Linux root')
     if args.unequal_acl and not args.controlled_identities:
@@ -322,6 +325,8 @@ def main():
                         print('FAIL: host: ' + name + ' (fixture setup)', flush=True)
                         continue
                     fixture = {'args': [], 'stdin': '', 'env': {'PATH': args.path}}
+                    if args.locale_path and platform.system() == 'Linux':
+                        fixture['env']['LOCPATH'] = str(args.locale_path.resolve())
                     fixture['env'].update(case.get('env', {}))
                     if args.sanitizer:
                         fixture['env'].update({'ASAN_OPTIONS': 'halt_on_error=1' +
@@ -411,6 +416,7 @@ def main():
                                 if args.printf_faults else None),
               'limits': {'timeout_seconds': 5, 'combined_output_bytes': 65536,
                          'child_resources': 'smoke.child_limits'},
+              'locale_path': str(args.locale_path) if args.locale_path else None,
               'setup': 'tests/host_utilities.py:setup', 'totals': totals, 'cases': records}
     if platform.system() == 'Linux' and shutil.which('dpkg-query'):
         result['package_versions'] = subprocess.check_output(

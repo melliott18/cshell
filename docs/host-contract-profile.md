@@ -212,3 +212,10 @@ defect. [The completion record](evidence/csh-064-completion/README.md) validates
 process-group cleanup and descendant reaping through the actual nested path.
 The ticket records acceptance; this repair is independent of the external
 capabilities required for vendor requalification.
+
+## CSH-076 locale and catalog subset
+
+[Provider setup, independent assertions and exact unqualified contracts](host-locale-catalogs.md)
+cover gencat/gettext/iconv/locale/localedef/msgfmt/ngettext. `make test-host-profile`
+includes the bounded strict subset; `make test-host-catalog-contracts` also runs
+retained failing vendor reproducers. Full utility contracts remain open.

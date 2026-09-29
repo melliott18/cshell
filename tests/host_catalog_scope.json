@@ -1,0 +1,39 @@
+{
+  "owner": "CSH-076",
+  "qualified_boundary": "Only the enumerated fixtures, modes, provider identities and supplied capabilities. No complete utility or full-system qualification.",
+  "excluded_cases": {
+    "Darwin": {
+      "gencat/stdin-stdout": "Apple gencat rejects the required '-' stream operands. Strict reproducer retained by --scope all.",
+      "iconv/invalid-policy": "Apple iconv writes the invalid-character diagnostic with -s. Strict reproducer retained by --scope all.",
+      "locale/environment": "Apple locale double-quotes LANG and LC_ALL in the C-locale report; strict prescribed-format assertion retained by --scope all.",
+      "gencat/unknown-escape": "Apple gencat diagnoses a valid unrecognized escape but returns success, violating XCU 1.4 STDERR. Output q remains required in the strict reproducer."
+    },
+    "Linux": {
+      "gencat/merge-replace-delete": "glibc gencat retains a set deleted from an existing catalog by $delset. Strict assertion still requires deletion.",
+      "iconv/invalid-policy": "glibc iconv emits an invalid-character diagnostic despite -s. Strict assertion still requires no stderr."
+    }
+  },
+  "unqualified": {
+    "gencat": [
+      "Default NL_SETD, implementation limits and I/O or allocation exhaustion; diagnostic locales; native stream operands"
+    ],
+    "gettext": [
+      "Catalog search permutations beyond the supplied domains/locales; translated diagnostics; output failures and resource ceilings"
+    ],
+    "ngettext": [
+      "Additional plural expressions and integer boundaries; catalog search and diagnostic permutations; output failures and resource ceilings"
+    ],
+    "msgfmt": [
+      "Additional format checks, LC_CTYPE charset fallback, no-c-format precedence, diagnostic locales, output failures and resource ceilings"
+    ],
+    "iconv": [
+      "Charmap joins, exhaustive advertised encodings, invalid-character option policy, interrupted I/O and resource ceilings"
+    ],
+    "locale": [
+      "Complete keyword/category value and quoting grammar, listing completeness against vendor databases, diagnostics and output failures"
+    ],
+    "localedef": [
+      "Darwin locale source/charmap generation; public-locale installation; -c warning retention, -u, all category grammar, limits and fault atomicity; category success reporting"
+    ]
+  }
+}

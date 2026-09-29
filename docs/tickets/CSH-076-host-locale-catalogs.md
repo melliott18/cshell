@@ -1,11 +1,11 @@
 # CSH-076: Qualify host locale and message catalog utilities
 
-- Status: ready
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: Assigned when work starts
+- Branch: test/CSH-076-host-locale-catalogs
 - Issue: [#148](https://github.com/melliott18/cshell/issues/148)
 
 ## Goal
@@ -52,17 +52,17 @@ Conditional prerequisite reports also owned here: `U-035/German-locale`, `U-040/
 
 ## Acceptance criteria
 
-- [ ] Select each required exec-accessible provider, supply missing packages/services,
+- [x] Select each required exec-accessible provider, supply missing packages/services,
   and retain exact PATH, realpath, executable hash, package and environment identity.
 - [ ] Map every applicable page section and common default to clause-derived
   assertions or an individually justified disposition; repair required-contract
   failures. Selected examples alone do not complete a utility contract.
-- [ ] Resolve each assigned retained condition with its required capability and
+- [x] Resolve each assigned retained condition with its required capability and
   strict evidence, or transfer that individual condition to a concrete open owner.
   Preserve vendor ownership, setup failures and failed assertions separately.
 - [ ] Verify public cshell dispatch and direct exec access, exact output/status and
   relevant effects, with zero gap allowances for every declared qualified subset.
-- [ ] Update the inventory, current ownership manifest and clause maps with the
+- [x] Update the inventory, current ownership manifest and clause maps with the
   exact qualification boundary; keep stock-host, qualified subset and full-system
   claims separate.
 
@@ -78,6 +78,34 @@ processes and disposable files/services and verify cleanup after failure/timeout
 
 ## Implementation notes/evidence
 
-Work has not started. CSH-068 transfers ownership only; it supplies no new vendor
-implementation, service, privileged host or physical terminal. CSH-064 remains
-done for its bounded capability work and repaired probe cleanup.
+Implementation is in progress on the branch above. The [bounded profile](../host-locale-catalogs.md)
+supplies GNU catalog providers with native option/escape adapters, private Linux
+locales, independent catalog consumers and byte oracles, all five dispatch modes,
+strict failure reproducers and per-section accounting. Full contracts remain open;
+this ticket must not be closed from these selected witnesses.
+
+[Separate native and Linux evidence](../evidence/csh-076/README.md) records the
+current native subset (355 passing cases), current existing host profile
+(1,162 passes, zero gaps), and an intermediate Linux subset (395 passes) with
+five verified private locales. The final native C adapter replacement has not
+been revalidated on Linux: the shared Docker engine returned HTTP 500 before
+the final rebuild. These source identities are deliberately kept separate.
+
+The four conditional locale prerequisites are supplied on the recorded hosts;
+that does not qualify printf, sed or find behavior owned by other tickets.
+The [machine clause map](../../tests/host_catalog_clauses.json) and
+[scope manifest](../../tests/host_catalog_scope.json) keep every remaining
+section and provider defect owned here. Required strict failures include native
+gencat stream operands/escape diagnostics, native locale reporting, iconv `-s`
+on both hosts, and glibc gencat deletion of existing sets. No failure is converted
+to a passing assertion. Darwin generated-locale support, further normative
+sections/defaults and final Linux validation remain outstanding.
+
+`make test-runtime` passed 3,950 native cases under the selected PATH. The first
+PTY run and focused retry fail in the unchanged terminal handoff fault fixture;
+logs retain the five-second timeout and cleanup diagnostics. This is a distinct
+validation failure, not a claimed catalog defect or a passing PTY result.
+
+The remaining native `make test-runtime-pty` target passes 33 cases when run
+independently. A stock-PATH control reproduces the terminal handoff timeout;
+its cause remains unestablished.

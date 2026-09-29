@@ -1,0 +1,910 @@
+{
+  "schema_version": 1,
+  "owner": "CSH-076",
+  "scope": "tests/host_catalog_scope.json",
+  "note": "Each witness is bounded. Open dispositions do not qualify a section or a complete page. Unselected XSI NLSPATH behavior is conditional, not passing.",
+  "utilities": {
+    "gencat": {
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/gencat.html",
+      "sections": {
+        "DESCRIPTION": {
+          "witnesses": [
+            "gencat/source-grammar",
+            "gencat/merge-replace-delete",
+            "gencat/unknown-escape"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "OPTIONS": {
+          "witnesses": [
+            "gencat/source-grammar",
+            "gencat/merge-replace-delete",
+            "gencat/unknown-escape"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "OPERANDS": {
+          "witnesses": [
+            "gencat/source-grammar",
+            "gencat/merge-replace-delete",
+            "gencat/unknown-escape"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "STDIN": {
+          "witnesses": [
+            "gencat/stdin-stdout"
+          ],
+          "disposition": "Explicit file/stdin witnesses only; unused-stdin offset and inherited-descriptor assertions remain open."
+        },
+        "INPUT FILES": {
+          "witnesses": [
+            "gencat/source-grammar",
+            "gencat/merge-replace-delete"
+          ],
+          "disposition": "Bounded private effects or independently authored input files. Unspecified binary formats are validated through libc catgets or Python GNUTranslations; complete failure atomicity remains open."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "witnesses": [
+            "gencat/utf8"
+          ],
+          "disposition": "Selected environment witnesses only; diagnostic catalogs and remaining locale combinations open. XSI NLSPATH lookup is outside the selected profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "witnesses": [],
+          "disposition": "Open: inherited ignore/default dispositions, signals during I/O and vendor temporary-file cleanup. Harness timeout cleanup is not evidence of the utility contract."
+        },
+        "STDOUT": {
+          "witnesses": [
+            "gencat/source-grammar",
+            "gencat/merge-replace-delete",
+            "gencat/unknown-escape"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "STDERR": {
+          "witnesses": [
+            "gencat/usage-error"
+          ],
+          "disposition": "Exact empty stderr on success and nonempty diagnostic on selected errors. Diagnostic wording is unspecified; successful diagnostics are not silently accepted."
+        },
+        "OUTPUT FILES": {
+          "witnesses": [
+            "gencat/source-grammar",
+            "gencat/merge-replace-delete"
+          ],
+          "disposition": "Bounded private effects or independently authored input files. Unspecified binary formats are validated through libc catgets or Python GNUTranslations; complete failure atomicity remains open."
+        },
+        "EXTENDED DESCRIPTION": {
+          "witnesses": [
+            "gencat/source-grammar",
+            "gencat/merge-replace-delete",
+            "gencat/unknown-escape"
+          ],
+          "disposition": "Bounded source grammar; complete grammar and limits remain open."
+        },
+        "EXIT STATUS": {
+          "witnesses": [
+            "gencat/source-grammar",
+            "gencat/merge-replace-delete",
+            "gencat/unknown-escape"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "witnesses": [
+            "gencat/missing-file"
+          ],
+          "disposition": "Selected errors only. Further operand continuation, I/O failures, cleanup and resource exhaustion remain open; msgfmt output after -cv failure is unspecified."
+        }
+      },
+      "cases": [
+        "gencat/merge-replace-delete",
+        "gencat/missing-file",
+        "gencat/source-grammar",
+        "gencat/stdin-stdout",
+        "gencat/unknown-escape",
+        "gencat/usage-error",
+        "gencat/utf8"
+      ]
+    },
+    "gettext": {
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/gettext.html",
+      "sections": {
+        "DESCRIPTION": {
+          "witnesses": [
+            "gettext/environment-domain",
+            "gettext/option-domain",
+            "gettext/operand-precedence",
+            "gettext/escape-lookup",
+            "gettext/c-escapes",
+            "gettext/separation",
+            "gettext/no-newline",
+            "gettext/missing-message"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "OPTIONS": {
+          "witnesses": [
+            "gettext/environment-domain",
+            "gettext/option-domain",
+            "gettext/operand-precedence",
+            "gettext/escape-lookup",
+            "gettext/c-escapes",
+            "gettext/separation",
+            "gettext/no-newline",
+            "gettext/missing-message"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "OPERANDS": {
+          "witnesses": [
+            "gettext/environment-domain",
+            "gettext/option-domain",
+            "gettext/operand-precedence",
+            "gettext/escape-lookup",
+            "gettext/c-escapes",
+            "gettext/separation",
+            "gettext/no-newline",
+            "gettext/missing-message"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "STDIN": {
+          "witnesses": [],
+          "disposition": "Explicit file/stdin witnesses only; unused-stdin offset and inherited-descriptor assertions remain open."
+        },
+        "INPUT FILES": {
+          "witnesses": [
+            "gettext/environment-domain"
+          ],
+          "disposition": "Bounded private effects or independently authored input files. Unspecified binary formats are validated through libc catgets or Python GNUTranslations; complete failure atomicity remains open."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "witnesses": [
+            "gettext/LANG",
+            "gettext/LC_MESSAGES",
+            "gettext/LC_ALL-precedence",
+            "gettext/LANGUAGE",
+            "gettext/C-fallback",
+            "gettext/output-encoding"
+          ],
+          "disposition": "Selected environment witnesses only; diagnostic catalogs and remaining locale combinations open. XSI NLSPATH lookup is outside the selected profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "witnesses": [],
+          "disposition": "Open: inherited ignore/default dispositions, signals during I/O and vendor temporary-file cleanup. Harness timeout cleanup is not evidence of the utility contract."
+        },
+        "STDOUT": {
+          "witnesses": [
+            "gettext/environment-domain",
+            "gettext/option-domain",
+            "gettext/operand-precedence",
+            "gettext/escape-lookup",
+            "gettext/c-escapes",
+            "gettext/separation",
+            "gettext/no-newline",
+            "gettext/missing-message"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "STDERR": {
+          "witnesses": [
+            "gettext/usage-error"
+          ],
+          "disposition": "Exact empty stderr on success and nonempty diagnostic on selected errors. Diagnostic wording is unspecified; successful diagnostics are not silently accepted."
+        },
+        "OUTPUT FILES": {
+          "witnesses": [
+            "gettext/environment-domain"
+          ],
+          "disposition": "Bounded private effects or independently authored input files. Unspecified binary formats are validated through libc catgets or Python GNUTranslations; complete failure atomicity remains open."
+        },
+        "EXTENDED DESCRIPTION": {
+          "witnesses": [],
+          "disposition": "None on the normative page; no additional grammar contract."
+        },
+        "EXIT STATUS": {
+          "witnesses": [
+            "gettext/environment-domain",
+            "gettext/option-domain",
+            "gettext/operand-precedence",
+            "gettext/escape-lookup",
+            "gettext/c-escapes",
+            "gettext/separation",
+            "gettext/no-newline",
+            "gettext/missing-message"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "witnesses": [
+            "gettext/usage-error"
+          ],
+          "disposition": "Selected errors only. Further operand continuation, I/O failures, cleanup and resource exhaustion remain open; msgfmt output after -cv failure is unspecified."
+        }
+      },
+      "cases": [
+        "gettext/C-fallback",
+        "gettext/LANG",
+        "gettext/LANGUAGE",
+        "gettext/LC_ALL-precedence",
+        "gettext/LC_MESSAGES",
+        "gettext/c-escapes",
+        "gettext/end-options",
+        "gettext/environment-domain",
+        "gettext/escape-lookup",
+        "gettext/literal-escapes",
+        "gettext/missing-domain",
+        "gettext/missing-message",
+        "gettext/no-newline",
+        "gettext/operand-precedence",
+        "gettext/option-domain",
+        "gettext/output-encoding",
+        "gettext/s-default-literal",
+        "gettext/separation",
+        "gettext/usage-error"
+      ]
+    },
+    "iconv": {
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/iconv.html",
+      "sections": {
+        "DESCRIPTION": {
+          "witnesses": [
+            "iconv/latin1",
+            "iconv/reverse",
+            "iconv/gb18030",
+            "iconv/gb18030-reverse",
+            "iconv/ordered-files",
+            "iconv/list",
+            "iconv/invalid-policy"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "OPTIONS": {
+          "witnesses": [
+            "iconv/latin1",
+            "iconv/reverse",
+            "iconv/gb18030",
+            "iconv/gb18030-reverse",
+            "iconv/ordered-files",
+            "iconv/list",
+            "iconv/invalid-policy"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "OPERANDS": {
+          "witnesses": [
+            "iconv/latin1",
+            "iconv/reverse",
+            "iconv/gb18030",
+            "iconv/gb18030-reverse",
+            "iconv/ordered-files",
+            "iconv/list",
+            "iconv/invalid-policy"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "STDIN": {
+          "witnesses": [
+            "iconv/stdin-dash",
+            "iconv/latin1",
+            "iconv/empty"
+          ],
+          "disposition": "Explicit file/stdin witnesses only; unused-stdin offset and inherited-descriptor assertions remain open."
+        },
+        "INPUT FILES": {
+          "witnesses": [
+            "iconv/ordered-files"
+          ],
+          "disposition": "Bounded private effects or independently authored input files. Unspecified binary formats are validated through libc catgets or Python GNUTranslations; complete failure atomicity remains open."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "witnesses": [
+            "iconv/locale-default--f",
+            "iconv/locale-default--t"
+          ],
+          "disposition": "Selected environment witnesses only; diagnostic catalogs and remaining locale combinations open. XSI NLSPATH lookup is outside the selected profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "witnesses": [],
+          "disposition": "Open: inherited ignore/default dispositions, signals during I/O and vendor temporary-file cleanup. Harness timeout cleanup is not evidence of the utility contract."
+        },
+        "STDOUT": {
+          "witnesses": [
+            "iconv/latin1",
+            "iconv/reverse",
+            "iconv/gb18030",
+            "iconv/gb18030-reverse",
+            "iconv/ordered-files",
+            "iconv/list",
+            "iconv/invalid-policy"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "STDERR": {
+          "witnesses": [
+            "iconv/usage-error"
+          ],
+          "disposition": "Exact empty stderr on success and nonempty diagnostic on selected errors. Diagnostic wording is unspecified; successful diagnostics are not silently accepted."
+        },
+        "OUTPUT FILES": {
+          "witnesses": [
+            "iconv/ordered-files"
+          ],
+          "disposition": "Bounded private effects or independently authored input files. Unspecified binary formats are validated through libc catgets or Python GNUTranslations; complete failure atomicity remains open."
+        },
+        "EXTENDED DESCRIPTION": {
+          "witnesses": [],
+          "disposition": "None on the normative page; no additional grammar contract."
+        },
+        "EXIT STATUS": {
+          "witnesses": [
+            "iconv/latin1",
+            "iconv/reverse",
+            "iconv/gb18030",
+            "iconv/gb18030-reverse",
+            "iconv/ordered-files",
+            "iconv/list",
+            "iconv/invalid-policy"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "witnesses": [
+            "iconv/missing-file"
+          ],
+          "disposition": "Selected errors only. Further operand continuation, I/O failures, cleanup and resource exhaustion remain open; msgfmt output after -cv failure is unspecified."
+        }
+      },
+      "cases": [
+        "iconv/empty",
+        "iconv/gb18030",
+        "iconv/gb18030-reverse",
+        "iconv/invalid-policy",
+        "iconv/latin1",
+        "iconv/list",
+        "iconv/locale-default--f",
+        "iconv/locale-default--t",
+        "iconv/missing-file",
+        "iconv/ordered-files",
+        "iconv/reverse",
+        "iconv/stdin-dash",
+        "iconv/usage-error"
+      ]
+    },
+    "locale": {
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/locale.html",
+      "sections": {
+        "DESCRIPTION": {
+          "witnesses": [
+            "locale/keyword",
+            "locale/named-keyword",
+            "locale/category-keyword",
+            "locale/both-options",
+            "locale/operand-order",
+            "locale/list",
+            "locale/charmaps",
+            "locale/environment"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "OPTIONS": {
+          "witnesses": [
+            "locale/keyword",
+            "locale/named-keyword",
+            "locale/category-keyword",
+            "locale/both-options",
+            "locale/operand-order",
+            "locale/list",
+            "locale/charmaps",
+            "locale/environment"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "OPERANDS": {
+          "witnesses": [
+            "locale/keyword",
+            "locale/named-keyword",
+            "locale/category-keyword",
+            "locale/both-options",
+            "locale/operand-order",
+            "locale/list",
+            "locale/charmaps",
+            "locale/environment"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "STDIN": {
+          "witnesses": [],
+          "disposition": "Explicit file/stdin witnesses only; unused-stdin offset and inherited-descriptor assertions remain open."
+        },
+        "INPUT FILES": {
+          "witnesses": [],
+          "disposition": "Bounded private effects or independently authored input files. Unspecified binary formats are validated through libc catgets or Python GNUTranslations; complete failure atomicity remains open."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "witnesses": [
+            "locale/LANG",
+            "locale/category",
+            "locale/LC_ALL"
+          ],
+          "disposition": "Selected environment witnesses only; diagnostic catalogs and remaining locale combinations open. XSI NLSPATH lookup is outside the selected profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "witnesses": [],
+          "disposition": "Open: inherited ignore/default dispositions, signals during I/O and vendor temporary-file cleanup. Harness timeout cleanup is not evidence of the utility contract."
+        },
+        "STDOUT": {
+          "witnesses": [
+            "locale/keyword",
+            "locale/named-keyword",
+            "locale/category-keyword",
+            "locale/both-options",
+            "locale/operand-order",
+            "locale/list",
+            "locale/charmaps",
+            "locale/environment"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "STDERR": {
+          "witnesses": [
+            "locale/usage-error"
+          ],
+          "disposition": "Exact empty stderr on success and nonempty diagnostic on selected errors. Diagnostic wording is unspecified; successful diagnostics are not silently accepted."
+        },
+        "OUTPUT FILES": {
+          "witnesses": [],
+          "disposition": "Bounded private effects or independently authored input files. Unspecified binary formats are validated through libc catgets or Python GNUTranslations; complete failure atomicity remains open."
+        },
+        "EXTENDED DESCRIPTION": {
+          "witnesses": [],
+          "disposition": "None on the normative page; no additional grammar contract."
+        },
+        "EXIT STATUS": {
+          "witnesses": [
+            "locale/keyword",
+            "locale/named-keyword",
+            "locale/category-keyword",
+            "locale/both-options",
+            "locale/operand-order",
+            "locale/list",
+            "locale/charmaps",
+            "locale/environment"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "witnesses": [
+            "locale/usage-error"
+          ],
+          "disposition": "Selected errors only. Further operand continuation, I/O failures, cleanup and resource exhaustion remain open; msgfmt output after -cv failure is unspecified."
+        }
+      },
+      "cases": [
+        "locale/LANG",
+        "locale/LC_ALL",
+        "locale/both-options",
+        "locale/category",
+        "locale/category-keyword",
+        "locale/charmaps",
+        "locale/environment",
+        "locale/keyword",
+        "locale/list",
+        "locale/named-keyword",
+        "locale/operand-order",
+        "locale/usage-error"
+      ]
+    },
+    "localedef": {
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/localedef.html",
+      "sections": {
+        "DESCRIPTION": {
+          "witnesses": [
+            "localedef/private-fr_FR",
+            "localedef/private-de_DE",
+            "localedef/private-en_US",
+            "localedef/private-zh_CN",
+            "localedef/stdin-source",
+            "localedef/error-no-output"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "OPTIONS": {
+          "witnesses": [
+            "localedef/private-fr_FR",
+            "localedef/private-de_DE",
+            "localedef/private-en_US",
+            "localedef/private-zh_CN",
+            "localedef/stdin-source",
+            "localedef/error-no-output"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "OPERANDS": {
+          "witnesses": [
+            "localedef/private-fr_FR",
+            "localedef/private-de_DE",
+            "localedef/private-en_US",
+            "localedef/private-zh_CN",
+            "localedef/stdin-source",
+            "localedef/error-no-output"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "STDIN": {
+          "witnesses": [
+            "localedef/stdin-source"
+          ],
+          "disposition": "Explicit file/stdin witnesses only; unused-stdin offset and inherited-descriptor assertions remain open."
+        },
+        "INPUT FILES": {
+          "witnesses": [
+            "localedef/private-fr_FR",
+            "localedef/private-de_DE",
+            "localedef/private-en_US",
+            "localedef/private-zh_CN"
+          ],
+          "disposition": "Bounded private effects or independently authored input files. Unspecified binary formats are validated through libc catgets or Python GNUTranslations; complete failure atomicity remains open."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "witnesses": [],
+          "disposition": "Selected environment witnesses only; diagnostic catalogs and remaining locale combinations open. XSI NLSPATH lookup is outside the selected profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "witnesses": [],
+          "disposition": "Open: inherited ignore/default dispositions, signals during I/O and vendor temporary-file cleanup. Harness timeout cleanup is not evidence of the utility contract."
+        },
+        "STDOUT": {
+          "witnesses": [
+            "localedef/private-fr_FR",
+            "localedef/private-de_DE",
+            "localedef/private-en_US",
+            "localedef/private-zh_CN",
+            "localedef/stdin-source",
+            "localedef/error-no-output"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "STDERR": {
+          "witnesses": [
+            "localedef/usage-error"
+          ],
+          "disposition": "Exact empty stderr on success and nonempty diagnostic on selected errors. Diagnostic wording is unspecified; successful diagnostics are not silently accepted."
+        },
+        "OUTPUT FILES": {
+          "witnesses": [
+            "localedef/private-fr_FR",
+            "localedef/private-de_DE",
+            "localedef/private-en_US",
+            "localedef/private-zh_CN"
+          ],
+          "disposition": "Bounded private effects or independently authored input files. Unspecified binary formats are validated through libc catgets or Python GNUTranslations; complete failure atomicity remains open."
+        },
+        "EXTENDED DESCRIPTION": {
+          "witnesses": [
+            "localedef/private-fr_FR",
+            "localedef/private-de_DE",
+            "localedef/private-en_US",
+            "localedef/private-zh_CN",
+            "localedef/stdin-source",
+            "localedef/error-no-output"
+          ],
+          "disposition": "Bounded source grammar; complete grammar and limits remain open."
+        },
+        "EXIT STATUS": {
+          "witnesses": [
+            "localedef/private-fr_FR",
+            "localedef/private-de_DE",
+            "localedef/private-en_US",
+            "localedef/private-zh_CN",
+            "localedef/stdin-source",
+            "localedef/error-no-output"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "witnesses": [
+            "localedef/error-no-output"
+          ],
+          "disposition": "Selected errors only. Further operand continuation, I/O failures, cleanup and resource exhaustion remain open; msgfmt output after -cv failure is unspecified."
+        }
+      },
+      "cases": [
+        "localedef/error-no-output",
+        "localedef/private-de_DE",
+        "localedef/private-en_US",
+        "localedef/private-fr_FR",
+        "localedef/private-zh_CN",
+        "localedef/stdin-source",
+        "localedef/usage-error"
+      ]
+    },
+    "msgfmt": {
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/msgfmt.html",
+      "sections": {
+        "DESCRIPTION": {
+          "witnesses": [
+            "msgfmt/output",
+            "msgfmt/fuzzy",
+            "msgfmt/search",
+            "msgfmt/suffix",
+            "msgfmt/domains",
+            "msgfmt/multiple-inputs",
+            "msgfmt/newline-check",
+            "msgfmt/format-check"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "OPTIONS": {
+          "witnesses": [
+            "msgfmt/output",
+            "msgfmt/fuzzy",
+            "msgfmt/search",
+            "msgfmt/suffix",
+            "msgfmt/domains",
+            "msgfmt/multiple-inputs",
+            "msgfmt/newline-check",
+            "msgfmt/format-check"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "OPERANDS": {
+          "witnesses": [
+            "msgfmt/output",
+            "msgfmt/fuzzy",
+            "msgfmt/search",
+            "msgfmt/suffix",
+            "msgfmt/domains",
+            "msgfmt/multiple-inputs",
+            "msgfmt/newline-check",
+            "msgfmt/format-check"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "STDIN": {
+          "witnesses": [],
+          "disposition": "Explicit file/stdin witnesses only; unused-stdin offset and inherited-descriptor assertions remain open."
+        },
+        "INPUT FILES": {
+          "witnesses": [
+            "msgfmt/output",
+            "msgfmt/fuzzy",
+            "msgfmt/domains",
+            "msgfmt/multiple-inputs"
+          ],
+          "disposition": "Bounded private effects or independently authored input files. Unspecified binary formats are validated through libc catgets or Python GNUTranslations; complete failure atomicity remains open."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "witnesses": [],
+          "disposition": "Selected environment witnesses only; diagnostic catalogs and remaining locale combinations open. XSI NLSPATH lookup is outside the selected profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "witnesses": [],
+          "disposition": "Open: inherited ignore/default dispositions, signals during I/O and vendor temporary-file cleanup. Harness timeout cleanup is not evidence of the utility contract."
+        },
+        "STDOUT": {
+          "witnesses": [
+            "msgfmt/output",
+            "msgfmt/fuzzy",
+            "msgfmt/search",
+            "msgfmt/suffix",
+            "msgfmt/domains",
+            "msgfmt/multiple-inputs",
+            "msgfmt/newline-check",
+            "msgfmt/format-check"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "STDERR": {
+          "witnesses": [
+            "msgfmt/usage-error"
+          ],
+          "disposition": "Exact empty stderr on success and nonempty diagnostic on selected errors. Diagnostic wording is unspecified; successful diagnostics are not silently accepted."
+        },
+        "OUTPUT FILES": {
+          "witnesses": [
+            "msgfmt/output",
+            "msgfmt/fuzzy",
+            "msgfmt/domains",
+            "msgfmt/multiple-inputs"
+          ],
+          "disposition": "Bounded private effects or independently authored input files. Unspecified binary formats are validated through libc catgets or Python GNUTranslations; complete failure atomicity remains open."
+        },
+        "EXTENDED DESCRIPTION": {
+          "witnesses": [
+            "msgfmt/output",
+            "msgfmt/fuzzy",
+            "msgfmt/search",
+            "msgfmt/suffix",
+            "msgfmt/domains",
+            "msgfmt/multiple-inputs",
+            "msgfmt/newline-check",
+            "msgfmt/format-check"
+          ],
+          "disposition": "Bounded source grammar; complete grammar and limits remain open."
+        },
+        "EXIT STATUS": {
+          "witnesses": [
+            "msgfmt/output",
+            "msgfmt/fuzzy",
+            "msgfmt/search",
+            "msgfmt/suffix",
+            "msgfmt/domains",
+            "msgfmt/multiple-inputs",
+            "msgfmt/newline-check",
+            "msgfmt/format-check"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "witnesses": [
+            "msgfmt/missing-file"
+          ],
+          "disposition": "Selected errors only. Further operand continuation, I/O failures, cleanup and resource exhaustion remain open; msgfmt output after -cv failure is unspecified."
+        }
+      },
+      "cases": [
+        "msgfmt/bad-syntax",
+        "msgfmt/domains",
+        "msgfmt/format-check",
+        "msgfmt/fuzzy",
+        "msgfmt/missing-file",
+        "msgfmt/multiple-inputs",
+        "msgfmt/newline-check",
+        "msgfmt/output",
+        "msgfmt/search",
+        "msgfmt/suffix",
+        "msgfmt/usage-error"
+      ]
+    },
+    "ngettext": {
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ngettext.html",
+      "sections": {
+        "DESCRIPTION": {
+          "witnesses": [
+            "ngettext/plural-0",
+            "ngettext/plural-1",
+            "ngettext/plural-2",
+            "ngettext/plural-3",
+            "ngettext/plural-101",
+            "ngettext/plural-escapes",
+            "ngettext/missing-singular",
+            "ngettext/missing-plural"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "OPTIONS": {
+          "witnesses": [
+            "ngettext/plural-0",
+            "ngettext/plural-1",
+            "ngettext/plural-2",
+            "ngettext/plural-3",
+            "ngettext/plural-101",
+            "ngettext/plural-escapes",
+            "ngettext/missing-singular",
+            "ngettext/missing-plural"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "OPERANDS": {
+          "witnesses": [
+            "ngettext/plural-0",
+            "ngettext/plural-1",
+            "ngettext/plural-2",
+            "ngettext/plural-3",
+            "ngettext/plural-101",
+            "ngettext/plural-escapes",
+            "ngettext/missing-singular",
+            "ngettext/missing-plural"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "STDIN": {
+          "witnesses": [],
+          "disposition": "Explicit file/stdin witnesses only; unused-stdin offset and inherited-descriptor assertions remain open."
+        },
+        "INPUT FILES": {
+          "witnesses": [
+            "ngettext/plural-1"
+          ],
+          "disposition": "Bounded private effects or independently authored input files. Unspecified binary formats are validated through libc catgets or Python GNUTranslations; complete failure atomicity remains open."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "witnesses": [
+            "ngettext/option-domain",
+            "ngettext/operand-domain"
+          ],
+          "disposition": "Selected environment witnesses only; diagnostic catalogs and remaining locale combinations open. XSI NLSPATH lookup is outside the selected profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "witnesses": [],
+          "disposition": "Open: inherited ignore/default dispositions, signals during I/O and vendor temporary-file cleanup. Harness timeout cleanup is not evidence of the utility contract."
+        },
+        "STDOUT": {
+          "witnesses": [
+            "ngettext/plural-0",
+            "ngettext/plural-1",
+            "ngettext/plural-2",
+            "ngettext/plural-3",
+            "ngettext/plural-101",
+            "ngettext/plural-escapes",
+            "ngettext/missing-singular",
+            "ngettext/missing-plural"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "STDERR": {
+          "witnesses": [
+            "ngettext/usage-error"
+          ],
+          "disposition": "Exact empty stderr on success and nonempty diagnostic on selected errors. Diagnostic wording is unspecified; successful diagnostics are not silently accepted."
+        },
+        "OUTPUT FILES": {
+          "witnesses": [
+            "ngettext/plural-1"
+          ],
+          "disposition": "Bounded private effects or independently authored input files. Unspecified binary formats are validated through libc catgets or Python GNUTranslations; complete failure atomicity remains open."
+        },
+        "EXTENDED DESCRIPTION": {
+          "witnesses": [],
+          "disposition": "None on the normative page; no additional grammar contract."
+        },
+        "EXIT STATUS": {
+          "witnesses": [
+            "ngettext/plural-0",
+            "ngettext/plural-1",
+            "ngettext/plural-2",
+            "ngettext/plural-3",
+            "ngettext/plural-101",
+            "ngettext/plural-escapes",
+            "ngettext/missing-singular",
+            "ngettext/missing-plural"
+          ],
+          "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "witnesses": [
+            "ngettext/usage-error"
+          ],
+          "disposition": "Selected errors only. Further operand continuation, I/O failures, cleanup and resource exhaustion remain open; msgfmt output after -cv failure is unspecified."
+        }
+      },
+      "cases": [
+        "ngettext/literal-escapes",
+        "ngettext/missing-plural",
+        "ngettext/missing-singular",
+        "ngettext/operand-domain",
+        "ngettext/option-domain",
+        "ngettext/plural-0",
+        "ngettext/plural-1",
+        "ngettext/plural-101",
+        "ngettext/plural-2",
+        "ngettext/plural-3",
+        "ngettext/plural-escapes",
+        "ngettext/usage-error"
+      ]
+    }
+  },
+  "common_defaults": {
+    "1.1": {
+      "disposition": "Function equivalence: catgets independently consumes gencat output; Python reads msgfmt output. gettext catalogs and iconv bytes are authored independently. Complete libc equivalence remains open."
+    },
+    "1.2": {
+      "disposition": "Finite argv/files/output only; implementation limit ceilings and exhaustion are open. Runtime bounds are recorded separately, never claimed as utility maxima."
+    },
+    "1.3": {
+      "disposition": "Grammar notation informs fixture input; not a separately executable assertion."
+    },
+    "1.4": {
+      "disposition": "Per-page rows map streams, files, options, errors, environment and effects. Operand ordering and byte conversion have witnesses. Unused stdin offsets, eight-bit environment names, interruption, temporary-file cleanup, error continuation and remaining syntax guidelines remain open."
+    },
+    "1.5": {
+      "disposition": "Large-file offsets and files over 2 GiB remain unqualified; catalog tests use bounded disposable inputs."
+    },
+    "1.6": {
+      "disposition": "All seven selected providers are invoked directly by absolute pathname, through public cshell PATH dispatch in string/file/stdin modes, and by explicit cshell exec. Missing providers fail setup."
+    }
+  }
+}

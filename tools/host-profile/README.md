@@ -7,8 +7,8 @@ cshell's builtin allocation. All tools are real exec-accessible programs;
 
 | Host | Selected replacements | Provisioning |
 | --- | --- | --- |
-| macOS | Standalone FreeBSD printf with adapters; Homebrew `gtest` and `g[` | `brew install coreutils`; prefixed binaries must be on the provisioning process's PATH |
-| Debian/Ubuntu | Standalone FreeBSD printf with adapters; BusyBox kill | `apt-get install build-essential python3 ed busybox locales acl`; generate `fr_FR.UTF-8` |
+| macOS | Standalone FreeBSD printf with adapters; Homebrew `gtest` and `g[`; adapted GNU gettext/catalog programs | `brew install coreutils gettext`; coreutils prefixed binaries and the gettext package bin directory must be on the provisioning process's PATH |
+| Debian/Ubuntu | Standalone FreeBSD printf with adapters; BusyBox kill; adapted GNU gettext/catalog programs | `apt-get install build-essential python3 ed busybox locales acl gettext`; `host-locales` generates private locales |
 
 Other scoped commands use `os.defpath` without additional symlinks, preserving
 cshell's PATH-associated pwd builtin selection. In particular, echo remains the system
@@ -242,3 +242,10 @@ control. It checks the deadline, strict timeout record, measured IDs, disappeara
 of every owned PID (including zombies), and survival of an unrelated child.
 Only private files and processes are used. See
 [CSH-064 completion](../../docs/evidence/csh-064-completion/README.md) for validation.
+
+## CSH-076 locale and catalog subset
+
+[Provider setup, independent assertions and exact unqualified contracts](../../docs/host-locale-catalogs.md)
+cover gencat/gettext/iconv/locale/localedef/msgfmt/ngettext. `make test-host-profile`
+includes the bounded strict subset; `make test-host-catalog-contracts` also runs
+retained failing vendor reproducers. Full utility contracts remain open.
