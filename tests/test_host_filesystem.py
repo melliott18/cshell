@@ -93,7 +93,7 @@ class FilesystemHarnessTests(unittest.TestCase):
             self.assertIn('status mismatch', record['errors'])
             self.assertTrue(record['cleanup'])
 
-    def test_archive_oracle_rejects_duplicate_and_wrong_link_graph(self):
+    def test_archive_oracle_rejects_duplicate_members(self):
         import tarfile
         from host_filesystem_extended import archive_errors
         with tempfile.TemporaryDirectory() as root:

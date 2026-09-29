@@ -62,7 +62,7 @@ def cases(system=None):
                   effects={'renamed/file': {'content': b'archive payload\n'}, 'bundle/file': {'type': 'absent'}})
     yield witness('pax', 'unmatched-pattern', ['-f', 'archive', 'absent'], 'archives', archive_input='types', status='nonzero', err='nonempty')
     yield witness('pax', 'ustar-types-write', ['-w', '-x', 'ustar', '-f', 'archive', 'bundle'], 'archives',
-                  archive_output='types', env={'COPYFILE_DISABLE': '1'})
+                  archive_output='types', provider_audit=True, env={'COPYFILE_DISABLE': '1'})
     yield witness('pax', 'ustar-append', ['-w', '-a', '-x', 'ustar', '-f', 'archive', 'data'], 'archives',
                   archive_input='single', archive_output='append', env={'COPYFILE_DISABLE': '1'})
     yield witness('pax', 'truncated-member', ['-r', '-f', 'archive'], 'archives', archive_input='truncated', status='nonzero', err='nonempty', provider_audit=True)

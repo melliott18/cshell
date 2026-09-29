@@ -124,7 +124,9 @@ The declared extension excludes strict unresolved provider contracts, whose
 expectations remain in `--provider-audit`. Native Apple `find` silently succeeds
 on a logical cycle; Apple `pax` returns zero for a truncated member, broken pipe
 and file-size-limit write error. Those four contracts remain unqualified under
-CSH-079. Linux ENOSPC for pax is separately audited. The selected profile has
+CSH-079. Linux pax also writes type bits in the 12-bit ustar mode field; strict
+type-graph writing remains in the provider audit on both platforms (native
+passes). Linux ENOSPC for pax passes in its separate audit; Linux pax EFBIG fails. The selected profile has
 zero allowances; diagnostic audit results cannot qualify a failed contract.
 
 [Extended evidence](evidence/csh-072/extended/README.md) retains each result,
