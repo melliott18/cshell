@@ -1,0 +1,86 @@
+name: Host text qualification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native:
+    name: Text subset (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Supply Linux providers and locale
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential binutils locales ed
+          sudo localedef -i en_US -f UTF-8 en_US.UTF-8
+      - name: Build and verify qualification harness
+        run: make -j2 cshell test-host-inventory test-host-text-harness
+      - name: Strict declared subset
+        run: make test-host-text
+      - name: Record unqualified audit failures separately
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          python3 tests/host_text.py ./cshell --boundaries --audit --record build/tests/host-text-audit.json
+          status=$?
+          echo "$status" > build/tests/host-text-audit.status
+          exit "$status"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: text-${{ matrix.os }}
+          path: build/tests/host-text-*
+          if-no-files-found: error
+
+  docker:
+    name: Text subset (Debian with capacity fixture)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build selected Linux environment
+        run: |
+          docker build -t cshell-text:ci .
+          mkdir -p build/text-evidence
+          chmod 777 build/text-evidence
+          docker image inspect cshell-text:ci > build/text-evidence/image.json
+      - name: Strict declared subset with disposable ENOSPC
+        run: |
+          docker run --rm --init --tmpfs /capacity:rw,size=1m,mode=1777 \
+            -v "$PWD/build/text-evidence:/evidence" cshell-text:ci sh -c '
+              make test-host-inventory test-host-text-harness &&
+              python3 tests/host_text.py ./cshell --boundaries --capacity-root /capacity --record /evidence/subset.json'
+      - name: Record unqualified audit failures separately
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          docker run --rm --init --tmpfs /capacity:rw,size=1m,mode=1777 \
+            -v "$PWD/build/text-evidence:/evidence" cshell-text:ci \
+            python3 tests/host_text.py ./cshell --boundaries --audit --capacity-root /capacity --record /evidence/audit.json
+          status=$?
+          echo "$status" > build/text-evidence/audit.status
+          exit "$status"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: text-debian-capacity
+          path: build/text-evidence/
+          if-no-files-found: error

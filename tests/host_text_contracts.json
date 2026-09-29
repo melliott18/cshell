@@ -32,7 +32,7 @@
       "owner": "CSH-073",
       "related_owner": "CSH-074",
       "witness": "host_text_boundaries.py",
-      "boundary": "cat/head/cmp default termination plus ed HUP buffer save. ed SIGINT recovery is strict audit evidence, owned jointly with CSH-074, and currently fails its stdout contract. Native blocked writes and general EINTR retry remain open."
+      "boundary": "cat/head/cmp owned default SIGINT/TERM/SIGPIPE, stop/resume data preservation, Linux blocked-write TERM; tee -i survival with exact post-signal output/file; ed HUP buffer save. ed INT stdout contract remains strict failed audit owned with CSH-074. Actual EINTR-return retry and native blocked-write observation remain open."
     }
   },
   "utilities": [
@@ -47,6 +47,7 @@
         "bytes": 13170
       },
       "cases": [
+        "cat/eight-mib-bytes",
         "cat/bytes",
         "cat/ordered-stdin",
         "cat/unbuffered",
@@ -79,7 +80,7 @@
         },
         "ASYNCHRONOUS EVENTS": {
           "status": "partial",
-          "reason": "Owned FIFO TERM and Linux observed blocked-write TERM; native blocked writes remain unqualified."
+          "reason": "Portable owned SIGINT/SIGPIPE, observed stop/continue with exact remaining data for cat/head/cmp; tee default SIGINT and -i continued copy. Existing TERM and Linux blocked-write probes remain separate. No EINTR-return retry claim."
         },
         "STDOUT": {
           "status": "partial",
@@ -106,7 +107,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Non-regular inputs beyond owned FIFO, -u latency, same-file policy, read faults and native filesystem capacity; termination is not EINTR recovery."
+      "remaining_contracts": "All bytes through 8 MiB, ordered/repeated stdin, -u invocation, FIFO TERM/INT, SIGPIPE, stopped-state/resumed copying and Linux blocked-write TERM/ENOSPC are covered. Native capacity, -u latency, read errors and actual EINTR/short-write recovery remain open."
     },
     {
       "utility": "cksum",
@@ -192,6 +193,7 @@
         "bytes": 14673
       },
       "cases": [
+        "cmp/byte-line-boundary",
         "cmp/equal",
         "cmp/silent-difference",
         "cmp/eof",
@@ -226,7 +228,7 @@
         },
         "ASYNCHRONOUS EVENTS": {
           "status": "partial",
-          "reason": "Owned FIFO TERM and Linux observed blocked-write TERM; native blocked writes remain unqualified."
+          "reason": "Portable owned SIGINT/SIGPIPE, observed stop/continue with exact remaining data for cat/head/cmp; tee default SIGINT and -i continued copy. Existing TERM and Linux blocked-write probes remain separate. No EINTR-return retry claim."
         },
         "STDOUT": {
           "status": "partial",
@@ -253,7 +255,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Default char-versus-byte output audit, non-C messages, read errors, wider offset range and non-regular files beyond owned FIFO remain open."
+      "remaining_contracts": "Equal/difference/EOF, independent byte and line numbers, offset 2147483649, FIFO TERM/INT, SIGPIPE and stop/resume comparison are covered. Non-C messages, read errors, wider offset range and further non-regular inputs remain open."
     },
     {
       "utility": "comm",
@@ -343,6 +345,9 @@
         "bytes": 15132
       },
       "cases": [
+        "csplit/regex-positive-offset",
+        "csplit/regex-negative-offset",
+        "csplit/line-repetition",
         "csplit/line",
         "csplit/regex-prefix",
         "csplit/discard",
@@ -404,7 +409,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Line and regex/discard splits, cleanup and keep are bounded; signed regex offsets, repetition, NAME_MAX and suffix exhaustion, SIGINT cleanup remain open."
+      "remaining_contracts": "Line, BRE/discard, signed regex offsets, repetition, custom names, cleanup and keep are bounded. NAME_MAX, suffix exhaustion and SIGINT cleanup remain open."
     },
     {
       "utility": "cut",
@@ -417,6 +422,7 @@
         "bytes": 18138
       },
       "cases": [
+        "cut/mib-line-tail",
         "cut/b-overlap",
         "cut/c-overlap",
         "cut/fields",
@@ -479,7 +485,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "C-locale bytes/characters/fields covered; UTF-8 character and -n requirements have strict audit cases; arbitrary delimiters, unlimited lines and further locales remain open."
+      "remaining_contracts": "C-locale bytes/characters/fields and a 1 MiB line are covered; UTF-8 -c and -b -n remain strict audit failures on selected GNU providers. Further delimiters, locales and resource failures remain open."
     },
     {
       "utility": "diff",
@@ -638,6 +644,8 @@
         "bytes": 14326
       },
       "cases": [
+        "fold/backspace-column",
+        "fold/mib-byte-fold",
         "fold/default",
         "fold/bytes",
         "fold/spaces",
@@ -698,7 +706,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Default, byte, space and carriage-return folding covered; multibyte widths, backspace/tab combinations and interruptions remain open."
+      "remaining_contracts": "Default, byte, space, carriage return, backspace-column folding and a 1 MiB byte-fold input are covered. Multibyte widths, tab combinations and interruptions remain open."
     },
     {
       "utility": "head",
@@ -711,6 +719,7 @@
         "bytes": 13766
       },
       "cases": [
+        "head/million-lines",
         "head/default",
         "head/lines",
         "head/bytes",
@@ -746,7 +755,7 @@
         },
         "ASYNCHRONOUS EVENTS": {
           "status": "partial",
-          "reason": "Owned FIFO TERM and Linux observed blocked-write TERM; native blocked writes remain unqualified."
+          "reason": "Portable owned SIGINT/SIGPIPE, observed stop/continue with exact remaining data for cat/head/cmp; tee default SIGINT and -i continued copy. Existing TERM and Linux blocked-write probes remain separate. No EINTR-return retry claim."
         },
         "STDOUT": {
           "status": "partial",
@@ -773,7 +782,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Default/explicit bytes/lines and multi-file headings covered; INT32+1 audit measures a provider count boundary without declaring a portable maximum; wider counts and native blocked-write observation remain open."
+      "remaining_contracts": "Counts through INT32, byte/line multi-file headers, one million output lines, FIFO TERM/INT, SIGPIPE and stop/resume copying are covered. INT32+1 audit, larger counts, native blocked-write observation and further I/O faults remain open."
     },
     {
       "utility": "join",
@@ -786,6 +795,9 @@
         "bytes": 19362
       },
       "cases": [
+        "join/duplicate-cross-product",
+        "join/unpaired-only",
+        "join/empty-selected-field",
         "join/default",
         "join/unpaired",
         "join/fields",
@@ -845,7 +857,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Default, unpaired and selected fields covered; duplicate-key cross products, -v, -e, stdin and locale collation remain open."
+      "remaining_contracts": "Default/unpaired/selected fields, duplicate-key cross products, -v and -e are covered. Stdin and non-C collation remain open."
     },
     {
       "utility": "od",
@@ -858,6 +870,12 @@
         "bytes": 41054
       },
       "cases": [
+        "od/skip-decimal",
+        "od/skip-octal",
+        "od/skip-hex",
+        "od/concatenated-skip",
+        "od/skip-beyond-eof",
+        "od/sparse-marker",
         "od/octets",
         "od/skip-count",
         "od/missing-input"
@@ -916,7 +934,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Unsigned byte values and skip/count covered; other integer sizes/byte order, floats, named/multibyte characters, repeated-block suppression, offsets and partial-element padding remain open. XSI short-form options are unselected."
+      "remaining_contracts": "Byte values, explicit decimal/octal/hex skips, concatenated input offsets, EOF errors and sparse offset 2147483648 are covered. Other integer/float/character types, repeat suppression and partial-element padding remain open; XSI short forms unselected."
     },
     {
       "utility": "paste",
@@ -929,6 +947,7 @@
         "bytes": 14746
       },
       "cases": [
+        "paste/escaped-delimiters",
         "paste/parallel",
         "paste/serial-delimiters",
         "paste/stdin-twice",
@@ -988,7 +1007,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Parallel/serial/custom delimiter cycling and repeated stdin covered; escaped delimiters, empty-file combinations and I/O faults remain open."
+      "remaining_contracts": "Parallel, serial, custom cycling, escaped delimiters and repeated stdin are covered. Empty-file combinations and further I/O faults remain open."
     },
     {
       "utility": "pr",
@@ -1073,6 +1092,11 @@
         "bytes": 47997
       },
       "cases": [
+        "sed/append-insert-change",
+        "sed/hold-exchange",
+        "sed/write-read",
+        "sed/delete-first-pattern-line",
+        "sed/mib-pattern-hold-transform",
         "sed/substitution",
         "sed/hold",
         "sed/range",
@@ -1138,7 +1162,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Basic substitution, hold/range/next/branch/translation/script input and multibyte class repetition covered; UTF-8 backreference has a strict audit; remaining editing commands, addresses, BRE combinations and allocation exhaustion remain open."
+      "remaining_contracts": "Substitution, hold/exchange, N/P/D, range, branch, translation, append/insert/change, read/write/script files, UTF-8 class repetition and 1 MiB transformed pattern/hold are covered. Multibyte backreferences remain strict audit evidence; other addresses/BRE combinations and allocation exhaustion remain open."
     },
     {
       "utility": "sort",
@@ -1151,6 +1175,9 @@
         "bytes": 31084
       },
       "cases": [
+        "sort/dictionary",
+        "sort/numeric-field-reverse",
+        "sort/large-record-order",
         "sort/default",
         "sort/numeric",
         "sort/reverse",
@@ -1215,7 +1242,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "C ordering, numeric/reverse/unique/field/case/check/merge/output covered; locale numeric/collation, dictionary/nonprinting/blanks, key modifiers, large merge/temp-file failures and same-input output remain open."
+      "remaining_contracts": "C/numeric/reverse/unique/field/case/dictionary/check/merge/output and 200000-record ordering are covered. Non-C collation, further modifiers, temp-file/resource failures and same-input output remain open."
     },
     {
       "utility": "split",
@@ -1228,6 +1255,7 @@
         "bytes": 14847
       },
       "cases": [
+        "split/mib-units",
         "split/lines",
         "split/bytes",
         "split/empty",
@@ -1288,7 +1316,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Lines, bytes, suffixes, empty input and suffix exhaustion covered; default 1000, k/m units, NAME_MAX, I/O faults and signal cleanup remain open."
+      "remaining_contracts": "Line/byte/suffix/empty/exhaustion and 1 MiB units with exact trailing piece are covered. Default 1000, k units, NAME_MAX, I/O faults and signal cleanup remain open."
     },
     {
       "utility": "strings",
@@ -1301,6 +1329,9 @@
         "bytes": 12615
       },
       "cases": [
+        "strings/offset-decimal",
+        "strings/offset-octal",
+        "strings/offset-hex",
         "strings/all",
         "strings/length",
         "strings/missing-input"
@@ -1359,7 +1390,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Whole-file scan and minimum lengths covered; decimal/octal/hex offsets, default implementation-defined scan scope, multibyte printable policy and I/O faults remain open."
+      "remaining_contracts": "Whole-file scan, minimum lengths and exact decimal/octal/hex offsets are covered. Default implementation-defined scanning, multibyte printability and I/O faults remain open."
     },
     {
       "utility": "tail",
@@ -1372,6 +1403,8 @@
         "bytes": 18552
       },
       "cases": [
+        "tail/from-byte",
+        "tail/large-input-buffer",
         "tail/lines",
         "tail/from-start",
         "tail/bytes",
@@ -1434,7 +1467,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Line/byte/start/end/zero and sparse offset covered; -r has strict audit, -f requires a future append/rotation witness, input buffer minimum and further non-regular inputs remain open."
+      "remaining_contracts": "Line/byte/start/end/zero counts, sparse offset and 128 KiB suffix of a larger input are covered. -r remains audit evidence, -f needs append/rotation witnesses, pipe-buffer minimum and further non-regular inputs remain open."
     },
     {
       "utility": "tee",
@@ -1447,6 +1480,7 @@
         "bytes": 11507
       },
       "cases": [
+        "tee/eight-mib-copies",
         "tee/files",
         "tee/append",
         "tee/thirteen",
@@ -1478,8 +1512,8 @@
           "reason": "C/POSIX locale selected; UTF-8 explicitly measured for sed/wc/cut cases. LANG/LC_ALL precedence, further categories and localized diagnostics remain open; XSI NLSPATH excluded."
         },
         "ASYNCHRONOUS EVENTS": {
-          "status": "open",
-          "reason": "No per-utility signal assertion; default actions (or page-specific signal policy) remain open."
+          "status": "partial",
+          "reason": "Portable owned SIGINT/SIGPIPE, observed stop/continue with exact remaining data for cat/head/cmp; tee default SIGINT and -i continued copy. Existing TERM and Linux blocked-write probes remain separate. No EINTR-return retry claim."
         },
         "STDOUT": {
           "status": "partial",
@@ -1506,7 +1540,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Byte copies, append, literal - filename, 13 outputs and continue-on-open-error covered; -i, unbuffered latency, short writes and mid-stream file errors remain open."
+      "remaining_contracts": "8 MiB exact stdout/file copies, append, literal - filename, 13 outputs, open-error continuation, default SIGINT and ignored SIGINT with continued exact copying are covered. Unbuffered latency, short writes and mid-stream file errors remain open."
     },
     {
       "utility": "tr",
@@ -1519,6 +1553,10 @@
         "bytes": 26943
       },
       "cases": [
+        "tr/octal-byte-range",
+        "tr/repeat-array",
+        "tr/character-complement-C",
+        "tr/mib-transform",
         "tr/translate",
         "tr/delete",
         "tr/squeeze",
@@ -1580,7 +1618,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "C translation/deletion/squeeze/complement/classes covered; -C, equivalence classes, repeats/ranges, multibyte support, octal ambiguity and output errors remain open."
+      "remaining_contracts": "C translation/deletion/squeeze/complement/-C/classes/octal ranges/repeated-array syntax and 1 MiB transformation are covered. Equivalence classes, multibyte behavior, additional octal ambiguities and output errors remain open."
     },
     {
       "utility": "tsort",
@@ -1664,6 +1702,7 @@
         "bytes": 12836
       },
       "cases": [
+        "unexpand/existing-tabs",
         "unexpand/leading",
         "unexpand/all",
         "unexpand/stops",
@@ -1736,6 +1775,9 @@
         "bytes": 16090
       },
       "cases": [
+        "uniq/counts",
+        "uniq/combined-skips",
+        "uniq/large-adjacent-run",
         "uniq/adjacent",
         "uniq/duplicates",
         "uniq/unique",
@@ -1798,7 +1840,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Adjacent/nonadjacent duplicate, -d/-u, field/character skipping and output file covered; -c format, combined skips, multibyte characters and I/O faults remain open."
+      "remaining_contracts": "Adjacent/nonadjacent duplicates, -c/-d/-u, combined field/character skips, output file and a 200000-line duplicate run are covered. Multibyte characters and I/O faults remain open."
     },
     {
       "utility": "wc",
@@ -1811,6 +1853,7 @@
         "bytes": 13468
       },
       "cases": [
+        "wc/eight-mib-byte-count",
         "wc/counts",
         "wc/bytes",
         "wc/lines",
@@ -1872,7 +1915,71 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Default counts, bytes, newlines, totals and UTF-8 characters covered; other locale whitespace, word boundaries, read/write faults and interruptions remain open."
+      "remaining_contracts": "Default counts, newlines, totals, UTF-8 characters and 8 MiB byte count are covered. Further locale whitespace, word boundaries and I/O faults remain open."
     }
-  ]
+  ],
+  "coverage_groups": {
+    "transformations": [
+      "join/duplicate-cross-product",
+      "join/unpaired-only",
+      "join/empty-selected-field",
+      "paste/escaped-delimiters",
+      "sort/dictionary",
+      "sort/numeric-field-reverse",
+      "uniq/counts",
+      "uniq/combined-skips",
+      "tr/octal-byte-range",
+      "tr/repeat-array",
+      "tr/character-complement-C",
+      "sed/append-insert-change",
+      "sed/hold-exchange",
+      "sed/write-read",
+      "sed/delete-first-pattern-line",
+      "fold/backspace-column",
+      "unexpand/existing-tabs"
+    ],
+    "offsets": [
+      "strings/offset-decimal",
+      "strings/offset-octal",
+      "strings/offset-hex",
+      "od/skip-decimal",
+      "od/skip-octal",
+      "od/skip-hex",
+      "od/concatenated-skip",
+      "od/skip-beyond-eof",
+      "od/sparse-marker",
+      "cmp/byte-line-boundary",
+      "csplit/regex-positive-offset",
+      "csplit/regex-negative-offset",
+      "csplit/line-repetition",
+      "tail/from-byte"
+    ],
+    "large-inputs": [
+      "cat/eight-mib-bytes",
+      "tee/eight-mib-copies",
+      "wc/eight-mib-byte-count",
+      "sed/mib-pattern-hold-transform",
+      "cut/mib-line-tail",
+      "tr/mib-transform",
+      "fold/mib-byte-fold",
+      "head/million-lines",
+      "tail/large-input-buffer",
+      "split/mib-units",
+      "sort/large-record-order",
+      "uniq/large-adjacent-run"
+    ],
+    "interruptions": [
+      "cat/fifo-int",
+      "cat/pipe-broken",
+      "cat/fifo-stop-resume",
+      "head/fifo-int",
+      "head/pipe-broken",
+      "head/fifo-stop-resume",
+      "cmp/fifo-int",
+      "cmp/pipe-broken",
+      "cmp/fifo-stop-resume",
+      "tee/int-default",
+      "tee/int-ignore"
+    ]
+  }
 }

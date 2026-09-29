@@ -96,6 +96,61 @@ class TextEvidenceTests(unittest.TestCase):
             self.assertTrue(row['leader_reaped'])
             self.assertTrue(row['fixture_removed'])
 
+    def test_large_file_oracle_rejects_corruption_truncation_and_trailing_data(self):
+        from host_text_data import check_recipe, write_recipe, MAX_FILE
+        from host_text_extended import repeat
+        with tempfile.TemporaryDirectory() as root:
+            path=Path(root)/'result'
+            recipe=[repeat(b'ab', 65536), repeat(b'end', 1)]
+            metadata=write_recipe(path,recipe)
+            self.assertEqual(metadata['bytes'],131075)
+            self.assertTrue(check_recipe(path,recipe)['matches'])
+            with path.open('r+b') as stream:
+                stream.seek(65537)
+                stream.write(b'X')
+            self.assertEqual(check_recipe(path,recipe)['first_mismatch_offset'],65537)
+            write_recipe(path,recipe)
+            with path.open('r+b') as stream:
+                stream.truncate(100)
+            self.assertEqual(check_recipe(path,recipe)['first_mismatch_offset'],100)
+            write_recipe(path,recipe)
+            with path.open('ab') as stream:
+                stream.write(b'extra')
+            self.assertEqual(check_recipe(path,recipe)['first_mismatch_offset'],131075)
+            with self.assertRaises(ValueError):
+                write_recipe(path,repeat(b'x',MAX_FILE+1))
+
+    def test_direct_large_output_cannot_pass_with_wrong_data(self):
+        from host_text_extended import repeat
+        with tempfile.TemporaryDirectory() as root:
+            tool=Path(root)/'fake'
+            tool.write_text('#!/bin/sh\nprintf wrong\n')
+            tool.chmod(0o700)
+            row=run_case(Path('/bin/sh'),os.defpath,{'cat':{'path':str(tool)}},
+                case('cat','generated',stdout_file='result',
+                     generated_inputs={'input':repeat(b'x',131072)},
+                     generated_files={'result':repeat(b'x',131072)}),'direct',Path(root))
+            self.assertEqual(row['verdict'],'FAIL')
+            self.assertEqual(row['actual']['generated_files']['result']['first_mismatch_offset'],0)
+            self.assertTrue(row['fixture_removed'])
+
+    def test_ignored_signal_probe_cannot_accept_default_termination(self):
+        from host_text_interruptions import run_case as signal_run
+        with tempfile.TemporaryDirectory() as root:
+            tool=Path(root)/'false-ignore'
+            # This executable copies the ready marker to both sinks but never
+            # ignores SIGINT; an argument called -i is not proof of the policy.
+            tool.write_text('#!'+sys.executable+'\nimport os,signal\n'
+                'signal.signal(signal.SIGINT,signal.SIG_DFL)\n'
+                'data=os.read(0,6)\nopen("copy","wb").write(data)\n'
+                'os.write(1,data)\nos.read(0,1)\n')
+            tool.chmod(0o700)
+            row=signal_run(Path('/bin/sh'),os.defpath,str(tool),'tee',
+                           'int-ignore','direct',Path(root))
+            self.assertEqual(row['verdict'],'FAIL')
+            self.assertTrue(row['leader_reaped'])
+            self.assertTrue(row['fixture_removed'])
+
     def test_contract_map_rejects_missing_sections_and_dangling_cases(self):
         from host_text_contracts import load, validate
         data=load()
@@ -103,6 +158,9 @@ class TextEvidenceTests(unittest.TestCase):
         missing=copy.deepcopy(data)
         del missing['utilities'][0]['sections']['OPTIONS']
         self.assertTrue(any('sections' in error for error in validate(missing)))
+        group=copy.deepcopy(data)
+        group['coverage_groups']['offsets'].pop()
+        self.assertTrue(any('coverage group' in error for error in validate(group)))
         dangling=copy.deepcopy(data)
         dangling['utilities'][0]['cases'].append('cat/invented')
         self.assertTrue(any('unknown case' in error for error in validate(dangling)))

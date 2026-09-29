@@ -45,6 +45,15 @@ def validate(data):
     expected_conditions=next(o['conditions'] for o in load_contracts()['owners'] if o['ticket']=='CSH-073')
     if set(data['conditions'])!=set(expected_conditions):
         errors.append('retained condition accounting incomplete')
+    from host_text_interruptions import definitions
+    expected_groups = {name: {c['id'] for c in cases('en_US.UTF-8', True)
+                              if c.get('category') == name}
+                       for name in ('transformations', 'offsets', 'large-inputs')}
+    expected_groups['interruptions'] = {tool+'/'+kind for tool, kind in definitions()}
+    for name, expected_group in expected_groups.items():
+        actual_group = data.get('coverage_groups', {}).get(name, [])
+        if set(actual_group) != expected_group or len(actual_group) != len(expected_group):
+            errors.append('missing, duplicate or unknown coverage group entries: '+name)
     return errors
 
 

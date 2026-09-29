@@ -24,6 +24,8 @@ def case(tool, name, args=(), data=b'', out=b'', status=0, err=b'', **kw):
 
 
 def cases(utf8=None, audit=False):
+    from host_text_extended import cases as extended_cases
+    yield from extended_cases()
     binary = bytes(range(256))
     lines = b'one\ntwo\nthree\n'
     yield case('cat', 'bytes', data=binary, out=binary)

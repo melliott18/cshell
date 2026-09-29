@@ -16,6 +16,7 @@ import tempfile
 import smoke
 from host_platform import filesystem_identity
 from host_text_cases import UTILITIES, cases
+from host_text_data import write_recipe, check_recipe, MAX_FILE
 from host_utilities import match, serial, sha, source_identity, sanitizer_diagnostic
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -67,6 +68,8 @@ def setup(directory, case):
     (directory / 'input').write_bytes(case['input'])
     for name, data in case.get('inputs', {}).items():
         (directory / name).write_bytes(data)
+    for name, recipe in case.get('generated_inputs', {}).items():
+        write_recipe(directory / name, recipe)
     if case.get('sparse'):
         for name, marker in [('a', b'X'), ('b', b'Y')]:
             with (directory / name).open('wb') as stream:
@@ -86,6 +89,8 @@ def run_case(binary, path, identity, case, mode, fixture_root):
         row['fixture_directory'] = temporary
         try:
             row['sparse'] = setup(directory, case)
+            row['generated_inputs'] = {name: dict(bytes=(directory/name).stat().st_size, sha256=sha(directory/name))
+                                       for name in case.get('generated_inputs', {})}
             selected = identity[case['utility']]['path']
             if selected is None:
                 raise FileNotFoundError('required provider missing: ' + case['utility'])
@@ -93,9 +98,16 @@ def run_case(binary, path, identity, case, mode, fixture_root):
             if mode == 'direct':
                 target = Path(selected)
                 fixture = dict(args=case['args'], stdin=case['input'], env=env)
+                if case.get('generated_inputs') or case.get('stdout_file'):
+                    target = Path(sys.executable)
+                    fixture['args'] = [str(ROOT/'tests/host_text_io.py'), 'input',
+                                       case.get('stdout_file', '-'), selected] + case['args']
             else:
                 target = binary
-                script = shlex.join([case['utility']] + case['args']) + ' < input\n'
+                script = shlex.join([case['utility']] + case['args']) + ' < input'
+                if case.get('stdout_file'):
+                    script += ' > ' + shlex.quote(case['stdout_file'])
+                script += '\n'
                 if mode == 'string':
                     fixture = dict(args=['-c',script], stdin=b'', env=env)
                 elif mode == 'file':
@@ -105,17 +117,24 @@ def run_case(binary, path, identity, case, mode, fixture_root):
                     fixture = dict(args=[], stdin=script, env=env)
             row['invocation'] = serial(dict(binary=str(target), **fixture))
             status, output, errors = smoke.capture(target, fixture, directory,
-                                        20 if case.get('sparse') else 5, 65536)
+                                        20 if case.get('sparse') or case.get('generated_inputs') else 5, 65536,
+                                        file_size_limit=MAX_FILE if case.get('generated_inputs') else None)
             if sanitizer_diagnostic(output):
                 errors.append('sanitizer diagnostic')
             effects = {name: (directory/name).read_bytes() if (directory/name).is_file() else None for name in case.get('files', {})}
-            if case.get('products'):
+            if case.get('products') and not case.get('generated_files'):
                 effects = {p.name: p.read_bytes() for p in directory.glob(case['products']) if p.is_file()}
-            ok = (not errors and match(case['status'], status)
+            generated_effects = {name: check_recipe(directory/name, recipe)
+                                 for name, recipe in case.get('generated_files', {}).items()}
+            if case.get('products') and case.get('generated_files'):
+                actual_names = {p.name for p in directory.glob(case['products'])}
+                if actual_names != set(case['generated_files']):
+                    errors.append('generated output file set differs: ' + repr(sorted(actual_names)))
+            ok = (all(effect['matches'] for effect in generated_effects.values()) and not errors and match(case['status'], status)
                   and all(stream_matches(case, name, bytes(output[name])) for name in ('stdout','stderr'))
                   and effects == case.get('files', {}))
             row.update(verdict='PASS' if ok else 'FAIL', phase='assertion',
-                       actual=serial(dict(status=status, stdout=bytes(output['stdout']), stderr=bytes(output['stderr']), files=effects, errors=errors)))
+                       actual=serial(dict(status=status, stdout=bytes(output['stdout']), stderr=bytes(output['stderr']), files=effects, generated_files=generated_effects, errors=errors)))
         except (OSError, subprocess.SubprocessError) as error:
             row.update(phase='setup', error=str(error), errno=getattr(error,'errno',None))
     row['fixture_removed'] = not Path(temporary).exists()
@@ -150,7 +169,12 @@ def main():
         from host_text_boundaries import run_boundaries
         rows.extend(run_boundaries(binary, args.path, identity, args.fixture_root, args.capacity_root, args.audit))
     totals = {state.lower(): sum(row['verdict'] == state for row in rows) for state in ('PASS','FAIL','UNAVAILABLE')}
-    result = dict(schema_version=1, owner='CSH-073', full_contracts_qualified=False,
+    group_totals = {}
+    for group in ('transformations', 'offsets', 'large-inputs', 'interruptions'):
+        members = [row for row in rows if row.get('category', row.get('case', {}).get('category')) == group]
+        group_totals[group] = {state.lower(): sum(row['verdict'] == state for row in members)
+                               for state in ('PASS', 'FAIL', 'UNAVAILABLE')}
+    result = dict(qualification_groups=group_totals, schema_version=1, owner='CSH-073', full_contracts_qualified=False,
                   scope='required-contract audit' if args.audit else 'declared bounded subset',
                   path=args.path, platform=platform.platform(), libc=platform.libc_ver(),
                   inventory=identity, utf8_locale=utf8, binary_sha256=sha(binary),
@@ -158,7 +182,7 @@ def main():
                   command=sys.argv, credentials=dict(uid=os.getuid(),euid=os.geteuid(),gid=os.getgid(),egid=os.getegid(),groups=os.getgroups()),
                   capacity_filesystem=filesystem_identity(args.capacity_root) if args.capacity_root else None,
                   limits=dict(timeout_seconds=5, sparse_timeout_seconds=20, capture_bytes=65536,
-                              child_resources='smoke.child_limits', sparse_offset=1 << 31),
+                              child_resources='smoke.child_limits', sparse_offset=1 << 31, generated_file_bytes=MAX_FILE, large_timeout_seconds=20),
                   totals=totals, cases=rows)
     if platform.system() == 'Darwin':
         result['os_build'] = subprocess.check_output(['sw_vers'], text=True)
