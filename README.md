@@ -11,8 +11,8 @@ repository has no installation target yet. Build locally and run `./cshell`.
 
 ## Build and run
 
-Requirements: a C99 compiler and GNU Make. The handwritten lexer needs no
-scanner generator or scanner runtime library.
+Requirements: Clang or GCC with C99 support, POSIX threads, and GNU Make.
+The handwritten lexer needs no scanner generator or scanner runtime library.
 
 ```sh
 make -j
@@ -50,6 +50,7 @@ make test-syntax   # Clause-mapped invocation, descriptor, syntax and alias chec
 make test-input    # Replacement input/invocation API checks only
 make test-lexer    # Replacement lexer/token API checks only
 make test-parser   # Replacement parser/AST API checks only
+make test-nesting  # Deep constructs and stack/resource exhaustion
 make test-alias    # Alias storage, handlers, and token/AST substitution
 make test-expansion # Clause-mapped public-runtime expansion evidence
 make test-expand   # Replacement value/field expansion, arithmetic, and quote APIs
@@ -140,6 +141,7 @@ src/expand.c     Replacement value expansion with quote provenance
 src/fields.c     Final field splitting and quote removal
 src/pathname.c   Component-wise filename generation
 src/arithmetic.c Checked signed-long arithmetic evaluation
+src/stack.c      Native stack bounds and resource headroom
 src/quote.c      Shared dollar-single-quote escape decoding
 src/builtin.c    Replacement state builtin handlers
 src/utility.c    Read, getopts, umask, times, and resource-limit handlers

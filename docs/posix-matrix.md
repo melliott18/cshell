@@ -106,8 +106,8 @@ tree lifetimes, AST transfers, and allocation failures. See the
 platform evidence. These checks do not execute commands. CSH-027 compound
 syntax and CSH-030 aliases have their own subsequent evidence records.
 [CSH-041](#csh-041-replay-evidence) adds arithmetic-first ambiguity fallback.
-Recursive nesting beyond the documented guard and the full requirement audit
-remain open.
+[CSH-066](nesting-resources.md) removes fixed nesting counts and records finite
+resource/depth witnesses; these do not promote the full requirement family.
 
 <a id="csh-022-api-evidence"></a>
 

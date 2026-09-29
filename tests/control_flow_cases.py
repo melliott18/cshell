@@ -93,8 +93,8 @@ def add_control_cases(cross, helper):
           f'v=prefix f; {args} "$v" "$other"', stdout='[prefix]\n[parent]\n[kept]\n')
     check('function recursive parameters', f'f() {{ if test "$1" -gt 0; then f "$(( $1 - 1 ))"; fi; {args} "$1"; }}; f 3',
           stdout='[0]\n[1]\n[2]\n[3]\n')
-    check('function recursion limit', 'f() { f; }; f', status=2,
-          stderr='cshell: function nesting limit exceeded\n')
+    check('function recursion beyond 128',
+          'f() { case $1 in 0) :;; *) f $(($1-1));; esac; }; f 160')
     check('function definition heredoc invocation', f'f() {{ {helper} copy; }} <<END\nhello $1\nEND\nf world',
           stdout='hello world\n')
     check('function in substitutions and pipelines', f'f() {{ {args} "$1"; }}; {args} "$(f sub)"; f pipe | {helper} copy',

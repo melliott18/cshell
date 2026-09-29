@@ -1,3 +1,4 @@
+#include "cshell/stack.h"
 #include "cshell/execute.h"
 #include "prepare.h"
 #include "cshell/builtin.h"
@@ -792,7 +793,8 @@ struct execution_plan {
     enum csh_ast_kind kind;
     const struct csh_ast *tree; /* Borrowed; expansion occurs only at execution. */
     struct execution_plan *children;
-    size_t count;
+    struct execution_plan *parent; /* Owned traversal; never follows C recursion. */
+    size_t count, cursor;
     int negated;
     int asynchronous;
 };
@@ -802,27 +804,42 @@ struct descriptor_reservations {
     size_t count;
 };
 
+/* Destructive postorder walk needs neither recursion nor an allocation, even
+ * when preparing a plan failed halfway through a child array. */
 static void plan_destroy(struct execution_plan *plan)
 {
-    size_t i;
-    for (i = 0; i < plan->count; ++i) plan_destroy(&plan->children[i]);
-    free(plan->children);
-    memset(plan, 0, sizeof(*plan));
+    struct execution_plan *current = plan;
+    while (current != NULL) {
+        if (current->count != 0) {
+            current = &current->children[--current->count];
+        } else {
+            struct execution_plan *parent = current->parent;
+            free(current->children);
+            memset(current, 0, sizeof(*current));
+            current = parent;
+        }
+    }
 }
 
-static int plan_prepare(const struct csh_ast *tree, struct execution_plan *plan,
-    struct descriptor_reservations *reserved, unsigned depth,
+static int plan_node(const struct csh_ast *tree, struct execution_plan *plan,
+    struct descriptor_reservations *reserved,
     struct csh_error *error)
 {
     size_t i, count = 0;
-    if (tree == NULL || depth > 256)
-        return fail(error, "invalid or excessively nested execution tree", 0, 2);
+    const struct execution_plan *ancestor;
+    if (tree == NULL)
+        return fail(error, "invalid execution tree", 0, 2);
+    for (ancestor = plan->parent; ancestor != NULL; ancestor = ancestor->parent)
+        if (ancestor->tree == tree)
+            return fail(error, "cyclic execution tree", 0, 2);
     plan->kind = tree->kind;
     plan->tree = tree;
     switch (tree->kind) {
     case CSH_AST_SIMPLE:
         break;
     case CSH_AST_IF:
+        if (tree->data.if_clause.branch_count > (SIZE_MAX - 1) / 2)
+            return fail(error, "execution plan size overflow", EOVERFLOW, 1);
         count = tree->data.if_clause.branch_count * 2 + (tree->data.if_clause.else_body != NULL);
         break;
     case CSH_AST_FOR: case CSH_AST_FUNCTION: count = 1; break;
@@ -868,6 +885,7 @@ static int plan_prepare(const struct csh_ast *tree, struct execution_plan *plan,
     plan->count = count;
     for (i = 0; i < count; ++i) {
         const struct csh_ast *child;
+        plan->children[i].parent = plan;
         switch (tree->kind) {
         case CSH_AST_LIST:
             child = tree->data.list.items[i].command;
@@ -890,10 +908,26 @@ static int plan_prepare(const struct csh_ast *tree, struct execution_plan *plan,
         case CSH_AST_CASE: child = tree->data.case_clause.items[i].body; break;
         default: child = tree->data.group.body; break;
         }
-        if (plan_prepare(child, &plan->children[i], reserved, depth + 1, error) == -1)
-            return -1;
+        plan->children[i].tree = child;
     }
     return 0;
+}
+
+/* Build the entire supported-syntax/descriptor plan before any command effects.
+ * Parent links and cursors are in the owned plan, so depth costs heap storage. */
+static int plan_prepare(const struct csh_ast *tree, struct execution_plan *plan,
+    struct descriptor_reservations *reserved, struct csh_error *error)
+{
+    struct execution_plan *current = plan;
+    plan->tree = tree;
+    for (;;) {
+        if (plan_node(current->tree, current, reserved, error) == -1) return -1;
+        while (current->cursor == current->count) {
+            current = current->parent;
+            if (current == NULL) return 0;
+        }
+        current = &current->children[current->cursor++];
+    }
 }
 
 int csh_execution_context_reap(struct csh_execution_context *context, int wait,
@@ -1312,14 +1346,13 @@ static int evaluate_input(struct csh_execution_context *context, struct csh_inpu
     struct csh_parser *parser = NULL;
     int rc = 0;
     enum csh_execution_category category = result->category;
-    if (context->evaluation_depth >= 128) return fail(error, "evaluation nesting limit exceeded", 0, 2);
+    if (csh_stack_check() != 0) return fail(error, "evaluation stack exhausted", ENOMEM, 1);
     if (csh_parser_create(&parser, input, error) == -1) return -1;
     csh_input_set_line_hook(input, csh_execute_input_line, context->state);
     if (csh_state_aliases(context->state) == NULL) {
         csh_parser_destroy(parser); return fail(error, "cannot allocate aliases", ENOMEM, 1);
     }
     csh_parser_set_aliases(parser, csh_state_aliases(context->state));
-    ++context->evaluation_depth;
     result->status = 0;
     for (;;) {
         struct csh_ast *tree = NULL;
@@ -1345,7 +1378,6 @@ static int evaluate_input(struct csh_execution_context *context, struct csh_inpu
             rc = 0;
         }
     }
-    --context->evaluation_depth;
     csh_parser_destroy(parser);
     result->category = category;
     return rc;
@@ -1545,8 +1577,7 @@ static int evaluation_handler(struct csh_state *state, const struct csh_command 
             category = path_builtin_category(state, target.argv[0], defaults, NULL);
             if (!strcmp(target.argv[0], "exit") || control_name(target.argv[0])) category = CSH_EXEC_SPECIAL_BUILTIN;
             if (category == CSH_EXEC_SPECIAL_BUILTIN) category = CSH_EXEC_REGULAR_BUILTIN;
-            if (context->evaluation_depth >= 128) return fail(error, "evaluation nesting limit exceeded", 0, 2);
-            ++context->evaluation_depth;
+            if (csh_stack_check() != 0) return fail(error, "evaluation stack exhausted", ENOMEM, 1);
             if (context->jobs && csh_jobs_is_builtin(target.argv[0]) &&
                 (strcmp(target.argv[0], "set") ||
                     (target.argc > 1 && strcmp(target.argv[1], "--"))))
@@ -1555,7 +1586,6 @@ static int evaluation_handler(struct csh_state *state, const struct csh_command 
                 rc = context_job(context, NULL, NULL, &target, 0, result, error);
             else rc = execute_resolved(state, &target, category,
                 category == CSH_EXEC_EXTERNAL ? NULL : bootstrap_handler, context, result, NULL, error);
-            --context->evaluation_depth;
             result->category = CSH_EXEC_REGULAR_BUILTIN;
         }
     } else { /* hash */
@@ -2109,10 +2139,10 @@ invalid_operand:
         int rc = -1;
         if (function == NULL) return fail(error, "missing function definition", 0, 1);
         csh_state_get_info(state, &info);
-        if (info.function_depth >= 128)
-            return fail(error, "function nesting limit exceeded", 0, 2);
+        if (csh_stack_check() != 0)
+            return fail(error, "function stack exhausted", ENOMEM, 1);
         csh_function_retain(&function->base);
-        if (plan_prepare(function->tree, &plan, &reserved, 0, error) == -1) goto done;
+        if (plan_prepare(function->tree, &plan, &reserved, error) == -1) goto done;
         if (csh_input_reserve_begin(&input_scope, reserved.items, reserved.count, error) == -1) goto done;
         if (context->jobs != NULL && csh_jobs_reserve(context->jobs,
             reserved.items, reserved.count) == -1) {
@@ -2298,6 +2328,11 @@ static int execute_plan(struct csh_execution_context *context,
     int rc = 0;
     memset(result, 0, sizeof(*result));
     memset(error, 0, sizeof(*error));
+    if (csh_stack_check() != 0) {
+        result->status = 1;
+        expansion_failed(context->state, result);
+        return fail(error, "execution stack exhausted", ENOMEM, 1);
+    }
     {
         struct csh_state_info info;
         csh_state_get_info(context->state, &info);
@@ -2398,7 +2433,7 @@ int csh_execute_context_ast(struct csh_execution_context *context,
         goto done;
     }
     if (csh_execution_context_reap(context, 0, error) == -1 ||
-        plan_prepare(tree, &plan, &reserved, 0, error) == -1) goto done;
+        plan_prepare(tree, &plan, &reserved, error) == -1) goto done;
     if (csh_input_reserve_begin(&input_scope, reserved.items, reserved.count, error) == -1) goto done;
     if (context->jobs != NULL && csh_jobs_reserve(context->jobs,
         reserved.items, reserved.count) == -1) {
@@ -2435,7 +2470,6 @@ static int standalone_trap(const struct csh_ast *tree)
 int csh_execute_substitution(struct csh_state *state, const struct csh_ast *tree,
     char **bytes, size_t *length, int *status, struct csh_error *error)
 {
-    static unsigned nesting;
     struct csh_pipeline_stage child = {0};
     sigset_t blocked, prior;
     int ends[2] = {-1, -1}, failed = 0;
@@ -2443,7 +2477,7 @@ int csh_execute_substitution(struct csh_state *state, const struct csh_ast *tree
     char *buffer = NULL;
     *bytes = NULL;
     *length = 0;
-    if (nesting >= 128) return fail(error, "command substitution nesting limit exceeded", 0, 2);
+    if (csh_stack_check() != 0) return fail(error, "command substitution stack exhausted", ENOMEM, 1);
     if (pipeline_pipe(ends) == -1) return fail(error, "cannot create substitution pipe", errno, 1);
     sigemptyset(&blocked);
     csh_traps_add_caught(csh_traps_active(), &blocked);
@@ -2466,7 +2500,6 @@ int csh_execute_substitution(struct csh_state *state, const struct csh_ast *tree
         if (csh_jobs_active() != NULL) csh_jobs_after_fork(csh_jobs_active(), 0);
         csh_traps_after_fork(csh_traps_active(), 0, standalone_trap(tree));
         sigprocmask(SIG_SETMASK, &prior, NULL);
-        ++nesting;
         if (pipeline_connect(ends[1], STDOUT_FILENO) == -1) {
             diagnose("substitution", "cannot connect output", errno);
             _exit(1);
@@ -2579,7 +2612,7 @@ int csh_execute_pipeline_ast(struct csh_state *state, const struct csh_ast *tree
         fail(error, "only a foreground simple command or pipeline is supported", 0, 2);
         goto done;
     }
-    if (plan_prepare(tree, &plan, &reserved, 0, error) == -1) goto done;
+    if (plan_prepare(tree, &plan, &reserved, error) == -1) goto done;
     if (initial.options & CSH_OPT_NOEXEC) {
         out->execution.status = initial.last_status;
         rc = 0;

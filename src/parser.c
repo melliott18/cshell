@@ -2,15 +2,12 @@
 #include "cshell/parser.h"
 #include "cshell/alias.h"
 #include "cshell/quote.h"
+#include "cshell/stack.h"
 
 #include <errno.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-
-/* Iterative sequences have no fixed length limit. Recursive grammar contexts
- * have an explicit limit so hostile grouping cannot exhaust the C stack. */
-#define PARSER_NESTING_LIMIT 128
 
 struct csh_parser {
     struct csh_input *input;
@@ -31,7 +28,6 @@ struct parse_frame {
     struct csh_ast_word look;
     int has_look;
     int eof;
-    size_t depth;
     struct csh_ast_redirection **documents;
     size_t document_count;
     size_t document_capacity;
@@ -209,11 +205,10 @@ static int peek_raw(struct parse_frame *frame)
             memset(&substitution, 0, sizeof(substitution));
             (void)csh_lexer_context(frame->lexer, &context, &opening);
             opening = csh_lexer_diagnostic_position(frame->lexer, opening);
-            if (frame->depth >= PARSER_NESTING_LIMIT)
-                return fail_at(frame, CSH_PARSE_ERROR, "parser nesting limit exceeded",
-                    0, opening);
+            if (csh_stack_check() != 0)
+                return fail_at(frame, CSH_PARSE_ERROR, "parser stack exhausted",
+                    ENOMEM, opening);
             child.parser = frame->parser;
-            child.depth = frame->depth + 1;
             if (csh_lexer_command_begin(frame->lexer, &child.lexer, &error) == -1)
                 return adopt_error(frame, &error);
             substitution.body = parse_list(&child, CLOSE_PAREN, 1, opening);
@@ -948,15 +943,14 @@ static struct csh_ast *parse_compound(struct parse_frame *frame, enum csh_ast_ki
 {
     struct csh_ast *node;
     int result = -1;
-    if (frame->depth >= PARSER_NESTING_LIMIT) {
-        fail_at(frame, CSH_PARSE_ERROR, "parser nesting limit exceeded", 0, position(frame));
+    if (csh_stack_check() != 0) {
+        fail_at(frame, CSH_PARSE_ERROR, "parser stack exhausted", ENOMEM, position(frame));
         return NULL;
     }
     node = new_node(frame, kind);
     if (node == NULL)
         return NULL;
     node->start = position(frame);
-    ++frame->depth;
     switch (kind) {
     case CSH_AST_SUBSHELL:
     case CSH_AST_BRACE:
@@ -976,7 +970,6 @@ static struct csh_ast *parse_compound(struct parse_frame *frame, enum csh_ast_ki
     case CSH_AST_CASE: result = parse_case(frame, node); break;
     default: break;
     }
-    --frame->depth;
     if (result == -1) {
         csh_ast_destroy(node);
         return NULL;

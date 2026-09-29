@@ -15,7 +15,7 @@ enum csh_expand_origin { CSH_EXPAND_LITERAL, CSH_EXPAND_TILDE,
 enum csh_expand_result { CSH_EXPAND_OK, CSH_EXPAND_INVALID, CSH_EXPAND_NOMEM,
     CSH_EXPAND_UNSET, CSH_EXPAND_READONLY, CSH_EXPAND_ARITHMETIC_ERROR,
     CSH_EXPAND_DEFERRED, CSH_EXPAND_LIMIT, CSH_EXPAND_IO,
-    CSH_EXPAND_INTERRUPTED };
+    CSH_EXPAND_INTERRUPTED, CSH_EXPAND_RESOURCE };
 
 struct csh_expand_span {
     char *text;                 /* owned, NUL-terminated; length excludes NUL */
@@ -60,7 +60,8 @@ struct csh_expand_options {
  * out must not own a previous result; cleared on every error. The result owns
  * all bytes independently of token/state. No printing, exiting, status update,
  * field splitting, globbing, or final provenance removal. Every failure rolls
- * back shell-state mutations made while expanding this word. */
+ * back shell-state mutations made while expanding this word. RESOURCE means
+ * native stack exhaustion; there is no fixed nesting count. */
 enum csh_expand_result csh_expand_word(struct csh_state *state,
     const struct csh_token *word, const struct csh_expand_options *options,
     struct csh_expansion *out, struct csh_expand_error *error);

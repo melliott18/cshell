@@ -52,9 +52,10 @@ restoration, while unrelated variable changes survive.
 The call's redirections apply first; definition redirections then expand in the
 call's parameter and assignment environment. Definition here-documents likewise
 expand at invocation. A function returns its body's status or the status requested
-by `return`. Calls are limited to 128 active function frames; that depth is
-inherited by subshells and substitutions. Structural execution plans retain the
-existing nesting limit of 256.
+by `return`. Calls check available native stack space before entering another
+function. Subshells and substitutions inherit the existing stack usage; fork
+does not reset the resource calculation. Structural plans use iterative
+preparation and destruction. See [nesting resources](nesting-resources.md).
 
 ## Control transfer and project choices
 

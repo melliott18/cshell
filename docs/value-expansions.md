@@ -136,9 +136,9 @@ supported. Empty expressions produce zero.
 Overflow, division by zero, `LONG_MIN / -1`, and invalid shift counts return
 errors before undefined C operations occur. Negative left shifts are rejected;
 negative right shifts round toward negative infinity. Assignments roll back on
-all errors, and the result scalar is unchanged on evaluator failure. Both
-arithmetic parsing and word expansion bound recursive nesting at 128 levels and
-return explicit errors above that limit.
+all errors, and the result scalar is unchanged on evaluator failure. Arithmetic parsing and word expansion check remaining native stack space and
+return `CSH_ARITH_RESOURCE` / `CSH_EXPAND_RESOURCE` on exhaustion, preserving
+rollback. Their [resource contract](nesting-resources.md) has no fixed nesting count.
 
 `csh_arith_probe()` checks expression grammar and assignment targets without
 reading state or evaluating operations. Oversized constants and `1/0` remain
@@ -155,8 +155,10 @@ whose evaluation fails. `$((echo hi); )` therefore captures `hi`, while
 `$((1/0))` reports an arithmetic error. EOF in a still-possible arithmetic
 candidate remains an incomplete-input error; `csh_arith_probe_prefix()` checks
 whether an unfinished nested operand has already ruled out arithmetic.
-Checkpoint nesting is limited to 128 across command frames. These selected
-cases do not establish full conformance.
+Checkpoints use growable owned storage without a nesting-count guard. Native
+stack failure in either arithmetic probe propagates as a resource error and
+never triggers command-substitution replay. These finite cases do not establish
+full conformance.
 
 ## Deferred substitutions and integration
 
@@ -312,6 +314,6 @@ selected checks do not establish full POSIX compliance.
 
 [CSH-047](expansion-evidence.md) maps exact API and public-runtime witnesses to
 ENV-002/004 and EXP-001–011, including unspecified/policy partitions and
-remaining locale, pattern and depth limits. Run `make test-expansion` for the
+remaining locale and pattern limits, and [nesting resource handling](nesting-resources.md). Run `make test-expansion` for the
 354 new runtime cases; `make test` includes them. This inventory does not
 promote any complete expansion family to verified.

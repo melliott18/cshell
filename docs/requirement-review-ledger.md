@@ -2,6 +2,8 @@
 
 The [final audit closure](conformance-closure.md) supersedes earlier acceptance-gate
 decisions. Recorded failures and source-qualified evidence below remain unchanged.
+[CSH-066](nesting-resources.md) has a subsequent implementation and validation
+record; the rows below describe the original review baseline.
 
 This accompanies the [CSH-012 review](conformance-acceptance-review.md). All 131
 matrix families are listed: 115 applicable and 16 excluded under the unchanged

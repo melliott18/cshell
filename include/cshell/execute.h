@@ -145,7 +145,6 @@ struct csh_jobs;
 struct csh_execution_context {
     struct csh_state *state;
     unsigned loop_depth;
-    unsigned evaluation_depth;
     struct csh_background_child *children; /* Private owned registry. */
     size_t child_count;
     struct csh_jobs *jobs; /* Optional owned runtime job manager; see jobs.h. */

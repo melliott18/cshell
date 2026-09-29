@@ -241,8 +241,10 @@ Preparation builds a structural execution plan borrowing the AST and validates
 its structure before effects. All parsed compound kinds are supported; function
 name restrictions are validated only when a definition is reached. Words and here-document bodies expand only when
 execution reaches their command, and lazy substitution bodies are preflighted
-when selected. A maximum nesting depth of 256 bounds
-recursive preparation/execution. Preparation does not resolve future commands
+when selected. Preparation and destruction walk the owned plan iteratively;
+cycle validation remains in place for API-supplied trees. Execution checks
+remaining native stack space before descending. There is no fixed depth count;
+see [nesting resources](nesting-resources.md). Preparation does not resolve future commands
 against current state: earlier `cd`, assignment, and export operations can still
 change later command lookup and environments. The plan is freed after dispatch;
 background children inherit their own copy through `fork()`.

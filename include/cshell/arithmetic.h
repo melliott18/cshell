@@ -8,7 +8,8 @@ enum csh_arith_result {
     CSH_ARITH_SYNTAX,
     CSH_ARITH_RANGE,
     CSH_ARITH_NOMEM,
-    CSH_ARITH_READONLY
+    CSH_ARITH_READONLY,
+    CSH_ARITH_RESOURCE
 };
 
 /* Evaluate an already-expanded expression using signed long arithmetic. Shell
@@ -24,7 +25,7 @@ enum csh_arith_result {
  * printed and last_status is unchanged. Expression may alias a state value.
  * NULL arguments are SYNTAX. Successful assignments invalidate state views;
  * rollback after a failed evaluation can also invalidate borrowed state views.
- * Nesting beyond 128 parser levels is rejected with SYNTAX. */
+ * Native stack exhaustion returns RESOURCE. No fixed nesting count. */
 enum csh_arith_result csh_arith_eval(struct csh_state *state,
     const char *expression, long *out);
 
@@ -33,13 +34,14 @@ enum csh_arith_result csh_arith_eval(struct csh_state *state,
  * arithmetic operand by the caller; this function does not parse shell syntax.
  * Checks tokens, precedence, and assignment targets, but does not look up names,
  * evaluate operations, or reject out-of-range constants. Thus 1/0 is arithmetic
- * grammar even though evaluation fails. Returns OK or SYNTAX; never mutates. */
+ * grammar even though evaluation fails. Returns OK, SYNTAX or RESOURCE; never mutates. */
 enum csh_arith_result csh_arith_probe(const char *expression);
 
 /* Grammar-only prefix check for EOF inside an opaque shell operand. Returns
- * nonzero if the expression is valid or only lacks trailing operands or
+ * 1 if the expression is valid or only lacks trailing operands or
  * delimiters. This distinguishes an incomplete candidate from one whose
- * existing grammar already rules out arithmetic. No evaluation or allocation. */
+ * existing grammar already rules out arithmetic. Returns -1 on native stack
+ * exhaustion; callers must propagate it without trying command syntax. */
 int csh_arith_probe_prefix(const char *expression);
 
 #endif

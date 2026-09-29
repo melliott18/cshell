@@ -768,6 +768,46 @@ static void substitution_faults(struct csh_state *state)
     arm(0);
 }
 
+static void deep_plan_faults(struct csh_state *state)
+{
+    struct csh_execution_context context = {0};
+    struct csh_execution result;
+    struct csh_error error;
+    struct csh_ast *tree;
+    char source[3000], *at = source;
+    size_t i, calls, point, baseline = live;
+    int before = fd_count(), status;
+    context.state = state;
+    for (i = 0; i < 512; ++i) { memcpy(at, "{ ", 2); at += 2; }
+    memcpy(at, ":; ", 3); at += 3;
+    for (i = 0; i < 512; ++i) { memcpy(at, "}; ", 3); at += 3; }
+    *at = 0;
+    tree = parse(source);
+    arm(0);
+    assert(csh_state_update_options(state, CSH_OPT_NOEXEC, 0) == CSH_STATE_OK);
+    assert(csh_execute_context_ast(&context, tree, &result, &error) == 0);
+    calls = allocation_calls;
+    for (point = 1; point <= calls; point += calls / 32 + 1) {
+        arm(point);
+        assert(csh_execute_context_ast(&context, tree, &result, &error) == -1);
+        assert(error.system_errno == ENOMEM && result.status == 1);
+        assert(live == baseline && fd_count() == before && launched_count == 0);
+    }
+    arm(0);
+    assert(csh_state_update_options(state, 0, CSH_OPT_NOEXEC) == CSH_STATE_OK);
+    csh_ast_destroy(tree);
+    /* The old depth guard also rejected cycles in caller-supplied trees. */
+    assert(csh_ast_create(&tree, CSH_AST_BRACE, &error) == 0);
+    tree->data.group.body = tree;
+    assert(csh_execute_context_ast(&context, tree, &result, &error) == -1);
+    assert(strstr(error.message, "cyclic"));
+    tree->data.group.body = NULL;
+    csh_ast_destroy(tree);
+    csh_execution_context_destroy(&context);
+    assert(waitpid(-1, &status, WNOHANG) == -1 && errno == ECHILD);
+    assert(live == baseline && fd_count() == before);
+}
+
 static void context_faults(struct csh_state *state)
 {
     struct csh_execution_context context = {0};
@@ -1215,6 +1255,7 @@ int main(int argc, char **argv)
     }
     if (argc == 2 && strcmp(argv[1], "--context") == 0) {
         assert(csh_state_create(&state, &invocation, NULL) == CSH_STATE_OK);
+        deep_plan_faults(state);
         context_faults(state);
         csh_state_destroy(state);
         assert(live == 0);

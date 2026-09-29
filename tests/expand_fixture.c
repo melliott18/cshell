@@ -713,7 +713,7 @@ static void invalid_api(void)
     csh_state_destroy(state);
 }
 
-static void nesting_limit(void)
+static void deep_expansion(void)
 {
     struct csh_state *state = new_state();
     char source[4096];
@@ -726,7 +726,7 @@ static void nesting_limit(void)
     for (index = 0; index < 129; ++index)
         source[length++] = '}';
     source[length] = '\0';
-    failure(state, source, NULL, CSH_EXPAND_LIMIT);
+    one(state, source, "x");
     csh_state_destroy(state);
 }
 
@@ -741,7 +741,7 @@ int main(void)
     callback_ownership();
     arithmetic();
     invalid_api();
-    nesting_limit();
+    deep_expansion();
     puts("PASS: value expansions, provenance, lazy operands, callbacks, arithmetic, ownership, rollback");
     return 0;
 }

@@ -219,17 +219,12 @@ def nonblocking(binary, directory, kind, mode):
 def nesting(binary, directory, depth):
     # Braces avoid spawning a process at every level, isolating parser depth.
     script = '{ ' * depth + ': >effect; ' + '}; ' * depth + '\n'
-    actual = run(binary, directory, ['-c', script])
-    if depth == 127:
-        expect(actual)
+    for mode in ('command', 'file', 'stdin'):
+        (directory / 'nested').write_text(script)
+        args = ['-c', script] if mode == 'command' else ['nested'] if mode == 'file' else []
+        expect(run(binary, directory, args, data=script.encode() if mode == 'stdin' else b''))
         assert (directory / 'effect').read_bytes() == b''
-    else:
-        status, stdout, stderr = actual
-        assert status == 2 and stdout == b'', actual
-        diagnostic = (b'invalid or excessively nested execution tree' if depth == 128
-                      else b'parser nesting limit exceeded')
-        assert diagnostic in stderr, actual
-        assert not (directory / 'effect').exists()
+        (directory / 'effect').unlink()
 
 
 def independent_stdin(binary, directory, mode, closed):
@@ -284,7 +279,7 @@ def cases(binary, directory):
         def check(depth=depth):
             with tempfile.TemporaryDirectory(dir=directory) as temporary:
                 nesting(binary, Path(temporary), depth)
-        yield f'GRAM-005 parser guard depth {depth}', check
+        yield f'GRAM-005 brace execution in all input modes at depth {depth}', check
     for identity in ('uid', 'gid'):
         def check(identity=identity):
             script = 'case $- in *i*) printf interactive;; esac; exit 7'

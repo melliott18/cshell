@@ -14,7 +14,9 @@ and empty dot files succeed. A nonzero status from an ordinary evaluated command
 is returned without being classified as an error in the evaluation builtin.
 Syntax, expansion, and special-builtin errors retain the runtime's interactive
 versus non-interactive policy. The nested loop stops on explicit exit, return,
-or loop control transfer. Evaluation nesting is limited to 128 active calls.
+or loop control transfer. Evaluation and `command` wrappers check available
+native stack space; dot scripts also require descriptors for their active input
+sources. There is no fixed call count. See [nesting resources](nesting-resources.md).
 `eval` does not interpret options, including `--`.
 
 `. [--] file [arguments...]` searches PATH for a readable file when the

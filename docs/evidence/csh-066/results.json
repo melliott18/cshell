@@ -1,0 +1,137 @@
+{
+  "ticket": "CSH-066",
+  "base": "f075682",
+  "date": "2026-09-29",
+  "source_sha256": "973f043eaf178657a3459c39b5260cc80791dc424377e16c1b7f20ded911a8ca",
+  "source_hash_inputs": "Sorted Makefile, src/*.c, include/cshell/*.h, tests/*.{c,h,py}; each path + NUL + bytes + NUL.",
+  "platforms": {
+    "native": "macOS 14.8.7 arm64; Apple Clang 15.0.0; Python 3.12.2",
+    "docker": "Debian bookworm Linux aarch64; GCC 12.2.0; Python 3.11.2"
+  },
+  "sanitizer_cflags": "-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+  "sanitizer_ldflags": "-fsanitize=address,undefined",
+  "final_native_binary_sha256": "1867c614912c52752b1d7407347325cc7f725ddffdd3657327e0210670618772",
+  "final_native_asan_binary_sha256": "e6c7f02cd64697b2a5ed2d92839f3fb39b3e04fbc134a47535b9276d7000a3fd",
+  "runs": [
+    {
+      "description": "Native test-parser test-expand test-execute test-runtime test-invocation test-control",
+      "scope": "before final TLS cache change",
+      "exit_status": 0,
+      "log_sha256": "5f6bf7bdb839f35ab2e0e1e3a9a1651e8518a1097b270efcfd2b91ffae7e1838",
+      "summaries": [
+        "Result: 49 passed, 0 failed, 2 skipped",
+        "238/238 parser checks passed",
+        "110/110 final-field checks passed",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 210 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "control flow API and allocation checks passed",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 3905 passed, 0 failed, 0 skipped"
+      ]
+    },
+    {
+      "description": "Native test-evaluation test-substitution test-pipeline test-context test-options",
+      "scope": "before final TLS cache change",
+      "exit_status": 0,
+      "log_sha256": "22302a06176d42ea7b5bccc48d6295a362628d416685911b358f5ed9366707c0",
+      "summaries": [
+        "Result: 304 passed, 0 failed, 0 skipped",
+        "substitution ownership checks passed",
+        "substitution fault checks passed",
+        "Result: 1101 passed, 0 failed, 0 skipped"
+      ]
+    },
+    {
+      "description": "Linux test-nesting test-parser test-expand test-execute test-runtime test-invocation test-control test-context test-substitution test-pipeline",
+      "scope": "before final TLS cache change",
+      "exit_status": 0,
+      "log_sha256": "bf9c1327bac69df6865a84981e74020308b8ba7e174780ed0a9b242a83d89e55",
+      "summaries": [
+        "Result: 49 passed, 0 failed, 2 skipped",
+        "42 nesting/resource witnesses passed",
+        "Result: 210 passed, 0 failed, 0 skipped",
+        "control flow API and allocation checks passed",
+        "substitution ownership checks passed",
+        "substitution fault checks passed",
+        "238/238 parser checks passed",
+        "110/110 final-field checks passed",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 3905 passed, 0 failed, 0 skipped"
+      ]
+    },
+    {
+      "description": "Native ASan/UBSan: test-nesting test-parser test-expand test-execute test-runtime test-invocation test-control test-context test-substitution test-pipeline; detect_leaks=0",
+      "scope": "before final TLS cache change",
+      "exit_status": 0,
+      "log_sha256": "e28eab678949e1c195215e27445c529e66e65ecf83896f1bdad32e0726bd635a",
+      "summaries": [
+        "Result: 49 passed, 0 failed, 2 skipped",
+        "110/110 final-field checks passed",
+        "238/238 parser checks passed",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "42 nesting/resource witnesses passed",
+        "substitution ownership checks passed",
+        "substitution fault checks passed",
+        "Result: 210 passed, 0 failed, 0 skipped",
+        "control flow API and allocation checks passed",
+        "Result: 3905 passed, 0 failed, 0 skipped"
+      ]
+    },
+    {
+      "description": "Native optimized: test-nesting test-context",
+      "scope": "final source",
+      "exit_status": 0,
+      "log_sha256": "d01922fe876abf497e2ceda7ba81f3fbdfd53a4b234b9d17d471e385c7864a18",
+      "summaries": [
+        "42 nesting/resource witnesses passed"
+      ]
+    },
+    {
+      "description": "Native ASan/UBSan: resource API fixture and tests/nesting.py, including successive custom thread stacks; linked with unchanged sanitizer objects from the broad run",
+      "scope": "final source",
+      "exit_status": 0,
+      "log_sha256": "cf05af9e4b1ff7c25232145c7514d7e344741911f75c6d5f80b405dafaf82069",
+      "summaries": [
+        "42 nesting/resource witnesses passed"
+      ]
+    },
+    {
+      "description": "Linux optimized: test-nesting",
+      "scope": "final source",
+      "exit_status": 0,
+      "log_sha256": "8855e1a4347681bcd592ae1d0649fbe43c511b690024044a8dc04a996da90180",
+      "summaries": [
+        "42 nesting/resource witnesses passed"
+      ]
+    },
+    {
+      "description": "Linux final-source ASan/UBSan/LSan: test-nesting test-parser test-expand test-execute test-context; ASAN_OPTIONS=halt_on_error=1:detect_leaks=1 UBSAN_OPTIONS=halt_on_error=1",
+      "scope": "final source",
+      "exit_status": 0,
+      "log_sha256": "c8325729e4a23d2ceb31f042d9336a15468213fa25ff8715bd67f369c22d901b",
+      "summaries": [
+        "42 nesting/resource witnesses passed",
+        "110/110 final-field checks passed",
+        "238/238 parser checks passed",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped"
+      ]
+    }
+  ],
+  "superseded_run": "A broad pre-TLS Linux sanitizer run was stopped without a reported failure in favor of final-source Linux ASan/UBSan/LSan API and nesting validation. It is not counted as a passing full suite.",
+  "limits": "Finite samples are not unlimited-capacity or conformance proof. Two existing unequal-identity invocation cases require Linux root and were skipped in unprivileged runs. Full make test, PTY, and unrelated host qualification suites were not run for this ticket."
+}

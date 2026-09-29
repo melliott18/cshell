@@ -123,9 +123,9 @@ partitions and absence of a forbidden side effect. F `{assignment,pattern}
 suppresses splitting and globbing` is API-only supplemental evidence.
 
 D-008: N `policy brace expansion absent` leaves both brace forms literal.
-Expansion/arithmetical nesting still has a 128-level guard; selected cases do
-not establish arbitrary nesting support. CSH-047 retains that expansion limit;
-the parser/executor size guard is separately retained by CSH-046. Assignment
+[CSH-066](nesting-resources.md) replaces the historical 128-level expansion and
+arithmetic guards with actual resource checks, and updates the parser/executor
+guard fixtures to require success. Finite depth cases do not prove unlimited capacity. Assignment
 and redirection expansion environments include source-permitted alternatives;
 X `empty command redirection environment isolated` tests cshell's clone policy.
 
@@ -247,7 +247,8 @@ round-down shift selection and comma sequencing (comma is a C operator, not an
 extra shell syntax claim). API boundaries assert unchanged result/storage after
 failure. Recursive variable expressions, increment/decrement, suffixes,
 `sizeof`, floating point and exponentiation are not supported extensions.
-Nesting is bounded at 128; no ILP32 or different integer representation was run.
+Nesting now follows the [CSH-066 resource contract](nesting-resources.md); no
+ILP32 or different integer representation was run.
 
 <a id="exp-007"></a>
 ### EXP-007 — IFS splitting

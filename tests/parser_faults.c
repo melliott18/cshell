@@ -194,6 +194,36 @@ static void sweep(const char *source, int valid)
     sweep_mode(source, valid, 0);
 }
 
+/* Selected failures both while descending and after deep children have been
+ * attached exercise partial ownership beyond the removed 128-context guard. */
+static void deep_failures(void)
+{
+    char source[1024], *at = source;
+    size_t i, calls, point;
+    for (i = 0; i < 160; ++i) { memcpy(at, "{ ", 2); at += 2; }
+    memcpy(at, ":; ", 3); at += 3;
+    for (i = 0; i < 160; ++i) { memcpy(at, "}; ", 3); at += 3; }
+    *at = 0;
+    allocation_calls = fail_allocation = 0;
+    assert(run(source, 1, 0));
+    calls = allocation_calls;
+    assert(live_allocations == 0);
+    for (point = 1; point <= calls; point += calls / 32 + 1) {
+        allocation_calls = 0;
+        fail_allocation = point;
+        assert(!run(source, 1, 0));
+        assert(live_allocations == 0);
+    }
+    allocation_calls = 0;
+    fail_allocation = calls;
+    assert(!run(source, 1, 0));
+    assert(live_allocations == 0);
+    fail_allocation = 0;
+    at[-3] = 0; /* one missing brace, after the other owned children close */
+    assert(run(source, 0, 0));
+    assert(live_allocations == 0);
+}
+
 int main(void)
 {
     char *large = malloc(32800);
@@ -267,6 +297,7 @@ int main(void)
     sweep("f() { if cat <<IF\ncondition\nIF\nthen cat <<BODY\nunclosed body\n", 0);
     sweep("case x in a) cat <<A ;; b) cat <<B ;; esac\none\nA\nmissing second delimiter\n", 0);
     sweep("f() { x; } <<FUNCTION\nmissing delimiter\n", 0);
+    deep_failures();
     free(large);
     puts("PASS: every allocation failure, compound/function trees, heredoc queues, partial errors, sticky results, cleanup");
     return 0;
