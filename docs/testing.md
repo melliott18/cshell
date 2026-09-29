@@ -1358,3 +1358,11 @@ unavailable, not passing tests. `make test-host-text-harness` checks independent
 CRC answers, rejection of wrong output/effects, timeout cleanup, and section
 accounting mutations. `make test-host-inventory` also validates the new ledger.
 See [qualification scope and reproduction](host-text-contracts.md).
+
+
+The CSH-073 transformation/offset/large-input extension runs in the same
+`test-host-text` and `test-host-profile` targets. Reports now include separate
+`qualification_groups` totals. File recipes permit exact multi-MiB comparisons
+without unbounded capture; negative controls reject changed, short and extra
+bytes. `Host text qualification` CI retains native and Docker JSON artifacts
+and separate strict-audit statuses, even if other shell jobs fail.

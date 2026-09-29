@@ -140,3 +140,26 @@ handshake/capture hardening is validated by the later focused completion runs.
 Exact commands, source/provider identities, all attempts and diagnoses are in
 the linked evidence. No native full-profile pass or complete utility
 qualification is claimed.
+
+
+### Transformation, offset, large-input and interruption extension
+
+The [four-group qualification](../host-text-contracts.md#transformation-offset-large-input-and-interruption-qualification)
+adds 194 strict assertions: 68 transformations, 56 offsets, 48 large-input
+assertions and 22 owned signal assertions. Large byte-for-byte comparisons
+include 8 MiB copies, 1 MiB transformations and one million lines. SIGINT,
+SIGPIPE, measured STOP/CONT resumption and tee -i continued copying are distinct
+from earlier TERM termination and failed ed recovery. Native SIGPIPE now has
+portable write evidence; already-blocked write observation remains a separate
+unavailable capability. Exact qualification and new retained attempts are in
+[extension evidence](../evidence/csh-073-extensions/README.md).
+
+Final extension subset results: macOS 14.8.7 **726 pass, 0 fail, 8 unavailable**;
+Ubuntu **732 pass, 0 fail, 2 unavailable**; Debian **734 pass, 0 fail,
+0 unavailable**. All 194 added assertions pass in each environment, with no
+unavailable extension rows. All 12 harness regressions pass. Final Linux strict
+audits retain 18 vendor failures each; the retained native audit has 14.
+The dedicated [hosted run](https://github.com/melliott18/cshell/actions/runs/36644920521)
+completed Ubuntu and Debian successfully; macOS 15 was queued at evidence
+capture. Local Docker API failure is retained separately from hosted Debian
+success. Full ticket acceptance remains open.

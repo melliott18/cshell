@@ -150,3 +150,40 @@ these requirements, the full pages, U-034/U-040 families, or the CSH-012 gate.
 The current ownership manifest links the section ledger; immutable CSH-064 and
 CSH-068 evidence remains unchanged. CSH-073 stays open for its per-utility
 remaining contracts, unavailable native capabilities and vendor requalification.
+
+
+## Transformation, offset, large-input and interruption qualification
+
+The follow-up adds four machine-checked groups in `coverage_groups` of the
+section ledger. Each JSON result reports their pass/fail/unavailable totals
+separately. These groups define finite contracts for the measured providers,
+not an assumption that a whole utility page follows from examples.
+
+| Group | Assertions and independent oracle | Scope |
+| --- | --- | --- |
+| Transformations | Join duplicate-key cross products, unmatched-only records and missing fields; paste escape delimiters; dictionary and numeric-key sorting; uniq counts/combined skips; tr octal ranges/repeat arrays/-C; sed append/insert/change, hold exchange, read/write files and N/P/D; fold backspaces; existing-tab unexpand | 17 cases in direct exec and all three public cshell modes: 68 assertions. Outputs are authored separately from the commands. C locale; earlier UTF-8 cases and strict failures remain separate. |
+| Offsets | strings decimal/octal/hex offsets; od decimal/octal/hex skips, concatenated input, beyond-EOF errors and sparse offset 2³¹; cmp byte 14/line 3; csplit positive/negative BRE offsets and repetition; tail +3 byte origin | 14 cases × four modes: 56 assertions. File construction determines each offset; no provider measures its own expected position. Existing cmp byte 2147483649 and tail sparse witnesses remain. |
+| Large inputs | 8 MiB cat/tee copies and wc count; 1 MiB sed pattern/hold transformation, cut suffix, tr and fold output; one million head lines; a 128 KiB tail suffix; split 1m units with partial last piece; 200000-record sort and uniq | 12 cases × four modes: 48 assertions. File-backed outputs are compared **every byte and length**, using compact independent recipes. Digests aid provenance but do not replace the comparison. Sizes are witnesses, never advertised maxima. |
+| Interruptions | cat/head/cmp default SIGINT on owned FIFO input, SIGPIPE from a private pipe with no readers, and SIGSTOP/SIGCONT with exact resumed input/output; tee default SIGINT versus -i surviving the signal and copying the next marker to stdout and a file | 11 cases in direct and cshell exec modes: 22 assertions. FIFO-open rendezvous, waitpid WUNTRACED stopped-state evidence, and tee's initial marker in **both** sinks gate the signal. No sleeps stand in for survival or recovery. |
+
+Large fixtures use at most 16 MiB per generated file and a 20-second operation
+limit; stdout/stderr pipe capture remains 65536 bytes. An exec-only adapter
+opens private input/output descriptors and execs the inventoried provider for
+the direct mode. The shell modes perform their own redirections. The runner
+records input sizes/hashes and expected/actual output sizes/hashes plus the
+first mismatching offset. Truncation, corruption, appended bytes, missing files
+and extra split pieces fail. File recipes remain bounded in the parent as well
+as by the child's RLIMIT_FSIZE.
+
+The new SIGPIPE witness supplies portable native write-interruption evidence;
+it does not claim to observe an already-blocked write or an EINTR return.
+Observed STOP/CONT resumption verifies bytes/status, not a particular syscall's
+restart implementation. Native blocked-write observation and capacity remain
+unavailable, and ed's exact SIGINT stdout contract remains a strict failure
+owned with CSH-074. No earlier failure expectation is relaxed.
+
+The dedicated `Host text qualification` workflow runs the strict subset and
+harness on native macOS, Ubuntu and Debian Docker with disposable capacity.
+Strict audits are a separately labelled non-gating step: their actual nonzero
+exit statuses and full JSON are uploaded, not converted into qualifying passes.
+See [follow-up evidence](evidence/csh-073-extensions/README.md).
