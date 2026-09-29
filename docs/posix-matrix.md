@@ -1,5 +1,8 @@
 # POSIX requirements and evidence matrix
 
+Current audit disposition: [CSH-012 closure](conformance-closure.md),
+[complete utility inventory](host-system-inventory.md), and [defect dispositions](defect-dispositions.md).
+
 The [CSH-012 acceptance review](conformance-acceptance-review.md) at `c8c1c91`
 records current requirement gaps, defect ownership, platform results and documentation corrections.
 

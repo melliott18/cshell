@@ -60,3 +60,5 @@ so the information remains accessible in a plain Markdown reader.
 - [Residual execution contracts (CSH-055)](execution-contracts.md): prefix PATH, inherited descriptors, read errors, and nested control evidence.
 
 The [CSH-012 requirement, defect, platform and documentation review](conformance-acceptance-review.md) records the current acceptance decisions and open limitations.
+
+[CSH-012 audit closure](conformance-closure.md) records complete requirement accounting and scoped defect dispositions; known implementation gaps remain open.

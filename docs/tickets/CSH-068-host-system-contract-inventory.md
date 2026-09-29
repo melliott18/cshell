@@ -1,6 +1,6 @@
 # CSH-068: Inventory the complete required host utility contract
 
-- Status: ready
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
@@ -21,14 +21,27 @@ Expand the system-wide host obligation into a reviewable inventory instead of tr
 
 ## Acceptance criteria
 
-- [ ] Enumerate the required utility collection for the selected POSIX.1-2024 profile with clause/page links and justified exclusions.
-- [ ] Link every applicable utility to a supplied provider plus qualifying evidence, or a concrete missing-contract owner and limitation.
-- [ ] Document PATH, packages, fallback shell, OS/libc/filesystem/credential assumptions and reproducible setup.
-- [ ] Keep stock-host gaps, qualified subset results and complete-system qualification distinct in the parent audit.
+- [x] Enumerate the required utility collection for the selected POSIX.1-2024 profile with clause/page links and justified exclusions.
+- [x] Link every applicable utility to a supplied provider plus qualifying evidence, or a concrete missing-contract owner and limitation.
+- [x] Document PATH, packages, fallback shell, OS/libc/filesystem/credential assumptions and reproducible setup.
+- [x] Keep stock-host gaps, qualified subset results and complete-system qualification distinct in the parent audit.
+
+- [ ] Qualify the remaining external utility contracts assigned here by the closure
+  inventory, or transfer individual contracts to narrower open implementation owners.
 
 ## Validation
 
 Review the normative §1.6 inventory independently of tests/host_utility_cases.py. Validate executable identities and representative public dispatch with zero gap allowances for any declared qualified subset; a successful selected suite does not qualify the full host.
+
+## Inventory completion and remaining ownership
+
+The [complete inventory](../host-system-inventory.md) supplies 155 indexed utility
+pages, the `[` spelling and 15 special builtins with applicability, actual native
+and Debian providers, exact executable identities and per-utility open contracts.
+This completes inventory for CSH-012. This ticket stays open as the concrete
+owner for the unqualified external contracts named there; qualification is not
+inferred from executable presence. CSH-064's narrower conditions retain their
+existing owner. Complete or transfer those contracts before closing this owner.
 
 ## Implementation notes/evidence
 

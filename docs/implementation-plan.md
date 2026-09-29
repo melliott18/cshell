@@ -1,5 +1,8 @@
 # Implementation plan
 
+Current audit disposition: [CSH-012 closure](conformance-closure.md),
+[complete utility inventory](host-system-inventory.md), and [defect dispositions](defect-dispositions.md).
+
 ## Read the backlog as a dependency graph
 
 Ticket numbers are stable identifiers, not a required execution order. The

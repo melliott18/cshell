@@ -1,0 +1,4948 @@
+{
+  "source_revision": "5b56328143adc72f48f8af581b93fcb758af060e",
+  "counts": {
+    "indexed_pages": 155,
+    "utility_names_with_test_alias": 156,
+    "conditional_names": 45,
+    "applicable_names": 111,
+    "exec_required_names": 101,
+    "special_builtins": 15
+  },
+  "entries": [
+    {
+      "name": "admin",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/admin.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "alias",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/alias.html",
+      "scope": "base",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/alias",
+          "realpath": "/usr/bin/alias",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        },
+        "qualified": {
+          "path": "/usr/bin/alias",
+          "realpath": "/usr/bin/alias",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-017",
+      "owner": [
+        46,
+        67
+      ]
+    },
+    {
+      "name": "ar",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ar.html",
+      "scope": "conditional SD",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/ar",
+          "realpath": "/usr/bin/ar",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        },
+        "qualified": {
+          "path": "/usr/bin/ar",
+          "realpath": "/usr/bin/ar",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/ar",
+          "realpath": "/usr/bin/aarch64-linux-gnu-ar",
+          "sha256": "0cba08ac21fb60324faf00b55ad6185a0109e0b04714be211522f94aa4ddbe53"
+        },
+        "qualified": {
+          "path": "/bin/ar",
+          "realpath": "/usr/bin/aarch64-linux-gnu-ar",
+          "sha256": "0cba08ac21fb60324faf00b55ad6185a0109e0b04714be211522f94aa4ddbe53"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "asa",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/asa.html",
+      "scope": "conditional FR",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/asa",
+          "realpath": "/usr/bin/asa",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        },
+        "qualified": {
+          "path": "/usr/bin/asa",
+          "realpath": "/usr/bin/asa",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "at",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/at.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/at",
+          "realpath": "/usr/bin/at",
+          "sha256": "dc79a55ce64ca43f17aee6e9cecf6951f694f1527500952fe993d537624ea35d"
+        },
+        "qualified": {
+          "path": "/usr/bin/at",
+          "realpath": "/usr/bin/at",
+          "sha256": "dc79a55ce64ca43f17aee6e9cecf6951f694f1527500952fe993d537624ea35d"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "awk",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/awk",
+          "realpath": "/usr/bin/awk",
+          "sha256": "db79e22eebd9de422aa752dbd4a44fbaf4b7a441443d1c94dff997c1e46f61d4"
+        },
+        "qualified": {
+          "path": "/usr/bin/awk",
+          "realpath": "/usr/bin/awk",
+          "sha256": "db79e22eebd9de422aa752dbd4a44fbaf4b7a441443d1c94dff997c1e46f61d4"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/awk",
+          "realpath": "/usr/bin/mawk",
+          "sha256": "94cf5802d953550edc96829843918779f1ffa7d567d7aa7ca4e5f42326d77412"
+        },
+        "qualified": {
+          "path": "/bin/awk",
+          "realpath": "/usr/bin/mawk",
+          "sha256": "94cf5802d953550edc96829843918779f1ffa7d567d7aa7ca4e5f42326d77412"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "basename",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/basename.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/basename",
+          "realpath": "/usr/bin/basename",
+          "sha256": "8dceba49a7490d4f070365a5527634d180e64d22196967598deb8655a6802983"
+        },
+        "qualified": {
+          "path": "/usr/bin/basename",
+          "realpath": "/usr/bin/basename",
+          "sha256": "8dceba49a7490d4f070365a5527634d180e64d22196967598deb8655a6802983"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/basename",
+          "realpath": "/usr/bin/basename",
+          "sha256": "75c41954f12dbfd2a3c36a0a80279656e1c394c8fbf19415f987ea3c5311a0ec"
+        },
+        "qualified": {
+          "path": "/bin/basename",
+          "realpath": "/usr/bin/basename",
+          "sha256": "75c41954f12dbfd2a3c36a0a80279656e1c394c8fbf19415f987ea3c5311a0ec"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "batch",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/batch.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/batch",
+          "realpath": "/usr/bin/batch",
+          "sha256": "cac3c6563cb66ccfa9272d573cd3034141cf61c82557812aa8722f0fdcc12bd8"
+        },
+        "qualified": {
+          "path": "/usr/bin/batch",
+          "realpath": "/usr/bin/batch",
+          "sha256": "cac3c6563cb66ccfa9272d573cd3034141cf61c82557812aa8722f0fdcc12bd8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "bc",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/bc",
+          "realpath": "/usr/bin/bc",
+          "sha256": "7896edfdcf129e984b62e4ac7d3939a5c65872184e60347a07f5c0134c1c6dff"
+        },
+        "qualified": {
+          "path": "/usr/bin/bc",
+          "realpath": "/usr/bin/bc",
+          "sha256": "7896edfdcf129e984b62e4ac7d3939a5c65872184e60347a07f5c0134c1c6dff"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "bg",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bg.html",
+      "scope": "conditional UP",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/bg",
+          "realpath": "/usr/bin/bg",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        },
+        "qualified": {
+          "path": "/usr/bin/bg",
+          "realpath": "/usr/bin/bg",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-018",
+      "owner": []
+    },
+    {
+      "name": "c17",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/c17.html",
+      "scope": "conditional CD",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "cal",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cal.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/cal",
+          "realpath": "/usr/bin/cal",
+          "sha256": "bbd4ae6f6d4b109b3306f7307605a207d4f105fdbd83ed304dfda1cef3ff78d7"
+        },
+        "qualified": {
+          "path": "/usr/bin/cal",
+          "realpath": "/usr/bin/cal",
+          "sha256": "bbd4ae6f6d4b109b3306f7307605a207d4f105fdbd83ed304dfda1cef3ff78d7"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "cat",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cat.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/cat",
+          "realpath": "/bin/cat",
+          "sha256": "38c19fef3e9b4e6ffeee7fef5ff90119f913720b48f55ae0406b77d2beee1dab"
+        },
+        "qualified": {
+          "path": "/bin/cat",
+          "realpath": "/bin/cat",
+          "sha256": "38c19fef3e9b4e6ffeee7fef5ff90119f913720b48f55ae0406b77d2beee1dab"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/cat",
+          "realpath": "/usr/bin/cat",
+          "sha256": "491ea6f9b1804d893d660477e6873855b28271c018b13f086c2fc419d51560bb"
+        },
+        "qualified": {
+          "path": "/bin/cat",
+          "realpath": "/usr/bin/cat",
+          "sha256": "491ea6f9b1804d893d660477e6873855b28271c018b13f086c2fc419d51560bb"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "cd",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cd.html",
+      "scope": "base",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/cd",
+          "realpath": "/usr/bin/cd",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        },
+        "qualified": {
+          "path": "/usr/bin/cd",
+          "realpath": "/usr/bin/cd",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-019",
+      "owner": [
+        48
+      ]
+    },
+    {
+      "name": "cflow",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cflow.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "chgrp",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/chgrp.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/chgrp",
+          "realpath": "/usr/bin/chgrp",
+          "sha256": "7cc60467170c86358144d4cdce61dea728172611af737d2d080413c424938ea8"
+        },
+        "qualified": {
+          "path": "/usr/bin/chgrp",
+          "realpath": "/usr/bin/chgrp",
+          "sha256": "7cc60467170c86358144d4cdce61dea728172611af737d2d080413c424938ea8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/chgrp",
+          "realpath": "/usr/bin/chgrp",
+          "sha256": "f7b2e690874abf8006af0875f0ca6179b677fdede7952f84f0139bf21af90e92"
+        },
+        "qualified": {
+          "path": "/bin/chgrp",
+          "realpath": "/usr/bin/chgrp",
+          "sha256": "f7b2e690874abf8006af0875f0ca6179b677fdede7952f84f0139bf21af90e92"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "chmod",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/chmod.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/chmod",
+          "realpath": "/bin/chmod",
+          "sha256": "cd5a3d30a2df30eac5ca8e06bb96a2d97bcd4cf5ac8052a23cd0d6cb0230418b"
+        },
+        "qualified": {
+          "path": "/bin/chmod",
+          "realpath": "/bin/chmod",
+          "sha256": "cd5a3d30a2df30eac5ca8e06bb96a2d97bcd4cf5ac8052a23cd0d6cb0230418b"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/chmod",
+          "realpath": "/usr/bin/chmod",
+          "sha256": "ca00b5e3f39f71555b48b45effd7be511d3e73d87a767579bc10aff81bf02bc6"
+        },
+        "qualified": {
+          "path": "/bin/chmod",
+          "realpath": "/usr/bin/chmod",
+          "sha256": "ca00b5e3f39f71555b48b45effd7be511d3e73d87a767579bc10aff81bf02bc6"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "chown",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/chown.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/sbin/chown",
+          "realpath": "/usr/sbin/chown",
+          "sha256": "7cc60467170c86358144d4cdce61dea728172611af737d2d080413c424938ea8"
+        },
+        "qualified": {
+          "path": "/usr/sbin/chown",
+          "realpath": "/usr/sbin/chown",
+          "sha256": "7cc60467170c86358144d4cdce61dea728172611af737d2d080413c424938ea8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/chown",
+          "realpath": "/usr/bin/chown",
+          "sha256": "850c78fba00bb7d84cf3d6fb9f4e788d68781d7a09a54ece6bfb8e08d1b06782"
+        },
+        "qualified": {
+          "path": "/bin/chown",
+          "realpath": "/usr/bin/chown",
+          "sha256": "850c78fba00bb7d84cf3d6fb9f4e788d68781d7a09a54ece6bfb8e08d1b06782"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "cksum",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cksum.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/cksum",
+          "realpath": "/usr/bin/cksum",
+          "sha256": "b9ea109701cd7df1f0dba78ecde4f6f825922011e3ed0ef74bf9c225a275fa4e"
+        },
+        "qualified": {
+          "path": "/usr/bin/cksum",
+          "realpath": "/usr/bin/cksum",
+          "sha256": "b9ea109701cd7df1f0dba78ecde4f6f825922011e3ed0ef74bf9c225a275fa4e"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/cksum",
+          "realpath": "/usr/bin/cksum",
+          "sha256": "43b53d830e04fda369a7b40754a97e0b5dbfee44549d15a4777f920305214073"
+        },
+        "qualified": {
+          "path": "/bin/cksum",
+          "realpath": "/usr/bin/cksum",
+          "sha256": "43b53d830e04fda369a7b40754a97e0b5dbfee44549d15a4777f920305214073"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "cmp",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cmp.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/cmp",
+          "realpath": "/usr/bin/cmp",
+          "sha256": "9a4e2eaeccc87d4fe8f9d436f8d4ac0bb5a3b74b763807328daa729722a1fe03"
+        },
+        "qualified": {
+          "path": "/usr/bin/cmp",
+          "realpath": "/usr/bin/cmp",
+          "sha256": "9a4e2eaeccc87d4fe8f9d436f8d4ac0bb5a3b74b763807328daa729722a1fe03"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/cmp",
+          "realpath": "/usr/bin/cmp",
+          "sha256": "2f7b69a504f687fdc54ea05e3d89c16d13c79a9078036e0bfca7792d2ae3846c"
+        },
+        "qualified": {
+          "path": "/bin/cmp",
+          "realpath": "/usr/bin/cmp",
+          "sha256": "2f7b69a504f687fdc54ea05e3d89c16d13c79a9078036e0bfca7792d2ae3846c"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "comm",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/comm.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/comm",
+          "realpath": "/usr/bin/comm",
+          "sha256": "16f600b715b9b11fdd07960f846fc7be40e9ae438d1639fed48dabe4ddd8d6fe"
+        },
+        "qualified": {
+          "path": "/usr/bin/comm",
+          "realpath": "/usr/bin/comm",
+          "sha256": "16f600b715b9b11fdd07960f846fc7be40e9ae438d1639fed48dabe4ddd8d6fe"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/comm",
+          "realpath": "/usr/bin/comm",
+          "sha256": "8e1f49842d7a22ffca38f0102eb8ac2c269cd9d9cdc5a65e213b772d5b88288e"
+        },
+        "qualified": {
+          "path": "/bin/comm",
+          "realpath": "/usr/bin/comm",
+          "sha256": "8e1f49842d7a22ffca38f0102eb8ac2c269cd9d9cdc5a65e213b772d5b88288e"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "command",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/command.html",
+      "scope": "base",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/command",
+          "realpath": "/usr/bin/command",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        },
+        "qualified": {
+          "path": "/usr/bin/command",
+          "realpath": "/usr/bin/command",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-020",
+      "owner": [
+        48
+      ]
+    },
+    {
+      "name": "compress",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/compress.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/compress",
+          "realpath": "/usr/bin/compress",
+          "sha256": "1ff840f2f6daedc87cfb526ea182ef0e4a5bfd25dbabba413aabbc4a235cc146"
+        },
+        "qualified": {
+          "path": "/usr/bin/compress",
+          "realpath": "/usr/bin/compress",
+          "sha256": "1ff840f2f6daedc87cfb526ea182ef0e4a5bfd25dbabba413aabbc4a235cc146"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "cp",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/cp",
+          "realpath": "/bin/cp",
+          "sha256": "f49651f68a61e0d2c640246b51d620687ee803640a1e91a13e82ddfabc02a7c6"
+        },
+        "qualified": {
+          "path": "/bin/cp",
+          "realpath": "/bin/cp",
+          "sha256": "f49651f68a61e0d2c640246b51d620687ee803640a1e91a13e82ddfabc02a7c6"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/cp",
+          "realpath": "/usr/bin/cp",
+          "sha256": "939203c07f6783252aafd545ab03c026c02f198245122564102ba7d652aaecde"
+        },
+        "qualified": {
+          "path": "/bin/cp",
+          "realpath": "/usr/bin/cp",
+          "sha256": "939203c07f6783252aafd545ab03c026c02f198245122564102ba7d652aaecde"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "crontab",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/crontab.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/crontab",
+          "realpath": "/usr/bin/crontab",
+          "sha256": "e9e39093910349a1e3be8b6f457fcb98775a3c99d268648aaad4f7117df0ad8d"
+        },
+        "qualified": {
+          "path": "/usr/bin/crontab",
+          "realpath": "/usr/bin/crontab",
+          "sha256": "e9e39093910349a1e3be8b6f457fcb98775a3c99d268648aaad4f7117df0ad8d"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "csplit",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/csplit.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/csplit",
+          "realpath": "/usr/bin/csplit",
+          "sha256": "e9b756c8a75112a685de361f9ff74edac950d13ad097323c82cfdb6f46a33e5e"
+        },
+        "qualified": {
+          "path": "/usr/bin/csplit",
+          "realpath": "/usr/bin/csplit",
+          "sha256": "e9b756c8a75112a685de361f9ff74edac950d13ad097323c82cfdb6f46a33e5e"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/csplit",
+          "realpath": "/usr/bin/csplit",
+          "sha256": "52866927c925b7f29cbdecd96b92d60cb70dc7d6e585b7ce3efaab6863ace7be"
+        },
+        "qualified": {
+          "path": "/bin/csplit",
+          "realpath": "/usr/bin/csplit",
+          "sha256": "52866927c925b7f29cbdecd96b92d60cb70dc7d6e585b7ce3efaab6863ace7be"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "ctags",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ctags.html",
+      "scope": "conditional CD or SD",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/ctags",
+          "realpath": "/usr/bin/ctags",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        },
+        "qualified": {
+          "path": "/usr/bin/ctags",
+          "realpath": "/usr/bin/ctags",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "cut",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cut.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/cut",
+          "realpath": "/usr/bin/cut",
+          "sha256": "5f768483018e296ffa034a6073505a66e63b90ed0eff7564b017ad9781b2b4bf"
+        },
+        "qualified": {
+          "path": "/usr/bin/cut",
+          "realpath": "/usr/bin/cut",
+          "sha256": "5f768483018e296ffa034a6073505a66e63b90ed0eff7564b017ad9781b2b4bf"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/cut",
+          "realpath": "/usr/bin/cut",
+          "sha256": "f0174329a0371042f7f3f523ea7737029c55380b7c432a45c4e0476024d83c11"
+        },
+        "qualified": {
+          "path": "/bin/cut",
+          "realpath": "/usr/bin/cut",
+          "sha256": "f0174329a0371042f7f3f523ea7737029c55380b7c432a45c4e0476024d83c11"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "cxref",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cxref.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "date",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/date.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/date",
+          "realpath": "/bin/date",
+          "sha256": "822f922dfb07ff16dea6fc310f6615126be3c6081b82e2d46f1eb00c6d30d934"
+        },
+        "qualified": {
+          "path": "/bin/date",
+          "realpath": "/bin/date",
+          "sha256": "822f922dfb07ff16dea6fc310f6615126be3c6081b82e2d46f1eb00c6d30d934"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/date",
+          "realpath": "/usr/bin/date",
+          "sha256": "92daa8bd922d7a4c42a5c3c00761a27688a745788b46656eafb63656bb17fdb8"
+        },
+        "qualified": {
+          "path": "/bin/date",
+          "realpath": "/usr/bin/date",
+          "sha256": "92daa8bd922d7a4c42a5c3c00761a27688a745788b46656eafb63656bb17fdb8"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "dd",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dd.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/dd",
+          "realpath": "/bin/dd",
+          "sha256": "98ac30acbe9e98c7111d44a8f53210ad779d65fefc0a70b0601db2a2dcf285f5"
+        },
+        "qualified": {
+          "path": "/bin/dd",
+          "realpath": "/bin/dd",
+          "sha256": "98ac30acbe9e98c7111d44a8f53210ad779d65fefc0a70b0601db2a2dcf285f5"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/dd",
+          "realpath": "/usr/bin/dd",
+          "sha256": "57e766b90bd8c45b390da857893d13ef2d5af3c42fe95f2cadd31852220c9962"
+        },
+        "qualified": {
+          "path": "/bin/dd",
+          "realpath": "/usr/bin/dd",
+          "sha256": "57e766b90bd8c45b390da857893d13ef2d5af3c42fe95f2cadd31852220c9962"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "delta",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/delta.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "df",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/df",
+          "realpath": "/bin/df",
+          "sha256": "d9525d5bbc9faf5cc36fa0d4be4581e86907e2d0bb0eefd77fbd28814c9a9990"
+        },
+        "qualified": {
+          "path": "/bin/df",
+          "realpath": "/bin/df",
+          "sha256": "d9525d5bbc9faf5cc36fa0d4be4581e86907e2d0bb0eefd77fbd28814c9a9990"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/df",
+          "realpath": "/usr/bin/df",
+          "sha256": "cc6f4d541a9f7bd5f668fd3d4e2980de69ed476254ac2a2e488676818801ce60"
+        },
+        "qualified": {
+          "path": "/bin/df",
+          "realpath": "/usr/bin/df",
+          "sha256": "cc6f4d541a9f7bd5f668fd3d4e2980de69ed476254ac2a2e488676818801ce60"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "diff",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/diff.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/diff",
+          "realpath": "/usr/bin/diff",
+          "sha256": "a2ef656d00221ce931a6e676c835b520fd842ed80066b8d9719c287f4b08b7b7"
+        },
+        "qualified": {
+          "path": "/usr/bin/diff",
+          "realpath": "/usr/bin/diff",
+          "sha256": "a2ef656d00221ce931a6e676c835b520fd842ed80066b8d9719c287f4b08b7b7"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/diff",
+          "realpath": "/usr/bin/diff",
+          "sha256": "a5ebfeadf202517258ea40992577650213d14d7358c898a70094ebd1bba35917"
+        },
+        "qualified": {
+          "path": "/bin/diff",
+          "realpath": "/usr/bin/diff",
+          "sha256": "a5ebfeadf202517258ea40992577650213d14d7358c898a70094ebd1bba35917"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "dirname",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/dirname",
+          "realpath": "/usr/bin/dirname",
+          "sha256": "3679bcd2e5be8e2d576ca293d93807e40ba082e66921fa0e9cb4b7ca4ef4a82c"
+        },
+        "qualified": {
+          "path": "/usr/bin/dirname",
+          "realpath": "/usr/bin/dirname",
+          "sha256": "3679bcd2e5be8e2d576ca293d93807e40ba082e66921fa0e9cb4b7ca4ef4a82c"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/dirname",
+          "realpath": "/usr/bin/dirname",
+          "sha256": "40db5e8700922e932aafd7e0251182a70c1197a90946ded544e20a871d73c86a"
+        },
+        "qualified": {
+          "path": "/bin/dirname",
+          "realpath": "/usr/bin/dirname",
+          "sha256": "40db5e8700922e932aafd7e0251182a70c1197a90946ded544e20a871d73c86a"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "du",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/du",
+          "realpath": "/usr/bin/du",
+          "sha256": "5e7217c12d6fa6b0950452a7753aef4921ea73dade1c253258af4c6ca503675d"
+        },
+        "qualified": {
+          "path": "/usr/bin/du",
+          "realpath": "/usr/bin/du",
+          "sha256": "5e7217c12d6fa6b0950452a7753aef4921ea73dade1c253258af4c6ca503675d"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/du",
+          "realpath": "/usr/bin/du",
+          "sha256": "f995bf38c5cc2ef8bc2a922fa451cf8b9fce7992a423a9e6e3fbed97085bb49f"
+        },
+        "qualified": {
+          "path": "/bin/du",
+          "realpath": "/usr/bin/du",
+          "sha256": "f995bf38c5cc2ef8bc2a922fa451cf8b9fce7992a423a9e6e3fbed97085bb49f"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "echo",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/echo.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/echo",
+          "realpath": "/bin/echo",
+          "sha256": "58b8586cef5f0ca5fab36ef9a2ccea04d0fad1fc63b60351283d96a1fc6d91c4"
+        },
+        "qualified": {
+          "path": "/bin/echo",
+          "realpath": "/bin/echo",
+          "sha256": "58b8586cef5f0ca5fab36ef9a2ccea04d0fad1fc63b60351283d96a1fc6d91c4"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/echo",
+          "realpath": "/usr/bin/echo",
+          "sha256": "06b166eee3ef88d62a7174a4a03a42416d959fb4bd05754d597365f89b9cd984"
+        },
+        "qualified": {
+          "path": "/bin/echo",
+          "realpath": "/usr/bin/echo",
+          "sha256": "06b166eee3ef88d62a7174a4a03a42416d959fb4bd05754d597365f89b9cd984"
+        }
+      },
+      "requirement": "U-036",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "ed",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/ed",
+          "realpath": "/bin/ed",
+          "sha256": "be799d70cda13ff74f13d571de9b41c72578dcbb620d807a998d38ab9a10f86f"
+        },
+        "qualified": {
+          "path": "/bin/ed",
+          "realpath": "/bin/ed",
+          "sha256": "be799d70cda13ff74f13d571de9b41c72578dcbb620d807a998d38ab9a10f86f"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/ed",
+          "realpath": "/usr/bin/ed",
+          "sha256": "0aa4cddab76c0ed02d50894b9c719527f5d0fc4fb55ce7ec6a9c05ac174324dd"
+        },
+        "qualified": {
+          "path": "/bin/ed",
+          "realpath": "/usr/bin/ed",
+          "sha256": "0aa4cddab76c0ed02d50894b9c719527f5d0fc4fb55ce7ec6a9c05ac174324dd"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "env",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/env.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/env",
+          "realpath": "/usr/bin/env",
+          "sha256": "148a4776d572617e023c1f4588b53d06eec8666c27530e7e4dbaf1b58b2387a4"
+        },
+        "qualified": {
+          "path": "/usr/bin/env",
+          "realpath": "/usr/bin/env",
+          "sha256": "148a4776d572617e023c1f4588b53d06eec8666c27530e7e4dbaf1b58b2387a4"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/env",
+          "realpath": "/usr/bin/env",
+          "sha256": "67a8c7fac47281a5ee335366bcd12f31aa7eeca008cef6eccad38304753ddee9"
+        },
+        "qualified": {
+          "path": "/bin/env",
+          "realpath": "/usr/bin/env",
+          "sha256": "67a8c7fac47281a5ee335366bcd12f31aa7eeca008cef6eccad38304753ddee9"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "ex",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ex.html",
+      "scope": "conditional UP",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/ex",
+          "realpath": "/usr/bin/vim",
+          "sha256": "0b7f9a73390c84e50be70188e73572d207e02b05fe025a65084b0be039eefba6"
+        },
+        "qualified": {
+          "path": "/usr/bin/ex",
+          "realpath": "/usr/bin/vim",
+          "sha256": "0b7f9a73390c84e50be70188e73572d207e02b05fe025a65084b0be039eefba6"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "expand",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expand.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/expand",
+          "realpath": "/usr/bin/expand",
+          "sha256": "629d814d479c2524f58ab294324210ad042b7a303d18879a5433c98614297275"
+        },
+        "qualified": {
+          "path": "/usr/bin/expand",
+          "realpath": "/usr/bin/expand",
+          "sha256": "629d814d479c2524f58ab294324210ad042b7a303d18879a5433c98614297275"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/expand",
+          "realpath": "/usr/bin/expand",
+          "sha256": "6aa4c74abc38191f0ee63ba27c6e30f964d25c5f98fce8324bbb408a72a2248a"
+        },
+        "qualified": {
+          "path": "/bin/expand",
+          "realpath": "/usr/bin/expand",
+          "sha256": "6aa4c74abc38191f0ee63ba27c6e30f964d25c5f98fce8324bbb408a72a2248a"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "expr",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/expr",
+          "realpath": "/bin/expr",
+          "sha256": "74699eabffc534fce15403aaf37b677d261aac834477e3484adf737e0eff610e"
+        },
+        "qualified": {
+          "path": "/bin/expr",
+          "realpath": "/bin/expr",
+          "sha256": "74699eabffc534fce15403aaf37b677d261aac834477e3484adf737e0eff610e"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/expr",
+          "realpath": "/usr/bin/expr",
+          "sha256": "de120b772e3aaf8a15b670c725717d1e873b831b07c6eeb08e0a46f5e56a5f61"
+        },
+        "qualified": {
+          "path": "/bin/expr",
+          "realpath": "/usr/bin/expr",
+          "sha256": "de120b772e3aaf8a15b670c725717d1e873b831b07c6eeb08e0a46f5e56a5f61"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "false",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/false.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/false",
+          "realpath": "/usr/bin/false",
+          "sha256": "ee975fead4a84a15293e7b024e53a5f7db65c17e344313893ab3ebf4f2e60bf5"
+        },
+        "qualified": {
+          "path": "/usr/bin/false",
+          "realpath": "/usr/bin/false",
+          "sha256": "ee975fead4a84a15293e7b024e53a5f7db65c17e344313893ab3ebf4f2e60bf5"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/false",
+          "realpath": "/usr/bin/false",
+          "sha256": "903ccf165f04653d2717e8589cdee1a09a5c0aecfa5dfd8ea1e02050aca43e3e"
+        },
+        "qualified": {
+          "path": "/bin/false",
+          "realpath": "/usr/bin/false",
+          "sha256": "903ccf165f04653d2717e8589cdee1a09a5c0aecfa5dfd8ea1e02050aca43e3e"
+        }
+      },
+      "requirement": "U-039",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "fc",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/fc.html",
+      "scope": "conditional UP",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/fc",
+          "realpath": "/usr/bin/fc",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        },
+        "qualified": {
+          "path": "/usr/bin/fc",
+          "realpath": "/usr/bin/fc",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-021",
+      "owner": []
+    },
+    {
+      "name": "fg",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/fg.html",
+      "scope": "conditional UP",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/fg",
+          "realpath": "/usr/bin/fg",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        },
+        "qualified": {
+          "path": "/usr/bin/fg",
+          "realpath": "/usr/bin/fg",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-022",
+      "owner": []
+    },
+    {
+      "name": "file",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/file",
+          "realpath": "/usr/bin/file",
+          "sha256": "0a206b730535e0e66feebe19f5a8d0d4b5842cca11c6997202bbbd4bdb706cc9"
+        },
+        "qualified": {
+          "path": "/usr/bin/file",
+          "realpath": "/usr/bin/file",
+          "sha256": "0a206b730535e0e66feebe19f5a8d0d4b5842cca11c6997202bbbd4bdb706cc9"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "find",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/find",
+          "realpath": "/usr/bin/find",
+          "sha256": "d3a0d7bd763b11b824f669dd100243a1d8afba0dbc05660e3396c2738e595a6a"
+        },
+        "qualified": {
+          "path": "/usr/bin/find",
+          "realpath": "/usr/bin/find",
+          "sha256": "d3a0d7bd763b11b824f669dd100243a1d8afba0dbc05660e3396c2738e595a6a"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/find",
+          "realpath": "/usr/bin/find",
+          "sha256": "02953b247cc5538ed853c4a21d50dd789a964b21ae9908c0dfdf46358188f9fe"
+        },
+        "qualified": {
+          "path": "/bin/find",
+          "realpath": "/usr/bin/find",
+          "sha256": "02953b247cc5538ed853c4a21d50dd789a964b21ae9908c0dfdf46358188f9fe"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "fold",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/fold.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/fold",
+          "realpath": "/usr/bin/fold",
+          "sha256": "c6217c730cb0d19daeb548151f9a0cf245e9e3b6cd39739f1d2daf16fd7bc9ea"
+        },
+        "qualified": {
+          "path": "/usr/bin/fold",
+          "realpath": "/usr/bin/fold",
+          "sha256": "c6217c730cb0d19daeb548151f9a0cf245e9e3b6cd39739f1d2daf16fd7bc9ea"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/fold",
+          "realpath": "/usr/bin/fold",
+          "sha256": "df17255e06211cb2effd7aabb6822fda47c83bd46a305ed154ba22f154b98738"
+        },
+        "qualified": {
+          "path": "/bin/fold",
+          "realpath": "/usr/bin/fold",
+          "sha256": "df17255e06211cb2effd7aabb6822fda47c83bd46a305ed154ba22f154b98738"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "fuser",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/fuser.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/fuser",
+          "realpath": "/usr/bin/fuser",
+          "sha256": "40eb622e053727159a5b97604000bcbb16f4d0344aad697a55f423c6c4d2b80f"
+        },
+        "qualified": {
+          "path": "/usr/bin/fuser",
+          "realpath": "/usr/bin/fuser",
+          "sha256": "40eb622e053727159a5b97604000bcbb16f4d0344aad697a55f423c6c4d2b80f"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "gencat",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/gencat.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/gencat",
+          "realpath": "/usr/bin/gencat",
+          "sha256": "05d15bf225fb492e6b6a016a3d0c110f053d673df82e01075fd60674b5f27e60"
+        },
+        "qualified": {
+          "path": "/usr/bin/gencat",
+          "realpath": "/usr/bin/gencat",
+          "sha256": "05d15bf225fb492e6b6a016a3d0c110f053d673df82e01075fd60674b5f27e60"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/gencat",
+          "realpath": "/usr/bin/gencat",
+          "sha256": "131427b5bf5fee0fb66e18ba3df08bda928bd1aacdc682e47074dcd00d450e22"
+        },
+        "qualified": {
+          "path": "/bin/gencat",
+          "realpath": "/usr/bin/gencat",
+          "sha256": "131427b5bf5fee0fb66e18ba3df08bda928bd1aacdc682e47074dcd00d450e22"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "get",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/get.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "getconf",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/getconf.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/getconf",
+          "realpath": "/usr/bin/getconf",
+          "sha256": "381f8d0720b05797987437dbdea6f633b4c636f8975330b9f803373bdce00d37"
+        },
+        "qualified": {
+          "path": "/usr/bin/getconf",
+          "realpath": "/usr/bin/getconf",
+          "sha256": "381f8d0720b05797987437dbdea6f633b4c636f8975330b9f803373bdce00d37"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/getconf",
+          "realpath": "/usr/bin/getconf",
+          "sha256": "ed69493e9116dde0f7e91d400193abb18d72f229d44d8669fe7912e5e85b1ac5"
+        },
+        "qualified": {
+          "path": "/bin/getconf",
+          "realpath": "/usr/bin/getconf",
+          "sha256": "ed69493e9116dde0f7e91d400193abb18d72f229d44d8669fe7912e5e85b1ac5"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "getopts",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/getopts.html",
+      "scope": "base",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/getopts",
+          "realpath": "/usr/bin/getopts",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        },
+        "qualified": {
+          "path": "/usr/bin/getopts",
+          "realpath": "/usr/bin/getopts",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-023",
+      "owner": [
+        48
+      ]
+    },
+    {
+      "name": "gettext",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/gettext.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "grep",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/grep",
+          "realpath": "/usr/bin/grep",
+          "sha256": "761f26aa7461da2e39c344bf601c8353eb0d82f8b50fab95833650b6d3fb7892"
+        },
+        "qualified": {
+          "path": "/usr/bin/grep",
+          "realpath": "/usr/bin/grep",
+          "sha256": "761f26aa7461da2e39c344bf601c8353eb0d82f8b50fab95833650b6d3fb7892"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/grep",
+          "realpath": "/usr/bin/grep",
+          "sha256": "d4323504915163bfb15b27d84d7dd7c35369d6a2bbba89e239d758044c1135b1"
+        },
+        "qualified": {
+          "path": "/bin/grep",
+          "realpath": "/usr/bin/grep",
+          "sha256": "d4323504915163bfb15b27d84d7dd7c35369d6a2bbba89e239d758044c1135b1"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "hash",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/hash.html",
+      "scope": "base",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/hash",
+          "realpath": "/usr/bin/hash",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        },
+        "qualified": {
+          "path": "/usr/bin/hash",
+          "realpath": "/usr/bin/hash",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-024",
+      "owner": [
+        48
+      ]
+    },
+    {
+      "name": "head",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/head.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/head",
+          "realpath": "/usr/bin/head",
+          "sha256": "49a1de825dbaefcf4e8fbbe18029fba298f2bc6ad0a61f08f3ee38784ded216f"
+        },
+        "qualified": {
+          "path": "/usr/bin/head",
+          "realpath": "/usr/bin/head",
+          "sha256": "49a1de825dbaefcf4e8fbbe18029fba298f2bc6ad0a61f08f3ee38784ded216f"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/head",
+          "realpath": "/usr/bin/head",
+          "sha256": "d46405d797a24d1e9844039634f7ca28b62a995bd1529fd15ca1fddbd9cd3b73"
+        },
+        "qualified": {
+          "path": "/bin/head",
+          "realpath": "/usr/bin/head",
+          "sha256": "d46405d797a24d1e9844039634f7ca28b62a995bd1529fd15ca1fddbd9cd3b73"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "iconv",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/iconv.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/iconv",
+          "realpath": "/usr/bin/iconv",
+          "sha256": "3d8f0db8c49788443196d1ba6c5385360f61d9da49104582c6ad2c23be00e438"
+        },
+        "qualified": {
+          "path": "/usr/bin/iconv",
+          "realpath": "/usr/bin/iconv",
+          "sha256": "3d8f0db8c49788443196d1ba6c5385360f61d9da49104582c6ad2c23be00e438"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/iconv",
+          "realpath": "/usr/bin/iconv",
+          "sha256": "46c8df61a902d57f16a791db156412129c24beecac7a6898ccb765bc87db3c92"
+        },
+        "qualified": {
+          "path": "/bin/iconv",
+          "realpath": "/usr/bin/iconv",
+          "sha256": "46c8df61a902d57f16a791db156412129c24beecac7a6898ccb765bc87db3c92"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "id",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/id.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/id",
+          "realpath": "/usr/bin/id",
+          "sha256": "6bf5d78f2572048be3b7f8fd8aeb0258a39c2fbb18b63e9d5e7d4848617ffde4"
+        },
+        "qualified": {
+          "path": "/usr/bin/id",
+          "realpath": "/usr/bin/id",
+          "sha256": "6bf5d78f2572048be3b7f8fd8aeb0258a39c2fbb18b63e9d5e7d4848617ffde4"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/id",
+          "realpath": "/usr/bin/id",
+          "sha256": "fde076fa197c3ae255604153a7f26fe0491c764da37730989e76951c31df6188"
+        },
+        "qualified": {
+          "path": "/bin/id",
+          "realpath": "/usr/bin/id",
+          "sha256": "fde076fa197c3ae255604153a7f26fe0491c764da37730989e76951c31df6188"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "ipcrm",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ipcrm.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/ipcrm",
+          "realpath": "/usr/bin/ipcrm",
+          "sha256": "fb8370df1b038612c315ad33e688e13a5db2789a9b4432f318d7b97af641f637"
+        },
+        "qualified": {
+          "path": "/usr/bin/ipcrm",
+          "realpath": "/usr/bin/ipcrm",
+          "sha256": "fb8370df1b038612c315ad33e688e13a5db2789a9b4432f318d7b97af641f637"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/ipcrm",
+          "realpath": "/usr/bin/ipcrm",
+          "sha256": "12db88481eee8e1bf7fb5da0a32d9b7e3f394bd03445d2a7f87bb67cb070307e"
+        },
+        "qualified": {
+          "path": "/bin/ipcrm",
+          "realpath": "/usr/bin/ipcrm",
+          "sha256": "12db88481eee8e1bf7fb5da0a32d9b7e3f394bd03445d2a7f87bb67cb070307e"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "ipcs",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ipcs.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/ipcs",
+          "realpath": "/usr/bin/ipcs",
+          "sha256": "35cfc7d10d7b106272bf0b669d37df38189966295070d099f768717018e05520"
+        },
+        "qualified": {
+          "path": "/usr/bin/ipcs",
+          "realpath": "/usr/bin/ipcs",
+          "sha256": "35cfc7d10d7b106272bf0b669d37df38189966295070d099f768717018e05520"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/ipcs",
+          "realpath": "/usr/bin/ipcs",
+          "sha256": "2c2dbd048b3efec8d11117c4ee9d59fde34467027ad9cee0715e57a4b843bccf"
+        },
+        "qualified": {
+          "path": "/bin/ipcs",
+          "realpath": "/usr/bin/ipcs",
+          "sha256": "2c2dbd048b3efec8d11117c4ee9d59fde34467027ad9cee0715e57a4b843bccf"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "jobs",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/jobs.html",
+      "scope": "conditional UP",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/jobs",
+          "realpath": "/usr/bin/jobs",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        },
+        "qualified": {
+          "path": "/usr/bin/jobs",
+          "realpath": "/usr/bin/jobs",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-025",
+      "owner": []
+    },
+    {
+      "name": "join",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/join.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/join",
+          "realpath": "/usr/bin/join",
+          "sha256": "387a77917901c1a6e7d067c7bc0cdddcb237c05cd13c0c308b13cdf2aed655f3"
+        },
+        "qualified": {
+          "path": "/usr/bin/join",
+          "realpath": "/usr/bin/join",
+          "sha256": "387a77917901c1a6e7d067c7bc0cdddcb237c05cd13c0c308b13cdf2aed655f3"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/join",
+          "realpath": "/usr/bin/join",
+          "sha256": "05336890f9091ba30ac0ac9dfa29f88d5721d9be3ee76a1e2dcfcd00be44d777"
+        },
+        "qualified": {
+          "path": "/bin/join",
+          "realpath": "/usr/bin/join",
+          "sha256": "05336890f9091ba30ac0ac9dfa29f88d5721d9be3ee76a1e2dcfcd00be44d777"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "kill",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/kill.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/kill",
+          "realpath": "/bin/kill",
+          "sha256": "2cb72601038b0d001f6a584a86edcbd98489cedc64ce61f27c3cf75c499c6d31"
+        },
+        "qualified": {
+          "path": "/bin/kill",
+          "realpath": "/bin/kill",
+          "sha256": "2cb72601038b0d001f6a584a86edcbd98489cedc64ce61f27c3cf75c499c6d31"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/kill",
+          "realpath": "/usr/bin/kill",
+          "sha256": "51e5efe55fbb617951e3e00626dd1a1c1435fe4f8c9b7c180e080f156ceb14c0"
+        },
+        "qualified": {
+          "path": "/bin/kill",
+          "realpath": "/usr/bin/kill",
+          "sha256": "51e5efe55fbb617951e3e00626dd1a1c1435fe4f8c9b7c180e080f156ceb14c0"
+        }
+      },
+      "requirement": "U-026",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "lex",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/lex.html",
+      "scope": "conditional CD",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/lex",
+          "realpath": "/usr/bin/lex",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        },
+        "qualified": {
+          "path": "/usr/bin/lex",
+          "realpath": "/usr/bin/lex",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "link",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/link.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/bin/link",
+          "realpath": "/bin/link",
+          "sha256": "754b8fad2abd7c615a8f315306fe0e0f2154b4a15dba7f61a4b98efa993fea95"
+        },
+        "qualified": {
+          "path": "/bin/link",
+          "realpath": "/bin/link",
+          "sha256": "754b8fad2abd7c615a8f315306fe0e0f2154b4a15dba7f61a4b98efa993fea95"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/link",
+          "realpath": "/usr/bin/link",
+          "sha256": "3467daeab2b772f09317010cefa1b49db096dbcb3224cd49075c23354c50f72c"
+        },
+        "qualified": {
+          "path": "/bin/link",
+          "realpath": "/usr/bin/link",
+          "sha256": "3467daeab2b772f09317010cefa1b49db096dbcb3224cd49075c23354c50f72c"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "ln",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/ln",
+          "realpath": "/bin/ln",
+          "sha256": "754b8fad2abd7c615a8f315306fe0e0f2154b4a15dba7f61a4b98efa993fea95"
+        },
+        "qualified": {
+          "path": "/bin/ln",
+          "realpath": "/bin/ln",
+          "sha256": "754b8fad2abd7c615a8f315306fe0e0f2154b4a15dba7f61a4b98efa993fea95"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/ln",
+          "realpath": "/usr/bin/ln",
+          "sha256": "770fac0193aa8e7712032c049720f7af0bd4d54b799cb66816b318273535664e"
+        },
+        "qualified": {
+          "path": "/bin/ln",
+          "realpath": "/usr/bin/ln",
+          "sha256": "770fac0193aa8e7712032c049720f7af0bd4d54b799cb66816b318273535664e"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "locale",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/locale.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/locale",
+          "realpath": "/usr/bin/locale",
+          "sha256": "741336c8b2921295caf4c8242fa252fe1d96e71f5fe4b2f86d6ce6a8890287e2"
+        },
+        "qualified": {
+          "path": "/usr/bin/locale",
+          "realpath": "/usr/bin/locale",
+          "sha256": "741336c8b2921295caf4c8242fa252fe1d96e71f5fe4b2f86d6ce6a8890287e2"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/locale",
+          "realpath": "/usr/bin/locale",
+          "sha256": "f86b1cf81579981ef51fd5b4233b4625e6f254c1d29793125befb39b7aa00cef"
+        },
+        "qualified": {
+          "path": "/bin/locale",
+          "realpath": "/usr/bin/locale",
+          "sha256": "f86b1cf81579981ef51fd5b4233b4625e6f254c1d29793125befb39b7aa00cef"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "localedef",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/localedef.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/localedef",
+          "realpath": "/usr/bin/localedef",
+          "sha256": "77dc068b4e19b5986ce020c4570cf0c676c22a21358159faefbd8712c0f1e704"
+        },
+        "qualified": {
+          "path": "/usr/bin/localedef",
+          "realpath": "/usr/bin/localedef",
+          "sha256": "77dc068b4e19b5986ce020c4570cf0c676c22a21358159faefbd8712c0f1e704"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/localedef",
+          "realpath": "/usr/bin/localedef",
+          "sha256": "428a1a57253e62aa2939bd47ef1a021d6e6406ee0ff6b643dda04842f137b1f4"
+        },
+        "qualified": {
+          "path": "/bin/localedef",
+          "realpath": "/usr/bin/localedef",
+          "sha256": "428a1a57253e62aa2939bd47ef1a021d6e6406ee0ff6b643dda04842f137b1f4"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "logger",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/logger.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/logger",
+          "realpath": "/usr/bin/logger",
+          "sha256": "8ee67b68e02bd5013862b72a4747705fdc06f437d38eb0f53a0ef95b64c758e3"
+        },
+        "qualified": {
+          "path": "/usr/bin/logger",
+          "realpath": "/usr/bin/logger",
+          "sha256": "8ee67b68e02bd5013862b72a4747705fdc06f437d38eb0f53a0ef95b64c758e3"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/logger",
+          "realpath": "/usr/bin/logger",
+          "sha256": "3f8e9ea5cea4e9a9b358a6e840a188bb983a6159e920aa74a0c9b85a0d61353b"
+        },
+        "qualified": {
+          "path": "/bin/logger",
+          "realpath": "/usr/bin/logger",
+          "sha256": "3f8e9ea5cea4e9a9b358a6e840a188bb983a6159e920aa74a0c9b85a0d61353b"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "logname",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/logname.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/logname",
+          "realpath": "/usr/bin/logname",
+          "sha256": "4b9fdb7de0e1ed1089347a7d9658f06b77744ecdd49d8474ec472b5241349243"
+        },
+        "qualified": {
+          "path": "/usr/bin/logname",
+          "realpath": "/usr/bin/logname",
+          "sha256": "4b9fdb7de0e1ed1089347a7d9658f06b77744ecdd49d8474ec472b5241349243"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/logname",
+          "realpath": "/usr/bin/logname",
+          "sha256": "92dd3e1b88a7e00077ef7d9c3e1187d3174a846a4cccc62222030e3d718cc501"
+        },
+        "qualified": {
+          "path": "/bin/logname",
+          "realpath": "/usr/bin/logname",
+          "sha256": "92dd3e1b88a7e00077ef7d9c3e1187d3174a846a4cccc62222030e3d718cc501"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "lp",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/lp.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/lp",
+          "realpath": "/usr/bin/lp",
+          "sha256": "9c39ab6feb0b4cd1403abf267dfb79923ba7b9d094182389889861d82a5bf183"
+        },
+        "qualified": {
+          "path": "/usr/bin/lp",
+          "realpath": "/usr/bin/lp",
+          "sha256": "9c39ab6feb0b4cd1403abf267dfb79923ba7b9d094182389889861d82a5bf183"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "ls",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/ls",
+          "realpath": "/bin/ls",
+          "sha256": "5a83882945a6d212134c6f417b2af54e90dfdb53e589e99c5bc2deae5c68673b"
+        },
+        "qualified": {
+          "path": "/bin/ls",
+          "realpath": "/bin/ls",
+          "sha256": "5a83882945a6d212134c6f417b2af54e90dfdb53e589e99c5bc2deae5c68673b"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/ls",
+          "realpath": "/usr/bin/ls",
+          "sha256": "8d0a90d5aa1f9151e09f0550a9db8522c0a9a035633de3d94debd2701299a255"
+        },
+        "qualified": {
+          "path": "/bin/ls",
+          "realpath": "/usr/bin/ls",
+          "sha256": "8d0a90d5aa1f9151e09f0550a9db8522c0a9a035633de3d94debd2701299a255"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "m4",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/m4",
+          "realpath": "/usr/bin/m4",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        },
+        "qualified": {
+          "path": "/usr/bin/m4",
+          "realpath": "/usr/bin/m4",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "mailx",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mailx.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/mailx",
+          "realpath": "/usr/bin/mailx",
+          "sha256": "7c02e061ebc54607b640ca7e50336227f93ac4a42fe12a02e8c46faae8cee6db"
+        },
+        "qualified": {
+          "path": "/usr/bin/mailx",
+          "realpath": "/usr/bin/mailx",
+          "sha256": "7c02e061ebc54607b640ca7e50336227f93ac4a42fe12a02e8c46faae8cee6db"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "make",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/make.html",
+      "scope": "conditional SD",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/make",
+          "realpath": "/usr/bin/make",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        },
+        "qualified": {
+          "path": "/usr/bin/make",
+          "realpath": "/usr/bin/make",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/make",
+          "realpath": "/usr/bin/make",
+          "sha256": "78f2a508b7c1864869d618fc746cb775f3cbce92cd636ae976f4c68d0eec64d1"
+        },
+        "qualified": {
+          "path": "/bin/make",
+          "realpath": "/usr/bin/make",
+          "sha256": "78f2a508b7c1864869d618fc746cb775f3cbce92cd636ae976f4c68d0eec64d1"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "man",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/man.html",
+      "scope": "conditional UP",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/man",
+          "realpath": "/usr/bin/man",
+          "sha256": "42c2333db696599bbe3ecd5b35192c7ff48c59b11b68b3a6343085ad5c811358"
+        },
+        "qualified": {
+          "path": "/usr/bin/man",
+          "realpath": "/usr/bin/man",
+          "sha256": "42c2333db696599bbe3ecd5b35192c7ff48c59b11b68b3a6343085ad5c811358"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "mesg",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mesg.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/mesg",
+          "realpath": "/usr/bin/mesg",
+          "sha256": "2c73b2e33b4f959bde99aab9514849baa75f742577ef9a2fbc86d2d8472b5449"
+        },
+        "qualified": {
+          "path": "/usr/bin/mesg",
+          "realpath": "/usr/bin/mesg",
+          "sha256": "2c73b2e33b4f959bde99aab9514849baa75f742577ef9a2fbc86d2d8472b5449"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/mesg",
+          "realpath": "/usr/bin/mesg",
+          "sha256": "52bb9d498e7ea9b57d723e7e9a95be8ad06fb284f83d4337a9b6b8e22790f602"
+        },
+        "qualified": {
+          "path": "/bin/mesg",
+          "realpath": "/usr/bin/mesg",
+          "sha256": "52bb9d498e7ea9b57d723e7e9a95be8ad06fb284f83d4337a9b6b8e22790f602"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "mkdir",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/mkdir",
+          "realpath": "/bin/mkdir",
+          "sha256": "ff5f5e8482d4b6edbb2fb853b6a80fcf40caaa41385081fc951f36178c391e9e"
+        },
+        "qualified": {
+          "path": "/bin/mkdir",
+          "realpath": "/bin/mkdir",
+          "sha256": "ff5f5e8482d4b6edbb2fb853b6a80fcf40caaa41385081fc951f36178c391e9e"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/mkdir",
+          "realpath": "/usr/bin/mkdir",
+          "sha256": "8fca34baba116e4e0b099db07b98b066314be0ceee7ae4c2eb2388cfa062c5b0"
+        },
+        "qualified": {
+          "path": "/bin/mkdir",
+          "realpath": "/usr/bin/mkdir",
+          "sha256": "8fca34baba116e4e0b099db07b98b066314be0ceee7ae4c2eb2388cfa062c5b0"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "mkfifo",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/mkfifo",
+          "realpath": "/usr/bin/mkfifo",
+          "sha256": "6057b0415c5e37019f2ff2e99ca0cea929cfa2c5a44fe431564924b526abd2b0"
+        },
+        "qualified": {
+          "path": "/usr/bin/mkfifo",
+          "realpath": "/usr/bin/mkfifo",
+          "sha256": "6057b0415c5e37019f2ff2e99ca0cea929cfa2c5a44fe431564924b526abd2b0"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/mkfifo",
+          "realpath": "/usr/bin/mkfifo",
+          "sha256": "db022d5e11018ab024ba9d2593281619bc07f6708c021faf019a8419b6316323"
+        },
+        "qualified": {
+          "path": "/bin/mkfifo",
+          "realpath": "/usr/bin/mkfifo",
+          "sha256": "db022d5e11018ab024ba9d2593281619bc07f6708c021faf019a8419b6316323"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "more",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/more.html",
+      "scope": "conditional UP",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/more",
+          "realpath": "/usr/bin/more",
+          "sha256": "ae02805eb7b5f2d39c88fb69fd9f392f27c80e331ea5f8d1c8c031e0d0933b54"
+        },
+        "qualified": {
+          "path": "/usr/bin/more",
+          "realpath": "/usr/bin/more",
+          "sha256": "ae02805eb7b5f2d39c88fb69fd9f392f27c80e331ea5f8d1c8c031e0d0933b54"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/more",
+          "realpath": "/usr/bin/more",
+          "sha256": "56bb9511065ff0da9d24ac90a3f6c630c599732c38035b7ab949f62e3cc5adbb"
+        },
+        "qualified": {
+          "path": "/bin/more",
+          "realpath": "/usr/bin/more",
+          "sha256": "56bb9511065ff0da9d24ac90a3f6c630c599732c38035b7ab949f62e3cc5adbb"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "msgfmt",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/msgfmt.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "mv",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mv.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/mv",
+          "realpath": "/bin/mv",
+          "sha256": "618d90795a99cc12b9cf0c77ca6bf2546f70cb07ab1bb78c7cb2d4437259fcfa"
+        },
+        "qualified": {
+          "path": "/bin/mv",
+          "realpath": "/bin/mv",
+          "sha256": "618d90795a99cc12b9cf0c77ca6bf2546f70cb07ab1bb78c7cb2d4437259fcfa"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/mv",
+          "realpath": "/usr/bin/mv",
+          "sha256": "628955ea9db8f8624bfef0f88a56aa90bfaddbfd415631c87204c513d6be77f5"
+        },
+        "qualified": {
+          "path": "/bin/mv",
+          "realpath": "/usr/bin/mv",
+          "sha256": "628955ea9db8f8624bfef0f88a56aa90bfaddbfd415631c87204c513d6be77f5"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "newgrp",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/newgrp.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/newgrp",
+          "realpath": "/usr/bin/newgrp",
+          "sha256": "c17ba0c1fe7057f570199e1f8191322148b83a19e6b6667937a8763adba01720"
+        },
+        "qualified": {
+          "path": "/usr/bin/newgrp",
+          "realpath": "/usr/bin/newgrp",
+          "sha256": "c17ba0c1fe7057f570199e1f8191322148b83a19e6b6667937a8763adba01720"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/newgrp",
+          "realpath": "/usr/bin/newgrp",
+          "sha256": "0466e757f261cc50fa879f50c0663372e399fa6653a659053037faaa334da104"
+        },
+        "qualified": {
+          "path": "/bin/newgrp",
+          "realpath": "/usr/bin/newgrp",
+          "sha256": "0466e757f261cc50fa879f50c0663372e399fa6653a659053037faaa334da104"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "ngettext",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ngettext.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "nice",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/nice.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/nice",
+          "realpath": "/usr/bin/nice",
+          "sha256": "48456b711c0d63b93e3147ea9cb8dd03819ccf660ff9f528b4d366b9db4bbd51"
+        },
+        "qualified": {
+          "path": "/usr/bin/nice",
+          "realpath": "/usr/bin/nice",
+          "sha256": "48456b711c0d63b93e3147ea9cb8dd03819ccf660ff9f528b4d366b9db4bbd51"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/nice",
+          "realpath": "/usr/bin/nice",
+          "sha256": "e25d973e543c4eb9d86d786945c873d0a8f2172688b3432685b1fc4f0a5e8406"
+        },
+        "qualified": {
+          "path": "/bin/nice",
+          "realpath": "/usr/bin/nice",
+          "sha256": "e25d973e543c4eb9d86d786945c873d0a8f2172688b3432685b1fc4f0a5e8406"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "nl",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/nl.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/nl",
+          "realpath": "/usr/bin/nl",
+          "sha256": "777117606eb69dd8fc1d616bdaaf4410227f6f6b81c63133cbaf49f5df7b4afe"
+        },
+        "qualified": {
+          "path": "/usr/bin/nl",
+          "realpath": "/usr/bin/nl",
+          "sha256": "777117606eb69dd8fc1d616bdaaf4410227f6f6b81c63133cbaf49f5df7b4afe"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/nl",
+          "realpath": "/usr/bin/nl",
+          "sha256": "8762cb7a5d4ddc5b0b5a494a6bdcc629d8dbfb380972a2399d29f04ef8eed4a6"
+        },
+        "qualified": {
+          "path": "/bin/nl",
+          "realpath": "/usr/bin/nl",
+          "sha256": "8762cb7a5d4ddc5b0b5a494a6bdcc629d8dbfb380972a2399d29f04ef8eed4a6"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "nm",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/nm.html",
+      "scope": "conditional SD",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/nm",
+          "realpath": "/usr/bin/nm",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        },
+        "qualified": {
+          "path": "/usr/bin/nm",
+          "realpath": "/usr/bin/nm",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/nm",
+          "realpath": "/usr/bin/aarch64-linux-gnu-nm",
+          "sha256": "0744c8eba243d1a2b908e3728e98b7cae8fe0f1945582c6511803f039dbb8474"
+        },
+        "qualified": {
+          "path": "/bin/nm",
+          "realpath": "/usr/bin/aarch64-linux-gnu-nm",
+          "sha256": "0744c8eba243d1a2b908e3728e98b7cae8fe0f1945582c6511803f039dbb8474"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "nohup",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/nohup.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/nohup",
+          "realpath": "/usr/bin/nohup",
+          "sha256": "3cc9491cde142b2d8bdfa2cb36f9f3779d18725a23152ffc8cd724221230f365"
+        },
+        "qualified": {
+          "path": "/usr/bin/nohup",
+          "realpath": "/usr/bin/nohup",
+          "sha256": "3cc9491cde142b2d8bdfa2cb36f9f3779d18725a23152ffc8cd724221230f365"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/nohup",
+          "realpath": "/usr/bin/nohup",
+          "sha256": "c32df97ed1330415a875a42d72decd40b7a3f04a1ee2b3740cf65469479ff2f0"
+        },
+        "qualified": {
+          "path": "/bin/nohup",
+          "realpath": "/usr/bin/nohup",
+          "sha256": "c32df97ed1330415a875a42d72decd40b7a3f04a1ee2b3740cf65469479ff2f0"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "od",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/od.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/od",
+          "realpath": "/usr/bin/od",
+          "sha256": "3942e106921620a82c2956eb5574d564ab0d74b8fa3ab534697df623ffa070f0"
+        },
+        "qualified": {
+          "path": "/usr/bin/od",
+          "realpath": "/usr/bin/od",
+          "sha256": "3942e106921620a82c2956eb5574d564ab0d74b8fa3ab534697df623ffa070f0"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/od",
+          "realpath": "/usr/bin/od",
+          "sha256": "43106972ae05168d16c9c94a77da330e0af9c52bc062c1f98e0933742ba0acef"
+        },
+        "qualified": {
+          "path": "/bin/od",
+          "realpath": "/usr/bin/od",
+          "sha256": "43106972ae05168d16c9c94a77da330e0af9c52bc062c1f98e0933742ba0acef"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "paste",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/paste.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/paste",
+          "realpath": "/usr/bin/paste",
+          "sha256": "4792b9d3f287c861aec2edb5ca4002a638549c79df91475ed52dab0a7874a6fc"
+        },
+        "qualified": {
+          "path": "/usr/bin/paste",
+          "realpath": "/usr/bin/paste",
+          "sha256": "4792b9d3f287c861aec2edb5ca4002a638549c79df91475ed52dab0a7874a6fc"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/paste",
+          "realpath": "/usr/bin/paste",
+          "sha256": "dc473cbce11e782a4176e525c17f1553d7fa9c66d96cba0823699c11f0623e4d"
+        },
+        "qualified": {
+          "path": "/bin/paste",
+          "realpath": "/usr/bin/paste",
+          "sha256": "dc473cbce11e782a4176e525c17f1553d7fa9c66d96cba0823699c11f0623e4d"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "patch",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/patch",
+          "realpath": "/usr/bin/patch",
+          "sha256": "c066577f61456a74d0eedfc4779a012dbeaf146a0cc541fcec0b8bd18dbd8542"
+        },
+        "qualified": {
+          "path": "/usr/bin/patch",
+          "realpath": "/usr/bin/patch",
+          "sha256": "c066577f61456a74d0eedfc4779a012dbeaf146a0cc541fcec0b8bd18dbd8542"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/patch",
+          "realpath": "/usr/bin/patch",
+          "sha256": "f8829b451b6212cca6a94905a007f5d6fa409159cf8eb1ad7114180eadd1dbe5"
+        },
+        "qualified": {
+          "path": "/bin/patch",
+          "realpath": "/usr/bin/patch",
+          "sha256": "f8829b451b6212cca6a94905a007f5d6fa409159cf8eb1ad7114180eadd1dbe5"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "pathchk",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/pathchk",
+          "realpath": "/usr/bin/pathchk",
+          "sha256": "928722f71388c619c73ee7473ee8ec72633939b81997981d6ebc77e99f60a8e6"
+        },
+        "qualified": {
+          "path": "/usr/bin/pathchk",
+          "realpath": "/usr/bin/pathchk",
+          "sha256": "928722f71388c619c73ee7473ee8ec72633939b81997981d6ebc77e99f60a8e6"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/pathchk",
+          "realpath": "/usr/bin/pathchk",
+          "sha256": "7cb693b400c65303ec8be6aed119879a3725abd9687703f2cf1d7d850b0fbbf5"
+        },
+        "qualified": {
+          "path": "/bin/pathchk",
+          "realpath": "/usr/bin/pathchk",
+          "sha256": "7cb693b400c65303ec8be6aed119879a3725abd9687703f2cf1d7d850b0fbbf5"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "pax",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/pax",
+          "realpath": "/bin/pax",
+          "sha256": "a78fa6fa557da8c93fb0fae1e840a46bc695a3286146e4faf09a4dd099b9f8cc"
+        },
+        "qualified": {
+          "path": "/bin/pax",
+          "realpath": "/bin/pax",
+          "sha256": "a78fa6fa557da8c93fb0fae1e840a46bc695a3286146e4faf09a4dd099b9f8cc"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "pr",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pr.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/pr",
+          "realpath": "/usr/bin/pr",
+          "sha256": "fa6fae631ccc9c2e0083adade0ee3411088a0e39b327d1ccc66062aee11925c0"
+        },
+        "qualified": {
+          "path": "/usr/bin/pr",
+          "realpath": "/usr/bin/pr",
+          "sha256": "fa6fae631ccc9c2e0083adade0ee3411088a0e39b327d1ccc66062aee11925c0"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/pr",
+          "realpath": "/usr/bin/pr",
+          "sha256": "117525d96e53fbbd5765804905c35f0cfece36511f3efe009605456d6d9e1fda"
+        },
+        "qualified": {
+          "path": "/bin/pr",
+          "realpath": "/usr/bin/pr",
+          "sha256": "117525d96e53fbbd5765804905c35f0cfece36511f3efe009605456d6d9e1fda"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "printf",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/printf.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/printf",
+          "realpath": "/usr/bin/printf",
+          "sha256": "2429bfa5d0be4020fef79a22f98f137b844a1c5d1b965fcfab0cac3bb00532dd"
+        },
+        "qualified": {
+          "path": "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh012-acceptance-u2u4m_pi/build/host-profile/bin/printf",
+          "realpath": "/private/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh012-acceptance-u2u4m_pi/build/host-printf",
+          "sha256": "2cdb4cbfb9f554184fdd5cfc010bc03f9db13743a22a4920d7ecd015ddec5295"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/printf",
+          "realpath": "/usr/bin/printf",
+          "sha256": "2c7b0151ee3c1ba4e829209f2ff4336de9d97143e22bf87c7448539112139957"
+        },
+        "qualified": {
+          "path": "/bin/printf",
+          "realpath": "/usr/bin/printf",
+          "sha256": "2c7b0151ee3c1ba4e829209f2ff4336de9d97143e22bf87c7448539112139957"
+        }
+      },
+      "requirement": "U-035",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "prs",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/prs.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "ps",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ps.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/ps",
+          "realpath": "/bin/ps",
+          "sha256": "d05a9268aea9a595633d7d1426b97a221d465e7973f918ec02694ee68870ea9b"
+        },
+        "qualified": {
+          "path": "/bin/ps",
+          "realpath": "/bin/ps",
+          "sha256": "d05a9268aea9a595633d7d1426b97a221d465e7973f918ec02694ee68870ea9b"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/ps",
+          "realpath": "/usr/bin/ps",
+          "sha256": "9d20cb2fe16ba1b80b516287fb1df43d23876620266103a78557faf64cda1349"
+        },
+        "qualified": {
+          "path": "/bin/ps",
+          "realpath": "/usr/bin/ps",
+          "sha256": "9d20cb2fe16ba1b80b516287fb1df43d23876620266103a78557faf64cda1349"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "pwd",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/pwd",
+          "realpath": "/bin/pwd",
+          "sha256": "23ad10f79008c53d35aef47dfcc5dcc340706f66d1e3d8a06d05bd35b96c9cbd"
+        },
+        "qualified": {
+          "path": "/bin/pwd",
+          "realpath": "/bin/pwd",
+          "sha256": "23ad10f79008c53d35aef47dfcc5dcc340706f66d1e3d8a06d05bd35b96c9cbd"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/pwd",
+          "realpath": "/usr/bin/pwd",
+          "sha256": "57a579e9fbdc1393dafc4e7532b3cc2b1515d6e40b043443da8548313d0d793b"
+        },
+        "qualified": {
+          "path": "/bin/pwd",
+          "realpath": "/usr/bin/pwd",
+          "sha256": "57a579e9fbdc1393dafc4e7532b3cc2b1515d6e40b043443da8548313d0d793b"
+        }
+      },
+      "requirement": "U-033",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "read",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/read.html",
+      "scope": "base",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/read",
+          "realpath": "/usr/bin/read",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        },
+        "qualified": {
+          "path": "/usr/bin/read",
+          "realpath": "/usr/bin/read",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-027",
+      "owner": [
+        48,
+        67
+      ]
+    },
+    {
+      "name": "readlink",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/readlink",
+          "realpath": "/usr/bin/readlink",
+          "sha256": "d63a52663cd940e360b9c49d9b3a3f0f3f5468238057da0560e01774ee7c8faa"
+        },
+        "qualified": {
+          "path": "/usr/bin/readlink",
+          "realpath": "/usr/bin/readlink",
+          "sha256": "d63a52663cd940e360b9c49d9b3a3f0f3f5468238057da0560e01774ee7c8faa"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/readlink",
+          "realpath": "/usr/bin/readlink",
+          "sha256": "f468bf4e2aa35fed33a1d82b0a254203db0908737314bbce6d24ce6b4a382f17"
+        },
+        "qualified": {
+          "path": "/bin/readlink",
+          "realpath": "/usr/bin/readlink",
+          "sha256": "f468bf4e2aa35fed33a1d82b0a254203db0908737314bbce6d24ce6b4a382f17"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "realpath",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/realpath",
+          "realpath": "/bin/realpath",
+          "sha256": "269ee90695cb7902ccfad9693f75f5b36f0b1d1c93aeebe60e303b13ad9d1749"
+        },
+        "qualified": {
+          "path": "/bin/realpath",
+          "realpath": "/bin/realpath",
+          "sha256": "269ee90695cb7902ccfad9693f75f5b36f0b1d1c93aeebe60e303b13ad9d1749"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/realpath",
+          "realpath": "/usr/bin/realpath",
+          "sha256": "3587ffe7927d83c6b2a9b6e918be097b96b2696993c247a23af73ec3a4a03cb3"
+        },
+        "qualified": {
+          "path": "/bin/realpath",
+          "realpath": "/usr/bin/realpath",
+          "sha256": "3587ffe7927d83c6b2a9b6e918be097b96b2696993c247a23af73ec3a4a03cb3"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "renice",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/renice.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/renice",
+          "realpath": "/usr/bin/renice",
+          "sha256": "9c10570a7f20e5c7d1e0f940fea4c035278e0ec7b3eb21b11ea388391c6c0464"
+        },
+        "qualified": {
+          "path": "/usr/bin/renice",
+          "realpath": "/usr/bin/renice",
+          "sha256": "9c10570a7f20e5c7d1e0f940fea4c035278e0ec7b3eb21b11ea388391c6c0464"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/renice",
+          "realpath": "/usr/bin/renice",
+          "sha256": "915c084ff4a2ff190ee8be6ec81f135212f51b08c251a0972f3119f9dd28e372"
+        },
+        "qualified": {
+          "path": "/bin/renice",
+          "realpath": "/usr/bin/renice",
+          "sha256": "915c084ff4a2ff190ee8be6ec81f135212f51b08c251a0972f3119f9dd28e372"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "rm",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/rm",
+          "realpath": "/bin/rm",
+          "sha256": "8c37738cd44bf013022c39026faff5a450c8497e8469fb5b3979cd9bc1fd28e9"
+        },
+        "qualified": {
+          "path": "/bin/rm",
+          "realpath": "/bin/rm",
+          "sha256": "8c37738cd44bf013022c39026faff5a450c8497e8469fb5b3979cd9bc1fd28e9"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/rm",
+          "realpath": "/usr/bin/rm",
+          "sha256": "dc7b54162ea7f69fb0b84a0f99bc88c0d91319d964c358008c388b2ba27394d0"
+        },
+        "qualified": {
+          "path": "/bin/rm",
+          "realpath": "/usr/bin/rm",
+          "sha256": "dc7b54162ea7f69fb0b84a0f99bc88c0d91319d964c358008c388b2ba27394d0"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "rmdel",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdel.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "rmdir",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/rmdir",
+          "realpath": "/bin/rmdir",
+          "sha256": "ffdbd05db23e7367289af5e8a146124f59aa0b09d2e8f3a9d9de08002cebcceb"
+        },
+        "qualified": {
+          "path": "/bin/rmdir",
+          "realpath": "/bin/rmdir",
+          "sha256": "ffdbd05db23e7367289af5e8a146124f59aa0b09d2e8f3a9d9de08002cebcceb"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/rmdir",
+          "realpath": "/usr/bin/rmdir",
+          "sha256": "f409b966ef25d3f736a338bf97327991e0fb35c05b05336ff97502b64c153f66"
+        },
+        "qualified": {
+          "path": "/bin/rmdir",
+          "realpath": "/usr/bin/rmdir",
+          "sha256": "f409b966ef25d3f736a338bf97327991e0fb35c05b05336ff97502b64c153f66"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "sact",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sact.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "sccs",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sccs.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "sed",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sed.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/sed",
+          "realpath": "/usr/bin/sed",
+          "sha256": "25982752241791e1c57074400473aecda16aea1d7174fc4cdb0dd7382365ff81"
+        },
+        "qualified": {
+          "path": "/usr/bin/sed",
+          "realpath": "/usr/bin/sed",
+          "sha256": "25982752241791e1c57074400473aecda16aea1d7174fc4cdb0dd7382365ff81"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/sed",
+          "realpath": "/usr/bin/sed",
+          "sha256": "b5d4c730f921851b46db74b6a3d84e99c6a0e3797ba126061be24b4d86878f61"
+        },
+        "qualified": {
+          "path": "/bin/sed",
+          "realpath": "/usr/bin/sed",
+          "sha256": "b5d4c730f921851b46db74b6a3d84e99c6a0e3797ba126061be24b4d86878f61"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "sh",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sh.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/sh",
+          "realpath": "/bin/sh",
+          "sha256": "10b15cf96b455baa0a2ea5ead25fc4f25b42dbbb45fed8113d8a7bbb790ddeb2"
+        },
+        "qualified": {
+          "path": "/bin/sh",
+          "realpath": "/bin/sh",
+          "sha256": "10b15cf96b455baa0a2ea5ead25fc4f25b42dbbb45fed8113d8a7bbb790ddeb2"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/sh",
+          "realpath": "/usr/bin/dash",
+          "sha256": "15fc4c72f49c86639a383121eec6fbdbcd32ec9d03db915cb3096928295e1a17"
+        },
+        "qualified": {
+          "path": "/bin/sh",
+          "realpath": "/usr/bin/dash",
+          "sha256": "15fc4c72f49c86639a383121eec6fbdbcd32ec9d03db915cb3096928295e1a17"
+        }
+      },
+      "requirement": "SH-001",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "sleep",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sleep.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/sleep",
+          "realpath": "/bin/sleep",
+          "sha256": "69de8c94641382b9460db7d365554471aea2eb772660b7134a8b724e5f6ec180"
+        },
+        "qualified": {
+          "path": "/bin/sleep",
+          "realpath": "/bin/sleep",
+          "sha256": "69de8c94641382b9460db7d365554471aea2eb772660b7134a8b724e5f6ec180"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/sleep",
+          "realpath": "/usr/bin/sleep",
+          "sha256": "17a623f303e2489770e64a9eab9420c66e576ec5ad215ea7c46ec392a2212f49"
+        },
+        "qualified": {
+          "path": "/bin/sleep",
+          "realpath": "/usr/bin/sleep",
+          "sha256": "17a623f303e2489770e64a9eab9420c66e576ec5ad215ea7c46ec392a2212f49"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "sort",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sort.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/sort",
+          "realpath": "/usr/bin/sort",
+          "sha256": "02b00ce8bfcdb14a34f953b5ea2a0434d93ef7f008808b0d2f5cdac12888087e"
+        },
+        "qualified": {
+          "path": "/usr/bin/sort",
+          "realpath": "/usr/bin/sort",
+          "sha256": "02b00ce8bfcdb14a34f953b5ea2a0434d93ef7f008808b0d2f5cdac12888087e"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/sort",
+          "realpath": "/usr/bin/sort",
+          "sha256": "aa340dae9965c78551003e6c1f7a7a42b96063513ab60fe1cbe9ef4bbf4df8e8"
+        },
+        "qualified": {
+          "path": "/bin/sort",
+          "realpath": "/usr/bin/sort",
+          "sha256": "aa340dae9965c78551003e6c1f7a7a42b96063513ab60fe1cbe9ef4bbf4df8e8"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "split",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/split.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/split",
+          "realpath": "/usr/bin/split",
+          "sha256": "03f94907b6009299f21eb4819aef79ecc56ecd6123f07e8343d9dbba2169a287"
+        },
+        "qualified": {
+          "path": "/usr/bin/split",
+          "realpath": "/usr/bin/split",
+          "sha256": "03f94907b6009299f21eb4819aef79ecc56ecd6123f07e8343d9dbba2169a287"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/split",
+          "realpath": "/usr/bin/split",
+          "sha256": "aa7458e9b9786e7ae1552d6afe6c3e4d7b59c43acbb3a400c8f5b339a0239885"
+        },
+        "qualified": {
+          "path": "/bin/split",
+          "realpath": "/usr/bin/split",
+          "sha256": "aa7458e9b9786e7ae1552d6afe6c3e4d7b59c43acbb3a400c8f5b339a0239885"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "strings",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/strings.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/strings",
+          "realpath": "/usr/bin/strings",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        },
+        "qualified": {
+          "path": "/usr/bin/strings",
+          "realpath": "/usr/bin/strings",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/strings",
+          "realpath": "/usr/bin/aarch64-linux-gnu-strings",
+          "sha256": "59b417ec5c3514c112d8328e602175f856aa985707fe81df2c260c200ca9715e"
+        },
+        "qualified": {
+          "path": "/bin/strings",
+          "realpath": "/usr/bin/aarch64-linux-gnu-strings",
+          "sha256": "59b417ec5c3514c112d8328e602175f856aa985707fe81df2c260c200ca9715e"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "strip",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/strip.html",
+      "scope": "conditional SD",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/strip",
+          "realpath": "/usr/bin/strip",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        },
+        "qualified": {
+          "path": "/usr/bin/strip",
+          "realpath": "/usr/bin/strip",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/strip",
+          "realpath": "/usr/bin/aarch64-linux-gnu-strip",
+          "sha256": "09ea31b5f54325e60310f43ee17fa532b4f816a177a13f4b59f72767d26932bf"
+        },
+        "qualified": {
+          "path": "/bin/strip",
+          "realpath": "/usr/bin/aarch64-linux-gnu-strip",
+          "sha256": "09ea31b5f54325e60310f43ee17fa532b4f816a177a13f4b59f72767d26932bf"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "stty",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/stty.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/stty",
+          "realpath": "/bin/stty",
+          "sha256": "470e0fc5a064d1f43b98ad9bff5e119d0430d2addf6dba59179317b86c7d0c08"
+        },
+        "qualified": {
+          "path": "/bin/stty",
+          "realpath": "/bin/stty",
+          "sha256": "470e0fc5a064d1f43b98ad9bff5e119d0430d2addf6dba59179317b86c7d0c08"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/stty",
+          "realpath": "/usr/bin/stty",
+          "sha256": "5a31ff763d7618f975e1a7fd11d0537dac76db6e6ff0157bcf7a2497ac803b38"
+        },
+        "qualified": {
+          "path": "/bin/stty",
+          "realpath": "/usr/bin/stty",
+          "sha256": "5a31ff763d7618f975e1a7fd11d0537dac76db6e6ff0157bcf7a2497ac803b38"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "tabs",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tabs.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/tabs",
+          "realpath": "/usr/bin/tabs",
+          "sha256": "846ecf8dd3e4b33078f8e161a9783cff7ad0c0bd029b7d0429b33ded2f3a745e"
+        },
+        "qualified": {
+          "path": "/usr/bin/tabs",
+          "realpath": "/usr/bin/tabs",
+          "sha256": "846ecf8dd3e4b33078f8e161a9783cff7ad0c0bd029b7d0429b33ded2f3a745e"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/tabs",
+          "realpath": "/usr/bin/tabs",
+          "sha256": "f8172d3e0c4ed40d0e4f058b6817df3f5420b299cd8150b84c56883f6c8914b0"
+        },
+        "qualified": {
+          "path": "/bin/tabs",
+          "realpath": "/usr/bin/tabs",
+          "sha256": "f8172d3e0c4ed40d0e4f058b6817df3f5420b299cd8150b84c56883f6c8914b0"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "tail",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tail.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/tail",
+          "realpath": "/usr/bin/tail",
+          "sha256": "1777af40fa5d717411ae6706067db3f737013e932a51921c3d64e110399f67f5"
+        },
+        "qualified": {
+          "path": "/usr/bin/tail",
+          "realpath": "/usr/bin/tail",
+          "sha256": "1777af40fa5d717411ae6706067db3f737013e932a51921c3d64e110399f67f5"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/tail",
+          "realpath": "/usr/bin/tail",
+          "sha256": "8d3a202a30f641a655611698433b63cdc7bd440cd09a5d79e4a428107fd48cb1"
+        },
+        "qualified": {
+          "path": "/bin/tail",
+          "realpath": "/usr/bin/tail",
+          "sha256": "8d3a202a30f641a655611698433b63cdc7bd440cd09a5d79e4a428107fd48cb1"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "talk",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/talk.html",
+      "scope": "conditional UP",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/talk",
+          "realpath": "/usr/bin/talk",
+          "sha256": "47f0cda34a781cdad2390a2341e63df1468776e84de5b5f4fce0638a75db1071"
+        },
+        "qualified": {
+          "path": "/usr/bin/talk",
+          "realpath": "/usr/bin/talk",
+          "sha256": "47f0cda34a781cdad2390a2341e63df1468776e84de5b5f4fce0638a75db1071"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "tee",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tee.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/tee",
+          "realpath": "/usr/bin/tee",
+          "sha256": "22015d0e6925928e17c5acf862b9c65488a6fadeb39819829b305494fbfc2395"
+        },
+        "qualified": {
+          "path": "/usr/bin/tee",
+          "realpath": "/usr/bin/tee",
+          "sha256": "22015d0e6925928e17c5acf862b9c65488a6fadeb39819829b305494fbfc2395"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/tee",
+          "realpath": "/usr/bin/tee",
+          "sha256": "14e6ba696347c409bc805c70eb8e6b5415426ef8e413ccfdc8ca0e286b41d673"
+        },
+        "qualified": {
+          "path": "/bin/tee",
+          "realpath": "/usr/bin/tee",
+          "sha256": "14e6ba696347c409bc805c70eb8e6b5415426ef8e413ccfdc8ca0e286b41d673"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "test",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/test",
+          "realpath": "/bin/test",
+          "sha256": "f2c2fd4ba63e3cc02141a9b12c5776e344d51c80d2b9d65ea6d4e8382352a18d"
+        },
+        "qualified": {
+          "path": "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh012-acceptance-u2u4m_pi/build/host-profile/bin/test",
+          "realpath": "/usr/local/Cellar/coreutils/9.3/bin/gtest",
+          "sha256": "20da32995b18808ddbfefa1a1e7d63b04d0207fbf5cc460361f9e0ca4f2a6819"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/test",
+          "realpath": "/usr/bin/test",
+          "sha256": "db7c4676eac33eadb8e908c3d540254f23d7902521d1a4622ebb5439001f097b"
+        },
+        "qualified": {
+          "path": "/bin/test",
+          "realpath": "/usr/bin/test",
+          "sha256": "db7c4676eac33eadb8e908c3d540254f23d7902521d1a4622ebb5439001f097b"
+        }
+      },
+      "requirement": "U-037",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "time",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/time.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/time",
+          "realpath": "/usr/bin/time",
+          "sha256": "ca819c48eea030845f141c4de40590b7b7cc3589eda932df5f551724469a85a3"
+        },
+        "qualified": {
+          "path": "/usr/bin/time",
+          "realpath": "/usr/bin/time",
+          "sha256": "ca819c48eea030845f141c4de40590b7b7cc3589eda932df5f551724469a85a3"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "timeout",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/timeout.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/timeout",
+          "realpath": "/usr/bin/timeout",
+          "sha256": "3629fa180f625d4de2e3fd3b15b12c5d42315e5733ecae6d1550b306abd7d482"
+        },
+        "qualified": {
+          "path": "/bin/timeout",
+          "realpath": "/usr/bin/timeout",
+          "sha256": "3629fa180f625d4de2e3fd3b15b12c5d42315e5733ecae6d1550b306abd7d482"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "touch",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/touch",
+          "realpath": "/usr/bin/touch",
+          "sha256": "1c3c4ad9bb495173870a075d51183206b1ada12799999a39dc5315a79af2b944"
+        },
+        "qualified": {
+          "path": "/usr/bin/touch",
+          "realpath": "/usr/bin/touch",
+          "sha256": "1c3c4ad9bb495173870a075d51183206b1ada12799999a39dc5315a79af2b944"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/touch",
+          "realpath": "/usr/bin/touch",
+          "sha256": "866e7f7d08fc061d62dc5ba5c88785f0ecbcd3eebf3a533ea29b38a462622c42"
+        },
+        "qualified": {
+          "path": "/bin/touch",
+          "realpath": "/usr/bin/touch",
+          "sha256": "866e7f7d08fc061d62dc5ba5c88785f0ecbcd3eebf3a533ea29b38a462622c42"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "tput",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tput.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/tput",
+          "realpath": "/usr/bin/tput",
+          "sha256": "2af3af4174a4f5f993fa8faa5af3a4aad4e92956370f50a5b9f10ef187c84fc7"
+        },
+        "qualified": {
+          "path": "/usr/bin/tput",
+          "realpath": "/usr/bin/tput",
+          "sha256": "2af3af4174a4f5f993fa8faa5af3a4aad4e92956370f50a5b9f10ef187c84fc7"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/tput",
+          "realpath": "/usr/bin/tput",
+          "sha256": "e2d53ac0561f5e9637b0bac08efc739a030690cd1e0f868afc446cbb85535cf5"
+        },
+        "qualified": {
+          "path": "/bin/tput",
+          "realpath": "/usr/bin/tput",
+          "sha256": "e2d53ac0561f5e9637b0bac08efc739a030690cd1e0f868afc446cbb85535cf5"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "tr",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tr.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/tr",
+          "realpath": "/usr/bin/tr",
+          "sha256": "72a2ed7535b2dcbd170bde4c5707e3bf0f322276d44d61d59999ddaf7e4b288c"
+        },
+        "qualified": {
+          "path": "/usr/bin/tr",
+          "realpath": "/usr/bin/tr",
+          "sha256": "72a2ed7535b2dcbd170bde4c5707e3bf0f322276d44d61d59999ddaf7e4b288c"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/tr",
+          "realpath": "/usr/bin/tr",
+          "sha256": "aa0bd96422af68a5cc77fd2fe90b7d13a26cc62d77cc6eda46a62d2bf45aeb5c"
+        },
+        "qualified": {
+          "path": "/bin/tr",
+          "realpath": "/usr/bin/tr",
+          "sha256": "aa0bd96422af68a5cc77fd2fe90b7d13a26cc62d77cc6eda46a62d2bf45aeb5c"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "true",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/true.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/true",
+          "realpath": "/usr/bin/true",
+          "sha256": "5e2d80e01d8053b8b0fbcd46b0bb4d31b45b4aa63a4f7b7bfab14a05b25f03de"
+        },
+        "qualified": {
+          "path": "/usr/bin/true",
+          "realpath": "/usr/bin/true",
+          "sha256": "5e2d80e01d8053b8b0fbcd46b0bb4d31b45b4aa63a4f7b7bfab14a05b25f03de"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/true",
+          "realpath": "/usr/bin/true",
+          "sha256": "dfd1b0241759344063bd5052622d90910c53084234a26f19527d150da3e43d4b"
+        },
+        "qualified": {
+          "path": "/bin/true",
+          "realpath": "/usr/bin/true",
+          "sha256": "dfd1b0241759344063bd5052622d90910c53084234a26f19527d150da3e43d4b"
+        }
+      },
+      "requirement": "U-038",
+      "owner": [
+        68,
+        64
+      ]
+    },
+    {
+      "name": "tsort",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tsort.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/tsort",
+          "realpath": "/usr/bin/tsort",
+          "sha256": "e3178d6ef65afca9d2e4ddac7a21da018bc5e6a576ef0cda51e33f3f40f7bdd3"
+        },
+        "qualified": {
+          "path": "/usr/bin/tsort",
+          "realpath": "/usr/bin/tsort",
+          "sha256": "e3178d6ef65afca9d2e4ddac7a21da018bc5e6a576ef0cda51e33f3f40f7bdd3"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/tsort",
+          "realpath": "/usr/bin/tsort",
+          "sha256": "47d79624c6537ce38e0e37cec7bcd66ab7e78497dd2255cfb21b45e87c16682c"
+        },
+        "qualified": {
+          "path": "/bin/tsort",
+          "realpath": "/usr/bin/tsort",
+          "sha256": "47d79624c6537ce38e0e37cec7bcd66ab7e78497dd2255cfb21b45e87c16682c"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "tty",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tty.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/tty",
+          "realpath": "/usr/bin/tty",
+          "sha256": "1a036ac25066b98271a8a65b1c4d929fd97256acae5798630cdf7ac03f5824e8"
+        },
+        "qualified": {
+          "path": "/usr/bin/tty",
+          "realpath": "/usr/bin/tty",
+          "sha256": "1a036ac25066b98271a8a65b1c4d929fd97256acae5798630cdf7ac03f5824e8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/tty",
+          "realpath": "/usr/bin/tty",
+          "sha256": "849b7afe58a785fa8292da6ced51dd48349334e08e11afb17dda9e976bf06bf4"
+        },
+        "qualified": {
+          "path": "/bin/tty",
+          "realpath": "/usr/bin/tty",
+          "sha256": "849b7afe58a785fa8292da6ced51dd48349334e08e11afb17dda9e976bf06bf4"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "type",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/type.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/type",
+          "realpath": "/usr/bin/type",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        },
+        "qualified": {
+          "path": "/usr/bin/type",
+          "realpath": "/usr/bin/type",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-028",
+      "owner": []
+    },
+    {
+      "name": "ulimit",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ulimit.html",
+      "scope": "base",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/ulimit",
+          "realpath": "/usr/bin/ulimit",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        },
+        "qualified": {
+          "path": "/usr/bin/ulimit",
+          "realpath": "/usr/bin/ulimit",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-029",
+      "owner": [
+        48
+      ]
+    },
+    {
+      "name": "umask",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/umask.html",
+      "scope": "base",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/umask",
+          "realpath": "/usr/bin/umask",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        },
+        "qualified": {
+          "path": "/usr/bin/umask",
+          "realpath": "/usr/bin/umask",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-030",
+      "owner": [
+        48
+      ]
+    },
+    {
+      "name": "unalias",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/unalias.html",
+      "scope": "base",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/unalias",
+          "realpath": "/usr/bin/unalias",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        },
+        "qualified": {
+          "path": "/usr/bin/unalias",
+          "realpath": "/usr/bin/unalias",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-031",
+      "owner": [
+        46,
+        67
+      ]
+    },
+    {
+      "name": "uname",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uname.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/uname",
+          "realpath": "/usr/bin/uname",
+          "sha256": "33d94ff9950060db57f58d99d27ac2896eb194d19b4a83060015667986206c69"
+        },
+        "qualified": {
+          "path": "/usr/bin/uname",
+          "realpath": "/usr/bin/uname",
+          "sha256": "33d94ff9950060db57f58d99d27ac2896eb194d19b4a83060015667986206c69"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/uname",
+          "realpath": "/usr/bin/uname",
+          "sha256": "17fe678160647ed2c67919d3a675e4ed847634b5d6acadf5062a3e9dd8d2924e"
+        },
+        "qualified": {
+          "path": "/bin/uname",
+          "realpath": "/usr/bin/uname",
+          "sha256": "17fe678160647ed2c67919d3a675e4ed847634b5d6acadf5062a3e9dd8d2924e"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "uncompress",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uncompress.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/uncompress",
+          "realpath": "/usr/bin/uncompress",
+          "sha256": "1ff840f2f6daedc87cfb526ea182ef0e4a5bfd25dbabba413aabbc4a235cc146"
+        },
+        "qualified": {
+          "path": "/usr/bin/uncompress",
+          "realpath": "/usr/bin/uncompress",
+          "sha256": "1ff840f2f6daedc87cfb526ea182ef0e4a5bfd25dbabba413aabbc4a235cc146"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/uncompress",
+          "realpath": "/usr/bin/uncompress",
+          "sha256": "55c2f67ca4c3cca0ebac659f0075461dd671ec4937ecd6c71123bb49ed322ebd"
+        },
+        "qualified": {
+          "path": "/bin/uncompress",
+          "realpath": "/usr/bin/uncompress",
+          "sha256": "55c2f67ca4c3cca0ebac659f0075461dd671ec4937ecd6c71123bb49ed322ebd"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "unexpand",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/unexpand.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/unexpand",
+          "realpath": "/usr/bin/unexpand",
+          "sha256": "a22975909926ad78b2a2cc6af87d9d8056d80a15ca36c5d090af963b82190943"
+        },
+        "qualified": {
+          "path": "/usr/bin/unexpand",
+          "realpath": "/usr/bin/unexpand",
+          "sha256": "a22975909926ad78b2a2cc6af87d9d8056d80a15ca36c5d090af963b82190943"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/unexpand",
+          "realpath": "/usr/bin/unexpand",
+          "sha256": "276b2d7c28a19f58eae8c8efa3faf259037411513e9edd63cd92026b51403712"
+        },
+        "qualified": {
+          "path": "/bin/unexpand",
+          "realpath": "/usr/bin/unexpand",
+          "sha256": "276b2d7c28a19f58eae8c8efa3faf259037411513e9edd63cd92026b51403712"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "unget",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/unget.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "uniq",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uniq.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/uniq",
+          "realpath": "/usr/bin/uniq",
+          "sha256": "cbe3190047af116eb10c240f1717a223d03ad1fd18019c77a1207598581dee27"
+        },
+        "qualified": {
+          "path": "/usr/bin/uniq",
+          "realpath": "/usr/bin/uniq",
+          "sha256": "cbe3190047af116eb10c240f1717a223d03ad1fd18019c77a1207598581dee27"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/uniq",
+          "realpath": "/usr/bin/uniq",
+          "sha256": "0458056a19b21caf6d4e42d88abfbc670cadcb95f44cf9977aa3dd8c1c422347"
+        },
+        "qualified": {
+          "path": "/bin/uniq",
+          "realpath": "/usr/bin/uniq",
+          "sha256": "0458056a19b21caf6d4e42d88abfbc670cadcb95f44cf9977aa3dd8c1c422347"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "unlink",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/unlink.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/bin/unlink",
+          "realpath": "/bin/unlink",
+          "sha256": "8c37738cd44bf013022c39026faff5a450c8497e8469fb5b3979cd9bc1fd28e9"
+        },
+        "qualified": {
+          "path": "/bin/unlink",
+          "realpath": "/bin/unlink",
+          "sha256": "8c37738cd44bf013022c39026faff5a450c8497e8469fb5b3979cd9bc1fd28e9"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/unlink",
+          "realpath": "/usr/bin/unlink",
+          "sha256": "2d8137f98ec363556bb8b13d107510e2b02af23a7553475614257e4ace9d738c"
+        },
+        "qualified": {
+          "path": "/bin/unlink",
+          "realpath": "/usr/bin/unlink",
+          "sha256": "2d8137f98ec363556bb8b13d107510e2b02af23a7553475614257e4ace9d738c"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "uucp",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uucp.html",
+      "scope": "conditional UU",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/uucp",
+          "realpath": "/usr/bin/uucp",
+          "sha256": "1eaa2893cd1250624c7366975b345e82d6ce15d836318473540199c67ff74700"
+        },
+        "qualified": {
+          "path": "/usr/bin/uucp",
+          "realpath": "/usr/bin/uucp",
+          "sha256": "1eaa2893cd1250624c7366975b345e82d6ce15d836318473540199c67ff74700"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "uudecode",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uudecode.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/uudecode",
+          "realpath": "/usr/bin/uudecode",
+          "sha256": "a2ed97113d46ad095fbfa2e20545dd09a232aa7c0694cab7de0ef0cfd6afe531"
+        },
+        "qualified": {
+          "path": "/usr/bin/uudecode",
+          "realpath": "/usr/bin/uudecode",
+          "sha256": "a2ed97113d46ad095fbfa2e20545dd09a232aa7c0694cab7de0ef0cfd6afe531"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "uuencode",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uuencode.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/uuencode",
+          "realpath": "/usr/bin/uuencode",
+          "sha256": "cf34f5514c5cb8a0c97f3185c26e2922706344487f309b140b5600795035d8f1"
+        },
+        "qualified": {
+          "path": "/usr/bin/uuencode",
+          "realpath": "/usr/bin/uuencode",
+          "sha256": "cf34f5514c5cb8a0c97f3185c26e2922706344487f309b140b5600795035d8f1"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "uustat",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uustat.html",
+      "scope": "conditional UU",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/uustat",
+          "realpath": "/usr/bin/uustat",
+          "sha256": "9327cc0f696992b504529afc1aa4493bea542d3adf048fb9550147711a5404dd"
+        },
+        "qualified": {
+          "path": "/usr/bin/uustat",
+          "realpath": "/usr/bin/uustat",
+          "sha256": "9327cc0f696992b504529afc1aa4493bea542d3adf048fb9550147711a5404dd"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "uux",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uux.html",
+      "scope": "conditional UU",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/uux",
+          "realpath": "/usr/bin/uux",
+          "sha256": "30e83ccb26bf0538dbbf1d11e88b95097e6ef1caf13502b922add2fecb39040c"
+        },
+        "qualified": {
+          "path": "/usr/bin/uux",
+          "realpath": "/usr/bin/uux",
+          "sha256": "30e83ccb26bf0538dbbf1d11e88b95097e6ef1caf13502b922add2fecb39040c"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "val",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/val.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "vi",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/vi.html",
+      "scope": "conditional UP",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/vi",
+          "realpath": "/usr/bin/vim",
+          "sha256": "0b7f9a73390c84e50be70188e73572d207e02b05fe025a65084b0be039eefba6"
+        },
+        "qualified": {
+          "path": "/usr/bin/vi",
+          "realpath": "/usr/bin/vim",
+          "sha256": "0b7f9a73390c84e50be70188e73572d207e02b05fe025a65084b0be039eefba6"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "wait",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/wait.html",
+      "scope": "base",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/wait",
+          "realpath": "/usr/bin/wait",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        },
+        "qualified": {
+          "path": "/usr/bin/wait",
+          "realpath": "/usr/bin/wait",
+          "sha256": "6b84445c57c474382fd4083629b8308d189e10a9a2bbd66c06b288e56b5b08a8"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-032",
+      "owner": [
+        50
+      ]
+    },
+    {
+      "name": "wc",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/wc.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/wc",
+          "realpath": "/usr/bin/wc",
+          "sha256": "c95e164c28836c40abfa8bfc7e11fa8c4583a4c1ee8544031f9fedeb9d2b9509"
+        },
+        "qualified": {
+          "path": "/usr/bin/wc",
+          "realpath": "/usr/bin/wc",
+          "sha256": "c95e164c28836c40abfa8bfc7e11fa8c4583a4c1ee8544031f9fedeb9d2b9509"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/wc",
+          "realpath": "/usr/bin/wc",
+          "sha256": "ce74356835b690f104f59f2917d58cfdfb7f01d4ac210df20df859e194738889"
+        },
+        "qualified": {
+          "path": "/bin/wc",
+          "realpath": "/usr/bin/wc",
+          "sha256": "ce74356835b690f104f59f2917d58cfdfb7f01d4ac210df20df859e194738889"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "what",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/what.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/what",
+          "realpath": "/usr/bin/what",
+          "sha256": "4779f447374e92edc3880c960dc2ca39f5556d26f1f890caeda9c831a8a50dc4"
+        },
+        "qualified": {
+          "path": "/usr/bin/what",
+          "realpath": "/usr/bin/what",
+          "sha256": "4779f447374e92edc3880c960dc2ca39f5556d26f1f890caeda9c831a8a50dc4"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "who",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/who.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/who",
+          "realpath": "/usr/bin/who",
+          "sha256": "f64428ce4f28dc727fc053a60c2e55485ecc387061e62a920ef666c15032bf4e"
+        },
+        "qualified": {
+          "path": "/usr/bin/who",
+          "realpath": "/usr/bin/who",
+          "sha256": "f64428ce4f28dc727fc053a60c2e55485ecc387061e62a920ef666c15032bf4e"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/who",
+          "realpath": "/usr/bin/who",
+          "sha256": "6c78fa5636c5c6602d97a38fdf7854861f2bb8f0c9506ba246a16c4e9c26e29f"
+        },
+        "qualified": {
+          "path": "/bin/who",
+          "realpath": "/usr/bin/who",
+          "sha256": "6c78fa5636c5c6602d97a38fdf7854861f2bb8f0c9506ba246a16c4e9c26e29f"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "write",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/write.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/write",
+          "realpath": "/usr/bin/write",
+          "sha256": "384c09d90bd72e6b32d6b4441c48301d10124a88e1c28f228d6407a15112fbf6"
+        },
+        "qualified": {
+          "path": "/usr/bin/write",
+          "realpath": "/usr/bin/write",
+          "sha256": "384c09d90bd72e6b32d6b4441c48301d10124a88e1c28f228d6407a15112fbf6"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "xargs",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/xargs",
+          "realpath": "/usr/bin/xargs",
+          "sha256": "87d35c96249ae0104aa74027c83f232511e2067bcde16b84f597a28808914b13"
+        },
+        "qualified": {
+          "path": "/usr/bin/xargs",
+          "realpath": "/usr/bin/xargs",
+          "sha256": "87d35c96249ae0104aa74027c83f232511e2067bcde16b84f597a28808914b13"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/xargs",
+          "realpath": "/usr/bin/xargs",
+          "sha256": "7fb8e6885c50ee457111c03aefa1819a8fd5b7e350ec78c9ade7b4a13f0d6153"
+        },
+        "qualified": {
+          "path": "/bin/xargs",
+          "realpath": "/usr/bin/xargs",
+          "sha256": "7fb8e6885c50ee457111c03aefa1819a8fd5b7e350ec78c9ade7b4a13f0d6153"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": [
+        68
+      ]
+    },
+    {
+      "name": "xgettext",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xgettext.html",
+      "scope": "conditional CD",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "yacc",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/yacc.html",
+      "scope": "conditional CD",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/yacc",
+          "realpath": "/usr/bin/yacc",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        },
+        "qualified": {
+          "path": "/usr/bin/yacc",
+          "realpath": "/usr/bin/yacc",
+          "sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": null
+        },
+        "qualified": {
+          "path": null
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "zcat",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/zcat.html",
+      "scope": "conditional XSI",
+      "exec_required": false,
+      "native": {
+        "standard": {
+          "path": "/usr/bin/zcat",
+          "realpath": "/usr/bin/zcat",
+          "sha256": "8d16cb947cd94a4a933c6ba7789bcd24656a6f518f0aeb43bcefb78ab3686055"
+        },
+        "qualified": {
+          "path": "/usr/bin/zcat",
+          "realpath": "/usr/bin/zcat",
+          "sha256": "8d16cb947cd94a4a933c6ba7789bcd24656a6f518f0aeb43bcefb78ab3686055"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/zcat",
+          "realpath": "/usr/bin/zcat",
+          "sha256": "f0b4d86b6a10064b7f2f41a452ab5437f61d4f17d8b1ab3488f3f345519f4f8d"
+        },
+        "qualified": {
+          "path": "/bin/zcat",
+          "realpath": "/usr/bin/zcat",
+          "sha256": "f0b4d86b6a10064b7f2f41a452ab5437f61d4f17d8b1ab3488f3f345519f4f8d"
+        }
+      },
+      "requirement": "U-034/U-040",
+      "owner": []
+    },
+    {
+      "name": "[",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html",
+      "scope": "base",
+      "exec_required": true,
+      "native": {
+        "standard": {
+          "path": "/bin/[",
+          "realpath": "/bin/[",
+          "sha256": "7450f5bdd2fc8bbbd4b7eb8a902d512962f34e4f0feace04e989fb9ae5f70d90"
+        },
+        "qualified": {
+          "path": "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh012-acceptance-u2u4m_pi/build/host-profile/bin/[",
+          "realpath": "/usr/local/Cellar/coreutils/9.3/bin/g[",
+          "sha256": "ae9434583049affae9d11bb634bf4af6b719f937330c6d8aeb2397528227f3df"
+        }
+      },
+      "docker": {
+        "standard": {
+          "path": "/bin/[",
+          "realpath": "/usr/bin/[",
+          "sha256": "fd8f74b04e8fc3410818605f34382b7da516d386fc14d566040ee61d75623b09"
+        },
+        "qualified": {
+          "path": "/bin/[",
+          "realpath": "/usr/bin/[",
+          "sha256": "fd8f74b04e8fc3410818605f34382b7da516d386fc14d566040ee61d75623b09"
+        }
+      },
+      "requirement": "U-037",
+      "owner": [
+        68,
+        64
+      ]
+    }
+  ],
+  "classification_note": "Reviewed complete SYNOPSIS shading and normative DESCRIPTION. ar is SD by DESCRIPTION despite unshaded synopsis lines. Partial optional forms never exclude base utility."
+}

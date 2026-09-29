@@ -1,5 +1,8 @@
 # CSH-012 evidence reconciliation at `07ee1cb`
 
+The [final audit closure](conformance-closure.md) supersedes earlier acceptance-gate
+decisions. Recorded failures and source-qualified evidence below remain unchanged.
+
 This is a historical snapshot. See the [current acceptance review](conformance-acceptance-review.md)
 for the subsequent requirement, defect, platform and documentation decisions.
 

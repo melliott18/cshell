@@ -1,5 +1,8 @@
 # Requirement review ledger at c8c1c91
 
+The [final audit closure](conformance-closure.md) supersedes earlier acceptance-gate
+decisions. Recorded failures and source-qualified evidence below remain unchanged.
+
 This accompanies the [CSH-012 review](conformance-acceptance-review.md). All 131
 matrix families are listed: 115 applicable and 16 excluded under the unchanged
 base profile. A condition map links implementation paths, precise assertions,

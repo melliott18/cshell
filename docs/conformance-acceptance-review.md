@@ -1,5 +1,8 @@
 # CSH-012 requirement, defect, platform and documentation review
 
+The [final audit closure](conformance-closure.md) supersedes earlier acceptance-gate
+decisions. Recorded failures and source-qualified evidence below remain unchanged.
+
 Review baseline: `c8c1c91372e6e77cf2e7032765cd3c068fa1906d`, integrated `main`,
 2026-09-29 UTC. The review is complete; CSH-012 acceptance is **not complete**.
 Two shell limitations are reproduced with strict probes, platform qualification
