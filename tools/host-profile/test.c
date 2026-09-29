@@ -1,12 +1,25 @@
+#define _GNU_SOURCE
 #define _POSIX_C_SOURCE 200809L
+#include <fcntl.h>
 #include <locale.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include "host-test-provider.h"
 
-/* Issue 8 adds locale-aware < and > binary primaries. Delegate every other
- * expression to the selected, inventoried vendor test. Never install globally. */
+/* Query the filesystem with effective credentials, including ACLs. A mode-bit
+ * approximation (or access() using real IDs) loses grants and denials when
+ * identities differ. The kernel owns lookup, ACL and privilege semantics. */
+static int permission(const char *operator)
+{
+    if (!strcmp(operator, "-r")) return R_OK;
+    if (!strcmp(operator, "-w")) return W_OK;
+    if (!strcmp(operator, "-x")) return X_OK;
+    return 0;
+}
+
+/* Issue 8 collation and effective-credential predicates; other expressions
+ * delegate to the selected, inventoried vendor test. Never install globally. */
 int main(int argc, char **argv)
 {
     const char *name = strrchr(argv[0], '/');
@@ -19,6 +32,10 @@ int main(int argc, char **argv)
         }
         argv[--argc] = NULL;
     }
+    if (argc == 3 && permission(argv[1]))
+        return faccessat(AT_FDCWD, argv[2], permission(argv[1]), AT_EACCESS) == 0 ? 0 : 1;
+    if (argc == 4 && !strcmp(argv[1], "!") && permission(argv[2]))
+        return faccessat(AT_FDCWD, argv[3], permission(argv[2]), AT_EACCESS) == 0 ? 1 : 0;
     if (argc == 5 && !strcmp(argv[1], "!")) {
         offset = 2;
         negate = 1;

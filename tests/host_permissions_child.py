@@ -36,15 +36,27 @@ def main():
     spec = json.loads(Path(sys.argv[1]).read_text())
     if spec.get('credentials'):
         real, effective = spec['credentials']
-        os.setgroups([])
-        os.setresgid(real, effective, effective)
-        os.setresuid(real, effective, effective)
+        os.setgroups(spec.get('supplementary', []))
+        gid_real, gid_effective = spec.get('gids') or (real, effective)
+        if sys.platform == 'darwin':
+            os.setregid(gid_real, gid_effective)
+            os.setreuid(real, effective)
+        else:
+            os.setresgid(gid_real, gid_effective, gid_effective)
+            os.setresuid(real, effective, effective)
     observed = identity()
+    if spec.get('credentials'):
+        try:
+            os.seteuid(0)
+        except PermissionError:
+            observed['root_regain_denied'] = True
+        else:
+            raise RuntimeError('controlled child can regain root')
     if spec.get('access'):
         permission = spec['access']['permission']
         try:
             if permission == 'x':
-                completed = subprocess.run(['./access'], capture_output=True, timeout=1)
+                completed = subprocess.run(['./access'] + (['acl-executed'] if spec['access'].get('binary') else []), capture_output=True, timeout=1)
                 observed['access'] = dict(allowed=completed.returncode == 0,
                                          status=completed.returncode,
                                          stdout=completed.stdout.hex(), stderr=completed.stderr.hex())

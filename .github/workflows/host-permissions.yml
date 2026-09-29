@@ -1,0 +1,54 @@
+name: Permission qualification
+on:
+  pull_request:
+    paths:
+      - 'tools/host-profile/**'
+      - 'tests/host_*'
+      - '.github/workflows/host-permissions.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  permissions:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Linux dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ed busybox acl
+      - name: Darwin dependencies
+        if: runner.os == 'macOS'
+        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+      - name: Build isolated profile
+        run: make -j2 cshell host-profile build/tests/host_utility_helper build/tests/host_printf_faults
+      - name: Ordinary ownership and Darwin ACLs
+        run: |
+          flags=()
+          if [ "$RUNNER_OS" = macOS ]; then flags+=(--darwin-acls); fi
+          python3 tests/host_permissions.py ./cshell --path "$PWD/build/host-profile/bin:$(getconf PATH)" --qualification-only "${flags[@]}" --record build/ordinary-qualification.json
+      - name: Linux controlled credentials and ownership
+        if: runner.os == 'Linux'
+        run: |
+          sudo "$(command -v python3)" tests/host_permissions.py ./cshell --path "$PWD/build/host-profile/bin:$(getconf PATH)" --qualification-only --controlled-identities --record build/controlled-qualification.json
+      - name: Linux strict unequal-ID ACLs
+        if: runner.os == 'Linux'
+        run: |
+          sudo "$(command -v python3)" tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$PWD/build/host-profile/bin:$(getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults --controlled-identities --unequal-acl --record build/unequal-acl-qualification.json
+      - name: Darwin controlled unequal credentials and ACLs
+        if: runner.os == 'macOS'
+        run: |
+          sudo "$(command -v python3)" tests/host_permissions.py ./cshell --path "$PWD/build/host-profile/bin:$(getconf PATH)" --qualification-only --darwin-acls --darwin-credentials --record build/controlled-qualification.json
+      - name: Retain qualification records
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: permission-qualification-${{ runner.os }}
+          path: build/*qualification.json

@@ -110,3 +110,35 @@ with CSH-071 and utility/libc/filesystem vendors retain implementation ownership
 
 No replacement platform milestone or fictitious completed owner is introduced.
 The remaining contracts keep this implementation ticket open.
+
+## Effective-credential and ACL qualification extension
+
+The selected adapter now evaluates `-r`, `-w`, `-x`, and their defined negated
+forms with `faccessat(AT_FDCWD, path, mode, AT_EACCESS)`. This uses effective IDs
+and filesystem ACL decisions rather than the retained GNU `euidaccess` mode-bit
+approximation under unequal IDs. Other predicates still delegate. The relevant
+interface is [faccessat](https://pubs.opengroup.org/onlinepubs/9799919799/functions/access.html).
+This implementation change does not by itself qualify an unavailable platform.
+
+`--qualification-only` selects focused ownership and credential assertions.
+`--darwin-acls` adds current-user named ACL grants, denials, ordered entries and
+file inheritance, with exact ACL metadata and independent read/write/exec
+controls. It needs no account modification or root for ordinary owned files.
+All tests include test/bracket and negation. Binary execute fixtures use mode
+0454, providing the global execute mode bit Darwin requires; the owner cannot
+use the group bit, and a no-ACL control must fail. Controlled root-owned fixtures
+exclude both dropped subjects from the owning group. Write effects are checked
+by returned byte count and independent file size without requiring read access.
+
+The separate `Permission qualification` workflow supplies disposable Linux and
+macOS runners. Linux tests independently varied real/effective UID/GID and
+supplementary groups, non-owner chmod/chown/chgrp denials, and the strict existing
+unequal-ID ACL suite. Darwin's `--darwin-credentials` uses sudo only on that
+runner, then drops to its existing runner/daemon accounts in both ID directions.
+Each child verifies loss of saved-root access before invoking the selected
+provider. No account database is modified. macOS may include the effective GID
+in getgroups(); no other unsupplied supplementary groups are accepted.
+
+Ordinary ownership checks include nonprivileged set-ID clearing, a real change
+to a supplied supplementary group, and strict file-status timestamp updates.
+Full user-namespace/fakeowner and remaining page contracts are still separate.

@@ -12,10 +12,12 @@ import stat
 import subprocess
 import sys
 import tempfile
+import time
 
 import smoke
 from host_contract_inventory import load_contracts
 from host_permission_cases import UTILITIES, cases
+from host_permission_qualification import cases as qualification_cases, setup_acl, clear_acls
 from host_platform import credential_namespace, filesystem_identity
 from host_utilities import inventory, match, serial, sha, source_identity, sanitizer_diagnostic
 
@@ -102,6 +104,13 @@ def run_case(binary, tools, search_path, case, mode, fixture_root, sanitizer=Fal
     connection = None
     try:
         connection = setup(root, case)
+        if case.get('initial_owner'):
+            os.chown(root / 'subject', *case['initial_owner'])
+        if case.get('acl'):
+            record['acl'] = setup_acl(root, case['acl'], case['access']['permission'])
+        if case.get('ctime_update'):
+            record['ctime_before_ns'] = (root / 'subject').stat().st_ctime_ns
+            time.sleep(0.01)
         name = case['utility']
         executable = tools[name]['path']
         if not executable:
@@ -127,7 +136,8 @@ def run_case(binary, tools, search_path, case, mode, fixture_root, sanitizer=Fal
                 argv = ['cshell']
                 stdin = script
         spec = dict(executable=executable, argv=argv, umask=case.get('umask', 0o022),
-                    credentials=case.get('credentials'), access=case.get('access'))
+                    credentials=case.get('credentials'), access=case.get('access'),
+                    gids=case.get('gids'), supplementary=case.get('supplementary', []))
         (root / 'exec.json').write_text(json.dumps(spec))
         record['invocation'] = spec
         env = dict(PATH=search_path, **case.get('env', {}))
@@ -144,9 +154,17 @@ def run_case(binary, tools, search_path, case, mode, fixture_root, sanitizer=Fal
         record['identity'] = identity
         if case.get('credentials'):
             real, effective = case['credentials']
-            if identity.get('capabilities', {}).get('CapEff') != '0000000000000000':
+            if not identity.get('root_regain_denied'):
+                errors.append('controlled child did not prove loss of saved root')
+            if platform.system() == 'Linux' and identity.get('capabilities', {}).get('CapEff') != '0000000000000000':
                 errors.append('controlled child retained effective capabilities')
-            if [identity[k] for k in ('uid', 'euid', 'gid', 'egid')] != [real, effective, real, effective] or identity['groups']:
+            gids = case.get('gids', [real, effective])
+            expected_groups = set(case.get('supplementary', []))
+            actual_groups = set(identity['groups'])
+            groups_valid = actual_groups == expected_groups
+            if platform.system() == 'Darwin':
+                groups_valid = groups_valid or actual_groups == expected_groups | {gids[1]}
+            if ([identity[k] for k in ('uid', 'euid', 'gid', 'egid')] != [real, effective, *gids] or not groups_valid):
                 errors.append('credential setup differs from requested IDs')
         if case.get('access'):
             access = identity.get('access', {})
@@ -155,8 +173,10 @@ def run_case(binary, tools, search_path, case, mode, fixture_root, sanitizer=Fal
             if access.get('allowed'):
                 permission = case['access']['permission']
                 if ((permission == 'r' and access.get('data') != b'private\n'.hex()) or
-                    (permission == 'w' and (access.get('count') != 8 or (root / 'access').read_bytes() != b'private\nwritten\n')) or
-                    (permission == 'x' and (access.get('status') != 0 or access.get('stdout') or access.get('stderr')))):
+                    (permission == 'w' and (access.get('count') != 8 or
+                        ((root / 'access').stat().st_size != 16 if case.get('acl') else
+                         (root / 'access').read_bytes() != b'private\nwritten\n'))) or
+                    (permission == 'x' and (access.get('status') != 0 or access.get('stdout') != (b'executed\n'.hex() if case['access'].get('binary') else '') or access.get('stderr')))):
                     errors.append('independent access operation had unexpected effects')
         if 'session_gid' in case:
             session = json.loads((root / 'session.json').read_text())
@@ -165,6 +185,10 @@ def run_case(binary, tools, search_path, case, mode, fixture_root, sanitizer=Fal
                     session['cwd'] != str(root.resolve()) or session['umask'] != case['umask'] or
                     session['exported'] != 'retained'):
                 errors.append('newgrp environment differs from required preserved state')
+        if case.get('ctime_update'):
+            record['ctime_after_ns'] = (root / 'subject').stat().st_ctime_ns
+            if record['ctime_after_ns'] <= record['ctime_before_ns']:
+                errors.append('file status change timestamp was not updated')
         observed = metadata(root, case.get('metadata', {}))
         expected = {p: {k: v for k, v in f.items() if k != 'nofollow'}
                     for p, f in case.get('metadata', {}).items()}
@@ -179,6 +203,8 @@ def run_case(binary, tools, search_path, case, mode, fixture_root, sanitizer=Fal
     finally:
         if connection is not None:
             connection.close()
+        if case.get('acl'):
+            clear_acls(root)
         # A tested chmod may remove search permission from our private directories.
         for directory in ('tree', 'outside'):
             if (root / directory).is_dir():
@@ -197,6 +223,9 @@ def main():
     parser.add_argument('--record', type=Path, required=True)
     parser.add_argument('--fixture-root', type=Path, default=Path(tempfile.gettempdir()))
     parser.add_argument('--case-prefix', help='Run an explicitly selected case prefix; recorded in evidence')
+    parser.add_argument('--qualification-only', action='store_true')
+    parser.add_argument('--darwin-acls', action='store_true')
+    parser.add_argument('--darwin-credentials', action='store_true')
     parser.add_argument('--sanitizer', action='store_true')
     parser.add_argument('--controlled-identities', action='store_true')
     parser.add_argument('--session-controls', action='store_true')
@@ -204,6 +233,10 @@ def main():
     args = parser.parse_args()
     if (args.controlled_identities or args.session_controls) and (platform.system() != 'Linux' or os.geteuid() != 0):
         parser.error('controlled identities/sessions require a disposable Linux root environment')
+    if args.darwin_acls and platform.system() != 'Darwin':
+        parser.error('--darwin-acls requires Darwin')
+    if args.darwin_credentials and (not args.darwin_acls or os.geteuid() != 0 or not os.environ.get('SUDO_USER')):
+        parser.error('--darwin-credentials requires --darwin-acls and a disposable sudo environment')
     tools = inventory(args.path, names=UTILITIES)
     result = dict(schema_version=1, owner='CSH-071', claim='selected assertions only; full contracts unqualified',
                   platform=platform.platform(), libc=platform.libc_ver(), path=args.path,
@@ -225,7 +258,10 @@ def main():
     elif shutil.which('dpkg-query'):
         result['packages'] = subprocess.check_output(['dpkg-query', '-W', '-f=${Package} ${Version}\n'], text=True)
     result['case_prefix'] = args.case_prefix
-    for case in cases(args.controlled_identities, args.session_controls, args.vendor_residuals):
+    result['qualification'] = dict(selected=args.qualification_only, darwin_acls=args.darwin_acls, darwin_credentials=args.darwin_credentials)
+    selected = (qualification_cases(args.darwin_acls, args.controlled_identities, args.darwin_credentials)
+                if args.qualification_only else cases(args.controlled_identities, args.session_controls, args.vendor_residuals))
+    for case in selected:
         if args.case_prefix and not case['name'].startswith(args.case_prefix):
             continue
         for mode in case.get('modes', ('direct', 'string', 'file', 'stdin')):
