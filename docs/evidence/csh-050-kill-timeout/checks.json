@@ -1,0 +1,8 @@
+{
+  "source_digest_matches_across_native_normal_sanitizer_and_docker": "2fb1d6258665049fa2595355fd036d5ddd7df2c88be55523fd6a8bcfa7540d13",
+  "local_link_targets_checked": 123,
+  "git_diff_check": "pass",
+  "fixture_only_source_change": [
+    "tests/kill_job_state.c"
+  ]
+}

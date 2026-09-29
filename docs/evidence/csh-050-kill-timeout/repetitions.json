@@ -1,0 +1,155 @@
+[
+  {
+    "variant": "baseline",
+    "attempts": 722,
+    "failures": 1,
+    "seconds": 7.338577500078827,
+    "last_result": {
+      "iteration": 721,
+      "seconds": 4.030808124924079,
+      "failures": [
+        "status: expected 0, got -14",
+        "stdout: expected b'partial delivery: state and final wait status passed\\n' (53 bytes), got b'' (0 captured bytes)"
+      ]
+    }
+  },
+  {
+    "variant": "traced",
+    "attempts": 2000,
+    "failures": 0,
+    "seconds": 11.865008958149701,
+    "last_result": {
+      "iteration": 1999,
+      "seconds": 0.004638958955183625,
+      "failures": []
+    }
+  },
+  {
+    "variant": "phase",
+    "attempts": 235,
+    "failures": 1,
+    "seconds": 5.255976791027933,
+    "last_result": {
+      "iteration": 234,
+      "seconds": 4.0270506660453975,
+      "failures": [
+        "status: expected 0, got -14",
+        "stdout: expected b'partial delivery: state and final wait status passed\\n' (53 bytes), got b'' (0 captured bytes)"
+      ]
+    }
+  },
+  {
+    "variant": "sampled",
+    "attempts": 5000,
+    "failures": 0,
+    "seconds": 25.035327999852598,
+    "last_result": {
+      "iteration": 4999,
+      "seconds": 0.004390999907627702,
+      "failures": []
+    }
+  },
+  {
+    "variant": "sampled-minimal",
+    "attempts": 83,
+    "failures": 1,
+    "seconds": 4.502251875121146,
+    "last_result": {
+      "iteration": 82,
+      "seconds": 4.0618726660031825,
+      "failures": [
+        "status: expected 0, got -14",
+        "stdout: expected b'partial delivery: state and final wait status passed\\n' (53 bytes), got b'' (0 captured bytes)"
+      ]
+    }
+  },
+  {
+    "variant": "alarm",
+    "attempts": 286,
+    "failures": 1,
+    "seconds": 5.470101417042315,
+    "last_result": {
+      "iteration": 285,
+      "seconds": 4.030111082829535,
+      "failures": [
+        "status: expected 0, got -14",
+        "stdout: expected b'partial delivery: state and final wait status passed\\n' (53 bytes), got b'' (0 captured bytes)"
+      ]
+    }
+  },
+  {
+    "variant": "minimal-raise",
+    "attempts": 143,
+    "failures": 1,
+    "seconds": 4.868794832844287,
+    "last_result": {
+      "iteration": 142,
+      "seconds": 4.028689041966572,
+      "failures": [
+        "status: expected 0, got -14",
+        "stdout: expected b'passed\\n' (7 bytes), got b'' (0 captured bytes)"
+      ]
+    }
+  },
+  {
+    "variant": "minimal-kill",
+    "attempts": 425,
+    "failures": 1,
+    "seconds": 5.879745499929413,
+    "last_result": {
+      "iteration": 424,
+      "seconds": 4.04061087500304,
+      "failures": [
+        "status: expected 0, got -14",
+        "stdout: expected b'passed\\n' (7 bytes), got b'' (0 captured bytes)"
+      ]
+    }
+  },
+  {
+    "variant": "after",
+    "attempts": 468,
+    "failures": 1,
+    "seconds": 6.179427959024906,
+    "last_result": {
+      "iteration": 467,
+      "seconds": 4.0381058328785,
+      "failures": [
+        "status: expected 0, got -14",
+        "stdout: expected b'partial delivery: state and final wait status passed\\n' (53 bytes), got b'' (0 captured bytes)"
+      ]
+    }
+  },
+  {
+    "variant": "minimal-parent",
+    "attempts": 3000,
+    "failures": 0,
+    "seconds": 13.696786874905229,
+    "last_result": {
+      "iteration": 2999,
+      "seconds": 0.005329750012606382,
+      "failures": []
+    }
+  },
+  {
+    "variant": "parent",
+    "attempts": 3000,
+    "failures": 0,
+    "seconds": 14.280356207862496,
+    "last_result": {
+      "iteration": 2999,
+      "seconds": 0.004201791016384959,
+      "failures": []
+    }
+  },
+  {
+    "variant": "all-parent",
+    "attempts": 1400,
+    "failures": 0,
+    "seconds": 7.422804709058255,
+    "last_result": {
+      "iteration": 1399,
+      "seconds": 0.005211084149777889,
+      "failures": []
+    }
+  }
+]

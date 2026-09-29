@@ -1,0 +1,4 @@
+  PID  PPID  PGID STAT WCHAN  COMMAND
+76913 76657 76913 Ss   -      /Users/mitchell/.codex/worktrees/csh-050-kill-timeout/cshell/build/csh050-investigation/kill_phase ungrouped CONT after
+76914 76913 76913 S    -      /Users/mitchell/.codex/worktrees/csh-050-kill-timeout/cshell/build/csh050-investigation/kill_phase ungrouped CONT after
+76915 76913 76913 S    -      /Users/mitchell/.codex/worktrees/csh-050-kill-timeout/cshell/build/csh050-investigation/kill_phase ungrouped CONT after

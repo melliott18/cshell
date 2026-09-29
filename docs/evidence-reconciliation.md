@@ -21,6 +21,13 @@ unchecked for a new partial-kill SIGALRM, not the old retention observation;
 CSH-050 / #82 owns the new failure. CSH-063 is scoped complete and CSH-064 owns
 remaining external platform prerequisites.
 
+The [CSH-050 fixture investigation](evidence/csh-050-kill-timeout/README.md)
+subsequently reproduced that SIGALRM outside cshell and replaced the child
+self-stop setup with parent-directed stops (`d1ca90b`). Scoped native/Docker
+normal and sanitizer checks pass without changing the original assertions;
+CSH-050 remains at review pending integration. This supersedes the unexplained
+partial-kill hold in the retained snapshots, not their failed results.
+
 ## Review dispositions
 
 | Ticket / integrated change | Review result | Remaining acceptance work |

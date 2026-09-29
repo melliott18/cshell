@@ -1,0 +1,37 @@
+{
+  "recorded_utc": "2026-09-29T01:18:32.226038+00:00",
+  "source_revision": "d1ca90b",
+  "runs": [
+    {
+      "host": "native",
+      "command": "make -j4 test-jobs-signals test-harness",
+      "exit_status": 0,
+      "log": "native-focused.log.gz"
+    },
+    {
+      "host": "Docker",
+      "command": "make -j4 test-jobs-signals test-harness",
+      "exit_status": 0,
+      "log": "docker-focused.log.gz"
+    },
+    {
+      "host": "native sanitizer",
+      "command": "make -C build/csh050-asan -j4 test-jobs test-jobs-pty with recorded sanitizer flags",
+      "exit_status": 0,
+      "log": "native-sanitizer.log.gz"
+    },
+    {
+      "host": "Docker sanitizer",
+      "command": "make clean && make -j4 test-jobs test-jobs-pty with recorded sanitizer flags",
+      "exit_status": 0,
+      "log": "docker-sanitizer.log.gz"
+    },
+    {
+      "host": "native, old bookkeeping with repaired fixture",
+      "command": "python3 tests/smoke.py ./build/csh050-investigation/old-kill --suite build/tests/kill-job-state.json",
+      "exit_status": 1,
+      "expected_failure": true,
+      "log": "oracle-before.log.gz"
+    }
+  ]
+}
