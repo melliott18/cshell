@@ -1,6 +1,6 @@
 # CSH-050: Close jobs, signal and trap evidence gaps
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
