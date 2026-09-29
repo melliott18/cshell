@@ -9,7 +9,7 @@ the milestone remains `review` until that change lands in `main`.
 
 | Criterion | Final audit decision | Concrete evidence |
 | --- | --- | --- |
-| Every applicable requirement has evidence or an explicit open ticket/limitation | Satisfied as accounting | [131-family ledger](requirement-review-ledger.md), seven linked clause maps, and [complete utility inventory](host-system-inventory.md): 155 indexed utility pages, `[` alias, 15 special builtins. Every applicable external contract is linked to CSH-068 unless covered by narrower passing evidence/CSH-064 residuals. Shell defects/qualification limits remain CSH-065–067. |
+| Every applicable requirement has evidence or an explicit open ticket/limitation | Satisfied as accounting | [131-family ledger](requirement-review-ledger.md), seven linked clause maps, and [complete utility inventory](host-system-inventory.md): 155 indexed utility pages, `[` alias, 15 special builtins. Every applicable external contract is linked to CSH-068 unless covered by narrower passing evidence/retained CSH-064 residuals, now qualified under CSH-068. Shell defects/qualification limits remain CSH-065–067. |
 | Conditional, unspecified and implementation-defined behavior is labeled | Satisfied | Existing D decisions and base/UP/XSI classification retained; full utility inventory also explicitly identifies conditional CD/SD/FR/UU entries and mixed base/optional forms. No base requirement is excluded because one option is shaded. |
 | CI runs documented clean-checkout checks on supported systems | Satisfied for audited baseline, with later outcomes disclosed | Exact `c8c1c91` Ubuntu/GCC, macOS/Clang and Docker normal/PTY/profile/harness/ASan/UBSan jobs all pass; fresh clean native normal run passes. At identical production/test bytes in `5b56328`, the subsequent Docker push fails H11 and the PR macOS job is cancelled. These are retained separately, not called passes. |
 | Defects have regression coverage and resolved or linked tickets; waivers state reason/scope | Satisfied as accounting | [Defect dispositions](defect-dispositions.md) link integrated fixes, runnable strict failing reproducers, enforced existing tests, explicit missing historical details and eleven finite observations owned by CSH-069. Scoped acceptance waives a causal-repair demonstration for past observations only, never current/future assertions. |
@@ -30,7 +30,7 @@ audit to close while those implementation tickets remain open.
 
 | Owner | Remaining obligation |
 | --- | --- |
-| [CSH-064 / #127](tickets/CSH-064-host-platform-external-prerequisites.md) | Thirty stable selected host residuals, conditional prerequisites, strict ACL/namespace/fakeowner failures. |
+| [CSH-068 / #137](tickets/CSH-068-host-system-contract-inventory.md), with [completed CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md) | Qualification of thirty retained selected host residuals and conditional prerequisites; CSH-064's bounded capability work and project probe-cleanup repair are done. |
 | [CSH-065 / #134](tickets/CSH-065-interactive-parser-recovery.md) | Repair interactive main-parser recovery and integrate its strict reproducers into the normal regression suite. |
 | [CSH-066 / #135](tickets/CSH-066-resource-bounded-nesting.md) | Remove arbitrary parser/executor/evaluation/expansion limits with safe resource handling. |
 | [CSH-067 / #136](tickets/CSH-067-shell-locale-pathname-qualification.md) | Qualify the finite shell locale/pattern/pathname conditions and repair demonstrated violations. |
@@ -44,11 +44,16 @@ or utility invoked for its side effects to make this review pass.
 
 ## Verification and integration
 
-[Closure evidence](evidence/csh-012/closure-5b56328/README.md) retains official
+[Closure evidence](evidence/csh-012/closure-5b56328/README.md) and
+[final integration checks](evidence/csh-012/integration-008c1f9/README.md) retain official
 source and executable inventories, platform/package identities, both subsequent
 CI snapshots and all completed job logs, exact failed outcomes, disposition
-hashes and reproducible consistency checks. Production source, tests, Makefile,
-Dockerfile and CI workflow bytes are unchanged from the audited baseline.
+hashes and reproducible consistency checks. Production C source is unchanged from the audited baseline. During integration,
+main advanced to `008c1f9` with the separately reviewed CSH-064 probe-cleanup
+repair (`65ca752`, PR #140) and scoped acceptance (PR #141). Those test/Makefile/CI
+changes and their [passing integration/regression evidence](evidence/csh-064-completion/README.md)
+are preserved. The final document-only closure changes are checked against that
+new main baseline; earlier snapshots still identify their original source bytes.
 
 No new full runtime run is needed for these documentation/inventory edits:
 passing baseline evidence and the later failed/cancelled attempts are all
@@ -58,3 +63,18 @@ unchanged. Closure is an audit decision, not a claim that every CI attempt passe
 After PR #139 integrates, record its merge commit, mark the ticket `done` in
 `main`, synchronize issue #13 and close it. Recurrence goes to the explicit
 owner; omitted or falsely characterized requirements/evidence reopen the audit.
+
+## Integration reconciliation (`008c1f9`)
+
+CSH-064 is now done and issue #127 is closed. Its added project-owned timeout
+cleanup defect has causal before/after coverage: two failing cases become three
+passing cases, with all owned descendants reaped and unrelated children preserved.
+Fresh native/Linux integration results and retained strict fakeowner failures are
+linked above. This is an additional resolved defect, separate from H11's
+context-fixture assertion. H11 remains unknown cause.
+
+The original thirty host conditions remain unqualified where recorded. CSH-068
+is their open qualification owner for this audit, using the retained CSH-064
+records and concrete capability prerequisites; vendor implementation ownership
+remains unchanged. Closing the bounded CSH-064 work does not qualify those
+conditions or leave the audit pointing only to a closed implementation ticket.

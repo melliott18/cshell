@@ -1,0 +1,12 @@
+{
+  "source_sha256": "4e24b19eb1b088b6b8041a7f6e2a37bbb9f67f112d060ea6678581e939c3d694",
+  "acceptance": "scoped cleanup gate satisfied",
+  "regression_before": {
+    "passed": 1,
+    "failed": 2
+  },
+  "regression_after": {
+    "passed": 3,
+    "failed": 0
+  }
+}

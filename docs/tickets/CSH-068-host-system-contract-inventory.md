@@ -16,7 +16,7 @@ Expand the system-wide host obligation into a reviewable inventory instead of tr
 
 - XCU §1.6 and U-034/U-040. Inventory required utilities for the selected base profile, each applicability decision, selected executable/provider and missing package or behavior contract.
 - Relate the shell fallback /bin/sh and default search path to the claimed execution environment.
-- CSH-064 continues to own its thirty stable residual conditions and conditional prerequisites for the already selected host utilities; reference that work rather than opening another sequence of equivalent platform tickets.
+- CSH-064 is complete for its bounded capability work and repaired probe cleanup. This ticket owns further qualification of its thirty retained residual conditions and conditional prerequisites; reference the exact CSH-064 evidence and vendor implementation owners rather than reopening that completed work or creating another sequence of platform tickets.
 - Installation currently consists of a repository-local build with no install target; do not imply system replacement or a certified host distribution.
 
 ## Acceptance criteria
@@ -40,8 +40,8 @@ pages, the `[` spelling and 15 special builtins with applicability, actual nativ
 and Debian providers, exact executable identities and per-utility open contracts.
 This completes inventory for CSH-012. This ticket stays open as the concrete
 owner for the unqualified external contracts named there; qualification is not
-inferred from executable presence. CSH-064's narrower conditions retain their
-existing owner. Complete or transfer those contracts before closing this owner.
+inferred from executable presence. CSH-064's narrower conditions retain their evidence and
+vendor implementation owners, with further qualification now owned here. Complete or transfer those contracts before closing this owner.
 
 ## Implementation notes/evidence
 

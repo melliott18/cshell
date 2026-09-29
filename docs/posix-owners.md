@@ -65,7 +65,7 @@ covered by an existing ticket.
 | [CSH-065](tickets/CSH-065-interactive-parser-recovery.md) | [SH-008](posix-matrix.md#sh-008), [GRAM-005](posix-matrix.md#gram-005), [EXEC-015](posix-matrix.md#exec-015) |
 | [CSH-066](tickets/CSH-066-resource-bounded-nesting.md) | [SH-006](posix-matrix.md#sh-006), [GRAM-002](posix-matrix.md#gram-002), [GRAM-004](posix-matrix.md#gram-004), [GRAM-005](posix-matrix.md#gram-005), [EXP-001](posix-matrix.md#exp-001), [EXP-005](posix-matrix.md#exp-005), [EXP-006](posix-matrix.md#exp-006), [EXEC-014](posix-matrix.md#exec-014) |
 | [CSH-067](tickets/CSH-067-shell-locale-pathname-qualification.md) | [SH-003](posix-matrix.md#sh-003), [LEX-002](posix-matrix.md#lex-002), [LEX-004](posix-matrix.md#lex-004), [LEX-005](posix-matrix.md#lex-005), [ENV-004](posix-matrix.md#env-004), [EXP-004](posix-matrix.md#exp-004), [EXP-007](posix-matrix.md#exp-007), [EXP-008](posix-matrix.md#exp-008), [EXP-009](posix-matrix.md#exp-009), [EXP-010](posix-matrix.md#exp-010), [EXEC-012](posix-matrix.md#exec-012), [U-017](posix-utilities.md#u-017), [U-027](posix-utilities.md#u-027), [U-031](posix-utilities.md#u-031) |
-| [CSH-068](tickets/CSH-068-host-system-contract-inventory.md) | [U-034](posix-utilities.md#u-034), [U-040](posix-utilities.md#u-040) |
+| [CSH-068](tickets/CSH-068-host-system-contract-inventory.md) | [U-034](posix-utilities.md#u-034), [U-040](posix-utilities.md#u-040), [U-026](posix-utilities.md#u-026), [U-035](posix-utilities.md#u-035), [U-036](posix-utilities.md#u-036), [U-037](posix-utilities.md#u-037), [U-038](posix-utilities.md#u-038), [U-039](posix-utilities.md#u-039) |
 
 CSH-069 owns the finite historical validation disposition ledger in the current review;
 it does not acquire implementation ownership for every family exercised by those runs.
@@ -106,14 +106,21 @@ CSH-052's scoped host qualification continued through
 CSH-059/060/061/062/063. Their retained records describe the supplied environments
 and exact assertions, not whole utility families.
 
-The current qualification owner is
-[CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md).
+The retained scoped qualification evidence is
+[CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md), now done.
+[CSH-068](tickets/CSH-068-host-system-contract-inventory.md) owns further
+qualification of the individually retained external contracts.
 All 30 stable conditions in `tests/host_capability_limits.py` retain individual
 sources, actual environments, executable identities, reasons and separate
 implementation owners. [CSH-064 evidence](evidence/csh-064/README.md) preserves
 204 strict unequal-ID predicate failures per tested vendor, unsupported tmpfs
 ACL setup and the separate `fakeowner` socket-metadata and chmod failures. Missing privileged Darwin,
 locales, controlled credentials and physical terminals remain capability limits.
+[CSH-064 acceptance reconciliation](evidence/csh-064-acceptance/README.md) also
+retains the historical project-owned probe timeout cleanup defect.
+[The validated cleanup repair](evidence/csh-064-completion/README.md) satisfies
+that acceptance gate; it remains separate from the vendor-owned
+utility/libc/platform conditions. The ticket owns the current acceptance status.
 
 The [current CSH-012 acceptance review](conformance-acceptance-review.md) records
 completed scoped tickets and the remaining milestone gates. Qualification

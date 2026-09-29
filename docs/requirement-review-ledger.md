@@ -9,8 +9,8 @@ base profile. A condition map links implementation paths, precise assertions,
 normative sources, policies and retained revisions. A map reference means
 bounded evidence was reviewed; it does not mark an entire family verified.
 
-Open owners supplement historical implementation/evidence owners. CSH-064 is
-a qualification owner, not a replacement for utility/vendor implementation
+Open owners supplement historical implementation/evidence owners. CSH-064 records scoped qualification evidence; CSH-068 is now
+the open qualification owner, not a replacement for utility/vendor implementation
 owners. CSH-069 dispositions apply to run observations, not every requirement
 touched by a timed-out suite. U-034/U-040 still require expansion into the complete
 system inventory; this is why the parent requirement criterion stays pending.
@@ -107,7 +107,7 @@ system inventory; this is why the parent requirement criterion stays pending.
 | [U-023](posix-utilities.md#u-023) | [CSH-048 clause/condition map](state-builtin-evidence.md#u-023) | Bounded mapped evidence retained; no additional defect identified in this review. |
 | [U-024](posix-utilities.md#u-024) | [CSH-048 clause/condition map](state-builtin-evidence.md#u-024) | Bounded mapped evidence retained; no additional defect identified in this review. |
 | [U-025](posix-utilities.md#u-025) | Matrix option/profile exclusion and source | Inapplicable for selected profile; no base portions of mixed rows excluded. |
-| [U-026](posix-utilities.md#u-026) | [CSH-050 clause/condition map](jobs-signals-evidence.md#u-026) | Open residual: [CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md). |
+| [U-026](posix-utilities.md#u-026) | [CSH-050 clause/condition map](jobs-signals-evidence.md#u-026) | Open residual: [CSH-068](tickets/CSH-068-host-system-contract-inventory.md) (retained CSH-064 evidence). |
 | [U-027](posix-utilities.md#u-027) | [CSH-048 clause/condition map](state-builtin-evidence.md#u-027) | Open residual: [CSH-067](tickets/CSH-067-shell-locale-pathname-qualification.md). |
 | [U-028](posix-utilities.md#u-028) | Matrix option/profile exclusion and source | Inapplicable for selected profile; no base portions of mixed rows excluded. |
 | [U-029](posix-utilities.md#u-029) | [CSH-048 clause/condition map](state-builtin-evidence.md#u-029) | Bounded mapped evidence retained; no additional defect identified in this review. |
@@ -116,12 +116,12 @@ system inventory; this is why the parent requirement criterion stays pending.
 | [U-032](posix-utilities.md#u-032) | [CSH-050 clause/condition map](jobs-signals-evidence.md#u-032) | Bounded mapped evidence retained; no additional defect identified in this review. |
 | [U-033](posix-utilities.md#u-033) | [CSH-048 clause/condition map](state-builtin-evidence.md#u-033) | Bounded mapped evidence retained; no additional defect identified in this review. |
 | [U-034](posix-utilities.md#u-034) | [CSH-052 clause/condition map](host-utility-evidence.md#u-034) | Open residual: [CSH-068](tickets/CSH-068-host-system-contract-inventory.md). |
-| [U-035](posix-utilities.md#u-035) | [CSH-052 clause/condition map](host-utility-evidence.md#u-035) | Open residual: [CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md). |
-| [U-036](posix-utilities.md#u-036) | [CSH-052 clause/condition map](host-utility-evidence.md#u-036) | Open residual: [CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md). |
-| [U-037](posix-utilities.md#u-037) | [CSH-052 clause/condition map](host-utility-evidence.md#u-037) | Open residual: [CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md). |
-| [U-038](posix-utilities.md#u-038) | [CSH-052 clause/condition map](host-utility-evidence.md#u-038) | Open residual: [CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md). |
-| [U-039](posix-utilities.md#u-039) | [CSH-052 clause/condition map](host-utility-evidence.md#u-039) | Open residual: [CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md). |
-| [U-040](posix-utilities.md#u-040) | [CSH-052 clause/condition map](host-utility-evidence.md#u-040) | Open residual: [CSH-068](tickets/CSH-068-host-system-contract-inventory.md), [CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md). |
+| [U-035](posix-utilities.md#u-035) | [CSH-052 clause/condition map](host-utility-evidence.md#u-035) | Open residual: [CSH-068](tickets/CSH-068-host-system-contract-inventory.md) (retained CSH-064 evidence). |
+| [U-036](posix-utilities.md#u-036) | [CSH-052 clause/condition map](host-utility-evidence.md#u-036) | Open residual: [CSH-068](tickets/CSH-068-host-system-contract-inventory.md) (retained CSH-064 evidence). |
+| [U-037](posix-utilities.md#u-037) | [CSH-052 clause/condition map](host-utility-evidence.md#u-037) | Open residual: [CSH-068](tickets/CSH-068-host-system-contract-inventory.md) (retained CSH-064 evidence). |
+| [U-038](posix-utilities.md#u-038) | [CSH-052 clause/condition map](host-utility-evidence.md#u-038) | Open residual: [CSH-068](tickets/CSH-068-host-system-contract-inventory.md) (retained CSH-064 evidence). |
+| [U-039](posix-utilities.md#u-039) | [CSH-052 clause/condition map](host-utility-evidence.md#u-039) | Open residual: [CSH-068](tickets/CSH-068-host-system-contract-inventory.md) (retained CSH-064 evidence). |
+| [U-040](posix-utilities.md#u-040) | [CSH-052 clause/condition map](host-utility-evidence.md#u-040) | Open residual: [CSH-068](tickets/CSH-068-host-system-contract-inventory.md), [CSH-068](tickets/CSH-068-host-system-contract-inventory.md) (retained CSH-064 evidence). |
 | [U-041](posix-utilities.md#u-041) | [CSH-052 clause/condition map](host-utility-evidence.md#u-041) | Bounded mapped evidence retained; no additional defect identified in this review. |
 | [O-001](posix-utilities.md#o-001) | [CSH-051 clause/condition map](shell-option-evidence.md#o-001) | Bounded mapped evidence retained; no additional defect identified in this review. |
 | [O-002](posix-utilities.md#o-002) | [CSH-051 clause/condition map](shell-option-evidence.md#o-002) | Bounded mapped evidence retained; no additional defect identified in this review. |

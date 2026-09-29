@@ -202,3 +202,11 @@ utility/libc/platform vendors as implementation owners. Privileged Darwin and
 physical terminal environments remain unavailable; missing root, locale and
 stat-only block witnesses remain separate. No parent utility family or CSH-012
 gate is promoted.
+
+
+The [CSH-064 acceptance reconciliation](evidence/csh-064-acceptance/README.md)
+retains the passing evidence and the historical project-owned probe timeout
+defect. [The completion record](evidence/csh-064-completion/README.md) validates
+process-group cleanup and descendant reaping through the actual nested path.
+The ticket records acceptance; this repair is independent of the external
+capabilities required for vendor requalification.

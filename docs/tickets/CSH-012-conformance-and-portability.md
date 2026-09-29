@@ -65,6 +65,14 @@ Completing one child does not establish the milestone or POSIX compliance.
 Passing a differential suite is useful evidence but does not itself prove POSIX
 conformance. External certification, if desired, is separate from this ticket.
 
+### Integration reconciliation
+
+Main `008c1f9` closes CSH-064's bounded work after the validated probe cleanup
+repair. [Closure reconciliation](../conformance-closure.md#integration-reconciliation-008c1f9)
+preserves that decision and its additional causal regression. CSH-068 is now the
+open qualification owner for the thirty retained external conditions; CSH-064
+and vendor records remain the evidence and implementation provenance.
+
 ### Final audit acceptance and integration
 
 The [closure record](../conformance-closure.md) satisfies all six original
@@ -74,7 +82,7 @@ The [defect dispositions](../defect-dispositions.md) retain every observed
 failure, exact strict tests/reproducers, available identities and missing detail,
 including the new Docker context-fixture assertion H11.
 
-CSH-064–069 remain open for explicitly owned implementation/qualification and
+CSH-065–069 remain open for explicitly owned implementation/qualification and
 diagnosis work. Their repair is not a new dependency of this audit. Acceptance
 of unresolved historical observations applies only to audit closure; assertions,
 time limits and future CI failure enforcement remain unchanged.
@@ -129,7 +137,7 @@ in the review's acceptance table. This reconciliation does not supply a new
 sentence-level normative audit or full supported-platform qualification.
 No POSIX compliance claim is authorized.
 
-### Qualified host-profile limitation
+### Historical qualified host-profile limitation
 
 The [qualified host profile](../host-contract-profile.md) resolves the five
 CSH-052 stock-host gaps only with its documented PATH and executable identities.

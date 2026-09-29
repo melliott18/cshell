@@ -224,3 +224,21 @@ is `fakeowner`. The probe supplements the full runtime/PTY integration and does
 not qualify a host by itself. See [CSH-064 evidence](../../docs/evidence/csh-064/README.md)
 for results and unavailable external prerequisites. CSH-064 retains qualification
 ownership; selected utility/libc/platform vendors retain implementation ownership.
+
+
+## Probe timeout ownership
+
+The focused Linux probe uses one five-second watchdog for the credential wrapper
+and selected utility in an inherited process group. The privileged runner
+becomes a child subreaper while the invocation runs, kills the owned group on
+exit/timeout, and waits for its adopted descendants within a separate two-second
+cleanup bound. It restores its prior subreaper setting and never waits for
+unrelated children. Cleanup errors force a failure record. The inner credential
+wrapper has no competing timeout or new process group.
+
+In a disposable root Linux container, `make test-host-probe-timeout` exercises
+the actual nested path with a slow utility, a forking slow utility, and an ordinary
+control. It checks the deadline, strict timeout record, measured IDs, disappearance
+of every owned PID (including zombies), and survival of an unrelated child.
+Only private files and processes are used. See
+[CSH-064 completion](../../docs/evidence/csh-064-completion/README.md) for validation.

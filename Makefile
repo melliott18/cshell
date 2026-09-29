@@ -567,3 +567,8 @@ test-kill-job-state: build/tests/kill_job_state build/tests/kill-job-state.json
 	$(PYTHON) tests/smoke.py ./build/tests/kill_job_state --suite build/tests/kill-job-state.json
 
 test-jobs: test-kill-job-state
+
+# Explicit disposable Linux-root regression; never create or modify accounts.
+.PHONY: test-host-probe-timeout
+test-host-probe-timeout:
+	$(PYTHON) tests/host_probe_timeout.py --record build/tests/host-probe-timeout.json
