@@ -162,3 +162,7 @@ CSH-041 adds arithmetic-first lexer replay for ambiguous `$((` input; new
 modules follow POSIX requirements and explicit ownership contracts.
 
 Originally authored by Mitchell Elliott.
+
+The [CSH-012 requirement, defect, platform and documentation review](docs/conformance-acceptance-review.md) records the current acceptance decisions and open limitations.
+
+[CSH-012 audit closure](docs/conformance-closure.md) records complete requirement accounting and scoped defect dispositions; known implementation gaps remain open.

@@ -1,0 +1,11 @@
+{
+  "Id": "sha256:42e058b3ee3f92d31540bc667dc9059cb576e5a6b5783c655da59f89dcfe77e0",
+  "RepoTags": [
+    "cshell-integration:round7",
+    "cshell-test:csh-050-kill-timeout"
+  ],
+  "RepoDigests": [],
+  "Architecture": "arm64",
+  "Os": "linux",
+  "Created": "2026-09-29T01:12:10.619838756Z"
+}

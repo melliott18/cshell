@@ -1,0 +1,314 @@
+{
+  "prior_snapshot": "5b56328143adc72f48f8af581b93fcb758af060e",
+  "records": [
+    {
+      "id": "H01",
+      "observation": "Nine portability deadlines and one context deadline (CSH-042)",
+      "source_identity": "7bf7025 is the final repair revision; the earlier failed attempt is not independently identified in the narrative.",
+      "evidence": [
+        {
+          "path": "docs/tickets/CSH-042-locale-semantics.md",
+          "sha256": "15d3986aed16a08942c177451ce27bc82ac4efaa375fb751cbb3243ec2f2cd20",
+          "bytes": 8934
+        }
+      ],
+      "coverage": "tests/portability.py; tests/contexts.py",
+      "bounds": "5s portability, 10s context",
+      "cause": "unknown unless a narrower original record proves a mechanism",
+      "audit_disposition": "Accepted unresolved for CSH-012 accounting only; failed outcomes retained; no future test waiver",
+      "reason": "Narrative retains the failed attempt and later independent hosted passes. Exact initial source identity and raw failed log are unavailable in the ticket; do not reconstruct them from a later passing identity.",
+      "diagnosis_and_recurrence_owner": "CSH-069 / issue 138",
+      "reopen_trigger": "Recurrence or new causal evidence requires CSH-069 triage; missing/misclassified normative obligations reopen the audit, not merely an already-owned failure."
+    },
+    {
+      "id": "H02",
+      "observation": "CSH-043 native ps cleanup and Docker offset timeouts",
+      "source_identity": "Final focused evidence is c37890d; exact failed-attempt identity is not separately retained in the narrative.",
+      "evidence": [
+        {
+          "path": "docs/tickets/CSH-043-redirection-offset.md",
+          "sha256": "c98fe8ceb61923721327150fad637d516030371da076e15aaca3c81681537963",
+          "bytes": 9223
+        }
+      ],
+      "coverage": "tests/redirection_offsets.py; tests/pty_harness.py",
+      "bounds": "1s original ps cleanup; 5s offset cases",
+      "cause": "unknown unless a narrower original record proves a mechanism",
+      "audit_disposition": "Accepted unresolved for CSH-012 accounting only; failed outcomes retained; no future test waiver",
+      "reason": "Narrative preserves 17 passes/19 failures and not-run chained stages. Raw local failed logs are not linked by that record. Later ps-budget repair is not assigned as cause without an exact match.",
+      "diagnosis_and_recurrence_owner": "CSH-069 / issue 138",
+      "reopen_trigger": "Recurrence or new causal evidence requires CSH-069 triage; missing/misclassified normative obligations reopen the audit, not merely an already-owned failure."
+    },
+    {
+      "id": "H03",
+      "observation": "CSH-046 empty file; CSH-047 arithmetic and field timeouts",
+      "source_identity": "5e77577e892192567c091d0c20658ce4f01f6327; 2153c39ea6fa56f1c68dc304a1304f9973ef792e",
+      "evidence": [
+        {
+          "path": "docs/evidence/csh-046/docker-sanitizer.log.gz",
+          "sha256": "240af0abe5174697adc00381c594f3b3744412a5ba75b4434d79d91c78f7b12b",
+          "bytes": 6526
+        },
+        {
+          "path": "docs/evidence/csh-046/validation.json",
+          "sha256": "33f1bdfb79e5430a3b771bbcb7114ca1076d6dce17af5e394f51cd878a000cb7",
+          "bytes": 21541
+        },
+        {
+          "path": "docs/evidence/csh-047/docker-sanitizer.log.gz",
+          "sha256": "d40a8e2a73d277ae4d8cd6f4d566e0e9055c58b796ed5207f18769b212a39638",
+          "bytes": 3660
+        },
+        {
+          "path": "docs/evidence/csh-047/validation.json",
+          "sha256": "9d1b8266428ca02000a0e070b0f4fed08ec1ea92906e6c0d5906c0f120ba3c2b",
+          "bytes": 89772
+        }
+      ],
+      "coverage": "tests/input.py; tests/portability.py; tests/fields.py",
+      "bounds": "5s original case deadlines",
+      "cause": "unknown unless a narrower original record proves a mechanism",
+      "audit_disposition": "Accepted unresolved for CSH-012 accounting only; failed outcomes retained; no future test waiver",
+      "reason": "Initial logs and binary/source manifests retained. Passing same-source serial attempts demonstrate bounded witnesses, not a causal repair.",
+      "diagnosis_and_recurrence_owner": "CSH-069 / issue 138",
+      "reopen_trigger": "Recurrence or new causal evidence requires CSH-069 triage; missing/misclassified normative obligations reopen the audit, not merely an already-owned failure."
+    },
+    {
+      "id": "H04",
+      "observation": "CSH-048 times/ulimit completion and native cleanup deadlines",
+      "source_identity": "ae993de53f2efcfd179e93ec3c632aa6b524b755 initial; per-attempt manifest in validation.json distinguishes later 1e08f41 correction.",
+      "evidence": [
+        {
+          "path": "docs/evidence/csh-048/docker-sanitizer.log.gz",
+          "sha256": "33674ebeb75a4f7bcfccd84af375c1542bc02761a49cdaebab3a9e93f3fd9bd9",
+          "bytes": 8878
+        },
+        {
+          "path": "docs/evidence/csh-048/native.log.gz",
+          "sha256": "e2e08a34cf0f1e9cfe333eb4055d41f7f13107d9d4872ea823ce82d84fdb6123",
+          "bytes": 25064
+        },
+        {
+          "path": "docs/evidence/csh-048/validation.json",
+          "sha256": "aafe4c0a94f76998fdb7a355a0fad1d3933be29c50ec17deacfe21efcc9eca84",
+          "bytes": 185410
+        }
+      ],
+      "coverage": "tests/state_builtin_cases.py; tests/pty_harness.py",
+      "bounds": "5s runtime; original cleanup bound in raw log",
+      "cause": "unknown unless a narrower original record proves a mechanism",
+      "audit_disposition": "Accepted unresolved for CSH-012 accounting only; failed outcomes retained; no future test waiver",
+      "reason": "Correct bytes before termination do not establish successful completion. The later dprintf leak repair is a separately diagnosed defect and does not establish the cause of every timeout.",
+      "diagnosis_and_recurrence_owner": "CSH-069 / issue 138",
+      "reopen_trigger": "Recurrence or new causal evidence requires CSH-069 triage; missing/misclassified normative obligations reopen the audit, not merely an already-owned failure."
+    },
+    {
+      "id": "H05",
+      "observation": "CSH-049 cleanup and three offset timeouts",
+      "source_identity": "9f755dec9d7c8840f3e38e95011eceb64e55e662; per-platform manifests retained.",
+      "evidence": [
+        {
+          "path": "docs/evidence/csh-049/native-harness.log.gz",
+          "sha256": "aca08557c93330639fd784642975aa2e46540a0acd8bbf3321b0a8d2b4b6fb26",
+          "bytes": 2071
+        },
+        {
+          "path": "docs/evidence/csh-049/docker-asan.log.gz",
+          "sha256": "a5ee8e06a708f3e7adfc77e66375ddff6225b8f94feda78828eed2b5f4436ece",
+          "bytes": 3209
+        },
+        {
+          "path": "docs/evidence/csh-049/validation.json",
+          "sha256": "82ff62cac29c7ded5be96614ea8340ec04e70fc151295b5a8fe1ec7dd75e24ee",
+          "bytes": 88638
+        }
+      ],
+      "coverage": "tests/redirection_offsets.py; tests/test_harness.py; tests/test_pty_harness.py",
+      "bounds": "1s original ps cleanup; 5s three offset cases",
+      "cause": "unknown unless a narrower original record proves a mechanism",
+      "audit_disposition": "Accepted unresolved for CSH-012 accounting only; failed outcomes retained; no future test waiver",
+      "reason": "All three source modes of the first rejected positioned byte timed out. Remaining make targets were not run; later full passes remain separate.",
+      "diagnosis_and_recurrence_owner": "CSH-069 / issue 138",
+      "reopen_trigger": "Recurrence or new causal evidence requires CSH-069 triage; missing/misclassified normative obligations reopen the audit, not merely an already-owned failure."
+    },
+    {
+      "id": "H06",
+      "observation": "CSH-051 leak-enabled timeouts and setup deadline",
+      "source_identity": "e1091a5fd818a85ec6a7b2ddc90a54cf1fdd8c9d",
+      "evidence": [
+        {
+          "path": "docs/evidence/csh-051/docker-sanitizer.log.gz",
+          "sha256": "653b333ff920e44a1dcda0cb9289db7453b92e3301b9fb07d1a24784d5e9bd6d",
+          "bytes": 2445
+        },
+        {
+          "path": "docs/evidence/csh-051/docker.log.gz",
+          "sha256": "1cd26310ed8481f9d2ecb140059d6acc91098bb542545d43d9c2dbf7370ba167",
+          "bytes": 27402
+        },
+        {
+          "path": "docs/evidence/csh-051/README.md",
+          "sha256": "19b245bc430dd5863478109f7f0482f4141cce51e9b7c3d77f30bcf0e9861203",
+          "bytes": 7277
+        }
+      ],
+      "coverage": "tests/option_evidence_cases.py; tests/test_harness.py; tests/test_pty_harness.py",
+      "bounds": "5s option/PTY cases; 150ms original setup marker",
+      "cause": "unknown unless a narrower original record proves a mechanism",
+      "audit_disposition": "Accepted unresolved for CSH-012 accounting only; failed outcomes retained; no future test waiver",
+      "reason": "Leak-disabled ASan/UBSan results do not qualify LeakSanitizer. Measured startup slowdown is not a complete causal diagnosis of both failures.",
+      "diagnosis_and_recurrence_owner": "CSH-069 / issue 138",
+      "reopen_trigger": "Recurrence or new causal evidence requires CSH-069 triage; missing/misclassified normative obligations reopen the audit, not merely an already-owned failure."
+    },
+    {
+      "id": "H07",
+      "observation": "CSH-053 invocation/offset deadlines and hosted repeated-resume mismatch",
+      "source_identity": "4b81c6380e43fbcd0f46c58ead57cc4bddb4639c is the PR evidence revision; duplicate push job identity remains linked in the ticket.",
+      "evidence": [
+        {
+          "path": "docs/tickets/CSH-053-multibyte-lexical-boundaries.md",
+          "sha256": "0d028122fa939d5d4067cd8c601767adf013084f6472fa6c705f5cadadd8a668",
+          "bytes": 7499
+        }
+      ],
+      "coverage": "tests/invocation.py; tests/redirection_offsets.py; tests/jobs_cases.py",
+      "bounds": "5s local case bounds; hosted mismatch is bytes, not a timeout",
+      "cause": "unknown unless a narrower original record proves a mechanism",
+      "audit_disposition": "Accepted unresolved for CSH-012 accounting only; failed outcomes retained; no future test waiver",
+      "reason": "Hosted output was 7,328 versus 7,216 expected bytes. Local successes do not resolve that mismatch. Preserve linked job 108450341412 and its source attribution rather than assign the separate prompt repair as its cause.",
+      "diagnosis_and_recurrence_owner": "CSH-069 / issue 138",
+      "reopen_trigger": "Recurrence or new causal evidence requires CSH-069 triage; missing/misclassified normative obligations reopen the audit, not merely an already-owned failure."
+    },
+    {
+      "id": "H08",
+      "observation": "CSH-055 harness setup/cleanup and descriptor/ignoreeof deadlines",
+      "source_identity": "Initial source digest a6b1b54ef172b710be3b8d704b676911ace0d3a6fcf1c7e967979302de64ce48; identities retain exact manifests.",
+      "evidence": [
+        {
+          "path": "docs/evidence/csh-055/native-harness-failed.log.gz",
+          "sha256": "f5ed2c29147de6a911c449cc2bf694d55c25ed12d0a8a5d95134e22f68bee641",
+          "bytes": 2411
+        },
+        {
+          "path": "docs/evidence/csh-055/docker-initial-sanitizer-failed.log.gz",
+          "sha256": "1f7a9b11f2c6fc42fdaf3333ed73f9d170e3b43220a00f5ca0071520f5c1ba3a",
+          "bytes": 1739
+        },
+        {
+          "path": "docs/evidence/csh-055/docker-initial-sanitizer-identity.json",
+          "sha256": "fc512fa1396d3b3f006d0eb071edf5b1c3e56186011f031cc8321860fcafd5ec",
+          "bytes": 17244
+        },
+        {
+          "path": "docs/evidence/csh-055/README.md",
+          "sha256": "728239b23b916a5f8f596cf02cab7c3f2513ed6c29a9e2cba59d2aef2850f029",
+          "bytes": 3582
+        }
+      ],
+      "coverage": "tests/execution_contracts.py; tests/runtime_cases.py; tests/test_harness.py; tests/test_pty_harness.py",
+      "bounds": "1s original ps cleanup, fixture setup marker, 5s descriptor/PTY",
+      "cause": "unknown unless a narrower original record proves a mechanism",
+      "audit_disposition": "Accepted unresolved for CSH-012 accounting only; failed outcomes retained; no future test waiver",
+      "reason": "Preserve the descriptor stop and later unrun stages. CSH-054 readiness fixes require matching evidence before being called causal repairs for these attempts.",
+      "diagnosis_and_recurrence_owner": "CSH-069 / issue 138",
+      "reopen_trigger": "Recurrence or new causal evidence requires CSH-069 triage; missing/misclassified normative obligations reopen the audit, not merely an already-owned failure."
+    },
+    {
+      "id": "H09",
+      "observation": "CSH-057 four Linux sanitizer control-flow deadlines",
+      "source_identity": "adb9e5c103f7183836eb5f8f19ba180b134a004a; batch manifests qualify tested bytes.",
+      "evidence": [
+        {
+          "path": "docs/evidence/csh-057/docker-sanitizer-runtime-0.log.gz",
+          "sha256": "8ce76551492ddb1594c79b5e853f58181b6c8cd980f9f10316ddc6e461bf6035",
+          "bytes": 7693
+        },
+        {
+          "path": "docs/evidence/csh-057/docker-sanitizer-runtime-1.log.gz",
+          "sha256": "32c7e0d6ba510e53013925eb7f7f16a5b2abf3536fb50c00ef52d63d3edc7daa",
+          "bytes": 7678
+        },
+        {
+          "path": "docs/evidence/csh-057/docker-sanitizer-runtime-2.log.gz",
+          "sha256": "0ca36a36e363a695f660d727f52a36a4504155894ad9787546e9db768c538c5d",
+          "bytes": 7717
+        },
+        {
+          "path": "docs/evidence/csh-057/docker-sanitizer-runtime-3.log.gz",
+          "sha256": "6e075133f96629f1b5420a5852a26cae72574b71be70ca53b9999ed800c7649e",
+          "bytes": 7759
+        },
+        {
+          "path": "docs/evidence/csh-057/docker-sanitizer-runtime-batches.json",
+          "sha256": "6c16f026fc2df4f904c738a9f49e9939047df9335c99e6de443179ec0d31230b",
+          "bytes": 191310
+        }
+      ],
+      "coverage": "tests/control_flow_cases.py",
+      "bounds": "5s cases; same exact cases retained in batch manifest",
+      "cause": "unknown unless a narrower original record proves a mechanism",
+      "audit_disposition": "Accepted unresolved for CSH-012 accounting only; failed outcomes retained; no future test waiver",
+      "reason": "These control-flow timeouts are outside the formal CSH-057 retention disposition. Serial unchanged passes do not establish cause.",
+      "diagnosis_and_recurrence_owner": "CSH-069 / issue 138",
+      "reopen_trigger": "Recurrence or new causal evidence requires CSH-069 triage; missing/misclassified normative obligations reopen the audit, not merely an already-owned failure."
+    },
+    {
+      "id": "H10",
+      "observation": "CSH-058 ps/PTY/setup bounds and native case-fallthrough deadline",
+      "source_identity": "74bcc04e67a6b42503b86d52828a00aae903c50b; fixture correction 0dbf8d6 is distinguished in the source record.",
+      "evidence": [
+        {
+          "path": "docs/evidence/csh-058/native-full.log.gz",
+          "sha256": "ec02035f2d48701fa1f1f48cc2aa5b1ba487885fe29af51a69e1af8252252282",
+          "bytes": 29217
+        },
+        {
+          "path": "docs/evidence/csh-058/docker-full.log.gz",
+          "sha256": "cd233830b459b64d744468474ae4a402e16eeafcc09db9c5cad0782229f3f04e",
+          "bytes": 21616
+        },
+        {
+          "path": "docs/evidence/csh-058/sanitizer-full.log.gz",
+          "sha256": "4713ef5d1e79bcc951011a17bd286207c1262da34c15cb0adf2d7625cd683f4d",
+          "bytes": 12625
+        },
+        {
+          "path": "docs/evidence/csh-058/README.md",
+          "sha256": "7857555b7d93ca636758fb3e0d756a3808723620ba5e634f5ff1fc86ed093ced",
+          "bytes": 8779
+        }
+      ],
+      "coverage": "tests/pty_harness.py; tests/test_harness.py; tests/test_pty_harness.py; tests/control_flow_cases.py",
+      "bounds": "5s ps snapshot; 0.3s EOF-helper setup; 2s observation; 5s control plus 1s reap",
+      "cause": "unknown unless a narrower original record proves a mechanism",
+      "audit_disposition": "Accepted unresolved for CSH-012 accounting only; failed outcomes retained; no future test waiver",
+      "reason": "Separate these observations from the diagnosed four-second launcher alarm leaking through exec, which is repaired. No blanket load explanation.",
+      "diagnosis_and_recurrence_owner": "CSH-069 / issue 138",
+      "reopen_trigger": "Recurrence or new causal evidence requires CSH-069 triage; missing/misclassified normative obligations reopen the audit, not merely an already-owned failure."
+    },
+    {
+      "id": "H11",
+      "observation": "New Docker context_fixture WNOWAIT assertion",
+      "source_identity": "5b56328143adc72f48f8af581b93fcb758af060e; push run 36512726060, job 109228225575.",
+      "evidence": [
+        {
+          "path": "docs/evidence/csh-012/closure-5b56328/ci-36512726060.json",
+          "sha256": "05955d06d313c68b93dcd350269e5497a93326b6630b16b43206ac665f871eb5",
+          "bytes": 12012
+        },
+        {
+          "path": "docs/evidence/csh-012/closure-5b56328/ci-job-109228225575.log.gz",
+          "sha256": "09c0df2342ee510b41b2e5b8f6ddf9f343bf469c4fca7960a03d43d160c52dc3",
+          "bytes": 74407
+        }
+      ],
+      "coverage": "tests/context_fixture.c:136; tests/contexts.py",
+      "bounds": "Existing context fixture assertion and runner bound, unchanged",
+      "cause": "unknown unless a narrower original record proves a mechanism",
+      "audit_disposition": "Accepted unresolved for CSH-012 accounting only; failed outcomes retained; no future test waiver",
+      "reason": "waitid(P_PID, background_pid, WEXITED | WNOWAIT) returned nonzero; fixture aborted with status -6. Errno was not printed. Early child collection is a hypothesis only. The separate PR Docker job passed without a rerun; this does not diagnose the failed push job.",
+      "diagnosis_and_recurrence_owner": "CSH-069 / issue 138",
+      "reopen_trigger": "Recurrence or new causal evidence requires CSH-069 triage; missing/misclassified normative obligations reopen the audit, not merely an already-owned failure."
+    }
+  ]
+}

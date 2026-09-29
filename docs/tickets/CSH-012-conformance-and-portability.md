@@ -1,12 +1,12 @@
 # CSH-012: Audit POSIX conformance and portability
 
-- Status: in-progress
+- Status: review
 - Type: test
 - Kind: milestone
 - Parent: None
 - Depends on: CSH-008, CSH-009, CSH-010, CSH-011
 - Children: CSH-036, CSH-037
-- Branch: Milestone; reconciliation on docs/CSH-012-evidence-reconciliation
+- Branch: Milestone; review on docs/CSH-012-requirement-defect-review
 - Issue: [#13](https://github.com/melliott18/cshell/issues/13)
 
 ## Goal
@@ -30,14 +30,14 @@ platforms, and remaining gaps before making a compliance claim.
 
 ## Acceptance criteria
 
-- [ ] Each applicable requirement links to implementation and passing evidence,
+- [x] Each applicable requirement links to implementation and passing evidence,
   or an explicit open ticket and limitation.
 - [x] Conditional, unspecified, and implementation-defined behavior is labeled;
   permitted implementation choices are documented.
-- [ ] CI runs the documented checks from a clean checkout on supported systems.
-- [ ] All discovered defects have regression coverage and resolved or linked
+- [x] CI runs the documented checks from a clean checkout on supported systems.
+- [x] All discovered defects have regression coverage and resolved or linked
   tickets; waived tests include a reason and scope.
-- [ ] Installation, invocation, architecture, and contribution docs are coherent
+- [x] Installation, invocation, architecture, and contribution docs are coherent
   and link to the current evidence and limitations.
 - [x] Any compliance statement names the standard edition, selected scope, and
   evidence, and is withheld while applicable requirements remain unmet.
@@ -53,7 +53,7 @@ sample of its linked cases from a clean checkout.
 
 - [x] [CSH-036: Conformance matrix](CSH-036-conformance-matrix.md) is done.
 - [x] [CSH-037: Portability audit](CSH-037-portability-audit.md) is done.
-- [ ] The original acceptance criteria above pass together, with recorded
+- [x] The original acceptance criteria above pass together, with recorded
   cross-feature evidence and all completion prerequisites satisfied.
 
 Child dependencies control when each work item can start. The parent
@@ -65,9 +65,59 @@ Completing one child does not establish the milestone or POSIX compliance.
 Passing a differential suite is useful evidence but does not itself prove POSIX
 conformance. External certification, if desired, is separate from this ticket.
 
-### Current evidence reconciliation (`07ee1cb`)
+### Integration reconciliation
 
-The [current reconciliation](../evidence-reconciliation-current.md) supersedes
+Main `008c1f9` closes CSH-064's bounded work after the validated probe cleanup
+repair. [Closure reconciliation](../conformance-closure.md#integration-reconciliation-008c1f9)
+preserves that decision and its additional causal regression. CSH-068 is now the
+open qualification owner for the thirty retained external conditions; CSH-064
+and vendor records remain the evidence and implementation provenance.
+
+### Final audit acceptance and integration
+
+The [closure record](../conformance-closure.md) satisfies all six original
+acceptance criteria. The [complete utility inventory](../host-system-inventory.md)
+accounts for 155 utility pages, the `[` spelling and 15 special builtins.
+The [defect dispositions](../defect-dispositions.md) retain every observed
+failure, exact strict tests/reproducers, available identities and missing detail,
+including the new Docker context-fixture assertion H11.
+
+CSH-065–069 remain open for explicitly owned implementation/qualification and
+diagnosis work. Their repair is not a new dependency of this audit. Acceptance
+of unresolved historical observations applies only to audit closure; assertions,
+time limits and future CI failure enforcement remain unchanged.
+
+All prerequisites and both children are done. Ready to integrate in PR #139;
+status becomes done only after the closure record is on main. The original
+criteria above are satisfied as evidence/ownership accounting, not as a POSIX
+conformance claim. Audit complete; known gaps are documented and owned;
+POSIX conformance remains unclaimed.
+
+### Earlier requirement, defect, platform and documentation review (`c8c1c91`)
+
+The [acceptance review](../conformance-acceptance-review.md) and
+[131-family ledger](../requirement-review-ledger.md) supersede the earlier
+snapshot's current-state conclusions. CSH-050's repair is integrated and done;
+CSH-064 retains thirty stable host residuals and conditional prerequisites.
+New open tickets CSH-065–069 own interactive main-parser recovery, arbitrary
+nesting limits, shell locale/pathname qualification, the complete host utility
+inventory and finite historical failure dispositions.
+
+Fresh strict probes report 15 PASS and 10 FAIL, retaining required-success
+oracles. A clean native full normal run passes, while explicitly preserving
+stock-host gaps and unavailable capabilities. Baseline Linux and Docker CI jobs
+and macOS 15 CI jobs pass all stages, including ASan/UBSan.
+[Commands, identities, logs and results](../evidence/csh-012/acceptance-c8c1c91/README.md)
+are retained independently of earlier evidence.
+
+At that earlier snapshot, documentation and supported-platform CI acceptance were checked; classification
+and claim policy remained checked. Requirement accounting and defect
+regression/disposition were unchecked for the concrete reasons in
+the review. Those accounting gates are now satisfied by the final closure record.
+
+### Historical evidence reconciliation (`07ee1cb`)
+
+At that snapshot, the [reconciliation](../evidence-reconciliation-current.md) superseded
 stale lifecycle and residual-owner statements in the
 [earlier snapshot](../evidence-reconciliation.md), while preserving its results.
 Both children and all four completion prerequisites are done. CSH-046–049,
@@ -81,22 +131,22 @@ Git blobs and later documented corrections. Historical manifests and failed
 runs are preserved. The fresh clean-archive native sample and separately
 identified CI snapshots are linked from the review; pending CI is not a pass.
 
-The classification and claim-policy criteria stay checked. The other four
-criteria and combined completion gate remain unchecked for the specific reasons
+At that snapshot, classification and claim-policy criteria stayed checked. The other four
+criteria and combined completion gate were unchecked for the specific reasons
 in the review's acceptance table. This reconciliation does not supply a new
 sentence-level normative audit or full supported-platform qualification.
 No POSIX compliance claim is authorized.
 
-### Qualified host-profile gate
+### Historical qualified host-profile limitation
 
 The [qualified host profile](../host-contract-profile.md) resolves the five
 CSH-052 stock-host gaps only with its documented PATH and executable identities.
 CSH-059/060/061/062/063 add bounded qualification; stock macOS/Debian are not
 promoted. [CSH-064](CSH-064-host-platform-external-prerequisites.md) now owns the
-28 stable host residuals plus conditional limits, including strict unequal-ID
+30 stable host residuals plus conditional limits, including strict unequal-ID
 ACL predicate failures and unqualified tmpfs/`fakeowner` profiles. U-034/U-040,
 other incomplete utility contracts and the system-wide §1.6 obligation remain
-open, so the milestone completion gate stays closed. CSH-057's
+open for implementation/qualification after audit completion. CSH-057's
 [formal retention disposition](../evidence/csh-057-retention-disposition/README.md)
 accepts only the historical observation for its scoped completion; #99 retains
 recurrence ownership and the unchanged retention test stays enforced.

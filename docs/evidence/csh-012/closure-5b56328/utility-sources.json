@@ -1,0 +1,1524 @@
+{
+  "index": {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/idx/utilities.html",
+    "bytes": 10690,
+    "sha256": "4590ad99a332fa72048790c28f38dbb32588c2d4585a77b5a422f52ff23c43a9"
+  },
+  "pages": [
+    {
+      "utility": "admin",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/admin.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:33.616992+00:00",
+      "bytes": 23948,
+      "sha256": "1a7b599228053bb688f624536a637f26b500497c05e3c99e5ea375e2dcb1c765",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "alias",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/alias.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:33.630528+00:00",
+      "bytes": 14493,
+      "sha256": "8cea5106a27e91c9fdb17fc52593006423777ae8f2c859d2d3e99305110366f1",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "ar",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ar.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:33.617118+00:00",
+      "bytes": 34225,
+      "sha256": "c1265958d4f14512420343343029863c65abe12d1ca0e2102bfefeef26c4ebed",
+      "synopsis_option_codes": [
+        "SD",
+        "XSI"
+      ]
+    },
+    {
+      "utility": "asa",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/asa.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:33.613257+00:00",
+      "bytes": 11236,
+      "sha256": "e1614f456c6cd5852c593427155f6b8c0d14f167e0331233dee4b5ebf52f454e",
+      "synopsis_option_codes": [
+        "FR"
+      ]
+    },
+    {
+      "utility": "at",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/at.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:33.632516+00:00",
+      "bytes": 30619,
+      "sha256": "aa0571cacb1292107adca0c3083b6f1763960de4c3ab0dd719d1f34690043bec",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "awk",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:33.769323+00:00",
+      "bytes": 144111,
+      "sha256": "6df7d0776af4b28dbc3ec667a02a18e51ccd5066ea45a22166214e7e3832f898",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "basename",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/basename.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:33.940887+00:00",
+      "bytes": 13554,
+      "sha256": "76c256427a758fc4388559e7a71fcc9351ed0cfb19afc5af07d38c4cf25c8ab2",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "batch",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/batch.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:33.930177+00:00",
+      "bytes": 13986,
+      "sha256": "8703b7c390562eb2586ea548ee79ed86e19b8670efdfe83dfeecf6c8afdb97fa",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "bc",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.020573+00:00",
+      "bytes": 50804,
+      "sha256": "3f0d136fe8bbe187e2badbcbb3740595992a201988ab2c2db796509608ab578b",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "bg",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bg.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:33.936910+00:00",
+      "bytes": 13222,
+      "sha256": "e238b2905a3d6c37df514ef9549db90b3ac76445dcb1b2fdfbf4c1e00e1c2a9f",
+      "synopsis_option_codes": [
+        "UP"
+      ]
+    },
+    {
+      "utility": "c17",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/c17.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.020521+00:00",
+      "bytes": 61819,
+      "sha256": "b77fef7b1448ab161fbc6f23335fbde9bdbcdc6fe0d67d0054192dce9d4c9a82",
+      "synopsis_option_codes": [
+        "CD"
+      ]
+    },
+    {
+      "utility": "cal",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cal.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.030157+00:00",
+      "bytes": 9733,
+      "sha256": "773b0dca48b4425e064be7262043dc554694b5c5935728d83828f8bc26b8cf41",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "cat",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cat.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.237293+00:00",
+      "bytes": 13170,
+      "sha256": "c65d7288eec83a6e19ad3c6e5d407eb0c072d856d73674ecf619e52a3c2a1d66",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "cd",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cd.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.316605+00:00",
+      "bytes": 25003,
+      "sha256": "6c62adc698387aa20c6331a59c069c520cce58868f1f36adb4eb1a26972d41ee",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "cflow",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cflow.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.249732+00:00",
+      "bytes": 13006,
+      "sha256": "ccc0cb3095a1b1808406650e5fc4d9eaedf244fb6523bc0b2680034263118894",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "chgrp",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/chgrp.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.339032+00:00",
+      "bytes": 13025,
+      "sha256": "e69f5e23d19d1bc68c160064cb3d97359016e7999cc1c660d23ef1c2ef9f00dc",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "chmod",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/chmod.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.342186+00:00",
+      "bytes": 28306,
+      "sha256": "29ea831c77491fb8b1f4e84320a273d5f16411a960bb18436459afe25cb4b7b7",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "chown",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/chown.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.333380+00:00",
+      "bytes": 15965,
+      "sha256": "aaadc605c8f8657f517ca7f87efe45b2cabd1a40eeab79ba07b83228e0d59aa0",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "cksum",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cksum.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.546498+00:00",
+      "bytes": 19800,
+      "sha256": "db8f1f08114364a9ab6c9cea2e380cf960acb93a5e34fe2bed51c51505b99367",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "cmp",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cmp.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.550840+00:00",
+      "bytes": 14673,
+      "sha256": "4d2368fccfdee5cd8998d23412760295422ff1044cb8de059c51f511eaafe6bb",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "comm",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/comm.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.623909+00:00",
+      "bytes": 14616,
+      "sha256": "f17b73b15918149a456f6f0ecf9f1335e1a2dbd92d64282131afc6d7f8e2e210",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "command",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/command.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.645881+00:00",
+      "bytes": 27355,
+      "sha256": "43db4a94e14a93d7c3afff243853d0d5a5e284ef2b19324805660fa83b50e1ab",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "compress",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/compress.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.639154+00:00",
+      "bytes": 23195,
+      "sha256": "36223e5f3feddce1288d701fb42c98ea74d0fba662305df67b606fa1a59651c2",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "cp",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.656655+00:00",
+      "bytes": 32759,
+      "sha256": "777d1c06255117e8ea9d8c5ede3996ef77b7c5ddecd1cbf9e584deef239a5836",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "crontab",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/crontab.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.855176+00:00",
+      "bytes": 18284,
+      "sha256": "93d593f708b25559bf467ee4d11bd715f67b17a4b04139d519d770bcd8813a80",
+      "synopsis_option_codes": [
+        "UP"
+      ]
+    },
+    {
+      "utility": "csplit",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/csplit.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.850873+00:00",
+      "bytes": 15132,
+      "sha256": "48d95169abe3b824ff379c81b2494f6face8527e1e0d42d3a2e3288fe3ef78f5",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "ctags",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ctags.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.936136+00:00",
+      "bytes": 20394,
+      "sha256": "8336860b2fc2113074118811c655146edef90da0c2b263adc3f263bb702160e7",
+      "synopsis_option_codes": [
+        "CD%20SD"
+      ]
+    },
+    {
+      "utility": "cut",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cut.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.945978+00:00",
+      "bytes": 18138,
+      "sha256": "d3af4b048815929f72fdb40e3e128f4bd8d701298d3c51a7725eacac9a74e978",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "cxref",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cxref.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.952657+00:00",
+      "bytes": 11622,
+      "sha256": "fc8e8fdced55ad279e390af911b4b96ebdb4f955d9956fe229a5c9d6b16e7312",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "date",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/date.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:34.958279+00:00",
+      "bytes": 21483,
+      "sha256": "47dc0778b01ff6f60e945b2c494a0e2e52cc0e197e502ef188d25819ef660390",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "dd",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dd.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:35.161327+00:00",
+      "bytes": 31842,
+      "sha256": "876cebeba49456b8e22b53057bc861120f092c36522193823685cea8b821e249",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "delta",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/delta.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:35.152976+00:00",
+      "bytes": 17988,
+      "sha256": "2c8fa5a01dc994b1af46761de2521ea0ac049bbe2896f7b3ec4422aae366d3f9",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "df",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:35.246802+00:00",
+      "bytes": 17229,
+      "sha256": "afbeec1b5e25c2ebf0de45fcffdcff03cf9f3bf4aa6960fc09b426cfc1a45a11",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "diff",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/diff.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:35.250675+00:00",
+      "bytes": 34172,
+      "sha256": "f7c1634d7ed82bd1bfc4ac5be9877832563d7487d66390ce9f1c49aa49a577ed",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "dirname",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:35.261331+00:00",
+      "bytes": 12984,
+      "sha256": "f218ded1508843cdd90913db7cd56ee938d43f67050d6f0645d88cbf916ec6c4",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "du",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:35.272512+00:00",
+      "bytes": 16397,
+      "sha256": "659c1410d265ef1d4056a784611c6af0df45495f99ff9abfbdbc3c9eb516c100",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "echo",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/echo.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:35.456100+00:00",
+      "bytes": 14926,
+      "sha256": "bf06a3c6bffbb6ee66289551410c611d8fe13240c5acf2529ff82c05b1339efc",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "ed",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:35.532170+00:00",
+      "bytes": 75788,
+      "sha256": "d8fe056317166b69d6d78f9730951e9f17b1a6e6e1f7a0028edc2d681ced39d1",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "env",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/env.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:35.557169+00:00",
+      "bytes": 15526,
+      "sha256": "0304635ac8176ad6602bdffcc43b50c938cf2ebc1b24acccc60c5814d7e68d33",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "ex",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ex.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:35.764353+00:00",
+      "bytes": 278311,
+      "sha256": "dfbf066a548e329c502c85fcb01a2d67be0f9c16a60955a6d0937a17dab8cef8",
+      "synopsis_option_codes": [
+        "UP"
+      ]
+    },
+    {
+      "utility": "expand",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expand.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:35.558961+00:00",
+      "bytes": 11684,
+      "sha256": "884904df391a56f83f1f160779e8e076a9c2b4ea7ad0da4a670b71577be932d7",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "expr",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:35.585634+00:00",
+      "bytes": 20774,
+      "sha256": "76196fd72e9f4c475b4843d63fce09d176d025cfb4eaf6f1655387d4fc41afa3",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "false",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/false.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:35.695188+00:00",
+      "bytes": 6102,
+      "sha256": "b9e1b46b9996345f3746166b83d7ffb5cdb1c529d72b8c2a77bb06bb1b51e12c",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "fc",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/fc.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:35.840717+00:00",
+      "bytes": 22579,
+      "sha256": "fafa1ea93ff203b6d4a94baf2cdec24b864b4f99ba8710b7ab1d5c7a705ce1ef",
+      "synopsis_option_codes": [
+        "UP"
+      ]
+    },
+    {
+      "utility": "fg",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/fg.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:35.864037+00:00",
+      "bytes": 11504,
+      "sha256": "27889788d9d5cd6abcbcf9596e5cdbe3eb2bed73ab2a919ef805b6a5c40029b0",
+      "synopsis_option_codes": [
+        "UP"
+      ]
+    },
+    {
+      "utility": "file",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:35.867416+00:00",
+      "bytes": 35851,
+      "sha256": "c2e7590cab2534dbf4a0b3fbd8cc77312990c495c6a448243ca63c14074067bb",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "find",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:35.961343+00:00",
+      "bytes": 46686,
+      "sha256": "6293363b063c9de0bc4d190b62a09d3cd03906a1fa40d3ddc52ecd6a09a62502",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "fold",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/fold.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.005307+00:00",
+      "bytes": 14326,
+      "sha256": "f928f3eee3530cea92b10456c9edf2c8f1cdeed98f7921fd4b777a6ed5c0d671",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "fuser",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/fuser.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.099602+00:00",
+      "bytes": 14655,
+      "sha256": "6f512dd76184f3370412f71346e5abac1e2f6e74d331cfb4d05bac8941491028",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "gencat",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/gencat.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.141975+00:00",
+      "bytes": 15273,
+      "sha256": "a9f64693c95f94cce93132e47527b101c793bc7254ad65d416b71a2b74cc4bac",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "get",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/get.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.176319+00:00",
+      "bytes": 34560,
+      "sha256": "2a5ddeeefd03ccfca9fcf3e22fbf6cde221077063388ea6d4bcd84076a9cb064",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "getconf",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/getconf.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.172057+00:00",
+      "bytes": 18311,
+      "sha256": "19c7cf52aa24e1b61bbaf5dc4a759a1ab236b023106df6f8fc545486241cb3ff",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "getopts",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/getopts.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.266624+00:00",
+      "bytes": 21111,
+      "sha256": "564a92bdcae6cc38ea1d5d88d5ba4e15ab121eeafd7a8c02140e3cfd7fe46a4f",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "gettext",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/gettext.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.312875+00:00",
+      "bytes": 20773,
+      "sha256": "672babe34b26f36b021eb8058d3bf988f0d57956171825c6d0615b1edbd59712",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "grep",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.415329+00:00",
+      "bytes": 21316,
+      "sha256": "9473205c9203676853dd5dfb486f2d7a7e223aa7336a59a3481b05be90dcd531",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "hash",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/hash.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.449989+00:00",
+      "bytes": 12016,
+      "sha256": "615435c99f4a90eb1c76d1731c05c4d47507b75f706e6f8c513cd6d2241d53bc",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "head",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/head.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.471929+00:00",
+      "bytes": 13766,
+      "sha256": "812ce0ca42b45f118d748fc0131a49b3a307bc3042235fd85a9ede87db32cc47",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "iconv",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/iconv.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.486269+00:00",
+      "bytes": 14747,
+      "sha256": "f0266cd552e5f9030948080dff433bbf66e146c17f845c9c8041687c5e224a95",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "id",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/id.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.579994+00:00",
+      "bytes": 14228,
+      "sha256": "77958ea32a3a05a674fa2e234262024db587eebb2875af263ae19bc1431c4bd8",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "ipcrm",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ipcrm.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.554989+00:00",
+      "bytes": 9862,
+      "sha256": "0f091834c1eb794fc9b8082f6a6eb19c93e7222dc1c6033e78db8341ba33edd2",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "ipcs",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ipcs.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.732187+00:00",
+      "bytes": 25388,
+      "sha256": "40e2023ebdd7c20a8d0a91bf981a452f5a68385dc2acc7b8b4083bb1699e1dd0",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "jobs",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/jobs.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.762796+00:00",
+      "bytes": 18589,
+      "sha256": "7063a42fe884c5cbfaa372164723fc92f343a21949b60ed578856411abd0c538",
+      "synopsis_option_codes": [
+        "UP"
+      ]
+    },
+    {
+      "utility": "join",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/join.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.797373+00:00",
+      "bytes": 19362,
+      "sha256": "3fef7c9f2ddcd7ae0a924604a7b30c1f8de7e25c59719cd5823a9c5c4da523d2",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "kill",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/kill.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.797511+00:00",
+      "bytes": 20896,
+      "sha256": "b8a734e2a6c967cb8fbfd56d8e5efbec318e8bbae182754a75ad3d4d472ce12e",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "lex",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/lex.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.948816+00:00",
+      "bytes": 49040,
+      "sha256": "a11344fbae75334ba20ef1a14362992d411de0c4a1371343d9269efa5b8b4d89",
+      "synopsis_option_codes": [
+        "CD"
+      ]
+    },
+    {
+      "utility": "link",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/link.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:36.814633+00:00",
+      "bytes": 8278,
+      "sha256": "2eea3dd8578671cc731635a0ed8cc5aa54fba4c159b4a268f28b381a93fe98bf",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "ln",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.034394+00:00",
+      "bytes": 20048,
+      "sha256": "c4e793bb510483faef398e4c16fb7adc2d60b99c712ea7e6b5f2751a4c6c453c",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "locale",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/locale.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.076848+00:00",
+      "bytes": 21111,
+      "sha256": "c8a2cc8cb14a914821bd8ce203b2cbfc652071bf89dd6df675aa1f42d935633a",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "localedef",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/localedef.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.103294+00:00",
+      "bytes": 19934,
+      "sha256": "b400f82fd7ca5bedc660cf4a251f3bde2b15016766e4876715d4ed88d8e2483b",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "logger",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/logger.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.108721+00:00",
+      "bytes": 13413,
+      "sha256": "f86b6cc252a36537ea7f8e4cfc748e623cc69174409dfe43796440e4c0deefeb",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "logname",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/logname.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.054685+00:00",
+      "bytes": 8250,
+      "sha256": "23dc1c19737ec581b47f6f23c47ccac500ec17cb3f5d7bfc605f4bcc7bf8df08",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "lp",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/lp.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.258102+00:00",
+      "bytes": 21334,
+      "sha256": "a8e718c7a8c31c92d6f9e5bd73bed6576c1077ed9ce58dccfc3eb36d30f9799f",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "ls",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.419976+00:00",
+      "bytes": 48711,
+      "sha256": "cd4db85f09dbadf3d529b1bf6a8c157806759c5a22d3ca616aad0cc0363f07bc",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "m4",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.424414+00:00",
+      "bytes": 39250,
+      "sha256": "c8fa5682d9b5885c173ede4c3c2e97cf0dac19898bcd88df9b78a1ebc8ce10c6",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "mailx",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mailx.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.530319+00:00",
+      "bytes": 106276,
+      "sha256": "4029a1895ba3bb6c0315a10675edcb7f2ce0f822f928608661c576048dc75cdb",
+      "synopsis_option_codes": [
+        "UP"
+      ]
+    },
+    {
+      "utility": "make",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/make.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.565072+00:00",
+      "bytes": 128800,
+      "sha256": "86663126116573d3b62d89a86807e205030bd2e161beeeddfbdab7c7d25d52b4",
+      "synopsis_option_codes": [
+        "SD"
+      ]
+    },
+    {
+      "utility": "man",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/man.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.415300+00:00",
+      "bytes": 15151,
+      "sha256": "c739d1d5ab6ff51f92009cb1823bebcd97b252dade346b291939fde556258f09",
+      "synopsis_option_codes": [
+        "UP"
+      ]
+    },
+    {
+      "utility": "mesg",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mesg.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.501219+00:00",
+      "bytes": 10658,
+      "sha256": "7d73f4f3bf4e12e5a50cea00882867600e41dc7750a5180912cf7a0fd69ddc69",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "mkdir",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.723255+00:00",
+      "bytes": 13670,
+      "sha256": "7d37d11b3829422919fbc928cf3e4e0e2c9ba3d0eaba2e2e36362e80f4086576",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "mkfifo",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.733621+00:00",
+      "bytes": 11067,
+      "sha256": "508f579e25f7ac32d94c2f57aef1a12448e4984fc60d467120cb2bb66157c3ed",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "more",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/more.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.813083+00:00",
+      "bytes": 48950,
+      "sha256": "dbe3241145ef79ae0feb5f41e1ec9a0ebc39867edab4c595eb1ce6a9dbcc622f",
+      "synopsis_option_codes": [
+        "UP"
+      ]
+    },
+    {
+      "utility": "msgfmt",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/msgfmt.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.805319+00:00",
+      "bytes": 26935,
+      "sha256": "4a289a444b7330378b64745556b7aea6e7b0b8a6a018023a664d6257b22318d3",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "mv",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mv.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.852985+00:00",
+      "bytes": 23048,
+      "sha256": "c17c6279d2fdf408e2aa82bd674d5eff5130f391361b2e175e4862d6c4a89662",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "newgrp",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/newgrp.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:37.877864+00:00",
+      "bytes": 16028,
+      "sha256": "ab27e6d5f656913c1bc1686121dfc24ab493a74606e914c7b3c2214d0a6cc560",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "ngettext",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ngettext.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.029045+00:00",
+      "bytes": 20773,
+      "sha256": "672babe34b26f36b021eb8058d3bf988f0d57956171825c6d0615b1edbd59712",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "nice",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/nice.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.033283+00:00",
+      "bytes": 15786,
+      "sha256": "f58df3354b5b441e729e615b08423a385ee6115b2c8dd0831070e5ac2e1eb78d",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "nl",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/nl.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.110183+00:00",
+      "bytes": 15205,
+      "sha256": "067182f61467bb7e88841f1cd5819065835515c2b7466b6865e8428bf65e7f88",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "nm",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/nm.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.125245+00:00",
+      "bytes": 19819,
+      "sha256": "9f854e62336299b91e5325ab1e1022683a760406f9f013adf8b62bf339113238",
+      "synopsis_option_codes": [
+        "SD",
+        "XSI"
+      ]
+    },
+    {
+      "utility": "nohup",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/nohup.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.168178+00:00",
+      "bytes": 14986,
+      "sha256": "19f5b7797e78cf87bdd03570dd482abf685ca76b7ea371cb415e3e4c0cce0377",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "od",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/od.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.250183+00:00",
+      "bytes": 41054,
+      "sha256": "9f4155dfc0f80092b11a3ca0a272347a4e6903e64d3201b2021ea4afa4cb3626",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "paste",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/paste.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.360457+00:00",
+      "bytes": 14746,
+      "sha256": "3482c9627b8c3ca34ddb638b468c9b70d0a34ebb165ee70d147d69fb1e90e2b9",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "patch",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.360515+00:00",
+      "bytes": 28362,
+      "sha256": "f9b52d950df15a4c1d0d3f6dac174e422b4ecb68fe67268f8232ccca67fb9589",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "pathchk",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.417049+00:00",
+      "bytes": 16727,
+      "sha256": "ce446d31316645a78d6aa4df6ff45829afbdbd3d667c84ae2c6a3bdfe0ce825a",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "pax",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.580822+00:00",
+      "bytes": 166776,
+      "sha256": "398b008eab3110cd482eee2e62797adaf915405e488b1f36bc73fc2a29591efb",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "pr",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pr.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.471267+00:00",
+      "bytes": 24811,
+      "sha256": "289d54c3627dd93fb954d5ee2faf1ebe040c9a8186075aa148b52b6770fb681c",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "printf",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/printf.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.568355+00:00",
+      "bytes": 33375,
+      "sha256": "10a8cae0fcf8fba5c33a685266219c1eef19e9a40ceb34d3dd02ba01dc242a5e",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "prs",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/prs.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.666549+00:00",
+      "bytes": 32248,
+      "sha256": "508bd0cf781b2e23642c65402e22c602ce4672164ad8e7fb8abfa68a41fab16f",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "ps",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ps.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.666598+00:00",
+      "bytes": 34877,
+      "sha256": "7ee67610c0e0ddab88971fd7dfc94a32205f198312ad3c0de524f77b3870b4d4",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "pwd",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.716286+00:00",
+      "bytes": 12366,
+      "sha256": "6c0724e219d469ac68640fc07c825a95e090931483b9cee2d089dec136efd7f6",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "read",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/read.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.781550+00:00",
+      "bytes": 19988,
+      "sha256": "2eec6366229acb50ba5cc984e972172033bbd9077f37af7d1c6fd2e5f5aea6e1",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "readlink",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.802680+00:00",
+      "bytes": 8805,
+      "sha256": "b8af59cd805ca79ad73dab35ad008a55b9f8bbef0fc84ce7334ffac7b8f0f4dc",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "realpath",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.899966+00:00",
+      "bytes": 13540,
+      "sha256": "dfded63f96378a20c8952547dea666f07d0006e8868fa37a883b8553de684cc5",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "renice",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/renice.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.972628+00:00",
+      "bytes": 15452,
+      "sha256": "98053362ac28cc8bba051713e135514261b7abad95dd478c14382c43f6a1a657",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "rm",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.982112+00:00",
+      "bytes": 21420,
+      "sha256": "7ea788ea4ed4cc0f309bfc9681b650da0cbcec9d535604cb12bfd57fbddb9839",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "rmdel",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdel.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:38.953772+00:00",
+      "bytes": 10598,
+      "sha256": "f9f751ae23cc92fd7fa581ba6bd89b4645e2bded61cb2b9258ba0a321176803f",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "rmdir",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.022470+00:00",
+      "bytes": 10270,
+      "sha256": "44451db47f43a6dfb058b6e8f71aee7db1fec99961573246380f7deb0c54bc9f",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "sact",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sact.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.104868+00:00",
+      "bytes": 11025,
+      "sha256": "fb714f0be8b2322c5cdac88523654628882609af625bda2a5ba38649199f0dc2",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "sccs",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sccs.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.212032+00:00",
+      "bytes": 19489,
+      "sha256": "167ba5555e57e4973c0dcf891c11a6376bd0ecf689bf893e71e092ad0d5a0da4",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "sed",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sed.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.332986+00:00",
+      "bytes": 47997,
+      "sha256": "3b2889785b23530a924a25a44fde064963b1e13b4647d48a890d033ac5354ded",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "sh",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sh.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.362505+00:00",
+      "bytes": 75412,
+      "sha256": "b6f11dc31fccb2145dd51ccd92704779dfce1faa00b3a5bec27f0007b711a054",
+      "synopsis_option_codes": [
+        "OB"
+      ]
+    },
+    {
+      "utility": "sleep",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sleep.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.212088+00:00",
+      "bytes": 9615,
+      "sha256": "8de7054b446b649e7d80133ff062abc560104ed5dd66d40a1ff32d6b3fc9ca30",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "sort",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sort.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.324500+00:00",
+      "bytes": 31084,
+      "sha256": "a395f75e0d56093c8eae8847281bb4a0064e26706801dc73d2bc1aa4a26e7aa5",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "split",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/split.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.410952+00:00",
+      "bytes": 14847,
+      "sha256": "8af2dcb947db849c4f140988a3395734d3bf10a5fc2be3f9e5e1f5c1190039ff",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "strings",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/strings.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.512987+00:00",
+      "bytes": 12615,
+      "sha256": "43006836b255e8892eced71087d4a1a0dbc43a4594473ba20980d88eac7ffbbd",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "strip",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/strip.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.524648+00:00",
+      "bytes": 10473,
+      "sha256": "06066a6743849332ddc5313e4334502111ba8bbdf474ba327615edb0e144d64e",
+      "synopsis_option_codes": [
+        "SD"
+      ]
+    },
+    {
+      "utility": "stty",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/stty.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.695492+00:00",
+      "bytes": 45836,
+      "sha256": "0cf85b0b2fe76bb717583942343b9641f12f04fe666207756299719ffa85e892",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "tabs",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tabs.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.636734+00:00",
+      "bytes": 16702,
+      "sha256": "11fb5a47ec971fc74edc5a7e0b02b6d34d3dbfccfe5ab9476ab48125e9d0516b",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "tail",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tail.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.665634+00:00",
+      "bytes": 18552,
+      "sha256": "792dfe494f50222bf7a71c9550b842dfb51632ca449c1c3af2ddf28b87304ad8",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "talk",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/talk.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.721284+00:00",
+      "bytes": 15659,
+      "sha256": "266bbd7b48a19bf8ed056721abb19440da19865a6d8cc4d31cc0addf1a4c14b6",
+      "synopsis_option_codes": [
+        "UP"
+      ]
+    },
+    {
+      "utility": "tee",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tee.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.810606+00:00",
+      "bytes": 11507,
+      "sha256": "5a39247e5f23f23669ffcb48ed94485f05349322163cb6b20334e96aa979a1a7",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "test",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.830510+00:00",
+      "bytes": 32085,
+      "sha256": "bc67634d25dde24c8e020a749f24e15d59c4bf6d3669a930b7e3133fce5272d8",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "time",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/time.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.944098+00:00",
+      "bytes": 19557,
+      "sha256": "122563d377c7f0c8bfdb99ac022fbdca81cd514f8b2266867c77c413b0c54ac0",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "timeout",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/timeout.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:39.985654+00:00",
+      "bytes": 19791,
+      "sha256": "4beb610c27b75e76889068d3c259180e4c13db9bec1ff853c7fa4b0654f13825",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "touch",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.011325+00:00",
+      "bytes": 23445,
+      "sha256": "ae8c1a8fc027372a6a50561b7c07bea8c30a471458ee72c00d7b35c039d756b7",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "tput",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tput.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.024934+00:00",
+      "bytes": 12104,
+      "sha256": "8bb81a54fe3ab0a1c3772ed0c3c29f4460ad9c35359b7f969dc9886789f256c0",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "tr",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tr.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.114062+00:00",
+      "bytes": 26943,
+      "sha256": "05b7fa7c0f1c2080cd4f5049c6cf9496ef352d6fd8bf2a51931a8fadcd6ee8dc",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "true",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/true.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.065956+00:00",
+      "bytes": 7814,
+      "sha256": "85e102249592eb707d35b638d340e0792547d9e1ad4445184cdd15dcc9428694",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "tsort",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tsort.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.258480+00:00",
+      "bytes": 11447,
+      "sha256": "8ad52992ab08970a35d6a2bb8ff134d4b378575c50a8e7ea0553a1f8a172168e",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "tty",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tty.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.222446+00:00",
+      "bytes": 9661,
+      "sha256": "5960556d4e42d8de77021860fd21aa99290d98e8605301c5505dd58c6a1f9285",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "type",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/type.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.258429+00:00",
+      "bytes": 9521,
+      "sha256": "751b5e2e0e55dea89f864568f743968ea72c1a0bbb0b0a1351f389b24709e2ba",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "ulimit",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ulimit.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.338504+00:00",
+      "bytes": 15985,
+      "sha256": "c63de22080fec37644b6381f4345533091ed70380e2652d02b542de8b8fcd01a",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "umask",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/umask.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.366124+00:00",
+      "bytes": 15178,
+      "sha256": "f149967bc798774e259f430836b8582d61892280ebec5183f949156c3afc1254",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "unalias",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/unalias.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.357169+00:00",
+      "bytes": 10216,
+      "sha256": "6a55559940ea84b8dfe3be5b4c77b27e4efbb3340bbfd688ec828ee3aaea0ba7",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "uname",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uname.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.529196+00:00",
+      "bytes": 10819,
+      "sha256": "be63b354f5b23d28b399aa743cf91bccb7f1c9df5a38d6e9ba91c6a6a961e529",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "uncompress",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uncompress.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.572715+00:00",
+      "bytes": 23195,
+      "sha256": "36223e5f3feddce1288d701fb42c98ea74d0fba662305df67b606fa1a59651c2",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "unexpand",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/unexpand.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.564278+00:00",
+      "bytes": 12836,
+      "sha256": "562701109c3ecb6268b8e57940e68695c52c24156b5606c43030e87ac0ea1318",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "unget",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/unget.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.644154+00:00",
+      "bytes": 11186,
+      "sha256": "dc4852ce239e39ae2c7767d9fc4a504ec91da429a59ab05c3690c1bbe67dbf86",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "uniq",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uniq.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.658139+00:00",
+      "bytes": 16090,
+      "sha256": "3549e84e15c0274e513bb27d569100905abfffc3a5c2e9c61ff0a287d6e3d1d9",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "unlink",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/unlink.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.605433+00:00",
+      "bytes": 7761,
+      "sha256": "90b4360192ce061935c9121e1458eed65fbc5e8d58794034408098ee613919e9",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "uucp",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uucp.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.839045+00:00",
+      "bytes": 15464,
+      "sha256": "d41c657f9a702c9c8fb700a5782c4793996c8aae2ce0a755c1d00be9b84ccd5c",
+      "synopsis_option_codes": [
+        "UU"
+      ]
+    },
+    {
+      "utility": "uudecode",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uudecode.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.873617+00:00",
+      "bytes": 14548,
+      "sha256": "61a4db11be4d9199332a5a33eaa613dff03c9bd4e44d71164cd02ccf23bcc618",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "uuencode",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uuencode.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.886348+00:00",
+      "bytes": 30094,
+      "sha256": "fc459b87c7cfc73cb83bd294c43bb3375eb5b165b3c591989d14ebb0bd403fb2",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "uustat",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uustat.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.908971+00:00",
+      "bytes": 11135,
+      "sha256": "1f8516b333de7c3917be32624a83123e8d4de8bf57cdc54a515652620ef8bfe9",
+      "synopsis_option_codes": [
+        "UU"
+      ]
+    },
+    {
+      "utility": "uux",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uux.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.949604+00:00",
+      "bytes": 16250,
+      "sha256": "0367521ffe58c54af47ebe85ac4240cfaa32e4b9e4695153ee422a4bc6d4cd57",
+      "synopsis_option_codes": [
+        "UU"
+      ]
+    },
+    {
+      "utility": "val",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/val.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:40.967363+00:00",
+      "bytes": 14361,
+      "sha256": "7d6a497e439916043be04b7a5eacae36e298cce002b2716cfabc4d56285b4111",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "vi",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/vi.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:41.296278+00:00",
+      "bytes": 183822,
+      "sha256": "3121e32ec05fdee854a9f7bdc35de987300a69adcf035a727821ad2a94572a6e",
+      "synopsis_option_codes": [
+        "UP"
+      ]
+    },
+    {
+      "utility": "wait",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/wait.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:41.174280+00:00",
+      "bytes": 18469,
+      "sha256": "284585bf126bc2207cf4e425a9e66ab16d869c9ab5fedcd8cb603493dc34f78e",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "wc",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/wc.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:41.188332+00:00",
+      "bytes": 13468,
+      "sha256": "8a2e80f9686a4cb1c9a52e9ba71da459726eccfb804614d36c85f8f299d36c0c",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "what",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/what.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:41.247852+00:00",
+      "bytes": 11507,
+      "sha256": "f07a8946a7be8f33c3ffda842e53838ece3019d84a753c643ca340dc02a5482f",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "who",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/who.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:41.262611+00:00",
+      "bytes": 19096,
+      "sha256": "f027eb443333f586589436a32328cf0a35b9c04126084cfc5b446e5057257bf5",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "write",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/write.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:41.271220+00:00",
+      "bytes": 13154,
+      "sha256": "c476995cf8a6603f5a29039f55c1d6b165215d84b4a0f6e4fb70fc5964818683",
+      "synopsis_option_codes": []
+    },
+    {
+      "utility": "xargs",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:41.491455+00:00",
+      "bytes": 32055,
+      "sha256": "5f31b40d1ebfc4433a8c025f56467903aac5059c95d755e077f6c00d60d7110e",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    },
+    {
+      "utility": "xgettext",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xgettext.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:41.489275+00:00",
+      "bytes": 19885,
+      "sha256": "737ed2236f0e9e9a6049b27d531ffe85ad3b521331b5251efda4fde06453f7db",
+      "synopsis_option_codes": [
+        "CD"
+      ]
+    },
+    {
+      "utility": "yacc",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/yacc.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:41.621188+00:00",
+      "bytes": 67097,
+      "sha256": "408d57a024f5e5d327590c2f8f4177108706974c389933f5c3146614e3db1f6d",
+      "synopsis_option_codes": [
+        "CD"
+      ]
+    },
+    {
+      "utility": "zcat",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/zcat.html",
+      "status": 0,
+      "retrieved_utc": "2026-09-29T03:11:41.581384+00:00",
+      "bytes": 23195,
+      "sha256": "36223e5f3feddce1288d701fb42c98ea74d0fba662305df67b606fa1a59651c2",
+      "synopsis_option_codes": [
+        "XSI"
+      ]
+    }
+  ]
+}

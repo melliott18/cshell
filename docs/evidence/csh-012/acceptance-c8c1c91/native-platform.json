@@ -1,0 +1,39 @@
+{
+  "recorded_utc": "2026-09-29T02:25:00.566355+00:00",
+  "purpose": "Native platform supplement; versions only, no new differential run",
+  "commands": [
+    {
+      "command": [
+        "/usr/bin/otool",
+        "-L",
+        "/usr/bin/true"
+      ],
+      "status": 0,
+      "output": "/usr/bin/true:\n\t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1345.120.2)\n"
+    },
+    {
+      "command": [
+        "/bin/bash",
+        "--version"
+      ],
+      "status": 0,
+      "output": "GNU bash, version 3.2.57(1)-release (arm64-apple-darwin23)\nCopyright (C) 2007 Free Software Foundation, Inc.\n"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "--version"
+      ],
+      "status": 0,
+      "output": "zsh 5.9 (x86_64-apple-darwin23.0)\n"
+    },
+    {
+      "command": [
+        "/bin/sh",
+        "--version"
+      ],
+      "status": 0,
+      "output": "GNU bash, version 3.2.57(1)-release (arm64-apple-darwin23)\nCopyright (C) 2007 Free Software Foundation, Inc.\n"
+    }
+  ]
+}

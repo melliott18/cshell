@@ -1,0 +1,20 @@
+{
+  "checked_utc": "2026-09-29T03:22:37.903391+00:00",
+  "utility_counts": {
+    "indexed_pages": 155,
+    "utility_names_with_test_alias": 156,
+    "conditional_names": 45,
+    "applicable_names": 111,
+    "exec_required_names": 101,
+    "special_builtins": 15
+  },
+  "dispositions": 11,
+  "source_fixture_workflow_unchanged": true,
+  "markdown_files": 31,
+  "local_links": 2764,
+  "link_errors": [],
+  "requirement_families": 131,
+  "ownership_pairs": 443,
+  "artifact_entries_checked": 748,
+  "unexplained_artifact_drift": []
+}

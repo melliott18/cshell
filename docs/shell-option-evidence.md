@@ -15,7 +15,7 @@ Reviewed against POSIX.1-2024, Issue 8, on 2026-09-26:
 - [sh, OPTIONS](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sh.html#tag_20_110_04): the same option forms at invocation.
 - [2.7.2, output redirection](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_07_02): regular files, symlinks, exclusive creation and override.
 - [2.9.2, pipelines](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_09_02): pipeline-start pipefail state and negation after status selection.
-- [2.12, execution environments](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_12): shared environments and subshell isolation.
+- [2.13, execution environments](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_13): shared environments and subshell isolation.
 - [2.6.2, parameter expansion](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_06_02) and [2.8.1, errors](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_08_01): nounset exceptions and environment-specific consequences.
 - [2.5.3, PS4](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html#tag_19_05_03): trace prefix expansion and default.
 

@@ -4,7 +4,7 @@ Use the [visual implementation plan](../implementation-plan.md) to understand
 the dependency paths and parallel work. Ticket files own scope, acceptance,
 and status; their GitHub links connect to the matching issues.
 
-CSH-016, CSH-017, and CSH-036 are the first parallel tasks. Legacy repair
+CSH-016, CSH-017, and CSH-036 were the first parallel tasks. Legacy repair
 tickets CSH-002, CSH-014, and CSH-015 are superseded, not completed; they retain
 defect history, while replacement tickets own the safety requirements.
 CSH-039 explicitly switches the default executable and deletes the legacy code.
@@ -62,6 +62,12 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-062](CSH-062-host-contract-controlled-platforms.md) | Supply remaining controlled host platforms | [CSH-061](CSH-061-host-environment-residuals.md) | [#116](https://github.com/melliott18/cshell/issues/116) |
 | [CSH-063](CSH-063-host-platform-residual-qualification.md) | Qualify remaining supplied host platforms | [CSH-062](CSH-062-host-contract-controlled-platforms.md) | [#122](https://github.com/melliott18/cshell/issues/122) |
 | [CSH-064](CSH-064-host-platform-external-prerequisites.md) | Supply external prerequisites for remaining host contracts | [CSH-063](CSH-063-host-platform-residual-qualification.md) | [#127](https://github.com/melliott18/cshell/issues/127) |
+
+| [CSH-065](CSH-065-interactive-parser-recovery.md) | Recover from interactive main-parser syntax errors | [CSH-039](CSH-039-legacy-retirement.md) | [#134](https://github.com/melliott18/cshell/issues/134) |
+| [CSH-066](CSH-066-resource-bounded-nesting.md) | Remove arbitrary shell nesting limits | [CSH-005](CSH-005-parser-and-ast.md), [CSH-028](CSH-028-control-flow-and-functions.md), [CSH-041](CSH-041-arithmetic-substitution-replay.md) | [#135](https://github.com/melliott18/cshell/issues/135) |
+| [CSH-067](CSH-067-shell-locale-pathname-qualification.md) | Qualify remaining shell locale and pathname boundaries | [CSH-042](CSH-042-locale-semantics.md), [CSH-047](CSH-047-expansion-evidence.md), [CSH-053](CSH-053-multibyte-lexical-boundaries.md) | [#136](https://github.com/melliott18/cshell/issues/136) |
+| [CSH-068](CSH-068-host-system-contract-inventory.md) | Inventory the complete required host utility contract | [CSH-052](CSH-052-host-utility-evidence.md), [CSH-056](CSH-056-host-contract-gaps.md) | [#137](https://github.com/melliott18/cshell/issues/137) |
+| [CSH-069](CSH-069-historical-failure-dispositions.md) | Disposition retained unexplained validation failures | [CSH-046](CSH-046-invocation-syntax-evidence.md), [CSH-047](CSH-047-expansion-evidence.md), [CSH-048](CSH-048-state-builtin-evidence.md), [CSH-049](CSH-049-execution-evidence.md), [CSH-051](CSH-051-shell-option-evidence.md), [CSH-055](CSH-055-execution-contract-gaps.md), [CSH-058](CSH-058-signal-edge-evidence.md) | [#138](https://github.com/melliott18/cshell/issues/138) |
 
 ## Child implementation tickets
 

@@ -1,0 +1,20 @@
+{
+  "artifacts": {
+    "host-cleanup-audit.json": {
+      "sha256": "cfd9740f63d56007a9bccc0358dca96a24288410a5f3363614e93394d1201156",
+      "bytes": 264
+    },
+    "README.md": {
+      "sha256": "431ae1bef406273b2cc82a1b519f8ca484ccd182af50370196fdd5b982ada760",
+      "bytes": 1511
+    },
+    "verification.json": {
+      "sha256": "2ff29e10bdca4be07e16bbf98487f395478a0dd98173bad8c8c296b57bdabab9",
+      "bytes": 549
+    },
+    "verify.py": {
+      "sha256": "255348e9c299ecac00f01a79e89b2a442903b32d91eb7f601d13225a3803dff5",
+      "bytes": 3711
+    }
+  }
+}

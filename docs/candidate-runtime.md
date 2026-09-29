@@ -115,10 +115,12 @@ runtime runs [EXIT and signal traps](traps-and-signals.md) with saved status sem
 
 The invocation API recognizes a terminal on both stdin and stderr, or explicit
 `-i`. For interactive stdin the parser's borrowed `before_read` hook requests a
-fixed `$ ` primary prompt or `> ` continuation prompt on stderr, once per
-physical read. Blank/comment lines restart the primary prompt; quoted multiline
-words and here-document lines retain the continuation prompt. Prompt expansion,
-startup files, and parser syntax-error recovery remain outside this runtime.
+fixed `$ ` primary prompt or literal `PS2` continuation prompt (default `> `)
+on stderr, once per physical read. Blank/comment lines restart the primary prompt; quoted multiline
+words and here-document lines retain the continuation prompt. Prompt expansion
+and startup files belong to the unselected UP profile. Main-parser syntax-error
+recovery is a base requirement and a confirmed defect tracked by
+[CSH-065](tickets/CSH-065-interactive-parser-recovery.md).
 SIGINT during input resets the parser to a primary prompt. Other parser failures
 are sticky and terminate even an interactive shell; execution or expansion errors can continue
 because its parser remains usable. `-i` with a string or file selects interactive

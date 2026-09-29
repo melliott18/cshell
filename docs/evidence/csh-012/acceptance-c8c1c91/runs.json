@@ -1,0 +1,29 @@
+[
+  {
+    "command": [
+      "make",
+      "-j4"
+    ],
+    "status": 0,
+    "start_utc": "2026-09-29T02:08:31.297862+00:00",
+    "end_utc": "2026-09-29T02:08:36.011346+00:00",
+    "cwd": "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh012-acceptance-u2u4m_pi",
+    "log": "native-build.log.gz",
+    "environment_overrides": {}
+  },
+  {
+    "command": [
+      "make",
+      "test",
+      "test-pty",
+      "test-host-profile",
+      "test-harness"
+    ],
+    "status": 0,
+    "start_utc": "2026-09-29T02:08:36.011676+00:00",
+    "end_utc": "2026-09-29T02:12:29.426353+00:00",
+    "cwd": "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh012-acceptance-u2u4m_pi",
+    "log": "native-full.log.gz",
+    "environment_overrides": {}
+  }
+]

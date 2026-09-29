@@ -1,5 +1,8 @@
 # Implementation plan
 
+Current audit disposition: [CSH-012 closure](conformance-closure.md),
+[complete utility inventory](host-system-inventory.md), and [defect dispositions](defect-dispositions.md).
+
 ## Read the backlog as a dependency graph
 
 Ticket numbers are stable identifiers, not a required execution order. The
@@ -19,7 +22,7 @@ active ticket depends on them. Their defect evidence informs safety tests in
 the replacement; it does not require a rewrite of the disposable implementation.
 CSH-038 records this roadmap revision.
 
-## First parallel work
+## Historical first parallel work
 
 The following graph shows the path to replacement and deletion of the original
 runtime. Each arrow means that the source must complete before the destination
@@ -53,7 +56,7 @@ flowchart TD
     pipelines --> cutover
 ```
 
-The first parallel tasks are CSH-016, CSH-017, and CSH-036: input APIs, testing
+The first parallel tasks were CSH-016, CSH-017, and CSH-036: input APIs, testing
 infrastructure, and the POSIX requirements matrix. After the input contract is
 available, the lexer/parser and state store can progress separately. The new
 executor joins those interfaces; runtime/status integration and pipeline work
@@ -142,3 +145,13 @@ checkpoint/replay gap recorded during those implementations. Both CSH-026 and
 CSH-041 are integrated; the [CSH-008 closure record](tickets/CSH-008-word-expansion.md)
 records the completed milestone and its combined validation.
 The original dependency diagrams above retain their initial split layout.
+
+## Current acceptance work
+
+The [CSH-012 acceptance review](conformance-acceptance-review.md) records current
+requirements, defects, supported-platform evidence and documentation corrections.
+CSH-050's repair is integrated. CSH-064 retains host qualification residuals;
+CSH-065/066 own interactive parser recovery and fixed nesting limits,
+CSH-067 owns shell locale/pathname qualification, CSH-068 owns the complete
+host utility inventory, and CSH-069 owns finite historical failure dispositions.
+These are standalone follow-ups; CSH-012 retains its original children and gates.
