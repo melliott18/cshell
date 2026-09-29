@@ -1,6 +1,6 @@
 # CSH-057: Verify remaining job lifecycle boundaries
 
-- Status: done
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
@@ -169,3 +169,12 @@ failure cases verify process isolation and retained outcomes; two actual normal
 retention probes pass. This diagnostic defect did not affect hosted CI. The
 historical retention observation remains owned here without claiming it is
 fixed, extending deadlines, or treating another passing rerun as a diagnosis.
+
+### Hosted recurrence during 2026-09-29 integration
+
+Issue #99 is reopened under the recurrence policy. macOS sanitizer job
+109523732498 in run 36602681743 hit the unchanged 60-second retention deadline.
+Its last progress at 58.721 seconds was capacity 256, round 2, completed 128.
+The duplicate run 36602689841 passed; that pass does not explain this failure.
+The earlier statement that the timeout had not reproduced describes the prior
+review only. No assertion or deadline is relaxed by this integration.
