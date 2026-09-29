@@ -25,13 +25,13 @@
   },
   {
     "command": "make test-host-formatted-contracts",
-    "attempt": "final",
+    "attempt": "before-sanitizer-controls",
     "status": 0,
     "result": "588 contract assertions plus input-stability assertion pass; four supervisor/threshold regressions pass"
   },
   {
     "command": "make test-host-formatted-sanitize",
-    "attempt": "final",
+    "attempt": "before-sanitizer-controls",
     "status": 0,
     "result": "536 ordinary assertions plus input-stability assertion pass; I/O/allocation/capacity probes explicitly not run under sanitizers"
   },
@@ -39,5 +39,22 @@
     "command": "make test-host-inventory",
     "status": 0,
     "result": "156 utilities / 101 external contracts / 30 retained conditions and 10 regressions pass"
+  },
+  {
+    "command": "make test-host-formatted-contracts",
+    "attempt": "final",
+    "status": 0,
+    "result": "589 passes and four harness regressions pass; leak/symbolizer subprocess controls enabled"
+  },
+  {
+    "command": "make test-host-formatted-sanitize",
+    "attempt": "final",
+    "status": 0,
+    "result": "537 passes; ASan/UBSan enabled, LeakSanitizer disabled"
+  },
+  {
+    "command": "io_cases(cshell, build/host-formatted-sanitizer)",
+    "status": 0,
+    "result": "40 instrumented-provider I/O checks pass; all owned processes reaped; source identity unchanged"
   }
 ]

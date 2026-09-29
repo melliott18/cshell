@@ -29,6 +29,13 @@ def main():
         assert case['verdict'] == 'PASS' and case['invocation']['reaped']
         assert not case['invocation']['errors']
         assert case['actual'] == case['expected']
+    instrumented = read('sanitized-io.json.gz')
+    assert instrumented['totals'] == dict(PASS=40, FAIL=0)
+    assert instrumented['source_identity'] == instrumented['final_source_identity'] == normal['source_identity']
+    for case in instrumented['cases']:
+        assert case['verdict'] == 'PASS' and case['invocation']['reaped']
+        assert not case['invocation']['errors']
+        assert case['actual'] == case['expected']
     failed = read('native-attempt-1.json.gz')
     assert failed['totals'] == dict(PASS=523, FAIL=30)
     assert all(case['name'].startswith('catalog fallback ') for case in failed['cases'] if case['verdict'] == 'FAIL')

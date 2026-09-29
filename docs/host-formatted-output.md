@@ -129,6 +129,9 @@ These are selected libc policies, not a portable diagnostic-wording requirement.
 The I/O supervisor accepts only the selected non-forking C providers and the
 shell's process-replacing exec path. It owns/reaps one PID, caps CPU/output/file
 size, and enforces a five-second execution plus two-second reap deadline.
+Leak scanning and symbolizer subprocesses are disabled for this supervisor,
+including instrumented CI builds; ASan/UBSan error detection remains enabled.
+Separate instrumented-provider I/O probes pass all 40 assertions.
 Dedicated regressions check timeout reaping, preservation of an unrelated child,
 and setup failures that must not be mistaken for signal termination. It does
 not replace the general smoke/PTY descendant supervisor or qualify its retained

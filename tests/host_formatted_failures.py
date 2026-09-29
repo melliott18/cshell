@@ -23,6 +23,11 @@ def run_owned(argv, environment, stdout, stderr, *, ignored=(), file_limit=65536
         for number in (signal.SIGPIPE, signal.SIGXFSZ):
             signal.signal(number, signal.SIG_IGN if number in ignored else signal.SIG_DFL)
 
+    # The full CI profile may compile these C providers with sanitizers.
+    # Suppress leak-tracer/symbolizer subprocesses to preserve this fixture's
+    # single-PID contract; memory/UB detection itself remains enabled.
+    environment = dict(environment, ASAN_OPTIONS='halt_on_error=1:detect_leaks=0:symbolize=0',
+                       UBSAN_OPTIONS='halt_on_error=1:print_stacktrace=0')
     record = dict(argv=argv, environment=environment, file_limit=file_limit,
                   ignored_signals=list(ignored), timeout_seconds=timeout,
                   cleanup_seconds=2, pid=None, status=None, reaped=False, errors=[])

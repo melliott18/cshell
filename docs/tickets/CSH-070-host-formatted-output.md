@@ -120,3 +120,7 @@ No selected provider implementation changes are needed for these new assertions.
 The initial Darwin catalog oracle failure is retained and corrected using the
 vendor's published policy. `test-host-formatted-contracts` runs this subset
 without repeating stack/memory or exec-capacity probes.
+
+The final native subset passes 589 checks; ASan/UBSan passes 537 ordinary
+checks and 40 separately supervised I/O assertions. Input identities are stable,
+and all owned I/O/fault children are reaped. Leak scanning is outside this scope.

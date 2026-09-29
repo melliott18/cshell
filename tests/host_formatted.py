@@ -78,7 +78,7 @@ def main():
             for mode in ('direct', 'exec', 'string', 'file', 'stdin'):
                 fixture = dict(env=dict(PATH=search, **case['env']), args=[], stdin='')
                 if args.sanitizer:
-                    fixture['env'].update(ASAN_OPTIONS='halt_on_error=1', UBSAN_OPTIONS='halt_on_error=1')
+                    fixture['env'].update(ASAN_OPTIONS='halt_on_error=1:detect_leaks=0', UBSAN_OPTIONS='halt_on_error=1')
                 script = shlex.join([case['utility']] + case['argv']) + '\n'
                 target = binary
                 if mode == 'direct':

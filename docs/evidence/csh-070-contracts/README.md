@@ -32,6 +32,11 @@ retains the remaining environments and failure observations.
   setup failure. This scoped supervisor does not bypass or replace general
   smoke/PTY descendant cleanup.
 
+LeakSanitizer is disabled in these scoped runs. The I/O supervisor also disables
+symbolizer/stacktrace subprocesses to preserve its one-PID ownership contract,
+including when CI builds ordinary providers with sanitizers. ASan/UBSan error
+detection remains enabled; these results do not qualify leak scanning.
+
 No provider implementation changes were necessary for these added cases.
 The modified C is a test-only allocation selector. `--scope contracts` explicitly
 omits the original stack/memory and exec-capacity probes; the normal full profile
@@ -50,10 +55,11 @@ python3 docs/evidence/csh-070-contracts/audit.py
 | --- | --- |
 | `native-contracts.json.gz` | 588 contract assertions plus one input-stability assertion pass; zero failed assertions. One explicit unsafe-Darwin capability remains unqualified; capacity probes are explicitly not run in this scope. |
 | `native-sanitize.json.gz` | 536 ordinary assertions plus one input-stability assertion pass with ASan/UBSan; zero failed assertions. Normal-helper resource/I/O/allocation probes remain separate. |
+| `sanitized-io.json.gz` | All 40 I/O assertions also pass with the ASan/UBSan provider binaries; every owned process is reaped. |
 | `inventory.log.gz` | Exhaustive ownership and ten accounting regressions pass. |
 
 Both final native records have the build/test input digest
-`4ccb50d2c1fd39eb9122856cf86968065e86cf0f7733885122d931cb3b369cbc`.
+`e2df54fbb2a6bbb706dd3bb9f0554f93fece5a4b28906ac218fd24ffd1cf968b`.
 The runner now captures source and executable/helper/catalog hashes before
 execution and checks them again afterward. A changed input fails qualification.
 Actual invocations, selected policies, outputs/statuses, process cleanup,
@@ -81,7 +87,9 @@ utility output or accepted as a generic stderr allowance.
 `native-attempt-2` (553 passes), `native-expanded` (588 passes) and
 `native-sanitize-intermediate` (536 passes) are intermediate scopes preceding
 the final input-stability guard. They are retained separately; the final records
-above are authoritative for the completed native validation. `commands.json`
+above are authoritative for the completed native validation. The separately
+retained `*-before-sanitizer-controls` records preserve the preceding successful
+runs before disabling sanitizer helper subprocesses. `commands.json`
 records the sequence and actual failures.
 
 ## Hosted Linux evidence at the initial PR source
