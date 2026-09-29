@@ -195,7 +195,15 @@ int main(int argc, char **argv)
         if (parsed != CSH_PARSE_TREE) {
             diagnose(&error, csh_parser_source_name(parser));
             csh_state_set_status(state, error.status);
-            break; /* Ordinary parser errors remain sticky. */
+            if (invocation.interactive) {
+                int recovered = csh_parser_recover(parser, &error);
+                if (recovered > 0) continue;
+                if (recovered < 0) {
+                    diagnose(&error, csh_parser_source_name(parser));
+                    csh_state_set_status(state, error.status);
+                }
+            }
+            break;
         }
         executed = csh_execute_context_ast(&context, tree, &execution, &error);
         csh_jobs_take_interrupt();

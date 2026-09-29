@@ -37,7 +37,21 @@ parser-owned state; use `csh_ast_destroy()` for each returned tree. All failures
 and EOF are sticky: subsequent calls reproduce the terminal result without
 further input acquisition or allocation. An incomplete result describes final
 EOF, not a resumable request to feed more bytes. An interactive continuation
-callback and recovery after syntax errors are future runtime work.
+callback is available through `csh_parser_set_read_hook()`.
+
+`csh_parser_recover()` explicitly releases the sticky state after an eligible
+syntax error; the main runtime calls it only for interactive input. It returns
+1 when a fresh command can be read, 0 for an ineligible failure, or -1 with a
+new sticky diagnostic if recovery fails. The input object, alias table and read
+hooks remain borrowed, and the lexer resumes at the input's absolute position.
+Final EOF/incomplete syntax and system/allocation errors cannot be recovered.
+The failed tree never escapes. Before unwinding, the parser copies pending
+here-document delimiters, in each frame's declaration order, innermost frame
+first. Recovery discards the failed line, consumes those bodies without
+expansion (including already-buffered alias bodies), and discards remaining
+alias text. It never reads the next command line. An error or interruption
+while draining documents is fatal. Arithmetic-first speculative replay releases
+its recovery snapshot before retrying the alternative parse.
 
 Errors carry a static message, suggested shell status, system error where
 applicable, and physical byte position. Syntax and incomplete-input diagnostics

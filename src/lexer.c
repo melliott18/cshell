@@ -266,6 +266,11 @@ int csh_lexer_create(struct csh_lexer **out, const char *source_name,
     return 0;
 }
 
+void csh_lexer_set_position(struct csh_lexer *lexer, struct csh_position position)
+{
+    lexer->source->position = position;
+}
+
 void csh_lexer_destroy(struct csh_lexer *lexer)
 {
     struct source *source;

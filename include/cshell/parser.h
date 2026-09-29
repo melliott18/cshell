@@ -40,6 +40,14 @@ const char *csh_parser_source_name(const struct csh_parser *parser);
 enum csh_parse_result csh_parser_next(struct csh_parser *parser,
     struct csh_ast **out, struct csh_error *error);
 
+/* Explicit interactive recovery after ERROR with no system error. Discards
+ * the already-read physical line and alias/lexer frames, then consumes known
+ * pending here-documents without expansion. Retains input, aliases and hooks.
+ * Returns 1 at a fresh command boundary, 0 for an ineligible sticky failure
+ * (including incomplete EOF), or -1 if recovery itself fails, setting error.
+ * A failed recovery remains sticky. This call may read here-document lines. */
+int csh_parser_recover(struct csh_parser *parser, struct csh_error *error);
+
 /* Tokenize an unquoted here-document body using body-specific rules and the
  * normal nested-command parser. Output owns the word and substitution ASTs. */
 int csh_parser_document(const void *bytes, size_t length,

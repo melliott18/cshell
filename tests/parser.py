@@ -589,6 +589,8 @@ def cases(fixture):
         fixture.run("consumed") == b"ok\n", "consumed source contract")
     yield "input read failure preserves sticky diagnostic", lambda: expect(
         fixture.run("read-failure") == b"ok\n", "read failure contract")
+    yield "explicit recovery preserves boundaries and rejects read failures", lambda: expect(
+        fixture.run("recovery") == b"ok\n", "recovery contract")
     yield "200KB command word", lambda: expect(
         raw_words(one(fixture, b"x" * 200000)) == [("x" * 200000, False)], "long token")
     yield "10000 command words", lambda: expect(

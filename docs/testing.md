@@ -1260,3 +1260,13 @@ The Docker image includes its Dockerfile for that source inventory.
 Debian sid profiles, runtime/PTY integration, strict vendor failures and unsupported
 tmpfs/host-bind fixtures. [CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md)
 owns the individually retained residuals; no parent utility is promoted.
+
+### Interactive parser recovery (CSH-065)
+
+`tests/parser_recovery_cases.py` contributes exact string/file/forced-stdin
+assertions to the default runtime and syntax suites, and a controlling-terminal
+case to the default PTY suite. Run `make test-runtime test-parser test-pty`;
+`make test` also includes the new public read-failure controls through
+`test-execution-contracts`. [The invocation map](invocation-syntax-evidence.md#interactive-parser-recovery)
+records covered boundaries and [the ticket](tickets/CSH-065-interactive-parser-recovery.md)
+records platform and sanitizer validation.

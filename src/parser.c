@@ -23,9 +23,14 @@ struct csh_parser {
     void (*before_read)(void *, int);
     void *read_context;
     int continuation;
+    struct csh_ast_redirection **recovery_documents;
+    size_t recovery_count;
+    unsigned char *recovery_bytes;
+    size_t recovery_length;
 };
 
 struct parse_frame {
+    struct parse_frame *parent;
     struct csh_parser *parser;
     struct csh_lexer *lexer;
     struct csh_ast_word look;
@@ -45,6 +50,80 @@ struct bytes { unsigned char *data; size_t length, capacity; };
 
 static struct csh_ast *parse_list(struct parse_frame *, enum closing, int,
     struct csh_position);
+static struct csh_position token_position(const struct csh_token *token);
+
+static void clear_recovery(struct csh_parser *parser)
+{
+    size_t i;
+    for (i = 0; i < parser->recovery_count; ++i)
+        csh_ast_redirection_destroy(parser->recovery_documents[i]);
+    free(parser->recovery_documents);
+    parser->recovery_documents = NULL;
+    parser->recovery_count = 0;
+    free(parser->recovery_bytes);
+    parser->recovery_bytes = NULL;
+    parser->recovery_length = 0;
+}
+
+/* The failed tree is freed while unwinding. Preserve only the delimiters
+ * needed to keep its unread bodies out of the next command, innermost first.
+ * Do this at the first syntax failure, while all borrowed targets are alive. */
+static void save_recovery(struct parse_frame *frame)
+{
+    struct csh_parser *parser = frame->parser;
+    struct parse_frame *at;
+    size_t count = 0, i;
+    if (parser->final || parser->failure_result != CSH_PARSE_ERROR ||
+        parser->failure.system_errno != 0) return;
+    for (at = frame; at != NULL; at = at->parent) {
+        if (at->document_count > SIZE_MAX - count) goto failed;
+        count += at->document_count;
+    }
+    if (count == 0) return;
+    parser->recovery_documents = calloc(count, sizeof(*parser->recovery_documents));
+    if (parser->recovery_documents == NULL) goto failed;
+    for (at = frame; at != NULL; at = at->parent) {
+        for (i = 0; i < at->document_count; ++i) {
+            const struct csh_ast_redirection *source = at->documents[i];
+            struct csh_ast_redirection *copy = calloc(1, sizeof(*copy));
+            if (copy == NULL) goto failed;
+            parser->recovery_documents[parser->recovery_count++] = copy;
+            copy->operator_kind = source->operator_kind;
+            copy->delimiter_quoted = source->delimiter_quoted;
+            copy->delimiter_length = source->delimiter_length;
+            copy->operand.token.start = token_position(&source->operand.token);
+            copy->delimiter = malloc(source->delimiter_length + 1);
+            if (copy->delimiter == NULL) goto failed;
+            memcpy(copy->delimiter, source->delimiter, source->delimiter_length + 1);
+        }
+    }
+    /* Multiline aliases can already contain some or all of the bodies. Keep
+     * only the suffix after the erroneous line for raw document draining;
+     * any remaining alias commands are discarded after the last delimiter. */
+    {
+        size_t length, skip = 0;
+        struct csh_position start;
+        int final;
+        const unsigned char *pending = csh_lexer_pending(frame->lexer,
+            &length, &start, &final);
+        if (!frame->has_look || frame->look.token.kind != CSH_TOKEN_NEWLINE) {
+            while (skip < length && pending[skip++] != '\n')
+                ;
+        }
+        if (skip < length) {
+            parser->recovery_length = length - skip;
+            parser->recovery_bytes = malloc(parser->recovery_length);
+            if (parser->recovery_bytes == NULL) goto failed;
+            memcpy(parser->recovery_bytes, pending + skip, parser->recovery_length);
+        }
+    }
+    return;
+failed:
+    clear_recovery(parser);
+    parser->failure.message = "cannot preserve here-document recovery";
+    parser->failure.system_errno = ENOMEM;
+    parser->failure.status = 1;
+}
 
 static int fail_at(struct parse_frame *frame, enum csh_parse_result result,
     const char *message, int number, struct csh_position position)
@@ -57,6 +136,7 @@ static int fail_at(struct parse_frame *frame, enum csh_parse_result result,
         parser->failure.status = number != 0 ? 1 : 2;
         parser->failure.position = position;
         parser->failure_result = result;
+        save_recovery(frame);
     }
     return -1;
 }
@@ -90,6 +170,7 @@ static int adopt_error(struct parse_frame *frame, const struct csh_error *error)
             CSH_PARSE_INCOMPLETE : CSH_PARSE_ERROR;
         if (error->system_errno == EINTR)
             frame->parser->failure_result = CSH_PARSE_INTERRUPTED;
+        save_recovery(frame);
     }
     return -1;
 }
@@ -213,6 +294,7 @@ static int peek_raw(struct parse_frame *frame)
                 return fail_at(frame, CSH_PARSE_ERROR, "parser nesting limit exceeded",
                     0, opening);
             child.parser = frame->parser;
+            child.parent = frame;
             child.depth = frame->depth + 1;
             if (csh_lexer_command_begin(frame->lexer, &child.lexer, &error) == -1)
                 return adopt_error(frame, &error);
@@ -245,6 +327,7 @@ command_error:
             {
                 int replay = csh_lexer_replay_arithmetic(frame->lexer, &error);
                 if (replay != 0) {
+                    clear_recovery(frame->parser);
                     memset(&frame->parser->failure, 0, sizeof(frame->parser->failure));
                     if (replay == -1)
                         return adopt_error(frame, &error);
@@ -581,7 +664,7 @@ static int append_document_line(struct parse_frame *frame, struct bytes *body,
     return append(frame, body, line->data + i, line->length - i);
 }
 
-static int collect_documents(struct parse_frame *frame)
+static int collect_documents(struct parse_frame *frame, int discard_body)
 {
     size_t i;
     struct csh_error error;
@@ -639,7 +722,7 @@ static int collect_documents(struct parse_frame *frame)
             if (logical.length - skip == document->delimiter_length &&
                 memcmp(logical.data + skip, document->delimiter,
                        document->delimiter_length) == 0) {
-                if (append(frame, &body, NULL, 0) == -1)
+                if (!discard_body && append(frame, &body, NULL, 0) == -1)
                     goto document_failed;
                 document->body = body.data;
                 document->body_length = body.length;
@@ -648,7 +731,7 @@ static int collect_documents(struct parse_frame *frame)
                 free(logical.data);
                 break;
             }
-            if (append_document_line(frame, &body, &line, strip_tabs,
+            if (!discard_body && append_document_line(frame, &body, &line, strip_tabs,
                                      document->delimiter_quoted) == -1)
                 goto document_failed;
             line.length = logical.length = 0;
@@ -667,7 +750,7 @@ static int collect_documents(struct parse_frame *frame)
 static int newline(struct parse_frame *frame)
 {
     discard(frame);
-    return collect_documents(frame);
+    return collect_documents(frame, 0);
 }
 
 static struct csh_ast *new_node(struct parse_frame *frame, enum csh_ast_kind kind)
@@ -1437,6 +1520,7 @@ void csh_parser_destroy(struct csh_parser *parser)
     if (parser == NULL)
         return;
     csh_lexer_destroy(parser->lexer);
+    clear_recovery(parser);
     free(parser);
 }
 
@@ -1450,6 +1534,66 @@ void csh_parser_set_read_hook(struct csh_parser *parser,
 const char *csh_parser_source_name(const struct csh_parser *parser)
 {
     return csh_input_name(parser->input);
+}
+
+int csh_parser_recover(struct csh_parser *parser, struct csh_error *error)
+{
+    struct parse_frame frame = {0};
+    size_t owned_count, i;
+    memset(error, 0, sizeof(*error));
+    if (parser->failure.message == NULL ||
+        parser->failure_result != CSH_PARSE_ERROR ||
+        parser->failure.system_errno != 0 || parser->final ||
+        csh_input_failed(parser->input)) return 0;
+    if (csh_lexer_create(&parser->lexer, csh_input_name(parser->input), error) == -1) {
+        parser->failure = *error;
+        clear_recovery(parser);
+        return -1;
+    }
+    csh_lexer_set_position(parser->lexer, csh_input_position(parser->input));
+    if (parser->recovery_length != 0 && csh_lexer_feed(parser->lexer,
+            parser->recovery_bytes, parser->recovery_length, 0, error) == -1) {
+        parser->failure = *error;
+        clear_recovery(parser);
+        csh_lexer_destroy(parser->lexer);
+        parser->lexer = NULL;
+        return -1;
+    }
+    memset(&parser->failure, 0, sizeof(parser->failure));
+    frame.parser = parser;
+    frame.lexer = parser->lexer;
+    frame.documents = parser->recovery_documents;
+    frame.document_count = parser->recovery_count;
+    owned_count = parser->recovery_count;
+    /* Ownership stays here, not with the temporary parsing frame. */
+    parser->recovery_documents = NULL;
+    parser->recovery_count = 0;
+    if (collect_documents(&frame, 1) == -1) {
+        *error = parser->failure;
+        /* An interrupt while draining cannot expose the rest as commands. */
+        parser->failure_result = CSH_PARSE_ERROR;
+    }
+    /* collect_documents clears count on success, so retain the owned count. */
+    for (i = 0; i < owned_count; ++i)
+        csh_ast_redirection_destroy(frame.documents[i]);
+    free(frame.documents);
+    if (error->message == NULL && parser->recovery_length != 0) {
+        csh_lexer_destroy(parser->lexer);
+        if (csh_lexer_create(&parser->lexer, csh_input_name(parser->input), error) == 0) {
+            csh_lexer_set_position(parser->lexer, csh_input_position(parser->input));
+            if (parser->final)
+                (void)csh_lexer_feed(parser->lexer, NULL, 0, 1, error);
+        }
+        if (error->message != NULL) parser->failure = *error;
+    }
+    clear_recovery(parser);
+    if (error->message != NULL) {
+        csh_lexer_destroy(parser->lexer);
+        parser->lexer = NULL;
+        return -1;
+    }
+    parser->continuation = 0;
+    return 1;
 }
 
 enum csh_parse_result csh_parser_next(struct csh_parser *parser,
@@ -1534,5 +1678,6 @@ int csh_parser_document(const void *bytes, size_t length,
 done:
     frame_destroy(&frame);
     csh_lexer_destroy(parser.lexer);
+    clear_recovery(&parser);
     return rc;
 }

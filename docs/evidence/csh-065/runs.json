@@ -1,0 +1,154 @@
+{
+  "recorded_utc": "2026-09-29T16:32:43.725344+00:00",
+  "implementation_revision": "81d2f0b31b1336b25c587b85c1979bed1e1f654a",
+  "implementation_files_sha256": {
+    "Makefile": "8834a3550e6cbd42dcc41eab3fe9c84172858e82825952f0a970a773fc6a9712",
+    "include/cshell/lexer.h": "043f2bd56c8e0d269b46424c8d0ecd81a972909c677fe93df8b6ca6776682db5",
+    "include/cshell/parser.h": "43cd1bc253a4a83074a672a53d82d3f3853ae2c97604d4df4ebe6a3c0db3550f",
+    "src/lexer.c": "6a02b60de2e9bed1b8d4d016b2f9122d9632a3a0b2ce96cfbcb8b43d1deb9d0d",
+    "src/main.c": "9f5ba5aa825deac1a2f5301b757476dd50c3410359773bdccba88869e4057fbd",
+    "src/parser.c": "4651c6b1c689a4c6386fd4a0893e863761b07a40ffc54bb718d4ce04376d52ff",
+    "tests/execution_contracts.py": "626d9743a0d11968ea7d3012fa2a625e7baed5c12f76f7dd3aa116e985113827",
+    "tests/parser.py": "78cb90bcc1fe528d6ba1053fb38c0a465d3ea31cee079853e497c80809f3621e",
+    "tests/parser_faults.c": "7eca2e2ff2d85273c237d8fad5ce860339c3aa29f835e925d2c37e3752a4aa11",
+    "tests/parser_fixture.c": "a2d9c67e8ee9c210c012f248a8ba4853f5de6afc0b341be52f3bc777fc6f1155",
+    "tests/parser_recovery_cases.py": "2b1fcd479916eb409e6a02a4e0db7d9b2b477e54971ce75455cd1061d55de7d3",
+    "tests/runtime_cases.py": "d2376bef39c43ea683caed46ff5e2c0776a4ee240c75f8ced612f9a2043be253",
+    "tests/syntax_cases.py": "e823f1b827172602f44194509390ff3f90ee0871ffea74fb5a82acd0de0f240e"
+  },
+  "docker_image": "sha256:7d2189499b8321f32607b821d1c9c3f143b63aa984859509d526e6a91e44ff70",
+  "linux_sanitizer_binary_sha256": "ed1fe24a8580634075e1ae9fb21a9e72a389d37ad5b1812e1ac0dfa02bc2e944",
+  "runs": [
+    {
+      "environment": "macOS arm64 / Apple Clang 15",
+      "command": "make -j4 test",
+      "exit_status": 0,
+      "log_sha256": "65251d3ccb7350c7591a3bb41048ab8a517119f502a0b492b2ac4c0bfb39855d",
+      "suite_summaries": [
+        "Result: 49 passed, 0 failed, 2 skipped",
+        "execution contracts: 53 passed (32 descriptor, 9 main-read, 12 dot-read)",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "239/239 parser checks passed",
+        "Result: 36 passed, 0 failed, 0 skipped",
+        "Result: 210 passed, 0 failed, 0 skipped",
+        "Result: 207 passed, 0 failed, 0 skipped",
+        "Result: 36 passed, 0 failed, 0 skipped",
+        "Result: 14 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "63/63 input/invocation checks passed",
+        "71/71 lexer checks passed",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "110/110 final-field checks passed",
+        "Result: 102 passed, 0 failed, 0 skipped",
+        "Result: 784 passed, 0 failed, 12 gaps",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 148 passed, 0 failed, 0 skipped",
+        "Result: 2206 passed, 0 failed, 5 skipped (cases/capability groups)",
+        "Result: 361 passed, 0 failed, 0 skipped",
+        "Result: 3950 passed, 0 failed, 0 skipped"
+      ]
+    },
+    {
+      "environment": "macOS arm64 / Apple Clang 15",
+      "command": "make -j4 test-runtime test-pty",
+      "exit_status": 0,
+      "log_sha256": "bc9f54116b6b8244cb1c54d25c455369fdf7f7910c7587205569e5ea40b37180",
+      "suite_summaries": [
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 30 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 33 passed, 0 failed, 0 skipped",
+        "Result: 3950 passed, 0 failed, 0 skipped"
+      ]
+    },
+    {
+      "environment": "Linux aarch64 / Debian GCC 12.2",
+      "command": "make docker-test docker-test-pty DOCKER_IMAGE=cshell:csh-065",
+      "exit_status": 0,
+      "log_sha256": "d2e3be17d7e832b21d2d1b7c2d6819efdc1663e2217322115c45bfd3298c0b7f",
+      "suite_summaries": [
+        "execution contracts: 53 passed (32 descriptor, 9 main-read, 12 dot-read)",
+        "Result: 787 passed, 0 failed, 9 gaps",
+        "Result: 36 passed, 0 failed, 0 skipped",
+        "Result: 49 passed, 0 failed, 2 skipped",
+        "Result: 210 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 14 passed, 0 failed, 0 skipped",
+        "Result: 148 passed, 0 failed, 0 skipped",
+        "Result: 207 passed, 0 failed, 0 skipped",
+        "Result: 454 passed, 0 failed, 0 skipped",
+        "Result: 727 passed, 0 failed, 3 skipped (cases/capability groups)",
+        "Result: 36 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "63/63 input/invocation checks passed",
+        "71/71 lexer checks passed",
+        "239/239 parser checks passed",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "110/110 final-field checks passed",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 102 passed, 0 failed, 0 skipped",
+        "Result: 3950 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 30 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 33 passed, 0 failed, 0 skipped"
+      ]
+    },
+    {
+      "environment": "macOS arm64 / Apple Clang 15 / ASan+UBSan",
+      "command": "make -j2 test-parser test-runtime test-pty test-execution-contracts (sanitizer flags in README)",
+      "exit_status": 0,
+      "log_sha256": "87933e76134d0598089a05874dec02d3bed03f90d96d47e64940de232fe62b6b",
+      "suite_summaries": [
+        "239/239 parser checks passed",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "execution contracts: 53 passed (32 descriptor, 9 main-read, 12 dot-read)",
+        "Result: 30 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 33 passed, 0 failed, 0 skipped",
+        "Result: 3950 passed, 0 failed, 0 skipped"
+      ]
+    },
+    {
+      "environment": "Linux aarch64 / GCC ASan+UBSan+LSan",
+      "command": "python3 tests/smoke.py ./cshell --suite build/tests/recovery-leaks.json (42 recovery, 3 exit controls, 1 PTY)",
+      "exit_status": 0,
+      "log_sha256": "8fd4b225172c326a6623cd5289012327778da847d9ab650cec87dd2d1d5a7597",
+      "suite_summaries": [
+        "Result: 46 passed, 0 failed, 0 skipped"
+      ]
+    }
+  ],
+  "interrupted_linux_full_sanitizer_runs": [
+    {
+      "log_sha256": "f38d62b96c1c19722c7d89b6f116a67cf13d64f0256d61a67cb85e895290f929",
+      "log_name": "docker-leak-initial.log",
+      "disposition": "Stopped deliberately; only completed parser/AST results count. Full default Linux suite and focused sanitizer recovery suite completed separately.",
+      "completed_parser_checks": true
+    },
+    {
+      "log_sha256": "2cd048ce77391d49b44b639cbb7f87612aa5365c2ff973e37a8d530095d315b6",
+      "log_name": "docker-sanitizer.log",
+      "disposition": "Stopped deliberately; only completed parser/AST results count. Full default Linux suite and focused sanitizer recovery suite completed separately.",
+      "completed_parser_checks": true
+    }
+  ]
+}

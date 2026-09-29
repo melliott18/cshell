@@ -66,6 +66,8 @@ enum csh_lex_result {
  * bytes. No input acquisition, expansion, diagnostics or execution occurs. */
 int csh_lexer_create(struct csh_lexer **out, const char *source_name,
     struct csh_error *error);
+/* Fresh lexer only: resume physical positions after discarded input. */
+void csh_lexer_set_position(struct csh_lexer *lexer, struct csh_position position);
 /* Destroy the root, including unfinished child frames. Child frames are
  * released by command_end; callers must not destroy them separately. */
 void csh_lexer_destroy(struct csh_lexer *lexer);

@@ -90,6 +90,10 @@ static void sticky(struct csh_parser *parser, enum csh_parse_result first_result
     size_t calls = allocation_calls;
     int repeat;
     assert(first->message != NULL && first->status != 0);
+    if (first->system_errno != 0 || first_result == CSH_PARSE_INCOMPLETE) {
+        struct csh_error recovery_error;
+        assert(csh_parser_recover(parser, &recovery_error) == 0);
+    }
     for (repeat = 0; repeat < 3; ++repeat) {
         struct csh_ast *tree = NULL;
         struct csh_error error;
@@ -194,6 +198,58 @@ static void sweep(const char *source, int valid)
     sweep_mode(source, valid, 0);
 }
 
+static void sweep_recovery(const char *source)
+{
+    size_t point;
+    for (point = 1; point < 20000; ++point) {
+        struct csh_input *input = NULL;
+        struct csh_parser *parser = NULL;
+        struct csh_aliases *aliases = NULL;
+        struct csh_ast *tree = NULL;
+        struct csh_error error;
+        int succeeded = 0, recovered = 0, trees = 0;
+        allocation_calls = 0;
+        fail_allocation = point;
+        assert(live_allocations == 0);
+        if (csh_aliases_create(&aliases, &error) == 0 &&
+            csh_aliases_set(aliases, "bad", "cat <<END; )\nbody\nEND\nignored", &error) == 0 &&
+            csh_input_from_string(&input, source, "recovery-fault", &error) == 0 &&
+            csh_parser_create(&parser, input, &error) == 0) {
+            csh_parser_set_aliases(parser, aliases);
+            for (;;) {
+                enum csh_parse_result result = csh_parser_next(parser, &tree, &error);
+                if (result == CSH_PARSE_TREE) {
+                    ++trees;
+                    csh_ast_destroy(tree);
+                    tree = NULL;
+                } else if (result == CSH_PARSE_EOF) {
+                    assert(recovered == 1 && trees == 1);
+                    succeeded = 1;
+                    break;
+                } else {
+                    sticky(parser, result, &error);
+                    if (error.system_errno != 0) break;
+                    assert(recovered++ == 0);
+                    if (csh_parser_recover(parser, &error) == -1) {
+                        sticky(parser, CSH_PARSE_ERROR, &error);
+                        break;
+                    }
+                }
+            }
+        }
+        if (!succeeded) assert(error.system_errno == ENOMEM && error.status == 1);
+        csh_parser_destroy(parser);
+        csh_input_destroy(input);
+        csh_aliases_destroy(aliases);
+        assert(live_allocations == 0);
+        if (succeeded) {
+            assert(point > allocation_calls);
+            return;
+        }
+    }
+    assert(!"recovery allocation sweep did not converge");
+}
+
 int main(void)
 {
     char *large = malloc(32800);
@@ -204,6 +260,10 @@ int main(void)
     memset(large + 3, 'x', 32766);
     memcpy(large + 32769, "'\n", 3);
     sweep("", 1);
+    sweep_recovery(") ignored\nnext\n");
+    sweep_recovery("cat <<A <<-'B'; )\none\nA\n\ttwo\n\tB\nnext\n");
+    sweep_recovery("cat <<OUT $(cat <<IN; |)\ninner\nIN\nouter\nOUT\nnext\n");
+    sweep_recovery("bad\nnext\n");
     sweep("A=1 >one B='two' echo x 2>&1 | !literal && (left; right &) || { other; } >>last\n", 1);
     sweep("cat <<OUT $(cat <<'IN'\ninside ) $x\nIN\n)\noutside\nOUT\nnext\n", 1);
     sweep("cat <<A <<-'B'\none\nA\n\t$two\n\tB\n", 1);

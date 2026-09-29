@@ -22,7 +22,7 @@ Reviewed normative sources (Issue 8, fetched 2026-09-26):
   DESCRIPTION, OPTIONS, OPERANDS, STDOUT, STDERR and EXIT STATUS.
 
 The standard supplies the semantic expectations. No reference shell was used
-to generate them. Exact error wording, status 2 for syntax errors, sorted alias
+to generate the original CSH-046 expectations. Exact error wording, status 2 for syntax errors, sorted alias
 listing and the particular reusable quote spelling are cshell regression
 assertions; the normative error requirements generally prescribe only a
 nonzero status and diagnostic. Permitted and unspecified cases below test
@@ -34,6 +34,7 @@ Fixture abbreviations used in the inventory:
 | --- | --- |
 | S | [`tests/syntax_cases.py`](../tests/syntax_cases.py); every name starts `syntax: ` and ends `(string)`, `(file)` or `(stdin)` in generated `syntax.json` and `runtime.json`. |
 | I | [`tests/invocation.py`](../tests/invocation.py); names printed verbatim, executes the public binary with custom argv/descriptor/identity setup. |
+| P | [`tests/parser_recovery_cases.py`](../tests/parser_recovery_cases.py); `syntax: recovery …` in `runtime.json`/`syntax.json`, plus `terminal main parser syntax recovery` in the default PTY suite. |
 | R | [`tests/runtime_cases.py`](../tests/runtime_cases.py), cross-mode cases have the same three suffixes as S. Terminal names have no suffix. |
 | E | [`tests/evaluation_cases.py`](../tests/evaluation_cases.py), prefix `evaluation: ` and the three input-mode suffixes. |
 | X | [`tests/substitution_cases.py`](../tests/substitution_cases.py), the three input-mode suffixes. |
@@ -73,7 +74,7 @@ argument mappings used by expansion.
 | <a id="sh-005"></a>[SH-005](posix-matrix.md#sh-005): sh INPUT FILES/EXIT STATUS, empty/blank/comment-only sources and retained last status | R `empty input`, `blank and comment input` assert 0/empty streams; `nonzero completion`, `nonzero final unterminated line`, `failure followed by blank lines` assert 37; `failure followed by success` asserts 0/output. PTY `terminal EOF initially` and `terminal failure then EOF` assert 0 and 37 with exact prompts. | Existing witnesses suffice for this input/status partition; command-specific errors remain with their owners. |
 | <a id="sh-006"></a>[SH-006](posix-matrix.md#sh-006): sh INPUT FILES/STDIN, NUL-free parsed prefix, arbitrary remaining bytes, unlimited physical line length | I `SH-001/006 binary tail pipe` / `regular file` asserts byte-exact `00 ff 70…0a` payload consumed by `/bin/cat`, and file offset at end. `SH-007 nonblocking {pipe,fifo,terminal} (stdin)` supplies additional input kinds. [`portability.py`](../tests/portability.py) `large input line (file)` / `(stdin)` retains a 256-KiB-plus-sentinel value; S `large sequential complete command` runs 5,000 commands then prints `complete`. | API `file: embedded NUL and high byte` is byte-storage evidence only: NUL in the parsed prefix is outside guarantees. Large samples do not prove unbounded storage; the known recursive-size limit is tracked below. Interactive asynchronous competing readers are unspecified and excluded. |
 | <a id="sh-007"></a>[SH-007](posix-matrix.md#sh-007): sh STDIN, nonblocking FIFO/terminal becomes blocking and stays so after completion, regardless of command source | I `SH-007 nonblocking {pipe,fifo,terminal} ({stdin,string,file})` asserts full flags during a utility read and after shell exit equal original flags with only O_NONBLOCK cleared; stdout `ready\npayload\n`, status 7, empty stderr. `SH-007 independent {string,file} stdin closed={False,True}` asserts regular-file flags unchanged and independent sources work with closed fd 0. | These nine positive and four exclusion cases found and fix the missing `-c`/file normalization. `csh_input_prepare_stdin()` now handles all modes. API checks retain allocation/read failure and borrowed-fd ownership coverage; fstat/fcntl failure injection is not claimed. |
-| <a id="sh-008"></a>[SH-008](posix-matrix.md#sh-008): sh STDERR/EXIT STATUS and §2.8.1 diagnostic and continuation rules | R `syntax error prevents execution`, `incomplete final quote`, `special builtin error stops script`, `regular builtin redirection failure continues`, and `interactive special builtin error (string)/(file)` assert streams/status/continuation. All S/I noninteractive cases assert no unexpected prompts. PTY `terminal eval syntax error recovers` and `terminal invalid exit bad` assert recovery. | Syntax/usage/ordinary/special and interactive partitions are witnessed, not every utility's errors. CSH-055 adds seven public main-read and twelve dot-read failure cases (see [execution residuals](execution-residuals.md)). Main-parser interactive syntax recovery fails independently of passing eval recovery; [CSH-065](tickets/CSH-065-interactive-parser-recovery.md) owns the four retained review failures. Utility and option evidence remains in CSH-048–051. |
+| <a id="sh-008"></a>[SH-008](posix-matrix.md#sh-008): sh STDERR/EXIT STATUS and §2.8.1 diagnostic and continuation rules | R `syntax error prevents execution`, `incomplete final quote`, `special builtin error stops script`, `regular builtin redirection failure continues`, and `interactive special builtin error (string)/(file)` assert streams/status/continuation. All S/I noninteractive cases assert no unexpected prompts. PTY `terminal eval syntax error recovers` and `terminal invalid exit bad` assert recovery. | Syntax/usage/ordinary/special and interactive partitions are witnessed, not every utility's errors. CSH-055 adds seven public main-read and twelve dot-read failure cases (see [execution residuals](execution-residuals.md)). P asserts main-parser recovery in forced-interactive string/file/stdin and on a controlling terminal; see [CSH-065](tickets/CSH-065-interactive-parser-recovery.md) and the [recovery map](#interactive-parser-recovery). Utility and option evidence remains in CSH-048–051. |
 
 ## Token and quoting clauses
 
@@ -152,3 +153,39 @@ syntax-valued bytes inside valid multibyte characters remain data in bare,
 escaped, single/double/dollar-single quoted words and nested source, including
 after runtime locale changes. Locale and filesystem capability skips remain
 explicit; this does not extend the claim to stateful or every installed encoding.
+
+## Interactive parser recovery
+
+[CSH-065](tickets/CSH-065-interactive-parser-recovery.md) adds default-suite
+witnesses for SH-008, GRAM-005 and EXEC-015. Every pipe case asserts exact
+stdout, stderr, status and listed file effects, under the unchanged five-second
+bound. Forced-interactive stdin asserts the complete prompt transcript;
+`-i -c` and `-i script` assert no prompts. These are scoped recovery assertions,
+not promotion of the whole requirement families. Discarding the failed physical
+line, draining known documents, and abandoning remaining alias text are explicit
+cshell recovery policies; clause labels do not prescribe these exact choices.
+
+| P case suffix (each runs in string/file/stdin) | Contract |
+| --- | --- |
+| `main parser` | Previously completed output survives, a diagnostic is emitted, following output executes and explicit exit 7 succeeds. |
+| `status effects and repeated positions` | `$?` is 2, prior files survive, malformed-tree and same-line tail files stay absent, repeated diagnostics retain absolute source lines. |
+| `newline operand` | An offending newline does not cause the following command to be discarded. |
+| `aliases survive nested failure`, `alias remainder discarded` | Alias definitions remain usable; active nested alias frames and their leftover commands are abandoned. |
+| `pending documents`, `continued delimiter`, `nested pending documents` | Multiple, quoted, tab-stripped, continued and nested document boundaries are consumed without body/substitution effects; the following document still parses normally. |
+| `alias pending document`, `alias buffered document` | Delimiters introduced by aliases and bodies already inside a multiline alias preserve the next physical command boundary. |
+| `completed document then syntax error` | Already-consumed bodies are not drained again; a failed compound command has no effects. |
+| `EOF after syntax`, `EOF incomplete quote`, `EOF pending document` | EOF terminates with status 2 and bounded diagnostics; unfinished syntax and document acquisition never loop. |
+
+`terminal main parser syntax recovery` asserts primary/continuation prompt
+recovery, two observed `$?=2` values, absent body effects and exit 7 on a real
+controlling terminal. S `noninteractive main parser recovery control` asserts
+prior output, status 2 and an absent following-command file in all three modes.
+Existing interactive-eval controls remain separate from main-parser recovery.
+
+`make test-parser` covers sticky results before explicit recovery, exact input
+read boundaries, absolute AST positions, and refusal to recover read failures.
+Its exhaustive allocation sweep includes snapshot copying, lexer replacement,
+raw document draining and buffered alias bodies, with zero tracked live
+allocations after each injected failure. `make test-execution-contracts` adds
+two public forced-interactive file/stdin read failures during document recovery:
+only the EXIT trap executes, with status 128 and no body effects.

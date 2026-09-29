@@ -475,11 +475,74 @@ static void read_failure(void)
         "underlying read diagnostic survives parser handoff");
     require(error.position.offset == 0 && error.position.line == 1 && error.position.column == 1,
         "read-failure source position");
+    {
+        struct csh_error recovery_error;
+        require(csh_parser_recover(parser, &recovery_error) == 0,
+            "read failures cannot be recovered");
+    }
     check_repeat(parser, CSH_PARSE_ERROR, &error);
     csh_parser_destroy(parser);
     csh_input_destroy(input);
     require(close(descriptors[0]) == 0 && close(descriptors[1]) == 0,
         "borrowed pipe descriptors remain open");
+    puts("ok");
+}
+
+static int fail_read(void *context, int fd)
+{
+    (void)context;
+    (void)fd;
+    errno = EIO;
+    return -1;
+}
+
+static void recovery(void)
+{
+    const char *source = "cat <<END; )\nignored\nEND\nnext\ntrailing\n";
+    struct csh_input *input = NULL;
+    struct csh_parser *parser = NULL;
+    struct csh_ast *tree = NULL;
+    struct csh_error error;
+    int descriptors[2];
+    require(csh_input_from_string(&input, source, "recovery", &error) == 0, "recovery input");
+    require(csh_parser_create(&parser, input, &error) == 0, "recovery parser");
+    require(csh_parser_recover(parser, &error) == 0, "fresh parser needs no recovery");
+    require(csh_parser_next(parser, &tree, &error) == CSH_PARSE_ERROR && tree == NULL,
+        "syntax error publishes no tree");
+    check_repeat(parser, CSH_PARSE_ERROR, &error);
+    require(csh_input_position(input).offset == strlen("cat <<END; )\n"),
+        "sticky error does not read document body");
+    require(csh_parser_recover(parser, &error) == 1, "recover pending document");
+    require(csh_input_position(input).offset == strlen("cat <<END; )\nignored\nEND\n"),
+        "recovery stops exactly at delimiter");
+    require(csh_parser_next(parser, &tree, &error) == CSH_PARSE_TREE, "next tree after recovery");
+    require(tree->start.line == 4 && tree->start.column == 1 &&
+        tree->start.offset == strlen("cat <<END; )\nignored\nEND\n"),
+        "absolute source position survives recovery");
+    require(csh_input_position(input).offset == strlen(source) - strlen("trailing\n"),
+        "next tree preserves read boundary");
+    csh_parser_destroy(parser);
+    csh_input_destroy(input);
+    csh_ast_destroy(tree);
+    tree = NULL;
+
+    require(pipe(descriptors) == 0, "recovery fault pipe");
+    require(write(descriptors[1], source, strlen(source)) == (ssize_t)strlen(source),
+        "supply recovery fault input");
+    require(csh_input_from_fd(&input, descriptors[0], "recovery-fault", &error) == 0,
+        "recovery fault input");
+    require(csh_parser_create(&parser, input, &error) == 0, "recovery fault parser");
+    require(csh_parser_next(parser, &tree, &error) == CSH_PARSE_ERROR, "fault syntax boundary");
+    csh_input_set_wait_hook(input, fail_read, NULL);
+    require(csh_parser_recover(parser, &error) == -1 && error.system_errno == EIO,
+        "draining read failure is fatal");
+    check_repeat(parser, CSH_PARSE_ERROR, &error);
+    require(csh_input_position(input).offset == strlen("cat <<END; )\n"),
+        "read failure exposes no body as commands");
+    csh_parser_destroy(parser);
+    csh_input_destroy(input);
+    close(descriptors[0]);
+    close(descriptors[1]);
     puts("ok");
 }
 
@@ -495,6 +558,8 @@ int main(int argc, char **argv)
         consumed_input();
     else if (argc == 2 && strcmp(argv[1], "read-failure") == 0)
         read_failure();
+    else if (argc == 2 && strcmp(argv[1], "recovery") == 0)
+        recovery();
     else {
         fputs("usage: parser_fixture parse|contracts|chain|consumed|read-failure\n", stderr);
         return 2;
