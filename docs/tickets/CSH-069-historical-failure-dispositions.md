@@ -1,6 +1,6 @@
 # CSH-069: Disposition retained unexplained validation failures
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
