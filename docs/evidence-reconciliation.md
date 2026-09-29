@@ -10,7 +10,12 @@ This is a retained review snapshot. The subsequent
 supersedes its open-timeout hold for that scoped ticket: the repaired PTY races
 are integrated and the historical retention failure remains unknown-cause with
 same-ticket reopening ownership. It does not complete CSH-050 or CSH-012 or
-rewrite the older failed runs and accounting below.
+rewrite the older failed runs and accounting below. The
+[later CSH-050 review at `07ee1cb`](evidence/csh-050-disposition/README.md)
+applies that disposition to its own criteria. Its platform criterion remains
+unchecked for a new partial-kill SIGALRM, not the old retention observation;
+CSH-050 / #82 owns the new failure. CSH-063 is scoped complete and CSH-064 owns
+remaining external platform prerequisites.
 
 ## Review dispositions
 
