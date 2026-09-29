@@ -63,7 +63,6 @@ int main(int argc, char **argv)
         if (!children[i]) {
             close(gate[1]); close(release[1]);
             transfer(gate[0], 0, 1);
-            assert(raise(SIGSTOP) == 0);
             transfer(release[0], 0, 1);
             _exit(23 + i);
         }
@@ -73,6 +72,11 @@ int main(int argc, char **argv)
     job->pgid = children[0];
     transfer(gate[1], 1, 2);
     close(gate[0]); close(gate[1]);
+    /* Stop from the observing parent. On Darwin a child can remain inside
+     * its self-stop syscall after WSTOPPED is observed and CONT is delivered.
+     * The release pipe keeps children live until after delivery/state
+     * assertions without depending on that self-stop/continue sequence. */
+    for (int i = 0; i < 2; ++i) assert(kill(children[i], SIGSTOP) == 0);
     for (int i = 0; i < 2; ++i) {
         siginfo_t event;
         int rc;
