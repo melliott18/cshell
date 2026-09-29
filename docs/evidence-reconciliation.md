@@ -1,5 +1,9 @@
 # CSH-049/050 review and CSH-012 evidence reconciliation
 
+This is the historical `8ffb99e` review. For current ticket dispositions,
+CSH-064 host ownership, artifact reconciliation and the `07ee1cb` native sample,
+see the [latest CSH-012 reconciliation](evidence-reconciliation-current.md).
+
 Reviewed on 2026-09-28 against integrated main
 `8ffb99e73cfd21bb1b5ad66829544350f78b69ae`. This is an evidence and integration
 review with an independently built, scoped runtime reproduction. It is not a

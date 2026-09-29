@@ -1,0 +1,15 @@
+{
+  "reviewed_revision": "07ee1cb26ffcec0470977d03789ce0ebb156603a",
+  "previous_green": "faf2e9525dfe2c2c2cba4598a1d63d49552fc1d7",
+  "changed_build_test_inputs": [
+    "Dockerfile",
+    "tests/host_acl_cases.py",
+    "tests/host_acl_residual_cases.py",
+    "tests/host_capability_limits.py",
+    "tests/host_environment_cases.py",
+    "tests/host_platform.py",
+    "tests/host_utilities.py",
+    "tests/host_utility_helper.c",
+    "tests/test_host_harness.py"
+  ]
+}

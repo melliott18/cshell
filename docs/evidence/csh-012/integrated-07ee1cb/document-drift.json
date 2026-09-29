@@ -1,0 +1,22 @@
+[
+  {
+    "path": "docs/evidence/csh-056/README.md",
+    "manifest": "docs/evidence/csh-056/artifacts.json",
+    "historical_revision": "0b4dc0813db543a7c56f44ffd333710764b7dd34",
+    "expected_sha256": "913d33c2fdeb93a41fdde076adae21399ef35fac0415dd488b5842114180dd72",
+    "current_sha256": "9077d12ebecce0b06a12725020b8c210ac1f382cf52e4b282ebb8975e4909667",
+    "historical_bytes": 6160,
+    "current_bytes": 6160,
+    "diff": "diff --git a/docs/evidence/csh-056/README.md b/docs/evidence/csh-056/README.md\nindex 9053460..53c193f 100644\n--- a/docs/evidence/csh-056/README.md\n+++ b/docs/evidence/csh-056/README.md\n@@ -104,6 +104,6 @@ runs pass; these investigation logs are not final source evidence.\n \n Stock hosts still fail their original strict reproducer. This is expected and\n is not converted to a pass. The qualified profile resolves those five gaps;\n-[CSH-057](../../tickets/CSH-057-host-boundary-capabilities.md) retains each\n+[CSH-059](../../tickets/CSH-059-host-boundary-capabilities.md) retains each\n remaining capability/limit. No broad utility family or CSH-012 compliance gate\n is promoted.\n"
+  },
+  {
+    "path": "docs/evidence/csh-057-pty-fix/README.md",
+    "manifest": "docs/evidence/csh-057-pty-fix/artifacts.json",
+    "historical_revision": "787983461ca56efea431cae59b9bf8b9d181bf37",
+    "expected_sha256": "4cf74ccaa8153d120a7a33e6ccfda2cba2f78f7474fecdc1e898c2ac172817d6",
+    "current_sha256": "888f006544e583542071f8077d15e8cd52bd0e0b01a77b360e39f641f7b7af5d",
+    "historical_bytes": 6795,
+    "current_bytes": 6985,
+    "diff": "diff --git a/docs/evidence/csh-057-pty-fix/README.md b/docs/evidence/csh-057-pty-fix/README.md\nindex e484c3b..a29a2aa 100644\n--- a/docs/evidence/csh-057-pty-fix/README.md\n+++ b/docs/evidence/csh-057-pty-fix/README.md\n@@ -108,7 +108,7 @@ Logs and diagnostic patches are compressed with `.gz` without changing their con\n | `fault-before` | Deterministic regression fails the status-130 assertion before the runtime fix. |\n | `exit-before-continue` | Diagnostic forces the real Darwin EPERM race in all 32 public cycles; status 1 and extra notifications. |\n | `final-fault`, `native-sanitizer-fixed` | An intermediate regression revision did not retry its readiness-pipe read after the child's stop generated SIGCHLD. Fixed that fixture's EINTR handling; final native and Linux checks retain the original limits. |\n-| `native-repeat-final` | During concurrent native sanitizer and Docker work, round 76 exceeded the whole-case five-second budget at cycle 29. All 8,595 captured bytes exactly match the expected prefix; no foregrounding diagnostic occurred. It remains a failed loaded run under the CSH-040 transport/load boundary, separate from the diagnosed EPERM defect. Later serial repetitions do not erase it. |\n+| `native-repeat-final` | During concurrent native sanitizer and Docker work, round 76 exceeded the whole-case five-second budget at cycle 29. All 8,595 captured bytes exactly match the expected prefix; no foregrounding diagnostic occurred. That run remains failed. The earlier load classification was unsupported: a matching output prefix does not distinguish slow progress from a stalled child. The [timeout investigation](../csh-057-timeouts/README.md) reproduces blocked-SIGINT stalls with the same signature. The old log alone cannot identify which defect caused that historical run. |\n \n The follow-up validates the changed jobs path and existing terminal/harness\n suites. It does not claim a new full general-runtime conformance sweep or\n"
+  }
+]

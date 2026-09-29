@@ -250,8 +250,11 @@ historical retention failure as unknown-cause and non-blocking for its scoped
 completion, with the same ticket owning the record and any recurrence.
 The [CSH-050 integration record](evidence/csh-050/README.md) identifies its
 pre-correction baseline; the [post-integration review](evidence-reconciliation.md)
-records its earlier disposition. The [current acceptance review](evidence/csh-050-review/README.md)
-supersedes that snapshot for CSH-050 without rewriting historical artifacts.
+records its earlier disposition. The [merged-fix acceptance review](evidence/csh-050-review/README.md)
+predates the formal retention disposition. The
+[current CSH-012 reconciliation](evidence-reconciliation-current.md) records
+that later decision and current CI/host ownership while retaining CSH-050's
+independent platform gate and historical artifacts.
 
 | Residual condition | Current disposition / owner |
 | --- | --- |
@@ -260,7 +263,7 @@ supersedes that snapshot for CSH-050 without rewriting historical artifacts.
 | Historical retained-status deadline | The original 60-second hosted failure remains failed and unclassified. CSH-057's [formal disposition](evidence/csh-057-retention-disposition/README.md) accepts that uncertainty for scoped completion; the unchanged CI case remains enforced and a new relevant failure reopens #99. |
 | Partial `kill` delivery left successful stages stopped | Corrected in PR #120 (`6498859`); eight failing-before cases and all 14 passing-after cases distinguish cumulative command errors from per-stage state. See [partial-delivery assertions](#csh-050-partial-delivery-review). |
 | Inheritance/delivery, public interrupted waits, listing failures, group delivery and permission diagnostics | CSH-058 is integrated; its [exact matrix](#csh-058) supersedes the corresponding open entries in the historical CSH-054 table. Permission evidence uses syscall interposition, not host credential enforcement. |
-| External kill status mapping | Stock Debian failure remains a stock-host gap under CSH-052. CSH-056's opt-in qualified profile resolves that selected case; CSH-059/060 record wider host boundaries and CSH-061/062 add scoped evidence; [CSH-063](tickets/CSH-063-host-platform-residual-qualification.md) owns the remaining host-platform conditions. Builtin kill results do not qualify the external binary. |
+| External kill status mapping | Stock Debian failure remains a stock-host gap under CSH-052. CSH-056's opt-in qualified profile resolves that selected case; CSH-059/060 record wider host boundaries and CSH-061/062/063 add scoped evidence; [CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md) owns the remaining host-platform conditions. Builtin kill results do not qualify the external binary. |
 | Loaded transport deadlines and incomplete sanitizer runs | Retain the failed/not-run records under CSH-040/054 and CSH-057/058; serial passing results establish only their own observations. |
 
 CSH-050 supplies a reviewable map and run record; its separate platform
@@ -460,6 +463,6 @@ prevented successful delivery from clearing stopped state. `src/jobs.c` now
 updates successful group/stage deliveries individually and preserves the
 aggregate error. [Retained review results](evidence/csh-050-acceptance/README.md)
 identify the exact tested revision and environments. This fix is merged as
-`6498859`. The [current review](evidence/csh-050-review/README.md) distinguishes
+`6498859`. The [merged-fix review](evidence/csh-050-review/README.md) distinguishes
 repaired PTY failures from CSH-057's remaining historical retention observation;
 no whole requirement family is promoted.

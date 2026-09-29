@@ -87,23 +87,21 @@ rows. CSH-055 fixes prefix PATH/builtin selection and adds [scoped residual cont
 witnesses](execution-contracts.md) for the previously unverified
 execution contracts. Parent rows remain implemented subsets.
 
-CSH-052 residual host conditions belong to [CSH-056](tickets/CSH-056-host-contract-gaps.md):
-U-026/host-status-map, U-034/host-ed, U-035/numbered, U-035/b-precision,
-U-035/locale-errors, U-036/host-environment, U-037/missing-timestamps,
-U-037/capabilities, U-040/host-boundaries. Passing subconditions stay linked to
-[the CSH-052 clause map](host-utility-evidence.md); none closes CSH-012.
+CSH-052's scoped host qualification continued through
+[CSH-056](tickets/CSH-056-host-contract-gaps.md), followed by
+CSH-059/060/061/062/063. Their retained records describe the supplied environments
+and exact assertions, not whole utility families.
 
-The host qualification follow-ups are [CSH-059](tickets/CSH-059-host-boundary-capabilities.md)
-and [CSH-060](tickets/CSH-060-extended-host-environments.md). Their remaining
-U-035/U-036/U-037/U-040 conditions are individually recorded in
-`tests/host_capability_limits.py` and now owned by
-[CSH-061](tickets/CSH-061-host-environment-residuals.md), including the retained
-unequal-ID ACL grant failure. This ownership does not close a parent family.
+The current qualification owner is
+[CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md).
+All 28 stable conditions in `tests/host_capability_limits.py` retain individual
+sources, actual environments, executable identities, reasons and separate
+implementation owners. [CSH-063 evidence](evidence/csh-063/README.md) preserves
+204 strict unequal-ID predicate failures per tested vendor, unsupported tmpfs
+ACL setup and the separate `fakeowner` bind failures. Missing privileged Darwin,
+locales, controlled credentials and physical terminals remain capability limits.
 
-CSH-062 extends the host-contract evidence with multiple ACL subjects and
-supplementary groups, updated GNU/libc identities and supplied filesystem
-selection. [CSH-062 results](evidence/csh-062/README.md) retain strict unequal-ID
-grant failures and unsupported tmpfs ACL setup independently of passing scopes.
-[CSH-063](tickets/CSH-063-host-platform-residual-qualification.md) owns every
-remaining sourced host residual and missing supplied environment; this does not
-promote U-034 through U-037, U-040, or the CSH-012 gate.
+The [current CSH-012 reconciliation](evidence-reconciliation-current.md) records
+completed scoped tickets and the remaining milestone gates. Qualification
+ownership does not replace the original implementation owners in the table,
+promote U-034–U-037/U-040, or close the system-wide utility obligation.
