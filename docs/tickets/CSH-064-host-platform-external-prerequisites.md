@@ -1,11 +1,11 @@
 # CSH-064: Supply external prerequisites for remaining host contracts
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-063
-- Branch: Assigned when work starts
+- Branch: test/CSH-064-host-platform-prerequisites
 - Issue: [#127](https://github.com/melliott18/cshell/issues/127)
 
 ## Goal
@@ -34,11 +34,11 @@ or open the CSH-012 gate.
 
 ## Acceptance criteria
 
-- [ ] Each residual has assertions or an individual source, actual environment and
+- [x] Each residual has assertions or an individual source, actual environment and
   executable identity, reason, qualification owner and implementation owner.
-- [ ] Predicate and setup failures remain strict and distinct from limitations.
-- [ ] Claimed profiles pass runtime/PTY integration; changed C receives ASan/UBSan.
-- [ ] Queries, measured credentials, fixture bounds and unmet requirements stay
+- [x] Predicate and setup failures remain strict and distinct from limitations.
+- [x] Claimed profiles pass runtime/PTY integration; changed C receives ASan/UBSan.
+- [x] Queries, measured credentials, fixture bounds and unmet requirements stay
   separate, with no parent utility promotion.
 
 ## Validation
@@ -47,3 +47,45 @@ Start with [CSH-063 evidence](../evidence/csh-063/README.md). Preserve normal,
 strict unequal-ID and unsupported-setup records independently, including source
 hashes and exact selected vendor identities. Only claim physical hardware or
 privileged Darwin behavior when a disposable environment is actually supplied.
+
+
+## Implementation and validation
+
+Implemented in a separate managed worktree on
+`test/CSH-064-host-platform-prerequisites`. [Retained evidence](../evidence/csh-064/README.md)
+includes reproduction, exact source/executable/libc identities, complete normal,
+strict and unsupported records, integration logs, a prerequisite inventory and
+a machine-readable audit.
+
+Supplied a new disposable Linux user namespace mapping fixture IDs 10001..10005
+to outer IDs 30001..30005, without modifying accounts. Qualification JSON now
+records UID/GID maps, setgroups policy and user/mount namespace links. Numeric
+ACL metadata validation covers every controlled ACL fixture; malformed and
+duplicate metadata remain setup failures.
+
+The independent fakeowner probe reproduces socket stat EINVAL while a one-byte
+AF_UNIX transfer succeeds. Both external chmod and direct os.chmod allow a
+non-owner mode change with empty groups and no effective capabilities. The same
+probe passes all eight assertions on overlay; fakeowner retains five failures.
+Two separate residual conditions retain these platform failures.
+
+Native macOS passes 1162 host assertions and ordinary Debian sid passes 2281.
+The mapped namespace passes 2269 with twelve private-device setup failures;
+its complete profile is not qualified. Both ordinary and mapped strict runs
+retain 204 predicate failures (132 rejected grants, 72 false grants), separately
+from the twelve namespace setup failures. Exact coreutils 9.10/libc 2.43 hashes
+are unchanged from CSH-063; this is a namespace recheck, not a vendor update.
+Tmpfs retains 1098 setup failures. Fakeowner retains 1110 setup and nine
+assertion failures. All runs have zero gap allowances.
+
+Native, ordinary Linux and mapped Linux each pass 3905 runtime assertions,
+30 jobs PTY and 32 runtime PTY cases, notification and terminal-fault checks,
+and 86 harness self-tests. No C source changed; no new sanitizer result is claimed.
+
+All thirty stable residual conditions retain individual sources, actual
+environment/executable identities, reasons and concrete required capabilities.
+CSH-064 retains qualification ownership pending those capabilities; selected
+utility/libc/platform vendors retain implementation ownership. Privileged Darwin,
+physical terminals and other unavailable requirements remain separate. Queries,
+measured credentials, fixture bounds and unmet requirements are not conflated.
+No parent utility or CSH-012 gate is promoted. Ready for review, not integrated.

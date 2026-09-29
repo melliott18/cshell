@@ -161,16 +161,16 @@ class HostEvidenceTests(unittest.TestCase):
 
     def test_acl_setup_mismatch_cannot_be_utility_evidence(self):
         from types import SimpleNamespace
-        from host_acl_cases import verify_residual_acl
+        from host_acl_cases import verify_acl_metadata
         spec = dict(acl_entries='u::---,u:10002:r--,g::---,m::r--,o::---',
                     inherited=True, create_mode=0o700)
         observed = SimpleNamespace(st_uid=0, st_gid=0)
         actual = 'user::---\nuser:10002:r--\ngroup::---\nmask::---\nother::---\n'
-        verify_residual_acl(spec, actual, observed)
+        verify_acl_metadata(spec, actual, observed)
         with self.assertRaises(OSError):
-            verify_residual_acl(spec, actual.replace('mask::---', 'mask::r--'), observed)
+            verify_acl_metadata(spec, actual.replace('mask::---', 'mask::r--'), observed)
         with self.assertRaises(OSError):
-            verify_residual_acl(spec, actual, SimpleNamespace(st_uid=1, st_gid=0))
+            verify_acl_metadata(spec, actual, SimpleNamespace(st_uid=1, st_gid=0))
 
     def test_setup_timeout_retains_diagnostic_and_cannot_pass(self):
         import subprocess
@@ -183,3 +183,58 @@ class HostEvidenceTests(unittest.TestCase):
         self.assertEqual(result['actual']['timeout_seconds'], 5)
         self.assertEqual(result['actual']['stderr'], {'hex': b'setup stalled'.hex()})
         self.assertEqual(result['case']['status'], 0)
+
+
+    def test_namespace_identity_preserves_maps_and_setgroups_policy(self):
+        import tempfile
+        from pathlib import Path
+        from host_platform import credential_namespace
+        with tempfile.TemporaryDirectory() as temporary:
+            proc = Path(temporary)
+            (proc / 'ns').mkdir()
+            for name in ('uid_map', 'gid_map'):
+                (proc / name).write_text('0 0 1\n1 20001 65535\n')
+            (proc / 'setgroups').write_text('allow\n')
+            (proc / 'ns/user').symlink_to('user:[123]')
+            (proc / 'ns/mnt').symlink_to('mnt:[456]')
+            with patch('host_platform.platform.system', return_value='Linux'):
+                actual = credential_namespace(proc)
+            self.assertEqual(actual['uid_map'], '0 0 1\n1 20001 65535\n')
+            self.assertEqual(actual['gid_map'], actual['uid_map'])
+            self.assertEqual(actual['setgroups'], 'allow')
+            self.assertEqual(actual['user'], 'user:[123]')
+            with patch('host_platform.platform.system', return_value='Darwin'):
+                self.assertIsNone(credential_namespace(proc))
+
+    def test_malformed_acl_metadata_is_a_recordable_setup_failure(self):
+        from types import SimpleNamespace
+        from host_acl_cases import verify_acl_metadata
+        from host_utilities import setup_failure
+        spec = dict(acl_entries='u::r--,g::---,o::---', inherited=False)
+        for actual in ('not an acl', 'user::r--\nuser::r--\n', 'user::bad\n'):
+            with self.assertRaises(OSError) as caught:
+                verify_acl_metadata(spec, actual, SimpleNamespace(st_uid=0, st_gid=0))
+            row = setup_failure('metadata', dict(status=0), caught.exception)
+            self.assertEqual(row['phase'], 'setup')
+            self.assertEqual(row['verdict'], 'FAIL')
+            self.assertIn(actual, row['reason'].replace('\\n', '\n'))
+
+    def test_chmod_probe_cannot_accept_false_grants_or_unmeasured_identity(self):
+        from copy import deepcopy
+        import errno
+        from host_platform_probe import chmod_matches
+        actual = dict(credentials=dict(uid=10002, euid=10002, gid=10002, egid=10002,
+                                       groups=[], capabilities={'CapEff': '00000000'}),
+                      before=dict(uid=10001, gid=10002, mode='0o100400'),
+                      after=dict(uid=10001, gid=10002, mode='0o100400'), errno=errno.EPERM,
+                      utility=dict(status=1, stdout={'hex': ''}, stderr={'hex': '78'}))
+        for method in ('syscall', 'utility'):
+            self.assertTrue(chmod_matches(actual, 10002, method))
+            grant = deepcopy(actual)
+            grant.update(errno=0, utility=dict(status=0, stdout={'hex': ''}, stderr={'hex': ''}))
+            grant['after']['mode'] = '0o100600'
+            self.assertFalse(chmod_matches(grant, 10002, method))
+            for key, value in (('euid', 0), ('groups', [10001]), ('capabilities', {'CapEff': '1'})):
+                invalid = deepcopy(actual)
+                invalid['credentials'][key] = value
+                self.assertFalse(chmod_matches(invalid, 10002, method))

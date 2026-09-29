@@ -1,0 +1,254 @@
+[
+  {
+    "name": "normal",
+    "argv": [
+      "docker",
+      "exec",
+      "csh064-validation",
+      "python3",
+      "tests/host_utilities.py",
+      "./cshell",
+      "build/tests/host_utility_helper",
+      "--path",
+      "/work/build/host-profile/bin:/bin:/usr/bin",
+      "--strict-gaps",
+      "--boundaries",
+      "--printf-faults",
+      "build/tests/host_printf_faults",
+      "--controlled-identities",
+      "--record",
+      "/tmp/normal.json"
+    ],
+    "status": 0,
+    "totals": {
+      "passed": 2281,
+      "failed": 0,
+      "gaps": 0
+    },
+    "log": "linux-normal.log.gz"
+  },
+  {
+    "name": "unequal",
+    "argv": [
+      "docker",
+      "exec",
+      "csh064-validation",
+      "python3",
+      "tests/host_utilities.py",
+      "./cshell",
+      "build/tests/host_utility_helper",
+      "--path",
+      "/work/build/host-profile/bin:/bin:/usr/bin",
+      "--strict-gaps",
+      "--boundaries",
+      "--printf-faults",
+      "build/tests/host_printf_faults",
+      "--controlled-identities",
+      "--unequal-acl",
+      "--record",
+      "/tmp/unequal.json"
+    ],
+    "status": 1,
+    "totals": {
+      "passed": 2077,
+      "failed": 204,
+      "gaps": 0
+    },
+    "log": "linux-unequal.log.gz"
+  },
+  {
+    "name": "namespace",
+    "argv": [
+      "docker",
+      "exec",
+      "csh064-validation",
+      "unshare",
+      "--user",
+      "--map-users=0:0:1",
+      "--map-users=1:20001:65535",
+      "--map-groups=0:0:1",
+      "--map-groups=1:20001:65535",
+      "--setgroups=allow",
+      "python3",
+      "tests/host_utilities.py",
+      "./cshell",
+      "build/tests/host_utility_helper",
+      "--path",
+      "/work/build/host-profile/bin:/bin:/usr/bin",
+      "--strict-gaps",
+      "--boundaries",
+      "--printf-faults",
+      "build/tests/host_printf_faults",
+      "--controlled-identities",
+      "--record",
+      "/tmp/namespace.json"
+    ],
+    "status": 1,
+    "totals": {
+      "passed": 2269,
+      "failed": 12,
+      "gaps": 0
+    },
+    "log": "linux-namespace.log.gz"
+  },
+  {
+    "name": "namespace-unequal",
+    "argv": [
+      "docker",
+      "exec",
+      "csh064-validation",
+      "unshare",
+      "--user",
+      "--map-users=0:0:1",
+      "--map-users=1:20001:65535",
+      "--map-groups=0:0:1",
+      "--map-groups=1:20001:65535",
+      "--setgroups=allow",
+      "python3",
+      "tests/host_utilities.py",
+      "./cshell",
+      "build/tests/host_utility_helper",
+      "--path",
+      "/work/build/host-profile/bin:/bin:/usr/bin",
+      "--strict-gaps",
+      "--boundaries",
+      "--printf-faults",
+      "build/tests/host_printf_faults",
+      "--controlled-identities",
+      "--unequal-acl",
+      "--record",
+      "/tmp/namespace-unequal.json"
+    ],
+    "status": 1,
+    "totals": {
+      "passed": 2065,
+      "failed": 216,
+      "gaps": 0
+    },
+    "log": "linux-namespace-unequal.log.gz"
+  },
+  {
+    "name": "tmpfs",
+    "argv": [
+      "docker",
+      "exec",
+      "csh064-validation",
+      "python3",
+      "tests/host_utilities.py",
+      "./cshell",
+      "build/tests/host_utility_helper",
+      "--path",
+      "/work/build/host-profile/bin:/bin:/usr/bin",
+      "--strict-gaps",
+      "--boundaries",
+      "--printf-faults",
+      "build/tests/host_printf_faults",
+      "--controlled-identities",
+      "--fixture-root",
+      "/tmpfs-fixtures",
+      "--record",
+      "/tmp/tmpfs.json"
+    ],
+    "status": 1,
+    "totals": {
+      "passed": 1183,
+      "failed": 1098,
+      "gaps": 0
+    },
+    "log": "linux-tmpfs.log.gz"
+  },
+  {
+    "name": "bind",
+    "argv": [
+      "docker",
+      "exec",
+      "csh064-validation",
+      "python3",
+      "tests/host_utilities.py",
+      "./cshell",
+      "build/tests/host_utility_helper",
+      "--path",
+      "/work/build/host-profile/bin:/bin:/usr/bin",
+      "--strict-gaps",
+      "--boundaries",
+      "--printf-faults",
+      "build/tests/host_printf_faults",
+      "--controlled-identities",
+      "--fixture-root",
+      "/bind-fixtures",
+      "--record",
+      "/tmp/bind.json"
+    ],
+    "status": 1,
+    "totals": {
+      "passed": 1162,
+      "failed": 1119,
+      "gaps": 0
+    },
+    "log": "linux-bind.log.gz"
+  },
+  {
+    "name": "native-profile",
+    "command": "make test-host-profile",
+    "status": 0,
+    "record": "native.json.gz"
+  },
+  {
+    "name": "native-integration",
+    "command": "CSH_TEST_PATH=\"$PWD/build/host-profile/bin:$(getconf PATH)\" make test-runtime test-pty test-harness",
+    "status": 0,
+    "log": "native-integration.log.gz"
+  },
+  {
+    "name": "linux-integration",
+    "command": "docker exec csh064-validation sh -c \"CSH_TEST_PATH=/work/build/host-profile/bin:/bin:/usr/bin make test-runtime test-pty test-harness\"",
+    "status": 0,
+    "log": "linux-integration.log.gz"
+  },
+  {
+    "name": "namespace-integration",
+    "command": "docker exec csh064-validation unshare --user --map-users=0:0:1 --map-users=1:20001:65535 --map-groups=0:0:1 --map-groups=1:20001:65535 --setgroups=allow sh -c \"CSH_TEST_PATH=/work/build/host-profile/bin:/bin:/usr/bin make test-runtime test-pty test-harness\"",
+    "status": 0,
+    "log": "namespace-integration.log.gz"
+  },
+  {
+    "name": "overlay-probe",
+    "argv": [
+      "docker",
+      "exec",
+      "csh064-validation",
+      "python3",
+      "tests/host_platform_probe.py",
+      "--fixture-root",
+      "/tmp",
+      "--path",
+      "/work/build/host-profile/bin:/bin:/usr/bin",
+      "--record",
+      "/tmp/overlay-probe.json"
+    ],
+    "status": 0,
+    "stdout": "{\"passed\": 8, \"failed\": 0}\n",
+    "stderr": "",
+    "record": "overlay-probe.json"
+  },
+  {
+    "name": "bind-probe",
+    "argv": [
+      "docker",
+      "exec",
+      "csh064-validation",
+      "python3",
+      "tests/host_platform_probe.py",
+      "--fixture-root",
+      "/bind-fixtures",
+      "--path",
+      "/work/build/host-profile/bin:/bin:/usr/bin",
+      "--record",
+      "/tmp/bind-probe.json"
+    ],
+    "status": 1,
+    "stdout": "{\"passed\": 3, \"failed\": 5}\n",
+    "stderr": "",
+    "record": "bind-probe.json"
+  }
+]

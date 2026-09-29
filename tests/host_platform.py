@@ -1,7 +1,19 @@
 """Measured filesystem context for an explicitly selected private fixture root."""
 from pathlib import Path
+import os
 import re
 import platform
+
+
+def credential_namespace(proc=Path('/proc/self')):
+    """Measure namespace context; numeric IDs alone do not identify credentials."""
+    if platform.system() != 'Linux':
+        return None
+    return dict(uid_map=(proc / 'uid_map').read_text(),
+                gid_map=(proc / 'gid_map').read_text(),
+                setgroups=(proc / 'setgroups').read_text().strip(),
+                user=os.readlink(proc / 'ns/user'),
+                mount=os.readlink(proc / 'ns/mnt'))
 
 
 def filesystem_identity(directory, mountinfo=None):

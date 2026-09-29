@@ -113,14 +113,13 @@ def setup(directory, spec):
     def record(path):
         return subprocess.check_output(['getfacl', '-cpn', str(path)], timeout=5).decode()
     actual_acl = record(target)
-    if spec['subject'] == 'residual':
-        verify_residual_acl(spec, actual_acl, observed)
+    verify_acl_metadata(dict(spec, acl_entries=entries), actual_acl, observed)
     return dict(kind=spec, uid=observed.st_uid, gid=observed.st_gid,
                 mode=oct(observed.st_mode), rdev=observed.st_rdev,
                 acl=actual_acl, parent_acl=record(parent))
 
 
-def verify_residual_acl(spec, actual, observed):
+def verify_acl_metadata(spec, actual, observed):
     """Reject malformed/ignored setup before attributing results to a utility."""
     tags = {'u': 'user', 'g': 'group', 'm': 'mask', 'o': 'other'}
     expected = {}
@@ -136,7 +135,14 @@ def verify_residual_acl(spec, actual, observed):
     for line in actual.splitlines():
         line = line.split('#', 1)[0].strip()
         if line:
-            tag, qualifier, perms = line.split(':')
+            parts = line.split(':')
+            if (len(parts) != 3 or parts[0] not in tags.values() or
+                    len(parts[2]) != 3 or
+                    any(char not in ('-', allowed) for char, allowed in zip(parts[2], 'rwx'))):
+                raise OSError(errno.EINVAL, 'Malformed ACL metadata: ' + repr(actual))
+            tag, qualifier, perms = parts
+            if tag + ':' + qualifier in entries:
+                raise OSError(errno.EINVAL, 'Duplicate ACL metadata: ' + repr(actual))
             entries[tag + ':' + qualifier] = perms
     if (entries != expected or observed.st_uid != spec.get('owner', 0) or
             observed.st_gid != spec.get('group', 0)):

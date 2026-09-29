@@ -178,3 +178,49 @@ newer Debian sid vendors and retains unsupported filesystem results separately.
 [CSH-064](../../docs/tickets/CSH-064-host-platform-external-prerequisites.md)
 owns every remaining condition; utility/libc/platform vendors own implementation.
 No privileged Darwin environment or physical terminal has been supplied.
+
+
+## CSH-064 namespace and bind prerequisites
+
+The qualification record includes actual Linux user/mount namespace links,
+UID/GID maps and the setgroups policy, separately from the helper's measured
+credentials, system limit queries and per-case verdicts. All controlled ACL
+fixtures validate numeric ACL metadata and ownership before predicates run;
+malformed, duplicate or unexpected entries are setup failures.
+
+A disposable root Linux container with util-linux `unshare` can supply an
+additional credential namespace without creating or editing user accounts:
+
+```sh
+unshare --user --map-users=0:0:1 --map-users=1:20001:65535 \
+  --map-groups=0:0:1 --map-groups=1:20001:65535 --setgroups=allow \
+  python3 tests/host_utilities.py ./cshell build/tests/host_utility_helper \
+  --path "$PWD/build/host-profile/bin:$(getconf PATH)" --strict-gaps --boundaries \
+  --printf-faults build/tests/host_printf_faults --controlled-identities \
+  --record /tmp/namespace.json
+```
+
+Repeat separately with `--unequal-acl` for strict grants and denials. Namespace
+setup or private-node failures are failures, never an implicit permission to
+skip a fixture. Keep the unshare command's status and diagnostics if it fails
+before the harness starts. This mapping preserves namespace root but maps
+fixture UID/GIDs 10001..10005 to outer 30001..30005; it does not establish every
+namespace or filesystem contract.
+
+For a separately supplied disposable directory, the focused diagnosis requires
+Linux root and changes only private temporary fixtures:
+
+```sh
+python3 tests/host_platform_probe.py --fixture-root /fixtures \
+  --path "$PWD/build/host-profile/bin:$(getconf PATH)" --record /tmp/platform.json
+```
+
+It compares socket stat/test/bracket predicates with a bounded AF_UNIX transfer,
+and external chmod with Python's direct chmod under owner/non-owner credentials.
+The child drops supplementary groups and all saved root IDs and records effective
+capabilities. Status, diagnostics, metadata before/after and executable/source
+hashes remain in JSON. A false grant returns failure even if the supplied mount
+is `fakeowner`. The probe supplements the full runtime/PTY integration and does
+not qualify a host by itself. See [CSH-064 evidence](../../docs/evidence/csh-064/README.md)
+for results and unavailable external prerequisites. CSH-064 retains qualification
+ownership; selected utility/libc/platform vendors retain implementation ownership.
