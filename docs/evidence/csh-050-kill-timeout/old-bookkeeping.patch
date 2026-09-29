@@ -1,0 +1,26 @@
+--- a/src/jobs.c
++++ b/src/jobs.c
+@@ -844,20 +844,14 @@
+             struct csh_job *job = find_job(jobs, argv[i], 0);
+             size_t j;
+             if (job == NULL || complete(job)) { rc = diagnostic("kill", "no such job", argv[i]); continue; }
+-            /* Keep the command's cumulative error separate from delivery to
+-             * this job/stage. A prior bad operand or refused sibling must not
+-             * leave successfully continued/killed processes marked stopped. */
+-            int clears_stop = sig == SIGCONT || sig == SIGKILL;
+             if (job->grouped) {
+                 if (kill(-job->pgid, sig) == -1) rc = diagnostic("kill", strerror(errno), argv[i]);
+-                else if (clears_stop)
+-                    for (j = 0; j < job->count; ++j) job->processes[j].stopped = 0;
+             } else for (j = 0; j < job->count; ++j) {
+-                if (job->processes[j].done) continue;
+-                if (kill(job->processes[j].pid, sig) == -1)
++                if (!job->processes[j].done && kill(job->processes[j].pid, sig) == -1)
+                     rc = diagnostic("kill", strerror(errno), argv[i]);
+-                else if (clears_stop) job->processes[j].stopped = 0;
+             }
++            if ((sig == SIGCONT || sig == SIGKILL) && rc == 0)
++                for (j = 0; j < job->count; ++j) job->processes[j].stopped = 0;
+         } else if (number(argv[i], &value) == -1 || (long)(pid_t)value != value)
+             rc = diagnostic("kill", "invalid pid", argv[i]);
+         else if (kill((pid_t)value, sig) == -1) rc = diagnostic("kill", strerror(errno), argv[i]);

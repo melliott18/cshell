@@ -1,0 +1,15 @@
+--- a/tests/kill_job_state.c
++++ b/tests/kill_job_state.c
+@@ -63,7 +63,11 @@
+         if (!children[i]) {
+             close(gate[1]); close(release[1]);
+             transfer(gate[0], 0, 1);
+-            assert(raise(SIGSTOP) == 0);
++            /* Use a process-directed stop, matching the builtin's CONT.
++             * Darwin's thread-directed raise(SIGSTOP) can remain in
++             * pthread_kill after the parent observes the stop and continues
++             * the process. The isolated reproducer is retained with CSH-050. */
++            assert(kill(getpid(), SIGSTOP) == 0);
+             transfer(release[0], 0, 1);
+             _exit(23 + i);
+         }

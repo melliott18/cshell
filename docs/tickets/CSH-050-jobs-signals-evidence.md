@@ -5,7 +5,7 @@
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-036, CSH-039
-- Branch: docs/CSH-050-retention-disposition
+- Branch: fix/CSH-050-partial-kill-timeout
 - Issue: [#82](https://github.com/melliott18/cshell/issues/82)
 
 ## Goal
@@ -24,14 +24,21 @@ criteria: the old unknown-cause observation is accepted without changing its
 failed result, and #99 retains recurrence ownership under unchanged CI checks.
 It is no longer the reason to hold this ticket open.
 
-Platform acceptance remains unmet for a new CSH-050 failure: hosted macOS
-`kill state: ungrouped/CONT/after` terminated with SIGALRM in run 36497619126.
-The retention case passed in that job. CSH-050 / #82 owns this new observation;
-it is not covered by the historical retention decision. Current-main macOS
-validation was also incomplete at the retained snapshot. The
-[baseline](../evidence/csh-050/README.md),
-[partial-delivery](../evidence/csh-050-acceptance/README.md) and
-[earlier review](../evidence/csh-050-review/README.md) retain their original results.
+The new partial-kill SIGALRM has now been reproduced and isolated to the
+fixture's Darwin self-stop/continue sequence, including a standalone program
+with no cshell code. The [investigation and repair](../evidence/csh-050-kill-timeout/README.md)
+replace child self-stops with parent-directed stops while preserving all state,
+status, diagnostic, cleanup and deadline assertions. The original bookkeeping
+bug still fails eight cases with this revised fixture. Source/test `d1ca90b`
+passes native and Docker focused normal and ASan/UBSan checks; the scoped
+platform criterion is satisfied for review. Keep status `review` until this
+fixture correction is integrated. The earlier failed runs remain failed.
+
+The [baseline](../evidence/csh-050/README.md),
+[partial-delivery](../evidence/csh-050-acceptance/README.md),
+[earlier review](../evidence/csh-050-review/README.md) and
+[retention disposition review](../evidence/csh-050-disposition/README.md)
+retain their original results and source identities.
 Base signal/asynchronous-list/wait semantics remain applicable while the UP
 utility profile is unselected; terminal capability conditions remain explicit.
 
@@ -79,7 +86,7 @@ add or split fixtures only for a concrete coverage gap.
 - [x] Every requirement above has a clause/condition map naming the reviewed
   normative source, selected policies, implementation, exact fixture assertions
   and any narrower unresolved defect or limitation.
-- [ ] Remaining applicable runtime cases pass on supported native macOS and
+- [x] Remaining applicable runtime cases pass on supported native macOS and
   Linux/Docker configurations; required PTY/capability or locale skips name
   the reason, scope and follow-up owner.
 - [x] Results record the source/suite revision, binary identity, compiler,
@@ -341,3 +348,25 @@ At the retained `07ee1cb` snapshot, Ubuntu and Docker passed and macOS was queue
 No fresh local run or complete current-main pass is claimed. Three criteria
 remain checked; CSH-012 stays closed. CSH-063 is now scoped complete, with
 external platform prerequisites retained under CSH-064.
+
+
+### Partial-kill failure investigation and repair (2026-09-29 UTC)
+
+At base `3e82c1d`, the original case fails locally on attempt 722 with SIGALRM.
+Phase and stack probes locate final wait with children still in their self-stop
+signal syscalls. A standalone program reproduces with both `raise(SIGSTOP)`
+and `kill(getpid(), SIGSTOP)`; changing between those calls is a rejected fix.
+The exact kernel interleaving is not claimed. Parent-directed stops avoid the
+demonstrated sequence while preserving kernel stop observation and all oracles.
+
+`d1ca90b` changes only fixture setup. The standalone parent-stop control and
+repaired original case each pass 3,000 repetitions, and all 14 cases pass 100
+times each. Restoring the old partial-delivery bookkeeping still produces eight
+assertion failures and six passing controls. Native/Docker normal
+`test-jobs-signals test-harness` pass, as do native/Docker ASan/UBSan
+`test-jobs test-jobs-pty`, with unchanged deadlines and no skips or sanitizer
+findings. [Retained evidence](../evidence/csh-050-kill-timeout/README.md) includes
+failed experiments, samples, source/binary identities and logs. No fresh full
+general-runtime sweep or patched hosted CI pass is claimed. All scoped criteria
+are now supported; integration is required before marking this ticket done.
+The historical CSH-057 retention disposition and CSH-012 gate are unchanged.

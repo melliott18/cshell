@@ -252,7 +252,8 @@ The [CSH-050 integration record](evidence/csh-050/README.md) identifies its
 pre-correction baseline; the [post-integration review](evidence-reconciliation.md)
 records its earlier disposition. The [later acceptance review](evidence/csh-050-disposition/README.md)
 applies the retention disposition to CSH-050 and records its new independent
-partial-kill failure without rewriting historical artifacts.
+partial-kill failure. The [subsequent investigation](evidence/csh-050-kill-timeout/README.md)
+reproduces and repairs the fixture setup without rewriting historical artifacts.
 
 | Residual condition | Current disposition / owner |
 | --- | --- |
@@ -260,15 +261,16 @@ partial-kill failure without rewriting historical artifacts.
 | Public resume PTY deadlines | CSH-057's [timeout diagnosis](evidence/csh-057-timeouts/README.md) reproduces and repairs the process-group, inherited-mask and exit-status-gap races; PR #121 integrated them as `87fdfe8`. |
 | Historical retained-status deadline | The original 60-second hosted failure remains failed and unknown-cause. CSH-050 independently accepts the later [formal disposition](evidence/csh-057-retention-disposition/README.md) for its scoped evidence criteria; the unchanged CI case remains enforced and a new retention failure reopens #99. This old observation no longer holds CSH-050 open. |
 | Partial `kill` delivery left successful stages stopped | Corrected in PR #120 (`6498859`); eight failing-before cases and all 14 passing-after cases distinguish cumulative command errors from per-stage state. See [partial-delivery assertions](#csh-050-partial-delivery-review). |
-| New partial-kill fixture SIGALRM | CSH-050 / #82 owns macOS `kill state: ungrouped/CONT/after` in run 36497619126: status -14, empty stdout, 13/14 cases passed. Cause unknown; the retention case passed in the same job. The historical retention disposition does not cover this new failure. |
+| Partial-kill fixture SIGALRM | CSH-050 / #82 reproduced the Darwin self-stop/continue hang in the fixture and a standalone program. `d1ca90b` replaces child self-stops with parent-directed stops. [Before/after investigation](evidence/csh-050-kill-timeout/README.md) retains failed experiments, passing platform/sanitizer checks and proof that the original eight regression failures remain detectable. The fixture repair awaits integration; the separate historical retention disposition is unchanged. |
 | Inheritance/delivery, public interrupted waits, listing failures, group delivery and permission diagnostics | CSH-058 is integrated; its [exact matrix](#csh-058) supersedes the corresponding open entries in the historical CSH-054 table. Permission evidence uses syscall interposition, not host credential enforcement. |
 | External kill status mapping | Stock Debian failure remains a stock-host gap under CSH-052. CSH-056's opt-in qualified profile resolves that selected case; CSH-059/060 record wider host boundaries and CSH-061/062 add scoped evidence; [CSH-063](tickets/CSH-063-host-platform-residual-qualification.md) adds scoped qualification and [CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md) owns the remaining external platform prerequisites. Builtin kill results do not qualify the external binary. |
 | Loaded transport deadlines and incomplete sanitizer runs | Retain the failed/not-run records under CSH-040/054 and CSH-057/058; serial passing results establish only their own observations. |
 
-CSH-050 independently accepts the old retention disposition, but its platform
-criterion remains unchecked because of the new partial-kill failure. Current-main
-macOS validation was also incomplete at the retained snapshot. Documented
-host/capability limits retain their individual scopes and owners.
+CSH-050 independently accepts the old retention disposition. Its reproduced
+partial-kill fixture failure is repaired and its scoped platform criterion now
+has native/Docker normal and sanitizer support at `d1ca90b`; ticket status stays
+`review` pending integration. Documented host/capability limits retain their
+individual scopes and owners, and patched hosted CI is not yet claimed.
 The CSH-012 conformance gate stays closed. Parent rows remain implemented
 subsets, with stable family anchors; no entire family is promoted to verified.
 
@@ -464,5 +466,7 @@ updates successful group/stage deliveries individually and preserves the
 aggregate error. [Retained review results](evidence/csh-050-acceptance/README.md)
 identify the exact tested revision and environments. This fix is merged as
 `6498859`. The [later review](evidence/csh-050-disposition/README.md) distinguishes
-accepted historical retention risk from the newly observed partial-kill SIGALRM;
+accepted historical retention risk from the partial-kill SIGALRM; the
+[subsequent investigation](evidence/csh-050-kill-timeout/README.md) repairs the latter
+with unchanged regression oracles;
 no whole requirement family is promoted.
