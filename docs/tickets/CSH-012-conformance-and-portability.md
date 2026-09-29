@@ -1,6 +1,6 @@
 # CSH-012: Audit POSIX conformance and portability
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: milestone
 - Parent: None
@@ -87,8 +87,9 @@ diagnosis work. Their repair is not a new dependency of this audit. Acceptance
 of unresolved historical observations applies only to audit closure; assertions,
 time limits and future CI failure enforcement remain unchanged.
 
-All prerequisites and both children are done. Ready to integrate in PR #139;
-status becomes done only after the closure record is on main. The original
+All prerequisites and both children are done. PR #139 integrated the closure
+as `0bf8b0220abc5e06b5751382bf68bdc225feaef9` on 2026-09-29 UTC. The audit is
+accepted and done on main. The original
 criteria above are satisfied as evidence/ownership accounting, not as a POSIX
 conformance claim. Audit complete; known gaps are documented and owned;
 POSIX conformance remains unclaimed.

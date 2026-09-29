@@ -2,8 +2,8 @@
 
 **Audit complete; known gaps are documented and owned; POSIX conformance remains
 unclaimed.** This closure supplements the [earlier acceptance review](conformance-acceptance-review.md)
-without changing its source-qualified results. Integration is pending PR #139;
-the milestone remains `review` until that change lands in `main`.
+without changing its source-qualified results. PR #139 integrated this closure as
+`0bf8b0220abc5e06b5751382bf68bdc225feaef9` on 2026-09-29 UTC. CSH-012 is done.
 
 ## Original acceptance criteria
 
@@ -60,8 +60,8 @@ passing baseline evidence and the later failed/cancelled attempts are all
 included, with their exact revisions. Strict runtime tests remain enabled and
 unchanged. Closure is an audit decision, not a claim that every CI attempt passed.
 
-After PR #139 integrates, record its merge commit, mark the ticket `done` in
-`main`, synchronize issue #13 and close it. Recurrence goes to the explicit
+PR #139 is merged; the ticket is marked `done` in `main` and issue #13 is
+synchronized and closed as completed. Recurrence goes to the explicit
 owner; omitted or falsely characterized requirements/evidence reopen the audit.
 
 ## Integration reconciliation (`008c1f9`)
