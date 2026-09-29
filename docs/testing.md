@@ -1144,6 +1144,11 @@ CSH-057 completion. It grants no test allowance: any new retention timeout,
 unexpected termination, sanitizer, status, ownership or cleanup failure remains
 a failure and reopens [CSH-057 / #99](tickets/CSH-057-job-lifecycle-boundaries.md).
 Preserve its source and logs before rerunning; a successful retry does not erase it.
+The [2026-09-29 recurrence investigation](evidence/csh-057-retention-recurrence/README.md)
+retains a new macOS sanitizer timeout with 448 completed fill iterations and
+last output received at 58.721 seconds. It distinguishes aggregate deadline
+exhaustion from the still-unconfirmed reason for that elapsed time. CSH-057 is
+reopened; the retention case and both deadline levels remain unchanged.
 
 The [foreground-resume follow-up](evidence/csh-057-pty-fix/README.md) extends the
 existing terminal fault fixture with a synchronized exit-before-SIGCONT case,

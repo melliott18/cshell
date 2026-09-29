@@ -5,10 +5,27 @@
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-034, CSH-035
-- Branch: docs/CSH-057-retention-disposition
+- Branch: docs/CSH-057-retention-recurrence
 - Issue: [#99](https://github.com/melliott18/cshell/issues/99)
 
-## Final review disposition
+## Current review: hosted recurrence
+
+The 2026-09-29 macOS sanitizer recurrence remains unresolved under issue #99.
+The [recorded-progress investigation](../evidence/csh-057-retention-recurrence/README.md)
+establishes that the 60-second outer deadline expired after at least 448
+successful capacity-fill iterations. The runner received the last checkpoint
+at 58.721 seconds; this is a receipt time, not a per-child completion timestamp.
+It does not establish a five-second operation stall or identify the cause of
+the hosted elapsed time. The same source tree passed the peer sanitizer job in
+51.183 seconds. Local unmodified and instrumented sanitizer probes pass but do
+not diagnose or repair the hosted failure.
+
+Runtime, assertions and deadlines remain unchanged. Closure requires a
+demonstrated corrective change or an explicit new disposition of this
+recurrence and its aggregate budget; another passing retry is insufficient.
+The historical acceptance below does not apply to this new failure.
+
+## Historical review disposition
 
 The scoped lifecycle implementation and all demonstrated repairs are integrated:
 PR #109 (`ab0c779`), PR #112 (`19cd70e`), PR #121 (`87fdfe8`), and the diagnostic
@@ -178,3 +195,10 @@ Its last progress at 58.721 seconds was capacity 256, round 2, completed 128.
 The duplicate run 36602689841 passed; that pass does not explain this failure.
 The earlier statement that the timeout had not reproduced describes the prior
 review only. No assertion or deadline is relaxed by this integration.
+
+The [recurrence evidence](../evidence/csh-057-retention-recurrence/README.md)
+preserves both complete hosted logs, verifies their identical source trees,
+extracts the exact 524-byte expected prefix, and records source review and local
+fork/reap timing. The observed mechanism is aggregate deadline exhaustion after
+substantial completed work; the reason for the variable hosted elapsed time
+remains unconfirmed. No new runtime defect or corrective change is established.

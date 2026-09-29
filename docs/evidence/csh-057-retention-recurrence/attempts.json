@@ -1,0 +1,19 @@
+{
+  "baseline_probe_exit": 0,
+  "profile_probe_exit": 0,
+  "concurrent_launcher_exit": 0,
+  "concurrent_worker_failures": [
+    [],
+    [],
+    [],
+    []
+  ],
+  "instrumentation_note": "The prior fork-profile patch did not apply at the execute.c header because CSH-066 added stack.h. No partial changes were applied by that failed git apply. The adapted complete patch is profile.patch. An intermediate phase-only binary was built but not run.",
+  "baseline_source_note": "Local probes use current main 6029593, not failing checkout c707ecb. They cannot establish the historical failure cause.",
+  "probe_environment": {
+    "MallocNanoZone": "0",
+    "ASAN_OPTIONS": "not passed to candidate by smoke.capture",
+    "UBSAN_OPTIONS": "not passed to candidate by smoke.capture"
+  },
+  "artifact_validation_note": "The staged whitespace check flagged a blank context line in profile.patch. Its single-space context marker was normalized to an empty line; git apply --check still accepts the patch and the complete change passes git diff --check."
+}

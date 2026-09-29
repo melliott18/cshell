@@ -402,8 +402,13 @@ the parent requirement families to complete verification.
 PR #121 subsequently integrated the separate timeout repairs and PR #124
 integrated safe diagnostic-worker isolation. The
 [formal retention disposition](evidence/csh-057-retention-disposition/README.md)
-closes the scoped CSH-057 review while preserving the original unknown-cause
+closed the scoped CSH-057 review while preserving the original unknown-cause
 failure, exact test enforcement and same-ticket reopening ownership.
+The [2026-09-29 recurrence](evidence/csh-057-retention-recurrence/README.md)
+reopens #99: its outer deadline expired after at least 448 successful fill
+iterations, with the last output received at 58.721 seconds. The specific cause
+of the elapsed time remains unconfirmed; the old acceptance does not cover this
+new failure, and the investigation proposes no runtime or deadline change.
 
 <a id="csh-058"></a>
 
