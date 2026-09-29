@@ -1,11 +1,11 @@
 # CSH-068: Inventory the complete required host utility contract
 
-- Status: in-progress
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: Assigned when work starts
+- Branch: test/CSH-068-host-contract-inventory
 - Issue: [#137](https://github.com/melliott18/cshell/issues/137)
 
 ## Goal
@@ -26,7 +26,7 @@ Expand the system-wide host obligation into a reviewable inventory instead of tr
 - [x] Document PATH, packages, fallback shell, OS/libc/filesystem/credential assumptions and reproducible setup.
 - [x] Keep stock-host gaps, qualified subset results and complete-system qualification distinct in the parent audit.
 
-- [ ] Qualify the remaining external utility contracts assigned here by the closure
+- [x] Qualify the remaining external utility contracts assigned here by the closure
   inventory, or transfer individual contracts to narrower open implementation owners.
 
 ## Validation
@@ -38,10 +38,13 @@ Review the normative §1.6 inventory independently of tests/host_utility_cases.p
 The [complete inventory](../host-system-inventory.md) supplies 155 indexed utility
 pages, the `[` spelling and 15 special builtins with applicability, actual native
 and Debian providers, exact executable identities and per-utility open contracts.
-This completes inventory for CSH-012. This ticket stays open as the concrete
-owner for the unqualified external contracts named there; qualification is not
-inferred from executable presence. CSH-064's narrower conditions retain their evidence and
-vendor implementation owners, with further qualification now owned here. Complete or transfer those contracts before closing this owner.
+This completes inventory for CSH-012. The remaining criterion is satisfied by
+transferring all 101 external contracts and all thirty retained conditions to
+[CSH-070–078](../host-system-inventory.md#current-contract-ownership). Each ticket
+names its utilities, normative pages, measured provider gaps, required capabilities,
+strict validation and vendor implementation ownership. Eight conditional
+prerequisite reports also have individual owners. No full utility qualification
+is inferred from this transfer or from executable presence.
 
 ## Implementation notes/evidence
 
@@ -50,3 +53,25 @@ at source `c8c1c91372e6e77cf2e7032765cd3c068fa1906d`.
 [Strict probe inputs and actual results](../evidence/csh-012/acceptance-c8c1c91/contracts.json)
 and [review evidence](../evidence/csh-012/acceptance-c8c1c91/README.md)
 are retained. No production repair or completion is claimed by this review.
+
+
+## Implementation and validation
+
+Implemented on `test/CSH-068-host-contract-inventory` in a separate managed
+worktree. [Completion evidence](../evidence/csh-068/README.md) records the current
+ownership manifest, published CSH-070–078 implementation tickets, normative
+index/§1.6 review, fresh native/Docker provider identities and exact strict profile
+results. Historical source-qualified inventories and CSH-064 evidence are unchanged.
+
+`make test-host-inventory` checks all 101 external contracts, thirty retained
+conditions, eight conditional prerequisites and both directions of the utility
+ledger, plus 10 regression tests. It runs in `make test` and
+`make test-host-profile`, including Docker with the required documentation inputs.
+Reports now name current qualification owners instead of completed CSH-064.
+
+Native macOS and Docker/Linux each pass 1162 selected host assertions with zero
+failures or gap allowances. The initial Docker missing-document failure is
+retained alongside the repaired passing run. Requirement ownership, historical
+artifact integrity, local Markdown links and `git diff --check` pass. No production
+C changes or full-system qualification are claimed. Ready for review; `done`
+requires integration under the repository workflow.

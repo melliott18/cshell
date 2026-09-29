@@ -1260,3 +1260,14 @@ The Docker image includes its Dockerfile for that source inventory.
 Debian sid profiles, runtime/PTY integration, strict vendor failures and unsupported
 tmpfs/host-bind fixtures. [CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md)
 owns the individually retained residuals; no parent utility is promoted.
+
+## Complete host contract inventory
+
+`make test-host-inventory` validates the current contract ownership overlay in
+`tests/host_contracts.json` against the complete normative utility inventory and
+retained CSH-064 condition IDs. It runs in `make test` and `make test-host-profile`.
+It rejects missing/duplicate contracts, closed or missing owners, stale Markdown
+rows and unassigned conditional prerequisite reports. Regression checks exercise
+these failure cases and the runner's emitted ownership without invoking utilities.
+This is an accounting check, not a conformance suite. See the
+[current individual contracts](host-system-inventory.md#current-contract-ownership).

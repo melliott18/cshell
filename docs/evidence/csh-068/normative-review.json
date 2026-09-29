@@ -1,0 +1,40 @@
+{
+  "retrieved_utc": "2026-09-29T16:14:05.752849+00:00",
+  "index": {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/idx/utilities.html",
+    "sha256": "4590ad99a332fa72048790c28f38dbb32588c2d4585a77b5a422f52ff23c43a9",
+    "pages": 155,
+    "matches_retained_index": true
+  },
+  "chapter": {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap01.html",
+    "sha256": "9c010fcd7ff607111752fa6539357ba07b3799b80f47fc1cca5f91eb0b84b5b5",
+    "intrinsics": [
+      "alias",
+      "bg",
+      "cd",
+      "command",
+      "fc",
+      "fg",
+      "getopts",
+      "hash",
+      "jobs",
+      "kill",
+      "read",
+      "type",
+      "ulimit",
+      "umask",
+      "unalias",
+      "wait"
+    ]
+  },
+  "counts": {
+    "indexed_pages": 155,
+    "utility_names_with_test_alias": 156,
+    "conditional_names": 45,
+    "applicable_names": 111,
+    "exec_required_names": 101,
+    "special_builtins": 15
+  },
+  "review": "Fresh index and section 1.6/1.7 reviewed independently of host_utility_cases.py; applicability decisions and per-page sources retained from closure inventory. Special builtins are separately exempt. No new utility qualification."
+}

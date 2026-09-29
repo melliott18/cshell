@@ -148,10 +148,15 @@ The original dependency diagrams above retain their initial split layout.
 
 ## Current acceptance work
 
-The [CSH-012 acceptance review](conformance-acceptance-review.md) records current
+The [CSH-012 audit closure](conformance-closure.md) records current
 requirements, defects, supported-platform evidence and documentation corrections.
-CSH-050's repair is integrated. CSH-064 retains host qualification residuals;
+CSH-050's repair is integrated. CSH-064 retains historical host residual evidence;
 CSH-065/066 own interactive parser recovery and fixed nesting limits,
-CSH-067 owns shell locale/pathname qualification, CSH-068 owns the complete
-host utility inventory, and CSH-069 owns finite historical failure dispositions.
-These are standalone follow-ups; CSH-012 retains its original children and gates.
+CSH-067 owns shell locale/pathname qualification, CSH-068 completes the
+host utility inventory and contract assignments, and CSH-069 owns finite historical failure dispositions.
+These are standalone follow-ups; CSH-012 is complete as an accounting audit.
+
+CSH-068 transfers the 101 external contracts and 30 retained conditions to
+[CSH-070–078](host-system-inventory.md#current-contract-ownership), grouped by
+utility behavior. These are independent open implementation owners, not a new
+sequence of platform milestones.

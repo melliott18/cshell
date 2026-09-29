@@ -1,0 +1,1922 @@
+{
+  "checked_utc": "2026-09-29T16:16:46.546514+00:00",
+  "source_revision": "f07568223c02f488924e8599bf9b9f1013b03164",
+  "requirement_count": 131,
+  "applicable_count": 115,
+  "excluded_ids": [
+    "O-003",
+    "O-008",
+    "O-010",
+    "O-011",
+    "O-015",
+    "O-020",
+    "O-021",
+    "O-022",
+    "O-023",
+    "O-024",
+    "O-025",
+    "U-018",
+    "U-021",
+    "U-022",
+    "U-025",
+    "U-028"
+  ],
+  "forward_reverse_pairs": 473,
+  "ownership_matches": true,
+  "primary_allocations": {
+    "CSH-046": {
+      "status": "done",
+      "ids": [
+        "GRAM-001",
+        "GRAM-002",
+        "GRAM-003",
+        "GRAM-004",
+        "GRAM-005",
+        "LEX-001",
+        "LEX-002",
+        "LEX-003",
+        "LEX-004",
+        "LEX-005",
+        "LEX-006",
+        "SH-001",
+        "SH-002",
+        "SH-003",
+        "SH-004",
+        "SH-005",
+        "SH-006",
+        "SH-007",
+        "SH-008",
+        "U-017",
+        "U-031"
+      ]
+    },
+    "CSH-047": {
+      "status": "done",
+      "ids": [
+        "ENV-002",
+        "ENV-004",
+        "EXP-001",
+        "EXP-002",
+        "EXP-003",
+        "EXP-004",
+        "EXP-005",
+        "EXP-006",
+        "EXP-007",
+        "EXP-008",
+        "EXP-009",
+        "EXP-010",
+        "EXP-011"
+      ]
+    },
+    "CSH-048": {
+      "status": "done",
+      "ids": [
+        "ENV-001",
+        "ENV-003",
+        "ENV-005",
+        "ENV-006",
+        "U-001",
+        "U-002",
+        "U-005",
+        "U-006",
+        "U-007",
+        "U-009",
+        "U-010",
+        "U-011",
+        "U-012",
+        "U-013",
+        "U-014",
+        "U-016",
+        "U-019",
+        "U-020",
+        "U-023",
+        "U-024",
+        "U-027",
+        "U-029",
+        "U-030",
+        "U-033"
+      ]
+    },
+    "CSH-049": {
+      "status": "done",
+      "ids": [
+        "EXEC-001",
+        "EXEC-002",
+        "EXEC-003",
+        "EXEC-004",
+        "EXEC-005",
+        "EXEC-006",
+        "EXEC-007",
+        "EXEC-008",
+        "EXEC-010",
+        "EXEC-011",
+        "EXEC-012",
+        "EXEC-013",
+        "EXEC-014",
+        "EXEC-015",
+        "EXEC-016",
+        "O-026",
+        "RED-001",
+        "RED-002",
+        "RED-003",
+        "RED-004",
+        "RED-005",
+        "RED-006",
+        "SH-009",
+        "U-003",
+        "U-004"
+      ]
+    },
+    "CSH-050": {
+      "status": "done",
+      "ids": [
+        "EXEC-009",
+        "JOB-001",
+        "JOB-002",
+        "JOB-003",
+        "SIG-001",
+        "SIG-002",
+        "SIG-003",
+        "U-008",
+        "U-015",
+        "U-026",
+        "U-032"
+      ]
+    },
+    "CSH-051": {
+      "status": "done",
+      "ids": [
+        "O-001",
+        "O-002",
+        "O-004",
+        "O-005",
+        "O-006",
+        "O-007",
+        "O-009",
+        "O-012",
+        "O-013",
+        "O-014",
+        "O-016",
+        "O-017",
+        "O-018"
+      ]
+    },
+    "CSH-052": {
+      "status": "done",
+      "ids": [
+        "U-034",
+        "U-035",
+        "U-036",
+        "U-037",
+        "U-038",
+        "U-039",
+        "U-040",
+        "U-041"
+      ]
+    }
+  },
+  "ticket_statuses": {
+    "CSH-001": {
+      "path": "docs/tickets/CSH-001-project-foundation.md",
+      "status": "done"
+    },
+    "CSH-002": {
+      "path": "docs/tickets/CSH-002-legacy-safety.md",
+      "status": "superseded"
+    },
+    "CSH-003": {
+      "path": "docs/tickets/CSH-003-invocation-and-test-harness.md",
+      "status": "done"
+    },
+    "CSH-004": {
+      "path": "docs/tickets/CSH-004-lexer-and-words.md",
+      "status": "done"
+    },
+    "CSH-005": {
+      "path": "docs/tickets/CSH-005-parser-and-ast.md",
+      "status": "done"
+    },
+    "CSH-006": {
+      "path": "docs/tickets/CSH-006-execution-and-redirection.md",
+      "status": "done"
+    },
+    "CSH-007": {
+      "path": "docs/tickets/CSH-007-variables-and-parameters.md",
+      "status": "done"
+    },
+    "CSH-008": {
+      "path": "docs/tickets/CSH-008-word-expansion.md",
+      "status": "done"
+    },
+    "CSH-009": {
+      "path": "docs/tickets/CSH-009-compounds-and-functions.md",
+      "status": "done"
+    },
+    "CSH-010": {
+      "path": "docs/tickets/CSH-010-builtins-options-and-aliases.md",
+      "status": "done"
+    },
+    "CSH-011": {
+      "path": "docs/tickets/CSH-011-signals-and-job-control.md",
+      "status": "done"
+    },
+    "CSH-012": {
+      "path": "docs/tickets/CSH-012-conformance-and-portability.md",
+      "status": "done"
+    },
+    "CSH-013": {
+      "path": "docs/tickets/CSH-013-visual-roadmap.md",
+      "status": "done"
+    },
+    "CSH-014": {
+      "path": "docs/tickets/CSH-014-input-memory-safety.md",
+      "status": "superseded"
+    },
+    "CSH-015": {
+      "path": "docs/tickets/CSH-015-process-pipe-safety.md",
+      "status": "superseded"
+    },
+    "CSH-016": {
+      "path": "docs/tickets/CSH-016-input-and-invocation.md",
+      "status": "done"
+    },
+    "CSH-017": {
+      "path": "docs/tickets/CSH-017-test-harness-and-ci.md",
+      "status": "done"
+    },
+    "CSH-018": {
+      "path": "docs/tickets/CSH-018-status-and-cli-integration.md",
+      "status": "done"
+    },
+    "CSH-019": {
+      "path": "docs/tickets/CSH-019-simple-command-redirections.md",
+      "status": "done"
+    },
+    "CSH-020": {
+      "path": "docs/tickets/CSH-020-pipeline-lifecycle.md",
+      "status": "done"
+    },
+    "CSH-021": {
+      "path": "docs/tickets/CSH-021-lists-and-execution-contexts.md",
+      "status": "done"
+    },
+    "CSH-022": {
+      "path": "docs/tickets/CSH-022-shell-state-storage.md",
+      "status": "done"
+    },
+    "CSH-023": {
+      "path": "docs/tickets/CSH-023-assignment-environments.md",
+      "status": "done"
+    },
+    "CSH-024": {
+      "path": "docs/tickets/CSH-024-value-expansions.md",
+      "status": "done"
+    },
+    "CSH-025": {
+      "path": "docs/tickets/CSH-025-field-and-pathname-expansion.md",
+      "status": "done"
+    },
+    "CSH-026": {
+      "path": "docs/tickets/CSH-026-substitution-and-heredoc-integration.md",
+      "status": "done"
+    },
+    "CSH-027": {
+      "path": "docs/tickets/CSH-027-compound-syntax.md",
+      "status": "done"
+    },
+    "CSH-028": {
+      "path": "docs/tickets/CSH-028-control-flow-and-functions.md",
+      "status": "done"
+    },
+    "CSH-029": {
+      "path": "docs/tickets/CSH-029-state-builtins.md",
+      "status": "done"
+    },
+    "CSH-030": {
+      "path": "docs/tickets/CSH-030-alias-substitution.md",
+      "status": "done"
+    },
+    "CSH-031": {
+      "path": "docs/tickets/CSH-031-evaluation-builtins.md",
+      "status": "done"
+    },
+    "CSH-032": {
+      "path": "docs/tickets/CSH-032-shell-options.md",
+      "status": "done"
+    },
+    "CSH-033": {
+      "path": "docs/tickets/CSH-033-pty-test-harness.md",
+      "status": "done"
+    },
+    "CSH-034": {
+      "path": "docs/tickets/CSH-034-job-control.md",
+      "status": "done"
+    },
+    "CSH-035": {
+      "path": "docs/tickets/CSH-035-traps-and-signal-semantics.md",
+      "status": "done"
+    },
+    "CSH-036": {
+      "path": "docs/tickets/CSH-036-conformance-matrix.md",
+      "status": "done"
+    },
+    "CSH-037": {
+      "path": "docs/tickets/CSH-037-portability-audit.md",
+      "status": "done"
+    },
+    "CSH-038": {
+      "path": "docs/tickets/CSH-038-legacy-retirement-plan.md",
+      "status": "done"
+    },
+    "CSH-039": {
+      "path": "docs/tickets/CSH-039-legacy-retirement.md",
+      "status": "done"
+    },
+    "CSH-040": {
+      "path": "docs/tickets/CSH-040-macos-harness-cleanup.md",
+      "status": "done"
+    },
+    "CSH-041": {
+      "path": "docs/tickets/CSH-041-arithmetic-substitution-replay.md",
+      "status": "done"
+    },
+    "CSH-042": {
+      "path": "docs/tickets/CSH-042-locale-semantics.md",
+      "status": "done"
+    },
+    "CSH-043": {
+      "path": "docs/tickets/CSH-043-redirection-offset.md",
+      "status": "done"
+    },
+    "CSH-044": {
+      "path": "docs/tickets/CSH-044-intermittent-bg-prompt.md",
+      "status": "done"
+    },
+    "CSH-045": {
+      "path": "docs/tickets/CSH-045-jobs-fixture-timeout.md",
+      "status": "done"
+    },
+    "CSH-046": {
+      "path": "docs/tickets/CSH-046-invocation-syntax-evidence.md",
+      "status": "done"
+    },
+    "CSH-047": {
+      "path": "docs/tickets/CSH-047-expansion-evidence.md",
+      "status": "done"
+    },
+    "CSH-048": {
+      "path": "docs/tickets/CSH-048-state-builtin-evidence.md",
+      "status": "done"
+    },
+    "CSH-049": {
+      "path": "docs/tickets/CSH-049-execution-evidence.md",
+      "status": "done"
+    },
+    "CSH-050": {
+      "path": "docs/tickets/CSH-050-jobs-signals-evidence.md",
+      "status": "done"
+    },
+    "CSH-051": {
+      "path": "docs/tickets/CSH-051-shell-option-evidence.md",
+      "status": "done"
+    },
+    "CSH-052": {
+      "path": "docs/tickets/CSH-052-host-utility-evidence.md",
+      "status": "done"
+    },
+    "CSH-053": {
+      "path": "docs/tickets/CSH-053-multibyte-lexical-boundaries.md",
+      "status": "done"
+    },
+    "CSH-054": {
+      "path": "docs/tickets/CSH-054-signal-contract-gaps.md",
+      "status": "done"
+    },
+    "CSH-055": {
+      "path": "docs/tickets/CSH-055-execution-contract-gaps.md",
+      "status": "done"
+    },
+    "CSH-056": {
+      "path": "docs/tickets/CSH-056-host-contract-gaps.md",
+      "status": "done"
+    },
+    "CSH-057": {
+      "path": "docs/tickets/CSH-057-job-lifecycle-boundaries.md",
+      "status": "done"
+    },
+    "CSH-058": {
+      "path": "docs/tickets/CSH-058-signal-edge-evidence.md",
+      "status": "done"
+    },
+    "CSH-059": {
+      "path": "docs/tickets/CSH-059-host-boundary-capabilities.md",
+      "status": "done"
+    },
+    "CSH-060": {
+      "path": "docs/tickets/CSH-060-extended-host-environments.md",
+      "status": "done"
+    },
+    "CSH-061": {
+      "path": "docs/tickets/CSH-061-host-environment-residuals.md",
+      "status": "done"
+    },
+    "CSH-062": {
+      "path": "docs/tickets/CSH-062-host-contract-controlled-platforms.md",
+      "status": "done"
+    },
+    "CSH-063": {
+      "path": "docs/tickets/CSH-063-host-platform-residual-qualification.md",
+      "status": "done"
+    },
+    "CSH-064": {
+      "path": "docs/tickets/CSH-064-host-platform-external-prerequisites.md",
+      "status": "done"
+    },
+    "CSH-065": {
+      "path": "docs/tickets/CSH-065-interactive-parser-recovery.md",
+      "status": "ready"
+    },
+    "CSH-066": {
+      "path": "docs/tickets/CSH-066-resource-bounded-nesting.md",
+      "status": "ready"
+    },
+    "CSH-067": {
+      "path": "docs/tickets/CSH-067-shell-locale-pathname-qualification.md",
+      "status": "ready"
+    },
+    "CSH-068": {
+      "path": "docs/tickets/CSH-068-host-system-contract-inventory.md",
+      "status": "review"
+    },
+    "CSH-069": {
+      "path": "docs/tickets/CSH-069-historical-failure-dispositions.md",
+      "status": "in-progress"
+    },
+    "CSH-070": {
+      "path": "docs/tickets/CSH-070-host-formatted-output.md",
+      "status": "ready"
+    },
+    "CSH-071": {
+      "path": "docs/tickets/CSH-071-host-permissions-identities.md",
+      "status": "ready"
+    },
+    "CSH-072": {
+      "path": "docs/tickets/CSH-072-host-filesystem-paths.md",
+      "status": "ready"
+    },
+    "CSH-073": {
+      "path": "docs/tickets/CSH-073-host-text-streams.md",
+      "status": "ready"
+    },
+    "CSH-074": {
+      "path": "docs/tickets/CSH-074-host-languages-editors.md",
+      "status": "ready"
+    },
+    "CSH-075": {
+      "path": "docs/tickets/CSH-075-host-execution-processes.md",
+      "status": "ready"
+    },
+    "CSH-076": {
+      "path": "docs/tickets/CSH-076-host-locale-catalogs.md",
+      "status": "ready"
+    },
+    "CSH-077": {
+      "path": "docs/tickets/CSH-077-host-terminal-utilities.md",
+      "status": "ready"
+    },
+    "CSH-078": {
+      "path": "docs/tickets/CSH-078-host-service-utilities.md",
+      "status": "ready"
+    }
+  },
+  "requirements": {
+    "SH-001": {
+      "matrix": "posix-matrix.md#sh-001",
+      "owners": [
+        "CSH-016",
+        "CSH-018",
+        "CSH-046"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#sh-001); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). The family is not promoted; live residual owners are recorded in the [acceptance review](conformance-acceptance-review.md#requirement-review)."
+    },
+    "SH-002": {
+      "matrix": "posix-matrix.md#sh-002",
+      "owners": [
+        "CSH-016",
+        "CSH-022",
+        "CSH-046"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#sh-002); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). The family is not promoted; live residual owners are recorded in the [acceptance review](conformance-acceptance-review.md#requirement-review)."
+    },
+    "SH-003": {
+      "matrix": "posix-matrix.md#sh-003",
+      "owners": [
+        "CSH-016",
+        "CSH-046",
+        "CSH-067"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#sh-003); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). The family is not promoted; live residual owners are recorded in the [acceptance review](conformance-acceptance-review.md#requirement-review)."
+    },
+    "SH-004": {
+      "matrix": "posix-matrix.md#sh-004",
+      "owners": [
+        "CSH-016",
+        "CSH-018",
+        "CSH-033",
+        "CSH-046"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#sh-004); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). The family is not promoted; live residual owners are recorded in the [acceptance review](conformance-acceptance-review.md#requirement-review)."
+    },
+    "SH-005": {
+      "matrix": "posix-matrix.md#sh-005",
+      "owners": [
+        "CSH-016",
+        "CSH-018",
+        "CSH-046"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#sh-005); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). The family is not promoted; live residual owners are recorded in the [acceptance review](conformance-acceptance-review.md#requirement-review)."
+    },
+    "SH-006": {
+      "matrix": "posix-matrix.md#sh-006",
+      "owners": [
+        "CSH-016",
+        "CSH-031",
+        "CSH-046",
+        "CSH-066"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#sh-006); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). The family is not promoted; live residual owners are recorded in the [acceptance review](conformance-acceptance-review.md#requirement-review)."
+    },
+    "SH-007": {
+      "matrix": "posix-matrix.md#sh-007",
+      "owners": [
+        "CSH-016",
+        "CSH-033",
+        "CSH-046"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#sh-007); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). The family is not promoted; live residual owners are recorded in the [acceptance review](conformance-acceptance-review.md#requirement-review)."
+    },
+    "SH-008": {
+      "matrix": "posix-matrix.md#sh-008",
+      "owners": [
+        "CSH-018",
+        "CSH-046",
+        "CSH-065"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#sh-008); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). The family is not promoted; live residual owners are recorded in the [acceptance review](conformance-acceptance-review.md#requirement-review)."
+    },
+    "SH-009": {
+      "matrix": "posix-matrix.md#sh-009",
+      "owners": [
+        "CSH-019",
+        "CSH-025",
+        "CSH-037",
+        "CSH-043",
+        "CSH-049"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#sh-009), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "LEX-001": {
+      "matrix": "posix-matrix.md#lex-001",
+      "owners": [
+        "CSH-004",
+        "CSH-046"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#lex-001); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). The family is not promoted; live residual owners are recorded in the [acceptance review](conformance-acceptance-review.md#requirement-review)."
+    },
+    "LEX-002": {
+      "matrix": "posix-matrix.md#lex-002",
+      "owners": [
+        "CSH-004",
+        "CSH-046",
+        "CSH-053",
+        "CSH-067"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#lex-002); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). Family remains open for the map's stated limitations; owners CSH-046 and CSH-053 ([bounded multibyte witnesses](locales.md#raw-byte-lexical-witnesses-csh-053))."
+    },
+    "LEX-003": {
+      "matrix": "posix-matrix.md#lex-003",
+      "owners": [
+        "CSH-004",
+        "CSH-046"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#lex-003); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). The family is not promoted; live residual owners are recorded in the [acceptance review](conformance-acceptance-review.md#requirement-review)."
+    },
+    "LEX-004": {
+      "matrix": "posix-matrix.md#lex-004",
+      "owners": [
+        "CSH-004",
+        "CSH-024",
+        "CSH-026",
+        "CSH-046",
+        "CSH-053",
+        "CSH-067"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#lex-004); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). Family remains open for the map's stated limitations; owners CSH-046 and CSH-053 ([bounded multibyte witnesses](locales.md#raw-byte-lexical-witnesses-csh-053))."
+    },
+    "LEX-005": {
+      "matrix": "posix-matrix.md#lex-005",
+      "owners": [
+        "CSH-004",
+        "CSH-024",
+        "CSH-046",
+        "CSH-067"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#lex-005); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). The family is not promoted; live residual owners are recorded in the [acceptance review](conformance-acceptance-review.md#requirement-review)."
+    },
+    "LEX-006": {
+      "matrix": "posix-matrix.md#lex-006",
+      "owners": [
+        "CSH-004",
+        "CSH-005",
+        "CSH-030",
+        "CSH-046"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#lex-006); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). The family is not promoted; live residual owners are recorded in the [acceptance review](conformance-acceptance-review.md#requirement-review)."
+    },
+    "GRAM-001": {
+      "matrix": "posix-matrix.md#gram-001",
+      "owners": [
+        "CSH-005",
+        "CSH-027",
+        "CSH-046"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#gram-001); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). The family is not promoted; live residual owners are recorded in the [acceptance review](conformance-acceptance-review.md#requirement-review)."
+    },
+    "GRAM-002": {
+      "matrix": "posix-matrix.md#gram-002",
+      "owners": [
+        "CSH-005",
+        "CSH-046",
+        "CSH-066"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#gram-002); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). The family is not promoted; live residual owners are recorded in the [acceptance review](conformance-acceptance-review.md#requirement-review)."
+    },
+    "GRAM-003": {
+      "matrix": "posix-matrix.md#gram-003",
+      "owners": [
+        "CSH-004",
+        "CSH-005",
+        "CSH-046"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#gram-003); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). The family is not promoted; live residual owners are recorded in the [acceptance review](conformance-acceptance-review.md#requirement-review)."
+    },
+    "GRAM-004": {
+      "matrix": "posix-matrix.md#gram-004",
+      "owners": [
+        "CSH-027",
+        "CSH-046",
+        "CSH-066"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#gram-004); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). The family is not promoted; live residual owners are recorded in the [acceptance review](conformance-acceptance-review.md#requirement-review)."
+    },
+    "GRAM-005": {
+      "matrix": "posix-matrix.md#gram-005",
+      "owners": [
+        "CSH-005",
+        "CSH-016",
+        "CSH-018",
+        "CSH-046",
+        "CSH-065",
+        "CSH-066"
+      ],
+      "applicable": true,
+      "evidence": "implemented for the scoped assertions in the [clause/condition map](invocation-syntax-evidence.md#gram-005); see [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). The family is not promoted; live residual owners are recorded in the [acceptance review](conformance-acceptance-review.md#requirement-review)."
+    },
+    "ENV-001": {
+      "matrix": "posix-matrix.md#env-001",
+      "owners": [
+        "CSH-022",
+        "CSH-029",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#env-001); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "ENV-002": {
+      "matrix": "posix-matrix.md#env-002",
+      "owners": [
+        "CSH-022",
+        "CSH-024",
+        "CSH-047"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset: [clause/condition map](expansion-evidence.md#env-002) links exact runtime/API assertions, policies and narrower remaining limits; [CSH-047 revision-qualified runs](tickets/CSH-047-expansion-evidence.md#validation-record). Family remains open; CSH-047 retains the narrower limits in the map, with linked follow-up owners."
+    },
+    "ENV-003": {
+      "matrix": "posix-matrix.md#env-003",
+      "owners": [
+        "CSH-022",
+        "CSH-029",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#env-003); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "ENV-004": {
+      "matrix": "posix-matrix.md#env-004",
+      "owners": [
+        "CSH-004",
+        "CSH-025",
+        "CSH-037",
+        "CSH-042",
+        "CSH-047",
+        "CSH-053",
+        "CSH-067"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset: [clause/condition map](expansion-evidence.md#env-004) links exact runtime/API assertions, policies and narrower remaining limits; [CSH-047 revision-qualified runs](tickets/CSH-047-expansion-evidence.md#validation-record). Family remains open; CSH-047 retains the narrower limits in the map, with linked follow-up owners."
+    },
+    "ENV-005": {
+      "matrix": "posix-matrix.md#env-005",
+      "owners": [
+        "CSH-016",
+        "CSH-022",
+        "CSH-031",
+        "CSH-032",
+        "CSH-035",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#env-005); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "EXP-001": {
+      "matrix": "posix-matrix.md#exp-001",
+      "owners": [
+        "CSH-024",
+        "CSH-025",
+        "CSH-026",
+        "CSH-047",
+        "CSH-066"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset: [clause/condition map](expansion-evidence.md#exp-001) links exact runtime/API assertions, policies and narrower remaining limits; [CSH-047 revision-qualified runs](tickets/CSH-047-expansion-evidence.md#validation-record). Family remains open; CSH-047 retains the narrower limits in the map, with linked follow-up owners."
+    },
+    "EXP-002": {
+      "matrix": "posix-matrix.md#exp-002",
+      "owners": [
+        "CSH-024",
+        "CSH-047"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset: [clause/condition map](expansion-evidence.md#exp-002) links exact runtime/API assertions, policies and narrower remaining limits; [CSH-047 revision-qualified runs](tickets/CSH-047-expansion-evidence.md#validation-record). Family remains open; CSH-047 retains the narrower limits in the map, with linked follow-up owners."
+    },
+    "EXP-003": {
+      "matrix": "posix-matrix.md#exp-003",
+      "owners": [
+        "CSH-024",
+        "CSH-047"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset: [clause/condition map](expansion-evidence.md#exp-003) links exact runtime/API assertions, policies and narrower remaining limits; [CSH-047 revision-qualified runs](tickets/CSH-047-expansion-evidence.md#validation-record). Family remains open; CSH-047 retains the narrower limits in the map, with linked follow-up owners."
+    },
+    "EXP-004": {
+      "matrix": "posix-matrix.md#exp-004",
+      "owners": [
+        "CSH-024",
+        "CSH-025",
+        "CSH-042",
+        "CSH-047",
+        "CSH-067"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset: [clause/condition map](expansion-evidence.md#exp-004) links exact runtime/API assertions, policies and narrower remaining limits; [CSH-047 revision-qualified runs](tickets/CSH-047-expansion-evidence.md#validation-record). Family remains open; CSH-047 retains the narrower limits in the map, with linked follow-up owners."
+    },
+    "EXP-005": {
+      "matrix": "posix-matrix.md#exp-005",
+      "owners": [
+        "CSH-026",
+        "CSH-041",
+        "CSH-047",
+        "CSH-066"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset: [clause/condition map](expansion-evidence.md#exp-005) links exact runtime/API assertions, policies and narrower remaining limits; [CSH-047 revision-qualified runs](tickets/CSH-047-expansion-evidence.md#validation-record). Family remains open; CSH-047 retains the narrower limits in the map, with linked follow-up owners."
+    },
+    "EXP-006": {
+      "matrix": "posix-matrix.md#exp-006",
+      "owners": [
+        "CSH-024",
+        "CSH-041",
+        "CSH-047",
+        "CSH-066"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset: [clause/condition map](expansion-evidence.md#exp-006) links exact runtime/API assertions, policies and narrower remaining limits; [CSH-047 revision-qualified runs](tickets/CSH-047-expansion-evidence.md#validation-record). Family remains open; CSH-047 retains the narrower limits in the map, with linked follow-up owners."
+    },
+    "EXP-007": {
+      "matrix": "posix-matrix.md#exp-007",
+      "owners": [
+        "CSH-025",
+        "CSH-042",
+        "CSH-047",
+        "CSH-067"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset: [clause/condition map](expansion-evidence.md#exp-007) links exact runtime/API assertions, policies and narrower remaining limits; [CSH-047 revision-qualified runs](tickets/CSH-047-expansion-evidence.md#validation-record). Family remains open; CSH-047 retains the narrower limits in the map, with linked follow-up owners."
+    },
+    "EXP-008": {
+      "matrix": "posix-matrix.md#exp-008",
+      "owners": [
+        "CSH-025",
+        "CSH-032",
+        "CSH-042",
+        "CSH-047",
+        "CSH-067"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset: [clause/condition map](expansion-evidence.md#exp-008) links exact runtime/API assertions, policies and narrower remaining limits; [CSH-047 revision-qualified runs](tickets/CSH-047-expansion-evidence.md#validation-record). Family remains open; CSH-047 retains the narrower limits in the map, with linked follow-up owners."
+    },
+    "EXP-009": {
+      "matrix": "posix-matrix.md#exp-009",
+      "owners": [
+        "CSH-025",
+        "CSH-047",
+        "CSH-067"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset: [clause/condition map](expansion-evidence.md#exp-009) links exact runtime/API assertions, policies and narrower remaining limits; [CSH-047 revision-qualified runs](tickets/CSH-047-expansion-evidence.md#validation-record). Family remains open; CSH-047 retains the narrower limits in the map, with linked follow-up owners."
+    },
+    "EXP-010": {
+      "matrix": "posix-matrix.md#exp-010",
+      "owners": [
+        "CSH-025",
+        "CSH-028",
+        "CSH-042",
+        "CSH-047",
+        "CSH-053",
+        "CSH-067"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset: [clause/condition map](expansion-evidence.md#exp-010) links exact runtime/API assertions, policies and narrower remaining limits; [CSH-047 revision-qualified runs](tickets/CSH-047-expansion-evidence.md#validation-record). Family remains open; CSH-047 retains the narrower limits in the map, with linked follow-up owners."
+    },
+    "EXP-011": {
+      "matrix": "posix-matrix.md#exp-011",
+      "owners": [
+        "CSH-026",
+        "CSH-029",
+        "CSH-031",
+        "CSH-047"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset: [clause/condition map](expansion-evidence.md#exp-011) links exact runtime/API assertions, policies and narrower remaining limits; [CSH-047 revision-qualified runs](tickets/CSH-047-expansion-evidence.md#validation-record). Family remains open; CSH-047 retains the narrower limits in the map, with linked follow-up owners."
+    },
+    "RED-001": {
+      "matrix": "posix-matrix.md#red-001",
+      "owners": [
+        "CSH-019",
+        "CSH-026",
+        "CSH-049",
+        "CSH-055"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#red-001), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record), [CSH-055 conditions and runs](execution-contracts.md); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "RED-002": {
+      "matrix": "posix-matrix.md#red-002",
+      "owners": [
+        "CSH-019",
+        "CSH-032",
+        "CSH-049"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#red-002), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "RED-003": {
+      "matrix": "posix-matrix.md#red-003",
+      "owners": [
+        "CSH-019",
+        "CSH-049"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#red-003), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "RED-004": {
+      "matrix": "posix-matrix.md#red-004",
+      "owners": [
+        "CSH-019",
+        "CSH-026",
+        "CSH-049"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#red-004), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "RED-005": {
+      "matrix": "posix-matrix.md#red-005",
+      "owners": [
+        "CSH-019",
+        "CSH-049"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#red-005), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "RED-006": {
+      "matrix": "posix-matrix.md#red-006",
+      "owners": [
+        "CSH-019",
+        "CSH-049"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#red-006), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "EXEC-001": {
+      "matrix": "posix-matrix.md#exec-001",
+      "owners": [
+        "CSH-019",
+        "CSH-023",
+        "CSH-026",
+        "CSH-049",
+        "CSH-055"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#exec-001), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record), [CSH-055 conditions and runs](execution-contracts.md); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "EXEC-002": {
+      "matrix": "posix-matrix.md#exec-002",
+      "owners": [
+        "CSH-023",
+        "CSH-028",
+        "CSH-029",
+        "CSH-049"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#exec-002), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "EXEC-003": {
+      "matrix": "posix-matrix.md#exec-003",
+      "owners": [
+        "CSH-019",
+        "CSH-023",
+        "CSH-026",
+        "CSH-049",
+        "CSH-055"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#exec-003), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record), [CSH-055 conditions and runs](execution-contracts.md); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "EXEC-004": {
+      "matrix": "posix-matrix.md#exec-004",
+      "owners": [
+        "CSH-019",
+        "CSH-031",
+        "CSH-049",
+        "CSH-055"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#exec-004), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record), [CSH-055 conditions and runs](execution-contracts.md); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "EXEC-005": {
+      "matrix": "posix-matrix.md#exec-005",
+      "owners": [
+        "CSH-019",
+        "CSH-023",
+        "CSH-049",
+        "CSH-055"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#exec-005), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record), [CSH-055 conditions and runs](execution-contracts.md); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "EXEC-006": {
+      "matrix": "posix-matrix.md#exec-006",
+      "owners": [
+        "CSH-020",
+        "CSH-049"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#exec-006), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "EXEC-007": {
+      "matrix": "posix-matrix.md#exec-007",
+      "owners": [
+        "CSH-020",
+        "CSH-032",
+        "CSH-049"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#exec-007), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "EXEC-008": {
+      "matrix": "posix-matrix.md#exec-008",
+      "owners": [
+        "CSH-021",
+        "CSH-049"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#exec-008), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "EXEC-009": {
+      "matrix": "posix-matrix.md#exec-009",
+      "owners": [
+        "CSH-021",
+        "CSH-034",
+        "CSH-050",
+        "CSH-054",
+        "CSH-057"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](jobs-signals-evidence.md#exec-009), [CSH-050 run record](tickets/CSH-050-jobs-signals-evidence.md#validation-record); [CSH-054 fixes, exact assertions and residual owners](jobs-signals-evidence.md#csh-054); [CSH-057 lifecycle assertions and run record](jobs-signals-evidence.md#csh-057)"
+    },
+    "EXEC-010": {
+      "matrix": "posix-matrix.md#exec-010",
+      "owners": [
+        "CSH-021",
+        "CSH-049"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#exec-010), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "EXEC-011": {
+      "matrix": "posix-matrix.md#exec-011",
+      "owners": [
+        "CSH-028",
+        "CSH-049"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#exec-011), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "EXEC-012": {
+      "matrix": "posix-matrix.md#exec-012",
+      "owners": [
+        "CSH-025",
+        "CSH-028",
+        "CSH-042",
+        "CSH-049",
+        "CSH-067"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#exec-012), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "EXEC-013": {
+      "matrix": "posix-matrix.md#exec-013",
+      "owners": [
+        "CSH-028",
+        "CSH-049"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#exec-013), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "EXEC-014": {
+      "matrix": "posix-matrix.md#exec-014",
+      "owners": [
+        "CSH-028",
+        "CSH-049",
+        "CSH-055",
+        "CSH-066"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#exec-014), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record), [CSH-055 conditions and runs](execution-contracts.md); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "EXEC-015": {
+      "matrix": "posix-matrix.md#exec-015",
+      "owners": [
+        "CSH-018",
+        "CSH-019",
+        "CSH-031",
+        "CSH-035",
+        "CSH-049",
+        "CSH-055",
+        "CSH-065"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#exec-015), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record), [CSH-055 conditions and runs](execution-contracts.md); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "EXEC-016": {
+      "matrix": "posix-matrix.md#exec-016",
+      "owners": [
+        "CSH-018",
+        "CSH-019",
+        "CSH-035",
+        "CSH-049"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#exec-016), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "ENV-006": {
+      "matrix": "posix-matrix.md#env-006",
+      "owners": [
+        "CSH-021",
+        "CSH-026",
+        "CSH-028",
+        "CSH-030",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#env-006); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "JOB-001": {
+      "matrix": "posix-matrix.md#job-001",
+      "owners": [
+        "CSH-033",
+        "CSH-034",
+        "CSH-050",
+        "CSH-054",
+        "CSH-057"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](jobs-signals-evidence.md#job-001), [CSH-050 run record](tickets/CSH-050-jobs-signals-evidence.md#validation-record); [CSH-054 fixes, exact assertions and residual owners](jobs-signals-evidence.md#csh-054); [CSH-057 lifecycle assertions and run record](jobs-signals-evidence.md#csh-057)"
+    },
+    "JOB-002": {
+      "matrix": "posix-matrix.md#job-002",
+      "owners": [
+        "CSH-020",
+        "CSH-033",
+        "CSH-034",
+        "CSH-044",
+        "CSH-050",
+        "CSH-054",
+        "CSH-057"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](jobs-signals-evidence.md#job-002), [CSH-050 run record](tickets/CSH-050-jobs-signals-evidence.md#validation-record); [CSH-054 fixes, exact assertions and residual owners](jobs-signals-evidence.md#csh-054); [CSH-057 lifecycle assertions and run record](jobs-signals-evidence.md#csh-057)"
+    },
+    "JOB-003": {
+      "matrix": "posix-matrix.md#job-003",
+      "owners": [
+        "CSH-033",
+        "CSH-034",
+        "CSH-044",
+        "CSH-045",
+        "CSH-050",
+        "CSH-054",
+        "CSH-057"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](jobs-signals-evidence.md#job-003), [CSH-050 run record](tickets/CSH-050-jobs-signals-evidence.md#validation-record); [CSH-054 fixes, exact assertions and residual owners](jobs-signals-evidence.md#csh-054); [CSH-057 lifecycle assertions and run record](jobs-signals-evidence.md#csh-057)"
+    },
+    "SIG-001": {
+      "matrix": "posix-matrix.md#sig-001",
+      "owners": [
+        "CSH-034",
+        "CSH-035",
+        "CSH-050",
+        "CSH-054",
+        "CSH-058"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](jobs-signals-evidence.md#sig-001), [CSH-050 run record](tickets/CSH-050-jobs-signals-evidence.md#validation-record); [CSH-054 fixes, exact assertions and residual owners](jobs-signals-evidence.md#csh-054) ; [CSH-058 signal edge assertions and platform evidence](jobs-signals-evidence.md#csh-058)"
+    },
+    "SIG-002": {
+      "matrix": "posix-matrix.md#sig-002",
+      "owners": [
+        "CSH-035",
+        "CSH-050",
+        "CSH-054",
+        "CSH-058"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](jobs-signals-evidence.md#sig-002), [CSH-050 run record](tickets/CSH-050-jobs-signals-evidence.md#validation-record); [CSH-054 fixes, exact assertions and residual owners](jobs-signals-evidence.md#csh-054) ; [CSH-058 signal edge assertions and platform evidence](jobs-signals-evidence.md#csh-058)"
+    },
+    "SIG-003": {
+      "matrix": "posix-matrix.md#sig-003",
+      "owners": [
+        "CSH-026",
+        "CSH-031",
+        "CSH-035",
+        "CSH-050",
+        "CSH-054",
+        "CSH-058"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](jobs-signals-evidence.md#sig-003), [CSH-050 run record](tickets/CSH-050-jobs-signals-evidence.md#validation-record); [CSH-054 fixes, exact assertions and residual owners](jobs-signals-evidence.md#csh-054) ; [CSH-058 signal edge assertions and platform evidence](jobs-signals-evidence.md#csh-058)"
+    },
+    "U-001": {
+      "matrix": "posix-utilities.md#u-001",
+      "owners": [
+        "CSH-019",
+        "CSH-023",
+        "CSH-031",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-001); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-002": {
+      "matrix": "posix-utilities.md#u-002",
+      "owners": [
+        "CSH-029",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-002); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-003": {
+      "matrix": "posix-utilities.md#u-003",
+      "owners": [
+        "CSH-028",
+        "CSH-049",
+        "CSH-055"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#u-003), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record), [CSH-055 conditions and runs](execution-contracts.md); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "U-004": {
+      "matrix": "posix-utilities.md#u-004",
+      "owners": [
+        "CSH-028",
+        "CSH-049",
+        "CSH-055"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#u-004), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record), [CSH-055 conditions and runs](execution-contracts.md); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    },
+    "U-005": {
+      "matrix": "posix-utilities.md#u-005",
+      "owners": [
+        "CSH-028",
+        "CSH-031",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-005); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-006": {
+      "matrix": "posix-utilities.md#u-006",
+      "owners": [
+        "CSH-031",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-006); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-007": {
+      "matrix": "posix-utilities.md#u-007",
+      "owners": [
+        "CSH-019",
+        "CSH-031",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-007); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-008": {
+      "matrix": "posix-utilities.md#u-008",
+      "owners": [
+        "CSH-018",
+        "CSH-035",
+        "CSH-050",
+        "CSH-054"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](jobs-signals-evidence.md#u-008), [CSH-050 run record](tickets/CSH-050-jobs-signals-evidence.md#validation-record); [CSH-054 fixes, exact assertions and residual owners](jobs-signals-evidence.md#csh-054)"
+    },
+    "U-009": {
+      "matrix": "posix-utilities.md#u-009",
+      "owners": [
+        "CSH-023",
+        "CSH-029",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-009); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-010": {
+      "matrix": "posix-utilities.md#u-010",
+      "owners": [
+        "CSH-023",
+        "CSH-029",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-010); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-011": {
+      "matrix": "posix-utilities.md#u-011",
+      "owners": [
+        "CSH-028",
+        "CSH-031",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-011); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-012": {
+      "matrix": "posix-utilities.md#u-012",
+      "owners": [
+        "CSH-029",
+        "CSH-032",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-012); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-013": {
+      "matrix": "posix-utilities.md#u-013",
+      "owners": [
+        "CSH-029",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-013); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-014": {
+      "matrix": "posix-utilities.md#u-014",
+      "owners": [
+        "CSH-031",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-014); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-015": {
+      "matrix": "posix-utilities.md#u-015",
+      "owners": [
+        "CSH-035",
+        "CSH-050",
+        "CSH-054",
+        "CSH-058"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](jobs-signals-evidence.md#u-015), [CSH-050 run record](tickets/CSH-050-jobs-signals-evidence.md#validation-record); [CSH-054 fixes, exact assertions and residual owners](jobs-signals-evidence.md#csh-054) ; [CSH-058 signal edge assertions and platform evidence](jobs-signals-evidence.md#csh-058)"
+    },
+    "U-016": {
+      "matrix": "posix-utilities.md#u-016",
+      "owners": [
+        "CSH-028",
+        "CSH-029",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-016); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-017": {
+      "matrix": "posix-utilities.md#u-017",
+      "owners": [
+        "CSH-030",
+        "CSH-046",
+        "CSH-067"
+      ],
+      "applicable": true,
+      "evidence": "implemented for [mapped alias utility/runtime assertions](invocation-syntax-evidence.md#u-017); [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). Encoding/error breadth remains open as documented; owner CSH-046."
+    },
+    "U-018": {
+      "matrix": "posix-utilities.md#u-018",
+      "owners": [
+        "CSH-034"
+      ],
+      "applicable": false,
+      "evidence": "inapplicable to the [selected base profile](posix.md#selected-profile) (UP conditional); existing implementation evidence or future work: Implemented subset \u2014 [job-control fixtures](job-control.md); full UP profile remains open."
+    },
+    "U-019": {
+      "matrix": "posix-utilities.md#u-019",
+      "owners": [
+        "CSH-029",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-019); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-020": {
+      "matrix": "posix-utilities.md#u-020",
+      "owners": [
+        "CSH-023",
+        "CSH-031",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-020); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-021": {
+      "matrix": "posix-utilities.md#u-021",
+      "owners": [
+        "CSH-031"
+      ],
+      "applicable": false,
+      "evidence": "inapplicable to the [selected base profile](posix.md#selected-profile) (UP conditional); future work if UP is selected: history fixture is planned."
+    },
+    "U-022": {
+      "matrix": "posix-utilities.md#u-022",
+      "owners": [
+        "CSH-034"
+      ],
+      "applicable": false,
+      "evidence": "inapplicable to the [selected base profile](posix.md#selected-profile) (UP conditional); existing implementation evidence or future work: Implemented subset \u2014 [job-control fixtures](job-control.md); full UP profile remains open."
+    },
+    "U-023": {
+      "matrix": "posix-utilities.md#u-023",
+      "owners": [
+        "CSH-022",
+        "CSH-031",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-023); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-024": {
+      "matrix": "posix-utilities.md#u-024",
+      "owners": [
+        "CSH-031",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-024); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-025": {
+      "matrix": "posix-utilities.md#u-025",
+      "owners": [
+        "CSH-034"
+      ],
+      "applicable": false,
+      "evidence": "inapplicable to the [selected base profile](posix.md#selected-profile) (UP conditional); existing implementation evidence or future work: Implemented subset \u2014 [job-control fixtures](job-control.md); full UP profile remains open."
+    },
+    "U-026": {
+      "matrix": "posix-utilities.md#u-026",
+      "owners": [
+        "CSH-034",
+        "CSH-035",
+        "CSH-050",
+        "CSH-052",
+        "CSH-054",
+        "CSH-058",
+        "CSH-068",
+        "CSH-075"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](host-utility-evidence.md#u-026), [native/Docker run records](evidence/csh-052/README.md). [CSH-056 qualified profile](host-contract-profile.md) resolves the five selected stock-host gaps; [CSH-059](tickets/CSH-059-host-boundary-capabilities.md) adds [bounded byte/locale/resource evidence](evidence/csh-059/README.md); [CSH-060 controlled environments](evidence/csh-060/README.md) add bounded failures, locales and identity witnesses; retained [CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md) remains scoped; [current individual contract owners](host-system-inventory.md#current-contract-ownership) own further qualification, including the unequal-ID ACL failure. Internal passing witnesses remain in the [CSH-050 clause map](jobs-signals-evidence.md#u-026); internal fixes and residual ownership: [CSH-054 map](jobs-signals-evidence.md#csh-054); [CSH-058 signal edge assertions and platform evidence](jobs-signals-evidence.md#csh-058)"
+    },
+    "U-027": {
+      "matrix": "posix-utilities.md#u-027",
+      "owners": [
+        "CSH-025",
+        "CSH-031",
+        "CSH-042",
+        "CSH-048",
+        "CSH-053",
+        "CSH-067"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-027); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-028": {
+      "matrix": "posix-utilities.md#u-028",
+      "owners": [
+        "CSH-031"
+      ],
+      "applicable": false,
+      "evidence": "inapplicable to the [selected base profile](posix.md#selected-profile) (XSI conditional); existing implementation evidence or future work: Implemented \u2014 [evaluation/utility fixtures](evaluation-builtins.md#evidence); options, signals, and full-profile audit remain with their named owners."
+    },
+    "U-029": {
+      "matrix": "posix-utilities.md#u-029",
+      "owners": [
+        "CSH-031",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-029); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-030": {
+      "matrix": "posix-utilities.md#u-030",
+      "owners": [
+        "CSH-031",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-030); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-031": {
+      "matrix": "posix-utilities.md#u-031",
+      "owners": [
+        "CSH-030",
+        "CSH-046",
+        "CSH-067"
+      ],
+      "applicable": true,
+      "evidence": "implemented for [mapped alias utility/runtime assertions](invocation-syntax-evidence.md#u-031); [revision-qualified runs](tickets/CSH-046-invocation-syntax-evidence.md#validation-record). Encoding/error breadth remains open as documented; owner CSH-046."
+    },
+    "U-032": {
+      "matrix": "posix-utilities.md#u-032",
+      "owners": [
+        "CSH-021",
+        "CSH-034",
+        "CSH-035",
+        "CSH-050",
+        "CSH-054",
+        "CSH-057",
+        "CSH-058"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](jobs-signals-evidence.md#u-032), [CSH-050 run record](tickets/CSH-050-jobs-signals-evidence.md#validation-record); [CSH-054 fixes, exact assertions and residual owners](jobs-signals-evidence.md#csh-054); [CSH-057 lifecycle assertions and run record](jobs-signals-evidence.md#csh-057); [CSH-058 signal edge assertions and platform evidence](jobs-signals-evidence.md#csh-058)"
+    },
+    "U-033": {
+      "matrix": "posix-utilities.md#u-033",
+      "owners": [
+        "CSH-029",
+        "CSH-048"
+      ],
+      "applicable": true,
+      "evidence": "implemented subset \u2014 [clause/condition map and exact assertions](state-builtin-evidence.md#u-033); [CSH-048 run records](tickets/CSH-048-state-builtin-evidence.md#validation-record). [Additional runtime/error partitions](state-builtin-evidence.md#additional-runtime-partitions-2026-09-28) retain exact scope and narrower owners; no whole-family verification claim."
+    },
+    "U-034": {
+      "matrix": "posix-utilities.md#u-034",
+      "owners": [
+        "CSH-029",
+        "CSH-031",
+        "CSH-037",
+        "CSH-052",
+        "CSH-068",
+        "CSH-070",
+        "CSH-071",
+        "CSH-072",
+        "CSH-073",
+        "CSH-074",
+        "CSH-075",
+        "CSH-076",
+        "CSH-077",
+        "CSH-078"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](host-utility-evidence.md#u-034), [native/Docker run records](evidence/csh-052/README.md). [CSH-056 qualified profile](host-contract-profile.md) resolves the five selected stock-host gaps; [CSH-059](tickets/CSH-059-host-boundary-capabilities.md) adds [bounded byte/locale/resource evidence](evidence/csh-059/README.md); [CSH-060 controlled environments](evidence/csh-060/README.md) add bounded failures, locales and identity witnesses; retained [CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md) remains scoped; [current individual contract owners](host-system-inventory.md#current-contract-ownership) own further qualification, including the unequal-ID ACL failure."
+    },
+    "U-035": {
+      "matrix": "posix-utilities.md#u-035",
+      "owners": [
+        "CSH-029",
+        "CSH-031",
+        "CSH-052",
+        "CSH-068",
+        "CSH-070"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](host-utility-evidence.md#u-035), [native/Docker run records](evidence/csh-052/README.md). [CSH-056 qualified profile](host-contract-profile.md) resolves the five selected stock-host gaps; [CSH-059](tickets/CSH-059-host-boundary-capabilities.md) adds [bounded byte/locale/resource evidence](evidence/csh-059/README.md); [CSH-060 controlled environments](evidence/csh-060/README.md) add bounded failures, locales and identity witnesses; retained [CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md) remains scoped; [current individual contract owners](host-system-inventory.md#current-contract-ownership) own further qualification, including the unequal-ID ACL failure."
+    },
+    "U-036": {
+      "matrix": "posix-utilities.md#u-036",
+      "owners": [
+        "CSH-029",
+        "CSH-031",
+        "CSH-052",
+        "CSH-068",
+        "CSH-070"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](host-utility-evidence.md#u-036), [native/Docker run records](evidence/csh-052/README.md). [CSH-056 qualified profile](host-contract-profile.md) resolves the five selected stock-host gaps; [CSH-059](tickets/CSH-059-host-boundary-capabilities.md) adds [bounded byte/locale/resource evidence](evidence/csh-059/README.md); [CSH-060 controlled environments](evidence/csh-060/README.md) add bounded failures, locales and identity witnesses; retained [CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md) remains scoped; [current individual contract owners](host-system-inventory.md#current-contract-ownership) own further qualification, including the unequal-ID ACL failure."
+    },
+    "U-037": {
+      "matrix": "posix-utilities.md#u-037",
+      "owners": [
+        "CSH-029",
+        "CSH-031",
+        "CSH-052",
+        "CSH-068",
+        "CSH-071"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](host-utility-evidence.md#u-037), [native/Docker run records](evidence/csh-052/README.md). [CSH-056 qualified profile](host-contract-profile.md) resolves the five selected stock-host gaps; [CSH-059](tickets/CSH-059-host-boundary-capabilities.md) adds [bounded byte/locale/resource evidence](evidence/csh-059/README.md); [CSH-060 controlled environments](evidence/csh-060/README.md) add bounded failures, locales and identity witnesses; retained [CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md) remains scoped; [current individual contract owners](host-system-inventory.md#current-contract-ownership) own further qualification, including the unequal-ID ACL failure."
+    },
+    "U-038": {
+      "matrix": "posix-utilities.md#u-038",
+      "owners": [
+        "CSH-029",
+        "CSH-031",
+        "CSH-052",
+        "CSH-068",
+        "CSH-075"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](host-utility-evidence.md#u-038), [native/Docker run records](evidence/csh-052/README.md)."
+    },
+    "U-039": {
+      "matrix": "posix-utilities.md#u-039",
+      "owners": [
+        "CSH-029",
+        "CSH-031",
+        "CSH-052",
+        "CSH-068",
+        "CSH-075"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](host-utility-evidence.md#u-039), [native/Docker run records](evidence/csh-052/README.md)."
+    },
+    "U-040": {
+      "matrix": "posix-utilities.md#u-040",
+      "owners": [
+        "CSH-029",
+        "CSH-031",
+        "CSH-052",
+        "CSH-068",
+        "CSH-070",
+        "CSH-071",
+        "CSH-072",
+        "CSH-073",
+        "CSH-074",
+        "CSH-075",
+        "CSH-076",
+        "CSH-077",
+        "CSH-078"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](host-utility-evidence.md#u-040), [native/Docker run records](evidence/csh-052/README.md). [CSH-056 qualified profile](host-contract-profile.md) resolves the five selected stock-host gaps; [CSH-059](tickets/CSH-059-host-boundary-capabilities.md) adds [bounded byte/locale/resource evidence](evidence/csh-059/README.md); [CSH-060 controlled environments](evidence/csh-060/README.md) add bounded failures, locales and identity witnesses; retained [CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md) remains scoped; [current individual contract owners](host-system-inventory.md#current-contract-ownership) own further qualification, including the unequal-ID ACL failure."
+    },
+    "U-041": {
+      "matrix": "posix-utilities.md#u-041",
+      "owners": [
+        "CSH-029",
+        "CSH-031",
+        "CSH-052"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](host-utility-evidence.md#u-041), [native/Docker run records](evidence/csh-052/README.md)."
+    },
+    "O-001": {
+      "matrix": "posix-utilities.md#o-001",
+      "owners": [
+        "CSH-016",
+        "CSH-032",
+        "CSH-051"
+      ],
+      "applicable": true,
+      "evidence": "Implemented; [clause/condition map and exact assertion scope](shell-option-evidence.md#o-001), [native/Docker/PTY run records](evidence/csh-051/README.md). Required effects are separated from unspecified formatting, permitted choices and UP exclusions; no whole-shell conformance claim."
+    },
+    "O-002": {
+      "matrix": "posix-utilities.md#o-002",
+      "owners": [
+        "CSH-023",
+        "CSH-032",
+        "CSH-051"
+      ],
+      "applicable": true,
+      "evidence": "Implemented; [clause/condition map and exact assertion scope](shell-option-evidence.md#o-002), [native/Docker/PTY run records](evidence/csh-051/README.md). Required effects are separated from unspecified formatting, permitted choices and UP exclusions; no whole-shell conformance claim."
+    },
+    "O-003": {
+      "matrix": "posix-utilities.md#o-003",
+      "owners": [
+        "CSH-032",
+        "CSH-034"
+      ],
+      "applicable": false,
+      "evidence": "inapplicable to the [selected base profile](posix.md#selected-profile) (UP conditional); existing implementation evidence or future work: Implemented within the current subset \u2014 [CSH-032 option fixtures and choices](shell-options.md#profile-and-validation); job behavior also uses [CSH-034 evidence](job-control.md)."
+    },
+    "O-004": {
+      "matrix": "posix-utilities.md#o-004",
+      "owners": [
+        "CSH-019",
+        "CSH-032",
+        "CSH-051"
+      ],
+      "applicable": true,
+      "evidence": "Implemented; [clause/condition map and exact assertion scope](shell-option-evidence.md#o-004), [native/Docker/PTY run records](evidence/csh-051/README.md). Required effects are separated from unspecified formatting, permitted choices and UP exclusions; no whole-shell conformance claim."
+    },
+    "O-005": {
+      "matrix": "posix-utilities.md#o-005",
+      "owners": [
+        "CSH-032",
+        "CSH-051"
+      ],
+      "applicable": true,
+      "evidence": "Implemented; [clause/condition map and exact assertion scope](shell-option-evidence.md#o-005), [native/Docker/PTY run records](evidence/csh-051/README.md). Required effects are separated from unspecified formatting, permitted choices and UP exclusions; no whole-shell conformance claim."
+    },
+    "O-006": {
+      "matrix": "posix-utilities.md#o-006",
+      "owners": [
+        "CSH-025",
+        "CSH-032",
+        "CSH-051"
+      ],
+      "applicable": true,
+      "evidence": "Implemented; [clause/condition map and exact assertion scope](shell-option-evidence.md#o-006), [native/Docker/PTY run records](evidence/csh-051/README.md). Required effects are separated from unspecified formatting, permitted choices and UP exclusions; no whole-shell conformance claim."
+    },
+    "O-007": {
+      "matrix": "posix-utilities.md#o-007",
+      "owners": [
+        "CSH-031",
+        "CSH-032",
+        "CSH-051"
+      ],
+      "applicable": true,
+      "evidence": "Implemented; [clause/condition map and exact assertion scope](shell-option-evidence.md#o-007), [native/Docker/PTY run records](evidence/csh-051/README.md). Required effects are separated from unspecified formatting, permitted choices and UP exclusions; no whole-shell conformance claim."
+    },
+    "O-008": {
+      "matrix": "posix-utilities.md#o-008",
+      "owners": [
+        "CSH-032",
+        "CSH-034"
+      ],
+      "applicable": false,
+      "evidence": "inapplicable to the [selected base profile](posix.md#selected-profile) (UP conditional); existing implementation evidence or future work: Implemented within the current subset \u2014 [CSH-032 option fixtures and choices](shell-options.md#profile-and-validation); job behavior also uses [CSH-034 evidence](job-control.md)."
+    },
+    "O-009": {
+      "matrix": "posix-utilities.md#o-009",
+      "owners": [
+        "CSH-032",
+        "CSH-051"
+      ],
+      "applicable": true,
+      "evidence": "Implemented; [clause/condition map and exact assertion scope](shell-option-evidence.md#o-009), [native/Docker/PTY run records](evidence/csh-051/README.md). Required effects are separated from unspecified formatting, permitted choices and UP exclusions; no whole-shell conformance claim."
+    },
+    "O-010": {
+      "matrix": "posix-utilities.md#o-010",
+      "owners": [
+        "CSH-032",
+        "CSH-033"
+      ],
+      "applicable": false,
+      "evidence": "inapplicable to the [selected base profile](posix.md#selected-profile) (UP conditional); existing implementation evidence or future work: Implemented within the current subset \u2014 [CSH-032 option fixtures and choices](shell-options.md#profile-and-validation); job behavior also uses [CSH-034 evidence](job-control.md)."
+    },
+    "O-011": {
+      "matrix": "posix-utilities.md#o-011",
+      "owners": [
+        "CSH-031",
+        "CSH-032"
+      ],
+      "applicable": false,
+      "evidence": "inapplicable to the [selected base profile](posix.md#selected-profile) (UP conditional); existing implementation evidence or future work: Implemented within the current subset \u2014 [CSH-032 option fixtures and choices](shell-options.md#profile-and-validation); job behavior also uses [CSH-034 evidence](job-control.md)."
+    },
+    "O-012": {
+      "matrix": "posix-utilities.md#o-012",
+      "owners": [
+        "CSH-024",
+        "CSH-032",
+        "CSH-051"
+      ],
+      "applicable": true,
+      "evidence": "Implemented; [clause/condition map and exact assertion scope](shell-option-evidence.md#o-012), [native/Docker/PTY run records](evidence/csh-051/README.md). Required effects are separated from unspecified formatting, permitted choices and UP exclusions; no whole-shell conformance claim."
+    },
+    "O-013": {
+      "matrix": "posix-utilities.md#o-013",
+      "owners": [
+        "CSH-020",
+        "CSH-032",
+        "CSH-051"
+      ],
+      "applicable": true,
+      "evidence": "Implemented; [clause/condition map and exact assertion scope](shell-option-evidence.md#o-013), [native/Docker/PTY run records](evidence/csh-051/README.md). Required effects are separated from unspecified formatting, permitted choices and UP exclusions; no whole-shell conformance claim."
+    },
+    "O-014": {
+      "matrix": "posix-utilities.md#o-014",
+      "owners": [
+        "CSH-031",
+        "CSH-032",
+        "CSH-051"
+      ],
+      "applicable": true,
+      "evidence": "Implemented; [clause/condition map and exact assertion scope](shell-option-evidence.md#o-014), [native/Docker/PTY run records](evidence/csh-051/README.md). Required effects are separated from unspecified formatting, permitted choices and UP exclusions; no whole-shell conformance claim."
+    },
+    "O-015": {
+      "matrix": "posix-utilities.md#o-015",
+      "owners": [
+        "CSH-032",
+        "CSH-033"
+      ],
+      "applicable": false,
+      "evidence": "inapplicable to the [selected base profile](posix.md#selected-profile) (UP conditional); existing implementation evidence or future work: Not implemented; `vi` is rejected under the [current base profile](shell-options.md#profile-and-validation). UP selection and editing allocation remain open."
+    },
+    "O-016": {
+      "matrix": "posix-utilities.md#o-016",
+      "owners": [
+        "CSH-032",
+        "CSH-051"
+      ],
+      "applicable": true,
+      "evidence": "Implemented; [clause/condition map and exact assertion scope](shell-option-evidence.md#o-016), [native/Docker/PTY run records](evidence/csh-051/README.md). Required effects are separated from unspecified formatting, permitted choices and UP exclusions; no whole-shell conformance claim."
+    },
+    "O-017": {
+      "matrix": "posix-utilities.md#o-017",
+      "owners": [
+        "CSH-031",
+        "CSH-032",
+        "CSH-051"
+      ],
+      "applicable": true,
+      "evidence": "Implemented; [clause/condition map and exact assertion scope](shell-option-evidence.md#o-017), [native/Docker/PTY run records](evidence/csh-051/README.md). Required effects are separated from unspecified formatting, permitted choices and UP exclusions; no whole-shell conformance claim."
+    },
+    "O-018": {
+      "matrix": "posix-utilities.md#o-018",
+      "owners": [
+        "CSH-032",
+        "CSH-034",
+        "CSH-051"
+      ],
+      "applicable": true,
+      "evidence": "Implemented; [clause/condition map and exact assertion scope](shell-option-evidence.md#o-018), [native/Docker/PTY run records](evidence/csh-051/README.md). Required effects are separated from unspecified formatting, permitted choices and UP exclusions; no whole-shell conformance claim."
+    },
+    "O-020": {
+      "matrix": "posix-utilities.md#o-020",
+      "owners": [
+        "CSH-029",
+        "CSH-034",
+        "CSH-036",
+        "CSH-037"
+      ],
+      "applicable": false,
+      "evidence": "inapplicable to the [selected base profile](posix.md#selected-profile); UP behavior already present is tested as an extension, without a full UP claim. Reopen if the project selects UP."
+    },
+    "O-021": {
+      "matrix": "posix-utilities.md#o-021",
+      "owners": [
+        "CSH-029",
+        "CSH-031",
+        "CSH-035",
+        "CSH-037"
+      ],
+      "applicable": false,
+      "evidence": "inapplicable to the [selected base profile](posix.md#selected-profile); XSI behavior already present is tested as an extension, without a full XSI claim. Reopen if the project selects XSI."
+    },
+    "O-022": {
+      "matrix": "posix-utilities.md#o-022",
+      "owners": [
+        "CSH-016",
+        "CSH-029",
+        "CSH-031"
+      ],
+      "applicable": false,
+      "evidence": "inapplicable to the [selected base profile](posix.md#selected-profile) (UP conditional); future work if UP is selected: scope and conditional fixtures are pending."
+    },
+    "O-023": {
+      "matrix": "posix-utilities.md#o-023",
+      "owners": [
+        "CSH-029",
+        "CSH-032",
+        "CSH-033",
+        "CSH-035"
+      ],
+      "applicable": false,
+      "evidence": "inapplicable to the [selected base profile](posix.md#selected-profile) (UP conditional); future work if UP is selected: scope and conditional fixtures are pending."
+    },
+    "O-024": {
+      "matrix": "posix-utilities.md#o-024",
+      "owners": [
+        "CSH-029",
+        "CSH-032",
+        "CSH-033"
+      ],
+      "applicable": false,
+      "evidence": "inapplicable to the [selected base profile](posix.md#selected-profile) (UP conditional); future work if UP is selected: scope and conditional fixtures are pending."
+    },
+    "O-025": {
+      "matrix": "posix-utilities.md#o-025",
+      "owners": [
+        "CSH-022",
+        "CSH-032",
+        "CSH-033"
+      ],
+      "applicable": false,
+      "evidence": "inapplicable to the [selected base profile](posix.md#selected-profile) (UP conditional); existing implementation evidence or future work: Partial \u2014 [CSH-032 PS4 trace expansion](shell-options.md); LINENO, PS1/PS2 and history-variable obligations remain open."
+    },
+    "O-026": {
+      "matrix": "posix-utilities.md#o-026",
+      "owners": [
+        "CSH-019",
+        "CSH-037",
+        "CSH-043",
+        "CSH-049"
+      ],
+      "applicable": true,
+      "evidence": "Implemented subset \u2014 [clause map and exact assertions](execution-evidence.md#o-026), [CSH-049 run record](tickets/CSH-049-execution-evidence.md#validation-record); [remaining obligations](execution-evidence.md#remaining-obligations) remain open"
+    }
+  },
+  "artifact_inventories": {
+    "docs/evidence/csh-012/acceptance-c8c1c91/artifacts.json": 17,
+    "docs/evidence/csh-012/artifacts.json": 11,
+    "docs/evidence/csh-012/closure-5b56328/artifacts.json": 18,
+    "docs/evidence/csh-012/integration-008c1f9/artifacts.json": 4,
+    "docs/evidence/csh-049/integrated/artifacts.json": 15,
+    "docs/evidence/csh-049-residuals/artifacts.json": 33,
+    "docs/evidence/csh-050/artifacts.json": 17,
+    "docs/evidence/csh-050-acceptance/artifacts.json": 19,
+    "docs/evidence/csh-050-disposition/artifacts.json": 11,
+    "docs/evidence/csh-050-kill-timeout/artifacts.json": 53,
+    "docs/evidence/csh-050-review/artifacts.json": 4,
+    "docs/evidence/csh-051/artifacts.json": 23,
+    "docs/evidence/csh-052/artifacts.json": 22,
+    "docs/evidence/csh-054/artifacts.json": 23,
+    "docs/evidence/csh-055/artifacts.json": 29,
+    "docs/evidence/csh-056/artifacts.json": 20,
+    "docs/evidence/csh-057/artifacts.json": 60,
+    "docs/evidence/csh-057-pty-fix/artifacts.json": 33,
+    "docs/evidence/csh-058/artifacts.json": 24,
+    "docs/evidence/csh-059/artifacts.json": 18,
+    "docs/evidence/csh-060/artifacts.json": 18,
+    "docs/evidence/csh-061/artifacts.json": 29,
+    "docs/evidence/csh-062/artifacts.json": 46,
+    "docs/evidence/csh-063/artifacts.json": 48,
+    "docs/evidence/csh-064/artifacts.json": 27,
+    "docs/evidence/csh-064-acceptance/artifacts.json": 12,
+    "docs/evidence/csh-064-completion/artifacts.json": 15,
+    "docs/evidence/csh-057-timeouts/inventory.json": 114,
+    "docs/evidence/csh-057-retention-review/inventory.json": 34
+  },
+  "artifact_entries": 797,
+  "exact_manifest_matches": 795,
+  "explained_document_drift": [
+    "docs/evidence/csh-056/README.md",
+    "docs/evidence/csh-057-pty-fix/README.md"
+  ],
+  "unexplained_mismatches": []
+}

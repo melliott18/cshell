@@ -1,5 +1,5 @@
 # Send only the inputs needed to build and test a source snapshot.
-# Host binaries, build output, Git metadata, and documentation stay outside it.
+# Host binaries, build output, Git metadata, and unrelated evidence stay outside it.
 **
 !.dockerignore
 !Dockerfile
@@ -15,3 +15,17 @@
 
 !tools/
 !tools/**
+
+# Complete host ownership checks read these normative/accounting inputs.
+!docs/
+!docs/host-system-inventory.md
+!docs/tickets/
+!docs/tickets/*.md
+!docs/evidence/
+!docs/evidence/csh-012/
+!docs/evidence/csh-012/closure-5b56328/
+!docs/evidence/csh-012/closure-5b56328/utility-inventory.json
+!docs/evidence/csh-012/closure-5b56328/utility-sources.json
+!docs/evidence/csh-012/closure-5b56328/provider-inventory.py
+!docs/evidence/csh-064/
+!docs/evidence/csh-064/prerequisites.json

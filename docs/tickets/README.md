@@ -69,6 +69,16 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-068](CSH-068-host-system-contract-inventory.md) | Inventory the complete required host utility contract | [CSH-052](CSH-052-host-utility-evidence.md), [CSH-056](CSH-056-host-contract-gaps.md) | [#137](https://github.com/melliott18/cshell/issues/137) |
 | [CSH-069](CSH-069-historical-failure-dispositions.md) | Disposition retained unexplained validation failures | [CSH-046](CSH-046-invocation-syntax-evidence.md), [CSH-047](CSH-047-expansion-evidence.md), [CSH-048](CSH-048-state-builtin-evidence.md), [CSH-049](CSH-049-execution-evidence.md), [CSH-051](CSH-051-shell-option-evidence.md), [CSH-055](CSH-055-execution-contract-gaps.md), [CSH-058](CSH-058-signal-edge-evidence.md) | [#138](https://github.com/melliott18/cshell/issues/138) |
 
+| [CSH-070](CSH-070-host-formatted-output.md) | Qualify host printf and echo contracts | [CSH-052](CSH-052-host-utility-evidence.md), [CSH-056](CSH-056-host-contract-gaps.md) | [#142](https://github.com/melliott18/cshell/issues/142) |
+| [CSH-071](CSH-071-host-permissions-identities.md) | Qualify host predicates, permissions and identities | [CSH-052](CSH-052-host-utility-evidence.md), [CSH-056](CSH-056-host-contract-gaps.md) | [#143](https://github.com/melliott18/cshell/issues/143) |
+| [CSH-072](CSH-072-host-filesystem-paths.md) | Qualify host filesystem and pathname utilities | [CSH-052](CSH-052-host-utility-evidence.md), [CSH-056](CSH-056-host-contract-gaps.md) | [#144](https://github.com/melliott18/cshell/issues/144) |
+| [CSH-073](CSH-073-host-text-streams.md) | Qualify host text and byte stream utilities | [CSH-052](CSH-052-host-utility-evidence.md), [CSH-056](CSH-056-host-contract-gaps.md) | [#145](https://github.com/melliott18/cshell/issues/145) |
+| [CSH-074](CSH-074-host-languages-editors.md) | Qualify host languages, editors and argument construction | [CSH-052](CSH-052-host-utility-evidence.md), [CSH-056](CSH-056-host-contract-gaps.md) | [#146](https://github.com/melliott18/cshell/issues/146) |
+| [CSH-075](CSH-075-host-execution-processes.md) | Qualify host execution and process utilities | [CSH-052](CSH-052-host-utility-evidence.md), [CSH-056](CSH-056-host-contract-gaps.md) | [#147](https://github.com/melliott18/cshell/issues/147) |
+| [CSH-076](CSH-076-host-locale-catalogs.md) | Qualify host locale and message catalog utilities | [CSH-052](CSH-052-host-utility-evidence.md), [CSH-056](CSH-056-host-contract-gaps.md) | [#148](https://github.com/melliott18/cshell/issues/148) |
+| [CSH-077](CSH-077-host-terminal-utilities.md) | Qualify host terminal and session utilities | [CSH-052](CSH-052-host-utility-evidence.md), [CSH-056](CSH-056-host-contract-gaps.md) | [#149](https://github.com/melliott18/cshell/issues/149) |
+| [CSH-078](CSH-078-host-service-utilities.md) | Qualify host scheduling, mail and service utilities | [CSH-052](CSH-052-host-utility-evidence.md), [CSH-056](CSH-056-host-contract-gaps.md) | [#150](https://github.com/melliott18/cshell/issues/150) |
+
 ## Child implementation tickets
 
 ### CSH-002: Legacy safety (superseded)

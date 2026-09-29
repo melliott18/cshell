@@ -14,6 +14,8 @@ import locale
 import subprocess
 import tempfile
 
+from host_contract_inventory import condition_owner, utility_owner
+
 from host_platform import credential_namespace, filesystem_identity
 
 import smoke
@@ -153,7 +155,9 @@ def known_gap(case, status, output):
 
 def setup_failure(name, case, error):
     return dict(name=name, verdict='FAIL', phase='setup', case=serial(case),
-                reason=str(error), owner='CSH-064', source=case.get('source', BASE + 'test.html'),
+                reason=str(error),
+                owner=utility_owner(case.get('source', BASE + 'test.html').rsplit('/', 1)[-1].split('.')[0]),
+                source=case.get('source', BASE + 'test.html'),
                 actual=serial(dict(errno=getattr(error, 'errno', None),
                     timeout_seconds=getattr(error, 'timeout', None),
                     argv=getattr(error, 'cmd', None), status=getattr(error, 'returncode', None),
@@ -277,7 +281,7 @@ def main():
             ('U-037/permission-denial', capabilities['permission_denial'], 'effective UID 0 bypasses mode-bit denial'),
             ('U-037/block-device', capabilities['block_device'], 'no explicit stat-only block-device witness supplied')):
             if not available:
-                limitations.append(dict(condition=condition, reason=reason, owner='CSH-064',
+                limitations.append(dict(condition=condition, reason=reason, owner=condition_owner(condition),
                                         implementation_owner='selected utility/libc/platform vendor',
                                         environment=environment, source=BASE +
                                         ('test.html' if condition.startswith('U-037') else 'V3_chap01.html'),

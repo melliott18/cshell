@@ -1,8 +1,10 @@
 """Residual host contracts, emitted per run with environment and identities.
 
 These are capability limitations, never known-gap allowances or passing tests.
-CSH-064 owns the next qualification work; utility vendors own utility semantics.
+Current per-contract tickets own qualification; vendors own utility semantics.
 """
+from host_contract_inventory import condition_owner
+
 BASE = 'https://pubs.opengroup.org/onlinepubs/9799919799/utilities/'
 
 # Keep conditions individual: a supplied device does not establish ACL support,
@@ -43,7 +45,7 @@ RESIDUAL = [
 
 def limitations(environment, inventory):
     return [dict(condition=condition, source=BASE + utility + '.html',
-                 environment=environment, reason=reason, owner='CSH-064',
+                 environment=environment, reason=reason, owner=condition_owner(condition),
                  implementation_owner='selected utility/libc/platform vendor',
                  executable=inventory[utility],
                  related_executable=inventory['['] if utility == 'test' else None)
