@@ -9,7 +9,7 @@ without changing its source-qualified results. PR #139 integrated this closure a
 
 | Criterion | Final audit decision | Concrete evidence |
 | --- | --- | --- |
-| Every applicable requirement has evidence or an explicit open ticket/limitation | Satisfied as accounting | [131-family ledger](requirement-review-ledger.md), seven linked clause maps, and [complete utility inventory](host-system-inventory.md): 155 indexed utility pages, `[` alias, 15 special builtins. Every applicable external contract is linked to CSH-068 unless covered by narrower passing evidence/retained CSH-064 residuals, now qualified under CSH-068. Shell defects/qualification limits remain CSH-065–067. |
+| Every applicable requirement has evidence or an explicit open ticket/limitation | Satisfied as accounting | [131-family ledger](requirement-review-ledger.md), seven linked clause maps, and [complete utility inventory](host-system-inventory.md): 155 indexed utility pages, `[` alias, 15 special builtins. Every applicable external contract is assigned through the [current CSH-070–078 ownership ledger](host-system-inventory.md#current-contract-ownership), preserving narrower passing evidence and unqualified CSH-064 residuals. Shell defects/qualification limits remain CSH-065–067. |
 | Conditional, unspecified and implementation-defined behavior is labeled | Satisfied | Existing D decisions and base/UP/XSI classification retained; full utility inventory also explicitly identifies conditional CD/SD/FR/UU entries and mixed base/optional forms. No base requirement is excluded because one option is shaded. |
 | CI runs documented clean-checkout checks on supported systems | Satisfied for audited baseline, with later outcomes disclosed | Exact `c8c1c91` Ubuntu/GCC, macOS/Clang and Docker normal/PTY/profile/harness/ASan/UBSan jobs all pass; fresh clean native normal run passes. At identical production/test bytes in `5b56328`, the subsequent Docker push fails H11 and the PR macOS job is cancelled. These are retained separately, not called passes. |
 | Defects have regression coverage and resolved or linked tickets; waivers state reason/scope | Satisfied as accounting | [Defect dispositions](defect-dispositions.md) link integrated fixes, runnable strict failing reproducers, enforced existing tests, explicit missing historical details and eleven finite observations owned by CSH-069. Scoped acceptance waives a causal-repair demonstration for past observations only, never current/future assertions. |
@@ -30,11 +30,11 @@ audit to close while those implementation tickets remain open.
 
 | Owner | Remaining obligation |
 | --- | --- |
-| [CSH-068 / #137](tickets/CSH-068-host-system-contract-inventory.md), with [completed CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md) | Qualification of thirty retained selected host residuals and conditional prerequisites; CSH-064's bounded capability work and project probe-cleanup repair are done. |
+| [CSH-070–078](host-system-inventory.md#current-contract-ownership), with [completed CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md) | Qualification of thirty retained selected host residuals and conditional prerequisites; CSH-064's bounded capability work and project probe-cleanup repair are done. |
 | [CSH-065 / #134](tickets/CSH-065-interactive-parser-recovery.md) | Repair interactive main-parser recovery and integrate its strict reproducers into the normal regression suite. |
 | [CSH-066 / #135](tickets/CSH-066-resource-bounded-nesting.md) | Remove arbitrary parser/executor/evaluation/expansion limits with safe resource handling. |
 | [CSH-067 / #136](tickets/CSH-067-shell-locale-pathname-qualification.md) | [Finite qualification](locale-pathname-qualification.md) supplies public and instrumented witnesses, applicability decisions and external prerequisites P1–P6; broader host capability claims remain conditional. |
-| [CSH-068 / #137](tickets/CSH-068-host-system-contract-inventory.md) | Supply and qualify the explicitly enumerated external utility contracts, or transfer individual contracts to narrower open owners. Inventory work is complete; availability does not establish these contracts. |
+| [CSH-070–078](host-system-inventory.md#current-contract-ownership) | Supply and qualify 101 explicitly enumerated external utility contracts transferred by CSH-068; availability does not establish these contracts. |
 | [CSH-069 / #138](tickets/CSH-069-historical-failure-dispositions.md) | Diagnose/triage H01–H11 and recurrence; audit-only acceptance does not establish root causes or repair the context-fixture assertion. |
 
 Native standard-PATH inventory lacks four base names: gettext, msgfmt, ngettext
@@ -73,8 +73,8 @@ Fresh native/Linux integration results and retained strict fakeowner failures ar
 linked above. This is an additional resolved defect, separate from H11's
 context-fixture assertion. H11 remains unknown cause.
 
-The original thirty host conditions remain unqualified where recorded. CSH-068
-is their open qualification owner for this audit, using the retained CSH-064
+The original thirty host conditions remain unqualified where recorded. CSH-070–078
+are their [current qualification owners](host-system-inventory.md#current-contract-ownership), using the retained CSH-064
 records and concrete capability prerequisites; vendor implementation ownership
 remains unchanged. Closing the bounded CSH-064 work does not qualify those
 conditions or leave the audit pointing only to a closed implementation ticket.

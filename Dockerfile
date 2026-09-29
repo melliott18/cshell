@@ -24,6 +24,8 @@ COPY --chown=cshell:cshell include/ include/
 COPY --chown=cshell:cshell src/ src/
 COPY --chown=cshell:cshell tests/ tests/
 COPY --chown=cshell:cshell tools/ tools/
+# .dockerignore selects only the documentation used by ownership checks.
+COPY --chown=cshell:cshell docs/ docs/
 
 USER cshell
 # Build the selected source target with Linux tools, never a host executable.

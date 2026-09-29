@@ -1319,3 +1319,14 @@ explicit skips owned by CSH-067. The instrumented runtime replaces only
 `pathname.c` directory calls; it is not an actual failing-filesystem witness.
 See the [finite qualification map](locale-pathname-qualification.md) and
 [run records](evidence/csh-067/README.md).
+
+## Complete host contract inventory
+
+`make test-host-inventory` validates the current contract ownership overlay in
+`tests/host_contracts.json` against the complete normative utility inventory and
+retained CSH-064 condition IDs. It runs in `make test` and `make test-host-profile`.
+It rejects missing/duplicate contracts, closed or missing owners, stale Markdown
+rows and unassigned conditional prerequisite reports. Regression checks exercise
+these failure cases and the runner's emitted ownership without invoking utilities.
+This is an accounting check, not a conformance suite. See the
+[current individual contracts](host-system-inventory.md#current-contract-ownership).

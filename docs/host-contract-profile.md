@@ -1,11 +1,12 @@
 # Qualified host contracts and remaining boundaries
 
 Current residual qualification belongs to
-[CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md), after the
-integrated CSH-063 work. The numbered sections below retain their historical
-qualification scopes and handoffs. See [CSH-063 supplied platforms](#csh-063-supplied-platforms)
-for the latest result and [CSH-012 reconciliation](evidence-reconciliation-current.md)
-for milestone acceptance.
+[CSH-070–078](host-system-inventory.md#current-contract-ownership), following
+CSH-068's individual contract transfer. The numbered sections below retain their
+historical qualification scopes and handoffs. [CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md)
+is complete for its bounded work and cleanup repair; its failed profiles and
+unmet prerequisites remain unqualified. See [CSH-012 closure](conformance-closure.md)
+for the current audit decision.
 
 [CSH-056](tickets/CSH-056-host-contract-gaps.md) qualifies the
 [opt-in profile](../tools/host-profile/README.md). Its
@@ -80,7 +81,7 @@ identify the environment to which its limitations apply. The machine-readable
 [condition inventory](../tests/host_capability_limits.py) emits each source page,
 reason, next owner and selected executable identity, including both test and
 bracket. Conditions remain **unqualified**, never passes or inapplicability decisions. The unequal-ID ACL grant additionally has a retained failing reproducer.
-The following table records the CSH-059 boundary snapshot; the later numbered sections extend it. Each linked page is its normative source. The current machine-readable inventory assigns residual qualification to CSH-064.
+The following table records the CSH-059 boundary snapshot; the later numbered sections extend it. Each linked page is its normative source. The [current ownership overlay](../tests/host_contracts.json) assigns residual qualification to CSH-070–078.
 
 | Utility / source page | Evidence boundary and remaining capability |
 | --- | --- |
@@ -173,7 +174,8 @@ operations passing independently. These are utility/libc predicate failures.
 Unsupported tmpfs retains 1,098 setup failures. The `fakeowner` bind profile
 retains 1,110 setup failures and nine separate socket/chmod assertion failures;
 it is not a qualified Linux filesystem profile. The 28 stable residual conditions
-and conditional capability limits now belong to CSH-064. Privileged Darwin and
+and conditional capability limits passed to CSH-064 in that historical snapshot;
+current assignments are in the [ownership ledger](host-system-inventory.md#current-contract-ownership). Privileged Darwin and
 physical-terminal qualification remain absent. No parent utility family or
 CSH-012 acceptance gate is promoted.
 

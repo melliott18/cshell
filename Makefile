@@ -313,7 +313,7 @@ test-builtins: build/tests/builtin_fixture build/tests/execute_fixture
 	./build/tests/builtin_fixture
 	$(PYTHON) tests/builtins.py build/tests/execute_fixture
 
-test: test-execution-contracts test-host-utilities test-state-observations test-invocation test-control test-jobs test-traps test-substitution test-builtins test-portability test-redirection-offset test-prompt $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline test-context $(TEST_SUITE)
+test: test-host-inventory test-execution-contracts test-host-utilities test-state-observations test-invocation test-control test-jobs test-traps test-substitution test-builtins test-portability test-redirection-offset test-prompt $(TEST_TARGET) test-input test-lexer test-parser test-alias test-state test-expand test-execute test-pipeline test-context $(TEST_SUITE)
 	$(PYTHON) tests/smoke.py "$(TEST_BINARY)" --suite "$(TEST_SUITE)" \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)" $(if $(strip $(TEST_CASE)),--case "$(TEST_CASE)")
 
@@ -480,7 +480,7 @@ build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/pr
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_printf_faults.c $(LDLIBS)
 
-test-host-profile: cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
+test-host-profile: test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 
 # Public entry point with only the command input read syscall instrumented.
@@ -603,3 +603,8 @@ build/tests/pathname_runtime_faults: tests/pathname_runtime_faults.c build/tests
 .PHONY: test-locale-pathname
 test-locale-pathname: cshell build/tests/locale_probe build/tests/pathname_runtime_faults
 	$(PYTHON) tests/locale_pathname.py ./cshell build/tests/locale_probe build/tests/pathname_runtime_faults --record build/tests/locale-pathname-results.json
+
+.PHONY: test-host-inventory
+test-host-inventory:
+	$(PYTHON) tests/host_contract_inventory.py
+	$(PYTHON) tests/test_host_contract_inventory.py
