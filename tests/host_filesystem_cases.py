@@ -173,6 +173,8 @@ def setup(directory, row):
             data = b'archive bytes\n'
             info.size, info.mode = len(data), 0o640
             archive.addfile(info, io.BytesIO(data))
+    from host_filesystem_extended import setup as extended_setup
+    extended_setup(directory, row)
     return cwd
 
 
@@ -185,8 +187,17 @@ def effect_errors(directory, row):
             info = target.lstat()
             actual = {'type': 'file' if stat.S_ISREG(info.st_mode) else 'directory' if stat.S_ISDIR(info.st_mode)
                       else 'link' if stat.S_ISLNK(info.st_mode) else 'fifo' if stat.S_ISFIFO(info.st_mode) else 'other',
-                      'mode': stat.S_IMODE(info.st_mode), 'size': info.st_size,
+                      'mode': stat.S_IMODE(info.st_mode), 'size': info.st_size, 'nlink': info.st_nlink,
+                      'uid': info.st_uid, 'gid': info.st_gid,
                       'atime': int(info.st_atime), 'mtime': int(info.st_mtime)}
+            if 'owner_of' in expected:
+                other = (directory / expected['owner_of']).lstat()
+                actual['owner_of'] = expected['owner_of'] if (info.st_uid, info.st_gid) == (other.st_uid, other.st_gid) else None
+            if 'same_lstat' in expected:
+                other = (directory / expected['same_lstat']).lstat()
+                actual['same_lstat'] = expected['same_lstat'] if (info.st_dev, info.st_ino) == (other.st_dev, other.st_ino) else None
+            if 'max_size' in expected:
+                actual['max_size'] = expected['max_size'] if stat.S_ISREG(info.st_mode) and info.st_size <= expected['max_size'] else None
             if 'content' in expected:
                 actual['content'] = target.read_bytes() if stat.S_ISREG(info.st_mode) and info.st_size <= 1048576 else None
             if 'link' in expected:
@@ -202,10 +213,18 @@ def effect_errors(directory, row):
     if row.get('archive') == 'write':
         # Python's reader independently decodes the selected pax archive. Never
         # extract untrusted paths; compare only the one expected member's bytes.
-        with tarfile.open(directory / 'archive') as archive:
+        info = (directory / 'archive').lstat()
+        if not stat.S_ISREG(info.st_mode) or info.st_size > 1048576:
+            return errors + ['archive is not a bounded regular file'], observed
+        with tarfile.open(directory / 'archive', mode='r:') as archive:
             members = archive.getmembers()
             valid = len(members) == 1 and members[0].name == 'data' and members[0].isfile() and members[0].size == len(DATA)
             if not valid or archive.extractfile(members[0]).read(len(DATA) + 1) != DATA:
                 errors.append('archive member/bytes mismatch')
             observed['archive'] = [m.name for m in members]
+    from host_filesystem_extended import archive_errors
+    archive_failures, archive_observed = archive_errors(directory, row)
+    errors.extend(archive_failures)
+    if archive_observed:
+        observed['archive'] = archive_observed
     return errors, observed

@@ -5,6 +5,10 @@ Qualification is limited to the exact selected assertions in the
 page or full-system requirement is promoted. Remaining sections and the four
 original conditions belong to [CSH-079](../../tickets/CSH-079-filesystem-remaining-contracts.md).
 
+The [subsequent five-area extension](extended/README.md) retains additional
+traversal, links, metadata, archive and I/O evidence. The records below remain
+immutable evidence for the original 402-assertion scope.
+
 ## Results
 
 | Run | Retained result | Decision |

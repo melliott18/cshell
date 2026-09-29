@@ -18,7 +18,8 @@ are checked by `make test-host-inventory`.
 ```sh
 make test-host-filesystem        # bounded stock subset, missing providers fail
 make test-host-filesystem-audit  # also require Issue-8 pathname contracts
-make test-host-profile           # provision the opt-in PATH, require all assertions
+make test-host-profile           # provision the opt-in PATH, require declared assertions
+make test-host-filesystem-provider-audit # strict extended vendor audit; failures remain failures
 ```
 
 The stock audit is deliberately strict. A failure is not an allowance in the
@@ -91,7 +92,43 @@ providers, locales or fixture capabilities are failed setup, never passes.
 The four retained condition IDs stay in the ownership ledger. CSH-072 supplies
 larger-directory, deep UTF-8 and terminal-prompt capabilities; inaccessible
 ancestors, total pathname limits, actual descriptor exhaustion, non-C collation,
-mount boundaries, quotas, ENOSPC/EIO, archive formats and other individual page
+mount boundaries, quotas, filesystem-capacity exhaustion/EIO, further archive formats and other individual page
 contracts remain explicitly open in CSH-079. No protected mount or real disk
 contents are used. [Retained results and commands](evidence/csh-072/README.md)
 separate the stock audit, qualified subset and full-system limitations.
+
+## Extended traversal, links, metadata, archives and I/O
+
+[`host_filesystem_extended.py`](../tests/host_filesystem_extended.py) adds bounded
+cases in all five areas, each through direct exec and cshell string/file/stdin:
+
+- Traversal: distinguish `cp -RH/-RL/-RP` operand links from nested links;
+  `find -H/-L`, physical operands, precedence and depth order; physical recursive
+  removal of a symlink cycle and recursive FIFO copying.
+- Links: `ln -L/-P` and last-option precedence, symlink-inode hard links,
+  preserved existing targets, rename inode identity and decrementing link counts.
+- Metadata: `cp -p` mode, source uid/gid and both timestamps; symbolic creation
+  modes, parent/default umask behavior and isolated `touch -a/-m` updates.
+- Archives: independently authored ustar directory/file/hard-link/symlink/FIFO
+  graphs; list, selection, substitution, append and bad-checksum errors. The
+  independent reader checks exact member sets, bytes, types, modes, times,
+  link graphs and ustar headers without extracting provider output. It rejects
+  duplicate entries and nonregular or oversized output before reading.
+- I/O: EPIPE, EBADF, bounded EFBIG, directory reads and ENOTDIR. Linux adds real
+  ENOSPC from its verified virtual `/dev/full` character device. Each descriptor
+  or file-limit wrapper probes the expected kernel errno before executing the
+  inventoried utility; missing, setup-failure or exec-failure markers fail the
+  assertion. This does not supply a full filesystem, quota or EIO capability.
+
+The declared extension excludes strict unresolved provider contracts, whose
+expectations remain in `--provider-audit`. Native Apple `find` silently succeeds
+on a logical cycle; Apple `pax` returns zero for a truncated member, broken pipe
+and file-size-limit write error. Those four contracts remain unqualified under
+CSH-079. Linux ENOSPC for pax is separately audited. The selected profile has
+zero allowances; diagnostic audit results cannot qualify a failed contract.
+
+[Extended evidence](evidence/csh-072/extended/README.md) retains each result,
+including the initial incorrect closed-input fixture and its correction.
+The focused filesystem workflow retains selected and strict audit artifacts on
+Ubuntu and macOS. Its diagnostic audit may fail without blocking the selected
+subset, and its JSON keeps every failure visible.

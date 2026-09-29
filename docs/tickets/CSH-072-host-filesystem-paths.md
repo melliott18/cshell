@@ -116,9 +116,20 @@ qualification is the exact passing case set, not complete utility pages.
   conditions transfers to concrete open [CSH-079](CSH-079-filesystem-remaining-contracts.md)
   ([#158](https://github.com/melliott18/cshell/issues/158)). Vendor ownership and
   original CSH-064 evidence are preserved. Quotas, mount boundaries, inaccessible
-  ancestors and actual EIO/ENOSPC are not declared supplied.
+  ancestors, EIO and filesystem-capacity exhaustion are not declared supplied.
+  Linux virtual-device ENOSPC is a distinct bounded extension.
 
 Validation commands, totals, source/provider identities, strict stock failures
 and integration limitations are retained in the evidence directory. Review
 status records implemented scoped qualification and individual dispositions;
 it does not promote U-034/U-040, a full utility contract or full-system compliance.
+
+
+The traversal/link/metadata/archive/I/O extension adds the contracts and strict
+vendor audit described in [extended evidence](../evidence/csh-072/extended/README.md).
+The clause map distinguishes passing selected assertions, Linux-only capabilities
+and unresolved provider-audit assertions. Native find cycle detection and pax
+truncation/EPIPE/EFBIG failures remain open in CSH-079; their positive-error
+expectations are preserved, not weakened. The harness also rejects unarmed I/O
+faults and duplicate/FIFO archive output. The dedicated filesystem CI workflow
+retains strict audit failures separately from its required selected subset.

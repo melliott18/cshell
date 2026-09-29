@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Strict CSH-072 filesystem subset; separate --audit retains vendor failures."""
 import argparse
+import errno
 import json
 import locale
 import os
@@ -18,6 +19,7 @@ import pty_harness
 
 import smoke
 from host_filesystem_cases import UTILITIES, cases, audit_cases, terminal_cases, setup, effect_errors
+from host_filesystem_extended import cases as extended_cases
 from host_platform import filesystem_identity
 from host_utilities import inventory, match, sanitizer_diagnostic, serial, sha, source_identity
 
@@ -81,9 +83,9 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
                        UBSAN_OPTIONS='halt_on_error=1')
         argv = [row['utility'], *row['args']]
         direct = [provider, *row['args']]
-        if row.get('fault') or row.get('closed_stdout'):
-            action = 'signal.signal(signal.SIGXFSZ,signal.SIG_IGN)' if row.get('fault') else 'os.close(1)'
-            wrapper = [sys.executable, '-c', 'import os,signal,sys; ' + action + '; os.execv(sys.argv[1],sys.argv[1:])']
+        action = ('file-size' if row.get('fault') else 'closed-output' if row.get('closed_stdout') else row.get('io_action'))
+        if action:
+            wrapper = [sys.executable, '-S', str(Path(__file__).with_name('host_filesystem_fault.py')), action]
             argv = wrapper + direct
             direct = argv
         script = shlex.join(argv) + '\n'
@@ -116,6 +118,16 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
                 errors.append('terminal prompt mismatch')
             record['terminal_output'] = serial(output['output'])
             output = {'stdout': b'', 'stderr': b''}
+        if action:
+            try:
+                marker = json.loads((cwd / '.io-fault.json').read_text())
+                expected_errno = {'file-size': errno.EFBIG, 'closed-output': errno.EBADF,
+                                  'closed-input': errno.EBADF, 'broken-pipe': errno.EPIPE, 'enospc': errno.ENOSPC}[action]
+                if (marker.get('phase'), marker.get('action'), marker.get('provider'), marker.get('errno')) != ('armed', action, provider, expected_errno):
+                    errors.append('I/O fault was not independently armed')
+                record['kernel_fault'] = marker
+            except (OSError, ValueError) as error:
+                errors.append('missing/invalid kernel fault marker: ' + str(error))
         effects, observed = effect_errors(directory, row)
         errors.extend(effects)
         if not match(row['status'], status):
@@ -147,6 +159,8 @@ def main():
     parser.add_argument('--fixture-root', type=Path, default=Path(tempfile.gettempdir()))
     parser.add_argument('--audit', action='store_true')
     parser.add_argument('--sanitizer', action='store_true')
+    parser.add_argument('--provider-audit', action='store_true', help='Also require unqualified cycle/archive/fault contracts; failures remain fatal')
+    parser.add_argument('--extended-only', action='store_true', help='Select only traversal/link/metadata/archive/I/O extensions')
     args = parser.parse_args()
     providers = inventory(args.path, UTILITIES)
     utf8 = None
@@ -160,7 +174,9 @@ def main():
         except locale.Error:
             pass
     locale.setlocale(locale.LC_CTYPE, previous)
-    rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else [])
+    rows = [row for row in extended_cases() if args.provider_audit or not row.get('provider_audit')]
+    if not args.extended_only:
+        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows
     records = []
     for row in rows:
         for mode in row.get('modes', ('direct', 'string', 'file', 'stdin')):
@@ -171,7 +187,9 @@ def main():
                 print(json.dumps(record), flush=True)
     totals = {key: sum(r['verdict'] == key for r in records) for key in ('PASS', 'FAIL')}
     result = dict(ticket='CSH-072', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
-                  full_contracts_qualified=False, path=args.path, providers=providers, platform=platform.platform(),
+                  full_contracts_qualified=False, selection='extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
+                  unavailable_capabilities=[] if platform.system() == 'Linux' else ['Linux virtual-device ENOSPC'],
+                  path=args.path, providers=providers, platform=platform.platform(),
                   libc=platform.libc_ver(), utf8_locale=utf8, uid=os.getuid(), gid=os.getgid(), groups=os.getgroups(),
                   filesystem=filesystem_identity(args.fixture_root),
                   limits=dict(timeout_seconds=5, output_bytes=65536, file_bytes=1048576, fault_file_bytes=512,

@@ -84,7 +84,7 @@
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
       }
     },
@@ -162,7 +162,7 @@
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
       }
     },
@@ -178,9 +178,16 @@
         "cp/recursive-physical",
         "cp/symlink-follow",
         "cp/same-file",
-        "cp/missing"
+        "cp/missing",
+        "cp/traverse-H",
+        "cp/traverse-L",
+        "cp/traverse-P-operand",
+        "cp/recursive-fifo",
+        "cp/preserve-owner-times",
+        "cp/bounded-write-error",
+        "cp/destination-not-directory"
       ],
-      "remaining": "Interactive overwrite, -H/-L graph traversal, cycles, special files, cross-filesystem attributes, ACL/ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified.",
+      "remaining": "Interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -206,13 +213,13 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Interactive overwrite, -H/-L graph traversal, cycles, special files, cross-filesystem attributes, ACL/ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified."
+          "disposition": "Interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses."
         },
         "OPTIONS": {
-          "disposition": "Interactive overwrite, -H/-L graph traversal, cycles, special files, cross-filesystem attributes, ACL/ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified."
+          "disposition": "Interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses."
         },
         "OPERANDS": {
-          "disposition": "Interactive overwrite, -H/-L graph traversal, cycles, special files, cross-filesystem attributes, ACL/ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified."
+          "disposition": "Interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses."
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -236,14 +243,27 @@
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Interactive overwrite, -H/-L graph traversal, cycles, special files, cross-filesystem attributes, ACL/ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified."
+          "disposition": "Interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses."
         },
         "EXIT STATUS": {
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
+      },
+      "extended_qualification": {
+        "passing_scope": [
+          "cp/traverse-H",
+          "cp/traverse-L",
+          "cp/traverse-P-operand",
+          "cp/recursive-fifo",
+          "cp/preserve-owner-times",
+          "cp/bounded-write-error",
+          "cp/destination-not-directory"
+        ],
+        "strict_provider_audit": [],
+        "linux_only": []
       }
     },
     {
@@ -257,9 +277,13 @@
         "dd/skip",
         "dd/swab",
         "dd/file-size-fault",
-        "dd/missing"
+        "dd/missing",
+        "dd/broken-pipe",
+        "dd/closed-input",
+        "dd/directory-read-error",
+        "dd/virtual-device-enospc"
       ],
-      "remaining": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified; RLIMIT_FSIZE is not disk exhaustion.",
+      "remaining": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified. EPIPE, EBADF and EFBIG have native witnesses; Linux virtual-device ENOSPC is a separate supplied capability, not filesystem capacity exhaustion.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -285,13 +309,13 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified; RLIMIT_FSIZE is not disk exhaustion."
+          "disposition": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified. EPIPE, EBADF and EFBIG have native witnesses; Linux virtual-device ENOSPC is a separate supplied capability, not filesystem capacity exhaustion."
         },
         "OPTIONS": {
-          "disposition": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified; RLIMIT_FSIZE is not disk exhaustion."
+          "disposition": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified. EPIPE, EBADF and EFBIG have native witnesses; Linux virtual-device ENOSPC is a separate supplied capability, not filesystem capacity exhaustion."
         },
         "OPERANDS": {
-          "disposition": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified; RLIMIT_FSIZE is not disk exhaustion."
+          "disposition": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified. EPIPE, EBADF and EFBIG have native witnesses; Linux virtual-device ENOSPC is a separate supplied capability, not filesystem capacity exhaustion."
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -315,14 +339,26 @@
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified; RLIMIT_FSIZE is not disk exhaustion."
+          "disposition": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified. EPIPE, EBADF and EFBIG have native witnesses; Linux virtual-device ENOSPC is a separate supplied capability, not filesystem capacity exhaustion."
         },
         "EXIT STATUS": {
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
+      },
+      "extended_qualification": {
+        "passing_scope": [
+          "dd/broken-pipe",
+          "dd/closed-input",
+          "dd/directory-read-error",
+          "dd/virtual-device-enospc"
+        ],
+        "strict_provider_audit": [],
+        "linux_only": [
+          "dd/virtual-device-enospc"
+        ]
       }
     },
     {
@@ -397,7 +433,7 @@
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
       }
     },
@@ -473,7 +509,7 @@
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
       }
     },
@@ -549,7 +585,7 @@
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
       }
     },
@@ -565,9 +601,15 @@
         "find/prune",
         "find/depth",
         "find/deep-utf8",
-        "find/missing"
+        "find/missing",
+        "find/traverse-H",
+        "find/traverse-L",
+        "find/physical-operand",
+        "find/logical-cycle",
+        "find/expression-precedence",
+        "find/depth-order"
       ],
-      "remaining": "Remaining expression/actions and precedence, batched exec, time/size/permissions, -H/-L cycles, descriptor exhaustion and non-UTF-8 locale matching remain unqualified.",
+      "remaining": "Remaining expressions/actions, batched exec, time/size/permissions, descriptor exhaustion and non-UTF-8 locale matching remain unqualified. Selected -H/-L traversal, physical operands, precedence and depth order have witnesses; logical-cycle diagnostic/status fails on native Apple find and remains in the strict provider audit.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -593,13 +635,13 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Remaining expression/actions and precedence, batched exec, time/size/permissions, -H/-L cycles, descriptor exhaustion and non-UTF-8 locale matching remain unqualified."
+          "disposition": "Remaining expressions/actions, batched exec, time/size/permissions, descriptor exhaustion and non-UTF-8 locale matching remain unqualified. Selected -H/-L traversal, physical operands, precedence and depth order have witnesses; logical-cycle diagnostic/status fails on native Apple find and remains in the strict provider audit."
         },
         "OPTIONS": {
-          "disposition": "Remaining expression/actions and precedence, batched exec, time/size/permissions, -H/-L cycles, descriptor exhaustion and non-UTF-8 locale matching remain unqualified."
+          "disposition": "Remaining expressions/actions, batched exec, time/size/permissions, descriptor exhaustion and non-UTF-8 locale matching remain unqualified. Selected -H/-L traversal, physical operands, precedence and depth order have witnesses; logical-cycle diagnostic/status fails on native Apple find and remains in the strict provider audit."
         },
         "OPERANDS": {
-          "disposition": "Remaining expression/actions and precedence, batched exec, time/size/permissions, -H/-L cycles, descriptor exhaustion and non-UTF-8 locale matching remain unqualified."
+          "disposition": "Remaining expressions/actions, batched exec, time/size/permissions, descriptor exhaustion and non-UTF-8 locale matching remain unqualified. Selected -H/-L traversal, physical operands, precedence and depth order have witnesses; logical-cycle diagnostic/status fails on native Apple find and remains in the strict provider audit."
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -623,14 +665,27 @@
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Remaining expression/actions and precedence, batched exec, time/size/permissions, -H/-L cycles, descriptor exhaustion and non-UTF-8 locale matching remain unqualified."
+          "disposition": "Remaining expressions/actions, batched exec, time/size/permissions, descriptor exhaustion and non-UTF-8 locale matching remain unqualified. Selected -H/-L traversal, physical operands, precedence and depth order have witnesses; logical-cycle diagnostic/status fails on native Apple find and remains in the strict provider audit."
         },
         "EXIT STATUS": {
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
+      },
+      "extended_qualification": {
+        "passing_scope": [
+          "find/traverse-H",
+          "find/traverse-L",
+          "find/physical-operand",
+          "find/expression-precedence",
+          "find/depth-order"
+        ],
+        "strict_provider_audit": [
+          "find/logical-cycle"
+        ],
+        "linux_only": []
       }
     },
     {
@@ -643,9 +698,15 @@
         "ln/hard",
         "ln/symbolic",
         "ln/replace",
-        "ln/missing"
+        "ln/missing",
+        "ln/hard-symlink-L",
+        "ln/hard-symlink-P",
+        "ln/hard-symlink-PL",
+        "ln/hard-symlink-LP",
+        "ln/symbolic-ignores-dereference",
+        "ln/existing-preserved"
       ],
-      "remaining": "Interactive replacement, directory/symlink option combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified.",
+      "remaining": "Interactive replacement, remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -671,13 +732,13 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Interactive replacement, directory/symlink option combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified."
+          "disposition": "Interactive replacement, remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses."
         },
         "OPTIONS": {
-          "disposition": "Interactive replacement, directory/symlink option combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified."
+          "disposition": "Interactive replacement, remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses."
         },
         "OPERANDS": {
-          "disposition": "Interactive replacement, directory/symlink option combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified."
+          "disposition": "Interactive replacement, remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses."
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -701,14 +762,26 @@
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Interactive replacement, directory/symlink option combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified."
+          "disposition": "Interactive replacement, remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses."
         },
         "EXIT STATUS": {
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
+      },
+      "extended_qualification": {
+        "passing_scope": [
+          "ln/hard-symlink-L",
+          "ln/hard-symlink-P",
+          "ln/hard-symlink-PL",
+          "ln/hard-symlink-LP",
+          "ln/symbolic-ignores-dereference",
+          "ln/existing-preserved"
+        ],
+        "strict_provider_audit": [],
+        "linux_only": []
       }
     },
     {
@@ -784,7 +857,7 @@
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
       }
     },
@@ -798,9 +871,11 @@
         "mkdir/parents",
         "mkdir/mode",
         "mkdir/existing-parents",
-        "mkdir/existing-error"
+        "mkdir/existing-error",
+        "mkdir/symbolic-mode",
+        "mkdir/parents-umask"
       ],
-      "remaining": "Symbolic modes, intermediate-parent umask details, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified.",
+      "remaining": "Remaining symbolic mode and intermediate-parent combinations, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified. Selected symbolic mode and parent umask 077 have witnesses.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -826,13 +901,13 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Symbolic modes, intermediate-parent umask details, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified."
+          "disposition": "Remaining symbolic mode and intermediate-parent combinations, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified. Selected symbolic mode and parent umask 077 have witnesses."
         },
         "OPTIONS": {
-          "disposition": "Symbolic modes, intermediate-parent umask details, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified."
+          "disposition": "Remaining symbolic mode and intermediate-parent combinations, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified. Selected symbolic mode and parent umask 077 have witnesses."
         },
         "OPERANDS": {
-          "disposition": "Symbolic modes, intermediate-parent umask details, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified."
+          "disposition": "Remaining symbolic mode and intermediate-parent combinations, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified. Selected symbolic mode and parent umask 077 have witnesses."
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -856,14 +931,22 @@
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Symbolic modes, intermediate-parent umask details, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified."
+          "disposition": "Remaining symbolic mode and intermediate-parent combinations, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified. Selected symbolic mode and parent umask 077 have witnesses."
         },
         "EXIT STATUS": {
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
+      },
+      "extended_qualification": {
+        "passing_scope": [
+          "mkdir/symbolic-mode",
+          "mkdir/parents-umask"
+        ],
+        "strict_provider_audit": [],
+        "linux_only": []
       }
     },
     {
@@ -873,9 +956,11 @@
       "owner": "CSH-079",
       "full_contract_qualified": false,
       "assertions": [
-        "mkfifo/mode"
+        "mkfifo/mode",
+        "mkfifo/default-umask",
+        "mkfifo/symbolic-mode"
       ],
-      "remaining": "Default/symbolic modes, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified; FIFO data transfer is outside creation witness.",
+      "remaining": "Remaining symbolic mode combinations, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified. Default umask 077 and one symbolic mode have witnesses; FIFO data transfer is outside the creation witness.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -901,13 +986,13 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Default/symbolic modes, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified; FIFO data transfer is outside creation witness."
+          "disposition": "Remaining symbolic mode combinations, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified. Default umask 077 and one symbolic mode have witnesses; FIFO data transfer is outside the creation witness."
         },
         "OPTIONS": {
-          "disposition": "Default/symbolic modes, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified; FIFO data transfer is outside creation witness."
+          "disposition": "Remaining symbolic mode combinations, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified. Default umask 077 and one symbolic mode have witnesses; FIFO data transfer is outside the creation witness."
         },
         "OPERANDS": {
-          "disposition": "Default/symbolic modes, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified; FIFO data transfer is outside creation witness."
+          "disposition": "Remaining symbolic mode combinations, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified. Default umask 077 and one symbolic mode have witnesses; FIFO data transfer is outside the creation witness."
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -931,14 +1016,22 @@
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Default/symbolic modes, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified; FIFO data transfer is outside creation witness."
+          "disposition": "Remaining symbolic mode combinations, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified. Default umask 077 and one symbolic mode have witnesses; FIFO data transfer is outside the creation witness."
         },
         "EXIT STATUS": {
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
+      },
+      "extended_qualification": {
+        "passing_scope": [
+          "mkfifo/default-umask",
+          "mkfifo/symbolic-mode"
+        ],
+        "strict_provider_audit": [],
+        "linux_only": []
       }
     },
     {
@@ -951,7 +1044,8 @@
         "mv/rename",
         "mv/replace",
         "mv/symlink",
-        "mv/missing"
+        "mv/missing",
+        "mv/rename-inode"
       ],
       "remaining": "Interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified.",
       "normative_headings": [
@@ -1015,8 +1109,15 @@
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
+      },
+      "extended_qualification": {
+        "passing_scope": [
+          "mv/rename-inode"
+        ],
+        "strict_provider_audit": [],
+        "linux_only": []
       }
     },
     {
@@ -1093,7 +1194,7 @@
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
       }
     },
@@ -1107,9 +1208,21 @@
         "pax/copy-tree",
         "pax/archive-write",
         "pax/archive-read",
-        "pax/missing"
+        "pax/missing",
+        "pax/ustar-types-read",
+        "pax/ustar-list",
+        "pax/ustar-select",
+        "pax/ustar-substitution",
+        "pax/unmatched-pattern",
+        "pax/ustar-types-write",
+        "pax/ustar-append",
+        "pax/truncated-member",
+        "pax/bad-checksum",
+        "pax/broken-pipe",
+        "pax/bounded-write-error",
+        "pax/virtual-device-enospc"
       ],
-      "remaining": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed.",
+      "remaining": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar types, hard links, list/append/select/substitute and bad checksums have witnesses. Truncated member, EPIPE and EFBIG fail on native Apple pax; virtual-device ENOSPC is also retained in the strict provider audit pending platform evidence.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -1147,16 +1260,16 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+          "disposition": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar types, hard links, list/append/select/substitute and bad checksums have witnesses. Truncated member, EPIPE and EFBIG fail on native Apple pax; virtual-device ENOSPC is also retained in the strict provider audit pending platform evidence."
         },
         "OPTIONS": {
-          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+          "disposition": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar types, hard links, list/append/select/substitute and bad checksums have witnesses. Truncated member, EPIPE and EFBIG fail on native Apple pax; virtual-device ENOSPC is also retained in the strict provider audit pending platform evidence."
         },
         "List Mode Format Specifications": {
-          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+          "disposition": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar types, hard links, list/append/select/substitute and bad checksums have witnesses. Truncated member, EPIPE and EFBIG fail on native Apple pax; virtual-device ENOSPC is also retained in the strict provider audit pending platform evidence."
         },
         "OPERANDS": {
-          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+          "disposition": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar types, hard links, list/append/select/substitute and bad checksums have witnesses. Truncated member, EPIPE and EFBIG fail on native Apple pax; virtual-device ENOSPC is also retained in the strict provider audit pending platform evidence."
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -1180,47 +1293,68 @@
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+          "disposition": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar types, hard links, list/append/select/substitute and bad checksums have witnesses. Truncated member, EPIPE and EFBIG fail on native Apple pax; virtual-device ENOSPC is also retained in the strict provider audit pending platform evidence."
         },
         "pax Interchange Format": {
-          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+          "disposition": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar types, hard links, list/append/select/substitute and bad checksums have witnesses. Truncated member, EPIPE and EFBIG fail on native Apple pax; virtual-device ENOSPC is also retained in the strict provider audit pending platform evidence."
         },
         "pax Header Block": {
-          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+          "disposition": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar types, hard links, list/append/select/substitute and bad checksums have witnesses. Truncated member, EPIPE and EFBIG fail on native Apple pax; virtual-device ENOSPC is also retained in the strict provider audit pending platform evidence."
         },
         "pax Extended Header": {
-          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+          "disposition": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar types, hard links, list/append/select/substitute and bad checksums have witnesses. Truncated member, EPIPE and EFBIG fail on native Apple pax; virtual-device ENOSPC is also retained in the strict provider audit pending platform evidence."
         },
         "pax Extended Header Keyword Precedence": {
-          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+          "disposition": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar types, hard links, list/append/select/substitute and bad checksums have witnesses. Truncated member, EPIPE and EFBIG fail on native Apple pax; virtual-device ENOSPC is also retained in the strict provider audit pending platform evidence."
         },
         "pax Extended Header File Times": {
-          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+          "disposition": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar types, hard links, list/append/select/substitute and bad checksums have witnesses. Truncated member, EPIPE and EFBIG fail on native Apple pax; virtual-device ENOSPC is also retained in the strict provider audit pending platform evidence."
         },
         "ustar Interchange Format": {
-          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+          "disposition": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar types, hard links, list/append/select/substitute and bad checksums have witnesses. Truncated member, EPIPE and EFBIG fail on native Apple pax; virtual-device ENOSPC is also retained in the strict provider audit pending platform evidence."
         },
         "cpio Interchange Format": {
-          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+          "disposition": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar types, hard links, list/append/select/substitute and bad checksums have witnesses. Truncated member, EPIPE and EFBIG fail on native Apple pax; virtual-device ENOSPC is also retained in the strict provider audit pending platform evidence."
         },
         "cpio Header": {
-          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+          "disposition": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar types, hard links, list/append/select/substitute and bad checksums have witnesses. Truncated member, EPIPE and EFBIG fail on native Apple pax; virtual-device ENOSPC is also retained in the strict provider audit pending platform evidence."
         },
         "cpio Filename": {
-          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+          "disposition": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar types, hard links, list/append/select/substitute and bad checksums have witnesses. Truncated member, EPIPE and EFBIG fail on native Apple pax; virtual-device ENOSPC is also retained in the strict provider audit pending platform evidence."
         },
         "cpio File Data": {
-          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+          "disposition": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar types, hard links, list/append/select/substitute and bad checksums have witnesses. Truncated member, EPIPE and EFBIG fail on native Apple pax; virtual-device ENOSPC is also retained in the strict provider audit pending platform evidence."
         },
         "cpio Special Entries": {
-          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+          "disposition": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar types, hard links, list/append/select/substitute and bad checksums have witnesses. Truncated member, EPIPE and EFBIG fail on native Apple pax; virtual-device ENOSPC is also retained in the strict provider audit pending platform evidence."
         },
         "EXIT STATUS": {
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
+      },
+      "extended_qualification": {
+        "passing_scope": [
+          "pax/ustar-types-read",
+          "pax/ustar-list",
+          "pax/ustar-select",
+          "pax/ustar-substitution",
+          "pax/unmatched-pattern",
+          "pax/ustar-types-write",
+          "pax/ustar-append",
+          "pax/bad-checksum"
+        ],
+        "strict_provider_audit": [
+          "pax/truncated-member",
+          "pax/broken-pipe",
+          "pax/bounded-write-error",
+          "pax/virtual-device-enospc"
+        ],
+        "linux_only": [
+          "pax/virtual-device-enospc"
+        ]
       }
     },
     {
@@ -1295,7 +1429,7 @@
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
       }
     },
@@ -1313,7 +1447,8 @@
         "readlink/long-bytes",
         "readlink/dash-operand",
         "readlink/stdout-error",
-        "readlink/invalid-option"
+        "readlink/invalid-option",
+        "readlink/virtual-device-enospc"
       ],
       "remaining": "The selected local provider repairs the stock nonlink diagnostic and checks dynamic 600-byte links, -n, --, invalid operands and closed stdout. Arbitrary byte/locale combinations, allocation failure and true filesystem limits remain unqualified.",
       "normative_headings": [
@@ -1377,8 +1512,17 @@
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
+      },
+      "extended_qualification": {
+        "passing_scope": [
+          "readlink/virtual-device-enospc"
+        ],
+        "strict_provider_audit": [],
+        "linux_only": [
+          "readlink/virtual-device-enospc"
+        ]
       }
     },
     {
@@ -1406,7 +1550,8 @@
         "realpath/loop-error",
         "realpath/empty-error",
         "realpath/stdout-error",
-        "realpath/invalid-option"
+        "realpath/invalid-option",
+        "realpath/virtual-device-enospc"
       ],
       "remaining": "The selected local provider repairs -e/-E, validates directory components despite Darwin libc trailing-slash behavior, and checks dangling links, missing prefixes, dot-dot, loops, last-option precedence and closed stdout. Permission/namespace races, allocation faults, double-leading-slash policy and exact resource boundaries remain unqualified. Missing-final fallback permits at most 40 link expansions.",
       "normative_headings": [
@@ -1470,8 +1615,17 @@
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
+      },
+      "extended_qualification": {
+        "passing_scope": [
+          "realpath/virtual-device-enospc"
+        ],
+        "strict_provider_audit": [],
+        "linux_only": [
+          "realpath/virtual-device-enospc"
+        ]
       }
     },
     {
@@ -1487,7 +1641,9 @@
         "rm/force-missing",
         "rm/missing",
         "rm/terminal-y",
-        "rm/terminal-n"
+        "rm/terminal-n",
+        "rm/cycle-physical-removal",
+        "rm/unlink-one-name"
       ],
       "remaining": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses.",
       "normative_headings": [
@@ -1551,8 +1707,16 @@
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
+      },
+      "extended_qualification": {
+        "passing_scope": [
+          "rm/cycle-physical-removal",
+          "rm/unlink-one-name"
+        ],
+        "strict_provider_audit": [],
+        "linux_only": []
       }
     },
     {
@@ -1629,7 +1793,7 @@
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
       }
     },
@@ -1642,9 +1806,11 @@
       "assertions": [
         "touch/reference",
         "touch/no-create",
-        "touch/timestamp"
+        "touch/timestamp",
+        "touch/isolated-a",
+        "touch/isolated-m"
       ],
-      "remaining": "-a/-m isolation, -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified.",
+      "remaining": "Remaining -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified. Selected -a/-m timestamp isolation has witnesses.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -1670,13 +1836,13 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "-a/-m isolation, -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified."
+          "disposition": "Remaining -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified. Selected -a/-m timestamp isolation has witnesses."
         },
         "OPTIONS": {
-          "disposition": "-a/-m isolation, -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified."
+          "disposition": "Remaining -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified. Selected -a/-m timestamp isolation has witnesses."
         },
         "OPERANDS": {
-          "disposition": "-a/-m isolation, -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified."
+          "disposition": "Remaining -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified. Selected -a/-m timestamp isolation has witnesses."
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -1700,14 +1866,22 @@
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "-a/-m isolation, -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified."
+          "disposition": "Remaining -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified. Selected -a/-m timestamp isolation has witnesses."
         },
         "EXIT STATUS": {
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
+      },
+      "extended_qualification": {
+        "passing_scope": [
+          "touch/isolated-a",
+          "touch/isolated-m"
+        ],
+        "strict_provider_audit": [],
+        "linux_only": []
       }
     }
   ]

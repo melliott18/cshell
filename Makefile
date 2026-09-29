@@ -631,3 +631,7 @@ test-host-filesystem: cshell
 
 test-host-filesystem-audit: cshell
 	$(PYTHON) tests/host_filesystem.py ./cshell --audit --record build/tests/host-filesystem-audit.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-provider-audit
+test-host-filesystem-provider-audit: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --extended-only --provider-audit --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-provider-audit.json $(HOST_FILESYSTEM_FLAGS)
