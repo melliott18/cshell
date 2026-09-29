@@ -1,0 +1,2099 @@
+{
+  "schema_version": 1,
+  "scope": "C-locale bounded witnesses, not full normative pages",
+  "owner": "CSH-074",
+  "pages": [
+    {
+      "utility": "awk",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html",
+      "source_sha256": "6df7d0776af4b28dbc3ec667a02a18e51ccd5066ea45a22166214e7e3832f898",
+      "sections": [
+        {
+          "section": "NAME",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_01",
+          "disposition": "descriptive",
+          "witnesses": [],
+          "reason": "Descriptive name only; no separate behavioral assertion.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "SYNOPSIS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_02",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/records-fields",
+            "awk/variables",
+            "awk/program-files",
+            "awk/arrays-loops",
+            "awk/function-control",
+            "awk/ere-range",
+            "awk/strings",
+            "awk/format-math",
+            "awk/getline-output",
+            "awk/exit-end",
+            "awk/missing-file"
+          ],
+          "reason": "Invocations below exercise the listed forms; remaining option combinations are unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "DESCRIPTION",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_03",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/records-fields",
+            "awk/variables",
+            "awk/program-files",
+            "awk/arrays-loops",
+            "awk/function-control",
+            "awk/ere-range",
+            "awk/strings",
+            "awk/format-math",
+            "awk/getline-output",
+            "awk/exit-end",
+            "awk/missing-file"
+          ],
+          "reason": "General processing is witnessed below; the complete utility language/algorithm remains unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OPTIONS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_04",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/records-fields",
+            "awk/variables"
+          ],
+          "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OPERANDS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_05",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/program-files"
+          ],
+          "reason": "Selected operands and missing-file errors only; all operand forms and pathname/encoding boundaries remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDIN",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_06",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Finite C-locale input streams only; terminal interaction, read faults and interrupted input remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "INPUT FILES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_07",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/program-files"
+          ],
+          "reason": "Finite authored text files only; size, permissions, encoding and read-fault combinations remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "ENVIRONMENT VARIABLES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_08",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Locale precedence, non-C collation/encoding, NLSPATH/catalogs and other listed variables remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "ASYNCHRONOUS EVENTS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_09",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Signal timing across other operations and inherited dispositions remains unqualified; ed has synchronized bounded recovery witnesses.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDOUT",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_10",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/records-fields",
+            "awk/variables",
+            "awk/program-files",
+            "awk/arrays-loops",
+            "awk/function-control",
+            "awk/ere-range",
+            "awk/strings",
+            "awk/format-math",
+            "awk/getline-output",
+            "awk/exit-end",
+            "awk/missing-file"
+          ],
+          "reason": "Listed byte-exact outputs only; output write failures and all formatting/locale combinations remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDERR",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_11",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/missing-file"
+          ],
+          "reason": "Diagnostic presence only where wording is unspecified; localization, warnings and all error paths remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OUTPUT FILES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_12",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/getline-output"
+          ],
+          "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "EXTENDED DESCRIPTION",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/records-fields"
+          ],
+          "reason": "Selected language/algorithm operations only; remaining grammar, commands, expressions and interactions remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Overall Program Structure",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_01",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Overall Program Structure rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Expressions in awk",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_02",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/arrays-loops"
+          ],
+          "reason": "The Expressions in awk rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Variables and Special Variables",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_03",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/variables"
+          ],
+          "reason": "The Variables and Special Variables rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Regular Expressions",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_04",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/ere-range"
+          ],
+          "reason": "The Regular Expressions rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Patterns",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_05",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/ere-range"
+          ],
+          "reason": "The Patterns rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Special Patterns",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_06",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Special Patterns rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Expression Patterns",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_07",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Expression Patterns rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Pattern Ranges",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_08",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Pattern Ranges rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Actions",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_09",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/arrays-loops",
+            "awk/function-control",
+            "awk/exit-end"
+          ],
+          "reason": "The Actions rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Output Statements",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_10",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/format-math"
+          ],
+          "reason": "The Output Statements rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Functions",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_11",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Functions rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Arithmetic Functions",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_12",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/format-math"
+          ],
+          "reason": "The Arithmetic Functions rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "String Functions",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_13",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/strings"
+          ],
+          "reason": "The String Functions rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Input/Output and General Functions",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_14",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/getline-output"
+          ],
+          "reason": "The Input/Output and General Functions rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "User-Defined Functions",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_15",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/function-control"
+          ],
+          "reason": "The User-Defined Functions rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Grammar",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_16",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Grammar rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Lexical Conventions",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_17",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Lexical Conventions rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "EXIT STATUS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_14",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/records-fields",
+            "awk/variables",
+            "awk/program-files",
+            "awk/arrays-loops",
+            "awk/function-control",
+            "awk/ere-range",
+            "awk/strings",
+            "awk/format-math",
+            "awk/getline-output",
+            "awk/exit-end",
+            "awk/missing-file"
+          ],
+          "reason": "Listed success/error values only; all remaining error and asynchronous outcomes remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "CONSEQUENCES OF ERRORS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_15",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/missing-file"
+          ],
+          "reason": "Listed missing inputs, invalid syntax or child failures only; remaining failures and interactive recovery remain unqualified.",
+          "owner": "CSH-074"
+        }
+      ]
+    },
+    {
+      "utility": "bc",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html",
+      "source_sha256": "3f0d136fe8bbe187e2badbcbb3740595992a201988ab2c2db796509608ab578b",
+      "sections": [
+        {
+          "section": "NAME",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_01",
+          "disposition": "descriptive",
+          "witnesses": [],
+          "reason": "Descriptive name only; no separate behavioral assertion.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "SYNOPSIS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_02",
+          "disposition": "partial",
+          "witnesses": [
+            "bc/arithmetic",
+            "bc/scale",
+            "bc/bases",
+            "bc/function-loop-array",
+            "bc/file-then-stdin",
+            "bc/math-library",
+            "bc/quit",
+            "bc/missing-file"
+          ],
+          "reason": "Invocations below exercise the listed forms; remaining option combinations are unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "DESCRIPTION",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_03",
+          "disposition": "partial",
+          "witnesses": [
+            "bc/arithmetic",
+            "bc/scale",
+            "bc/bases",
+            "bc/function-loop-array",
+            "bc/file-then-stdin",
+            "bc/math-library",
+            "bc/quit",
+            "bc/missing-file"
+          ],
+          "reason": "General processing is witnessed below; the complete utility language/algorithm remains unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OPTIONS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_04",
+          "disposition": "partial",
+          "witnesses": [
+            "bc/math-library"
+          ],
+          "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OPERANDS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_05",
+          "disposition": "partial",
+          "witnesses": [
+            "bc/file-then-stdin"
+          ],
+          "reason": "Selected operands and missing-file errors only; all operand forms and pathname/encoding boundaries remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDIN",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_06",
+          "disposition": "partial",
+          "witnesses": [
+            "bc/file-then-stdin"
+          ],
+          "reason": "Finite C-locale input streams only; terminal interaction, read faults and interrupted input remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "INPUT FILES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_07",
+          "disposition": "partial",
+          "witnesses": [
+            "bc/file-then-stdin"
+          ],
+          "reason": "Finite authored text files only; size, permissions, encoding and read-fault combinations remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "ENVIRONMENT VARIABLES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_08",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Locale precedence, non-C collation/encoding, NLSPATH/catalogs and other listed variables remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "ASYNCHRONOUS EVENTS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_09",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Signal timing across other operations and inherited dispositions remains unqualified; ed has synchronized bounded recovery witnesses.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDOUT",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_10",
+          "disposition": "partial",
+          "witnesses": [
+            "bc/arithmetic",
+            "bc/scale",
+            "bc/bases",
+            "bc/function-loop-array",
+            "bc/file-then-stdin",
+            "bc/math-library",
+            "bc/quit",
+            "bc/missing-file"
+          ],
+          "reason": "Listed byte-exact outputs only; output write failures and all formatting/locale combinations remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDERR",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_11",
+          "disposition": "partial",
+          "witnesses": [
+            "bc/missing-file"
+          ],
+          "reason": "Diagnostic presence only where wording is unspecified; localization, warnings and all error paths remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OUTPUT FILES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_12",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "EXTENDED DESCRIPTION",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_13",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Selected language/algorithm operations only; remaining grammar, commands, expressions and interactions remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Grammar",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_13_01",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Grammar rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Lexical Conventions in bc",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_13_02",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Lexical Conventions in bc rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Operations in bc",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_13_03",
+          "disposition": "partial",
+          "witnesses": [
+            "bc/arithmetic",
+            "bc/scale",
+            "bc/bases",
+            "bc/function-loop-array",
+            "bc/math-library",
+            "bc/quit"
+          ],
+          "reason": "The Operations in bc rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "EXIT STATUS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_14",
+          "disposition": "partial",
+          "witnesses": [
+            "bc/arithmetic",
+            "bc/scale",
+            "bc/bases",
+            "bc/function-loop-array",
+            "bc/file-then-stdin",
+            "bc/math-library",
+            "bc/quit",
+            "bc/missing-file"
+          ],
+          "reason": "Listed success/error values only; all remaining error and asynchronous outcomes remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "CONSEQUENCES OF ERRORS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_15",
+          "disposition": "partial",
+          "witnesses": [
+            "bc/missing-file"
+          ],
+          "reason": "Listed missing inputs, invalid syntax or child failures only; remaining failures and interactive recovery remain unqualified.",
+          "owner": "CSH-074"
+        }
+      ]
+    },
+    {
+      "utility": "ed",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html",
+      "source_sha256": "d8fe056317166b69d6d78f9730951e9f17b1a6e6e1f7a0028edc2d681ced39d1",
+      "sections": [
+        {
+          "section": "NAME",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_01",
+          "disposition": "descriptive",
+          "witnesses": [],
+          "reason": "Descriptive name only; no separate behavioral assertion.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "SYNOPSIS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_02",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/substitute-write",
+            "ed/append-insert-change-delete",
+            "ed/copy-move-join-undo",
+            "ed/addresses-mark-number",
+            "ed/global-bre",
+            "ed/read-edit-filename",
+            "ed/list",
+            "ed/bad-address",
+            "ed/write-failure",
+            "ed/bounded-buffer"
+          ],
+          "reason": "Invocations below exercise the listed forms; remaining option combinations are unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "DESCRIPTION",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_03",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/substitute-write",
+            "ed/append-insert-change-delete",
+            "ed/copy-move-join-undo",
+            "ed/addresses-mark-number",
+            "ed/global-bre",
+            "ed/read-edit-filename",
+            "ed/list",
+            "ed/bad-address",
+            "ed/write-failure",
+            "ed/bounded-buffer"
+          ],
+          "reason": "General processing is witnessed below; the complete utility language/algorithm remains unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OPTIONS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_04",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OPERANDS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_05",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Selected operands and missing-file errors only; all operand forms and pathname/encoding boundaries remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDIN",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_06",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Finite C-locale input streams only; terminal interaction, read faults and interrupted input remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "INPUT FILES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_07",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Finite authored text files only; size, permissions, encoding and read-fault combinations remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "ENVIRONMENT VARIABLES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_08",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Locale precedence, non-C collation/encoding, NLSPATH/catalogs and other listed variables remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "ASYNCHRONOUS EVENTS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_09",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/signal-hup",
+            "ed/signal-hup-home",
+            "ed/signal-int"
+          ],
+          "reason": "Signal timing across other operations and inherited dispositions remains unqualified; ed has synchronized bounded recovery witnesses.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDOUT",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_10",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/substitute-write",
+            "ed/append-insert-change-delete",
+            "ed/copy-move-join-undo",
+            "ed/addresses-mark-number",
+            "ed/global-bre",
+            "ed/read-edit-filename",
+            "ed/list",
+            "ed/bad-address",
+            "ed/write-failure",
+            "ed/bounded-buffer"
+          ],
+          "reason": "Listed byte-exact outputs only; output write failures and all formatting/locale combinations remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDERR",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_11",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Diagnostic presence only where wording is unspecified; localization, warnings and all error paths remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OUTPUT FILES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_12",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/substitute-write"
+          ],
+          "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "EXTENDED DESCRIPTION",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/bounded-buffer"
+          ],
+          "reason": "Selected language/algorithm operations only; remaining grammar, commands, expressions and interactions remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Regular Expressions in ed",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_01",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/global-bre"
+          ],
+          "reason": "The Regular Expressions in ed rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Addresses in ed",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_02",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/addresses-mark-number"
+          ],
+          "reason": "The Addresses in ed rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Commands in ed",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_03",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Commands in ed rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Append Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_04",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/append-insert-change-delete"
+          ],
+          "reason": "The Append Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Change Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_05",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/append-insert-change-delete"
+          ],
+          "reason": "The Change Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Delete Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_06",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/append-insert-change-delete"
+          ],
+          "reason": "The Delete Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Edit Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_07",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Edit Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Edit Without Checking Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_08",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/read-edit-filename"
+          ],
+          "reason": "The Edit Without Checking Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Filename Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_09",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/read-edit-filename"
+          ],
+          "reason": "The Filename Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Global Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_10",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/global-bre"
+          ],
+          "reason": "The Global Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Interactive Global Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_11",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Interactive Global Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Help Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_12",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Help Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Help-Mode Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_13",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Help-Mode Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Insert Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_14",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/append-insert-change-delete"
+          ],
+          "reason": "The Insert Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Join Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_15",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/copy-move-join-undo"
+          ],
+          "reason": "The Join Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Mark Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_16",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/addresses-mark-number"
+          ],
+          "reason": "The Mark Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "List Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_17",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/list"
+          ],
+          "reason": "The List Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Move Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_18",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/copy-move-join-undo"
+          ],
+          "reason": "The Move Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Number Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_19",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/addresses-mark-number"
+          ],
+          "reason": "The Number Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Print Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_20",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Print Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Prompt Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_21",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Prompt Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Quit Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_22",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Quit Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Quit Without Checking Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_23",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Quit Without Checking Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Read Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_24",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/read-edit-filename"
+          ],
+          "reason": "The Read Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Substitute Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_25",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/substitute-write"
+          ],
+          "reason": "The Substitute Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Copy Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_26",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/copy-move-join-undo"
+          ],
+          "reason": "The Copy Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Undo Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_27",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/copy-move-join-undo"
+          ],
+          "reason": "The Undo Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Global Non-Matched Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_28",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/global-bre"
+          ],
+          "reason": "The Global Non-Matched Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Interactive Global Not-Matched Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_29",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Interactive Global Not-Matched Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Write Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_30",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/substitute-write",
+            "ed/write-failure"
+          ],
+          "reason": "The Write Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Line Number Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_31",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/addresses-mark-number"
+          ],
+          "reason": "The Line Number Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Shell Escape Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_32",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Shell Escape Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Null Command",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_33",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Null Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "EXIT STATUS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_14",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/substitute-write",
+            "ed/append-insert-change-delete",
+            "ed/copy-move-join-undo",
+            "ed/addresses-mark-number",
+            "ed/global-bre",
+            "ed/read-edit-filename",
+            "ed/list",
+            "ed/bad-address",
+            "ed/write-failure",
+            "ed/bounded-buffer"
+          ],
+          "reason": "Listed success/error values only; all remaining error and asynchronous outcomes remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "CONSEQUENCES OF ERRORS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_15",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/bad-address",
+            "ed/write-failure"
+          ],
+          "reason": "Listed missing inputs, invalid syntax or child failures only; remaining failures and interactive recovery remain unqualified.",
+          "owner": "CSH-074"
+        }
+      ]
+    },
+    {
+      "utility": "expr",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html",
+      "source_sha256": "76196fd72e9f4c475b4843d63fce09d176d025cfb4eaf6f1655387d4fc41afa3",
+      "sections": [
+        {
+          "section": "NAME",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_01",
+          "disposition": "descriptive",
+          "witnesses": [],
+          "reason": "Descriptive name only; no separate behavioral assertion.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "SYNOPSIS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_02",
+          "disposition": "partial",
+          "witnesses": [
+            "expr/precedence",
+            "expr/parentheses",
+            "expr/zero",
+            "expr/comparison",
+            "expr/or",
+            "expr/and",
+            "expr/match-length",
+            "expr/match-capture",
+            "expr/match-empty",
+            "expr/invalid"
+          ],
+          "reason": "Invocations below exercise the listed forms; remaining option combinations are unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "DESCRIPTION",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_03",
+          "disposition": "partial",
+          "witnesses": [
+            "expr/precedence",
+            "expr/parentheses",
+            "expr/zero",
+            "expr/comparison",
+            "expr/or",
+            "expr/and",
+            "expr/match-length",
+            "expr/match-capture",
+            "expr/match-empty",
+            "expr/invalid"
+          ],
+          "reason": "General processing is witnessed below; the complete utility language/algorithm remains unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OPTIONS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_04",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OPERANDS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_05",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Selected operands and missing-file errors only; all operand forms and pathname/encoding boundaries remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDIN",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_06",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Finite C-locale input streams only; terminal interaction, read faults and interrupted input remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "INPUT FILES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_07",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Finite authored text files only; size, permissions, encoding and read-fault combinations remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "ENVIRONMENT VARIABLES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_08",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Locale precedence, non-C collation/encoding, NLSPATH/catalogs and other listed variables remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "ASYNCHRONOUS EVENTS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_09",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Signal timing across other operations and inherited dispositions remains unqualified; ed has synchronized bounded recovery witnesses.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDOUT",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_10",
+          "disposition": "partial",
+          "witnesses": [
+            "expr/precedence",
+            "expr/parentheses",
+            "expr/zero",
+            "expr/comparison",
+            "expr/or",
+            "expr/and",
+            "expr/match-length",
+            "expr/match-capture",
+            "expr/match-empty",
+            "expr/invalid"
+          ],
+          "reason": "Listed byte-exact outputs only; output write failures and all formatting/locale combinations remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDERR",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_11",
+          "disposition": "partial",
+          "witnesses": [
+            "expr/invalid"
+          ],
+          "reason": "Diagnostic presence only where wording is unspecified; localization, warnings and all error paths remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OUTPUT FILES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_12",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "EXTENDED DESCRIPTION",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_13",
+          "disposition": "partial",
+          "witnesses": [
+            "expr/precedence",
+            "expr/parentheses",
+            "expr/zero",
+            "expr/comparison",
+            "expr/or",
+            "expr/and",
+            "expr/match-length",
+            "expr/match-capture",
+            "expr/match-empty"
+          ],
+          "reason": "Selected language/algorithm operations only; remaining grammar, commands, expressions and interactions remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Matching Expression",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_13_01",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Matching Expression rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Identification as Integer or String",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_13_02",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Identification as Integer or String rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "EXIT STATUS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_14",
+          "disposition": "partial",
+          "witnesses": [
+            "expr/precedence",
+            "expr/parentheses",
+            "expr/zero",
+            "expr/comparison",
+            "expr/or",
+            "expr/and",
+            "expr/match-length",
+            "expr/match-capture",
+            "expr/match-empty",
+            "expr/invalid"
+          ],
+          "reason": "Listed success/error values only; all remaining error and asynchronous outcomes remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "CONSEQUENCES OF ERRORS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_15",
+          "disposition": "partial",
+          "witnesses": [
+            "expr/invalid"
+          ],
+          "reason": "Listed missing inputs, invalid syntax or child failures only; remaining failures and interactive recovery remain unqualified.",
+          "owner": "CSH-074"
+        }
+      ]
+    },
+    {
+      "utility": "grep",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html",
+      "source_sha256": "9473205c9203676853dd5dfb486f2d7a7e223aa7336a59a3481b05be90dcd531",
+      "sections": [
+        {
+          "section": "NAME",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_01",
+          "disposition": "descriptive",
+          "witnesses": [],
+          "reason": "Descriptive name only; no separate behavioral assertion.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "SYNOPSIS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_02",
+          "disposition": "partial",
+          "witnesses": [
+            "grep/bre",
+            "grep/ere",
+            "grep/fixed",
+            "grep/ignore-case",
+            "grep/invert-number",
+            "grep/count",
+            "grep/quiet",
+            "grep/whole-line",
+            "grep/multiple-patterns",
+            "grep/pattern-file",
+            "grep/file-prefix",
+            "grep/file-list",
+            "grep/missing-file",
+            "grep/invalid-bre",
+            "grep/silent-missing"
+          ],
+          "reason": "Invocations below exercise the listed forms; remaining option combinations are unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "DESCRIPTION",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_03",
+          "disposition": "partial",
+          "witnesses": [
+            "grep/bre",
+            "grep/ere",
+            "grep/fixed",
+            "grep/ignore-case",
+            "grep/invert-number",
+            "grep/count",
+            "grep/quiet",
+            "grep/whole-line",
+            "grep/multiple-patterns",
+            "grep/pattern-file",
+            "grep/file-prefix",
+            "grep/file-list",
+            "grep/missing-file",
+            "grep/invalid-bre",
+            "grep/silent-missing"
+          ],
+          "reason": "General processing is witnessed below; the complete utility language/algorithm remains unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OPTIONS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_04",
+          "disposition": "partial",
+          "witnesses": [
+            "grep/bre",
+            "grep/ere",
+            "grep/fixed",
+            "grep/ignore-case",
+            "grep/invert-number",
+            "grep/count",
+            "grep/quiet",
+            "grep/whole-line",
+            "grep/multiple-patterns",
+            "grep/file-list",
+            "grep/silent-missing"
+          ],
+          "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OPERANDS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_05",
+          "disposition": "partial",
+          "witnesses": [
+            "grep/pattern-file"
+          ],
+          "reason": "Selected operands and missing-file errors only; all operand forms and pathname/encoding boundaries remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDIN",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_06",
+          "disposition": "partial",
+          "witnesses": [
+            "grep/bre",
+            "grep/ere",
+            "grep/fixed",
+            "grep/ignore-case",
+            "grep/invert-number",
+            "grep/count",
+            "grep/quiet",
+            "grep/whole-line",
+            "grep/multiple-patterns"
+          ],
+          "reason": "Finite C-locale input streams only; terminal interaction, read faults and interrupted input remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "INPUT FILES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_07",
+          "disposition": "partial",
+          "witnesses": [
+            "grep/pattern-file"
+          ],
+          "reason": "Finite authored text files only; size, permissions, encoding and read-fault combinations remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "ENVIRONMENT VARIABLES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_08",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Locale precedence, non-C collation/encoding, NLSPATH/catalogs and other listed variables remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "ASYNCHRONOUS EVENTS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_09",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Signal timing across other operations and inherited dispositions remains unqualified; ed has synchronized bounded recovery witnesses.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDOUT",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_10",
+          "disposition": "partial",
+          "witnesses": [
+            "grep/bre",
+            "grep/ere",
+            "grep/fixed",
+            "grep/ignore-case",
+            "grep/invert-number",
+            "grep/count",
+            "grep/quiet",
+            "grep/whole-line",
+            "grep/multiple-patterns",
+            "grep/pattern-file",
+            "grep/file-prefix",
+            "grep/file-list",
+            "grep/missing-file",
+            "grep/invalid-bre",
+            "grep/silent-missing"
+          ],
+          "reason": "Listed byte-exact outputs only; output write failures and all formatting/locale combinations remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDERR",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_11",
+          "disposition": "partial",
+          "witnesses": [
+            "grep/missing-file",
+            "grep/invalid-bre"
+          ],
+          "reason": "Diagnostic presence only where wording is unspecified; localization, warnings and all error paths remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OUTPUT FILES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_12",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "EXTENDED DESCRIPTION",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_13",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Selected language/algorithm operations only; remaining grammar, commands, expressions and interactions remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "EXIT STATUS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_14",
+          "disposition": "partial",
+          "witnesses": [
+            "grep/bre",
+            "grep/ere",
+            "grep/fixed",
+            "grep/ignore-case",
+            "grep/invert-number",
+            "grep/count",
+            "grep/quiet",
+            "grep/whole-line",
+            "grep/multiple-patterns",
+            "grep/pattern-file",
+            "grep/file-prefix",
+            "grep/file-list",
+            "grep/missing-file",
+            "grep/invalid-bre",
+            "grep/silent-missing"
+          ],
+          "reason": "Listed success/error values only; all remaining error and asynchronous outcomes remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "CONSEQUENCES OF ERRORS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_15",
+          "disposition": "partial",
+          "witnesses": [
+            "grep/missing-file"
+          ],
+          "reason": "Listed missing inputs, invalid syntax or child failures only; remaining failures and interactive recovery remain unqualified.",
+          "owner": "CSH-074"
+        }
+      ]
+    },
+    {
+      "utility": "m4",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html",
+      "source_sha256": "c8fa5682d9b5885c173ede4c3c2e97cf0dac19898bcd88df9b78a1ebc8ce10c6",
+      "sections": [
+        {
+          "section": "NAME",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_01",
+          "disposition": "descriptive",
+          "witnesses": [],
+          "reason": "Descriptive name only; no separate behavioral assertion.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "SYNOPSIS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_02",
+          "disposition": "partial",
+          "witnesses": [
+            "m4/define-arguments",
+            "m4/define-option",
+            "m4/undefine-option",
+            "m4/arithmetic-string",
+            "m4/conditionals-stack",
+            "m4/diversion",
+            "m4/include",
+            "m4/exit",
+            "m4/missing-file"
+          ],
+          "reason": "Invocations below exercise the listed forms; remaining option combinations are unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "DESCRIPTION",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_03",
+          "disposition": "partial",
+          "witnesses": [
+            "m4/define-arguments",
+            "m4/define-option",
+            "m4/undefine-option",
+            "m4/arithmetic-string",
+            "m4/conditionals-stack",
+            "m4/diversion",
+            "m4/include",
+            "m4/exit",
+            "m4/missing-file"
+          ],
+          "reason": "General processing is witnessed below; the complete utility language/algorithm remains unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OPTIONS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_04",
+          "disposition": "partial",
+          "witnesses": [
+            "m4/define-option",
+            "m4/undefine-option"
+          ],
+          "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OPERANDS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_05",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Selected operands and missing-file errors only; all operand forms and pathname/encoding boundaries remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDIN",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_06",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Finite C-locale input streams only; terminal interaction, read faults and interrupted input remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "INPUT FILES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_07",
+          "disposition": "partial",
+          "witnesses": [
+            "m4/include"
+          ],
+          "reason": "Finite authored text files only; size, permissions, encoding and read-fault combinations remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "ENVIRONMENT VARIABLES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_08",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Locale precedence, non-C collation/encoding, NLSPATH/catalogs and other listed variables remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "ASYNCHRONOUS EVENTS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_09",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Signal timing across other operations and inherited dispositions remains unqualified; ed has synchronized bounded recovery witnesses.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDOUT",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_10",
+          "disposition": "partial",
+          "witnesses": [
+            "m4/define-arguments",
+            "m4/define-option",
+            "m4/undefine-option",
+            "m4/arithmetic-string",
+            "m4/conditionals-stack",
+            "m4/diversion",
+            "m4/include",
+            "m4/exit",
+            "m4/missing-file"
+          ],
+          "reason": "Listed byte-exact outputs only; output write failures and all formatting/locale combinations remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDERR",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_11",
+          "disposition": "partial",
+          "witnesses": [
+            "m4/missing-file"
+          ],
+          "reason": "Diagnostic presence only where wording is unspecified; localization, warnings and all error paths remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OUTPUT FILES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_12",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "EXTENDED DESCRIPTION",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_13",
+          "disposition": "partial",
+          "witnesses": [
+            "m4/define-arguments",
+            "m4/arithmetic-string",
+            "m4/conditionals-stack",
+            "m4/diversion",
+            "m4/include"
+          ],
+          "reason": "Selected language/algorithm operations only; remaining grammar, commands, expressions and interactions remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "EXIT STATUS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_14",
+          "disposition": "partial",
+          "witnesses": [
+            "m4/define-arguments",
+            "m4/define-option",
+            "m4/undefine-option",
+            "m4/arithmetic-string",
+            "m4/conditionals-stack",
+            "m4/diversion",
+            "m4/include",
+            "m4/exit",
+            "m4/missing-file"
+          ],
+          "reason": "Listed success/error values only; all remaining error and asynchronous outcomes remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "CONSEQUENCES OF ERRORS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_15",
+          "disposition": "partial",
+          "witnesses": [
+            "m4/missing-file"
+          ],
+          "reason": "Listed missing inputs, invalid syntax or child failures only; remaining failures and interactive recovery remain unqualified.",
+          "owner": "CSH-074"
+        }
+      ]
+    },
+    {
+      "utility": "patch",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html",
+      "source_sha256": "f9b52d950df15a4c1d0d3f6dac174e422b4ecb68fe67268f8232ccca67fb9589",
+      "sections": [
+        {
+          "section": "NAME",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_01",
+          "disposition": "descriptive",
+          "witnesses": [],
+          "reason": "Descriptive name only; no separate behavioral assertion.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "SYNOPSIS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_02",
+          "disposition": "partial",
+          "witnesses": [
+            "patch/normal",
+            "patch/unified",
+            "patch/context",
+            "patch/reverse",
+            "patch/input-output",
+            "patch/reject"
+          ],
+          "reason": "Invocations below exercise the listed forms; remaining option combinations are unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "DESCRIPTION",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_03",
+          "disposition": "partial",
+          "witnesses": [
+            "patch/normal",
+            "patch/unified",
+            "patch/context",
+            "patch/reverse",
+            "patch/input-output",
+            "patch/reject"
+          ],
+          "reason": "General processing is witnessed below; the complete utility language/algorithm remains unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OPTIONS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_04",
+          "disposition": "partial",
+          "witnesses": [
+            "patch/normal",
+            "patch/unified",
+            "patch/context",
+            "patch/reverse",
+            "patch/input-output"
+          ],
+          "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OPERANDS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_05",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Selected operands and missing-file errors only; all operand forms and pathname/encoding boundaries remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDIN",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_06",
+          "disposition": "partial",
+          "witnesses": [
+            "patch/normal",
+            "patch/unified",
+            "patch/context"
+          ],
+          "reason": "Finite C-locale input streams only; terminal interaction, read faults and interrupted input remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "INPUT FILES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_07",
+          "disposition": "partial",
+          "witnesses": [
+            "patch/normal",
+            "patch/unified",
+            "patch/context"
+          ],
+          "reason": "Finite authored text files only; size, permissions, encoding and read-fault combinations remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "ENVIRONMENT VARIABLES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_08",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Locale precedence, non-C collation/encoding, NLSPATH/catalogs and other listed variables remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "ASYNCHRONOUS EVENTS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_09",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Signal timing across other operations and inherited dispositions remains unqualified; ed has synchronized bounded recovery witnesses.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDOUT",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_10",
+          "disposition": "partial",
+          "witnesses": [
+            "patch/normal",
+            "patch/unified",
+            "patch/context",
+            "patch/reverse",
+            "patch/input-output",
+            "patch/reject"
+          ],
+          "reason": "Listed byte-exact outputs only; output write failures and all formatting/locale combinations remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDERR",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_11",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Diagnostic presence only where wording is unspecified; localization, warnings and all error paths remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OUTPUT FILES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_12",
+          "disposition": "partial",
+          "witnesses": [
+            "patch/normal",
+            "patch/unified",
+            "patch/context",
+            "patch/input-output"
+          ],
+          "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "EXTENDED DESCRIPTION",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_13",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Selected language/algorithm operations only; remaining grammar, commands, expressions and interactions remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Patch File Format",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_13_01",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Patch File Format rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Filename Determination",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_13_02",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Filename Determination rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "Patch Application",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_13_03",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "The Patch Application rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "EXIT STATUS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_14",
+          "disposition": "partial",
+          "witnesses": [
+            "patch/normal",
+            "patch/unified",
+            "patch/context",
+            "patch/reverse",
+            "patch/input-output",
+            "patch/reject"
+          ],
+          "reason": "Listed success/error values only; all remaining error and asynchronous outcomes remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "CONSEQUENCES OF ERRORS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_15",
+          "disposition": "partial",
+          "witnesses": [
+            "patch/reject"
+          ],
+          "reason": "Listed missing inputs, invalid syntax or child failures only; remaining failures and interactive recovery remain unqualified.",
+          "owner": "CSH-074"
+        }
+      ]
+    },
+    {
+      "utility": "xargs",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html",
+      "source_sha256": "5f31b40d1ebfc4433a8c025f56467903aac5059c95d755e077f6c00d60d7110e",
+      "sections": [
+        {
+          "section": "NAME",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_01",
+          "disposition": "descriptive",
+          "witnesses": [],
+          "reason": "Descriptive name only; no separate behavioral assertion.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "SYNOPSIS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_02",
+          "disposition": "partial",
+          "witnesses": [
+            "xargs/quoting",
+            "xargs/batch-count",
+            "xargs/logical-lines",
+            "xargs/replace",
+            "xargs/eof",
+            "xargs/default-echo",
+            "xargs/trace",
+            "xargs/missing-utility",
+            "xargs/not-executable",
+            "xargs/unmatched-quote",
+            "xargs/size-rejection",
+            "xargs/child-exit-1",
+            "xargs/child-exit-255"
+          ],
+          "reason": "Invocations below exercise the listed forms; remaining option combinations are unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "DESCRIPTION",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_03",
+          "disposition": "partial",
+          "witnesses": [
+            "xargs/quoting",
+            "xargs/batch-count",
+            "xargs/logical-lines",
+            "xargs/replace",
+            "xargs/eof",
+            "xargs/default-echo",
+            "xargs/trace",
+            "xargs/missing-utility",
+            "xargs/not-executable",
+            "xargs/unmatched-quote",
+            "xargs/size-rejection",
+            "xargs/child-exit-1",
+            "xargs/child-exit-255"
+          ],
+          "reason": "General processing is witnessed below; the complete utility language/algorithm remains unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OPTIONS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_04",
+          "disposition": "partial",
+          "witnesses": [
+            "xargs/quoting",
+            "xargs/batch-count",
+            "xargs/logical-lines",
+            "xargs/replace",
+            "xargs/eof",
+            "xargs/trace",
+            "xargs/size-rejection"
+          ],
+          "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OPERANDS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_05",
+          "disposition": "partial",
+          "witnesses": [
+            "xargs/default-echo"
+          ],
+          "reason": "Selected operands and missing-file errors only; all operand forms and pathname/encoding boundaries remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDIN",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_06",
+          "disposition": "partial",
+          "witnesses": [
+            "xargs/quoting",
+            "xargs/unmatched-quote"
+          ],
+          "reason": "Finite C-locale input streams only; terminal interaction, read faults and interrupted input remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "INPUT FILES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_07",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Finite authored text files only; size, permissions, encoding and read-fault combinations remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "ENVIRONMENT VARIABLES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_08",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Locale precedence, non-C collation/encoding, NLSPATH/catalogs and other listed variables remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "ASYNCHRONOUS EVENTS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_09",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Signal timing across other operations and inherited dispositions remains unqualified; ed has synchronized bounded recovery witnesses.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDOUT",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_10",
+          "disposition": "partial",
+          "witnesses": [
+            "xargs/quoting",
+            "xargs/batch-count",
+            "xargs/logical-lines",
+            "xargs/replace",
+            "xargs/eof",
+            "xargs/default-echo",
+            "xargs/trace",
+            "xargs/missing-utility",
+            "xargs/not-executable",
+            "xargs/unmatched-quote",
+            "xargs/size-rejection",
+            "xargs/child-exit-1",
+            "xargs/child-exit-255"
+          ],
+          "reason": "Listed byte-exact outputs only; output write failures and all formatting/locale combinations remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "STDERR",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_11",
+          "disposition": "partial",
+          "witnesses": [
+            "xargs/trace"
+          ],
+          "reason": "Diagnostic presence only where wording is unspecified; localization, warnings and all error paths remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "OUTPUT FILES",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_12",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "EXTENDED DESCRIPTION",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_13",
+          "disposition": "unqualified",
+          "witnesses": [],
+          "reason": "Selected language/algorithm operations only; remaining grammar, commands, expressions and interactions remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "EXIT STATUS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_14",
+          "disposition": "partial",
+          "witnesses": [
+            "xargs/quoting",
+            "xargs/batch-count",
+            "xargs/logical-lines",
+            "xargs/replace",
+            "xargs/eof",
+            "xargs/default-echo",
+            "xargs/trace",
+            "xargs/missing-utility",
+            "xargs/not-executable",
+            "xargs/unmatched-quote",
+            "xargs/size-rejection",
+            "xargs/child-exit-1",
+            "xargs/child-exit-255"
+          ],
+          "reason": "Listed success/error values only; all remaining error and asynchronous outcomes remain unqualified.",
+          "owner": "CSH-074"
+        },
+        {
+          "section": "CONSEQUENCES OF ERRORS",
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_15",
+          "disposition": "partial",
+          "witnesses": [
+            "xargs/missing-utility",
+            "xargs/not-executable",
+            "xargs/unmatched-quote",
+            "xargs/size-rejection",
+            "xargs/child-exit-1",
+            "xargs/child-exit-255"
+          ],
+          "reason": "Listed missing inputs, invalid syntax or child failures only; remaining failures and interactive recovery remain unqualified.",
+          "owner": "CSH-074"
+        }
+      ]
+    }
+  ],
+  "common_defaults": [
+    {
+      "condition": "U-034",
+      "disposition": "partial",
+      "reason": "Every case executes both the inventoried pathname and PATH lookup through cshell string/file/stdin modes; invocation/resource boundaries remain unqualified.",
+      "owner": "CSH-074"
+    },
+    {
+      "condition": "U-040",
+      "disposition": "partial",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap01.html#tag_18_04",
+      "reason": "Private files, C locale, bounded streams, resource limits, ordinary errors and owned process cleanup. Full utility syntax guidelines, non-C locales, capacity, storage/read/write faults and signal timing remain unqualified.",
+      "owner": "CSH-074"
+    }
+  ],
+  "retained_conditions": [
+    {
+      "condition": "U-040/ed-buffer-temp-signal",
+      "witnesses": [
+        "ed/bounded-buffer",
+        "ed/write-failure",
+        "ed/signal-hup",
+        "ed/signal-hup-home",
+        "ed/signal-int"
+      ],
+      "disposition": "partial",
+      "reason": "4096-byte buffer, failed output pathname, synchronized SIGHUP cwd/HOME recovery and SIGINT command-mode recovery. Temp backing-store faults, capacity exhaustion and other signal timings remain open.",
+      "owner": "CSH-074"
+    }
+  ],
+  "optional_reproducers": [
+    {
+      "id": "ed/signal-int",
+      "flag": "--ed-sigint",
+      "disposition": "unqualified",
+      "reason": "Strict stdout ?\\n and unchanged buffer recovery. macOS emits on stderr; GNU adds a newline. Keep failures outside the declared passing subset, without gap allowances.",
+      "owner": "CSH-074"
+    }
+  ]
+}

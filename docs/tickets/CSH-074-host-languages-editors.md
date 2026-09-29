@@ -1,11 +1,11 @@
 # CSH-074: Qualify host languages, editors and argument construction
 
-- Status: ready
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: Assigned when work starts
+- Branch: test/CSH-074-host-languages-editors
 - Issue: [#146](https://github.com/melliott18/cshell/issues/146)
 
 ## Goal
@@ -56,17 +56,17 @@ profiles and executable/environment identities, remains unchanged.
 
 ## Acceptance criteria
 
-- [ ] Select each required exec-accessible provider, supply missing packages/services,
+- [x] Select each required exec-accessible provider, supply missing packages/services,
   and retain exact PATH, realpath, executable hash, package and environment identity.
 - [ ] Map every applicable page section and common default to clause-derived
   assertions or an individually justified disposition; repair required-contract
   failures. Selected examples alone do not complete a utility contract.
-- [ ] Resolve each assigned retained condition with its required capability and
+- [x] Resolve each assigned retained condition with its required capability and
   strict evidence, or transfer that individual condition to a concrete open owner.
   Preserve vendor ownership, setup failures and failed assertions separately.
-- [ ] Verify public cshell dispatch and direct exec access, exact output/status and
+- [x] Verify public cshell dispatch and direct exec access, exact output/status and
   relevant effects, with zero gap allowances for every declared qualified subset.
-- [ ] Update the inventory, current ownership manifest and clause maps with the
+- [x] Update the inventory, current ownership manifest and clause maps with the
   exact qualification boundary; keep stock-host, qualified subset and full-system
   claims separate.
 
@@ -82,6 +82,36 @@ processes and disposable files/services and verify cleanup after failure/timeout
 
 ## Implementation notes/evidence
 
-Work has not started. CSH-068 transfers ownership only; it supplies no new vendor
-implementation, service, privileged host or physical terminal. CSH-064 remains
-done for its bounded capability work and repaired probe cleanup.
+The [bounded implementation](../host-languages-evidence.md) adds 82 fixtures in
+four execution modes plus six synchronized SIGHUP cases, provider provisioning,
+strict harness controls and a [normative heading map](../../tests/host_language_contracts.json).
+The selected subset passes 334 assertions on native macOS and on an earlier
+Docker/Linux snapshot. A later Linux run exposed two signal-readiness failures;
+the corrected native run and 18 focused recovery checks pass. Final Linux
+validation is blocked by Docker daemon HTTP 500 errors.
+[All attempts and identities](../evidence/csh-074/README.md) retain fixture
+corrections, unknown m4 launcher timeouts and separate SIGINT failures.
+
+The provider/dispatch/ownership checkboxes apply to this declared subset.
+SIGHUP buffer recovery and HOME fallback supply the requested retained capability;
+temporary backing-store exhaustion, capacity and other signal contracts remain
+with this same open ticket. No historical residual is removed or rewritten.
+The remaining full-page acceptance checkbox is intentionally open. Every heading
+has a disposition, but unqualified sections are not waived normative obligations.
+The strict opt-in `--ed-sigint` reproducer still fails on retained providers;
+macOS writes the marker to stderr, while GNU has a leading newline requiring
+further disposition. No provider repair is claimed.
+
+Native `make test-host-inventory`, the five new harness controls, 86 existing
+harness controls and the focused selected subset pass. Native full
+`make test-host-profile` records two existing process-cleanup `ps` timeouts and
+is **not passing**. The earlier Linux full profile passes 1162 existing assertions plus 334
+new assertions, and the harness checks pass. Broader native runtime/PTY checks
+retain additional cleanup/terminal-fixture failures; they are not green.
+Commands, limits, package/toolchain
+identities, effects and cleanup outcomes are retained in the evidence above.
+
+Status `review` means the bounded implementation is reviewable. Keep this ticket
+open until remaining page contracts, provider failures and full acceptance are
+resolved. CSH-068 remains an ownership transfer and CSH-064 historical evidence
+is unchanged.

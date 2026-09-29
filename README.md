@@ -60,6 +60,7 @@ make test-options  # Invocation/set, option effects, and environment interaction
 make test-host-inventory # Complete utility and residual ownership consistency
 make test-host-utilities # Stock-host integration, identities and known gaps
 make test-host-profile   # Opt-in qualified utilities, strict gaps and boundaries
+make test-host-languages # Bounded host language/editor/xargs contracts
 make test-evaluation # Evaluation, lookup, aliases, and remaining utilities
 make test-builtins # Replacement state builtins and executor integration
 make test-state-builtins # Clause-mapped runtime state and utility evidence

@@ -8,7 +8,7 @@ cshell's builtin allocation. All tools are real exec-accessible programs;
 | Host | Selected replacements | Provisioning |
 | --- | --- | --- |
 | macOS | Standalone FreeBSD printf with adapters; Homebrew `gtest` and `g[` | `brew install coreutils`; prefixed binaries must be on the provisioning process's PATH |
-| Debian/Ubuntu | Standalone FreeBSD printf with adapters; BusyBox kill | `apt-get install build-essential python3 ed busybox locales acl`; generate `fr_FR.UTF-8` |
+| Debian/Ubuntu | Standalone FreeBSD printf with adapters; BusyBox kill | `apt-get install build-essential python3 ed busybox locales acl bc m4`; generate `fr_FR.UTF-8` |
 
 Other scoped commands use `os.defpath` without additional symlinks, preserving
 cshell's PATH-associated pwd builtin selection. In particular, echo remains the system
@@ -242,3 +242,16 @@ control. It checks the deadline, strict timeout record, measured IDs, disappeara
 of every owned PID (including zombies), and survival of an unrelated child.
 Only private files and processes are used. See
 [CSH-064 completion](../../docs/evidence/csh-064-completion/README.md) for validation.
+
+## CSH-074 language/editor providers
+
+Provisioning also requires awk, bc, ed, expr, grep, m4, patch and xargs. Docker
+and Linux CI explicitly supply bc/m4. On macOS, `xcrun --find m4` selects the
+actual developer-tool executable and records its hash; the private profile adds
+an m4 symlink instead of qualifying the `/usr/bin/m4` launcher. Xcode or Command
+Line Tools must already be available. Nothing is installed on the host.
+
+`make test-host-profile` runs the [334 bounded language/editor assertions](../../docs/host-languages-evidence.md)
+with the selected PATH. Full normative pages, temporary backing-store exhaustion
+and SIGINT stream qualification remain open. The documented `--ed-sigint`
+command is a separate strict failing reproducer, without known-gap allowances.

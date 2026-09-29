@@ -212,3 +212,15 @@ defect. [The completion record](evidence/csh-064-completion/README.md) validates
 process-group cleanup and descendant reaping through the actual nested path.
 The ticket records acceptance; this repair is independent of the external
 capabilities required for vendor requalification.
+
+## CSH-074 language/editor/argument subset
+
+[Host language evidence](host-languages-evidence.md) adds 334 strict bounded
+assertions and [per-heading dispositions](../tests/host_language_contracts.json)
+for awk, bc, ed, expr, grep, m4, patch and xargs. SIGHUP buffer recovery and HOME
+fallback supply part of `U-040/ed-buffer-temp-signal`; temp-store failures,
+capacity and SIGINT streams remain open under CSH-074. CSH-073's shared
+interruption condition retains its other utility and timing obligations.
+The [run evidence](evidence/csh-074/README.md) preserves failed stock/provider
+attempts and existing harness cleanup failures separately from passing subsets.
+No full-page or full-system promotion follows from these witnesses.

@@ -490,6 +490,8 @@ build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/pr
 
 test-host-profile: test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+	$(PYTHON) -m unittest discover -s tests -p 'test_host_languages.py'
+	$(PYTHON) tests/host_languages.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-languages-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 
 # Public entry point with only the command input read syscall instrumented.
 build/tests/command-read-input.o: src/input.c tests/command_read_faults.h $(INPUT_HEADERS)
@@ -616,3 +618,8 @@ test-locale-pathname: cshell build/tests/locale_probe build/tests/pathname_runti
 test-host-inventory:
 	$(PYTHON) tests/host_contract_inventory.py
 	$(PYTHON) tests/test_host_contract_inventory.py
+
+.PHONY: test-host-languages
+test-host-languages: cshell
+	$(PYTHON) -m unittest discover -s tests -p 'test_host_languages.py'
+	$(PYTHON) tests/host_languages.py ./cshell --path "$(if $(CSH_TEST_PATH),$(CSH_TEST_PATH),$(shell getconf PATH))" --record build/tests/host-languages-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)

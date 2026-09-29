@@ -1337,3 +1337,16 @@ rows and unassigned conditional prerequisite reports. Regression checks exercise
 these failure cases and the runner's emitted ownership without invoking utilities.
 This is an accounting check, not a conformance suite. See the
 [current individual contracts](host-system-inventory.md#current-contract-ownership).
+
+## Host languages, editors and argument construction
+
+`make test-host-languages` runs the CSH-074 harness controls and 334 strict
+assertions against eight providers selected from `getconf PATH`. Set
+`CSH_TEST_PATH` to select a different profile. `make test-host-profile` includes
+the selected-profile run after the existing host utility assertions. Linux CI
+and Docker supply bc/m4; macOS profile provisioning resolves the actual Xcode
+m4 binary. No developer-host package installation occurs.
+
+See [scope, bounds and reproduction](host-languages-evidence.md) and
+[all-attempt evidence](evidence/csh-074/README.md). Full pages and SIGINT remain
+unqualified; `--ed-sigint` is a strict opt-in reproducer, not a gap allowance.
