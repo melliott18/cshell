@@ -55,5 +55,6 @@ so the information remains accessible in a plain Markdown reader.
 - [Base shell-option clause evidence](shell-option-evidence.md): CSH-051 entry, state, environment, policy and run mapping.
 
 - [Qualified host contracts](host-contract-profile.md): CSH-056 profile, residual assertions and per-utility capability limits.
+- [External host prerequisites](evidence/csh-064/README.md): CSH-064 namespace qualification, fakeowner diagnosis and individually retained requirements.
 
 - [Residual execution contracts (CSH-055)](execution-contracts.md): prefix PATH, inherited descriptors, read errors, and nested control evidence.

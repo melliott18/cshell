@@ -1,0 +1,325 @@
+{
+  "supplied_capabilities": [
+    {
+      "name": "mapped Linux user namespace",
+      "new": true,
+      "uid_map": [
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          20001,
+          65535
+        ]
+      ],
+      "gid_map": [
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          20001,
+          65535
+        ]
+      ],
+      "setgroups": "allow",
+      "qualification": "linux-namespace.json.gz",
+      "strict": "linux-namespace-unequal.json.gz",
+      "unmet": "12 private-node mknod setup failures; complete profile fails"
+    },
+    {
+      "name": "independent fakeowner syscall and socket-transfer diagnosis",
+      "new": true,
+      "control": "overlay-probe.json",
+      "experiment": "bind-probe.json",
+      "unmet": "socket stat EINVAL and non-owner chmod success remain strict failures"
+    }
+  ],
+  "vendor_change": {
+    "supplied": false,
+    "reason": "Selected coreutils 9.10-1/libc6 2.43-6 identities are unchanged from CSH-063; this is a credential-namespace recheck, not a new vendor claim.",
+    "identity": "acl-diagnosis.json"
+  },
+  "external_environments": {
+    "privileged_Darwin": "not supplied",
+    "physical_terminal": "not supplied",
+    "additional_ACL_filesystem": "not supplied; new capability is credential namespace"
+  },
+  "residuals": [
+    {
+      "condition": "U-035/locale-catalogs",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/printf.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Standalone source has no message-catalog lookup; diagnostics fall back to untranslated text.",
+      "required_capability": "A selected printf implementation with catalog lookup and a supplied translated catalog; the current standalone source has no lookup.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-035/other-locales",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/printf.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "C/French/UTF-8 plus available German numeric and GB18030 byte cases are bounded witnesses; other locales and translated catalogs remain unqualified.",
+      "required_capability": "Additional installed locale/catalog identities with independently authored numeric and diagnostic expectations.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-035/format-allocation-limits",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/printf.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Test-only strdup/realloc ENOMEM branches and controls are checked when supplied; libc allocation failure, stack exhaustion and maximum accepted sizes remain untested.",
+      "required_capability": "A disposable libc allocation/stack-fault environment and bounded independent failure oracles beyond local strdup/realloc injection.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-035/full-format",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/printf.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Selected defined sign/base/width/precision/conversion and invalid-format cases extend the binary regression; the full combination space remains unqualified.",
+      "required_capability": "New bounded conversion combinations with independently authored byte/diagnostic expectations.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-036/alternative-policies",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/echo.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Explicit Apple/GNU and BusyBox FEATURE_FANCY_ECHO policies have independent assertions; other builds and policies need fresh identities and expectations.",
+      "required_capability": "A newly selected echo implementation/build policy, exact binary identity and independently authored policy expectations.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-036/argument-limits",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/echo.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Single and aggregate oversized exec vectors require E2BIG with a fixed environment; exact successful thresholds and other environment sizes remain unqualified.",
+      "required_capability": "A bounded threshold-search environment controlling kernel, stack limit, argv layout and environment bytes; oversized rejection alone is insufficient.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-037/ACLs",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Opt-in Linux-root fixtures check a named-user ACL grant and denial with equal IDs for test/bracket; combined unequal-ID ACL predicates fail on Debian 12/13 and sid coreutils 9.10/glibc 2.43 (strict --unequal-acl reproducer; includes false grants as well as rejected grants); CSH-061/062 add access/default ACL read/write/execute controls, multiple named users, two supplementary groups, user precedence and masks; unequal combinations are strict opt-in assertions. Each run records its selected fixture filesystem; CSH-063 adds owner/owning-group precedence, no fallback to other, mask-independent owner/other access and creation-mode restrictions with independent operations. Darwin and other filesystems remain unqualified.",
+      "required_capability": "A changed test/bracket/libc vendor implementation or an additional ACL-capable filesystem, followed by strict predicates and independent read/write/execute controls.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-037/Darwin-ACLs",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "This run has no supplied privileged Darwin identity fixture; ordered allow/deny entries, inheritance and effective-identity access remain unqualified. Requires a disposable root-controlled Darwin environment, never a modification to real user accounts.",
+      "required_capability": "A supplied disposable root-controlled Darwin environment for ordered allow/deny ACL entries, inheritance and controlled identities.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-037/unequal-identities",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Opt-in Linux-root fixtures check effective-owner/group reads with unequal UID/GID pairs and empty groups; CSH-062 covers two explicit supplementary groups (10003/10004), multiple ACL entries and named-user precedence; --unequal-acl requires the same grants with unequal IDs, without allowances. CSH-063 adds owner and owning-group selection and no-fallback controls under equal/unequal IDs. CSH-064 supplies a Linux user namespace mapping inner IDs 1..65535 to outer IDs 20001..85535, with root mapped to root and setgroups allowed; only recorded assertions qualify that bounded mapping. Other credentials and identity namespaces remain unqualified.",
+      "required_capability": "A further credential mapping or changed vendor implementation; retain false and rejected grants under the supplied 0:0:1,1:20001:65535 maps.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-037/fakeowner-socket-type",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "CSH-064 independently compares stat, test/bracket -S and a one-byte AF_UNIX transfer on the supplied fakeowner bind. Socket-type failures remain strict platform failures, separately from ACL setup and utility semantics.",
+      "required_capability": "A changed fakeowner/filesystem implementation with successful socket stat metadata and strict test/bracket predicates plus actual AF_UNIX transfer.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/fakeowner-chmod",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/chmod.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "CSH-064 compares external chmod and direct chmod under measured owner/non-owner IDs with empty groups and no effective capabilities. Successful non-owner chmod and changed metadata remain strict platform failures; fakeowner is not a qualified permission filesystem.",
+      "required_capability": "A changed fakeowner/filesystem implementation enforcing non-owner chmod denial under measured IDs and capabilities, for syscall and selected utility.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-037/device-namespaces",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Explicit block and private Linux character/block nodes are stat-only witnesses; other namespaces and device I/O are unqualified and real disk contents are never fixtures.",
+      "required_capability": "A disposable namespace allowed to create private device nodes, or an explicitly supplied stat-only witness. No real device I/O.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/true-exec-resources",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/true.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Oversized exec is rejected with E2BIG before utility entry; process/memory exhaustion and loader failure remain untested, with no utility capacity inferred.",
+      "required_capability": "A disposable process/memory/loader fault environment for true with deterministic independently observed failure stages.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/false-exec-resources",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/false.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Oversized exec is rejected with E2BIG before utility entry; process/memory exhaustion and loader failure remain untested, with no utility capacity inferred.",
+      "required_capability": "A disposable process/memory/loader fault environment for false with deterministic independently observed failure stages.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/pwd-access-path-limits",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Deleted cwd is checked; inaccessible ancestors and pathname limits need controlled permissions/filesystems.",
+      "required_capability": "A controlled inaccessible-ancestor and pathname-boundary filesystem with bounded, independently checked expectations.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/kill-identities-resources",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/kill.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Cross-user denials require another identity; process-limit exhaustion is outside the owned-child signal fixture.",
+      "required_capability": "Additional disposable credential/process-limit controls acting only on owned children.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/cat-filesystem-limits",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cat.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "A child-only 1024-byte RLIMIT_FSIZE with ignored SIGXFSZ checks partial output and diagnostic failure; filesystem I/O faults and maximum file size remain untested.",
+      "required_capability": "A disposable filesystem I/O fault or capacity environment beyond the existing 1024-byte child RLIMIT_FSIZE witness.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/env-ARG_MAX",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/env.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Oversized single and aggregate exec vectors require E2BIG before env entry; env internal exec limits, inherited environments and exact thresholds remain unqualified.",
+      "required_capability": "A controlled environment and argv threshold/internal-exec fixture that distinguishes loader rejection from env entry.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/find-depth-locale-limits",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "32 nested directories and UTF-8 single-character matching are checked; descriptor/depth exhaustion and broader locale matching remain unqualified.",
+      "required_capability": "Controlled descriptor/depth exhaustion or new locale matching oracles beyond 32 levels.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/ls-size-collation",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "256 C-locale entries and one UTF-8 name are checked; larger directories and locale collation require independent locale expectations.",
+      "required_capability": "A supplied locale/collation oracle or bounded larger directory beyond 256 C-locale entries.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/stty-physical-terminal",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/stty.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "A controlled PTY cannot establish physical serial/terminal hardware capabilities.",
+      "required_capability": "Explicitly supplied disposable physical serial/terminal hardware with known supported settings.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/ed-buffer-temp-signal",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "1024 input lines are printed; maximum edit buffer, temp-file failure and signal recovery are not induced.",
+      "required_capability": "A disposable temp-file/buffer failure or signal-recovery fixture with bounded expectations.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/sed-space-limits",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sed.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "32768-byte hold/pattern space, available UTF-8/GB18030 character matching and file-limit failure are checked; maxima and other multibyte expressions remain unqualified.",
+      "required_capability": "A new controlled memory/space boundary or multibyte-expression oracle beyond existing finite witnesses.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/head-count-interruption",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/head.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Count 2147483647 on a two-line file is not a maximum-count or interrupted-input witness.",
+      "required_capability": "An owned interrupted-input fixture or independently bounded count-boundary witness.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/cmp-offset-interruption",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cmp.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Difference at byte 65537 and EOF diagnostics are checked; larger offsets and interrupted-input behavior remain unqualified.",
+      "required_capability": "An owned interrupted-input fixture or independently bounded larger-offset witness.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/chmod-ACL-identity-filesystem",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/chmod.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Opt-in Linux-root fixtures check non-owner chmod denial; ACL effects, additional credential combinations and filesystem-specific permissions remain unqualified.",
+      "required_capability": "Additional ACL/identity/filesystem permission semantics with expected metadata and independently observed effects.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/rm-depth-mount-prompt",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "32-level removal and explicit -i yes/no prompts are checked; depth exhaustion, protected mounts and terminal-driven permission prompts remain unqualified.",
+      "required_capability": "A disposable mount/depth-exhaustion or terminal-prompt fixture; never protected mounts.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/sleep-duration",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sleep.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Maximum duration cannot be witnessed by waiting within a five-second fixture budget.",
+      "required_capability": "An independently bounded duration/overflow oracle that fits the fixture time budget.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/sh-host-semantics",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sh.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Selected invocation/status witnesses do not qualify the host shell parser, resource and locale semantics.",
+      "required_capability": "A separately scoped host shell parser/resource/locale qualification with independent oracles.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    },
+    {
+      "condition": "U-040/other-interruptions",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cat.html",
+      "owner": "CSH-064",
+      "implementation_owner": "selected utility/libc/platform vendor",
+      "reason": "Owned sleep TERM delivery does not qualify interrupted read/write or recovery for cat, head, cmp, ed or other utilities.",
+      "required_capability": "Per-utility owned read/write interruption and recovery fixtures for cat, head, cmp and ed; sleep TERM is insufficient.",
+      "actual_environment_and_executable": "Each qualification JSON limitations row with this condition; hashes and measured namespace/filesystem context are embedded."
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "Id": "38db8f2fc946377f30fbfbca863b5d06f1f0b38e1f00b78d345a1ece632cbee9",
+  "Image": "sha256:fda4e2035f7ea606a6b0b014f7a34a6149362cb9c3a2d5b4bbba655ad19fb605",
+  "Created": "2026-09-29T00:13:19.273458469Z",
+  "Mounts": [
+    {
+      "Type": "bind",
+      "Source": "/Users/mitchell/.codex/worktrees/csh-064-host-prerequisites/cshell/build/csh064-bind",
+      "Destination": "/bind-fixtures",
+      "Mode": "",
+      "RW": true,
+      "Propagation": "rprivate"
+    }
+  ],
+  "HostConfig": {
+    "CapAdd": null,
+    "Privileged": false,
+    "SecurityOpt": null,
+    "Tmpfs": {
+      "/tmpfs-fixtures": "rw,exec,size=128m,mode=1777"
+    }
+  }
+}

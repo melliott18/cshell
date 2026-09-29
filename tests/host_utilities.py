@@ -14,7 +14,7 @@ import locale
 import subprocess
 import tempfile
 
-from host_platform import filesystem_identity
+from host_platform import credential_namespace, filesystem_identity
 
 import smoke
 from host_utility_cases import HOSTS, INTRINSICS, cases
@@ -192,6 +192,7 @@ def main():
     if not fixture_root.is_dir():
         parser.error('--fixture-root must be an existing directory')
     filesystem = filesystem_identity(fixture_root)
+    namespace = credential_namespace()
     binary = args.binary.resolve()
     helper = shlex.quote(str(args.helper.resolve()))
     tools = inventory(args.path)
@@ -263,7 +264,8 @@ def main():
                          args.printf_faults.resolve() if args.printf_faults else None,
                          dict(german=capabilities['german_locale'], gb18030=capabilities['gb18030_locale'],
                               utf8=capabilities['utf8_locale']), args.controlled_identities, args.unequal_acl))
-        environment = dict(platform=platform.platform(), capabilities=capabilities, filesystem=filesystem)
+        environment = dict(platform=platform.platform(), capabilities=capabilities,
+                           filesystem=filesystem, credential_namespace=namespace)
         limitations.extend(residual_limitations(environment, tools))
         for condition, available, reason in (
             ('U-035/allocation-injection', args.printf_faults, 'No test-only printf allocation helper supplied'),
@@ -397,6 +399,7 @@ def main():
               'host_limits': {name: os.sysconf(name) for name in
                               ('SC_ARG_MAX', 'SC_OPEN_MAX', 'SC_LINE_MAX')},
               'filesystem_limits': filesystem_limits, 'filesystem': filesystem,
+              'credential_namespace': namespace,
               'filesystem_query_path': filesystem_query_path,
               'child_resources': child_resources,
               'binary_sha256': sha(binary), 'helper_sha256': sha(args.helper),

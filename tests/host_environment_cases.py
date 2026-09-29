@@ -3,7 +3,7 @@ import os
 import shlex
 import stat
 import subprocess
-from host_acl_cases import cases as acl_cases, setup as setup_acl
+from host_acl_cases import cases as acl_cases, setup as setup_acl, verify_acl_metadata
 
 
 def cases(paths, helper, printf_faults, locales, controlled, unequal_acl=False):
@@ -131,4 +131,6 @@ def setup_controlled(directory, kind):
                   mode=oct(observed.st_mode), rdev=observed.st_rdev)
     if kind == 'acl':
         result['acl'] = subprocess.check_output(['getfacl', '-cpn', str(target)], timeout=5).decode()
+        verify_acl_metadata(dict(acl_entries='u::---,u:10001:r--,g::---,m::r--,o::---',
+                                 inherited=False), result['acl'], observed)
     return result

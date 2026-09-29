@@ -153,3 +153,29 @@ All 28 residual rows remain individually sourced; conditional missing-root,
 locale and stat-only block witnesses remain separate and now also carry
 selected executable identities. [CSH-063](tickets/CSH-063-host-platform-residual-qualification.md)
 owns the remaining conditions. Utility families remain open and the CSH-012 gate stays closed.
+
+## CSH-064 external prerequisites and namespace evidence
+
+[CSH-064 evidence](evidence/csh-064/README.md) supplies a disposable Linux user
+namespace mapping fixture IDs 10001..10005 to outer IDs 30001..30005. The
+qualification JSON records UID/GID maps, setgroups policy and namespace links,
+separately from the actual helper credentials and system limit queries. ACL
+metadata validation now applies to every controlled ACL fixture. Namespace
+private-node creation failures remain setup failures; the bounded ACL result
+does not qualify the complete namespace profile.
+
+A focused independent probe diagnoses the supplied `fakeowner` bind mount:
+stat on a bound AF_UNIX socket fails with EINVAL while a one-byte transfer works,
+and both external and direct chmod permit a non-owner mode change with no
+effective capabilities. Socket predicates and non-owner denial expectations
+remain strict failures. These two conditions have individual residual rows.
+The 204 unequal-ID test/bracket predicate failures remain separately retained.
+
+[External prerequisite inventory](evidence/csh-064/prerequisites.json) records
+the concrete capability required before revisiting each of the 30 residual
+conditions. Each qualification record retains actual environment/executable
+identities, source, reason, CSH-064 as qualification owner and selected
+utility/libc/platform vendors as implementation owners. Privileged Darwin and
+physical terminal environments remain unavailable; missing root, locale and
+stat-only block witnesses remain separate. No parent utility family or CSH-012
+gate is promoted.
