@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import patch
 
 from host_capability_limits import RESIDUAL, limitations
+from host_contract_inventory import condition_owner
 from host_environment_cases import cases as environment_cases
 from host_utility_cases import HOSTS
 from host_utilities import known_gap, match, matches_case, sanitizer_diagnostic
@@ -55,7 +56,7 @@ class HostEvidenceTests(unittest.TestCase):
         self.assertEqual(len({row['condition'] for row in rows}), len(RESIDUAL))
         for row in rows:
             self.assertEqual(row['environment'], 'test environment')
-            self.assertEqual(row['owner'], 'CSH-064')
+            self.assertEqual(row['owner'], condition_owner(row['condition']))
             self.assertTrue(row['source'].startswith('https://pubs.opengroup.org/'))
             self.assertTrue(row['reason'])
             self.assertTrue(row['executable']['sha256'])
