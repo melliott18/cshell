@@ -605,8 +605,8 @@ build/tests/pathname-runtime-pathname.o: src/pathname.c tests/pathname_runtime_f
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/pathname_runtime_faults.h -c $< -o $@
 
-build/tests/pathname_runtime_faults: tests/pathname_runtime_faults.c build/tests/pathname-runtime-pathname.o $(OBJECTS) build/character.o
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/pathname_runtime_faults.c build/tests/pathname-runtime-pathname.o $(filter-out build/pathname.o,$(OBJECTS)) build/character.o $(LDLIBS)
+build/tests/pathname_runtime_faults: tests/pathname_runtime_faults.c build/tests/pathname-runtime-pathname.o $(OBJECTS) build/character.o build/stack.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/pathname_runtime_faults.c build/tests/pathname-runtime-pathname.o $(filter-out build/pathname.o,$(OBJECTS)) build/character.o build/stack.o $(LDLIBS)
 
 .PHONY: test-locale-pathname
 test-locale-pathname: cshell build/tests/locale_probe build/tests/pathname_runtime_faults
