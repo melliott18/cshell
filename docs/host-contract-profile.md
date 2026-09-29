@@ -212,3 +212,12 @@ defect. [The completion record](evidence/csh-064-completion/README.md) validates
 process-group cleanup and descendant reaping through the actual nested path.
 The ticket records acceptance; this repair is independent of the external
 capabilities required for vendor requalification.
+
+## CSH-075 execution subset
+
+The opt-in execution extension is documented in the
+[host execution clause map](host-execution-evidence.md). Supplying
+`HOST_EXECUTION_SUBSET` to `make test-host-profile` runs both the original profile
+and the declared execution subset strictly, retaining separate JSON results.
+Whole-page contracts, failed provider assertions and the six remaining conditions
+stay open. No historical evidence or stock-host allowance changes.

@@ -1,11 +1,11 @@
 # CSH-075: Qualify host execution and process utilities
 
-- Status: ready
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: Assigned when work starts
+- Branch: test/CSH-075-host-execution-processes
 - Issue: [#147](https://github.com/melliott18/cshell/issues/147)
 
 ## Goal
@@ -67,7 +67,7 @@ profiles and executable/environment identities, remains unchanged.
 
 ## Acceptance criteria
 
-- [ ] Select each required exec-accessible provider, supply missing packages/services,
+- [x] Select each required exec-accessible provider, supply missing packages/services,
   and retain exact PATH, realpath, executable hash, package and environment identity.
 - [ ] Map every applicable page section and common default to clause-derived
   assertions or an individually justified disposition; repair required-contract
@@ -75,9 +75,9 @@ profiles and executable/environment identities, remains unchanged.
 - [ ] Resolve each assigned retained condition with its required capability and
   strict evidence, or transfer that individual condition to a concrete open owner.
   Preserve vendor ownership, setup failures and failed assertions separately.
-- [ ] Verify public cshell dispatch and direct exec access, exact output/status and
+- [x] Verify public cshell dispatch and direct exec access, exact output/status and
   relevant effects, with zero gap allowances for every declared qualified subset.
-- [ ] Update the inventory, current ownership manifest and clause maps with the
+- [x] Update the inventory, current ownership manifest and clause maps with the
   exact qualification boundary; keep stock-host, qualified subset and full-system
   claims separate.
 
@@ -93,6 +93,29 @@ processes and disposable files/services and verify cleanup after failure/timeout
 
 ## Implementation notes/evidence
 
-Work has not started. CSH-068 transfers ownership only; it supplies no new vendor
-implementation, service, privileged host or physical terminal. CSH-064 remains
-done for its bounded capability work and repaired probe cleanup.
+Implementation is in progress on `test/CSH-075-host-execution-processes` in the
+separate `csh-075-host-execution` worktree. The [clause map](../host-execution-evidence.md)
+and [retained runs](../evidence/csh-075/README.md) describe the delivered harness,
+provider provisioning, exact subset lists, source identities and cleanup controls.
+
+The new runner covers all 14 providers with direct exec and public cshell
+string/file/stdin assertions. It independently inventories `/bin/sh`, measures
+aggregate argv success/E2BIG boundaries, records post-exec descriptor-limit
+failures, supplies Linux owned-process credential/limit controls, and checks
+large sleep durations using a bounded, opt-in clock interposer. Linux timeout
+cleanup explicitly adopts and reaps orphaned helpers. Tests protect status,
+timing, duration, section accounting and unrelated-child cleanup.
+
+Native macOS's declared execution subset passes 242 assertions; Docker/Linux's
+passes 238. The existing host profiles pass 1,162 and 1,144 assertions respectively,
+with zero failed assertions or gap allowances. The strict expanded profile still
+fails 12 assertions on macOS and 16 on Linux: required getconf Issue 8 names,
+timeout `-f`/`-p`, and Linux renice semantics. A native PTY cleanup timeout from
+an earlier concurrent run is retained separately; the serial rerun passes.
+
+**This ticket is not complete.** The two unchecked criteria remain unmet: required
+provider failures are not repaired, and the six retained conditions have only the
+bounded extensions listed in the clause map. No full-page or full-system claim
+is made, no open contract is silently transferred, and no original failed
+assertion is waived. All 14 page contracts and six conditions remain owned here;
+selected utility/libc/platform vendors retain implementation ownership.

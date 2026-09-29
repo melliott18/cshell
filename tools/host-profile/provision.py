@@ -14,8 +14,11 @@ sys.path.insert(0, str(ROOT / 'tests'))
 from host_utility_cases import HOSTS
 
 
-def provision(destination, gnu_bin=None):
+def provision(destination, gnu_bin=None, execution=False):
     selected = {name: shutil.which(name, path=os.defpath) for name in HOSTS}
+    if execution:
+        from host_execution_cases import UTILITIES
+        selected.update({name: shutil.which(name, path=os.defpath) for name in UTILITIES})
     overrides = {'printf': str(ROOT / 'build/host-printf')}
     system = platform.system()
     if system == 'Darwin':
@@ -23,6 +26,8 @@ def provision(destination, gnu_bin=None):
         search = str(gnu_bin) if gnu_bin else os.environ.get('PATH', os.defpath)
         overrides.update({name: shutil.which('g' + name, path=search)
                          for name in ('test', '[')})
+        if execution:
+            overrides['timeout'] = shutil.which('gtimeout', path=search)
     elif system == 'Linux':
         overrides['kill'] = shutil.which('busybox', path=os.defpath)
     else:
@@ -55,8 +60,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('destination', type=Path)
     parser.add_argument('--gnu-bin', type=Path)
+    parser.add_argument('--execution', action='store_true', help='Also supply CSH-075 providers')
     args = parser.parse_args()
     try:
-        provision(args.destination, args.gnu_bin)
+        provision(args.destination, args.gnu_bin, args.execution)
     except ValueError as error:
         parser.error(str(error))

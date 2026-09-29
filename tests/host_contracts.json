@@ -168,7 +168,9 @@
         "U-040/sleep-duration",
         "U-040/sh-host-semantics"
       ],
-      "prerequisite": "Record the selected /bin/sh ENOEXEC provider independently of PATH sh; supply controlled processes, credentials, loader/resource failures and deterministic clock/timeout controls. Missing timeout remains a provider gap. Do not infer maximum sleep duration by waiting five seconds."
+      "prerequisite": "Record the selected /bin/sh ENOEXEC provider independently of PATH sh; supply controlled processes, credentials, loader/resource failures and deterministic clock/timeout controls. Missing timeout remains a provider gap. Do not infer maximum sleep duration by waiting five seconds.",
+      "qualification_map": "tests/host_execution_contracts.json",
+      "qualification_boundary": "CSH-075 authored execution assertions only; all 14 whole-page contracts and six retained conditions stay open. See per-section remaining obligations and strict provider failures."
     },
     {
       "ticket": "CSH-076",

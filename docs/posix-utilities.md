@@ -192,3 +192,8 @@ and `pipefail`. Reference-shell disagreement is recorded through the
 and pathname residuals, including case, read and alias utilities. Its condition
 map assigns external prerequisites P1–P6 without promoting whole families or
 counting unavailable capabilities as passes.
+
+CSH-075 adds a separate [execution/process clause map](host-execution-evidence.md)
+for U-034, U-038, U-039 and U-040. It records provider-specific strict failures
+and declared subsets; all 14 full-page contracts and retained conditions remain
+open in the existing ownership manifest.

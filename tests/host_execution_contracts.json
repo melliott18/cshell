@@ -1,0 +1,1136 @@
+{
+  "schema_version": 1,
+  "boundary": "Authored assertions and explicit outstanding requirements; section coverage is not whole-page qualification.",
+  "common_defaults": {
+    "U-034": "Every ordinary case runs through direct exec plus cshell string/file/stdin. kill PATH invocations exercise its intrinsic; direct mode selects the external provider.",
+    "U-040": "Strict bytes/status/effects and C locale; generic defaults remain open where not explicitly asserted. No universal option rule is imposed on true/false."
+  },
+  "utilities": [
+    {
+      "utility": "env",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/env.html",
+      "source_sha256": "0304635ac8176ad6602bdffcc43b50c938cf2ebc1b24acccc60c5814d7e68d33",
+      "owner": "CSH-075",
+      "whole_page": "unqualified",
+      "sections": {
+        "NAME": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "SYNOPSIS": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "DESCRIPTION": {
+          "disposition": "partial",
+          "cases": [
+            "env/empty",
+            "env/listing",
+            "env/exact-environment",
+            "env/replace",
+            "env/inherit",
+            "env/remove-inherited",
+            "env/operand-path",
+            "env/child-status",
+            "env/arguments",
+            "env/missing",
+            "env/not-executable"
+          ],
+          "remaining": "Inherited environment preservation, locale diagnostics, internal exec E2BIG and allocation/exec failures remain open."
+        },
+        "OPTIONS": {
+          "disposition": "partial",
+          "remaining": "Inherited environment preservation, locale diagnostics, internal exec E2BIG and allocation/exec failures remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OPERANDS": {
+          "disposition": "partial",
+          "remaining": "Inherited environment preservation, locale diagnostics, internal exec E2BIG and allocation/exec failures remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDIN": {
+          "disposition": "open",
+          "reason": "The utility itself does not consume stdin. Complete preservation for invoked utilities and descriptor offsets remains unqualified."
+        },
+        "INPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no input files for the utility itself; invoked commands are qualified independently."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "partial",
+          "reason": "C locale and explicit PATH are recorded; required non-C locale precedence remains open. XSI NLSPATH is excluded."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "open",
+          "reason": "HUP disposition or owned timeout TERM/KILL is asserted where applicable; the full inherited/default signal matrix remains open."
+        },
+        "STDOUT": {
+          "disposition": "partial",
+          "remaining": "Inherited environment preservation, locale diagnostics, internal exec E2BIG and allocation/exec failures remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDERR": {
+          "disposition": "partial",
+          "remaining": "Inherited environment preservation, locale diagnostics, internal exec E2BIG and allocation/exec failures remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OUTPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no output files for the utility itself."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "no-additional-contract",
+          "reason": "No additional requirements in this section."
+        },
+        "EXIT STATUS": {
+          "disposition": "partial",
+          "remaining": "Inherited environment preservation, locale diagnostics, internal exec E2BIG and allocation/exec failures remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "partial",
+          "reason": "Selected command/operand failures are strict. The complete default error-continuation/resource matrix remains open."
+        }
+      }
+    },
+    {
+      "utility": "false",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/false.html",
+      "source_sha256": "b9e1b46b9996345f3746166b83d7ffb5cdb1c529d72b8c2a77bb06bb1b51e12c",
+      "owner": "CSH-075",
+      "whole_page": "unqualified",
+      "sections": {
+        "NAME": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "SYNOPSIS": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "DESCRIPTION": {
+          "disposition": "partial",
+          "cases": [
+            "false/status"
+          ],
+          "remaining": "Memory exhaustion, exact loader failure stage and signal-inheritance defaults remain open. No options, operands or environment variables are required."
+        },
+        "OPTIONS": {
+          "disposition": "partial",
+          "remaining": "Memory exhaustion, exact loader failure stage and signal-inheritance defaults remain open. No options, operands or environment variables are required.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OPERANDS": {
+          "disposition": "partial",
+          "remaining": "Memory exhaustion, exact loader failure stage and signal-inheritance defaults remain open. No options, operands or environment variables are required.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDIN": {
+          "disposition": "open",
+          "reason": "The utility itself does not consume stdin. Complete preservation for invoked utilities and descriptor offsets remains unqualified."
+        },
+        "INPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no input files for the utility itself; invoked commands are qualified independently."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "no-additional-contract",
+          "reason": "No environment variables specified."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "open",
+          "reason": "HUP disposition or owned timeout TERM/KILL is asserted where applicable; the full inherited/default signal matrix remains open."
+        },
+        "STDOUT": {
+          "disposition": "partial",
+          "remaining": "Memory exhaustion, exact loader failure stage and signal-inheritance defaults remain open. No options, operands or environment variables are required.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDERR": {
+          "disposition": "partial",
+          "remaining": "Memory exhaustion, exact loader failure stage and signal-inheritance defaults remain open. No options, operands or environment variables are required.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OUTPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no output files for the utility itself."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "no-additional-contract",
+          "reason": "No additional requirements in this section."
+        },
+        "EXIT STATUS": {
+          "disposition": "partial",
+          "remaining": "Memory exhaustion, exact loader failure stage and signal-inheritance defaults remain open. No options, operands or environment variables are required.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "partial",
+          "reason": "Selected command/operand failures are strict. The complete default error-continuation/resource matrix remains open."
+        }
+      }
+    },
+    {
+      "utility": "getconf",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/getconf.html",
+      "source_sha256": "19c7cf52aa24e1b61bbaf5dc4a759a1ab236b023106df6f8fc545486241cb3ff",
+      "owner": "CSH-075",
+      "whole_page": "unqualified",
+      "sections": {
+        "NAME": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "SYNOPSIS": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "DESCRIPTION": {
+          "disposition": "partial",
+          "cases": [
+            "getconf/ARG_MAX",
+            "getconf/PATH",
+            "getconf/NAME_MAX",
+            "getconf/invalid-variable",
+            "getconf/issue8-environment"
+          ],
+          "remaining": "Issue 8 compilation-environment names fail. Remaining required sysconf/pathconf/confstr/constants, -v environments, undefined values and query errors remain open."
+        },
+        "OPTIONS": {
+          "disposition": "partial",
+          "remaining": "Issue 8 compilation-environment names fail. Remaining required sysconf/pathconf/confstr/constants, -v environments, undefined values and query errors remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OPERANDS": {
+          "disposition": "partial",
+          "remaining": "Issue 8 compilation-environment names fail. Remaining required sysconf/pathconf/confstr/constants, -v environments, undefined values and query errors remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDIN": {
+          "disposition": "open",
+          "reason": "The utility itself does not consume stdin. Complete preservation for invoked utilities and descriptor offsets remains unqualified."
+        },
+        "INPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no input files for the utility itself; invoked commands are qualified independently."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "partial",
+          "reason": "C locale and explicit PATH are recorded; required non-C locale precedence remains open. XSI NLSPATH is excluded."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "open",
+          "reason": "HUP disposition or owned timeout TERM/KILL is asserted where applicable; the full inherited/default signal matrix remains open."
+        },
+        "STDOUT": {
+          "disposition": "partial",
+          "remaining": "Issue 8 compilation-environment names fail. Remaining required sysconf/pathconf/confstr/constants, -v environments, undefined values and query errors remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDERR": {
+          "disposition": "partial",
+          "remaining": "Issue 8 compilation-environment names fail. Remaining required sysconf/pathconf/confstr/constants, -v environments, undefined values and query errors remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OUTPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no output files for the utility itself."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "no-additional-contract",
+          "reason": "No additional requirements in this section."
+        },
+        "EXIT STATUS": {
+          "disposition": "partial",
+          "remaining": "Issue 8 compilation-environment names fail. Remaining required sysconf/pathconf/confstr/constants, -v environments, undefined values and query errors remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "partial",
+          "reason": "Selected command/operand failures are strict. The complete default error-continuation/resource matrix remains open."
+        }
+      }
+    },
+    {
+      "utility": "kill",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/kill.html",
+      "source_sha256": "b8a734e2a6c967cb8fbfd56d8e5efbec318e8bbae182754a75ad3d4d472ce12e",
+      "owner": "CSH-075",
+      "whole_page": "unqualified",
+      "sections": {
+        "NAME": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "SYNOPSIS": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "DESCRIPTION": {
+          "disposition": "partial",
+          "cases": [
+            "kill/signal-number",
+            "kill/probe-owned",
+            "kill/deliver-owned"
+          ],
+          "remaining": "Signal list completeness, multiple operands, owned process groups, race/error continuation and signal inheritance remain open. Job IDs are shell-context-only; XSI signal shorthand is outside the selected base profile."
+        },
+        "OPTIONS": {
+          "disposition": "partial",
+          "remaining": "Signal list completeness, multiple operands, owned process groups, race/error continuation and signal inheritance remain open. Job IDs are shell-context-only; XSI signal shorthand is outside the selected base profile.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OPERANDS": {
+          "disposition": "partial",
+          "remaining": "Signal list completeness, multiple operands, owned process groups, race/error continuation and signal inheritance remain open. Job IDs are shell-context-only; XSI signal shorthand is outside the selected base profile.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDIN": {
+          "disposition": "open",
+          "reason": "The utility itself does not consume stdin. Complete preservation for invoked utilities and descriptor offsets remains unqualified."
+        },
+        "INPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no input files for the utility itself; invoked commands are qualified independently."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "partial",
+          "reason": "C locale and explicit PATH are recorded; required non-C locale precedence remains open. XSI NLSPATH is excluded."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "open",
+          "reason": "HUP disposition or owned timeout TERM/KILL is asserted where applicable; the full inherited/default signal matrix remains open."
+        },
+        "STDOUT": {
+          "disposition": "partial",
+          "remaining": "Signal list completeness, multiple operands, owned process groups, race/error continuation and signal inheritance remain open. Job IDs are shell-context-only; XSI signal shorthand is outside the selected base profile.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDERR": {
+          "disposition": "partial",
+          "remaining": "Signal list completeness, multiple operands, owned process groups, race/error continuation and signal inheritance remain open. Job IDs are shell-context-only; XSI signal shorthand is outside the selected base profile.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OUTPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no output files for the utility itself."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "no-additional-contract",
+          "reason": "No additional requirements in this section."
+        },
+        "EXIT STATUS": {
+          "disposition": "partial",
+          "remaining": "Signal list completeness, multiple operands, owned process groups, race/error continuation and signal inheritance remain open. Job IDs are shell-context-only; XSI signal shorthand is outside the selected base profile.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "partial",
+          "reason": "Selected command/operand failures are strict. The complete default error-continuation/resource matrix remains open."
+        }
+      }
+    },
+    {
+      "utility": "nice",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/nice.html",
+      "source_sha256": "f58df3354b5b441e729e615b08423a385ee6115b2c8dd0831070e5ac2e1eb78d",
+      "owner": "CSH-075",
+      "whole_page": "unqualified",
+      "sections": {
+        "NAME": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "SYNOPSIS": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "DESCRIPTION": {
+          "disposition": "partial",
+          "cases": [
+            "nice/child-status",
+            "nice/arguments",
+            "nice/missing",
+            "nice/not-executable",
+            "nice/increment"
+          ],
+          "remaining": "Default increment policy, negative/clamped increments, denied adjustment with continued invocation, inherited state and resource failures remain open."
+        },
+        "OPTIONS": {
+          "disposition": "partial",
+          "remaining": "Default increment policy, negative/clamped increments, denied adjustment with continued invocation, inherited state and resource failures remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OPERANDS": {
+          "disposition": "partial",
+          "remaining": "Default increment policy, negative/clamped increments, denied adjustment with continued invocation, inherited state and resource failures remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDIN": {
+          "disposition": "open",
+          "reason": "The utility itself does not consume stdin. Complete preservation for invoked utilities and descriptor offsets remains unqualified."
+        },
+        "INPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no input files for the utility itself; invoked commands are qualified independently."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "partial",
+          "reason": "C locale and explicit PATH are recorded; required non-C locale precedence remains open. XSI NLSPATH is excluded."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "open",
+          "reason": "HUP disposition or owned timeout TERM/KILL is asserted where applicable; the full inherited/default signal matrix remains open."
+        },
+        "STDOUT": {
+          "disposition": "partial",
+          "remaining": "Default increment policy, negative/clamped increments, denied adjustment with continued invocation, inherited state and resource failures remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDERR": {
+          "disposition": "partial",
+          "remaining": "Default increment policy, negative/clamped increments, denied adjustment with continued invocation, inherited state and resource failures remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OUTPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no output files for the utility itself."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "no-additional-contract",
+          "reason": "No additional requirements in this section."
+        },
+        "EXIT STATUS": {
+          "disposition": "partial",
+          "remaining": "Default increment policy, negative/clamped increments, denied adjustment with continued invocation, inherited state and resource failures remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "partial",
+          "reason": "Selected command/operand failures are strict. The complete default error-continuation/resource matrix remains open."
+        }
+      }
+    },
+    {
+      "utility": "nohup",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/nohup.html",
+      "source_sha256": "19f5b7797e78cf87bdd03570dd482abf685ca76b7ea371cb415e3e4c0cce0377",
+      "owner": "CSH-075",
+      "whole_page": "unqualified",
+      "sections": {
+        "NAME": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "SYNOPSIS": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "DESCRIPTION": {
+          "disposition": "partial",
+          "cases": [
+            "nohup/child-status",
+            "nohup/arguments",
+            "nohup/missing",
+            "nohup/not-executable",
+            "nohup/hangup-disposition"
+          ],
+          "remaining": "Terminal stdin/stdout/stderr combinations, append/mode preservation, HOME fallback and open failures remain open; only nonterminal HUP disposition is tested."
+        },
+        "OPTIONS": {
+          "disposition": "partial",
+          "remaining": "Terminal stdin/stdout/stderr combinations, append/mode preservation, HOME fallback and open failures remain open; only nonterminal HUP disposition is tested.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OPERANDS": {
+          "disposition": "partial",
+          "remaining": "Terminal stdin/stdout/stderr combinations, append/mode preservation, HOME fallback and open failures remain open; only nonterminal HUP disposition is tested.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDIN": {
+          "disposition": "open",
+          "reason": "The utility itself does not consume stdin. Complete preservation for invoked utilities and descriptor offsets remains unqualified."
+        },
+        "INPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no input files for the utility itself; invoked commands are qualified independently."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "partial",
+          "reason": "C locale and explicit PATH are recorded; required non-C locale precedence remains open. XSI NLSPATH is excluded."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "partial",
+          "reason": "HUP disposition or owned timeout TERM/KILL is asserted where applicable; the full inherited/default signal matrix remains open."
+        },
+        "STDOUT": {
+          "disposition": "partial",
+          "remaining": "Terminal stdin/stdout/stderr combinations, append/mode preservation, HOME fallback and open failures remain open; only nonterminal HUP disposition is tested.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDERR": {
+          "disposition": "partial",
+          "remaining": "Terminal stdin/stdout/stderr combinations, append/mode preservation, HOME fallback and open failures remain open; only nonterminal HUP disposition is tested.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OUTPUT FILES": {
+          "disposition": "open",
+          "reason": "Terminal-driven nohup.out creation/append and shell redirection effects remain open."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "no-additional-contract",
+          "reason": "No additional requirements in this section."
+        },
+        "EXIT STATUS": {
+          "disposition": "partial",
+          "remaining": "Terminal stdin/stdout/stderr combinations, append/mode preservation, HOME fallback and open failures remain open; only nonterminal HUP disposition is tested.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "partial",
+          "reason": "Selected command/operand failures are strict. The complete default error-continuation/resource matrix remains open."
+        }
+      }
+    },
+    {
+      "utility": "ps",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ps.html",
+      "source_sha256": "7ee67610c0e0ddab88971fd7dfc94a32205f198312ad3c0de524f77b3870b4d4",
+      "owner": "CSH-075",
+      "whole_page": "unqualified",
+      "sections": {
+        "NAME": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "SYNOPSIS": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "DESCRIPTION": {
+          "disposition": "partial",
+          "cases": [
+            "ps/owned-pid"
+          ],
+          "remaining": "Default/terminal/all/real-user/group selection and union rules, repeated -o, all required fields/headers/widths, COLUMNS/LC_TIME/TZ remain open. XSI-only listing/selection forms are excluded."
+        },
+        "OPTIONS": {
+          "disposition": "partial",
+          "remaining": "Default/terminal/all/real-user/group selection and union rules, repeated -o, all required fields/headers/widths, COLUMNS/LC_TIME/TZ remain open. XSI-only listing/selection forms are excluded.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OPERANDS": {
+          "disposition": "partial",
+          "remaining": "Default/terminal/all/real-user/group selection and union rules, repeated -o, all required fields/headers/widths, COLUMNS/LC_TIME/TZ remain open. XSI-only listing/selection forms are excluded.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDIN": {
+          "disposition": "open",
+          "reason": "The utility itself does not consume stdin. Complete preservation for invoked utilities and descriptor offsets remains unqualified."
+        },
+        "INPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no input files for the utility itself; invoked commands are qualified independently."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "partial",
+          "reason": "C locale and explicit PATH are recorded; required non-C locale precedence remains open. XSI NLSPATH is excluded."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "open",
+          "reason": "HUP disposition or owned timeout TERM/KILL is asserted where applicable; the full inherited/default signal matrix remains open."
+        },
+        "STDOUT": {
+          "disposition": "partial",
+          "remaining": "Default/terminal/all/real-user/group selection and union rules, repeated -o, all required fields/headers/widths, COLUMNS/LC_TIME/TZ remain open. XSI-only listing/selection forms are excluded.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDERR": {
+          "disposition": "partial",
+          "remaining": "Default/terminal/all/real-user/group selection and union rules, repeated -o, all required fields/headers/widths, COLUMNS/LC_TIME/TZ remain open. XSI-only listing/selection forms are excluded.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OUTPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no output files for the utility itself."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "no-additional-contract",
+          "reason": "No additional requirements in this section."
+        },
+        "EXIT STATUS": {
+          "disposition": "partial",
+          "remaining": "Default/terminal/all/real-user/group selection and union rules, repeated -o, all required fields/headers/widths, COLUMNS/LC_TIME/TZ remain open. XSI-only listing/selection forms are excluded.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "partial",
+          "reason": "Selected command/operand failures are strict. The complete default error-continuation/resource matrix remains open."
+        }
+      }
+    },
+    {
+      "utility": "renice",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/renice.html",
+      "source_sha256": "98053362ac28cc8bba051713e135514261b7abad95dd478c14382c43f6a1a657",
+      "owner": "CSH-075",
+      "whole_page": "unqualified",
+      "sections": {
+        "NAME": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "SYNOPSIS": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "DESCRIPTION": {
+          "disposition": "partial",
+          "cases": [
+            "renice/relative-increment"
+          ],
+          "remaining": "Linux -n uses an absolute value and reports on stdout; the relative-increment assertion fails. Group/user selection, saved IDs, clamping, permission and multi-operand continuation remain open."
+        },
+        "OPTIONS": {
+          "disposition": "partial",
+          "remaining": "Linux -n uses an absolute value and reports on stdout; the relative-increment assertion fails. Group/user selection, saved IDs, clamping, permission and multi-operand continuation remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OPERANDS": {
+          "disposition": "partial",
+          "remaining": "Linux -n uses an absolute value and reports on stdout; the relative-increment assertion fails. Group/user selection, saved IDs, clamping, permission and multi-operand continuation remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDIN": {
+          "disposition": "open",
+          "reason": "The utility itself does not consume stdin. Complete preservation for invoked utilities and descriptor offsets remains unqualified."
+        },
+        "INPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no input files for the utility itself; invoked commands are qualified independently."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "partial",
+          "reason": "C locale and explicit PATH are recorded; required non-C locale precedence remains open. XSI NLSPATH is excluded."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "open",
+          "reason": "HUP disposition or owned timeout TERM/KILL is asserted where applicable; the full inherited/default signal matrix remains open."
+        },
+        "STDOUT": {
+          "disposition": "partial",
+          "remaining": "Linux -n uses an absolute value and reports on stdout; the relative-increment assertion fails. Group/user selection, saved IDs, clamping, permission and multi-operand continuation remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDERR": {
+          "disposition": "partial",
+          "remaining": "Linux -n uses an absolute value and reports on stdout; the relative-increment assertion fails. Group/user selection, saved IDs, clamping, permission and multi-operand continuation remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OUTPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no output files for the utility itself."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "no-additional-contract",
+          "reason": "No additional requirements in this section."
+        },
+        "EXIT STATUS": {
+          "disposition": "partial",
+          "remaining": "Linux -n uses an absolute value and reports on stdout; the relative-increment assertion fails. Group/user selection, saved IDs, clamping, permission and multi-operand continuation remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "partial",
+          "reason": "Selected command/operand failures are strict. The complete default error-continuation/resource matrix remains open."
+        }
+      }
+    },
+    {
+      "utility": "sh",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sh.html",
+      "source_sha256": "b6f11dc31fccb2145dd51ccd92704779dfce1faa00b3a5bec27f0007b711a054",
+      "owner": "CSH-075",
+      "whole_page": "unqualified",
+      "sections": {
+        "NAME": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "SYNOPSIS": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "DESCRIPTION": {
+          "disposition": "partial",
+          "cases": [
+            "sh/command-parameters",
+            "sh/stdin",
+            "sh/file",
+            "sh/noexec",
+            "sh/syntax-error"
+          ],
+          "remaining": "Remaining Chapter 2 grammar, expansions, state, invocation options, interactive behavior, input offsets/read faults, resources, locale and redirection offsets remain open for the external provider. UP history/editing and obsolescent -h are outside scope."
+        },
+        "OPTIONS": {
+          "disposition": "partial",
+          "remaining": "Remaining Chapter 2 grammar, expansions, state, invocation options, interactive behavior, input offsets/read faults, resources, locale and redirection offsets remain open for the external provider. UP history/editing and obsolescent -h are outside scope.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OPERANDS": {
+          "disposition": "partial",
+          "remaining": "Remaining Chapter 2 grammar, expansions, state, invocation options, interactive behavior, input offsets/read faults, resources, locale and redirection offsets remain open for the external provider. UP history/editing and obsolescent -h are outside scope.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDIN": {
+          "disposition": "partial",
+          "reason": "sh/stdin checks -s parameters; read-ahead, FIFO and terminal rules remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "partial",
+          "reason": "sh/file checks a readable command file; unlimited lines, nontext payload and read faults remain open."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "partial",
+          "reason": "C locale and explicit PATH are recorded; required non-C locale precedence remains open. XSI NLSPATH is excluded."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "open",
+          "reason": "HUP disposition or owned timeout TERM/KILL is asserted where applicable; the full inherited/default signal matrix remains open."
+        },
+        "STDOUT": {
+          "disposition": "partial",
+          "remaining": "Remaining Chapter 2 grammar, expansions, state, invocation options, interactive behavior, input offsets/read faults, resources, locale and redirection offsets remain open for the external provider. UP history/editing and obsolescent -h are outside scope.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDERR": {
+          "disposition": "partial",
+          "remaining": "Remaining Chapter 2 grammar, expansions, state, invocation options, interactive behavior, input offsets/read faults, resources, locale and redirection offsets remain open for the external provider. UP history/editing and obsolescent -h are outside scope.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OUTPUT FILES": {
+          "disposition": "open",
+          "reason": "Terminal-driven nohup.out creation/append and shell redirection effects remain open."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "excluded",
+          "reason": "UP command-line history/editing is excluded by the selected base profile; base Chapter 2 remains open under DESCRIPTION."
+        },
+        "EXIT STATUS": {
+          "disposition": "partial",
+          "remaining": "Remaining Chapter 2 grammar, expansions, state, invocation options, interactive behavior, input offsets/read faults, resources, locale and redirection offsets remain open for the external provider. UP history/editing and obsolescent -h are outside scope.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "partial",
+          "reason": "Selected command/operand failures are strict. The complete default error-continuation/resource matrix remains open."
+        }
+      }
+    },
+    {
+      "utility": "sleep",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sleep.html",
+      "source_sha256": "8de7054b446b649e7d80133ff062abc560104ed5dd66d40a1ff32d6b3fc9ca30",
+      "owner": "CSH-075",
+      "whole_page": "unqualified",
+      "sections": {
+        "NAME": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "SYNOPSIS": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "DESCRIPTION": {
+          "disposition": "partial",
+          "cases": [
+            "sleep/zero",
+            "sleep/one-second",
+            "sleep/invalid"
+          ],
+          "remaining": "Native duration conversion/overflow and general maxima remain open. Linux virtual-clock witnesses cover 1 and 32-bit boundaries only, not elapsed real time or a maximum."
+        },
+        "OPTIONS": {
+          "disposition": "partial",
+          "remaining": "Native duration conversion/overflow and general maxima remain open. Linux virtual-clock witnesses cover 1 and 32-bit boundaries only, not elapsed real time or a maximum.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OPERANDS": {
+          "disposition": "partial",
+          "remaining": "Native duration conversion/overflow and general maxima remain open. Linux virtual-clock witnesses cover 1 and 32-bit boundaries only, not elapsed real time or a maximum.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDIN": {
+          "disposition": "open",
+          "reason": "The utility itself does not consume stdin. Complete preservation for invoked utilities and descriptor offsets remains unqualified."
+        },
+        "INPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no input files for the utility itself; invoked commands are qualified independently."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "partial",
+          "reason": "C locale and explicit PATH are recorded; required non-C locale precedence remains open. XSI NLSPATH is excluded."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "open",
+          "reason": "HUP disposition or owned timeout TERM/KILL is asserted where applicable; the full inherited/default signal matrix remains open."
+        },
+        "STDOUT": {
+          "disposition": "partial",
+          "remaining": "Native duration conversion/overflow and general maxima remain open. Linux virtual-clock witnesses cover 1 and 32-bit boundaries only, not elapsed real time or a maximum.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDERR": {
+          "disposition": "partial",
+          "remaining": "Native duration conversion/overflow and general maxima remain open. Linux virtual-clock witnesses cover 1 and 32-bit boundaries only, not elapsed real time or a maximum.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OUTPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no output files for the utility itself."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "no-additional-contract",
+          "reason": "No additional requirements in this section."
+        },
+        "EXIT STATUS": {
+          "disposition": "partial",
+          "remaining": "Native duration conversion/overflow and general maxima remain open. Linux virtual-clock witnesses cover 1 and 32-bit boundaries only, not elapsed real time or a maximum.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "partial",
+          "reason": "Selected command/operand failures are strict. The complete default error-continuation/resource matrix remains open."
+        }
+      }
+    },
+    {
+      "utility": "time",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/time.html",
+      "source_sha256": "122563d377c7f0c8bfdb99ac022fbdca81cd514f8b2266867c77c413b0c54ac0",
+      "owner": "CSH-075",
+      "whole_page": "unqualified",
+      "sections": {
+        "NAME": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "SYNOPSIS": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "DESCRIPTION": {
+          "disposition": "partial",
+          "cases": [
+            "time/child-status",
+            "time/arguments",
+            "time/missing",
+            "time/not-executable"
+          ],
+          "remaining": "CPU/elapsed accuracy under controlled load, clock granularity, LC_NUMERIC, signals and resources remain open; -p layout and child status are tested."
+        },
+        "OPTIONS": {
+          "disposition": "partial",
+          "remaining": "CPU/elapsed accuracy under controlled load, clock granularity, LC_NUMERIC, signals and resources remain open; -p layout and child status are tested.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OPERANDS": {
+          "disposition": "partial",
+          "remaining": "CPU/elapsed accuracy under controlled load, clock granularity, LC_NUMERIC, signals and resources remain open; -p layout and child status are tested.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDIN": {
+          "disposition": "open",
+          "reason": "The utility itself does not consume stdin. Complete preservation for invoked utilities and descriptor offsets remains unqualified."
+        },
+        "INPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no input files for the utility itself; invoked commands are qualified independently."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "partial",
+          "reason": "C locale and explicit PATH are recorded; required non-C locale precedence remains open. XSI NLSPATH is excluded."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "open",
+          "reason": "HUP disposition or owned timeout TERM/KILL is asserted where applicable; the full inherited/default signal matrix remains open."
+        },
+        "STDOUT": {
+          "disposition": "partial",
+          "remaining": "CPU/elapsed accuracy under controlled load, clock granularity, LC_NUMERIC, signals and resources remain open; -p layout and child status are tested.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDERR": {
+          "disposition": "partial",
+          "remaining": "CPU/elapsed accuracy under controlled load, clock granularity, LC_NUMERIC, signals and resources remain open; -p layout and child status are tested.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OUTPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no output files for the utility itself."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "no-additional-contract",
+          "reason": "No additional requirements in this section."
+        },
+        "EXIT STATUS": {
+          "disposition": "partial",
+          "remaining": "CPU/elapsed accuracy under controlled load, clock granularity, LC_NUMERIC, signals and resources remain open; -p layout and child status are tested.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "partial",
+          "reason": "Selected command/operand failures are strict. The complete default error-continuation/resource matrix remains open."
+        }
+      }
+    },
+    {
+      "utility": "timeout",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/timeout.html",
+      "source_sha256": "4beb610c27b75e76889068d3c259180e4c13db9bec1ff853c7fa4b0654f13825",
+      "owner": "CSH-075",
+      "whole_page": "unqualified",
+      "sections": {
+        "NAME": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "SYNOPSIS": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "DESCRIPTION": {
+          "disposition": "partial",
+          "cases": [
+            "timeout/child-status",
+            "timeout/arguments",
+            "timeout/missing",
+            "timeout/not-executable",
+            "timeout/expiry",
+            "timeout/foreground",
+            "timeout/preserve",
+            "timeout/signal-case",
+            "timeout/kill-after",
+            "timeout/invalid-duration"
+          ],
+          "remaining": "Selected GNU providers reject required -f/-p. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open."
+        },
+        "OPTIONS": {
+          "disposition": "partial",
+          "remaining": "Selected GNU providers reject required -f/-p. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OPERANDS": {
+          "disposition": "partial",
+          "remaining": "Selected GNU providers reject required -f/-p. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDIN": {
+          "disposition": "open",
+          "reason": "The utility itself does not consume stdin. Complete preservation for invoked utilities and descriptor offsets remains unqualified."
+        },
+        "INPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no input files for the utility itself; invoked commands are qualified independently."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "partial",
+          "reason": "C locale and explicit PATH are recorded; required non-C locale precedence remains open. XSI NLSPATH is excluded."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "partial",
+          "reason": "HUP disposition or owned timeout TERM/KILL is asserted where applicable; the full inherited/default signal matrix remains open."
+        },
+        "STDOUT": {
+          "disposition": "partial",
+          "remaining": "Selected GNU providers reject required -f/-p. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDERR": {
+          "disposition": "partial",
+          "remaining": "Selected GNU providers reject required -f/-p. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OUTPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no output files for the utility itself."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "no-additional-contract",
+          "reason": "No additional requirements in this section."
+        },
+        "EXIT STATUS": {
+          "disposition": "partial",
+          "remaining": "Selected GNU providers reject required -f/-p. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "partial",
+          "reason": "Selected command/operand failures are strict. The complete default error-continuation/resource matrix remains open."
+        }
+      }
+    },
+    {
+      "utility": "true",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/true.html",
+      "source_sha256": "85e102249592eb707d35b638d340e0792547d9e1ad4445184cdd15dcc9428694",
+      "owner": "CSH-075",
+      "whole_page": "unqualified",
+      "sections": {
+        "NAME": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "SYNOPSIS": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "DESCRIPTION": {
+          "disposition": "partial",
+          "cases": [
+            "true/status"
+          ],
+          "remaining": "Memory exhaustion, exact loader failure stage and signal-inheritance defaults remain open. No options, operands or environment variables are required."
+        },
+        "OPTIONS": {
+          "disposition": "partial",
+          "remaining": "Memory exhaustion, exact loader failure stage and signal-inheritance defaults remain open. No options, operands or environment variables are required.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OPERANDS": {
+          "disposition": "partial",
+          "remaining": "Memory exhaustion, exact loader failure stage and signal-inheritance defaults remain open. No options, operands or environment variables are required.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDIN": {
+          "disposition": "open",
+          "reason": "The utility itself does not consume stdin. Complete preservation for invoked utilities and descriptor offsets remains unqualified."
+        },
+        "INPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no input files for the utility itself; invoked commands are qualified independently."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "no-additional-contract",
+          "reason": "No environment variables specified."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "open",
+          "reason": "HUP disposition or owned timeout TERM/KILL is asserted where applicable; the full inherited/default signal matrix remains open."
+        },
+        "STDOUT": {
+          "disposition": "partial",
+          "remaining": "Memory exhaustion, exact loader failure stage and signal-inheritance defaults remain open. No options, operands or environment variables are required.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDERR": {
+          "disposition": "partial",
+          "remaining": "Memory exhaustion, exact loader failure stage and signal-inheritance defaults remain open. No options, operands or environment variables are required.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OUTPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no output files for the utility itself."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "no-additional-contract",
+          "reason": "No additional requirements in this section."
+        },
+        "EXIT STATUS": {
+          "disposition": "partial",
+          "remaining": "Memory exhaustion, exact loader failure stage and signal-inheritance defaults remain open. No options, operands or environment variables are required.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "no-additional-contract",
+          "reason": "No consequences specified."
+        }
+      }
+    },
+    {
+      "utility": "uname",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uname.html",
+      "source_sha256": "be63b354f5b23d28b399aa743cf91bccb7f1c9df5a38d6e9ba91c6a6a961e529",
+      "owner": "CSH-075",
+      "whole_page": "unqualified",
+      "sections": {
+        "NAME": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "SYNOPSIS": {
+          "disposition": "scope",
+          "reason": "Utility identity and required invocation forms; behavioral coverage is listed under the applicable sections."
+        },
+        "DESCRIPTION": {
+          "disposition": "partial",
+          "cases": [
+            "uname/sysname-default",
+            "uname/sysname",
+            "uname/nodename",
+            "uname/release",
+            "uname/version",
+            "uname/machine",
+            "uname/ordered-selection"
+          ],
+          "remaining": "-a permits vendor-added trailing symbols; it is not asserted. Other option combinations, diagnostics, locale and write failures remain open."
+        },
+        "OPTIONS": {
+          "disposition": "partial",
+          "remaining": "-a permits vendor-added trailing symbols; it is not asserted. Other option combinations, diagnostics, locale and write failures remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OPERANDS": {
+          "disposition": "partial",
+          "remaining": "-a permits vendor-added trailing symbols; it is not asserted. Other option combinations, diagnostics, locale and write failures remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDIN": {
+          "disposition": "open",
+          "reason": "The utility itself does not consume stdin. Complete preservation for invoked utilities and descriptor offsets remains unqualified."
+        },
+        "INPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no input files for the utility itself; invoked commands are qualified independently."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "partial",
+          "reason": "C locale and explicit PATH are recorded; required non-C locale precedence remains open. XSI NLSPATH is excluded."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "open",
+          "reason": "HUP disposition or owned timeout TERM/KILL is asserted where applicable; the full inherited/default signal matrix remains open."
+        },
+        "STDOUT": {
+          "disposition": "partial",
+          "remaining": "-a permits vendor-added trailing symbols; it is not asserted. Other option combinations, diagnostics, locale and write failures remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "STDERR": {
+          "disposition": "partial",
+          "remaining": "-a permits vendor-added trailing symbols; it is not asserted. Other option combinations, diagnostics, locale and write failures remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "OUTPUT FILES": {
+          "disposition": "no-additional-contract",
+          "reason": "The page specifies no output files for the utility itself."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "no-additional-contract",
+          "reason": "No additional requirements in this section."
+        },
+        "EXIT STATUS": {
+          "disposition": "partial",
+          "remaining": "-a permits vendor-added trailing symbols; it is not asserted. Other option combinations, diagnostics, locale and write failures remain open.",
+          "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "partial",
+          "reason": "Selected command/operand failures are strict. The complete default error-continuation/resource matrix remains open."
+        }
+      }
+    }
+  ]
+}

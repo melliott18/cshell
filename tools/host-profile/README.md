@@ -242,3 +242,15 @@ control. It checks the deadline, strict timeout record, measured IDs, disappeara
 of every owned PID (including zombies), and survival of an unrelated child.
 Only private files and processes are used. See
 [CSH-064 completion](../../docs/evidence/csh-064-completion/README.md) for validation.
+
+## Execution/process provider extension (CSH-075)
+
+`provision.py build/host-profile/bin --execution` also requires the 14 CSH-075
+providers, selecting installed Homebrew `gtimeout` as `timeout` on macOS. The
+Dockerfile supplies Debian `time`; all other selections use the standard system
+PATH. No package is installed by provisioning. Missing dependencies fail setup.
+The manifest retains target/realpath/hash identities. GNU timeout's missing
+Issue 8 short options remain strict failures; a symlink does not qualify a page.
+
+See [execution evidence](../../docs/host-execution-evidence.md) for full and
+explicit-subset commands, independent controls, provider failures and limits.

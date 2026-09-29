@@ -42,9 +42,9 @@ def source_identity():
     return dict(sha256=digest, files=hashes)
 
 
-def inventory(search_path=os.defpath):
+def inventory(search_path=os.defpath, names=HOSTS):
     result = {}
-    for name in HOSTS:
+    for name in names:
         path = shutil.which(name, path=search_path)
         entry = {'path': path, 'realpath': os.path.realpath(path) if path else None}
         if path:
@@ -119,7 +119,7 @@ def matches_case(case, status, output):
 
 
 def serial(value):
-    if isinstance(value, bytes):
+    if isinstance(value, (bytes, bytearray)):
         return {'hex': value.hex()}
     if isinstance(value, dict):
         return {key: serial(item) for key, item in value.items()}

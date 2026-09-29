@@ -1337,3 +1337,15 @@ rows and unassigned conditional prerequisite reports. Regression checks exercise
 these failure cases and the runner's emitted ownership without invoking utilities.
 This is an accounting check, not a conformance suite. See the
 [current individual contracts](host-system-inventory.md#current-contract-ownership).
+
+## Host execution and process contracts
+
+`make test-host-execution` runs CSH-075's stock-PATH assertions, and
+`make test-host-execution-profile` supplies the additional selected providers.
+Both are strict: missing executables and failed assertions return nonzero.
+To run the declared passing subset together with the existing host profile, use
+`make test-host-profile HOST_EXECUTION_SUBSET=tests/host_execution_subset_darwin.json`
+on macOS, or the corresponding `_linux.json` file in Docker. See the
+[clause map and control boundaries](host-execution-evidence.md) and
+[retained run records](evidence/csh-075/README.md). `make test-host-inventory`
+also checks section accounting and the evidence matcher/cleanup regressions.

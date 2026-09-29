@@ -1,0 +1,71 @@
+{
+  "docker-full.json.gz": {
+    "totals": {
+      "passed": 251,
+      "failed": 16
+    },
+    "source_sha256": "bc34762274b6c36d4a7d9036b6deb5b2fd0fc3cd5835f928e6bf0c93484cd0c5",
+    "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36"
+  },
+  "docker-profile.json.gz": {
+    "totals": {
+      "passed": 1144,
+      "failed": 0,
+      "gaps": 0
+    },
+    "source_sha256": "96bc922893a1af9530071ad1b636c1d7ad84ed6c041634b8792c9aeeb2a3067a",
+    "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36"
+  },
+  "docker-subset.json.gz": {
+    "totals": {
+      "passed": 238,
+      "failed": 0
+    },
+    "source_sha256": "96bc922893a1af9530071ad1b636c1d7ad84ed6c041634b8792c9aeeb2a3067a",
+    "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36"
+  },
+  "native-full.json.gz": {
+    "totals": {
+      "passed": 242,
+      "failed": 12
+    },
+    "source_sha256": "bc34762274b6c36d4a7d9036b6deb5b2fd0fc3cd5835f928e6bf0c93484cd0c5",
+    "platform": "macOS-14.8.7-arm64-arm-64bit"
+  },
+  "native-profile-cleanup-failure.json.gz": {
+    "totals": {
+      "passed": 1161,
+      "failed": 1,
+      "gaps": 0
+    },
+    "source_sha256": "96bc922893a1af9530071ad1b636c1d7ad84ed6c041634b8792c9aeeb2a3067a",
+    "platform": "macOS-14.8.7-arm64-arm-64bit"
+  },
+  "native-profile.json.gz": {
+    "totals": {
+      "passed": 1162,
+      "failed": 0,
+      "gaps": 0
+    },
+    "source_sha256": "10121d3930ae34b0f91bae795d0aea1274a3f46ff9979e01449c346a4a9a816c",
+    "platform": "macOS-14.8.7-arm64-arm-64bit"
+  },
+  "native-stock.json.gz": {
+    "totals": {
+      "passed": 210,
+      "failed": 44
+    },
+    "source_sha256": "bc34762274b6c36d4a7d9036b6deb5b2fd0fc3cd5835f928e6bf0c93484cd0c5",
+    "platform": "macOS-14.8.7-arm64-arm-64bit"
+  },
+  "native-subset.json.gz": {
+    "totals": {
+      "passed": 242,
+      "failed": 0
+    },
+    "source_sha256": "bc34762274b6c36d4a7d9036b6deb5b2fd0fc3cd5835f928e6bf0c93484cd0c5",
+    "platform": "macOS-14.8.7-arm64-arm-64bit"
+  },
+  "docker_image": "sha256:27fea854cb18595c563f80a13656539949f5705be235a166da6b4c70dc8e8661",
+  "docker_inputs": "Built from Dockerfile, current runtime source; tests, Makefile and tools mounted read-only for final runs. Per-run source hashes identify actual inputs."
+}

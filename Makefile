@@ -482,14 +482,15 @@ build/host-printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/printf.c $(LDLIBS)
 
 host-profile: build/host-printf
-	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
+	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin $(HOST_PROFILE_PROVISION_FLAGS) $(if $(HOST_EXECUTION_SUBSET),--execution)
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_printf_faults.c $(LDLIBS)
 
-test-host-profile: test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
+test-host-profile: test-host-inventory cshell build/tests/host_execution_helper build/tests/host_utility_helper build/tests/host_printf_faults host-profile
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+	$(if $(HOST_EXECUTION_SUBSET),$(PYTHON) tests/host_execution.py ./cshell build/tests/host_execution_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --subset "$(HOST_EXECUTION_SUBSET)" $(HOST_EXECUTION_FLAGS) --record build/tests/host-execution-profile-results.json)
 
 # Public entry point with only the command input read syscall instrumented.
 build/tests/command-read-input.o: src/input.c tests/command_read_faults.h $(INPUT_HEADERS)
@@ -616,3 +617,23 @@ test-locale-pathname: cshell build/tests/locale_probe build/tests/pathname_runti
 test-host-inventory:
 	$(PYTHON) tests/host_contract_inventory.py
 	$(PYTHON) tests/test_host_contract_inventory.py
+	$(PYTHON) tests/test_host_execution.py
+
+# CSH-075: strict execution/process subset, separate from stock-host baselines.
+.PHONY: test-host-execution
+build/tests/host_execution_helper: tests/host_execution_helper.c
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+test-host-execution: cshell build/tests/host_execution_helper
+	$(PYTHON) tests/host_execution.py ./cshell build/tests/host_execution_helper $(HOST_EXECUTION_FLAGS) --record build/tests/host-execution-results.json
+
+.PHONY: test-host-execution-profile
+test-host-execution-profile: cshell build/tests/host_execution_helper build/host-printf
+	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin --execution
+	$(PYTHON) tests/host_execution.py ./cshell build/tests/host_execution_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" $(HOST_EXECUTION_FLAGS) --record build/tests/host-execution-profile-results.json
+
+# Linux opt-in interposer; never preload it into an ordinary profile.
+build/tests/host_execution_clock.so: tests/host_execution_clock.c
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -fPIC -shared -o $@ $<
