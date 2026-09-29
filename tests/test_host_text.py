@@ -134,6 +134,24 @@ class TextEvidenceTests(unittest.TestCase):
             self.assertEqual(row['actual']['generated_files']['result']['first_mismatch_offset'],0)
             self.assertTrue(row['fixture_removed'])
 
+    def test_file_adapter_preserves_default_sigpipe(self):
+        import subprocess
+        with tempfile.TemporaryDirectory() as root:
+            path=Path(root)/'input'
+            path.write_bytes(b'x'*(2*1024*1024))
+            adapter=Path(__file__).with_name('host_text_io.py')
+            child=subprocess.Popen([sys.executable,str(adapter),str(path),'-','/bin/cat'],
+                                   stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            child.stdout.close()
+            try:
+                self.assertEqual(child.wait(timeout=3),-signal.SIGPIPE)
+                self.assertEqual(child.stderr.read(),b'')
+            finally:
+                if child.poll() is None:
+                    child.kill()
+                child.wait()
+                child.stderr.close()
+
     def test_ignored_signal_probe_cannot_accept_default_termination(self):
         from host_text_interruptions import run_case as signal_run
         with tempfile.TemporaryDirectory() as root:
