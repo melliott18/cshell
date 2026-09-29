@@ -118,13 +118,21 @@ The invocation API recognizes a terminal on both stdin and stderr, or explicit
 fixed `$ ` primary prompt or literal `PS2` continuation prompt (default `> `)
 on stderr, once per physical read. Blank/comment lines restart the primary prompt; quoted multiline
 words and here-document lines retain the continuation prompt. Prompt expansion
-and startup files belong to the unselected UP profile. Main-parser syntax-error
-recovery is a base requirement and a confirmed defect tracked by
-[CSH-065](tickets/CSH-065-interactive-parser-recovery.md).
-SIGINT during input resets the parser to a primary prompt. Other parser failures
-are sticky and terminate even an interactive shell; execution or expansion errors can continue
-because its parser remains usable. `-i` with a string or file selects interactive
-error behavior without printing stdin prompts.
+and startup files belong to the unselected UP profile.
+[CSH-065](tickets/CSH-065-interactive-parser-recovery.md) recovers main-parser
+syntax errors in interactive mode: report the diagnostic, set status 2, discard
+the failed command and the remainder of its already-read physical line, and
+return to a primary prompt. Earlier completed commands and aliases survive.
+Known pending here-document bodies are consumed through their delimiters without
+expansion or execution, using continuation prompts when another physical read is
+needed. Buffered alias bodies are consumed before returning to physical input;
+remaining alias commands are discarded. Absolute source positions are retained.
+
+Final incomplete input, allocation failures, and source-read failures still end
+the shell; failure or interruption while draining recovery documents is also
+fatal. Noninteractive syntax errors still exit. SIGINT during ordinary input
+resets the parser to a primary prompt. `-i` with a string or file selects
+interactive error behavior without printing stdin prompts.
 
 ## Validation
 

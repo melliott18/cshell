@@ -1,0 +1,519 @@
+{
+  "source_revision": "81d2f0b31b1336b25c587b85c1979bed1e1f654a",
+  "recorded_utc": "2026-09-29T16:26:41.819023+00:00",
+  "binary_sha256": "4b0c8890336bfc51aa8a37f3fb784cd277e0a8ba72523664e20c056655500a9e",
+  "runner_sha256": "bfe91e49cea1871bc300e37adf9692c5bc65cf6a2c563ffbe406225988528392",
+  "cases": [
+    {
+      "name": "interactive main syntax recovery",
+      "mode": "string",
+      "case": {
+        "args": [
+          "-i",
+          "-c",
+          "printf 'before\\n'\n)\nprintf 'after\\n'\nexit 7\n"
+        ],
+        "stdin": ""
+      },
+      "expected": {
+        "status": 7,
+        "stdout": "before\nafter\n",
+        "diagnostic": true
+      },
+      "status": 7,
+      "stdout": "before\nafter\n",
+      "stderr": "cshell: -c: 2:1: expected command\n",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "noninteractive syntax error exits",
+      "mode": "string",
+      "case": {
+        "args": [
+          "-c",
+          "printf 'before\\n'\n)\nprintf 'after\\n'\n"
+        ],
+        "stdin": ""
+      },
+      "expected": {
+        "status": 2,
+        "stdout": "before\n",
+        "diagnostic": true
+      },
+      "status": 2,
+      "stdout": "before\n",
+      "stderr": "cshell: -c: 2:1: expected command\n",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "valid nested braces 127",
+      "mode": "string",
+      "case": {
+        "args": [
+          "-c",
+          "{ { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { printf 'nested\\n'; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; \n"
+        ],
+        "stdin": ""
+      },
+      "expected": {
+        "status": 0,
+        "stdout": "nested\n"
+      },
+      "status": 0,
+      "stdout": "nested\n",
+      "stderr": "",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "valid nested braces 128",
+      "mode": "string",
+      "case": {
+        "args": [
+          "-c",
+          "{ { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { printf 'nested\\n'; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; \n"
+        ],
+        "stdin": ""
+      },
+      "expected": {
+        "status": 0,
+        "stdout": "nested\n"
+      },
+      "status": 2,
+      "stdout": "",
+      "stderr": "cshell: invalid or excessively nested execution tree\n",
+      "harness_failures": [],
+      "verdict": "FAIL"
+    },
+    {
+      "name": "valid nested braces 129",
+      "mode": "string",
+      "case": {
+        "args": [
+          "-c",
+          "{ { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { printf 'nested\\n'; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; \n"
+        ],
+        "stdin": ""
+      },
+      "expected": {
+        "status": 0,
+        "stdout": "nested\n"
+      },
+      "status": 2,
+      "stdout": "",
+      "stderr": "cshell: -c: 1:257: parser nesting limit exceeded\n",
+      "harness_failures": [],
+      "verdict": "FAIL"
+    },
+    {
+      "name": "heredoc delimiter at source end",
+      "mode": "string",
+      "case": {
+        "args": [
+          "-c",
+          "cat <<END\nbody\nEND"
+        ],
+        "stdin": ""
+      },
+      "expected": {
+        "status": 0,
+        "stdout": "body\n"
+      },
+      "status": 0,
+      "stdout": "body\n",
+      "stderr": "",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "noninteractive eval syntax error exits",
+      "mode": "string",
+      "case": {
+        "args": [
+          "-c",
+          "eval ')'\nprintf 'after\\n'\n"
+        ],
+        "stdin": ""
+      },
+      "expected": {
+        "status": 2,
+        "stdout": "",
+        "diagnostic": true
+      },
+      "status": 2,
+      "stdout": "",
+      "stderr": "cshell: expected command\n",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "interactive eval syntax recovery",
+      "mode": "string",
+      "case": {
+        "args": [
+          "-i",
+          "-c",
+          "eval ')'\nprintf 'after\\n'\nexit 7\n"
+        ],
+        "stdin": ""
+      },
+      "expected": {
+        "status": 7,
+        "stdout": "after\n",
+        "diagnostic": true
+      },
+      "status": 7,
+      "stdout": "after\n",
+      "stderr": "cshell: expected command\n",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "interactive main syntax recovery",
+      "mode": "file",
+      "case": {
+        "args": [
+          "-i",
+          "input"
+        ],
+        "stdin": ""
+      },
+      "expected": {
+        "status": 7,
+        "stdout": "before\nafter\n",
+        "diagnostic": true
+      },
+      "status": 7,
+      "stdout": "before\nafter\n",
+      "stderr": "cshell: input: 2:1: expected command\n",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "noninteractive syntax error exits",
+      "mode": "file",
+      "case": {
+        "args": [
+          "input"
+        ],
+        "stdin": ""
+      },
+      "expected": {
+        "status": 2,
+        "stdout": "before\n",
+        "diagnostic": true
+      },
+      "status": 2,
+      "stdout": "before\n",
+      "stderr": "cshell: input: 2:1: expected command\n",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "valid nested braces 127",
+      "mode": "file",
+      "case": {
+        "args": [
+          "input"
+        ],
+        "stdin": ""
+      },
+      "expected": {
+        "status": 0,
+        "stdout": "nested\n"
+      },
+      "status": 0,
+      "stdout": "nested\n",
+      "stderr": "",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "valid nested braces 128",
+      "mode": "file",
+      "case": {
+        "args": [
+          "input"
+        ],
+        "stdin": ""
+      },
+      "expected": {
+        "status": 0,
+        "stdout": "nested\n"
+      },
+      "status": 2,
+      "stdout": "",
+      "stderr": "cshell: invalid or excessively nested execution tree\n",
+      "harness_failures": [],
+      "verdict": "FAIL"
+    },
+    {
+      "name": "valid nested braces 129",
+      "mode": "file",
+      "case": {
+        "args": [
+          "input"
+        ],
+        "stdin": ""
+      },
+      "expected": {
+        "status": 0,
+        "stdout": "nested\n"
+      },
+      "status": 2,
+      "stdout": "",
+      "stderr": "cshell: input: 1:257: parser nesting limit exceeded\n",
+      "harness_failures": [],
+      "verdict": "FAIL"
+    },
+    {
+      "name": "heredoc delimiter at source end",
+      "mode": "file",
+      "case": {
+        "args": [
+          "input"
+        ],
+        "stdin": ""
+      },
+      "expected": {
+        "status": 0,
+        "stdout": "body\n"
+      },
+      "status": 0,
+      "stdout": "body\n",
+      "stderr": "",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "noninteractive eval syntax error exits",
+      "mode": "file",
+      "case": {
+        "args": [
+          "input"
+        ],
+        "stdin": ""
+      },
+      "expected": {
+        "status": 2,
+        "stdout": "",
+        "diagnostic": true
+      },
+      "status": 2,
+      "stdout": "",
+      "stderr": "cshell: expected command\n",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "interactive eval syntax recovery",
+      "mode": "file",
+      "case": {
+        "args": [
+          "-i",
+          "input"
+        ],
+        "stdin": ""
+      },
+      "expected": {
+        "status": 7,
+        "stdout": "after\n",
+        "diagnostic": true
+      },
+      "status": 7,
+      "stdout": "after\n",
+      "stderr": "cshell: expected command\n",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "interactive main syntax recovery",
+      "mode": "stdin",
+      "case": {
+        "args": [
+          "-i"
+        ],
+        "stdin": "printf 'before\\n'\n)\nprintf 'after\\n'\nexit 7\n"
+      },
+      "expected": {
+        "status": 7,
+        "stdout": "before\nafter\n",
+        "diagnostic": true
+      },
+      "status": 7,
+      "stdout": "before\nafter\n",
+      "stderr": "$ $ cshell: stdin: 2:1: expected command\n$ $ ",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "noninteractive syntax error exits",
+      "mode": "stdin",
+      "case": {
+        "args": [],
+        "stdin": "printf 'before\\n'\n)\nprintf 'after\\n'\n"
+      },
+      "expected": {
+        "status": 2,
+        "stdout": "before\n",
+        "diagnostic": true
+      },
+      "status": 2,
+      "stdout": "before\n",
+      "stderr": "cshell: stdin: 2:1: expected command\n",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "valid nested braces 127",
+      "mode": "stdin",
+      "case": {
+        "args": [],
+        "stdin": "{ { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { printf 'nested\\n'; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; \n"
+      },
+      "expected": {
+        "status": 0,
+        "stdout": "nested\n"
+      },
+      "status": 0,
+      "stdout": "nested\n",
+      "stderr": "",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "valid nested braces 128",
+      "mode": "stdin",
+      "case": {
+        "args": [],
+        "stdin": "{ { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { printf 'nested\\n'; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; \n"
+      },
+      "expected": {
+        "status": 0,
+        "stdout": "nested\n"
+      },
+      "status": 2,
+      "stdout": "",
+      "stderr": "cshell: invalid or excessively nested execution tree\n",
+      "harness_failures": [],
+      "verdict": "FAIL"
+    },
+    {
+      "name": "valid nested braces 129",
+      "mode": "stdin",
+      "case": {
+        "args": [],
+        "stdin": "{ { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { { printf 'nested\\n'; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; }; \n"
+      },
+      "expected": {
+        "status": 0,
+        "stdout": "nested\n"
+      },
+      "status": 2,
+      "stdout": "",
+      "stderr": "cshell: stdin: 1:257: parser nesting limit exceeded\n",
+      "harness_failures": [],
+      "verdict": "FAIL"
+    },
+    {
+      "name": "heredoc delimiter at source end",
+      "mode": "stdin",
+      "case": {
+        "args": [],
+        "stdin": "cat <<END\nbody\nEND"
+      },
+      "expected": {
+        "status": 0,
+        "stdout": "body\n"
+      },
+      "status": 0,
+      "stdout": "body\n",
+      "stderr": "",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "noninteractive eval syntax error exits",
+      "mode": "stdin",
+      "case": {
+        "args": [],
+        "stdin": "eval ')'\nprintf 'after\\n'\n"
+      },
+      "expected": {
+        "status": 2,
+        "stdout": "",
+        "diagnostic": true
+      },
+      "status": 2,
+      "stdout": "",
+      "stderr": "cshell: expected command\n",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "interactive eval syntax recovery",
+      "mode": "stdin",
+      "case": {
+        "args": [
+          "-i"
+        ],
+        "stdin": "eval ')'\nprintf 'after\\n'\nexit 7\n"
+      },
+      "expected": {
+        "status": 7,
+        "stdout": "after\n",
+        "diagnostic": true
+      },
+      "status": 7,
+      "stdout": "after\n",
+      "stderr": "$ cshell: expected command\n$ $ ",
+      "harness_failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "name": "interactive main syntax recovery",
+      "mode": "pty",
+      "case": {
+        "args": [
+          "-i"
+        ],
+        "transport": "pty",
+        "steps": [
+          {
+            "expect": "$ "
+          },
+          {
+            "send": ")\n"
+          },
+          {
+            "expect": "cshell: stdin: 1:1: expected command\n$ "
+          },
+          {
+            "send": "printf 'after\\n'\n"
+          },
+          {
+            "expect": "after\n$ "
+          },
+          {
+            "send": "exit 7\n"
+          }
+        ]
+      },
+      "expected": {
+        "status": 7,
+        "output": "$ cshell: stdin: 1:1: expected command\n$ after\n$ "
+      },
+      "status": 7,
+      "output": {
+        "output": "$ cshell: stdin: 1:1: expected command\n$ after\n$ "
+      },
+      "harness_failures": [],
+      "verdict": "PASS"
+    }
+  ],
+  "probe_historical_source_revision": "c8c1c91372e6e77cf2e7032765cd3c068fa1906d",
+  "build_profile": "macOS arm64, Apple Clang 15, ASan/UBSan, detect_leaks=0, MallocNanoZone=0",
+  "note": "Unmodified retained probe; corrected its hardcoded historical revision label for this rerun. Six remaining failures are CSH-066 depth-128/129 cases."
+}
