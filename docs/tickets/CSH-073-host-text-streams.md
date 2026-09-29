@@ -1,11 +1,11 @@
 # CSH-073: Qualify host text and byte stream utilities
 
-- Status: ready
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: Assigned when work starts
+- Branch: test/CSH-073-host-text-streams
 - Issue: [#145](https://github.com/melliott18/cshell/issues/145)
 
 ## Goal
@@ -77,7 +77,7 @@ profiles and executable/environment identities, remains unchanged.
 
 ## Acceptance criteria
 
-- [ ] Select each required exec-accessible provider, supply missing packages/services,
+- [x] Select each required exec-accessible provider, supply missing packages/services,
   and retain exact PATH, realpath, executable hash, package and environment identity.
 - [ ] Map every applicable page section and common default to clause-derived
   assertions or an individually justified disposition; repair required-contract
@@ -85,9 +85,9 @@ profiles and executable/environment identities, remains unchanged.
 - [ ] Resolve each assigned retained condition with its required capability and
   strict evidence, or transfer that individual condition to a concrete open owner.
   Preserve vendor ownership, setup failures and failed assertions separately.
-- [ ] Verify public cshell dispatch and direct exec access, exact output/status and
+- [x] Verify public cshell dispatch and direct exec access, exact output/status and
   relevant effects, with zero gap allowances for every declared qualified subset.
-- [ ] Update the inventory, current ownership manifest and clause maps with the
+- [x] Update the inventory, current ownership manifest and clause maps with the
   exact qualification boundary; keep stock-host, qualified subset and full-system
   claims separate.
 
@@ -103,6 +103,40 @@ processes and disposable files/services and verify cleanup after failure/timeout
 
 ## Implementation notes/evidence
 
-Work has not started. CSH-068 transfers ownership only; it supplies no new vendor
-implementation, service, privileged host or physical terminal. CSH-064 remains
-done for its bounded capability work and repaired probe cleanup.
+The [implementation and clause map](../host-text-contracts.md) supplies strict
+independent byte/text oracles for all 25 utilities, four execution modes,
+per-page section accounting, owned signal fixtures shared with CSH-074, a
+2 GiB sparse offset, and disposable Linux filesystem exhaustion. The
+[machine section ledger](../../tests/host_text_contracts.json) is checked by
+`make test-host-inventory`; `tests/host_contracts.json` links that map without
+rewriting immutable earlier evidence.
+
+This change is ready for review as qualification infrastructure and bounded
+evidence. **Full ticket acceptance remains open.** The unchecked criteria retain
+required-contract failures and unavailable native capacity/write-observation
+capabilities; they are not waived by subset success. CSH-073 remains the concrete
+open qualification owner for every utility and condition listed above. Selected
+vendors own implementation repairs; CSH-074 shares the ed recovery repair.
+The individually described remaining contracts are in the section ledger and
+clause map. No wholesale utility or U-034/U-040 promotion is made.
+
+The [all-attempt record](../evidence/csh-073/README.md) distinguishes exploratory
+fixture corrections, strict vendor failures, passing subsets and unavailable
+capabilities. Use `make test-host-text-audit` to reproduce the unqualified
+requirements without changing expectations. CSH-064 remains done for its
+historical bounded work and repaired probe cleanup.
+
+
+### Validation results
+
+Final focused subset: native macOS **532 pass, 0 fail, 8 unavailable**;
+Docker/Linux **540 pass, 0 fail**. Final strict audit: native **548 pass,
+14 fail, 8 unavailable**; Docker **552 pass, 18 fail**. Both retain nonzero
+statuses for failed audits. Both pass inventory/section accounting and all
+eight new harness regression tests. Native `make test-host-profile` retains
+one existing PTY cleanup `ps` timeout (1161 pass, 1 fail); Docker's full profile
+passes (1162 prior assertions plus 540 text assertions). The final ed prompt
+handshake/capture hardening is validated by the later focused completion runs.
+Exact commands, source/provider identities, all attempts and diagnoses are in
+the linked evidence. No native full-profile pass or complete utility
+qualification is claimed.

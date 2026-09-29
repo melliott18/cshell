@@ -490,6 +490,7 @@ build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/pr
 
 test-host-profile: test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+	$(PYTHON) tests/host_text.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --boundaries $(HOST_TEXT_FLAGS) --record build/tests/host-text-results.json
 
 # Public entry point with only the command input read syscall instrumented.
 build/tests/command-read-input.o: src/input.c tests/command_read_faults.h $(INPUT_HEADERS)
@@ -616,3 +617,15 @@ test-locale-pathname: cshell build/tests/locale_probe build/tests/pathname_runti
 test-host-inventory:
 	$(PYTHON) tests/host_contract_inventory.py
 	$(PYTHON) tests/test_host_contract_inventory.py
+	$(PYTHON) tests/host_text_contracts.py
+
+# Strict declared text/byte subset; audit adds still-unqualified provider contracts.
+.PHONY: test-host-text test-host-text-audit test-host-text-harness
+test-host-text: cshell
+	$(PYTHON) tests/host_text.py ./cshell --boundaries $(HOST_TEXT_FLAGS) --record build/tests/host-text-results.json
+
+test-host-text-audit: cshell
+	$(PYTHON) tests/host_text.py ./cshell --boundaries --audit $(HOST_TEXT_FLAGS) --record build/tests/host-text-audit.json
+
+test-host-text-harness:
+	$(PYTHON) -m unittest discover -s tests -p 'test_host_text.py'

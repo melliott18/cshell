@@ -242,3 +242,13 @@ control. It checks the deadline, strict timeout record, measured IDs, disappeara
 of every owned PID (including zombies), and survival of an unrelated child.
 Only private files and processes are used. See
 [CSH-064 completion](../../docs/evidence/csh-064-completion/README.md) for validation.
+
+
+## CSH-073 text stream subset
+
+The [text/byte clause map](../../docs/host-text-contracts.md) and
+[section ledger](../../tests/host_text_contracts.json) add bounded assertions for all 25 CSH-073 utilities,
+sparse offsets, owned signal fixtures and explicitly supplied Linux ENOSPC.
+The strict provider audit retains failed contracts separately; no full utility
+page or common-default family is promoted. CSH-073 remains open for the listed
+residuals, with CSH-074 sharing the ed signal requirement.

@@ -68,3 +68,5 @@ The [CSH-012 requirement, defect, platform and documentation review](conformance
 
 - [Shell locale and pathname qualification](locale-pathname-qualification.md):
   CSH-067 clauses, exact witnesses, supplied definitions and external prerequisites.
+
+- [Text and byte stream qualification](host-text-contracts.md): CSH-073 assertions, per-page section ledger, sparse offsets, signal/capacity probes and strict vendor audit.

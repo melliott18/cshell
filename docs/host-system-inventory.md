@@ -309,3 +309,13 @@ an exact required capability for every stable condition, and its original
 qualification records retain actual environment/executable identities and vendor
 implementation owners. New reports use current qualification owners; historical
 reports remain unchanged. CSH-064 is complete and is not reopened.
+
+
+## CSH-073 text stream subset
+
+The [text/byte clause map](host-text-contracts.md) and
+[section ledger](../tests/host_text_contracts.json) add bounded assertions for all 25 CSH-073 utilities,
+sparse offsets, owned signal fixtures and explicitly supplied Linux ENOSPC.
+The strict provider audit retains failed contracts separately; no full utility
+page or common-default family is promoted. CSH-073 remains open for the listed
+residuals, with CSH-074 sharing the ed signal requirement.

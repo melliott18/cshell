@@ -1337,3 +1337,24 @@ rows and unassigned conditional prerequisite reports. Regression checks exercise
 these failure cases and the runner's emitted ownership without invoking utilities.
 This is an accounting check, not a conformance suite. See the
 [current individual contracts](host-system-inventory.md#current-contract-ownership).
+
+
+## Host text and byte stream contracts (CSH-073)
+
+`make test-host-text` checks the declared stock-PATH subset through direct exec
+and all three public cshell invocation modes. `make test-host-profile` includes
+the same cases with the opt-in PATH. `make test-host-text-audit` additionally
+executes strict still-unqualified provider contracts and currently returns
+failure on the recorded macOS and Debian providers. No failed audit assertion
+is treated as a passing subset result or a known-gap allowance.
+
+JSON is written to `build/tests/host-text-results.json` or
+`build/tests/host-text-audit.json`, including per-case expected/actual bytes,
+status, effects, setup failures, cleanup, source hashes and provider identities.
+`HOST_TEXT_FLAGS='--capacity-root /capacity'` selects an explicitly supplied
+small disposable filesystem; use a dedicated Docker tmpfs, never a working
+filesystem. Missing native blocked-write/capacity capabilities are individually
+unavailable, not passing tests. `make test-host-text-harness` checks independent
+CRC answers, rejection of wrong output/effects, timeout cleanup, and section
+accounting mutations. `make test-host-inventory` also validates the new ledger.
+See [qualification scope and reproduction](host-text-contracts.md).
