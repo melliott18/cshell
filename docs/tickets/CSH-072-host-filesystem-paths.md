@@ -133,3 +133,12 @@ truncation/EPIPE/EFBIG failures remain open in CSH-079; their positive-error
 expectations are preserved, not weakened. The harness also rejects unarmed I/O
 faults and duplicate/FIFO archive output. The dedicated filesystem CI workflow
 retains strict audit failures separately from its required selected subset.
+
+
+Final extension validation: selected native **550/550**, native instrumented
+pathname providers **550/550**, and hosted Ubuntu **562/562**. Strict native
+extension audit: **152 pass/16 fail**; Linux: **176 pass/8 fail**. Linux pax's
+ustar type bits and EFBIG remain unqualified alongside the native failures.
+All focused fixture cleanup checks pass; 23 ownership/harness regressions pass.
+The explicit Bash CI shell propagates test failures through tee. Initial failed
+and misleadingly green CI results remain retained in the extension evidence.
