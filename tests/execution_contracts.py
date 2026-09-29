@@ -62,6 +62,25 @@ with tempfile.TemporaryDirectory(prefix='cshell-contracts-') as temporary:
         run([binary, '-c', f'{shlex.quote(fault)} <fault-source'],
             stdout=b'exit:128\n', stderr=diagnostic.replace(b'fault-source:', b'stdin:'), status=128, extra=extra)
 
+    # CSH-065: recovering a syntax error must not turn a later acquisition
+    # failure into success or interpret the pending document as commands.
+    source = trap + 'cat <<END; )\nprintf forbidden >body\nEND\nprintf later\n'
+    (cwd / 'fault-source').write_text(source)
+    boundary = len(trap + 'cat <<END; )\n')
+    extra = {'CSH_TEST_READ_FILE': 'fault-source', 'CSH_TEST_READ_AFTER': str(boundary)}
+    for mode in ('file', 'stdin'):
+        source_name = 'fault-source' if mode == 'file' else 'stdin'
+        diagnostic = (f'cshell: {source_name}: 2:12: expected command\n' +
+                      ('> ' if mode == 'stdin' else '') +
+                      f'cshell: {source_name}: 3:1: cannot read input: {os.strerror(errno.EIO)}\n')
+        if mode == 'file':
+            args = [fault, '-i', 'fault-source']
+        else:
+            args = [binary, '-c', f'{shlex.quote(fault)} -i <fault-source']
+            diagnostic = '$ $ ' + diagnostic
+        run(args, stdout=b'exit:128\n', stderr=diagnostic.encode(), status=128, extra=extra)
+        assert not (cwd / 'body').exists()
+
     # A caught signal becomes pending at the failing read, before finalization.
     source = 'trap \'printf forbidden-trap\' USR1\n' + trap + 'printf forbidden; '
     (cwd / 'fault-source').write_text(source)
@@ -90,4 +109,4 @@ with tempfile.TemporaryDirectory(prefix='cshell-contracts-') as temporary:
                 run(args, stdout=b'sourced\n' + (b'exit:128\n' if fatal else b'continued:128\nexit:0\n'),
                     stderr=(b'$ $ ' + diagnostic + b'$ $ ') if interactive and mode == 'stdin' else diagnostic,
                     status=128 if fatal else 0, extra=extra)
-print(f'execution contracts: {checked} passed (32 descriptor, 7 main-read, 12 dot-read)')
+print(f'execution contracts: {checked} passed (32 descriptor, 9 main-read, 12 dot-read)')

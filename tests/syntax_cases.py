@@ -56,6 +56,10 @@ def add_syntax_cases(cross, helper):
          f"{helper} copy 3<>out <&3 3>&-\n", 'reset',
          files={'out': {'type': 'file', 'content': 'reset'}})
     case('shebang comment policy', '#!/not/an/interpreter\nprintf "body\\n"\n', 'body\n')
+    case('noninteractive main parser recovery control',
+         "printf 'before\\n'\n)\nprintf 'after\\n' >after\n", 'before\n', status=2,
+         stderr='cshell: @SOURCE@: 2:1: expected command\n',
+         files={'after': {'type': 'absent'}})
     # Unsupported extension operators reject the entire complete command.
     for operator, column, message in (
         ('|&', 12, 'expected command'),

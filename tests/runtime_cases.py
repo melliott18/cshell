@@ -18,6 +18,7 @@ from option_cases import add_option_cases, invocation_cases
 from option_evidence_cases import evidence_cases
 from trap_cases import add_trap_cases
 from syntax_cases import add_syntax_cases
+from parser_recovery_cases import recovery_cases, recovery_terminal_cases
 from expansion_cases import add_expansion_cases
 
 from state_builtin_cases import add_state_builtin_cases
@@ -50,6 +51,7 @@ def cases(helper):
 
     add_state_builtin_cases(cross, helper)
     add_syntax_cases(cross, helper)
+    result.extend(recovery_cases())
     add_expansion_cases(cross, helper)
 
     add_execution_cases(cross, helper)
@@ -218,7 +220,7 @@ def cases(helper):
 
 
 def terminal_cases(helper):
-    result = []
+    result = recovery_terminal_cases()
 
     def terminal(name, steps, output, status):
         result.append({"name": name, "transport": "pty", "steps": steps,
