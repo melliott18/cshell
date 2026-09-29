@@ -1,0 +1,11 @@
+{
+  "hosted_analysis_reproduced": true,
+  "profile_analysis_reproduced": true,
+  "evidence_scripts_compile": true,
+  "compressed_artifacts_readable": true,
+  "new_evidence_and_ticket_local_links_exist": true,
+  "diff_whitespace_clean": true,
+  "runtime_tests_and_ci_unchanged": true,
+  "diagnostic_patch_applies_to_unmodified_source": true,
+  "validation_scope": "Evidence-only review; no production or fixture changes. Local sanitizer probes are retained observations, not evidence of hosted repair. No full-suite or Docker rerun needed for this documentation-only diff."
+}
