@@ -1,6 +1,6 @@
 # CSH-067: Qualify remaining shell locale and pathname boundaries
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
