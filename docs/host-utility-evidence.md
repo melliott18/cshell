@@ -272,3 +272,7 @@ The category tables in builtin.c and execute.c contain no additional intrinsics;
 this source inspection complements the finite name tests. U-041/selected-set
 lookup is verified for this revision; it is not a claim about every string or
 prefix-PATH selection (the known pwd prefix defect remains CSH-055).
+
+CSH-071 adds [predicate, permission and identity qualification](host-permissions-identities.md),
+including `make test-host-permissions`, direct exec, public cshell dispatch,
+independent effects, and explicit unqualified vendor/session/platform branches.

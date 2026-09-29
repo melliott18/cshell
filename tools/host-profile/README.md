@@ -7,8 +7,8 @@ cshell's builtin allocation. All tools are real exec-accessible programs;
 
 | Host | Selected replacements | Provisioning |
 | --- | --- | --- |
-| macOS | Standalone FreeBSD printf with adapters; Homebrew `gtest` and `g[` | `brew install coreutils`; prefixed binaries must be on the provisioning process's PATH |
-| Debian/Ubuntu | Standalone FreeBSD printf with adapters; BusyBox kill | `apt-get install build-essential python3 ed busybox locales acl`; generate `fr_FR.UTF-8` |
+| macOS | Standalone FreeBSD printf with adapters; Issue 8 test/bracket adapter over Homebrew `gtest` | `brew install coreutils`; prefixed binaries must be on the provisioning process's PATH |
+| Debian/Ubuntu | Standalone FreeBSD printf with adapters; Issue 8 test/bracket adapter; BusyBox kill | `apt-get install build-essential python3 ed busybox locales acl`; generate `fr_FR.UTF-8` |
 
 Other scoped commands use `os.defpath` without additional symlinks, preserving
 cshell's PATH-associated pwd builtin selection. In particular, echo remains the system
@@ -242,3 +242,15 @@ control. It checks the deadline, strict timeout record, measured IDs, disappeara
 of every owned PID (including zombies), and survival of an unrelated child.
 Only private files and processes are used. See
 [CSH-064 completion](../../docs/evidence/csh-064-completion/README.md) for validation.
+
+## CSH-071 predicates and identities
+
+`test.c` adds POSIX.1-2024 locale-aware `<`/`>` and delegates other expressions
+to the absolute GNU test provider selected during the build. Both adapter and
+backend hashes are retained. `build/host-test-provider.h` records the provider;
+`make host-profile` regenerates it when the selected path changes. Neither
+ACL behavior nor any system executable is replaced by this adapter.
+
+`make test-host-permissions` is included in `make test-host-profile`. Its
+[clause map](../../docs/host-permissions-identities.md) records the exact subset,
+Linux-root flags, strict vendor reproducers and still-open CSH-071 obligations.

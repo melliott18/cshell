@@ -34,6 +34,9 @@ def source_identity():
     """Hash the actual build/test inputs, including uncommitted worktree edits."""
     root = Path(__file__).resolve().parent.parent
     paths = [root / 'Makefile', root / 'Dockerfile']
+    header = root / 'build/host-test-provider.h'
+    if header.is_file():
+        paths.append(header)
     for directory in ('src', 'include', 'tests', 'tools'):
         paths.extend(p for p in (root / directory).rglob('*')
                      if p.is_file() and '__pycache__' not in p.parts and p.suffix != '.pyc')
@@ -42,13 +45,19 @@ def source_identity():
     return dict(sha256=digest, files=hashes)
 
 
-def inventory(search_path=os.defpath):
+def inventory(search_path=os.defpath, names=HOSTS):
     result = {}
-    for name in HOSTS:
+    for name in names:
         path = shutil.which(name, path=search_path)
         entry = {'path': path, 'realpath': os.path.realpath(path) if path else None}
         if path:
             entry['sha256'] = sha(path)
+            if Path(entry['realpath']).name == 'host-test':
+                header = Path(entry['realpath']).with_name('host-test-provider.h')
+                backend = json.loads(header.read_text().removeprefix('#define CSH_TEST_PROVIDER ').strip())
+                if os.path.realpath(backend) == entry['realpath']:
+                    raise ValueError('test adapter cannot delegate to itself')
+                entry['backend'] = inventory(search_path, names=(backend,))[backend]
             if platform.system() == 'Linux':
                 # Package identity is safer than passing --version to tools that
                 # interpret it as an operand (notably test, echo and ed).

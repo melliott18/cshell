@@ -86,7 +86,7 @@ jobs:
           docker run --rm --init --user 0 cshell-test:local sh -c
           'mknod /tmp/csh060-block b 7 255 &&
           runuser -u cshell -- make test-host-profile HOST_PROFILE_FLAGS="--block-device /tmp/csh060-block" &&
-          make test-host-profile HOST_PROFILE_FLAGS="--controlled-identities" &&
+          make test-host-profile HOST_PROFILE_FLAGS="--controlled-identities" HOST_PERMISSIONS_FLAGS="--controlled-identities" &&
           mkdir -p build/busybox-echo && ln -s /bin/busybox build/busybox-echo/echo &&
           python3 tests/host_utilities.py ./cshell build/tests/host_utility_helper
           --path "/work/build/busybox-echo:/work/build/host-profile/bin:$(getconf PATH)"

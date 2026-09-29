@@ -1,11 +1,11 @@
 # CSH-071: Qualify host predicates, permissions and identities
 
-- Status: ready
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: Assigned when work starts
+- Branch: test/CSH-071-host-permissions-identities
 - Issue: [#143](https://github.com/melliott18/cshell/issues/143)
 
 ## Goal
@@ -74,7 +74,7 @@ Conditional prerequisite reports also owned here: `U-037/controlled-environment`
   Preserve vendor ownership, setup failures and failed assertions separately.
 - [ ] Verify public cshell dispatch and direct exec access, exact output/status and
   relevant effects, with zero gap allowances for every declared qualified subset.
-- [ ] Update the inventory, current ownership manifest and clause maps with the
+- [x] Update the inventory, current ownership manifest and clause maps with the
   exact qualification boundary; keep stock-host, qualified subset and full-system
   claims separate.
 
@@ -90,6 +90,28 @@ processes and disposable files/services and verify cleanup after failure/timeout
 
 ## Implementation notes/evidence
 
-Work has not started. CSH-068 transfers ownership only; it supplies no new vendor
-implementation, service, privileged host or physical terminal. CSH-064 remains
-done for its bounded capability work and repaired probe cleanup.
+Implemented the bounded [predicate, permission and identity suite](../host-permissions-identities.md)
+and [retained evidence](../evidence/csh-071/README.md) on the branch above in a
+separate managed worktree. The suite inventories all eight providers, tests direct
+exec and all three public cshell input modes, and independently observes modes,
+ownership, credentials, actual permission operations and session state.
+
+The opt-in profile now supplies an Issue 8 test/bracket adapter for locale-aware
+`<` and `>`; other primaries continue to use the inventoried GNU provider.
+`make test-host-permissions` is part of `make test-host-profile`. Linux controlled
+credential tests are wired into the existing CI profile. Clause maps and the
+current manifest record partial qualification; no residual is marked resolved.
+
+Controlled Debian passes 1,072 new and 2,281 existing host assertions. The final
+native selected run has 968 passes and 12 process timeout/cleanup failures and is
+not qualified. Strict extra reproducers retain GNU chmod original-X failures and
+newgrp numeric-group/failure-before-shell failures. The adapter passes 44 focused
+ASan/UBSan assertions; final Linux harness controls pass. See the evidence ledger
+for exact snapshots, commands, packages, effects, failed attempts and integration
+results.
+
+Status remains **in-progress**. The user confirmed that no disposable privileged
+Darwin environment is available. Full page contracts, all original residual
+conditions, and the new vendor failures retain this concrete open owner; no
+completion is inferred from selected passing assertions. CSH-064 remains done
+for its original bounded capability work and cleanup repair.
