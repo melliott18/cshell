@@ -1,0 +1,36 @@
+[
+  {
+    "command": "python3 build/csh064-reviewed/docs/evidence/csh-064/audit.py",
+    "status": 0,
+    "record": "audit.json"
+  },
+  {
+    "command": "python3 docs/evidence/csh-064-acceptance/check_verdicts.py build/csh064-reviewed",
+    "status": 0,
+    "record": "verdicts.json"
+  },
+  {
+    "command": "make -C build/csh064-reviewed test-harness",
+    "status": 0,
+    "record": "harness.log.gz",
+    "tests": 86
+  },
+  {
+    "command": "docker run --rm --init -i --user 0 --mount \"type=bind,source=$PWD/build/csh064-reviewed,target=/review,readonly\" --workdir /review cshell-test:csh-063-sid python3 - /review < docs/evidence/csh-064-acceptance/reproduce_timeout.py",
+    "status": 0,
+    "record": "timeout.json",
+    "assertion_verdict": "FAIL",
+    "meaning": "Defect reproduced; surviving owned process killed by review cleanup."
+  },
+  {
+    "command": "docker run --rm --init --user 0 --mount \"type=bind,source=$PWD/build/csh064-reviewed,target=/review,readonly\" --workdir /review cshell-test:csh-063-sid sh -c 'python3 tests/host_platform_probe.py --fixture-root /tmp --record /tmp/acceptance-probe.json >&2 && cat /tmp/acceptance-probe.json'",
+    "status": 0,
+    "record": "overlay-probe.json",
+    "passed": 8
+  },
+  {
+    "command": "gh pr view 131 --json state,headRefOid,mergeCommit,mergedAt,statusCheckRollup",
+    "status": 0,
+    "record": "hosted.json"
+  }
+]

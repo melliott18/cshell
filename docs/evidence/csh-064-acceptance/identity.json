@@ -1,0 +1,10 @@
+{
+  "recorded_utc": "2026-09-29T02:11:58.573660+00:00",
+  "review_source": "c0e61ef7a374f0030f804d9e278d3a65ba0774d1",
+  "merge_commit": "3e82c1d4fcb8d3f5552dfbbb57335ed59e5f8595",
+  "reconciliation_base": "c8c1c91372e6e77cf2e7032765cd3c068fa1906d",
+  "platform": "macOS-14.8.7-arm64-arm-64bit",
+  "python": "3.12.7 | packaged by Anaconda, Inc. | (main, Oct  4 2024, 08:22:19) [Clang 14.0.6 ]",
+  "source_sha256": "fe524b6a90519e622a00f21f792e201bdaa3f7de7ed9323200479a9ff2be1319",
+  "container_image": "sha256:fda4e2035f7ea606a6b0b014f7a34a6149362cb9c3a2d5b4bbba655ad19fb605"
+}

@@ -1,0 +1,81 @@
+{
+  "source_sha256": "fe524b6a90519e622a00f21f792e201bdaa3f7de7ed9323200479a9ff2be1319",
+  "residual_conditions": 30,
+  "records": {
+    "native": {
+      "totals": {
+        "passed": 1162,
+        "failed": 0,
+        "gaps": 0
+      },
+      "failure_phases": {},
+      "limitations": 32
+    },
+    "linux-normal": {
+      "totals": {
+        "passed": 2281,
+        "failed": 0,
+        "gaps": 0
+      },
+      "failure_phases": {},
+      "limitations": 32
+    },
+    "linux-unequal": {
+      "totals": {
+        "passed": 2077,
+        "failed": 204,
+        "gaps": 0
+      },
+      "failure_phases": {
+        "assertion": 204
+      },
+      "limitations": 32
+    },
+    "linux-namespace": {
+      "totals": {
+        "passed": 2269,
+        "failed": 12,
+        "gaps": 0
+      },
+      "failure_phases": {
+        "setup": 12
+      },
+      "limitations": 32
+    },
+    "linux-namespace-unequal": {
+      "totals": {
+        "passed": 2065,
+        "failed": 216,
+        "gaps": 0
+      },
+      "failure_phases": {
+        "setup": 12,
+        "assertion": 204
+      },
+      "limitations": 32
+    },
+    "linux-tmpfs": {
+      "totals": {
+        "passed": 1183,
+        "failed": 1098,
+        "gaps": 0
+      },
+      "failure_phases": {
+        "setup": 1098
+      },
+      "limitations": 32
+    },
+    "linux-bind": {
+      "totals": {
+        "passed": 1162,
+        "failed": 1119,
+        "gaps": 0
+      },
+      "failure_phases": {
+        "setup": 1110,
+        "assertion": 9
+      },
+      "limitations": 32
+    }
+  }
+}

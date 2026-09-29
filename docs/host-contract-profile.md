@@ -202,3 +202,11 @@ utility/libc/platform vendors as implementation owners. Privileged Darwin and
 physical terminal environments remain unavailable; missing root, locale and
 stat-only block witnesses remain separate. No parent utility family or CSH-012
 gate is promoted.
+
+
+The [CSH-064 acceptance reconciliation](evidence/csh-064-acceptance/README.md)
+retains the passing evidence but holds ticket acceptance for a project-owned
+probe timeout defect: the nested selected utility can survive its Python wrapper.
+The implementation is integrated; CSH-064 / #127 remains in progress until
+process-tree cleanup and a regression are implemented and validated. This repair
+is independent of the external capabilities required for vendor requalification.

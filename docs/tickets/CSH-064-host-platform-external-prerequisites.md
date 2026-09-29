@@ -1,11 +1,11 @@
 # CSH-064: Supply external prerequisites for remaining host contracts
 
-- Status: review
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-063
-- Branch: test/CSH-064-host-platform-prerequisites
+- Branch: docs/CSH-064-acceptance-reconciliation
 - Issue: [#127](https://github.com/melliott18/cshell/issues/127)
 
 ## Goal
@@ -40,6 +40,9 @@ or open the CSH-012 gate.
 - [x] Claimed profiles pass runtime/PTY integration; changed C receives ASan/UBSan.
 - [x] Queries, measured credentials, fixture bounds and unmet requirements stay
   separate, with no parent utility promotion.
+- [ ] Acceptance-review regression: a probe timeout terminates and reaps the
+  complete owned process tree before reporting or removing fixtures, with a
+  regression through the nested `_chmod-child`/selected-utility path.
 
 ## Validation
 
@@ -88,4 +91,38 @@ CSH-064 retains qualification ownership pending those capabilities; selected
 utility/libc/platform vendors retain implementation ownership. Privileged Darwin,
 physical terminals and other unavailable requirements remain separate. Queries,
 measured credentials, fixture bounds and unmet requirements are not conflated.
-No parent utility or CSH-012 gate is promoted. Ready for review, not integrated.
+No parent utility or CSH-012 gate is promoted. The implementation was integrated
+by [PR #131](https://github.com/melliott18/cshell/pull/131) as `3e82c1d`;
+acceptance remains open under the reconciliation below.
+
+
+## Acceptance reconciliation
+
+[The acceptance review and retained reproduction](../evidence/csh-064-acceptance/README.md)
+review exact PR head `c0e61ef`, independently of later main changes. The source
+and artifact audit passes; recomputing 12,616 saved non-setup assertion verdicts
+agrees with their records. Fresh review checks pass 86 native harness self-tests
+and eight focused Linux overlay controls. Original runtime/PTY results retain
+their original provenance; this review does not claim another full profile run.
+
+Acceptance is held for **P2: the probe timeout leaves its selected utility
+running**. `tests/host_platform_probe.py:command` kills only its direct child.
+The outer `_chmod-child` wrapper's deadline starts before its nested selected
+chmod deadline, so the wrapper can die while chmod survives. The disposable
+Linux reproducer records a five-second timeout and the still-sleeping utility's
+PID, UID/GID and capabilities, then explicitly kills its own process.
+
+CSH-064 / #127 owns the repair, and the **cshell test-harness implementation**
+is its implementation owner. This project defect is separate from the thirty
+utility/libc/platform residual conditions and needs no new external capability
+to fix. Use one deadline and cleanup owner for the complete process tree,
+terminate/reap descendants before returning or removing fixtures, retain a
+strict timeout failure, and add a regression through the actual nested path.
+
+The original four criteria retain their supported evidence; the newly discovered
+cleanup regression is an explicit additional open acceptance gate. Status is
+`in-progress` and #127 stays open until the repair, regression and validation are
+integrated. A merged implementation, passing ordinary cases or hosted check
+completion do not discharge this gate. External capability/vendor ownership and the
+closed CSH-012 completion gate remain unchanged. This reconciliation records the
+review; it does not implement the repair.

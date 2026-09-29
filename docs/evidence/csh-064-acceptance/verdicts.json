@@ -1,0 +1,40 @@
+{
+  "assertions_recomputed": 12616,
+  "records": {
+    "linux-bind.json.gz": {
+      "passed": 1162,
+      "failed": 1119,
+      "gaps": 0
+    },
+    "linux-namespace-unequal.json.gz": {
+      "passed": 2065,
+      "failed": 216,
+      "gaps": 0
+    },
+    "linux-namespace.json.gz": {
+      "passed": 2269,
+      "failed": 12,
+      "gaps": 0
+    },
+    "linux-normal.json.gz": {
+      "passed": 2281,
+      "failed": 0,
+      "gaps": 0
+    },
+    "linux-tmpfs.json.gz": {
+      "passed": 1183,
+      "failed": 1098,
+      "gaps": 0
+    },
+    "linux-unequal.json.gz": {
+      "passed": 2077,
+      "failed": 204,
+      "gaps": 0
+    },
+    "native.json.gz": {
+      "passed": 1162,
+      "failed": 0,
+      "gaps": 0
+    }
+  }
+}
