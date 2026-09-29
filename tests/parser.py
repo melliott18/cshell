@@ -5,6 +5,7 @@ import argparse
 import json
 import math
 import os
+import sys
 from pathlib import Path
 import tempfile
 
@@ -18,10 +19,17 @@ def name(value):
 class ParserFixture(Fixture):
     def parse(self, data, outcome="eof"):
         output = self.run("parse", data=data)
+        # The JSON representation adds multiple containers per AST level.
+        # Keep this finite fixture decoder from imposing Python's default
+        # recursion limit on the shell's deeper successful parse witnesses.
+        recursion_limit = sys.getrecursionlimit()
         try:
+            sys.setrecursionlimit(max(recursion_limit, 10000))
             result = json.loads(output)
         except ValueError:
             raise AssertionError(f"invalid JSON: {output[:1000]!r}") from None
+        finally:
+            sys.setrecursionlimit(recursion_limit)
         assert result["result"] == outcome, result
         assert result["repeats"] == 3, result
         if outcome == "eof":
@@ -364,7 +372,7 @@ def compound_cases(fixture):
         assert len(case["items"]) == 100 and all(len(item["patterns"]) == 10 for item in case["items"]), case
     yield "compound branch word arm and pattern vector growth", growth
     yield "32 nested conditional bodies", lambda: one(fixture, b"if x; then " * 32 + b"y; " + b"fi; " * 32)
-    yield "compound nesting limit is a structured error", lambda: fixture.parse(b"if x; then " * 200 + b"y; " + b"fi; " * 200, "error")
+    yield "200 conditional bodies", lambda: one(fixture, b"if x; then " * 200 + b"y; " + b"fi; " * 200)
 
 
 def cases(fixture):
@@ -539,10 +547,8 @@ def cases(fixture):
         assert len(inner["words"][1]["word"]["substitutions"]) == 1, inner
     yield "replay discards speculative ASTs and preserves preceding substitutions", replay_substitutions
 
-    def arithmetic_limit():
-        result = fixture.parse(b"echo " + b"$((" * 129 + b"1" + b"))" * 129, "error")
-        assert result["error"]["message"] == "arithmetic expansion nesting limit exceeded", result
-    yield "arithmetic checkpoint nesting is bounded", arithmetic_limit
+    yield "129 arithmetic checkpoints", lambda: one(fixture,
+        b"echo " + b"$((" * 129 + b"1" + b"))" * 129)
     yield "empty command substitution", lambda: one(fixture, b"echo $()\n")
 
     def nested_heredoc():
@@ -603,7 +609,7 @@ def cases(fixture):
         fixture.run("chain", data=b"x" + b" && x || x" * 4999 + b" && x\n") == b"10000\n",
         "binary chain growth or associativity")
     yield "48 nested subshell groups", lambda: one(fixture, b"(" * 48 + b"x" + b")" * 48)
-    yield "nesting limit gives structured error", lambda: fixture.parse(b"(" * 200 + b"x" + b")" * 200, "error")
+    yield "200 subshell groups", lambda: one(fixture, b"(" * 200 + b"x" + b")" * 200)
 
     def no_execution():
         one(fixture, b"echo $(touch parser-executed) `touch parser-executed` > parser-created\n")

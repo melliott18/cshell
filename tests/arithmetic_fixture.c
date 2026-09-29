@@ -244,8 +244,7 @@ static void syntax(void)
     nested[256] = '1';
     memset(nested + 257, ')', 256);
     nested[513] = '\0';
-    error_is(state, nested, CSH_ARITH_SYNTAX);
-    CHECK(csh_arith_probe(nested) == CSH_ARITH_SYNTAX);
+    value_is(state, nested, 1);
     CHECK(csh_arith_probe(NULL) == CSH_ARITH_SYNTAX);
     CHECK(csh_arith_eval(NULL, "1", &result) == CSH_ARITH_SYNTAX);
     CHECK(csh_arith_eval(state, NULL, &result) == CSH_ARITH_SYNTAX);

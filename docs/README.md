@@ -10,6 +10,7 @@ Start with the [project README](../README.md) for installation and current statu
 | [Runtime behavior](candidate-runtime.md) | Public executable, cross-mode behavior, exit/status policy, and bootstrap limits |
 | [Lexer and words](lexer-and-words.md) | Replacement tokens, quoting provenance, nested parser frames, and raw here-document handoff |
 | [Parser and AST](parser-and-ast.md) | Complete-command parsing, owned syntax trees, ordered here-documents, and diagnostics |
+| [Nesting resources](nesting-resources.md) | Removed fixed guards, native stack bounds, cleanup and finite regression witnesses |
 | [Aliases](aliases.md) | Alias storage, handlers, parser eligibility, injected input, and read timing |
 | [Shell state](shell-state.md) | Owned variables, parameters, attributes, environment snapshots, copying, and restoration |
 | [Locale behavior](locales.md) | Startup/runtime precedence, patterns, IFS, diagnostics, host-qualified evidence and encoding limits |

@@ -161,7 +161,8 @@ static int expand(struct csh_state *state, const struct csh_ast_word *word,
         result = csh_expand_fields(state, &value, NULL, out, &expansion_error);
     if (result != CSH_EXPAND_OK) {
         csh_state_restore(state, &checkpoint);
-        fail(error, "word expansion failed", result == CSH_EXPAND_NOMEM ? ENOMEM :
+        fail(error, "word expansion failed",
+            result == CSH_EXPAND_NOMEM || result == CSH_EXPAND_RESOURCE ? ENOMEM :
             result == CSH_EXPAND_IO ? EIO : result == CSH_EXPAND_INTERRUPTED ? EINTR : 0);
         snprintf(error->detail, sizeof(error->detail), "%s", expansion_error.message);
         error->position = expansion_error.position;

@@ -18,12 +18,12 @@ PTY_TEST_SUITE ?= build/tests/runtime-pty.json
 PTY_TEST_TARGET ?= cshell
 PTY_TEST_CASE ?=
 
-CSHELL_CPPFLAGS = -D_POSIX_C_SOURCE=200809L -Iinclude
+CSHELL_CPPFLAGS = -pthread -D_POSIX_C_SOURCE=200809L -Iinclude
 OBJECTS = build/main.o $(EXECUTE_OBJECTS) build/invocation.o
 INPUT_OBJECTS = build/input.o build/invocation.o
 INPUT_HEADERS = include/cshell/input.h include/cshell/invocation.h include/cshell/options.h
 INPUT_FAULT_OBJECTS = build/tests/fault-input.o build/tests/fault-invocation.o
-LEXER_HEADERS = include/cshell/character.h include/cshell/lexer.h include/cshell/input.h include/cshell/arithmetic.h
+LEXER_HEADERS = include/cshell/stack.h include/cshell/character.h include/cshell/lexer.h include/cshell/input.h include/cshell/arithmetic.h
 LEXER_SUPPORT_OBJECTS = build/arithmetic.o build/state.o build/alias.o
 ALIAS_HEADERS = include/cshell/alias.h include/cshell/input.h
 PARSER_HEADERS = $(ALIAS_HEADERS) include/cshell/parser.h include/cshell/ast.h include/cshell/quote.h $(LEXER_HEADERS)
@@ -44,8 +44,8 @@ FIELDS_FAULT_OBJECTS = build/tests/fields-fault-fields.o build/tests/fields-faul
 
 all: cshell
 
-cshell: $(OBJECTS) build/character.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) build/character.o $(LDLIBS)
+cshell: $(OBJECTS) build/character.o build/stack.o
+	$(CC) -pthread $(CFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) build/character.o build/stack.o $(LDLIBS)
 
 build/main.o: src/main.c $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)
@@ -74,17 +74,17 @@ build/lexer.o: src/lexer.c $(LEXER_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-build/tests/lexer_fixture: tests/lexer_fixture.c build/lexer.o $(LEXER_HEADERS) $(LEXER_SUPPORT_OBJECTS) build/character.o
+build/tests/lexer_fixture: tests/lexer_fixture.c build/lexer.o $(LEXER_HEADERS) $(LEXER_SUPPORT_OBJECTS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/lexer_fixture.c build/lexer.o $(LEXER_SUPPORT_OBJECTS) build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/lexer_fixture.c build/lexer.o $(LEXER_SUPPORT_OBJECTS) build/character.o build/stack.o $(LDLIBS)
 
 build/tests/fault-lexer.o: src/lexer.c $(LEXER_HEADERS) tests/lexer_faults.h
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/lexer_faults.h -c $< -o $@
 
-build/tests/lexer_faults: tests/lexer_faults.c tests/lexer_faults.h build/tests/fault-lexer.o $(LEXER_HEADERS) $(LEXER_SUPPORT_OBJECTS) build/character.o
+build/tests/lexer_faults: tests/lexer_faults.c tests/lexer_faults.h build/tests/fault-lexer.o $(LEXER_HEADERS) $(LEXER_SUPPORT_OBJECTS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/lexer_faults.c build/tests/fault-lexer.o $(LEXER_SUPPORT_OBJECTS) build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/lexer_faults.c build/tests/fault-lexer.o $(LEXER_SUPPORT_OBJECTS) build/character.o build/stack.o $(LDLIBS)
 
 test-lexer: build/tests/lexer_fixture build/tests/lexer_faults
 	$(PYTHON) tests/lexer.py build/tests/lexer_fixture --fault-binary build/tests/lexer_faults
@@ -97,21 +97,21 @@ build/quote.o: src/quote.c include/cshell/quote.h include/cshell/character.h
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-build/tests/parser_fixture: tests/parser_fixture.c $(PARSER_OBJECTS) $(PARSER_HEADERS) $(LEXER_SUPPORT_OBJECTS) build/character.o
+build/tests/parser_fixture: tests/parser_fixture.c $(PARSER_OBJECTS) $(PARSER_HEADERS) $(LEXER_SUPPORT_OBJECTS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/parser_fixture.c $(PARSER_OBJECTS) $(LEXER_SUPPORT_OBJECTS) build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/parser_fixture.c $(PARSER_OBJECTS) $(LEXER_SUPPORT_OBJECTS) build/character.o build/stack.o $(LDLIBS)
 
-build/tests/ast_fixture: tests/ast_fixture.c build/ast.o build/lexer.o $(PARSER_HEADERS) $(LEXER_SUPPORT_OBJECTS) build/character.o
+build/tests/ast_fixture: tests/ast_fixture.c build/ast.o build/lexer.o $(PARSER_HEADERS) $(LEXER_SUPPORT_OBJECTS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/ast_fixture.c build/ast.o build/lexer.o $(LEXER_SUPPORT_OBJECTS) build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/ast_fixture.c build/ast.o build/lexer.o $(LEXER_SUPPORT_OBJECTS) build/character.o build/stack.o $(LDLIBS)
 
 $(PARSER_FAULT_OBJECTS): build/tests/parser-fault-%.o: src/%.c $(PARSER_HEADERS) tests/parser_faults.h
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/parser_faults.h -c $< -o $@
 
-build/tests/parser_faults: tests/parser_faults.c tests/parser_faults.h $(PARSER_FAULT_OBJECTS) $(PARSER_HEADERS) $(LEXER_SUPPORT_OBJECTS) build/character.o
+build/tests/parser_faults: tests/parser_faults.c tests/parser_faults.h $(PARSER_FAULT_OBJECTS) $(PARSER_HEADERS) $(LEXER_SUPPORT_OBJECTS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/parser_faults.c $(PARSER_FAULT_OBJECTS) $(filter-out build/alias.o,$(LEXER_SUPPORT_OBJECTS)) build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/parser_faults.c $(PARSER_FAULT_OBJECTS) $(filter-out build/alias.o,$(LEXER_SUPPORT_OBJECTS)) build/character.o build/stack.o $(LDLIBS)
 
 test-parser: build/tests/parser_fixture build/tests/parser_faults build/tests/ast_fixture
 	$(PYTHON) tests/parser.py build/tests/parser_fixture --fault-binary build/tests/parser_faults
@@ -125,13 +125,13 @@ build/tests/alias_storage: tests/alias_storage.c build/alias.o $(ALIAS_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/alias_storage.c build/alias.o $(LDLIBS)
 
-build/tests/alias_lexer: tests/alias_lexer.c build/lexer.o $(LEXER_HEADERS) $(LEXER_SUPPORT_OBJECTS) build/character.o
+build/tests/alias_lexer: tests/alias_lexer.c build/lexer.o $(LEXER_HEADERS) $(LEXER_SUPPORT_OBJECTS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/alias_lexer.c build/lexer.o $(LEXER_SUPPORT_OBJECTS) build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/alias_lexer.c build/lexer.o $(LEXER_SUPPORT_OBJECTS) build/character.o build/stack.o $(LDLIBS)
 
-build/tests/alias_parser: tests/alias_parser.c $(PARSER_OBJECTS) $(PARSER_HEADERS) $(LEXER_SUPPORT_OBJECTS) build/character.o
+build/tests/alias_parser: tests/alias_parser.c $(PARSER_OBJECTS) $(PARSER_HEADERS) $(LEXER_SUPPORT_OBJECTS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/alias_parser.c $(PARSER_OBJECTS) $(LEXER_SUPPORT_OBJECTS) build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/alias_parser.c $(PARSER_OBJECTS) $(LEXER_SUPPORT_OBJECTS) build/character.o build/stack.o $(LDLIBS)
 
 build/tests/fault-alias.o: src/alias.c $(ALIAS_HEADERS) tests/alias_faults.h
 	mkdir -p $(dir $@)
@@ -171,49 +171,49 @@ build/expand.o build/arithmetic.o: build/%.o: src/%.c $(EXPAND_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-build/tests/expand_fixture: tests/expand_fixture.c $(EXPAND_OBJECTS) $(FIELDS_OBJECTS) build/state.o build/alias.o build/lexer.o $(EXPAND_HEADERS) build/character.o
+build/tests/expand_fixture: tests/expand_fixture.c $(EXPAND_OBJECTS) $(FIELDS_OBJECTS) build/state.o build/alias.o build/lexer.o $(EXPAND_HEADERS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/expand_fixture.c $(EXPAND_OBJECTS) $(FIELDS_OBJECTS) build/state.o build/alias.o build/lexer.o build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/expand_fixture.c $(EXPAND_OBJECTS) $(FIELDS_OBJECTS) build/state.o build/alias.o build/lexer.o build/character.o build/stack.o $(LDLIBS)
 
 build/tests/fault-expand.o build/tests/fault-quote.o build/tests/fault-fields.o build/tests/fault-pathname.o: build/tests/fault-%.o: src/%.c $(EXPAND_HEADERS) tests/expand_faults.h
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/expand_faults.h -c $< -o $@
 
-build/tests/expand_faults: tests/expand_faults.c tests/expand_faults.h build/tests/fault-expand.o build/tests/fault-quote.o build/arithmetic.o build/tests/fault-fields.o build/tests/fault-pathname.o build/state.o build/alias.o build/lexer.o $(EXPAND_HEADERS) build/character.o
+build/tests/expand_faults: tests/expand_faults.c tests/expand_faults.h build/tests/fault-expand.o build/tests/fault-quote.o build/arithmetic.o build/tests/fault-fields.o build/tests/fault-pathname.o build/state.o build/alias.o build/lexer.o $(EXPAND_HEADERS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/expand_faults.c build/tests/fault-expand.o build/tests/fault-quote.o build/arithmetic.o build/tests/fault-fields.o build/tests/fault-pathname.o build/state.o build/alias.o build/lexer.o build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/expand_faults.c build/tests/fault-expand.o build/tests/fault-quote.o build/arithmetic.o build/tests/fault-fields.o build/tests/fault-pathname.o build/state.o build/alias.o build/lexer.o build/character.o build/stack.o $(LDLIBS)
 
-build/tests/arithmetic_fixture: tests/arithmetic_fixture.c build/arithmetic.o build/state.o build/alias.o $(EXPAND_HEADERS)
+build/tests/arithmetic_fixture: tests/arithmetic_fixture.c build/arithmetic.o build/state.o build/alias.o $(EXPAND_HEADERS) build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/arithmetic_fixture.c build/arithmetic.o build/state.o build/alias.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/arithmetic_fixture.c build/arithmetic.o build/state.o build/alias.o build/stack.o $(LDLIBS)
 
-build/tests/quote_fixture: tests/quote_fixture.c build/quote.o include/cshell/quote.h build/character.o
+build/tests/quote_fixture: tests/quote_fixture.c build/quote.o include/cshell/quote.h build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/quote_fixture.c build/quote.o build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/quote_fixture.c build/quote.o build/character.o build/stack.o $(LDLIBS)
 
 build/tests/arith-fault-arithmetic.o build/tests/arith-fault-state.o: build/tests/arith-fault-%.o: src/%.c $(EXPAND_HEADERS) tests/arithmetic_faults.h
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/arithmetic_faults.h -c $< -o $@
 
-build/tests/arithmetic_faults: tests/arithmetic_faults.c tests/arithmetic_faults.h build/tests/arith-fault-arithmetic.o build/tests/arith-fault-state.o build/alias.o $(EXPAND_HEADERS)
+build/tests/arithmetic_faults: tests/arithmetic_faults.c tests/arithmetic_faults.h build/tests/arith-fault-arithmetic.o build/tests/arith-fault-state.o build/alias.o $(EXPAND_HEADERS) build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/arithmetic_faults.c build/tests/arith-fault-arithmetic.o build/tests/arith-fault-state.o build/alias.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/arithmetic_faults.c build/tests/arith-fault-arithmetic.o build/tests/arith-fault-state.o build/alias.o build/stack.o $(LDLIBS)
 
 $(FIELDS_OBJECTS): build/%.o: src/%.c $(FIELDS_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-build/tests/fields_fixture: tests/fields_fixture.c $(FIELDS_OBJECTS) $(EXPAND_OBJECTS) build/state.o build/alias.o build/lexer.o $(FIELDS_HEADERS) build/character.o
+build/tests/fields_fixture: tests/fields_fixture.c $(FIELDS_OBJECTS) $(EXPAND_OBJECTS) build/state.o build/alias.o build/lexer.o $(FIELDS_HEADERS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/fields_fixture.c $(FIELDS_OBJECTS) $(EXPAND_OBJECTS) build/state.o build/alias.o build/lexer.o build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/fields_fixture.c $(FIELDS_OBJECTS) $(EXPAND_OBJECTS) build/state.o build/alias.o build/lexer.o build/character.o build/stack.o $(LDLIBS)
 
 $(FIELDS_FAULT_OBJECTS): build/tests/fields-fault-%.o: src/%.c $(FIELDS_HEADERS) tests/fields_faults.h
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/fields_faults.h -c $< -o $@
 
-build/tests/fields_faults: tests/fields_faults.c tests/fields_faults.h $(FIELDS_FAULT_OBJECTS) build/state.o build/alias.o $(FIELDS_HEADERS) build/character.o
+build/tests/fields_faults: tests/fields_faults.c tests/fields_faults.h $(FIELDS_FAULT_OBJECTS) build/state.o build/alias.o $(FIELDS_HEADERS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/fields_faults.c $(FIELDS_FAULT_OBJECTS) build/state.o build/alias.o build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/fields_faults.c $(FIELDS_FAULT_OBJECTS) build/state.o build/alias.o build/character.o build/stack.o $(LDLIBS)
 
 test-fields: build/tests/fields_fixture build/tests/fields_faults
 	$(PYTHON) tests/fields.py build/tests/fields_fixture --fault-binary build/tests/fields_faults
@@ -229,9 +229,9 @@ build/execute.o build/prepare.o build/redirect.o build/builtin.o build/utility.o
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-build/tests/execute_fixture: tests/execute_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o
+build/tests/execute_fixture: tests/execute_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/execute_fixture.c $(EXECUTE_OBJECTS) build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/execute_fixture.c $(EXECUTE_OBJECTS) build/character.o build/stack.o $(LDLIBS)
 
 build/tests/execute_helper: tests/execute_helper.c
 	mkdir -p $(dir $@)
@@ -244,13 +244,13 @@ $(EXECUTE_FAULT_OBJECTS): build/tests/execute-fault-%.o: src/%.c $(EXECUTE_HEADE
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/execute_faults.h -c $< -o $@
 
-build/tests/execute_faults: tests/execute_faults.c tests/execute_faults.h $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/alias.o build/builtin.o $(EXECUTE_HEADERS) build/character.o
+build/tests/execute_faults: tests/execute_faults.c tests/execute_faults.h $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/alias.o build/builtin.o $(EXECUTE_HEADERS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/execute_faults.c $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/alias.o build/builtin.o build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/execute_faults.c $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/alias.o build/builtin.o build/character.o build/stack.o $(LDLIBS)
 
-build/tests/assignment_fixture: tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o
+build/tests/assignment_fixture: tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/assignment_fixture.c $(EXECUTE_OBJECTS) build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/assignment_fixture.c $(EXECUTE_OBJECTS) build/character.o build/stack.o $(LDLIBS)
 
 build/tests/runtime.json build/tests/runtime-pty.json build/tests/traps.json build/tests/control-flow.json build/tests/evaluation.json build/tests/options.json build/tests/syntax.json build/tests/execution.json build/tests/state-builtins.json build/tests/expansion.json: tests/parser_recovery_cases.py tests/expansion_cases.py tests/state_builtin_cases.py tests/runtime_cases.py tests/execution_redirection_cases.py tests/execution_cases.py tests/syntax_cases.py tests/trap_cases.py tests/option_cases.py tests/option_evidence_cases.py tests/substitution_cases.py tests/control_flow_cases.py tests/evaluation_cases.py build/tests/execute_helper
 	$(PYTHON) tests/runtime_cases.py --helper build/tests/execute_helper --output $@
@@ -287,16 +287,16 @@ test-runtime-pty: cshell build/tests/runtime-pty.json
 	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/runtime-pty.json \
 		--timeout "$(TEST_TIMEOUT)" --output-limit "$(TEST_OUTPUT_LIMIT)"
 
-build/tests/pipeline_fixture: tests/pipeline_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o
+build/tests/pipeline_fixture: tests/pipeline_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/pipeline_fixture.c $(EXECUTE_OBJECTS) build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/pipeline_fixture.c $(EXECUTE_OBJECTS) build/character.o build/stack.o $(LDLIBS)
 
 test-pipeline: build/tests/execute_fixture build/tests/execute_helper build/tests/pipeline_fixture build/tests/execute_faults
 	$(PYTHON) tests/pipeline.py build/tests/execute_fixture --helper build/tests/execute_helper --api-binary build/tests/pipeline_fixture --fault-binary build/tests/execute_faults
 
-build/tests/context_fixture: tests/context_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o
+build/tests/context_fixture: tests/context_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(EXECUTE_OBJECTS) build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(EXECUTE_OBJECTS) build/character.o build/stack.o $(LDLIBS)
 
 test-context: cshell build/tests/context_fixture build/tests/execute_helper build/tests/execute_faults
 	$(PYTHON) tests/contexts.py ./cshell --helper build/tests/execute_helper --api-binary build/tests/context_fixture --fault-binary build/tests/execute_faults
@@ -304,9 +304,9 @@ test-context: cshell build/tests/context_fixture build/tests/execute_helper buil
 test-execute: build/tests/execute_fixture build/tests/execute_helper build/tests/execute_faults build/tests/assignment_fixture
 	$(PYTHON) tests/execute.py build/tests/execute_fixture --helper build/tests/execute_helper --fault-binary build/tests/execute_faults --assignment-binary build/tests/assignment_fixture
 
-build/tests/builtin_fixture: tests/builtin_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o
+build/tests/builtin_fixture: tests/builtin_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(EXECUTE_OBJECTS) build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(EXECUTE_OBJECTS) build/character.o build/stack.o $(LDLIBS)
 
 .PHONY: test-builtins
 test-builtins: build/tests/builtin_fixture build/tests/execute_fixture
@@ -366,17 +366,17 @@ test-jobs-pty: cshell build/tests/jobs-pty.json build/tests/execute_faults
 	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/jobs-pty.json
 	$(PYTHON) tests/smoke.py ./build/tests/execute_faults --suite tests/fixtures/jobs-fault-pty.json
 
-build/tests/jobs_fixture: tests/jobs_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o
+build/tests/jobs_fixture: tests/jobs_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(EXECUTE_OBJECTS) build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(EXECUTE_OBJECTS) build/character.o build/stack.o $(LDLIBS)
 
 build/tests/prompt-fault-main.o: src/main.c tests/prompt_faults.h $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/prompt_faults.h -c $< -o $@
 
-build/tests/prompt_faults: tests/prompt_faults.c tests/prompt_faults.h build/tests/prompt-fault-main.o $(EXECUTE_OBJECTS) build/invocation.o build/character.o
+build/tests/prompt_faults: tests/prompt_faults.c tests/prompt_faults.h build/tests/prompt-fault-main.o $(EXECUTE_OBJECTS) build/invocation.o build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/prompt_faults.c build/tests/prompt-fault-main.o $(EXECUTE_OBJECTS) build/invocation.o build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/prompt_faults.c build/tests/prompt-fault-main.o $(EXECUTE_OBJECTS) build/invocation.o build/character.o build/stack.o $(LDLIBS)
 
 .PHONY: test-prompt
 test-prompt: build/tests/prompt_faults
@@ -390,19 +390,19 @@ build/tests/wait-jobs.o: src/jobs.c $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -Dsigsuspend=csh_wait_sigsuspend -c $< -o $@
 
-build/tests/wait_handshake: tests/wait_handshake.c build/main.o build/invocation.o build/tests/wait-jobs.o $(EXECUTE_OBJECTS) build/character.o
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/main.o build/invocation.o build/tests/wait-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o $(LDLIBS)
+build/tests/wait_handshake: tests/wait_handshake.c build/main.o build/invocation.o build/tests/wait-jobs.o $(EXECUTE_OBJECTS) build/character.o build/stack.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/main.o build/invocation.o build/tests/wait-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o build/stack.o $(LDLIBS)
 
-build/tests/signal_edges_helper: tests/signal_edges_helper.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o
+build/tests/signal_edges_helper: tests/signal_edges_helper.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(EXECUTE_OBJECTS) build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(EXECUTE_OBJECTS) build/character.o build/stack.o $(LDLIBS)
 
 build/tests/permission-jobs.o: src/jobs.c $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -Dkill=csh_permission_kill -c $< -o $@
 
-build/tests/kill_permission: tests/kill_permission.c build/tests/permission-jobs.o $(EXECUTE_OBJECTS) build/character.o
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/tests/permission-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o $(LDLIBS)
+build/tests/kill_permission: tests/kill_permission.c build/tests/permission-jobs.o $(EXECUTE_OBJECTS) build/character.o build/stack.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/tests/permission-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o build/stack.o $(LDLIBS)
 
 .PHONY: test-signal-edges
 test-signal-edges: cshell build/tests/signal_edges_helper build/tests/kill_permission
@@ -422,9 +422,9 @@ test-trap-runtime: cshell build/tests/traps.json
 # Use serial make for evidence runs to avoid concurrent PTY/snapshot load.
 test-jobs-signals: test-jobs test-traps test-jobs-pty test-runtime-pty
 
-build/tests/substitution_fixture: tests/substitution_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o
+build/tests/substitution_fixture: tests/substitution_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(EXECUTE_OBJECTS) build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(EXECUTE_OBJECTS) build/character.o build/stack.o $(LDLIBS)
 
 .PHONY: test-substitution
 test-substitution: build/tests/substitution_fixture build/tests/execute_faults
@@ -488,8 +488,8 @@ build/tests/command-read-input.o: src/input.c tests/command_read_faults.h $(INPU
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/command_read_faults.h -c $< -o $@
 
-build/tests/command_read_faults: tests/command_read_faults.c build/tests/command-read-input.o $(OBJECTS) build/character.o
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/command_read_faults.c build/tests/command-read-input.o $(filter-out build/input.o,$(OBJECTS)) build/character.o $(LDLIBS)
+build/tests/command_read_faults: tests/command_read_faults.c build/tests/command-read-input.o $(OBJECTS) build/character.o build/stack.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/command_read_faults.c build/tests/command-read-input.o $(filter-out build/input.o,$(OBJECTS)) build/character.o build/stack.o $(LDLIBS)
 
 .PHONY: test-execution-contracts
 test-execution-contracts: cshell build/tests/command_read_faults build/tests/execute_helper
@@ -500,17 +500,17 @@ build/character.o: src/character.c include/cshell/character.h
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-build/tests/character_fixture: tests/character_fixture.c build/lexer.o $(LEXER_SUPPORT_OBJECTS) build/character.o $(LEXER_HEADERS)
+build/tests/character_fixture: tests/character_fixture.c build/lexer.o $(LEXER_SUPPORT_OBJECTS) build/character.o build/stack.o $(LEXER_HEADERS)
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/character_fixture.c build/lexer.o $(LEXER_SUPPORT_OBJECTS) build/character.o $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/character_fixture.c build/lexer.o $(LEXER_SUPPORT_OBJECTS) build/character.o build/stack.o $(LDLIBS)
 
 # CSH-057 bounded CHILD_MAX injection; production executable keeps host sysconf.
 build/tests/lifecycle-jobs.o: src/jobs.c $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -Dsysconf=csh_lifecycle_sysconf -c $< -o $@
 
-build/tests/jobs_lifecycle: tests/jobs_lifecycle.c build/tests/lifecycle-jobs.o $(EXECUTE_OBJECTS) build/character.o
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/tests/lifecycle-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o $(LDLIBS)
+build/tests/jobs_lifecycle: tests/jobs_lifecycle.c build/tests/lifecycle-jobs.o $(EXECUTE_OBJECTS) build/character.o build/stack.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/tests/lifecycle-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o build/stack.o $(LDLIBS)
 
 test-jobs: test-job-retention
 .PHONY: test-job-retention
@@ -531,8 +531,8 @@ build/tests/state-builtin-fault-main.o: src/main.c tests/state_builtin_faults.h 
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -DCSHELL_STATE_FAULT_MAIN -include tests/state_builtin_faults.h -c $< -o $@
 
-build/tests/state_builtin_faults: tests/state_builtin_faults.c tests/state_builtin_faults.h build/tests/state-builtin-fault-main.o $(STATE_BUILTIN_FAULT_OBJECTS) $(OBJECTS) build/character.o
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/state_builtin_faults.c build/tests/state-builtin-fault-main.o $(STATE_BUILTIN_FAULT_OBJECTS) $(filter-out build/main.o build/builtin.o build/utility.o build/state.o,$(OBJECTS)) build/character.o $(LDLIBS)
+build/tests/state_builtin_faults: tests/state_builtin_faults.c tests/state_builtin_faults.h build/tests/state-builtin-fault-main.o $(STATE_BUILTIN_FAULT_OBJECTS) $(OBJECTS) build/character.o build/stack.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/state_builtin_faults.c build/tests/state-builtin-fault-main.o $(STATE_BUILTIN_FAULT_OBJECTS) $(filter-out build/main.o build/builtin.o build/utility.o build/state.o,$(OBJECTS)) build/character.o build/stack.o $(LDLIBS)
 
 .PHONY: test-state-edges
 test-state-edges: cshell build/tests/state_builtin_faults build/tests/state_builtin_helper
@@ -545,8 +545,8 @@ build/tests/redirection-fault-redirect.o: src/redirect.c tests/redirection_fault
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/redirection_faults.h -c $< -o $@
 
-build/tests/redirection_faults: tests/redirection_faults.c build/tests/redirection-fault-redirect.o $(OBJECTS) build/character.o
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/redirection_faults.c build/tests/redirection-fault-redirect.o $(filter-out build/redirect.o,$(OBJECTS)) build/character.o $(LDLIBS)
+build/tests/redirection_faults: tests/redirection_faults.c build/tests/redirection-fault-redirect.o $(OBJECTS) build/character.o build/stack.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/redirection_faults.c build/tests/redirection-fault-redirect.o $(filter-out build/redirect.o,$(OBJECTS)) build/character.o build/stack.o $(LDLIBS)
 
 .PHONY: test-redirection-edges
 test-redirection-edges: build/tests/redirection_faults build/tests/execute_helper
@@ -555,8 +555,8 @@ test-redirection-edges: build/tests/redirection_faults build/tests/execute_helpe
 test-execution-evidence test: test-redirection-edges
 
 # CSH-050: real stopped jobs with only permission failure interposed.
-build/tests/kill_job_state: tests/kill_job_state.c build/tests/permission-jobs.o $(EXECUTE_OBJECTS) build/character.o
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/tests/permission-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o $(LDLIBS)
+build/tests/kill_job_state: tests/kill_job_state.c build/tests/permission-jobs.o $(EXECUTE_OBJECTS) build/character.o build/stack.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/tests/permission-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o build/stack.o $(LDLIBS)
 
 build/tests/kill-job-state.json: tests/kill_job_state_cases.py
 	mkdir -p $(dir $@)
@@ -572,3 +572,18 @@ test-jobs: test-kill-job-state
 .PHONY: test-host-probe-timeout
 test-host-probe-timeout:
 	$(PYTHON) tests/host_probe_timeout.py --record build/tests/host-probe-timeout.json
+
+build/stack.o: src/stack.c include/cshell/stack.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+build/tests/nesting_fixture: tests/nesting_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o build/stack.o
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(EXECUTE_OBJECTS) build/character.o build/stack.o $(LDLIBS)
+
+.PHONY: test-nesting
+test-nesting: cshell build/tests/nesting_fixture
+	./build/tests/nesting_fixture
+	$(PYTHON) tests/nesting.py ./cshell
+
+test: test-nesting

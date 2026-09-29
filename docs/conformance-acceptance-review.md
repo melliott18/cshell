@@ -2,6 +2,8 @@
 
 The [final audit closure](conformance-closure.md) supersedes earlier acceptance-gate
 decisions. Recorded failures and source-qualified evidence below remain unchanged.
+The later [CSH-066 implementation](nesting-resources.md) replaces fixed nesting
+guards; its ticket records current validation separately from this baseline.
 
 Review baseline: `c8c1c91372e6e77cf2e7032765cd3c068fa1906d`, integrated `main`,
 2026-09-29 UTC. The review is complete; CSH-012 acceptance is **not complete**.

@@ -29,7 +29,7 @@ and command substitutions can require further physical lines. Blank and comment-
 | `CSH_PARSE_TREE` | Own the returned tree; evaluate it or destroy it before requesting the next complete command as runtime policy requires. |
 | `CSH_PARSE_EOF` | Clean EOF with no tree; the error is clear. |
 | `CSH_PARSE_INCOMPLETE` | Final EOF inside unfinished syntax, with no tree and a diagnostic. |
-| `CSH_PARSE_ERROR` | Invalid syntax, input/allocation failure, or a nesting-limit diagnostic; no tree escapes. |
+| `CSH_PARSE_ERROR` | Invalid syntax, input/allocation failure, or native stack exhaustion; no tree escapes. |
 
 Pass an empty output pointer. Successful trees remain valid after later parses
 and after parser and input destruction. `csh_parser_destroy()` releases only
@@ -176,18 +176,18 @@ Destruction iteratively walks owned children without allocation, including
 substitution trees, compound payloads, and long AND/OR chains. Words, pipelines,
 lists, conditional branches, case items/patterns, redirections, and here-document
 bodies grow dynamically with overflow checks. Recursive compound, function-body,
-and substitution parsing has a 128-context guard that reports a diagnostic
-instead of exhausting the C stack. This implementation limit remains an open
-part of the broader unrestricted-command-size requirement; ordinary sequence
-length and word/body size have no fixed parser cap.
+and substitution parsing checks the remaining native stack bytes before
+descending and reports a resource diagnostic when exhausted. There is no fixed
+context count; ordinary sequence length and word/body size also have no fixed
+parser cap. [CSH-066](nesting-resources.md) records the stack contract, guard
+audit and bounded depth/resource witnesses.
 
 [CSH-041](tickets/CSH-041-arithmetic-substitution-replay.md) resolves ambiguous
 `$((` input with arithmetic-first checkpoint/replay. On `CSH_LEX_REPLAY`, the
 parser destroys speculative substitution ASTs at or after the pending command
 fragment index and resumes the normal command handshake. Earlier substitutions
 in that word survive. Nested parser syntax failures can unwind to the candidate
-owner and retry through `csh_lexer_replay_arithmetic()`; resource failures and
-nesting-limit errors remain failures. Lexer snapshots preserve physical feeds,
+owner and retry through `csh_lexer_replay_arithmetic()`; resource failures remain failures. Lexer snapshots preserve physical feeds,
 alias source identities, and ancestor word positions. Here-document queues stay
 with their parser frames and are rebuilt with the replayed command tree.
 

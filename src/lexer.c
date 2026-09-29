@@ -597,15 +597,9 @@ static int checkpoint_arithmetic(struct csh_lexer *lexer, size_t command_length,
     struct source *source = lexer->source;
     struct arithmetic_checkpoint *checkpoint;
     struct csh_lexer *capture;
-    size_t count = 0, index, nesting = 0;
-    for (capture = lexer; capture != NULL; capture = capture->parent) {
-        struct arithmetic_checkpoint *saved;
+    size_t count = 0, index;
+    for (capture = lexer; capture != NULL; capture = capture->parent)
         ++count;
-        for (saved = capture->arithmetic; saved != NULL; saved = saved->previous)
-            ++nesting;
-    }
-    if (nesting >= 128)
-        return fail(lexer, error, "arithmetic expansion nesting limit exceeded", 0);
     if (count > (SIZE_MAX - sizeof(*checkpoint)) / sizeof(*checkpoint->captures))
         return fail(lexer, error, "lexer checkpoint overflow", EOVERFLOW);
     checkpoint = malloc(sizeof(*checkpoint) + count * sizeof(*checkpoint->captures));
@@ -670,8 +664,7 @@ int csh_lexer_replay_arithmetic(struct csh_lexer *lexer, struct csh_error *error
         lexer->source->failure.system_errno != 0)
         return 0;
     if (error->message != NULL &&
-        (strcmp(error->message, "unterminated arithmetic expansion") == 0 ||
-         strstr(error->message, "nesting limit exceeded") != NULL))
+        strcmp(error->message, "unterminated arithmetic expansion") == 0)
         return 0;
     if (lexer->source->final && error->message != NULL &&
         strncmp(error->message, "unterminated ", 13) == 0) {
@@ -771,9 +764,14 @@ static int probe_arithmetic(struct csh_lexer *lexer, int partial,
             expression[write++] = expression[read++];
     }
     expression[write] = 0;
-    valid = partial ? csh_arith_probe_prefix(expression) :
-        csh_arith_probe(expression) == CSH_ARITH_OK;
+    if (partial) valid = csh_arith_probe_prefix(expression);
+    else {
+        enum csh_arith_result result = csh_arith_probe(expression);
+        valid = result == CSH_ARITH_RESOURCE ? -1 : result == CSH_ARITH_OK;
+    }
     free(expression);
+    if (valid == -1)
+        return fail(lexer, error, "arithmetic stack exhausted", ENOMEM);
     return valid;
 }
 

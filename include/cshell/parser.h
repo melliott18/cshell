@@ -34,7 +34,7 @@ void csh_parser_destroy(struct csh_parser *parser);
 const char *csh_parser_source_name(const struct csh_parser *parser);
 /* TREE transfers a fully owned tree; every other result sets *out to NULL.
  * INCOMPLETE means final EOF within unfinished syntax. ERROR means invalid
- * syntax, acquisition, allocation or an explicit nesting-limit failure.
+ * syntax, acquisition, allocation or native stack exhaustion.
  * EOF and failures are sticky. error is cleared on TREE/EOF. Diagnostics use
  * the input source name and byte positions; this module never prints them. */
 enum csh_parse_result csh_parser_next(struct csh_parser *parser,

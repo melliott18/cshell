@@ -6,6 +6,7 @@
 
 #include "cshell/arithmetic.h"
 #include "cshell/state.h"
+#include "cshell/stack.h"
 
 enum token {
     TOK_END, TOK_BAD, TOK_NUMBER, TOK_NAME, TOK_LPAREN, TOK_RPAREN,
@@ -25,7 +26,6 @@ struct parser {
     enum csh_arith_result error;
     struct csh_state *state;
     unsigned options;
-    unsigned depth;
     int incomplete;
 };
 
@@ -384,11 +384,10 @@ static struct value expression(struct parser *parser, int minimum, int execute)
     struct value left = {0};
     if (parser->error != CSH_ARITH_OK)
         return left;
-    if (parser->depth == 128) {
-        parser->error = CSH_ARITH_SYNTAX;
+    if (csh_stack_check() != 0) {
+        parser->error = CSH_ARITH_RESOURCE;
         return left;
     }
-    ++parser->depth;
     left = primary(parser, execute);
     while (parser->error == CSH_ARITH_OK && precedence(parser->token) >= minimum) {
         enum token token = parser->token;
@@ -442,7 +441,6 @@ static struct value expression(struct parser *parser, int minimum, int execute)
             left = (struct value){0};
         }
     }
-    --parser->depth;
     return left;
 }
 
@@ -477,7 +475,8 @@ int csh_arith_probe_prefix(const char *text)
     if (text == NULL)
         return 0;
     parser.next = text;
-    return run(&parser, 0, NULL) == CSH_ARITH_OK || parser.incomplete;
+    if (run(&parser, 0, NULL) == CSH_ARITH_RESOURCE) return -1;
+    return parser.error == CSH_ARITH_OK || parser.incomplete;
 }
 
 enum csh_arith_result csh_arith_eval(struct csh_state *state,

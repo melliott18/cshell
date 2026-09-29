@@ -2,6 +2,7 @@
 #include "cshell/expand.h"
 #include "cshell/arithmetic.h"
 #include "cshell/quote.h"
+#include "cshell/stack.h"
 
 #include <fnmatch.h>
 #include <inttypes.h>
@@ -12,8 +13,6 @@
 #include <pwd.h>
 #include <wchar.h>
 
-#define EXPAND_DEPTH 128
-
 struct expansion_work {
     struct csh_state *state;
     const struct csh_token *word;
@@ -21,7 +20,6 @@ struct expansion_work {
     struct csh_expand_error *error;
     size_t *next;
     char **decoded;
-    unsigned depth;
 };
 
 static enum csh_expand_result fail(struct expansion_work *work,
@@ -556,6 +554,10 @@ static enum csh_expand_result arithmetic(struct expansion_work *work,
     if (text == NULL) { result = CSH_EXPAND_NOMEM; goto done; }
     arith = csh_arith_eval(work->state, text, &value);
     if (arith != CSH_ARITH_OK) {
+        if (arith == CSH_ARITH_RESOURCE) {
+            result = fail(work, CSH_EXPAND_RESOURCE, index, "arithmetic stack exhausted");
+            goto done;
+        }
         result = arith == CSH_ARITH_NOMEM ? CSH_EXPAND_NOMEM :
             arith == CSH_ARITH_READONLY ? CSH_EXPAND_READONLY : CSH_EXPAND_ARITHMETIC_ERROR;
         goto done;
@@ -597,10 +599,8 @@ static enum csh_expand_result range(struct expansion_work *work, size_t parent,
     size_t cursor = begin;
     int tilde_ok = tilde;
     enum csh_expand_result result = CSH_EXPAND_OK;
-    if (++work->depth > EXPAND_DEPTH) {
-        --work->depth;
-        return fail(work, CSH_EXPAND_LIMIT, parent, "expansion nesting limit exceeded");
-    }
+    if (csh_stack_check() != 0)
+        return fail(work, CSH_EXPAND_RESOURCE, parent, "expansion stack exhausted");
     for (; i < limit && result == CSH_EXPAND_OK; i = work->next[i]) {
         const struct csh_fragment *f = &work->word->fragments[i];
         size_t start, stop;
@@ -663,7 +663,6 @@ static enum csh_expand_result range(struct expansion_work *work, size_t parent,
         }
         cursor = stop;
     }
-    --work->depth;
     return result;
 }
 
@@ -765,10 +764,6 @@ static enum csh_expand_result prepare(struct expansion_work *work)
               !command_continuation(word, f))))) {
             free(stack);
             return fail(work, CSH_EXPAND_INVALID, i, "invalid fragment syntax");
-        }
-        if (depth >= EXPAND_DEPTH) {
-            free(stack);
-            return fail(work, CSH_EXPAND_LIMIT, i, "expansion nesting limit exceeded");
         }
         previous = f->begin;
         stack[depth++] = i;

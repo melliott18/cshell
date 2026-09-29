@@ -1270,3 +1270,27 @@ case to the default PTY suite. Run `make test-runtime test-parser test-pty`;
 `test-execution-contracts`. [The invocation map](invocation-syntax-evidence.md#interactive-parser-recovery)
 records covered boundaries and [the ticket](tickets/CSH-065-interactive-parser-recovery.md)
 records platform and sanitizer validation.
+
+## Nesting and native stack resources (CSH-066)
+
+`make test-nesting` (included in `make test`) runs API cleanup/rollback checks
+and 42 finite public-runtime witnesses, with commands, script files and stdin.
+It compares the same 192-brace input under 256 KiB and 8 MiB native stack limits,
+checks function/eval exhaustion and dot descriptor exhaustion, and exercises
+a 12,000-level plan with a 256 KiB stack. The normal `test-invocation` checks
+brace depths 127, 128 and 129 in all three input modes. Parser, expansion and
+execution allocation-fault fixtures remain separate and include deep partial
+ownership checks.
+
+The nesting runner budgets 30 seconds, 64 KiB of output, and up to 1,024
+descriptors per child (dot recursion retains an input descriptor per source).
+Its explicit exhaustion case lowers the descriptor budget to 64. It kills and
+reaps each process group after every test. The resource API fixture injects
+`EINTR` after the first physical line of a 192-brace command, then checks cleanup.
+These depth samples do not prove unlimited capacity. See the
+[nesting resource contract](nesting-resources.md).
+
+Run the same target with the documented ASan/UBSan flags. The stack helper uses
+a native frame address, so ASan fake-stack addresses cannot bypass its bounds.
+Linux stack queries use `pthread_getattr_np`; macOS uses the native pthread
+stack address and size APIs. Building with Clang or GCC and `-pthread` is required.
