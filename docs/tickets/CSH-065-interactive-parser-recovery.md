@@ -1,6 +1,6 @@
 # CSH-065: Recover from interactive main-parser syntax errors
 
-- Status: review
+- Status: done
 - Type: fix
 - Kind: implementation
 - Parent: None
