@@ -1,11 +1,11 @@
 # CSH-078: Qualify host scheduling, mail and service utilities
 
-- Status: ready
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: Assigned when work starts
+- Branch: test/CSH-078-host-service-utilities
 - Issue: [#150](https://github.com/melliott18/cshell/issues/150)
 
 ## Goal
@@ -52,17 +52,17 @@ contracts above are still open.
 
 ## Acceptance criteria
 
-- [ ] Select each required exec-accessible provider, supply missing packages/services,
+- [x] Select each required exec-accessible provider, supply missing packages/services,
   and retain exact PATH, realpath, executable hash, package and environment identity.
 - [ ] Map every applicable page section and common default to clause-derived
   assertions or an individually justified disposition; repair required-contract
   failures. Selected examples alone do not complete a utility contract.
-- [ ] Resolve each assigned retained condition with its required capability and
+- [x] Resolve each assigned retained condition with its required capability and
   strict evidence, or transfer that individual condition to a concrete open owner.
   Preserve vendor ownership, setup failures and failed assertions separately.
-- [ ] Verify public cshell dispatch and direct exec access, exact output/status and
+- [x] Verify public cshell dispatch and direct exec access, exact output/status and
   relevant effects, with zero gap allowances for every declared qualified subset.
-- [ ] Update the inventory, current ownership manifest and clause maps with the
+- [x] Update the inventory, current ownership manifest and clause maps with the
   exact qualification boundary; keep stock-host, qualified subset and full-system
   claims separate.
 
@@ -78,6 +78,22 @@ processes and disposable files/services and verify cleanup after failure/timeout
 
 ## Implementation notes/evidence
 
-Work has not started. CSH-068 transfers ownership only; it supplies no new vendor
-implementation, service, privileged host or physical terminal. CSH-064 remains
-done for its bounded capability work and repaired probe cleanup.
+The [disposable service profile](../host-service-profile.md) now supplies all
+nine exec-accessible providers, isolated atd/cron/Exim/CUPS/syslog services, a
+read-only test clock, and independent direct/cshell assertions. Native execution
+is restricted to codecs and read-only date. Two selected provider repairs add
+Issue 8 stdout-cookie handling to macOS uudecode and mandatory silent completion
+mail to the Linux batch profile. The stock failures are retained.
+
+The [machine section/disposition map](../../tests/host_service_contracts.json)
+accounts for every page section and common defaults with bounded assertions,
+optional-profile exclusions and 20 individually named open residuals. Current
+ownership links that map; inventory validation rejects lost sections, closed
+owners and false full-page qualification. No CSH-064 retained condition was
+assigned here. CSH-064 and its historical evidence are unchanged.
+
+**This ticket remains in progress.** The supplied profile is bounded; physical
+printing, further calendar/locale/option combinations and error/signal contracts
+remain unqualified. The residuals stay with CSH-078 instead of being transferred
+or described as passing. The full-contract acceptance checkbox stays open.
+See [all attempts and validation](../evidence/csh-078/README.md).

@@ -192,3 +192,5 @@ and `pipefail`. Reference-shell disagreement is recorded through the
 and pathname residuals, including case, read and alias utilities. Its condition
 map assigns external prerequisites P1–P6 without promoting whole families or
 counting unavailable capabilities as passes.
+
+CSH-078 adds [bounded disposable service and native codec evidence](host-service-profile.md) for U-034/U-040. The [section map](../tests/host_service_contracts.json) retains every remaining full-page contract under CSH-078; no stock-host or full-system qualification is inferred.

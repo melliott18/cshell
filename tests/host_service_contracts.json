@@ -1,0 +1,415 @@
+{
+  "schema_version": 1,
+  "owner": "CSH-078",
+  "full_contract_qualified": false,
+  "common_defaults": {
+    "U-034": "Each declared witness uses inventoried direct exec and all four public cshell paths; full exec accessibility also requires the unqualified page contracts.",
+    "U-040": "Option diagnostics, missing files/arguments and byte transparency are tested where named. Per-utility signal defaults, seekable input offsets, -- syntax, unused stdin with a shared offset, output failures, limits and unlisted environment interactions remain open under CSH-078. No universal -- or diagnostic-text oracle is inferred."
+  },
+  "utilities": [
+    {
+      "utility": "at",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/at.html",
+      "scope": "C-locale -f/-t/-l/-r/-m and now; queue a; cwd, environment, umask, local output/error and silent completion mail.",
+      "case_prefixes": [
+        "at-submit-file/",
+        "at-list-selected/",
+        "at-remove/",
+        "at-list-empty/",
+        "at-invalid-time/",
+        "at-submit-execution/",
+        "scheduled-effects/at-",
+        "scheduled-mail/at-",
+        "silent-completion-mail/at",
+        "scheduler-queue-cleanup/"
+      ],
+      "sections": {
+        "SYNOPSIS": "All declared cases run through direct exec and cshell -c, explicit exec, script and stdin. Utility-specific exceptions are listed in the scope.",
+        "DESCRIPTION": "Bounded behavior in scope is asserted. Residuals below remain open, not passes.",
+        "OPTIONS": "Selected options in scope are asserted; other required option combinations remain with the named residuals.",
+        "OPERANDS": "Selected operands and order are asserted. Exhaustive grammar and limits remain open.",
+        "STDIN": "Selected input use is asserted via independently staged bytes; all other offset/unused-input rules remain open.",
+        "INPUT FILES": "Text job from file and stdin. XSI at.allow/at.deny is excluded from the selected base profile; the fixture uses at.allow only for containment.",
+        "ENVIRONMENT VARIABLES": "C/POSIX locale and explicitly listed variables only. XSI NLSPATH is excluded. Other locale diagnostics and applicable variables remain open.",
+        "ASYNCHRONOUS EVENTS": "Default signal behavior is required but unqualified for this utility; CSH-078 owns independent signal and interrupted-effect witnesses.",
+        "STDOUT": "Exact bytes or independently parsed implementation-defined envelope/metadata for declared cases only.",
+        "STDERR": "Empty on declared successes except specified scheduler notices; nonempty diagnostics with positive status on declared failures. Localization/content beyond these assertions remains open.",
+        "OUTPUT FILES": "Declared observable effects are checked independently; implementation-defined storage remains fixture-specific.",
+        "EXTENDED DESCRIPTION": "No additional section behavior; the timespec grammar in OPERANDS remains individually open.",
+        "EXIT STATUS": "Zero success and positive diagnosed failures tested. Signal and resource failures remain open.",
+        "CONSEQUENCES OF ERRORS": "Selected effects/preservation tested. All other default error/signal effects remain unqualified."
+      },
+      "residuals": [
+        {
+          "id": "at/timespec",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "Complete timespec grammar: case-insensitive LC_TIME names, UTC qualifier, noon/midnight, rollover, today/tomorrow, every increment and calendar boundary; -t seconds and 2-digit years."
+        },
+        {
+          "id": "at/queues",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "-q selection and -l queue filtering; multiple selected IDs and multi-ID removal; non-owned IDs and scheduler errors without submission."
+        },
+        {
+          "id": "at/process-context",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "Separate process group/no controlling terminal, other SHELL selections, non-C locales, interactive prompts, access/resource failures and interrupted submission."
+        }
+      ]
+    },
+    {
+      "utility": "batch",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/batch.html",
+      "scope": "No-operand stdin jobs, queue execution, inherited cwd/environment/umask, output/error mail and mandatory silent completion mail.",
+      "case_prefixes": [
+        "batch-submit-execution/",
+        "scheduled-effects/batch-",
+        "scheduled-mail/batch-",
+        "silent-completion-mail/batch"
+      ],
+      "sections": {
+        "SYNOPSIS": "All declared cases run through direct exec and cshell -c, explicit exec, script and stdin. Utility-specific exceptions are listed in the scope.",
+        "DESCRIPTION": "Bounded behavior in scope is asserted. Residuals below remain open, not passes.",
+        "OPTIONS": "None in the base synopsis. The selected wrapper invokes exactly at -q b -m now.",
+        "OPERANDS": "None. Extra operands are outside the specified synopsis.",
+        "STDIN": "Selected input use is asserted via independently staged bytes; all other offset/unused-input rules remain open.",
+        "INPUT FILES": "Shell commands on stdin tested. XSI permission databases excluded; access fixture setup is not an XSI qualification.",
+        "ENVIRONMENT VARIABLES": "C/POSIX locale and explicitly listed variables only. XSI NLSPATH is excluded. Other locale diagnostics and applicable variables remain open.",
+        "ASYNCHRONOUS EVENTS": "Default signal behavior is required but unqualified for this utility; CSH-078 owns independent signal and interrupted-effect witnesses.",
+        "STDOUT": "Exact bytes or independently parsed implementation-defined envelope/metadata for declared cases only.",
+        "STDERR": "Empty on declared successes except specified scheduler notices; nonempty diagnostics with positive status on declared failures. Localization/content beyond these assertions remains open.",
+        "OUTPUT FILES": "Declared observable effects are checked independently; implementation-defined storage remains fixture-specific.",
+        "EXTENDED DESCRIPTION": "Additional applicable behavior is limited to the declared scope; see named residuals.",
+        "EXIT STATUS": "Zero success and positive diagnosed failures tested. Signal and resource failures remain open.",
+        "CONSEQUENCES OF ERRORS": "Selected effects/preservation tested. All other default error/signal effects remain unqualified."
+      },
+      "residuals": [
+        {
+          "id": "batch/scheduling-context",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "Independent queue-b identity, process-group/terminal assertions, unset/alternate SHELL choices and submission resource/error cleanup."
+        },
+        {
+          "id": "batch/environment",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "Non-C LC_CTYPE/LC_MESSAGES/LC_TIME, TZ rendering and terminal prompts."
+        }
+      ]
+    },
+    {
+      "utility": "crontab",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/crontab.html",
+      "scope": "Install/replace from file/stdin, list/remove, missing-file preservation, comments/blanks, wildcard execution, default environment and percent stdin, local mail.",
+      "case_prefixes": [
+        "crontab-install-file/",
+        "crontab-list-file/",
+        "crontab-replace-stdin/",
+        "crontab-list-replacement/",
+        "crontab-missing-file/",
+        "crontab-preserve-on-error/",
+        "crontab-remove/",
+        "crontab-no-table/",
+        "crontab-execution-submit/",
+        "cron-environment",
+        "cron-percent-stdin",
+        "cron-mail",
+        "crontab-final-remove/"
+      ],
+      "sections": {
+        "SYNOPSIS": "All declared cases run through direct exec and cshell -c, explicit exec, script and stdin. Utility-specific exceptions are listed in the scope.",
+        "DESCRIPTION": "Bounded behavior in scope is asserted. Residuals below remain open, not passes.",
+        "OPTIONS": "-l and -r tested. -e/EDITOR/vi are UP-shaded and excluded, matching the retained base profile.",
+        "OPERANDS": "Selected operands and order are asserted. Exhaustive grammar and limits remain open.",
+        "STDIN": "Selected input use is asserted via independently staged bytes; all other offset/unused-input rules remain open.",
+        "INPUT FILES": "Wildcard job execution and percent splitting tested; numeric lists/ranges stored but their execution is open. Invalid numeric fields violate application requirements and are not a mandatory rejection oracle. XSI allow/deny databases excluded.",
+        "ENVIRONMENT VARIABLES": "C/POSIX locale and explicitly listed variables only. XSI NLSPATH is excluded. Other locale diagnostics and applicable variables remain open.",
+        "ASYNCHRONOUS EVENTS": "Default signal behavior is required but unqualified for this utility; CSH-078 owns independent signal and interrupted-effect witnesses.",
+        "STDOUT": "Exact bytes or independently parsed implementation-defined envelope/metadata for declared cases only.",
+        "STDERR": "Empty on declared successes except specified scheduler notices; nonempty diagnostics with positive status on declared failures. Localization/content beyond these assertions remains open.",
+        "OUTPUT FILES": "Declared observable effects are checked independently; implementation-defined storage remains fixture-specific.",
+        "EXTENDED DESCRIPTION": "Additional applicable behavior is limited to the declared scope; see named residuals.",
+        "EXIT STATUS": "Zero success and positive diagnosed failures tested. Signal and resource failures remain open.",
+        "CONSEQUENCES OF ERRORS": "Selected effects/preservation tested. All other default error/signal effects remain unqualified."
+      },
+      "residuals": [
+        {
+          "id": "crontab/calendar",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "Actual range/list/element execution, day-of-month/month/day-of-week OR rules, escaped percent/backslash, each calendar boundary and default PATH completeness."
+        },
+        {
+          "id": "crontab/environment-errors",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "Non-C locales, asynchronous defaults, resource/permission failures and atomicity under interrupted replacement."
+        }
+      ]
+    },
+    {
+      "utility": "date",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/date.html",
+      "scope": "C-locale fixed leap-day output/defaults, common strftime conversions, literal percent/newline/tab, TZ and -u, invalid option.",
+      "case_prefixes": [
+        "date-literal/",
+        "date-invalid-option/",
+        "date-default/",
+        "date-conversions/",
+        "date-zone/",
+        "date-u-overrides-zone/"
+      ],
+      "sections": {
+        "SYNOPSIS": "All declared cases run through direct exec and cshell -c, explicit exec, script and stdin. Utility-specific exceptions are listed in the scope.",
+        "DESCRIPTION": "Read-only output tested; XSI clock-setting syntax is excluded. No clock setter or SYS_TIME capability is supplied.",
+        "OPTIONS": "Selected options in scope are asserted; other required option combinations remain with the named residuals.",
+        "OPERANDS": "Selected operands and order are asserted. Exhaustive grammar and limits remain open.",
+        "STDIN": "Unused input provided alongside literal format.",
+        "INPUT FILES": "None.",
+        "ENVIRONMENT VARIABLES": "C/POSIX locale and explicitly listed variables only. XSI NLSPATH is excluded. Other locale diagnostics and applicable variables remain open.",
+        "ASYNCHRONOUS EVENTS": "Default signal behavior is required but unqualified for this utility; CSH-078 owns independent signal and interrupted-effect witnesses.",
+        "STDOUT": "Exact bytes or independently parsed implementation-defined envelope/metadata for declared cases only.",
+        "STDERR": "Empty on declared successes except specified scheduler notices; nonempty diagnostics with positive status on declared failures. Localization/content beyond these assertions remains open.",
+        "OUTPUT FILES": "None.",
+        "EXTENDED DESCRIPTION": "None.",
+        "EXIT STATUS": "Zero success and positive diagnosed failures tested. Signal and resource failures remain open.",
+        "CONSEQUENCES OF ERRORS": "Selected effects/preservation tested. All other default error/signal effects remain unqualified."
+      },
+      "residuals": [
+        {
+          "id": "date/calendar-format",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "strftime E/O modifiers, field width/flags, year/week/day and DST transitions, leap seconds, locale alternative representations and invalid-format dispositions."
+        },
+        {
+          "id": "date/output-errors",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "Closed/full output, locale diagnostics, async defaults and argument/resource limits."
+        }
+      ]
+    },
+    {
+      "utility": "logger",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/logger.html",
+      "scope": "Private AF_UNIX syslog sink; operand joining, stdin/file lines, tag/header/timestamp/PID shape and all 72 required priority pairs.",
+      "case_prefixes": [
+        "logger-operands/",
+        "logger-stdin/",
+        "logger-file/",
+        "logger-pid/",
+        "logger-missing-file/",
+        "logger-priority-"
+      ],
+      "sections": {
+        "SYNOPSIS": "All declared cases run through direct exec and cshell -c, explicit exec, script and stdin. Utility-specific exceptions are listed in the scope.",
+        "DESCRIPTION": "Bounded behavior in scope is asserted. Residuals below remain open, not passes.",
+        "OPTIONS": "Selected options in scope are asserted; other required option combinations remain with the named residuals.",
+        "OPERANDS": "Selected operands and order are asserted. Exhaustive grammar and limits remain open.",
+        "STDIN": "Selected input use is asserted via independently staged bytes; all other offset/unused-input rules remain open.",
+        "INPUT FILES": "Only the declared file/text fixtures are qualified; other applicable types and error boundaries remain open.",
+        "ENVIRONMENT VARIABLES": "C/POSIX locale and explicitly listed variables only. XSI NLSPATH is excluded. Other locale diagnostics and applicable variables remain open.",
+        "ASYNCHRONOUS EVENTS": "Default signal behavior is required but unqualified for this utility; CSH-078 owns independent signal and interrupted-effect witnesses.",
+        "STDOUT": "Exact bytes or independently parsed implementation-defined envelope/metadata for declared cases only.",
+        "STDERR": "Empty on declared successes except specified scheduler notices; nonempty diagnostics with positive status on declared failures. Localization/content beyond these assertions remains open.",
+        "OUTPUT FILES": "Unspecified. The fixture records syslog datagrams directly; it does not claim host log storage/retention.",
+        "EXTENDED DESCRIPTION": "None.",
+        "EXIT STATUS": "Zero success and positive diagnosed failures tested. Signal and resource failures remain open.",
+        "CONSEQUENCES OF ERRORS": "Selected effects/preservation tested. All other default error/signal effects remain unqualified."
+      },
+      "residuals": [
+        {
+          "id": "logger/routing-errors",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "Operand precedence with -f, optional -f - policy, empty lines, multiple option orderings, invalid priorities, sink failure, resource limits and async defaults."
+        },
+        {
+          "id": "logger/environment",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "Non-C implementation policy and localized diagnostics; PID value correspondence beyond the required header shape."
+        }
+      ]
+    },
+    {
+      "utility": "lp",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/lp.html",
+      "scope": "CUPS raw queue and disposable byte sink; -c/-d/-n/-s/-t/repeated -o, stdin/-/file, accepted job IDs and backend bytes/metadata.",
+      "case_prefixes": [
+        "lp-stdin/",
+        "lp-dash/",
+        "lp-file/",
+        "lp-silent/",
+        "lp-missing-file/",
+        "print-queue-cleanup"
+      ],
+      "sections": {
+        "SYNOPSIS": "All declared cases run through direct exec and cshell -c, explicit exec, script and stdin. Utility-specific exceptions are listed in the scope.",
+        "DESCRIPTION": "Bounded behavior in scope is asserted. Residuals below remain open, not passes.",
+        "OPTIONS": "Selected options in scope are asserted; other required option combinations remain with the named residuals.",
+        "OPERANDS": "Selected operands and order are asserted. Exhaustive grammar and limits remain open.",
+        "STDIN": "Selected input use is asserted via independently staged bytes; all other offset/unused-input rules remain open.",
+        "INPUT FILES": "Only the declared file/text fixtures are qualified; other applicable types and error boundaries remain open.",
+        "ENVIRONMENT VARIABLES": "C/POSIX locale and explicitly listed variables only. XSI NLSPATH is excluded. Other locale diagnostics and applicable variables remain open.",
+        "ASYNCHRONOUS EVENTS": "Default signal behavior is required but unqualified for this utility; CSH-078 owns independent signal and interrupted-effect witnesses.",
+        "STDOUT": "Exact bytes or independently parsed implementation-defined envelope/metadata for declared cases only.",
+        "STDERR": "Empty on declared successes except specified scheduler notices; nonempty diagnostics with positive status on declared failures. Localization/content beyond these assertions remains open.",
+        "OUTPUT FILES": "None specified. CUPS spool and byte sink are fixture instrumentation; they are not a qualified hardcopy device.",
+        "EXTENDED DESCRIPTION": "None.",
+        "EXIT STATUS": "Zero success and positive diagnosed failures tested. Signal and resource failures remain open.",
+        "CONSEQUENCES OF ERRORS": "Selected effects/preservation tested. All other default error/signal effects remain unqualified."
+      },
+      "residuals": [
+        {
+          "id": "lp/physical-output",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "No hardcopy device: device availability/failure, exclusive access, actual copies, banners, title/timezone/LC_TIME rendering, multi-file ordering and class selection remain unqualified."
+        },
+        {
+          "id": "lp/notification",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "-m completion mail and -w terminal-or-mail notification are not supplied by the byte sink and remain open provider contracts."
+        },
+        {
+          "id": "lp/destination-errors",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "-d > LPDEST > PRINTER precedence across distinct destinations, default absent device, async/resource/permission errors and non-C diagnostics."
+        }
+      ]
+    },
+    {
+      "utility": "mailx",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mailx.html",
+      "scope": "Base send mode, two local recipients, -s subject, exact dot-containing text body, -E empty/nonempty, missing option argument.",
+      "case_prefixes": [
+        "mail-send-multiple-recipients/",
+        "mail-E-empty/",
+        "mail-E-nonempty/",
+        "mail-missing-subject/"
+      ],
+      "sections": {
+        "SYNOPSIS": "Only send mode is base. All UP receive/interactive forms are excluded.",
+        "DESCRIPTION": "Bounded behavior in scope is asserted. Residuals below remain open, not passes.",
+        "OPTIONS": "Selected options in scope are asserted; other required option combinations remain with the named residuals.",
+        "OPERANDS": "Selected operands and order are asserted. Exhaustive grammar and limits remain open.",
+        "STDIN": "Base text message tested; lines starting with tilde have unspecified results without UP and are excluded.",
+        "INPUT FILES": "Receive-mode mailbox input is UP and excluded. Actual startup-file send effects remain open.",
+        "ENVIRONMENT VARIABLES": "C/POSIX locale and explicitly listed variables only. XSI NLSPATH is excluded. Other locale diagnostics and applicable variables remain open.",
+        "ASYNCHRONOUS EVENTS": "Default signal behavior is required but unqualified for this utility; CSH-078 owns independent signal and interrupted-effect witnesses.",
+        "STDOUT": "Exact bytes or independently parsed implementation-defined envelope/metadata for declared cases only.",
+        "STDERR": "Empty on declared successes except specified scheduler notices; nonempty diagnostics with positive status on declared failures. Localization/content beyond these assertions remains open.",
+        "OUTPUT FILES": "Private mbox delivery is a fixture choice, not a requirement for portable mailbox storage.",
+        "EXTENDED DESCRIPTION": "UP commands, internal variables and escape interactions are excluded where shaded. Remaining base startup/send requirements stay open.",
+        "EXIT STATUS": "Zero success and positive diagnosed failures tested. Signal and resource failures remain open.",
+        "CONSEQUENCES OF ERRORS": "Selected effects/preservation tested. All other default error/signal effects remain unqualified."
+      },
+      "residuals": [
+        {
+          "id": "mailx/send-environment",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "Base applicable startup-file/address processing, MAILRC/HOME effects, locale diagnostics, subject bounds, transport failure and signal behavior."
+        },
+        {
+          "id": "mailx/delivery",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "No-subject/default empty-body delivery, independent RFC5322 header semantics beyond parsed Subject/body, eight-bit text and recipient/address boundary cases."
+        }
+      ]
+    },
+    {
+      "utility": "uuencode",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uuencode.html",
+      "scope": "Historical and MIME output independently validated across empty/1/2/3/44/45/46/57/58/256/8192 bytes; modes, stdin/file, envelope, padding and line bounds.",
+      "case_prefixes": [
+        "encode-historical-",
+        "encode-base64-",
+        "encode-stdin-",
+        "missing-file/",
+        "invalid-option/"
+      ],
+      "sections": {
+        "SYNOPSIS": "All declared cases run through direct exec and cshell -c, explicit exec, script and stdin. Utility-specific exceptions are listed in the scope.",
+        "DESCRIPTION": "Bounded behavior in scope is asserted. Residuals below remain open, not passes.",
+        "OPTIONS": "Selected options in scope are asserted; other required option combinations remain with the named residuals.",
+        "OPERANDS": "Selected operands and order are asserted. Exhaustive grammar and limits remain open.",
+        "STDIN": "Selected input use is asserted via independently staged bytes; all other offset/unused-input rules remain open.",
+        "INPUT FILES": "Only the declared file/text fixtures are qualified; other applicable types and error boundaries remain open.",
+        "ENVIRONMENT VARIABLES": "C/POSIX locale and explicitly listed variables only. XSI NLSPATH is excluded. Other locale diagnostics and applicable variables remain open.",
+        "ASYNCHRONOUS EVENTS": "Default signal behavior is required but unqualified for this utility; CSH-078 owns independent signal and interrupted-effect witnesses.",
+        "STDOUT": "Exact bytes or independently parsed implementation-defined envelope/metadata for declared cases only.",
+        "STDERR": "Empty on declared successes except specified scheduler notices; nonempty diagnostics with positive status on declared failures. Localization/content beyond these assertions remains open.",
+        "OUTPUT FILES": "None.",
+        "EXTENDED DESCRIPTION": "None.",
+        "EXIT STATUS": "Zero success and positive diagnosed failures tested. Signal and resource failures remain open.",
+        "CONSEQUENCES OF ERRORS": "Selected effects/preservation tested. All other default error/signal effects remain unqualified."
+      },
+      "residuals": [
+        {
+          "id": "uuencode/modes-paths",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "Other permission bits and symbolic notation, option termination and portable decode pathnames beyond the selected names."
+        },
+        {
+          "id": "uuencode/io-environment",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "Non-regular inputs, partial/read/closed/full-output failures, signal defaults, non-C locale encoding and resource/argument boundaries."
+        }
+      ]
+    },
+    {
+      "utility": "uudecode",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/uudecode.html",
+      "scope": "Independent historical/MIME input, stdin/file, leading preamble, -o override, both stdout cookies, 0640 creation despite 0077 umask and exact decoded bytes.",
+      "case_prefixes": [
+        "decode-historical-",
+        "decode-base64-",
+        "decode-file-override-",
+        "missing-file/",
+        "invalid-option/"
+      ],
+      "sections": {
+        "SYNOPSIS": "All declared cases run through direct exec and cshell -c, explicit exec, script and stdin. Utility-specific exceptions are listed in the scope.",
+        "DESCRIPTION": "Bounded behavior in scope is asserted. Residuals below remain open, not passes.",
+        "OPTIONS": "Selected options in scope are asserted; other required option combinations remain with the named residuals.",
+        "OPERANDS": "Selected operands and order are asserted. Exhaustive grammar and limits remain open.",
+        "STDIN": "Selected input use is asserted via independently staged bytes; all other offset/unused-input rules remain open.",
+        "INPUT FILES": "Only the declared file/text fixtures are qualified; other applicable types and error boundaries remain open.",
+        "ENVIRONMENT VARIABLES": "C/POSIX locale and explicitly listed variables only. XSI NLSPATH is excluded. Other locale diagnostics and applicable variables remain open.",
+        "ASYNCHRONOUS EVENTS": "Default signal behavior is required but unqualified for this utility; CSH-078 owns independent signal and interrupted-effect witnesses.",
+        "STDOUT": "Exact bytes or independently parsed implementation-defined envelope/metadata for declared cases only.",
+        "STDERR": "Empty on declared successes except specified scheduler notices; nonempty diagnostics with positive status on declared failures. Localization/content beyond these assertions remains open.",
+        "OUTPUT FILES": "Declared observable effects are checked independently; implementation-defined storage remains fixture-specific.",
+        "EXTENDED DESCRIPTION": "None.",
+        "EXIT STATUS": "Zero success and positive diagnosed failures tested. Signal and resource failures remain open.",
+        "CONSEQUENCES OF ERRORS": "Selected effects/preservation tested. All other default error/signal effects remain unqualified."
+      },
+      "residuals": [
+        {
+          "id": "uudecode/output-modes",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "Symbolic/other access modes, writable overwrite, denied existing output, tolerated chmod failure, symlinks, literal ./- and output-path boundaries."
+        },
+        {
+          "id": "uudecode/io-environment",
+          "owner": "CSH-078",
+          "status": "unqualified",
+          "reason": "Base64 ignored nonalphabet characters, input errors, partial/closed/full-output failures, asynchronous defaults, non-C diagnostics/encoding and resource bounds."
+        }
+      ]
+    }
+  ]
+}
