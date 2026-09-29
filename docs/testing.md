@@ -1260,3 +1260,28 @@ The Docker image includes its Dockerfile for that source inventory.
 Debian sid profiles, runtime/PTY integration, strict vendor failures and unsupported
 tmpfs/host-bind fixtures. [CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md)
 owns the individually retained residuals; no parent utility is promoted.
+
+## Shell locale/pathname qualification
+
+`make test-locale-pathname` runs CSH-067's public three-mode witnesses and
+separately labeled instrumented directory-read failures. It is included in
+`make test-portability` and therefore normal and sanitizer CI. The JSON record
+at `build/tests/locale-pathname-results.json` retains raw source/output hex,
+credentials, locale names/definition hashes, filesystem mount and binary hashes.
+`tests/smoke.py` accepts byte stdin for these internal (non-JSON) fixtures, with
+the same output/deadline/process-group bounds as ordinary cases.
+
+Linux CI and Docker provision the supplied `tests/locales/csh_067` definition
+as `csh_067.UTF-8` and `ja_JP.EUC-JP`. On a Linux host with glibc locale sources:
+
+```sh
+sudo localedef -i tests/locales/csh_067 -f UTF-8 csh_067.UTF-8
+sudo localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP
+make test-portability test-fields test-harness
+```
+
+Missing locales, catalogs, raw filename support or enforcing credentials remain
+explicit skips owned by CSH-067. The instrumented runtime replaces only
+`pathname.c` directory calls; it is not an actual failing-filesystem witness.
+See the [finite qualification map](locale-pathname-qualification.md) and
+[run records](evidence/csh-067/README.md).

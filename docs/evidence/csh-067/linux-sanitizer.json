@@ -1,0 +1,1186 @@
+{
+  "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+  "libc": [
+    "glibc",
+    "2.36"
+  ],
+  "libc_conf": "glibc 2.36",
+  "credentials": {
+    "uid": 10001,
+    "euid": 10001,
+    "gid": 10001,
+    "groups": [
+      10001
+    ]
+  },
+  "available_locales": [
+    "C",
+    "C.utf8",
+    "POSIX",
+    "csh_067.utf8",
+    "de_DE.utf8",
+    "en_US.utf8",
+    "fr_FR.utf8",
+    "ja_JP.eucjp",
+    "zh_CN.gb18030"
+  ],
+  "filesystem": "Filesystem     1024-blocks     Used Available Capacity Mounted on\noverlay          122713108 80768368  35678428      70% /",
+  "binary_sha256": "952400f8cfe42a39d9b64d70e517e55a278099b48adf0e8e4ed41eb6c4e04185",
+  "fault_binary_sha256": "f99accaf0dc3a299d0d8f84b252dd1f36d8b9b6c57eaaae2670dbcba1e889743",
+  "definition_sha256": "35b2eefe5519b049c8b6cf48e1547689f0edeca3ee8f0ff5fda56416cfbe5f1e",
+  "locale_sources": {
+    "/usr/share/i18n/locales/cs_CZ": "8383cc38d34df8e3daf76d1524d87f00f71c566d074b9f1e42b35f734ec7f8b6",
+    "/usr/share/i18n/locales/en_US": "38e3102344829f4ef998db66d064c0082b4bd1c8cf95e35ac3de12bb9f1d62f5",
+    "/usr/share/i18n/locales/ja_JP": "48efa346adfb8a2f57eddf87e5674fac177ed85dd69039a03808f4503c88b49e",
+    "/usr/share/i18n/locales/iso14651_t1": "368b462ba34ace172f685f7a4cdeefb95a093432e504a686912d5784a3bc85f3",
+    "/usr/share/i18n/locales/iso14651_t1_common": "e1941ce316bb5b1a987553e67728089475453a5225c24f8a88e8df2c1dccbfc5"
+  },
+  "capabilities": [
+    {
+      "permission_denial": true,
+      "uid": 10001,
+      "euid": 10001
+    },
+    {
+      "locale": "csh_067.UTF-8",
+      "sample_hex": null,
+      "status": 0,
+      "stdout": "UTF-8\n",
+      "stderr": ""
+    },
+    {
+      "locale": "ja_JP.eucJP",
+      "sample_hex": "8eb6",
+      "status": 0,
+      "stdout": "EUC-JP\n",
+      "stderr": ""
+    },
+    {
+      "locale": "ja_JP.eucJP",
+      "sample_hex": "8fa2af",
+      "status": 0,
+      "stdout": "EUC-JP\n",
+      "stderr": ""
+    },
+    {
+      "locale": "C",
+      "sample_hex": null,
+      "status": 0,
+      "stdout": "ANSI_X3.4-1968\n",
+      "stderr": ""
+    },
+    {
+      "locale": "fr_FR.UTF-8",
+      "sample_hex": null,
+      "status": 0,
+      "stdout": "UTF-8\n",
+      "stderr": ""
+    }
+  ],
+  "skips": [],
+  "records": [
+    {
+      "name": "symlink and trailing slash (string)",
+      "kind": "public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e2720747265652f64616e672a20747265652f6c2a2f6c65616620747265652f2a2f20747265652f66696c652f2a20747265652f6c6f6f702f2a0a",
+      "env": {},
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c747265652f64616e676c696e673e0a3c747265652f6c696e6b2f6c6561663e0a3c747265652f6469722f3e0a3c747265652f6c696e6b2f3e0a3c747265652f66696c652f2a3e0a3c747265652f6c6f6f702f2a3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c747265652f64616e676c696e673e0a3c747265652f6c696e6b2f6c6561663e0a3c747265652f6469722f3e0a3c747265652f6c696e6b2f3e0a3c747265652f66696c652f2a3e0a3c747265652f6c6f6f702f2a3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "symlink and trailing slash (file)",
+      "kind": "public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e2720747265652f64616e672a20747265652f6c2a2f6c65616620747265652f2a2f20747265652f66696c652f2a20747265652f6c6f6f702f2a0a",
+      "env": {},
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c747265652f64616e676c696e673e0a3c747265652f6c696e6b2f6c6561663e0a3c747265652f6469722f3e0a3c747265652f6c696e6b2f3e0a3c747265652f66696c652f2a3e0a3c747265652f6c6f6f702f2a3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c747265652f64616e676c696e673e0a3c747265652f6c696e6b2f6c6561663e0a3c747265652f6469722f3e0a3c747265652f6c696e6b2f3e0a3c747265652f66696c652f2a3e0a3c747265652f6c6f6f702f2a3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "symlink and trailing slash (stdin)",
+      "kind": "public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e2720747265652f64616e672a20747265652f6c2a2f6c65616620747265652f2a2f20747265652f66696c652f2a20747265652f6c6f6f702f2a0a",
+      "env": {},
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c747265652f64616e676c696e673e0a3c747265652f6c696e6b2f6c6561663e0a3c747265652f6469722f3e0a3c747265652f6c696e6b2f3e0a3c747265652f66696c652f2a3e0a3c747265652f6c6f6f702f2a3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c747265652f64616e676c696e673e0a3c747265652f6c696e6b2f6c6561663e0a3c747265652f6469722f3e0a3c747265652f6c696e6b2f3e0a3c747265652f66696c652f2a3e0a3c747265652f6c6f6f702f2a3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "quoted prefix and repeated slash (string)",
+      "kind": "public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e272027747265652f6c696e6b272f2f2a20747265652f64616e672a2f0a",
+      "env": {},
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c747265652f6c696e6b2f2f6c6561663e0a3c747265652f64616e672a2f3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c747265652f6c696e6b2f2f6c6561663e0a3c747265652f64616e672a2f3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "quoted prefix and repeated slash (file)",
+      "kind": "public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e272027747265652f6c696e6b272f2f2a20747265652f64616e672a2f0a",
+      "env": {},
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c747265652f6c696e6b2f2f6c6561663e0a3c747265652f64616e672a2f3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c747265652f6c696e6b2f2f6c6561663e0a3c747265652f64616e672a2f3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "quoted prefix and repeated slash (stdin)",
+      "kind": "public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e272027747265652f6c696e6b272f2f2a20747265652f64616e672a2f0a",
+      "env": {},
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c747265652f6c696e6b2f2f6c6561663e0a3c747265652f64616e672a2f3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c747265652f6c696e6b2f2f6c6561663e0a3c747265652f64616e672a2f3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "owned read versus search permissions (string)",
+      "kind": "public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e27207365617263682f7375622f2a207365617263682f2a20726561642f2a20726561642f2a2f6c65616620626c6f636b65642f2a202a2f6c6561660a",
+      "env": {},
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c7365617263682f7375622f6c6561663e0a3c7365617263682f2a3e0a3c726561642f6c6561663e0a3c726561642f7375623e0a3c726561642f2a2f6c6561663e0a3c626c6f636b65642f2a3e0a3c7365617263682f6c6561663e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c7365617263682f7375622f6c6561663e0a3c7365617263682f2a3e0a3c726561642f6c6561663e0a3c726561642f7375623e0a3c726561642f2a2f6c6561663e0a3c626c6f636b65642f2a3e0a3c7365617263682f6c6561663e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "owned read versus search permissions (file)",
+      "kind": "public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e27207365617263682f7375622f2a207365617263682f2a20726561642f2a20726561642f2a2f6c65616620626c6f636b65642f2a202a2f6c6561660a",
+      "env": {},
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c7365617263682f7375622f6c6561663e0a3c7365617263682f2a3e0a3c726561642f6c6561663e0a3c726561642f7375623e0a3c726561642f2a2f6c6561663e0a3c626c6f636b65642f2a3e0a3c7365617263682f6c6561663e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c7365617263682f7375622f6c6561663e0a3c7365617263682f2a3e0a3c726561642f6c6561663e0a3c726561642f7375623e0a3c726561642f2a2f6c6561663e0a3c626c6f636b65642f2a3e0a3c7365617263682f6c6561663e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "owned read versus search permissions (stdin)",
+      "kind": "public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e27207365617263682f7375622f2a207365617263682f2a20726561642f2a20726561642f2a2f6c65616620626c6f636b65642f2a202a2f6c6561660a",
+      "env": {},
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c7365617263682f7375622f6c6561663e0a3c7365617263682f2a3e0a3c726561642f6c6561663e0a3c726561642f7375623e0a3c726561642f2a2f6c6561663e0a3c626c6f636b65642f2a3e0a3c7365617263682f6c6561663e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c7365617263682f7375622f6c6561663e0a3c7365617263682f2a3e0a3c726561642f6c6561663e0a3c726561642f7375623e0a3c726561642f2a2f6c6561663e0a3c626c6f636b65642f2a3e0a3c7365617263682f6c6561663e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "SH-003 unreadable unreadable (file)",
+      "kind": "public runtime",
+      "script_hex": "",
+      "env": {},
+      "operand": "unreadable",
+      "expected": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "637368656c6c3a20756e7265616461626c653a20313a313a2063616e6e6f74206f70656e207363726970743a205065726d697373696f6e2064656e6965640a"
+      },
+      "actual": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "637368656c6c3a20756e7265616461626c653a20313a313a2063616e6e6f74206f70656e207363726970743a205065726d697373696f6e2064656e6965640a"
+      },
+      "failures": []
+    },
+    {
+      "name": "SH-003 unreadable ./unreadable (file)",
+      "kind": "public runtime",
+      "script_hex": "",
+      "env": {},
+      "operand": "./unreadable",
+      "expected": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "637368656c6c3a202e2f756e7265616461626c653a20313a313a2063616e6e6f74206f70656e207363726970743a205065726d697373696f6e2064656e6965640a"
+      },
+      "actual": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "637368656c6c3a202e2f756e7265616461626c653a20313a313a2063616e6e6f74206f70656e207363726970743a205065726d697373696f6e2064656e6965640a"
+      },
+      "failures": []
+    },
+    {
+      "name": "partial readdir EACCES (string)",
+      "kind": "instrumented public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e272070617468732f2a2f2a3b207072696e746620273c25733e5c6e272070617468732f6661756c742f2a0a",
+      "env": {
+        "CSH_PATH_FAULT": "EACCES"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c70617468732f676f6f642f6d617463683e0a3c70617468732f6661756c742f2a3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c70617468732f676f6f642f6d617463683e0a3c70617468732f6661756c742f2a3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "partial readdir EACCES (file)",
+      "kind": "instrumented public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e272070617468732f2a2f2a3b207072696e746620273c25733e5c6e272070617468732f6661756c742f2a0a",
+      "env": {
+        "CSH_PATH_FAULT": "EACCES"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c70617468732f676f6f642f6d617463683e0a3c70617468732f6661756c742f2a3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c70617468732f676f6f642f6d617463683e0a3c70617468732f6661756c742f2a3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "partial readdir EACCES (stdin)",
+      "kind": "instrumented public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e272070617468732f2a2f2a3b207072696e746620273c25733e5c6e272070617468732f6661756c742f2a0a",
+      "env": {
+        "CSH_PATH_FAULT": "EACCES"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c70617468732f676f6f642f6d617463683e0a3c70617468732f6661756c742f2a3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c70617468732f676f6f642f6d617463683e0a3c70617468732f6661756c742f2a3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "partial readdir ENOENT (string)",
+      "kind": "instrumented public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e272070617468732f2a2f2a3b207072696e746620273c25733e5c6e272070617468732f6661756c742f2a0a",
+      "env": {
+        "CSH_PATH_FAULT": "ENOENT"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c70617468732f676f6f642f6d617463683e0a3c70617468732f6661756c742f2a3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c70617468732f676f6f642f6d617463683e0a3c70617468732f6661756c742f2a3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "partial readdir ENOENT (file)",
+      "kind": "instrumented public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e272070617468732f2a2f2a3b207072696e746620273c25733e5c6e272070617468732f6661756c742f2a0a",
+      "env": {
+        "CSH_PATH_FAULT": "ENOENT"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c70617468732f676f6f642f6d617463683e0a3c70617468732f6661756c742f2a3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c70617468732f676f6f642f6d617463683e0a3c70617468732f6661756c742f2a3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "partial readdir ENOENT (stdin)",
+      "kind": "instrumented public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e272070617468732f2a2f2a3b207072696e746620273c25733e5c6e272070617468732f6661756c742f2a0a",
+      "env": {
+        "CSH_PATH_FAULT": "ENOENT"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c70617468732f676f6f642f6d617463683e0a3c70617468732f6661756c742f2a3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c70617468732f676f6f642f6d617463683e0a3c70617468732f6661756c742f2a3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "readdir EIO project failure policy (string)",
+      "kind": "instrumented public runtime",
+      "script_hex": "7072696e746620666f7262696464656e2070617468732f2a2f2a203e206566666563740a",
+      "env": {
+        "CSH_PATH_FAULT": "EIO"
+      },
+      "operand": null,
+      "expected": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "637368656c6c3a20706174686e616d6520657870616e73696f6e20492f4f206661696c65643a20496e7075742f6f7574707574206572726f720a"
+      },
+      "actual": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "637368656c6c3a20706174686e616d6520657870616e73696f6e20492f4f206661696c65643a20496e7075742f6f7574707574206572726f720a"
+      },
+      "failures": []
+    },
+    {
+      "name": "readdir EIO project failure policy (file)",
+      "kind": "instrumented public runtime",
+      "script_hex": "7072696e746620666f7262696464656e2070617468732f2a2f2a203e206566666563740a",
+      "env": {
+        "CSH_PATH_FAULT": "EIO"
+      },
+      "operand": null,
+      "expected": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "637368656c6c3a20706174686e616d6520657870616e73696f6e20492f4f206661696c65643a20496e7075742f6f7574707574206572726f720a"
+      },
+      "actual": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "637368656c6c3a20706174686e616d6520657870616e73696f6e20492f4f206661696c65643a20496e7075742f6f7574707574206572726f720a"
+      },
+      "failures": []
+    },
+    {
+      "name": "readdir EIO project failure policy (stdin)",
+      "kind": "instrumented public runtime",
+      "script_hex": "7072696e746620666f7262696464656e2070617468732f2a2f2a203e206566666563740a",
+      "env": {
+        "CSH_PATH_FAULT": "EIO"
+      },
+      "operand": null,
+      "expected": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "637368656c6c3a20706174686e616d6520657870616e73696f6e20492f4f206661696c65643a20496e7075742f6f7574707574206572726f720a"
+      },
+      "actual": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "637368656c6c3a20706174686e616d6520657870616e73696f6e20492f4f206661696c65643a20496e7075742f6f7574707574206572726f720a"
+      },
+      "failures": []
+    },
+    {
+      "name": "defined multicharacter element in case removal pathname (string)",
+      "kind": "public runtime",
+      "script_hex": "6361736520636820696e205b5b2e63682e5d5d29207072696e74662027656c656d656e745c6e273b3b20657361630a763d63685863683b207072696e746620273c25733e5c6e272022247b76235b5b2e63682e5d5d7d222022247b76255b5b2e63682e5d5d7d222022247b7623232a5b5b2e63682e5d5d7d222022247b7625255b5b2e63682e5d5d2a7d220a7072696e746620273c25733e5c6e27205b5b2e63682e5d5d0a",
+      "env": {
+        "LC_ALL": "csh_067.UTF-8"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "656c656d656e740a3c5863683e0a3c6368583e0a3c3e0a3c3e0a3c63683e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "656c656d656e740a3c5863683e0a3c6368583e0a3c3e0a3c3e0a3c63683e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "defined multicharacter element in case removal pathname (file)",
+      "kind": "public runtime",
+      "script_hex": "6361736520636820696e205b5b2e63682e5d5d29207072696e74662027656c656d656e745c6e273b3b20657361630a763d63685863683b207072696e746620273c25733e5c6e272022247b76235b5b2e63682e5d5d7d222022247b76255b5b2e63682e5d5d7d222022247b7623232a5b5b2e63682e5d5d7d222022247b7625255b5b2e63682e5d5d2a7d220a7072696e746620273c25733e5c6e27205b5b2e63682e5d5d0a",
+      "env": {
+        "LC_ALL": "csh_067.UTF-8"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "656c656d656e740a3c5863683e0a3c6368583e0a3c3e0a3c3e0a3c63683e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "656c656d656e740a3c5863683e0a3c6368583e0a3c3e0a3c3e0a3c63683e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "defined multicharacter element in case removal pathname (stdin)",
+      "kind": "public runtime",
+      "script_hex": "6361736520636820696e205b5b2e63682e5d5d29207072696e74662027656c656d656e745c6e273b3b20657361630a763d63685863683b207072696e746620273c25733e5c6e272022247b76235b5b2e63682e5d5d7d222022247b76255b5b2e63682e5d5d7d222022247b7623232a5b5b2e63682e5d5d7d222022247b7625255b5b2e63682e5d5d2a7d220a7072696e746620273c25733e5c6e27205b5b2e63682e5d5d0a",
+      "env": {
+        "LC_ALL": "csh_067.UTF-8"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "656c656d656e740a3c5863683e0a3c6368583e0a3c3e0a3c3e0a3c63683e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "656c656d656e740a3c5863683e0a3c6368583e0a3c3e0a3c3e0a3c63683e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "defined equivalence class and quoted bracket (string)",
+      "kind": "public runtime",
+      "script_hex": "63617365204120696e205b5b3d613d5d5d29207072696e746620276571756976616c656e745c6e273b3b20657361630a763d4178613b207072696e746620273c25733e5c6e272022247b76235b5b3d613d5d5d7d222022247b76255b5b3d613d5d5d7d220a7072696e746620273c25733e5c6e27205b5b3d613d5d5d20275b5b3d613d5d5d270a",
+      "env": {
+        "LC_ALL": "csh_067.UTF-8"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "6571756976616c656e740a3c78613e0a3c41783e0a3c613e0a3c413e0a3c5b5b3d613d5d5d3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "6571756976616c656e740a3c78613e0a3c41783e0a3c613e0a3c413e0a3c5b5b3d613d5d5d3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "defined equivalence class and quoted bracket (file)",
+      "kind": "public runtime",
+      "script_hex": "63617365204120696e205b5b3d613d5d5d29207072696e746620276571756976616c656e745c6e273b3b20657361630a763d4178613b207072696e746620273c25733e5c6e272022247b76235b5b3d613d5d5d7d222022247b76255b5b3d613d5d5d7d220a7072696e746620273c25733e5c6e27205b5b3d613d5d5d20275b5b3d613d5d5d270a",
+      "env": {
+        "LC_ALL": "csh_067.UTF-8"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "6571756976616c656e740a3c78613e0a3c41783e0a3c613e0a3c413e0a3c5b5b3d613d5d5d3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "6571756976616c656e740a3c78613e0a3c41783e0a3c613e0a3c413e0a3c5b5b3d613d5d5d3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "defined equivalence class and quoted bracket (stdin)",
+      "kind": "public runtime",
+      "script_hex": "63617365204120696e205b5b3d613d5d5d29207072696e746620276571756976616c656e745c6e273b3b20657361630a763d4178613b207072696e746620273c25733e5c6e272022247b76235b5b3d613d5d5d7d222022247b76255b5b3d613d5d5d7d220a7072696e746620273c25733e5c6e27205b5b3d613d5d5d20275b5b3d613d5d5d270a",
+      "env": {
+        "LC_ALL": "csh_067.UTF-8"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "6571756976616c656e740a3c78613e0a3c41783e0a3c613e0a3c413e0a3c5b5b3d613d5d5d3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "6571756976616c656e740a3c78613e0a3c41783e0a3c613e0a3c413e0a3c5b5b3d613d5d5d3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift source expansion read 8eb6 (string)",
+      "kind": "public runtime",
+      "script_hex": "763d278eb6273b207072696e746620273c25733e5c6e27208eb6205c8eb620228eb6222024278eb6272022247b23767d222022247b76233f7d220a4946533d278eb6273b20763d27618eb662273b207072696e746620273c25733e5c6e272024760a7265616420612062203c20646174613b207072696e746620273c25733e5c6e27202224612220222462220a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c8eb63e0a3c8eb63e0a3c8eb63e0a3c8eb63e0a3c313e0a3c3e0a3c613e0a3c623e0a3c613e0a3c623e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c8eb63e0a3c8eb63e0a3c8eb63e0a3c8eb63e0a3c313e0a3c3e0a3c613e0a3c623e0a3c613e0a3c623e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift source expansion read 8eb6 (file)",
+      "kind": "public runtime",
+      "script_hex": "763d278eb6273b207072696e746620273c25733e5c6e27208eb6205c8eb620228eb6222024278eb6272022247b23767d222022247b76233f7d220a4946533d278eb6273b20763d27618eb662273b207072696e746620273c25733e5c6e272024760a7265616420612062203c20646174613b207072696e746620273c25733e5c6e27202224612220222462220a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c8eb63e0a3c8eb63e0a3c8eb63e0a3c8eb63e0a3c313e0a3c3e0a3c613e0a3c623e0a3c613e0a3c623e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c8eb63e0a3c8eb63e0a3c8eb63e0a3c8eb63e0a3c313e0a3c3e0a3c613e0a3c623e0a3c613e0a3c623e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift source expansion read 8eb6 (stdin)",
+      "kind": "public runtime",
+      "script_hex": "763d278eb6273b207072696e746620273c25733e5c6e27208eb6205c8eb620228eb6222024278eb6272022247b23767d222022247b76233f7d220a4946533d278eb6273b20763d27618eb662273b207072696e746620273c25733e5c6e272024760a7265616420612062203c20646174613b207072696e746620273c25733e5c6e27202224612220222462220a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c8eb63e0a3c8eb63e0a3c8eb63e0a3c8eb63e0a3c313e0a3c3e0a3c613e0a3c623e0a3c613e0a3c623e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c8eb63e0a3c8eb63e0a3c8eb63e0a3c8eb63e0a3c313e0a3c3e0a3c613e0a3c623e0a3c613e0a3c623e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift alias reusable output 8eb6 (string)",
+      "kind": "public runtime",
+      "script_hex": "616c6961732076616c75653d277072696e7466202225735c6e22208eb6270a646566696e6974696f6e3d2428616c6961732076616c7565290a756e616c696173202d610a6576616c2022616c6961732024646566696e6974696f6e220a76616c75650a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "8eb60a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "8eb60a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift alias reusable output 8eb6 (file)",
+      "kind": "public runtime",
+      "script_hex": "616c6961732076616c75653d277072696e7466202225735c6e22208eb6270a646566696e6974696f6e3d2428616c6961732076616c7565290a756e616c696173202d610a6576616c2022616c6961732024646566696e6974696f6e220a76616c75650a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "8eb60a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "8eb60a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift alias reusable output 8eb6 (stdin)",
+      "kind": "public runtime",
+      "script_hex": "616c6961732076616c75653d277072696e7466202225735c6e22208eb6270a646566696e6974696f6e3d2428616c6961732076616c7565290a756e616c696173202d610a6576616c2022616c6961732024646566696e6974696f6e220a76616c75650a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "8eb60a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "8eb60a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift dollar escape protection 8eb6 (string)",
+      "kind": "public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e272024275c7834315c3130315c742a270a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c4141092a3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c4141092a3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift dollar escape protection 8eb6 (file)",
+      "kind": "public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e272024275c7834315c3130315c742a270a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c4141092a3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c4141092a3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift dollar escape protection 8eb6 (stdin)",
+      "kind": "public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e272024275c7834315c3130315c742a270a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c4141092a3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c4141092a3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift source expansion read 8fa2af (string)",
+      "kind": "public runtime",
+      "script_hex": "763d278fa2af273b207072696e746620273c25733e5c6e27208fa2af205c8fa2af20228fa2af222024278fa2af272022247b23767d222022247b76233f7d220a4946533d278fa2af273b20763d27618fa2af62273b207072696e746620273c25733e5c6e272024760a7265616420612062203c20646174613b207072696e746620273c25733e5c6e27202224612220222462220a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c8fa2af3e0a3c8fa2af3e0a3c8fa2af3e0a3c8fa2af3e0a3c313e0a3c3e0a3c613e0a3c623e0a3c613e0a3c623e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c8fa2af3e0a3c8fa2af3e0a3c8fa2af3e0a3c8fa2af3e0a3c313e0a3c3e0a3c613e0a3c623e0a3c613e0a3c623e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift source expansion read 8fa2af (file)",
+      "kind": "public runtime",
+      "script_hex": "763d278fa2af273b207072696e746620273c25733e5c6e27208fa2af205c8fa2af20228fa2af222024278fa2af272022247b23767d222022247b76233f7d220a4946533d278fa2af273b20763d27618fa2af62273b207072696e746620273c25733e5c6e272024760a7265616420612062203c20646174613b207072696e746620273c25733e5c6e27202224612220222462220a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c8fa2af3e0a3c8fa2af3e0a3c8fa2af3e0a3c8fa2af3e0a3c313e0a3c3e0a3c613e0a3c623e0a3c613e0a3c623e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c8fa2af3e0a3c8fa2af3e0a3c8fa2af3e0a3c8fa2af3e0a3c313e0a3c3e0a3c613e0a3c623e0a3c613e0a3c623e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift source expansion read 8fa2af (stdin)",
+      "kind": "public runtime",
+      "script_hex": "763d278fa2af273b207072696e746620273c25733e5c6e27208fa2af205c8fa2af20228fa2af222024278fa2af272022247b23767d222022247b76233f7d220a4946533d278fa2af273b20763d27618fa2af62273b207072696e746620273c25733e5c6e272024760a7265616420612062203c20646174613b207072696e746620273c25733e5c6e27202224612220222462220a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c8fa2af3e0a3c8fa2af3e0a3c8fa2af3e0a3c8fa2af3e0a3c313e0a3c3e0a3c613e0a3c623e0a3c613e0a3c623e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c8fa2af3e0a3c8fa2af3e0a3c8fa2af3e0a3c8fa2af3e0a3c313e0a3c3e0a3c613e0a3c623e0a3c613e0a3c623e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift alias reusable output 8fa2af (string)",
+      "kind": "public runtime",
+      "script_hex": "616c6961732076616c75653d277072696e7466202225735c6e22208fa2af270a646566696e6974696f6e3d2428616c6961732076616c7565290a756e616c696173202d610a6576616c2022616c6961732024646566696e6974696f6e220a76616c75650a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "8fa2af0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "8fa2af0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift alias reusable output 8fa2af (file)",
+      "kind": "public runtime",
+      "script_hex": "616c6961732076616c75653d277072696e7466202225735c6e22208fa2af270a646566696e6974696f6e3d2428616c6961732076616c7565290a756e616c696173202d610a6576616c2022616c6961732024646566696e6974696f6e220a76616c75650a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "8fa2af0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "8fa2af0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift alias reusable output 8fa2af (stdin)",
+      "kind": "public runtime",
+      "script_hex": "616c6961732076616c75653d277072696e7466202225735c6e22208fa2af270a646566696e6974696f6e3d2428616c6961732076616c7565290a756e616c696173202d610a6576616c2022616c6961732024646566696e6974696f6e220a76616c75650a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "8fa2af0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "8fa2af0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift dollar escape protection 8fa2af (string)",
+      "kind": "public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e272024275c7834315c3130315c742a270a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c4141092a3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c4141092a3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift dollar escape protection 8fa2af (file)",
+      "kind": "public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e272024275c7834315c3130315c742a270a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c4141092a3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c4141092a3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "single-shift dollar escape protection 8fa2af (stdin)",
+      "kind": "public runtime",
+      "script_hex": "7072696e746620273c25733e5c6e272024275c7834315c3130315c742a270a",
+      "env": {
+        "LC_ALL": "ja_JP.eucJP"
+      },
+      "operand": null,
+      "expected": {
+        "status": 0,
+        "stdout_hex": "3c4141092a3e0a",
+        "stderr_hex": ""
+      },
+      "actual": {
+        "status": 0,
+        "stdout_hex": "3c4141092a3e0a",
+        "stderr_hex": ""
+      },
+      "failures": []
+    },
+    {
+      "name": "alias diagnostic language policy C (string)",
+      "kind": "public runtime",
+      "script_hex": "616c696173206d697373696e670a",
+      "env": {
+        "LC_ALL": "C"
+      },
+      "operand": null,
+      "expected": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "actual": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "failures": []
+    },
+    {
+      "name": "alias diagnostic language policy C (file)",
+      "kind": "public runtime",
+      "script_hex": "616c696173206d697373696e670a",
+      "env": {
+        "LC_ALL": "C"
+      },
+      "operand": null,
+      "expected": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "actual": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "failures": []
+    },
+    {
+      "name": "alias diagnostic language policy C (stdin)",
+      "kind": "public runtime",
+      "script_hex": "616c696173206d697373696e670a",
+      "env": {
+        "LC_ALL": "C"
+      },
+      "operand": null,
+      "expected": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "actual": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "failures": []
+    },
+    {
+      "name": "unalias diagnostic language policy C (string)",
+      "kind": "public runtime",
+      "script_hex": "756e616c696173206d697373696e670a",
+      "env": {
+        "LC_ALL": "C"
+      },
+      "operand": null,
+      "expected": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "756e616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "actual": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "756e616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "failures": []
+    },
+    {
+      "name": "unalias diagnostic language policy C (file)",
+      "kind": "public runtime",
+      "script_hex": "756e616c696173206d697373696e670a",
+      "env": {
+        "LC_ALL": "C"
+      },
+      "operand": null,
+      "expected": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "756e616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "actual": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "756e616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "failures": []
+    },
+    {
+      "name": "unalias diagnostic language policy C (stdin)",
+      "kind": "public runtime",
+      "script_hex": "756e616c696173206d697373696e670a",
+      "env": {
+        "LC_ALL": "C"
+      },
+      "operand": null,
+      "expected": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "756e616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "actual": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "756e616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "failures": []
+    },
+    {
+      "name": "alias diagnostic language policy fr_FR.UTF-8 (string)",
+      "kind": "public runtime",
+      "script_hex": "616c696173206d697373696e670a",
+      "env": {
+        "LC_ALL": "fr_FR.UTF-8"
+      },
+      "operand": null,
+      "expected": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "actual": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "failures": []
+    },
+    {
+      "name": "alias diagnostic language policy fr_FR.UTF-8 (file)",
+      "kind": "public runtime",
+      "script_hex": "616c696173206d697373696e670a",
+      "env": {
+        "LC_ALL": "fr_FR.UTF-8"
+      },
+      "operand": null,
+      "expected": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "actual": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "failures": []
+    },
+    {
+      "name": "alias diagnostic language policy fr_FR.UTF-8 (stdin)",
+      "kind": "public runtime",
+      "script_hex": "616c696173206d697373696e670a",
+      "env": {
+        "LC_ALL": "fr_FR.UTF-8"
+      },
+      "operand": null,
+      "expected": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "actual": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "failures": []
+    },
+    {
+      "name": "unalias diagnostic language policy fr_FR.UTF-8 (string)",
+      "kind": "public runtime",
+      "script_hex": "756e616c696173206d697373696e670a",
+      "env": {
+        "LC_ALL": "fr_FR.UTF-8"
+      },
+      "operand": null,
+      "expected": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "756e616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "actual": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "756e616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "failures": []
+    },
+    {
+      "name": "unalias diagnostic language policy fr_FR.UTF-8 (file)",
+      "kind": "public runtime",
+      "script_hex": "756e616c696173206d697373696e670a",
+      "env": {
+        "LC_ALL": "fr_FR.UTF-8"
+      },
+      "operand": null,
+      "expected": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "756e616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "actual": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "756e616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "failures": []
+    },
+    {
+      "name": "unalias diagnostic language policy fr_FR.UTF-8 (stdin)",
+      "kind": "public runtime",
+      "script_hex": "756e616c696173206d697373696e670a",
+      "env": {
+        "LC_ALL": "fr_FR.UTF-8"
+      },
+      "operand": null,
+      "expected": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "756e616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "actual": {
+        "status": 1,
+        "stdout_hex": "",
+        "stderr_hex": "756e616c6961733a206d697373696e673a206e6f7420666f756e640a"
+      },
+      "failures": []
+    }
+  ],
+  "totals": {
+    "passed": 56,
+    "failed": 0,
+    "skipped": 0
+  }
+}

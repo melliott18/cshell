@@ -1,0 +1,445 @@
+python3 tests/locale_pathname.py ./cshell build/tests/locale_probe build/tests/pathname_runtime_faults --record build/tests/locale-pathname-results.json
+PASS: symlink and trailing slash (string)
+PASS: symlink and trailing slash (file)
+PASS: symlink and trailing slash (stdin)
+PASS: quoted prefix and repeated slash (string)
+PASS: quoted prefix and repeated slash (file)
+PASS: quoted prefix and repeated slash (stdin)
+PASS: owned read versus search permissions (string)
+PASS: owned read versus search permissions (file)
+PASS: owned read versus search permissions (stdin)
+PASS: SH-003 unreadable unreadable (file)
+PASS: SH-003 unreadable ./unreadable (file)
+PASS: partial readdir EACCES (string)
+PASS: partial readdir EACCES (file)
+PASS: partial readdir EACCES (stdin)
+PASS: partial readdir ENOENT (string)
+PASS: partial readdir ENOENT (file)
+PASS: partial readdir ENOENT (stdin)
+PASS: readdir EIO project failure policy (string)
+PASS: readdir EIO project failure policy (file)
+PASS: readdir EIO project failure policy (stdin)
+SKIP: controlled collation elements/equivalence: localedef -i tests/locales/csh_067 -f UTF-8 csh_067.UTF-8 (supplied Linux locale) (owner CSH-067)
+PASS: single-shift source expansion read 8eb6 (string)
+PASS: single-shift source expansion read 8eb6 (file)
+PASS: single-shift source expansion read 8eb6 (stdin)
+PASS: single-shift alias reusable output 8eb6 (string)
+PASS: single-shift alias reusable output 8eb6 (file)
+PASS: single-shift alias reusable output 8eb6 (stdin)
+PASS: single-shift dollar escape protection 8eb6 (string)
+PASS: single-shift dollar escape protection 8eb6 (file)
+PASS: single-shift dollar escape protection 8eb6 (stdin)
+PASS: single-shift source expansion read 8fa2af (string)
+PASS: single-shift source expansion read 8fa2af (file)
+PASS: single-shift source expansion read 8fa2af (stdin)
+PASS: single-shift alias reusable output 8fa2af (string)
+PASS: single-shift alias reusable output 8fa2af (file)
+PASS: single-shift alias reusable output 8fa2af (stdin)
+PASS: single-shift dollar escape protection 8fa2af (string)
+PASS: single-shift dollar escape protection 8fa2af (file)
+PASS: single-shift dollar escape protection 8fa2af (stdin)
+PASS: alias diagnostic language policy C (string)
+PASS: alias diagnostic language policy C (file)
+PASS: alias diagnostic language policy C (stdin)
+PASS: unalias diagnostic language policy C (string)
+PASS: unalias diagnostic language policy C (file)
+PASS: unalias diagnostic language policy C (stdin)
+PASS: alias diagnostic language policy fr_FR.UTF-8 (string)
+PASS: alias diagnostic language policy fr_FR.UTF-8 (file)
+PASS: alias diagnostic language policy fr_FR.UTF-8 (stdin)
+PASS: unalias diagnostic language policy fr_FR.UTF-8 (string)
+PASS: unalias diagnostic language policy fr_FR.UTF-8 (file)
+PASS: unalias diagnostic language policy fr_FR.UTF-8 (stdin)
+CSH-067: 50 passed, 0 failed, 1 capability skips
+python3 tests/portability.py ./cshell
+UTF-8 locale: en_US.UTF-8
+Locale probes available: C, en_US.UTF-8, fr_FR.UTF-8, de_DE.UTF-8, sv_SE.UTF-8
+PASS: Shift-JIS character API, split feeds and startup context (ja_JP.SJIS)
+Checked Shift-JIS raw-byte runtime witnesses in -c, file and stdin modes
+PASS: Big5 character API, split feeds and startup context (zh_TW.Big5)
+Checked Big5 raw-byte runtime witnesses in -c, file and stdin modes
+PASS: GBK character API, split feeds and startup context (zh_CN.GBK)
+Checked GBK raw-byte runtime witnesses in -c, file and stdin modes
+PASS: GB18030 character API, split feeds and startup context (zh_CN.GB18030)
+Checked GB18030 raw-byte runtime witnesses in -c, file and stdin modes
+SKIP: CSH-053 Shift-JIS: raw pathname unavailable on filesystem (Illegal byte sequence) (residual owner CSH-067)
+SKIP: CSH-053 Big5: raw pathname unavailable on filesystem (Illegal byte sequence) (residual owner CSH-067)
+SKIP: CSH-053 GBK: raw pathname unavailable on filesystem (Illegal byte sequence) (residual owner CSH-067)
+SKIP: CSH-053 GB18030: raw pathname unavailable on filesystem (Illegal byte sequence) (residual owner CSH-067)
+CSH-053: 2044 passed, 0 failed, 4 capability skips
+PASS: C locale multibyte pattern (string)
+PASS: C locale multibyte pattern (file)
+PASS: C locale multibyte pattern (stdin)
+PASS: UTF-8 pathname caf? (string)
+PASS: UTF-8 pathname caf? (file)
+PASS: UTF-8 pathname caf? (stdin)
+PASS: UTF-8 pathname caf[[:alpha:]] (string)
+PASS: UTF-8 pathname caf[[:alpha:]] (file)
+PASS: UTF-8 pathname caf[[:alpha:]] (stdin)
+PASS: LC_ALL overrides LC_CTYPE (string)
+PASS: LC_ALL overrides LC_CTYPE (file)
+PASS: LC_ALL overrides LC_CTYPE (stdin)
+PASS: LC_CTYPE when LC_ALL is empty (string)
+PASS: LC_CTYPE when LC_ALL is empty (file)
+PASS: LC_CTYPE when LC_ALL is empty (stdin)
+PASS: LC_ALL overrides assigned LC_CTYPE (string)
+PASS: LC_ALL overrides assigned LC_CTYPE (file)
+PASS: LC_ALL overrides assigned LC_CTYPE (stdin)
+PASS: UTF-8 IFS character (string)
+PASS: UTF-8 IFS character (file)
+PASS: UTF-8 IFS character (stdin)
+PASS: nested arithmetic depth 1 (string)
+PASS: nested arithmetic depth 1 (file)
+PASS: nested arithmetic depth 1 (stdin)
+PASS: nested arithmetic depth 2 (string)
+PASS: nested arithmetic depth 2 (file)
+PASS: nested arithmetic depth 2 (stdin)
+PASS: nested arithmetic depth 4 (string)
+PASS: nested arithmetic depth 4 (file)
+PASS: nested arithmetic depth 4 (stdin)
+PASS: nested arithmetic depth 8 (string)
+PASS: nested arithmetic depth 8 (file)
+PASS: nested arithmetic depth 8 (stdin)
+PASS: nested arithmetic depth 16 (string)
+PASS: nested arithmetic depth 16 (file)
+PASS: nested arithmetic depth 16 (stdin)
+PASS: nested arithmetic depth 32 (string)
+PASS: nested arithmetic depth 32 (file)
+PASS: nested arithmetic depth 32 (stdin)
+PASS: adjacent quote fragments 1 (string)
+PASS: adjacent quote fragments 1 (file)
+PASS: adjacent quote fragments 1 (stdin)
+PASS: adjacent quote fragments 2 (string)
+PASS: adjacent quote fragments 2 (file)
+PASS: adjacent quote fragments 2 (stdin)
+PASS: adjacent quote fragments 4 (string)
+PASS: adjacent quote fragments 4 (file)
+PASS: adjacent quote fragments 4 (stdin)
+PASS: adjacent quote fragments 8 (string)
+PASS: adjacent quote fragments 8 (file)
+PASS: adjacent quote fragments 8 (stdin)
+PASS: adjacent quote fragments 16 (string)
+PASS: adjacent quote fragments 16 (file)
+PASS: adjacent quote fragments 16 (stdin)
+PASS: adjacent quote fragments 32 (string)
+PASS: adjacent quote fragments 32 (file)
+PASS: adjacent quote fragments 32 (stdin)
+PASS: large input line (file)
+PASS: large input line (stdin)
+PASS: locale invalid LC_ALL: silent C fallback (string)
+PASS: locale invalid LC_ALL: silent C fallback (file)
+PASS: locale invalid LC_ALL: silent C fallback (stdin)
+PASS: locale invalid LC_CTYPE: silent C fallback (string)
+PASS: locale invalid LC_CTYPE: silent C fallback (file)
+PASS: locale invalid LC_CTYPE: silent C fallback (stdin)
+PASS: locale invalid LC_COLLATE: silent C fallback (string)
+PASS: locale invalid LC_COLLATE: silent C fallback (file)
+PASS: locale invalid LC_COLLATE: silent C fallback (stdin)
+PASS: locale invalid LC_MESSAGES: silent C fallback (string)
+PASS: locale invalid LC_MESSAGES: silent C fallback (file)
+PASS: locale invalid LC_MESSAGES: silent C fallback (stdin)
+PASS: locale invalid LANG: silent C fallback (string)
+PASS: locale invalid LANG: silent C fallback (file)
+PASS: locale invalid LANG: silent C fallback (stdin)
+PASS: locale invalid lower precedence is ignored (string)
+PASS: locale invalid lower precedence is ignored (file)
+PASS: locale invalid lower precedence is ignored (stdin)
+PASS: locale C bracket classes and removal (string)
+PASS: locale C bracket classes and removal (file)
+PASS: locale C bracket classes and removal (stdin)
+PASS: locale LANG fallback (string)
+PASS: locale LANG fallback (file)
+PASS: locale LANG fallback (stdin)
+PASS: locale empty LC_CTYPE fallback (string)
+PASS: locale empty LC_CTYPE fallback (file)
+PASS: locale empty LC_CTYPE fallback (stdin)
+PASS: locale LC_CTYPE overrides LANG (string)
+PASS: locale LC_CTYPE overrides LANG (file)
+PASS: locale LC_CTYPE overrides LANG (stdin)
+PASS: locale LC_ALL overrides categories (string)
+PASS: locale LC_ALL overrides categories (file)
+PASS: locale LC_ALL overrides categories (stdin)
+PASS: locale invalid category resets all categories to C (policy) (string)
+PASS: locale invalid category resets all categories to C (policy) (file)
+PASS: locale invalid category resets all categories to C (policy) (stdin)
+PASS: locale invalid runtime category recovers after unset (policy) (string)
+PASS: locale invalid runtime category recovers after unset (policy) (file)
+PASS: locale invalid runtime category recovers after unset (policy) (stdin)
+PASS: locale UTF-8 parameter removal character boundaries (string)
+PASS: locale UTF-8 parameter removal character boundaries (file)
+PASS: locale UTF-8 parameter removal character boundaries (stdin)
+PASS: locale UTF-8 case classes and quoted patterns (string)
+PASS: locale UTF-8 case classes and quoted patterns (file)
+PASS: locale UTF-8 case classes and quoted patterns (stdin)
+PASS: locale UTF-8 IFS whole characters and empty fields (string)
+PASS: locale UTF-8 IFS whole characters and empty fields (file)
+PASS: locale UTF-8 IFS whole characters and empty fields (stdin)
+PASS: locale UTF-8 read IFS whole characters (string)
+PASS: locale UTF-8 read IFS whole characters (file)
+PASS: locale UTF-8 read IFS whole characters (stdin)
+PASS: locale UTF-8 read IFS last variable remainder (string)
+PASS: locale UTF-8 read IFS last variable remainder (file)
+PASS: locale UTF-8 read IFS last variable remainder (stdin)
+PASS: locale UTF-8 read IFS single trailing delimiter (string)
+PASS: locale UTF-8 read IFS single trailing delimiter (file)
+PASS: locale UTF-8 read IFS single trailing delimiter (stdin)
+PASS: locale UTF-8 read IFS escaped delimiter (string)
+PASS: locale UTF-8 read IFS escaped delimiter (file)
+PASS: locale UTF-8 read IFS escaped delimiter (stdin)
+PASS: locale runtime CTYPE assignment and unset (string)
+PASS: locale runtime CTYPE assignment and unset (file)
+PASS: locale runtime CTYPE assignment and unset (stdin)
+PASS: locale runtime LANG and LC_ALL precedence (string)
+PASS: locale runtime LANG and LC_ALL precedence (file)
+PASS: locale runtime LANG and LC_ALL precedence (stdin)
+PASS: locale temporary builtin assignment restores categories (string)
+PASS: locale temporary builtin assignment restores categories (file)
+PASS: locale temporary builtin assignment restores categories (stdin)
+PASS: locale redirection clone restores parent success (string)
+PASS: locale redirection clone restores parent success (file)
+PASS: locale redirection clone restores parent success (stdin)
+PASS: locale redirection clone restores parent failure (string)
+PASS: locale redirection clone restores parent failure (file)
+PASS: locale redirection clone restores parent failure (stdin)
+PASS: locale subshell and substitution changes stay local (string)
+PASS: locale subshell and substitution changes stay local (file)
+PASS: locale subshell and substitution changes stay local (stdin)
+PASS: locale lexical UTF-8 syntax stable after CTYPE change (string)
+PASS: locale lexical UTF-8 syntax stable after CTYPE change (file)
+PASS: locale lexical UTF-8 syntax stable after CTYPE change (stdin)
+PASS: locale host-qualified collation en_US.UTF-8 LANG (string)
+PASS: locale host-qualified collation en_US.UTF-8 LANG (file)
+PASS: locale host-qualified collation en_US.UTF-8 LANG (stdin)
+PASS: locale host-qualified collation en_US.UTF-8 category (string)
+PASS: locale host-qualified collation en_US.UTF-8 category (file)
+PASS: locale host-qualified collation en_US.UTF-8 category (stdin)
+PASS: locale host-qualified collation en_US.UTF-8 LC_ALL (string)
+PASS: locale host-qualified collation en_US.UTF-8 LC_ALL (file)
+PASS: locale host-qualified collation en_US.UTF-8 LC_ALL (stdin)
+PASS: locale runtime collation and temporary scope restoration (string)
+PASS: locale runtime collation and temporary scope restoration (file)
+PASS: locale runtime collation and temporary scope restoration (stdin)
+PASS: locale host-qualified diagnostic C LANG (string)
+PASS: locale host-qualified diagnostic C LANG (file)
+PASS: locale host-qualified diagnostic C LANG (stdin)
+PASS: locale host-qualified diagnostic C category (string)
+PASS: locale host-qualified diagnostic C category (file)
+PASS: locale host-qualified diagnostic C category (stdin)
+PASS: locale host-qualified diagnostic C LC_ALL (string)
+PASS: locale host-qualified diagnostic C LC_ALL (file)
+PASS: locale host-qualified diagnostic C LC_ALL (stdin)
+PASS: sparse file pathname expansion
+SKIP: translated libc ENOENT diagnostic: installed candidate locales have no translation; cshell has no message catalogs (owner CSH-067)
+Result: 2206 passed, 0 failed, 5 skipped (cases/capability groups)
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2  -o build/tests/fields_fixture tests/fields_fixture.c build/fields.o build/pathname.o build/expand.o build/quote.o build/arithmetic.o build/state.o build/alias.o build/lexer.o build/character.o
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -include tests/fields_faults.h -c src/fields.c -o build/tests/fields-fault-fields.o
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -include tests/fields_faults.h -c src/pathname.c -o build/tests/fields-fault-pathname.o
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2  -o build/tests/fields_faults tests/fields_faults.c build/tests/fields-fault-fields.o build/tests/fields-fault-pathname.o build/state.o build/alias.o build/character.o
+python3 tests/fields.py build/tests/fields_fixture --fault-binary build/tests/fields_faults
+PASS: unset IFS trims and folds whitespace
+PASS: explicit default IFS
+PASS: empty IFS keeps whitespace
+PASS: whitespace-only IFS subset
+PASS: tab-only IFS retains spaces
+PASS: nonwhitespace delimiter empties
+PASS: single nonwhitespace delimiter
+PASS: two nonwhitespace delimiters
+PASS: mixed IFS trims around separators
+PASS: multiple nonwhitespace delimiters
+PASS: non-IFS whitespace is data
+PASS: literal delimiter never splits
+PASS: literal punctuation between expansions
+PASS: adjacent expansion whitespace
+PASS: adjacent expansion punctuation
+PASS: literal prefix and suffix
+PASS: literal prefix before leading delimiter
+PASS: literal suffix after trailing delimiter
+PASS: unset parameter disappears
+PASS: empty parameter disappears
+PASS: empty IFS still removes implicit null
+PASS: whitespace parameter disappears
+PASS: single quoted empty
+PASS: double quoted empty
+PASS: quoted empty parameter
+PASS: quoted absent parameter
+PASS: trailing quoted empty has position
+PASS: leading quoted empty has position
+PASS: quoted empty after nonwhite separator
+PASS: quoted empty before nonwhite separator
+PASS: empty between two split expansions
+PASS: quoted whitespace remains
+PASS: escaped whitespace remains
+PASS: quoted at preserves boundaries
+PASS: quoted at prefix and suffix
+PASS: quoted at without parameters
+PASS: quoted at absent between literals
+PASS: unquoted at splits each parameter
+PASS: quoted star joins with first IFS
+PASS: quoted star with empty IFS
+PASS: quoted star without parameters
+PASS: arithmetic eligible for splitting
+PASS: tilde result protected
+PASS: parameter default splitting
+PASS: quoted parameter default
+PASS: star matches sorted names and whitespace
+PASS: question mark
+PASS: bracket range
+PASS: bracket character class
+PASS: negated bracket
+PASS: quoted bracket member
+PASS: unquoted character class remains active
+PASS: quoted character class name is literal
+PASS: quoted class opening marker is literal
+PASS: quoted class closing marker is literal
+PASS: unquoted collating element remains active
+PASS: quoted collating marker is literal
+PASS: unquoted equivalence class remains active
+PASS: quoted equivalence marker is literal
+PASS: unmatched bracket literal
+PASS: no matching pathname preserved
+PASS: quoted star remains literal
+PASS: escaped star remains literal
+PASS: quoted question with active star
+PASS: quoted bracket text
+PASS: unmatched mixed quote pattern restores bytes
+PASS: expansion backslash escapes pattern metacharacter
+PASS: quoted literal backslash with active pattern
+PASS: expanded escaped star with active question
+PASS: pending expansion escape before quoted star
+PASS: escaped slash remains a pathname separator
+PASS: unmatched bracket leaves expansion backslash raw
+PASS: quoted variable suppresses pattern
+PASS: expanded pattern remains active
+PASS: splitting before pathname expansion
+PASS: set f suppresses only globbing
+PASS: set f removes quote syntax
+PASS: dotfiles require literal initial dot
+PASS: bracket dot cannot introduce dotfile
+PASS: quoted initial dot enables hidden match
+PASS: multiple wildcard directory components
+PASS: literal missing directory retains pattern
+PASS: nondirectory prefix retains pattern
+PASS: hidden directory not entered implicitly
+PASS: trailing slash filters files
+PASS: matching final literal must exist
+PASS: matching final literal remains sorted
+PASS: slash runs retained
+PASS: dot relative prefix retained
+PASS: absolute path matching
+PASS: directory symlink traversal
+PASS: directory symlink with trailing slash
+PASS: dangling symlink is pathname match
+PASS: dangling symlink cannot take trailing slash
+PASS: assignment suppresses splitting and globbing
+PASS: assignment preserves empty scalar
+PASS: pattern suppresses splitting and globbing
+PASS: pattern preserves empty scalar
+PASS: assignment removes protection syntax
+PASS: pattern retains quoted wildcard protection
+PASS: pattern protects bracket punctuation
+PASS: pattern protects quoted class name
+PASS: pattern preserves active syntax
+PASS: pattern preserves active expansion backslash
+PASS: pattern protects quoted expansion backslash
+PASS: pattern keeps pending escape before quoted star
+PASS: assignment preserves expansion backslash
+PASS: invalid API and idempotent cleanup
+PASS: multibyte IFS expansion boundaries
+PASS: allocation, I/O, interruption and ownership failures
+110/110 final-field checks passed
+python3 -m unittest discover -s tests -p 'test_*harness.py' -v
+test_darwin_permission_error_requires_a_fresh_empty_group_snapshot (test_cleanup_harness.GroupCleanupTests.test_darwin_permission_error_requires_a_fresh_empty_group_snapshot) ... ok
+test_darwin_permission_error_with_live_group_members_is_reported (test_cleanup_harness.GroupCleanupTests.test_darwin_permission_error_with_live_group_members_is_reported) ... ok
+test_executor_fixture_accepts_a_verified_exited_darwin_group (test_cleanup_harness.GroupCleanupTests.test_executor_fixture_accepts_a_verified_exited_darwin_group) ... ok
+test_executor_fixture_preserves_real_cleanup_permission_errors (test_cleanup_harness.GroupCleanupTests.test_executor_fixture_preserves_real_cleanup_permission_errors) ... ok
+test_expired_snapshot_deadline_cannot_hide_a_permission_error (test_cleanup_harness.GroupCleanupTests.test_expired_snapshot_deadline_cannot_hide_a_permission_error) ... ok
+test_failed_snapshot_cannot_hide_a_permission_error (test_cleanup_harness.GroupCleanupTests.test_failed_snapshot_cannot_hide_a_permission_error) ... ok
+test_missing_group_is_already_clean_without_a_snapshot (test_cleanup_harness.GroupCleanupTests.test_missing_group_is_already_clean_without_a_snapshot) ... ok
+test_other_permission_errors_are_reported_without_a_snapshot (test_cleanup_harness.GroupCleanupTests.test_other_permission_errors_are_reported_without_a_snapshot) ... ok
+test_pty_cleanup_accepts_groups_that_exit_after_the_snapshot (test_cleanup_harness.GroupCleanupTests.test_pty_cleanup_accepts_groups_that_exit_after_the_snapshot) ... ok
+test_pty_cleanup_reports_permission_failure_for_a_live_group (test_cleanup_harness.GroupCleanupTests.test_pty_cleanup_reports_permission_failure_for_a_live_group) ... ok
+test_repeated_cleanup_of_a_real_unreaped_zombie_group (test_cleanup_harness.GroupCleanupTests.test_repeated_cleanup_of_a_real_unreaped_zombie_group) ... ok
+test_all_skipped_suite_fails_to_avoid_an_empty_success (test_harness.HarnessTests.test_all_skipped_suite_fails_to_avoid_an_empty_success) ... ok
+test_case_filter_runs_only_named_case (test_harness.HarnessTests.test_case_filter_runs_only_named_case) ... ok
+test_child_resource_limits_are_bounded (test_harness.HarnessTests.test_child_resource_limits_are_bounded) ... ok
+test_cleanup_error_still_closes_streams_and_reaps_leader (test_harness.HarnessTests.test_cleanup_error_still_closes_streams_and_reaps_leader) ... ok
+test_cleanup_kills_descendant_after_successful_parent_exit (test_harness.HarnessTests.test_cleanup_kills_descendant_after_successful_parent_exit) ... ok
+test_environment_isolated_and_explicit_overrides_applied (test_harness.HarnessTests.test_environment_isolated_and_explicit_overrides_applied) ... ok
+test_file_type_mismatches_are_reported (test_harness.HarnessTests.test_file_type_mismatches_are_reported) ... ok
+test_filesystem_assertions_do_not_follow_symlinks (test_harness.HarnessTests.test_filesystem_assertions_do_not_follow_symlinks) ... ok
+test_fixture_paths_cannot_escape_or_replace_internal_directories (test_harness.HarnessTests.test_fixture_paths_cannot_escape_or_replace_internal_directories) ... ok
+test_intentional_failures_have_actionable_diagnostics (test_harness.HarnessTests.test_intentional_failures_have_actionable_diagnostics) ... ok
+test_invalid_cli_limits_fail (test_harness.HarnessTests.test_invalid_cli_limits_fail) ... ok
+test_invalid_fixture_documents_fail (test_harness.HarnessTests.test_invalid_fixture_documents_fail) ... ok
+test_invalid_json_reports_source_path (test_harness.HarnessTests.test_invalid_json_reports_source_path) ... ok
+test_large_stdin_and_output_backpressure_do_not_deadlock (test_harness.HarnessTests.test_large_stdin_and_output_backpressure_do_not_deadlock) ... ok
+test_long_output_diagnostic_keeps_failure_tail (test_harness.HarnessTests.test_long_output_diagnostic_keeps_failure_tail) ... ok
+test_output_flood_fails_promptly_with_bounded_diagnostics (test_harness.HarnessTests.test_output_flood_fails_promptly_with_bounded_diagnostics) ... ok
+test_output_limit_combines_stdout_and_stderr (test_harness.HarnessTests.test_output_limit_combines_stdout_and_stderr) ... ok
+test_passing_fixtures_cover_streams_status_args_files_and_isolation (test_harness.HarnessTests.test_passing_fixtures_cover_streams_status_args_files_and_isolation) ... ok
+test_platform_skip_is_explicit_and_does_not_launch_candidate (test_harness.HarnessTests.test_platform_skip_is_explicit_and_does_not_launch_candidate) ... ok
+test_removed_prompt_allowance_is_rejected (test_harness.HarnessTests.test_removed_prompt_allowance_is_rejected) ... ok
+test_removed_prototype_suite_is_rejected (test_harness.HarnessTests.test_removed_prototype_suite_is_rejected) ... ok
+test_repeated_cleanup_after_parent_exit_accepts_verified_darwin_eperm (test_harness.HarnessTests.test_repeated_cleanup_after_parent_exit_accepts_verified_darwin_eperm) ... ok
+test_suite_size_boundary (test_harness.HarnessTests.test_suite_size_boundary) ... ok
+test_temporary_directory_removed_after_success_and_failure (test_harness.HarnessTests.test_temporary_directory_removed_after_success_and_failure) ... ok
+test_timeout_handles_candidate_that_does_not_read_large_stdin (test_harness.HarnessTests.test_timeout_handles_candidate_that_does_not_read_large_stdin) ... ok
+test_timeout_kills_same_group_descendants (test_harness.HarnessTests.test_timeout_kills_same_group_descendants) ... ok
+test_timeout_retains_progress_before_stall (test_harness.HarnessTests.test_timeout_retains_progress_before_stall) ... ok
+test_unexpected_prompt_fails_exact_output (test_harness.HarnessTests.test_unexpected_prompt_fails_exact_output) ... ok
+test_unknown_case_filter_fails (test_harness.HarnessTests.test_unknown_case_filter_fails) ... ok
+test_acl_matrix_denials_and_operations_are_independent (test_host_harness.HostEvidenceTests.test_acl_matrix_denials_and_operations_are_independent) ... ok
+test_acl_residual_precedence_and_creation_grants_remain_strict (test_host_harness.HostEvidenceTests.test_acl_residual_precedence_and_creation_grants_remain_strict) ... ok
+test_acl_setup_mismatch_cannot_be_utility_evidence (test_host_harness.HostEvidenceTests.test_acl_setup_mismatch_cannot_be_utility_evidence) ... ok
+test_binary_printf_regression_has_no_known_gap_allowance (test_host_harness.HostEvidenceTests.test_binary_printf_regression_has_no_known_gap_allowance) ... ok
+test_chmod_probe_cannot_accept_false_grants_or_unmeasured_identity (test_host_harness.HostEvidenceTests.test_chmod_probe_cannot_accept_false_grants_or_unmeasured_identity) ... ok
+test_fixture_mount_identity_uses_longest_component_match (test_host_harness.HostEvidenceTests.test_fixture_mount_identity_uses_longest_component_match) ... ok
+test_known_kill_gap_requires_exact_signature (test_host_harness.HostEvidenceTests.test_known_kill_gap_requires_exact_signature) ... ok
+test_malformed_acl_metadata_is_a_recordable_setup_failure (test_host_harness.HostEvidenceTests.test_malformed_acl_metadata_is_a_recordable_setup_failure) ... ok
+test_multiple_group_unequal_grants_remain_strict (test_host_harness.HostEvidenceTests.test_multiple_group_unequal_grants_remain_strict) ... ok
+test_namespace_identity_preserves_maps_and_setgroups_policy (test_host_harness.HostEvidenceTests.test_namespace_identity_preserves_maps_and_setgroups_policy) ... ok
+test_native_gap_is_not_a_linux_allowance (test_host_harness.HostEvidenceTests.test_native_gap_is_not_a_linux_allowance) ... ok
+test_numbered_alternatives_require_consistent_streams_and_status (test_host_harness.HostEvidenceTests.test_numbered_alternatives_require_consistent_streams_and_status) ... ok
+test_residual_capabilities_are_distinct_and_have_provenance (test_host_harness.HostEvidenceTests.test_residual_capabilities_are_distinct_and_have_provenance) ... ok
+test_sanitizer_cannot_satisfy_a_diagnostic_predicate (test_host_harness.HostEvidenceTests.test_sanitizer_cannot_satisfy_a_diagnostic_predicate) ... ok
+test_setup_failure_retains_acl_diagnostic_and_cannot_pass (test_host_harness.HostEvidenceTests.test_setup_failure_retains_acl_diagnostic_and_cannot_pass) ... ok
+test_setup_timeout_retains_diagnostic_and_cannot_pass (test_host_harness.HostEvidenceTests.test_setup_timeout_retains_diagnostic_and_cannot_pass) ... ok
+test_status_predicates_do_not_accept_process_signal_death (test_host_harness.HostEvidenceTests.test_status_predicates_do_not_accept_process_signal_death) ... ok
+test_unequal_acl_grant_failure_stays_fatal (test_host_harness.HostEvidenceTests.test_unequal_acl_grant_failure_stays_fatal) ... ok
+test_candidate_owns_a_controlling_terminal_with_fixed_attributes (test_pty_harness.PtyHarnessTests.test_candidate_owns_a_controlling_terminal_with_fixed_attributes) ... ok
+test_controlling_terminal_unavailable_cannot_hide_teardown_failure (test_pty_harness.PtyHarnessTests.test_controlling_terminal_unavailable_cannot_hide_teardown_failure) ... ok
+test_environment_and_resource_limits_match_pipe_transport (test_pty_harness.PtyHarnessTests.test_environment_and_resource_limits_match_pipe_transport) ... ok
+test_exit_before_remaining_steps_is_not_a_false_success (test_pty_harness.PtyHarnessTests.test_exit_before_remaining_steps_is_not_a_false_success) ... ok
+test_expect_cursor_does_not_reuse_an_earlier_match (test_pty_harness.PtyHarnessTests.test_expect_cursor_does_not_reuse_an_earlier_match) ... ok
+test_expected_output_and_status_mismatches_are_actionable (test_pty_harness.PtyHarnessTests.test_expected_output_and_status_mismatches_are_actionable) ... ok
+test_foreground_child_stops_continues_and_returns_terminal (test_pty_harness.PtyHarnessTests.test_foreground_child_stops_continues_and_returns_terminal) ... ok
+test_foreground_mismatch_is_reported_and_cleans_leader (test_pty_harness.PtyHarnessTests.test_foreground_mismatch_is_reported_and_cleans_leader) ... ok
+test_hang_timeout_is_bounded_and_cleans_leader (test_pty_harness.PtyHarnessTests.test_hang_timeout_is_bounded_and_cleans_leader) ... ok
+test_invalid_pty_schema_has_scoped_errors (test_pty_harness.PtyHarnessTests.test_invalid_pty_schema_has_scoped_errors) ... ok
+test_large_send_to_nonreading_candidate_does_not_escape_timeout (test_pty_harness.PtyHarnessTests.test_large_send_to_nonreading_candidate_does_not_escape_timeout) ... ok
+test_output_flood_is_bounded_and_cleans_processes (test_pty_harness.PtyHarnessTests.test_output_flood_is_bounded_and_cleans_processes) ... ok
+test_prompt_input_merged_output_status_and_files (test_pty_harness.PtyHarnessTests.test_prompt_input_merged_output_status_and_files) ... ok
+test_signal_action_targets_terminal_foreground_group (test_pty_harness.PtyHarnessTests.test_signal_action_targets_terminal_foreground_group) ... ok
+test_signal_reaches_foreground_group_after_its_leader_is_reaped (test_pty_harness.PtyHarnessTests.test_signal_reaches_foreground_group_after_its_leader_is_reaped) ... ok
+test_slow_snapshot_has_budget_and_reap_has_its_own_deadline (test_pty_harness.PtyHarnessTests.test_slow_snapshot_has_budget_and_reap_has_its_own_deadline) ... ok
+test_snapshot_failure_reports_teardown_error_and_reaps_leader (test_pty_harness.PtyHarnessTests.test_snapshot_failure_reports_teardown_error_and_reaps_leader) ... ok
+test_steps_share_one_deadline (test_pty_harness.PtyHarnessTests.test_steps_share_one_deadline) ... ok
+test_successful_leader_exit_cleans_background_group (test_pty_harness.PtyHarnessTests.test_successful_leader_exit_cleans_background_group) ... ok
+test_teardown_failure_cannot_be_reported_as_success (test_pty_harness.PtyHarnessTests.test_teardown_failure_cannot_be_reported_as_success) ... ok
+test_temporary_directory_removed_after_success_and_failure (test_pty_harness.PtyHarnessTests.test_temporary_directory_removed_after_success_and_failure) ... ok
+test_terminal_control_characters_deliver_interrupt_quit_and_eof (test_pty_harness.PtyHarnessTests.test_terminal_control_characters_deliver_interrupt_quit_and_eof) ... ok
+test_terminal_descriptors_closed_after_launch_and_configuration_errors (test_pty_harness.PtyHarnessTests.test_terminal_descriptors_closed_after_launch_and_configuration_errors) ... ok
+test_terminal_descriptors_closed_after_success_and_failures (test_pty_harness.PtyHarnessTests.test_terminal_descriptors_closed_after_success_and_failures) ... ok
+test_terminal_eof_does_not_hide_a_running_candidate (test_pty_harness.PtyHarnessTests.test_terminal_eof_does_not_hide_a_running_candidate) ... ok
+test_timeout_cleans_background_group_ignoring_hup_and_term (test_pty_harness.PtyHarnessTests.test_timeout_cleans_background_group_ignoring_hup_and_term) ... ok
+test_timeout_cleans_stopped_foreground_job_and_waiting_leader (test_pty_harness.PtyHarnessTests.test_timeout_cleans_stopped_foreground_job_and_waiting_leader) ... ok
+test_unavailable_terminal_is_a_scoped_skip (test_pty_harness.PtyHarnessTests.test_unavailable_terminal_is_a_scoped_skip) ... ok
+
+----------------------------------------------------------------------
+Ran 86 tests in 20.552s
+
+OK

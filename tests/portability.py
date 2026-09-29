@@ -55,7 +55,7 @@ def cases(selected):
 
     if selected is None:
         print("SKIP: 18 UTF-8 locale cases: no C.UTF-8 or en_US.UTF-8 locale "
-              "installed (owner CSH-042)",
+              "installed (owner CSH-067)",
               flush=True)
     else:
         for pattern in ("caf?", "caf[[:alpha:]]"):
@@ -181,7 +181,7 @@ def main():
         passed += 1
         print("PASS: sparse file pathname expansion")
     for reason in skips:
-        print("SKIP:", reason, "(owner CSH-042)")
+        print("SKIP:", reason, "(owner CSH-067)")
     print(f"Result: {passed} passed, {failed} failed, "
           f"{(0 if selected else 18) + len(skips) + multibyte_skips} skipped (cases/capability groups)")
     return 1 if failed else 0

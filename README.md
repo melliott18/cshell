@@ -77,6 +77,7 @@ make test-jobs-signals # Combined jobs, signals, traps and terminal evidence
 make test-jobs-pty # Process groups, terminal signals, stop/resume, and restoration
 make test-runtime  # Cross-mode invocation/status behavior
 make test-redirection-offset # Sparse-file offset and resource-limit boundaries
+make test-locale-pathname # Shell locale, pathname and controlled read-error evidence
 make test-portability # Locale, large input, sparse files, bounded generated cases
 make test-prompt   # Interrupted and partial primary/continuation prompt writes
 make test-runtime-pty # Shell prompts, EOF, and exit errors on a terminal

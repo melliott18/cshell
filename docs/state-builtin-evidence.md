@@ -152,3 +152,8 @@ Conditions not covered by the named assertions remain unverified; the named
 expansion, signal, option and host owners retain their existing obligations.
 Neither a capability skip nor an unspecified policy is a profile exclusion. The CSH-012 compliance gate
 stays closed.
+
+[CSH-067](locale-pathname-qualification.md) qualifies the finite shell locale
+and pathname residuals, including case, read and alias utilities. Its condition
+map assigns external prerequisites P1–P6 without promoting whole families or
+counting unavailable capabilities as passes.

@@ -114,7 +114,7 @@ def run(binary, helper):
                             passed += 1
         print(f"Checked {label} raw-byte runtime witnesses in -c, file and stdin modes")
     for reason in skips:
-        print("SKIP: CSH-053 " + reason)
+        print("SKIP: CSH-053 " + reason + " (residual owner CSH-067)")
     print(f"CSH-053: {passed} passed, {failed} failed, {len(skips)} capability skips")
     return passed, failed, len(skips)
 

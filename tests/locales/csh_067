@@ -1,0 +1,40 @@
+comment_char %
+escape_char /
+% CSH-067 supplied locale: Czech collation with en_US other categories.
+% cs_CZ supplies the ch element and the a/A primary-weight equivalence class.
+LC_CTYPE
+copy "en_US"
+END LC_CTYPE
+LC_COLLATE
+copy "cs_CZ"
+END LC_COLLATE
+LC_MONETARY
+copy "en_US"
+END LC_MONETARY
+LC_NUMERIC
+copy "en_US"
+END LC_NUMERIC
+LC_TIME
+copy "en_US"
+END LC_TIME
+LC_MESSAGES
+copy "en_US"
+END LC_MESSAGES
+LC_PAPER
+copy "en_US"
+END LC_PAPER
+LC_NAME
+copy "en_US"
+END LC_NAME
+LC_ADDRESS
+copy "en_US"
+END LC_ADDRESS
+LC_TELEPHONE
+copy "en_US"
+END LC_TELEPHONE
+LC_MEASUREMENT
+copy "en_US"
+END LC_MEASUREMENT
+LC_IDENTIFICATION
+copy "en_US"
+END LC_IDENTIFICATION

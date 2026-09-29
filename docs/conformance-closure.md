@@ -33,7 +33,7 @@ audit to close while those implementation tickets remain open.
 | [CSH-068 / #137](tickets/CSH-068-host-system-contract-inventory.md), with [completed CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md) | Qualification of thirty retained selected host residuals and conditional prerequisites; CSH-064's bounded capability work and project probe-cleanup repair are done. |
 | [CSH-065 / #134](tickets/CSH-065-interactive-parser-recovery.md) | Repair interactive main-parser recovery and integrate its strict reproducers into the normal regression suite. |
 | [CSH-066 / #135](tickets/CSH-066-resource-bounded-nesting.md) | Remove arbitrary parser/executor/evaluation/expansion limits with safe resource handling. |
-| [CSH-067 / #136](tickets/CSH-067-shell-locale-pathname-qualification.md) | Qualify the finite shell locale/pattern/pathname conditions and repair demonstrated violations. |
+| [CSH-067 / #136](tickets/CSH-067-shell-locale-pathname-qualification.md) | [Finite qualification](locale-pathname-qualification.md) supplies public and instrumented witnesses, applicability decisions and external prerequisites P1–P6; broader host capability claims remain conditional. |
 | [CSH-068 / #137](tickets/CSH-068-host-system-contract-inventory.md) | Supply and qualify the explicitly enumerated external utility contracts, or transfer individual contracts to narrower open owners. Inventory work is complete; availability does not establish these contracts. |
 | [CSH-069 / #138](tickets/CSH-069-historical-failure-dispositions.md) | Diagnose/triage H01–H11 and recurrence; audit-only acceptance does not establish root causes or repair the context-fixture assertion. |
 
