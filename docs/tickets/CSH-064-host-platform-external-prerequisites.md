@@ -1,6 +1,6 @@
 # CSH-064: Supply external prerequisites for remaining host contracts
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
@@ -146,7 +146,9 @@ Fresh native macOS and Docker Linux validation each passes 3905 runtime
 assertions, 64 terminal checks and 86 harness self-tests. The fixed overlay
 probe passes all eight checks; fakeowner retains three passes and five strict
 failures. No C source changed in the repair. All five scoped acceptance criteria
-now have supporting evidence; the repair is ready for integration.
+have supporting evidence. The repair was integrated by
+[PR #140](https://github.com/melliott18/cshell/pull/140) as `5b86615`; CSH-064 is
+accepted and complete for its scoped work.
 
 Acceptance is bounded to the supplied capability work and the repaired harness.
 The original scope explicitly permits individually retained external conditions.
@@ -155,3 +157,10 @@ recorded with their owners; closure does not qualify failed profiles, erase
 vendor failures, supply Darwin/hardware, or promote a POSIX utility family.
 Future qualification must supply a concrete new capability and reference those
 records; it is not an unperformed requirement of this completed bounded work.
+
+
+Final disposition: **accepted / done** after integration of the cleanup repair.
+The original implementation (#131), reconciliation (#133), repaired regression
+(#140), retained failed records and passing validation remain linked above.
+Issue #127 can close as completed; no external failure is converted into a pass
+and no parent conformance gate is opened by this ticket's closure.
