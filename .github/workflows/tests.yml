@@ -34,7 +34,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential locales ed busybox acl
+          sudo apt-get install -y build-essential locales ed busybox acl file pax
           sudo localedef -i en_US -f UTF-8 en_US.UTF-8
           sudo localedef -i fr_FR -f UTF-8 fr_FR.UTF-8
           sudo localedef -i de_DE -f UTF-8 de_DE.UTF-8

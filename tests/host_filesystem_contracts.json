@@ -1,0 +1,1714 @@
+{
+  "schema_version": 1,
+  "ticket": "CSH-072",
+  "qualification": "case-scoped only; audit failures never qualify",
+  "common_defaults": {
+    "U-034": "Each of the 21 actual providers is inventoried and directly execed, alongside public cshell string/file/stdin dispatch; pwd builtin and external exec remain distinct.",
+    "U-040": "Controlled PATH, LC_ALL, TZ, umask and resource limits; independent effects and positive-error predicates. Common signal, locale, utility-syntax and environmental defaults outside the listed assertions remain individually open under each utility owner."
+  },
+  "utilities": [
+    {
+      "utility": "basename",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/basename.html",
+      "source_sha256": "76c256427a758fc4388559e7a71fcc9351ed0cfb19afc5af07d38c4cf25c8ab2",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "basename/path-6-620a",
+        "basename/path-1-2f0a",
+        "basename/path-5-706c61696e0a",
+        "basename/path-4-620a",
+        "basename/suffix",
+        "basename/entire-suffix",
+        "basename/nonmatching-suffix"
+      ],
+      "remaining": "Empty and double-slash policy, multibyte suffixes, argument/stdio exhaustion and diagnostic locales remain unqualified.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "Empty and double-slash policy, multibyte suffixes, argument/stdio exhaustion and diagnostic locales remain unqualified."
+        },
+        "OPTIONS": {
+          "disposition": "Empty and double-slash policy, multibyte suffixes, argument/stdio exhaustion and diagnostic locales remain unqualified."
+        },
+        "OPERANDS": {
+          "disposition": "Empty and double-slash policy, multibyte suffixes, argument/stdio exhaustion and diagnostic locales remain unqualified."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "Empty and double-slash policy, multibyte suffixes, argument/stdio exhaustion and diagnostic locales remain unqualified."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "dirname",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html",
+      "source_sha256": "f218ded1508843cdd90913db7cd56ee938d43f67050d6f0645d88cbf916ec6c4",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "dirname/0",
+        "dirname/1",
+        "dirname/2",
+        "dirname/3"
+      ],
+      "remaining": "Empty/double-slash policy, redundant slash combinations, multibyte paths and write/resource errors remain unqualified.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "Empty/double-slash policy, redundant slash combinations, multibyte paths and write/resource errors remain unqualified."
+        },
+        "OPTIONS": {
+          "disposition": "Empty/double-slash policy, redundant slash combinations, multibyte paths and write/resource errors remain unqualified."
+        },
+        "OPERANDS": {
+          "disposition": "Empty/double-slash policy, redundant slash combinations, multibyte paths and write/resource errors remain unqualified."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "Empty/double-slash policy, redundant slash combinations, multibyte paths and write/resource errors remain unqualified."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "cp",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html",
+      "source_sha256": "777d1c06255117e8ea9d8c5ede3996ef77b7c5ddecd1cbf9e584deef239a5836",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "cp/bytes",
+        "cp/preserve",
+        "cp/recursive-physical",
+        "cp/symlink-follow",
+        "cp/same-file",
+        "cp/missing"
+      ],
+      "remaining": "Interactive overwrite, -H/-L graph traversal, cycles, special files, cross-filesystem attributes, ACL/ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "Interactive overwrite, -H/-L graph traversal, cycles, special files, cross-filesystem attributes, ACL/ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified."
+        },
+        "OPTIONS": {
+          "disposition": "Interactive overwrite, -H/-L graph traversal, cycles, special files, cross-filesystem attributes, ACL/ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified."
+        },
+        "OPERANDS": {
+          "disposition": "Interactive overwrite, -H/-L graph traversal, cycles, special files, cross-filesystem attributes, ACL/ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "Interactive overwrite, -H/-L graph traversal, cycles, special files, cross-filesystem attributes, ACL/ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "dd",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dd.html",
+      "source_sha256": "876cebeba49456b8e22b53057bc861120f092c36522193823685cea8b821e249",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "dd/copy",
+        "dd/skip",
+        "dd/swab",
+        "dd/file-size-fault",
+        "dd/missing"
+      ],
+      "remaining": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified; RLIMIT_FSIZE is not disk exhaustion.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified; RLIMIT_FSIZE is not disk exhaustion."
+        },
+        "OPTIONS": {
+          "disposition": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified; RLIMIT_FSIZE is not disk exhaustion."
+        },
+        "OPERANDS": {
+          "disposition": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified; RLIMIT_FSIZE is not disk exhaustion."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified; RLIMIT_FSIZE is not disk exhaustion."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "df",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html",
+      "source_sha256": "afbeec1b5e25c2ebf0de45fcffdcff03cf9f3bf4aa6960fc09b426cfc1a45a11",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "df/portable-k",
+        "df/missing"
+      ],
+      "remaining": "Unspecified/default and 512-byte formats, all-filesystem enumeration, quotas, privilege-dependent availability and live capacity boundaries need a disposable filesystem oracle.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "Unspecified/default and 512-byte formats, all-filesystem enumeration, quotas, privilege-dependent availability and live capacity boundaries need a disposable filesystem oracle."
+        },
+        "OPTIONS": {
+          "disposition": "Unspecified/default and 512-byte formats, all-filesystem enumeration, quotas, privilege-dependent availability and live capacity boundaries need a disposable filesystem oracle."
+        },
+        "OPERANDS": {
+          "disposition": "Unspecified/default and 512-byte formats, all-filesystem enumeration, quotas, privilege-dependent availability and live capacity boundaries need a disposable filesystem oracle."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "Unspecified/default and 512-byte formats, all-filesystem enumeration, quotas, privilege-dependent availability and live capacity boundaries need a disposable filesystem oracle."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "du",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html",
+      "source_sha256": "659c1410d265ef1d4056a784611c6af0df45495f99ff9abfbdbc3c9eb516c100",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "du/file-k",
+        "du/missing"
+      ],
+      "remaining": "Recursive allocation totals, hard-link deduplication, -a/-s/-x/-H/-L, unreadable subtrees, shared extents and overflow need independent filesystem-specific accounting.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "Recursive allocation totals, hard-link deduplication, -a/-s/-x/-H/-L, unreadable subtrees, shared extents and overflow need independent filesystem-specific accounting."
+        },
+        "OPTIONS": {
+          "disposition": "Recursive allocation totals, hard-link deduplication, -a/-s/-x/-H/-L, unreadable subtrees, shared extents and overflow need independent filesystem-specific accounting."
+        },
+        "OPERANDS": {
+          "disposition": "Recursive allocation totals, hard-link deduplication, -a/-s/-x/-H/-L, unreadable subtrees, shared extents and overflow need independent filesystem-specific accounting."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "Recursive allocation totals, hard-link deduplication, -a/-s/-x/-H/-L, unreadable subtrees, shared extents and overflow need independent filesystem-specific accounting."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "file",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html",
+      "source_sha256": "c2e7590cab2534dbf4a0b3fbd8cc77312990c495c6a448243ca63c14074067bb",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "file/empty",
+        "file/directory"
+      ],
+      "remaining": "Non-empty/magic/encoding classification, -d/-h/-i/-M/-m, magic-file parsing/precedence, symlink errors and locale-dependent descriptions require supplied magic databases and independent samples.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "Non-empty/magic/encoding classification, -d/-h/-i/-M/-m, magic-file parsing/precedence, symlink errors and locale-dependent descriptions require supplied magic databases and independent samples."
+        },
+        "OPTIONS": {
+          "disposition": "Non-empty/magic/encoding classification, -d/-h/-i/-M/-m, magic-file parsing/precedence, symlink errors and locale-dependent descriptions require supplied magic databases and independent samples."
+        },
+        "OPERANDS": {
+          "disposition": "Non-empty/magic/encoding classification, -d/-h/-i/-M/-m, magic-file parsing/precedence, symlink errors and locale-dependent descriptions require supplied magic databases and independent samples."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "Non-empty/magic/encoding classification, -d/-h/-i/-M/-m, magic-file parsing/precedence, symlink errors and locale-dependent descriptions require supplied magic databases and independent samples."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "find",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html",
+      "source_sha256": "6293363b063c9de0bc4d190b62a09d3cd03906a1fa40d3ddc52ecd6a09a62502",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "find/regular",
+        "find/link",
+        "find/prune",
+        "find/depth",
+        "find/deep-utf8",
+        "find/missing"
+      ],
+      "remaining": "Remaining expression/actions and precedence, batched exec, time/size/permissions, -H/-L cycles, descriptor exhaustion and non-UTF-8 locale matching remain unqualified.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "Remaining expression/actions and precedence, batched exec, time/size/permissions, -H/-L cycles, descriptor exhaustion and non-UTF-8 locale matching remain unqualified."
+        },
+        "OPTIONS": {
+          "disposition": "Remaining expression/actions and precedence, batched exec, time/size/permissions, -H/-L cycles, descriptor exhaustion and non-UTF-8 locale matching remain unqualified."
+        },
+        "OPERANDS": {
+          "disposition": "Remaining expression/actions and precedence, batched exec, time/size/permissions, -H/-L cycles, descriptor exhaustion and non-UTF-8 locale matching remain unqualified."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "Remaining expression/actions and precedence, batched exec, time/size/permissions, -H/-L cycles, descriptor exhaustion and non-UTF-8 locale matching remain unqualified."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "ln",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html",
+      "source_sha256": "c4e793bb510483faef398e4c16fb7adc2d60b99c712ea7e6b5f2751a4c6c453c",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "ln/hard",
+        "ln/symbolic",
+        "ln/replace",
+        "ln/missing"
+      ],
+      "remaining": "Interactive replacement, directory/symlink option combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "Interactive replacement, directory/symlink option combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified."
+        },
+        "OPTIONS": {
+          "disposition": "Interactive replacement, directory/symlink option combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified."
+        },
+        "OPERANDS": {
+          "disposition": "Interactive replacement, directory/symlink option combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "Interactive replacement, directory/symlink option combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "ls",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
+      "source_sha256": "cd4db85f09dbadf3d529b1bf6a8c157806759c5a22d3ca616aad0cc0363f07bc",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "ls/512-c-order",
+        "ls/hidden",
+        "ls/missing"
+      ],
+      "remaining": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified."
+        },
+        "OPTIONS": {
+          "disposition": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified."
+        },
+        "OPERANDS": {
+          "disposition": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "mkdir",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html",
+      "source_sha256": "7d37d11b3829422919fbc928cf3e4e0e2c9ba3d0eaba2e2e36362e80f4086576",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "mkdir/parents",
+        "mkdir/mode",
+        "mkdir/existing-parents",
+        "mkdir/existing-error"
+      ],
+      "remaining": "Symbolic modes, intermediate-parent umask details, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "Symbolic modes, intermediate-parent umask details, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified."
+        },
+        "OPTIONS": {
+          "disposition": "Symbolic modes, intermediate-parent umask details, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified."
+        },
+        "OPERANDS": {
+          "disposition": "Symbolic modes, intermediate-parent umask details, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "Symbolic modes, intermediate-parent umask details, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "mkfifo",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html",
+      "source_sha256": "508f579e25f7ac32d94c2f57aef1a12448e4984fc60d467120cb2bb66157c3ed",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "mkfifo/mode"
+      ],
+      "remaining": "Default/symbolic modes, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified; FIFO data transfer is outside creation witness.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "Default/symbolic modes, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified; FIFO data transfer is outside creation witness."
+        },
+        "OPTIONS": {
+          "disposition": "Default/symbolic modes, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified; FIFO data transfer is outside creation witness."
+        },
+        "OPERANDS": {
+          "disposition": "Default/symbolic modes, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified; FIFO data transfer is outside creation witness."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "Default/symbolic modes, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified; FIFO data transfer is outside creation witness."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "mv",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mv.html",
+      "source_sha256": "c17c6279d2fdf408e2aa82bd674d5eff5130f391361b2e175e4862d6c4a89662",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "mv/rename",
+        "mv/replace",
+        "mv/symlink",
+        "mv/missing"
+      ],
+      "remaining": "Interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "Interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified."
+        },
+        "OPTIONS": {
+          "disposition": "Interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified."
+        },
+        "OPERANDS": {
+          "disposition": "Interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "Interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "pathchk",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html",
+      "source_sha256": "ce446d31316645a78d6aa4df6ff45829afbdbd3d667c84ae2c6a3bdfe0ce825a",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "pathchk/portable",
+        "pathchk/portable-too-long",
+        "pathchk/nonportable-byte",
+        "pathchk/name-max"
+      ],
+      "remaining": "-P and option combinations, inaccessible existing prefixes, empty operands, path total limits and alternate filesystems/character repertoires remain unqualified.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "-P and option combinations, inaccessible existing prefixes, empty operands, path total limits and alternate filesystems/character repertoires remain unqualified."
+        },
+        "OPTIONS": {
+          "disposition": "-P and option combinations, inaccessible existing prefixes, empty operands, path total limits and alternate filesystems/character repertoires remain unqualified."
+        },
+        "OPERANDS": {
+          "disposition": "-P and option combinations, inaccessible existing prefixes, empty operands, path total limits and alternate filesystems/character repertoires remain unqualified."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "-P and option combinations, inaccessible existing prefixes, empty operands, path total limits and alternate filesystems/character repertoires remain unqualified."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "pax",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html",
+      "source_sha256": "398b008eab3110cd482eee2e62797adaf915405e488b1f36bc73fc2a29591efb",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "pax/copy-tree",
+        "pax/archive-write",
+        "pax/archive-read",
+        "pax/missing"
+      ],
+      "remaining": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "List Mode Format Specifications",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "pax Interchange Format",
+        "pax Header Block",
+        "pax Extended Header",
+        "pax Extended Header Keyword Precedence",
+        "pax Extended Header File Times",
+        "ustar Interchange Format",
+        "cpio Interchange Format",
+        "cpio Header",
+        "cpio Filename",
+        "cpio File Data",
+        "cpio Special Entries",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+        },
+        "OPTIONS": {
+          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+        },
+        "List Mode Format Specifications": {
+          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+        },
+        "OPERANDS": {
+          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+        },
+        "pax Interchange Format": {
+          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+        },
+        "pax Header Block": {
+          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+        },
+        "pax Extended Header": {
+          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+        },
+        "pax Extended Header Keyword Precedence": {
+          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+        },
+        "pax Extended Header File Times": {
+          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+        },
+        "ustar Interchange Format": {
+          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+        },
+        "cpio Interchange Format": {
+          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+        },
+        "cpio Header": {
+          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+        },
+        "cpio Filename": {
+          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+        },
+        "cpio File Data": {
+          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+        },
+        "cpio Special Entries": {
+          "disposition": "pax/cpio formats and extended headers, list/append/options, pattern substitution, hard links/special files, identities, character-set conversion, multi-volume, truncation and recovery remain unqualified. Only one-member ustar encoding/decoding and copy links are witnessed."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "pwd",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html",
+      "source_sha256": "6c0724e219d469ac68640fc07c825a95e090931483b9cee2d089dec136efd7f6",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "pwd/physical",
+        "pwd/physical-name-boundary"
+      ],
+      "remaining": "Logical/physical option precedence, inaccessible ancestors, deleted directories, total PATH_MAX and allocation/stdio failures remain unqualified by this new subset; historical witnesses remain separate.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "Logical/physical option precedence, inaccessible ancestors, deleted directories, total PATH_MAX and allocation/stdio failures remain unqualified by this new subset; historical witnesses remain separate."
+        },
+        "OPTIONS": {
+          "disposition": "Logical/physical option precedence, inaccessible ancestors, deleted directories, total PATH_MAX and allocation/stdio failures remain unqualified by this new subset; historical witnesses remain separate."
+        },
+        "OPERANDS": {
+          "disposition": "Logical/physical option precedence, inaccessible ancestors, deleted directories, total PATH_MAX and allocation/stdio failures remain unqualified by this new subset; historical witnesses remain separate."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "Logical/physical option precedence, inaccessible ancestors, deleted directories, total PATH_MAX and allocation/stdio failures remain unqualified by this new subset; historical witnesses remain separate."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "readlink",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html",
+      "source_sha256": "b8af59cd805ca79ad73dab35ad008a55b9f8bbef0fc84ce7334ffac7b8f0f4dc",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "readlink/link",
+        "readlink/no-newline",
+        "readlink/nonlink-diagnostic",
+        "readlink/missing-diagnostic",
+        "readlink/long-bytes",
+        "readlink/dash-operand",
+        "readlink/stdout-error",
+        "readlink/invalid-option"
+      ],
+      "remaining": "The selected local provider repairs the stock nonlink diagnostic and checks dynamic 600-byte links, -n, --, invalid operands and closed stdout. Arbitrary byte/locale combinations, allocation failure and true filesystem limits remain unqualified.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "The selected local provider repairs the stock nonlink diagnostic and checks dynamic 600-byte links, -n, --, invalid operands and closed stdout. Arbitrary byte/locale combinations, allocation failure and true filesystem limits remain unqualified."
+        },
+        "OPTIONS": {
+          "disposition": "The selected local provider repairs the stock nonlink diagnostic and checks dynamic 600-byte links, -n, --, invalid operands and closed stdout. Arbitrary byte/locale combinations, allocation failure and true filesystem limits remain unqualified."
+        },
+        "OPERANDS": {
+          "disposition": "The selected local provider repairs the stock nonlink diagnostic and checks dynamic 600-byte links, -n, --, invalid operands and closed stdout. Arbitrary byte/locale combinations, allocation failure and true filesystem limits remain unqualified."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "The selected local provider repairs the stock nonlink diagnostic and checks dynamic 600-byte links, -n, --, invalid operands and closed stdout. Arbitrary byte/locale combinations, allocation failure and true filesystem limits remain unqualified."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "realpath",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html",
+      "source_sha256": "dfded63f96378a20c8952547dea666f07d0006e8868fa37a883b8553de684cc5",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "realpath/existing",
+        "realpath/missing-E",
+        "realpath/existing-e",
+        "realpath/missing-e-error",
+        "realpath/missing-prefix-error",
+        "realpath/missing-dotdot-error",
+        "realpath/missing-trailing-slash",
+        "realpath/regular-trailing-slash-error",
+        "realpath/regular-dotdot-error",
+        "realpath/regular-prefix-error",
+        "realpath/dangling-E",
+        "realpath/dangling-prefix-error",
+        "realpath/symlink-dotdot",
+        "realpath/last-E",
+        "realpath/last-e",
+        "realpath/loop-error",
+        "realpath/empty-error",
+        "realpath/stdout-error",
+        "realpath/invalid-option"
+      ],
+      "remaining": "The selected local provider repairs -e/-E, validates directory components despite Darwin libc trailing-slash behavior, and checks dangling links, missing prefixes, dot-dot, loops, last-option precedence and closed stdout. Permission/namespace races, allocation faults, double-leading-slash policy and exact resource boundaries remain unqualified. Missing-final fallback permits at most 40 link expansions.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "The selected local provider repairs -e/-E, validates directory components despite Darwin libc trailing-slash behavior, and checks dangling links, missing prefixes, dot-dot, loops, last-option precedence and closed stdout. Permission/namespace races, allocation faults, double-leading-slash policy and exact resource boundaries remain unqualified. Missing-final fallback permits at most 40 link expansions."
+        },
+        "OPTIONS": {
+          "disposition": "The selected local provider repairs -e/-E, validates directory components despite Darwin libc trailing-slash behavior, and checks dangling links, missing prefixes, dot-dot, loops, last-option precedence and closed stdout. Permission/namespace races, allocation faults, double-leading-slash policy and exact resource boundaries remain unqualified. Missing-final fallback permits at most 40 link expansions."
+        },
+        "OPERANDS": {
+          "disposition": "The selected local provider repairs -e/-E, validates directory components despite Darwin libc trailing-slash behavior, and checks dangling links, missing prefixes, dot-dot, loops, last-option precedence and closed stdout. Permission/namespace races, allocation faults, double-leading-slash policy and exact resource boundaries remain unqualified. Missing-final fallback permits at most 40 link expansions."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "The selected local provider repairs -e/-E, validates directory components despite Darwin libc trailing-slash behavior, and checks dangling links, missing prefixes, dot-dot, loops, last-option precedence and closed stdout. Permission/namespace races, allocation faults, double-leading-slash policy and exact resource boundaries remain unqualified. Missing-final fallback permits at most 40 link expansions."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "rm",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html",
+      "source_sha256": "7ea788ea4ed4cc0f309bfc9681b650da0cbcec9d535604cb12bfd57fbddb9839",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "rm/file",
+        "rm/symlink",
+        "rm/recursive",
+        "rm/force-missing",
+        "rm/missing",
+        "rm/terminal-y",
+        "rm/terminal-n"
+      ],
+      "remaining": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses."
+        },
+        "OPTIONS": {
+          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses."
+        },
+        "OPERANDS": {
+          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "rmdir",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html",
+      "source_sha256": "44451db47f43a6dfb058b6e8f71aee7db1fec99961573246380f7deb0c54bc9f",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "rmdir/empty",
+        "rmdir/nonempty",
+        "rmdir/parents",
+        "rmdir/missing"
+      ],
+      "remaining": "Symbolic-link/ancestor permissions, operand continuation, total depth/path boundaries and filesystem errors remain unqualified.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "Symbolic-link/ancestor permissions, operand continuation, total depth/path boundaries and filesystem errors remain unqualified."
+        },
+        "OPTIONS": {
+          "disposition": "Symbolic-link/ancestor permissions, operand continuation, total depth/path boundaries and filesystem errors remain unqualified."
+        },
+        "OPERANDS": {
+          "disposition": "Symbolic-link/ancestor permissions, operand continuation, total depth/path boundaries and filesystem errors remain unqualified."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "Symbolic-link/ancestor permissions, operand continuation, total depth/path boundaries and filesystem errors remain unqualified."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    },
+    {
+      "utility": "touch",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html",
+      "source_sha256": "ae8c1a8fc027372a6a50561b7c07bea8c30a471458ee72c00d7b35c039d756b7",
+      "owner": "CSH-079",
+      "full_contract_qualified": false,
+      "assertions": [
+        "touch/reference",
+        "touch/no-create",
+        "touch/timestamp"
+      ],
+      "remaining": "-a/-m isolation, -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified.",
+      "normative_headings": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDIN",
+        "INPUT FILES",
+        "ENVIRONMENT VARIABLES",
+        "ASYNCHRONOUS EVENTS",
+        "STDOUT",
+        "STDERR",
+        "OUTPUT FILES",
+        "EXTENDED DESCRIPTION",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ],
+      "sections": {
+        "NAME": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "SYNOPSIS": {
+          "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
+        },
+        "DESCRIPTION": {
+          "disposition": "-a/-m isolation, -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified."
+        },
+        "OPTIONS": {
+          "disposition": "-a/-m isolation, -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified."
+        },
+        "OPERANDS": {
+          "disposition": "-a/-m isolation, -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified."
+        },
+        "STDIN": {
+          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+        },
+        "INPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "ENVIRONMENT VARIABLES": {
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+        },
+        "ASYNCHRONOUS EVENTS": {
+          "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
+        },
+        "STDOUT": {
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+        },
+        "STDERR": {
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+        },
+        "OUTPUT FILES": {
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+        },
+        "EXTENDED DESCRIPTION": {
+          "disposition": "-a/-m isolation, -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified."
+        },
+        "EXIT STATUS": {
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+        },
+        "CONSEQUENCES OF ERRORS": {
+          "disposition": "Selected missing inputs, existing targets and dd RLIMIT_FSIZE are strict assertions. Real quota/ENOSPC/EIO, continuation and signal recovery require disposable fault environments and remain open."
+        }
+      }
+    }
+  ]
+}

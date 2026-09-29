@@ -47,9 +47,9 @@
       "prerequisite": "Supply disposable controlled credentials, privileged Darwin ACLs, and measured filesystem/namespace implementations; require actual read/write/execute controls alongside predicates. Preserve false grants, rejected grants, socket stat EINVAL and non-owner chmod failures independently."
     },
     {
-      "ticket": "CSH-072",
-      "path": "docs/tickets/CSH-072-host-filesystem-paths.md",
-      "title": "Qualify host filesystem and pathname utilities",
+      "ticket": "CSH-079",
+      "path": "docs/tickets/CSH-079-filesystem-remaining-contracts.md",
+      "title": "Qualify remaining filesystem provider and fault contracts",
       "utilities": [
         "basename",
         "dirname",
@@ -79,7 +79,7 @@
         "U-040/ls-size-collation",
         "U-040/rm-depth-mount-prompt"
       ],
-      "prerequisite": "Supply isolated filesystem fixtures for traversal, links, metadata, archive round trips, collation, quotas and I/O faults; measure boundaries without touching protected mounts or real disk contents."
+      "prerequisite": "Supply the individually listed filesystem, credential, quota, I/O, locale and archive capabilities in the CSH-072 clause map; preserve its strict subset and repaired pathname-provider regression tests."
     },
     {
       "ticket": "CSH-073",

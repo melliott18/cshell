@@ -481,7 +481,11 @@ build/host-printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/printf.c $(LDLIBS)
 
-host-profile: build/host-printf
+build/host-paths: tools/host-profile/paths.c
+	@mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+host-profile: build/host-printf build/host-paths
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
@@ -490,6 +494,7 @@ build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/pr
 
 test-host-profile: test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+	$(PYTHON) tests/host_filesystem.py ./cshell --audit --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-profile.json $(HOST_FILESYSTEM_FLAGS) $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 
 # Public entry point with only the command input read syscall instrumented.
 build/tests/command-read-input.o: src/input.c tests/command_read_faults.h $(INPUT_HEADERS)
@@ -616,3 +621,13 @@ test-locale-pathname: cshell build/tests/locale_probe build/tests/pathname_runti
 test-host-inventory:
 	$(PYTHON) tests/host_contract_inventory.py
 	$(PYTHON) tests/test_host_contract_inventory.py
+	$(PYTHON) tests/test_host_filesystem.py
+
+# CSH-072: independent direct-exec and public-runtime filesystem witnesses.
+.PHONY: test-host-filesystem test-host-filesystem-audit
+test-host-filesystem: cshell
+	$(PYTHON) -m unittest discover -s tests -p 'test_host_filesystem.py'
+	$(PYTHON) tests/host_filesystem.py ./cshell --record build/tests/host-filesystem.json $(HOST_FILESYSTEM_FLAGS)
+
+test-host-filesystem-audit: cshell
+	$(PYTHON) tests/host_filesystem.py ./cshell --audit --record build/tests/host-filesystem-audit.json $(HOST_FILESYSTEM_FLAGS)

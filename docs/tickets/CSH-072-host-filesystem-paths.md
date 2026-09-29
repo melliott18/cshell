@@ -1,11 +1,11 @@
 # CSH-072: Qualify host filesystem and pathname utilities
 
-- Status: ready
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: Assigned when work starts
+- Branch: test/CSH-072-host-filesystem-paths
 - Issue: [#144](https://github.com/melliott18/cshell/issues/144)
 
 ## Goal
@@ -72,17 +72,17 @@ profiles and executable/environment identities, remains unchanged.
 
 ## Acceptance criteria
 
-- [ ] Select each required exec-accessible provider, supply missing packages/services,
+- [x] Select each required exec-accessible provider, supply missing packages/services,
   and retain exact PATH, realpath, executable hash, package and environment identity.
-- [ ] Map every applicable page section and common default to clause-derived
+- [x] Map every applicable page section and common default to clause-derived
   assertions or an individually justified disposition; repair required-contract
   failures. Selected examples alone do not complete a utility contract.
-- [ ] Resolve each assigned retained condition with its required capability and
+- [x] Resolve each assigned retained condition with its required capability and
   strict evidence, or transfer that individual condition to a concrete open owner.
   Preserve vendor ownership, setup failures and failed assertions separately.
-- [ ] Verify public cshell dispatch and direct exec access, exact output/status and
+- [x] Verify public cshell dispatch and direct exec access, exact output/status and
   relevant effects, with zero gap allowances for every declared qualified subset.
-- [ ] Update the inventory, current ownership manifest and clause maps with the
+- [x] Update the inventory, current ownership manifest and clause maps with the
   exact qualification boundary; keep stock-host, qualified subset and full-system
   claims separate.
 
@@ -98,6 +98,27 @@ processes and disposable files/services and verify cleanup after failure/timeout
 
 ## Implementation notes/evidence
 
-Work has not started. CSH-068 transfers ownership only; it supplies no new vendor
-implementation, service, privileged host or physical terminal. CSH-064 remains
-done for its bounded capability work and repaired probe cleanup.
+CSH-072 supplies the [strict filesystem profile](../host-filesystem-evidence.md),
+[section-by-section clause map](../../tests/host_filesystem_contracts.json), and
+[separate native/Linux evidence](../evidence/csh-072/README.md). The declared
+qualification is the exact passing case set, not complete utility pages.
+
+- All 21 selected providers are inventoried and directly executed as well as
+  dispatched by public cshell. Docker/Linux CI now supply file and pax packages.
+- Local opt-in readlink/realpath providers repair measured stock diagnostic and
+  Issue-8 option failures, with strict path, symlink, error and output tests.
+- Files, metadata, links and ustar archives use independently authored oracles;
+  a 512-byte child limit supplies bounded write failure without filling a disk.
+- The retained find/ls/rm conditions gain 64-level UTF-8 matching, 512 C-locale
+  entries and controlled-terminal yes/no witnesses. Physical pwd is checked at
+  a measured component-length boundary.
+- Each unqualified page section and remaining portion of all four retained
+  conditions transfers to concrete open [CSH-079](CSH-079-filesystem-remaining-contracts.md)
+  ([#158](https://github.com/melliott18/cshell/issues/158)). Vendor ownership and
+  original CSH-064 evidence are preserved. Quotas, mount boundaries, inaccessible
+  ancestors and actual EIO/ENOSPC are not declared supplied.
+
+Validation commands, totals, source/provider identities, strict stock failures
+and integration limitations are retained in the evidence directory. Review
+status records implemented scoped qualification and individual dispositions;
+it does not promote U-034/U-040, a full utility contract or full-system compliance.

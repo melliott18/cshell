@@ -212,3 +212,13 @@ defect. [The completion record](evidence/csh-064-completion/README.md) validates
 process-group cleanup and descendant reaping through the actual nested path.
 The ticket records acceptance; this repair is independent of the external
 capabilities required for vendor requalification.
+
+## CSH-072 filesystem profile
+
+The [filesystem clause map](host-filesystem-evidence.md) adds 21 selected providers,
+independent metadata/archive oracles, bounded write failure, larger/deeper trees
+and terminal rm decisions. The opt-in PATH builds local readlink/realpath providers
+to repair the recorded Issue-8 gaps; stock failures remain separate.
+[CSH-079](tickets/CSH-079-filesystem-remaining-contracts.md) owns each unqualified
+page contract and the four original filesystem conditions. No utility family or
+full-system requirement is promoted.

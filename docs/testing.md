@@ -1337,3 +1337,12 @@ rows and unassigned conditional prerequisite reports. Regression checks exercise
 these failure cases and the runner's emitted ownership without invoking utilities.
 This is an accounting check, not a conformance suite. See the
 [current individual contracts](host-system-inventory.md#current-contract-ownership).
+
+## CSH-072 filesystem providers
+
+`make test-host-filesystem` runs isolated direct-exec and public-runtime cases.
+`make test-host-filesystem-audit` additionally requires the new pathname contracts
+and retains stock-provider failures. `make test-host-profile` includes the strict
+audit using its repaired selected providers. See the [assertion and boundary
+map](host-filesystem-evidence.md) and [retained evidence](evidence/csh-072/README.md).
+Linux setup additionally requires `file` and `pax`; Docker and CI provision both.
