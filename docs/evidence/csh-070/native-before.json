@@ -1,0 +1,41 @@
+{
+  "base": "60295934db1c971a2b3aac582f88b0f766eccce2",
+  "platform": "macOS-14.8.7-arm64-arm-64bit",
+  "files": {
+    "host_printf_resources": "cf25bb2e30ec3b85448b6479d5a2b665043fd1b1b17bfa3b16602860d4b5a4dd",
+    "printf": "fbbfc3558751529075780038210b1b84bfb16000f03efc6a33c994ddbbb5b080",
+    "tests/host_printf_resources.c": "038265d8ae46b3434eb5a77225f24444e7a8577d9eeb9fb4c8d0ae25c41d91c9",
+    "tools/host-profile/printf.c": "84e0f8e029005cfd31c376a201068da1d9909901c8a8c56af3e9a34cff03fc3c",
+    "tools/host-profile/vendor/printf.c": "b0e3a34426a37cb73c31ee0d2f19a81f61489bbf5aa8e2cce7a2e877af396eaf"
+  },
+  "cases": [
+    {
+      "name": "quoted float",
+      "verdict": "FAIL",
+      "expected_status": 1,
+      "expected_stdout_sha256": "296508b2bb5e27636dab94074ba9c1d7c5cbce1fe73cafe92a11001d88f4587f",
+      "diagnostic_required": true,
+      "actual": {
+        "status": 0,
+        "stdout_sha256": "937076e1e6c4fa4771b51d15ff62296886bfdac715cbff2b0475bb1dc392ad3f",
+        "stdout_bytes": 10,
+        "stderr_hex": "",
+        "errors": []
+      }
+    },
+    {
+      "name": "trailing character constant",
+      "verdict": "FAIL",
+      "expected_status": 1,
+      "expected_stdout_sha256": "a4ea29cbca7b8971cd77700be6bef22ce4c03df42453f88f64c225b07cc44040",
+      "diagnostic_required": true,
+      "actual": {
+        "status": 0,
+        "stdout_sha256": "a4ea29cbca7b8971cd77700be6bef22ce4c03df42453f88f64c225b07cc44040",
+        "stdout_bytes": 8,
+        "stderr_hex": "",
+        "errors": []
+      }
+    }
+  ]
+}

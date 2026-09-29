@@ -1337,3 +1337,12 @@ rows and unassigned conditional prerequisite reports. Regression checks exercise
 these failure cases and the runner's emitted ownership without invoking utilities.
 This is an accounting check, not a conformance suite. See the
 [current individual contracts](host-system-inventory.md#current-contract-ownership).
+
+## Formatted-output provider qualification
+
+`make test-host-formatted` runs the CSH-070 private printf/literal-echo selection
+and strict threshold-harness regressions. It is included in `test-host-profile`.
+See [the section map](host-formatted-output.md) for required locales/catalogs,
+resource bounds, selected stacks, before/after failure oracles and the retained
+Darwin low-stack cleanup failure. Output is `build/tests/host-formatted.json`;
+missing prerequisites or failed assertions are never converted to passing cases.

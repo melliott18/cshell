@@ -616,3 +616,36 @@ test-locale-pathname: cshell build/tests/locale_probe build/tests/pathname_runti
 test-host-inventory:
 	$(PYTHON) tests/host_contract_inventory.py
 	$(PYTHON) tests/test_host_contract_inventory.py
+
+# CSH-070 uses private catalogs and a separately selected literal echo policy.
+.PHONY: test-host-formatted
+build/host-echo-literal: tools/host-profile/echo.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+build/host-profile/catalogs/%.cat: tools/host-profile/catalogs/%.msg
+	@mkdir -p $(@D)
+	rm -f $@.tmp
+	LC_ALL=en_US.UTF-8 gencat $@.tmp $< && mv $@.tmp $@
+
+build/tests/host_printf_resources: tests/host_printf_resources.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(filter-out -fsanitize=%,$(CFLAGS)) $(filter-out -fsanitize=%,$(LDFLAGS)) -o $@ $< $(LDLIBS)
+
+test-host-formatted: cshell host-profile build/host-echo-literal build/tests/host_printf_resources build/host-profile/catalogs/fr.cat build/host-profile/catalogs/de.cat
+	$(PYTHON) tests/test_host_formatted.py
+	$(PYTHON) tests/host_formatted.py --record build/tests/host-formatted.json
+
+test-host-profile: test-host-formatted
+
+.PHONY: test-host-formatted-sanitize
+build/host-formatted-sanitizer/printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) -std=c99 -Wall -Wextra -Wpedantic -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -o $@ $< $(LDLIBS)
+
+build/host-formatted-sanitizer/echo: tools/host-profile/echo.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) -std=c99 -Wall -Wextra -Wpedantic -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -o $@ $< $(LDLIBS)
+
+test-host-formatted-sanitize: cshell build/host-formatted-sanitizer/printf build/host-formatted-sanitizer/echo build/tests/host_printf_resources build/host-profile/catalogs/fr.cat build/host-profile/catalogs/de.cat
+	$(PYTHON) tests/host_formatted.py --sanitizer --record build/tests/host-formatted-sanitize.json

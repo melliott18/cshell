@@ -1,0 +1,8 @@
+{
+  "validation_image_id": "sha256:c85561fed3035636dd00c44cb3471bc828b06f5499459bb4547ed1a187623eb2",
+  "tag": "cshell-csh070-validation",
+  "base_tag": "cshell-csh070",
+  "source_digest": "dc2b3476890b7819faed5645ae8ed0cc817911ebb6f095e4619e7b95244ca873",
+  "environment": "Debian bookworm aarch64; details in linux-focused.json.gz",
+  "inspection": "Docker API unavailable during finalization; no later full image inspection claimed"
+}
