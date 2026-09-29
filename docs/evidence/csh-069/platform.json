@@ -1,0 +1,5 @@
+{
+  "native": "macOS-14.8.7-arm64-arm-64bit",
+  "docker_image": "sha256:d06b6135387e1413af2b9fff2a952a4c19124e6bb712b241e36a87c720a11eac",
+  "docker_image_architecture": "arm64"
+}

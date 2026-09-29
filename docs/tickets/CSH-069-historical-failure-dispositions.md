@@ -1,11 +1,11 @@
 # CSH-069: Disposition retained unexplained validation failures
 
-- Status: in-progress
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-046, CSH-047, CSH-048, CSH-049, CSH-051, CSH-055, CSH-058
-- Branch: Assigned when work starts
+- Branch: test/CSH-069-historical-failure-dispositions
 - Issue: [#138](https://github.com/melliott18/cshell/issues/138)
 
 ## Goal
@@ -26,7 +26,7 @@ Resolve the finite historical observations listed in the CSH-012 defect ledger w
 - [x] Preserve failed attempts and skipped/not-run stages; no retry-to-green or unsupported load attribution.
 - [x] Record recurrence ownership and update CSH-012 without suppressing current strict tests.
 
-- [ ] Triage the newly retained H11 assertion to a supported cause/fix or a
+- [x] Triage the newly retained H11 assertion to a supported cause/fix or a
   further explicitly scoped disposition; retain recurrence ownership for H01–H11.
 
 ## Validation
@@ -38,12 +38,23 @@ Start from docs/conformance-acceptance-review.md#historical-observations. Reprod
 [Per-observation dispositions](../defect-dispositions.md) accept H01–H11 only for
 CSH-012 accounting. Available raw evidence, exact identities or explicit missing
 details, existing strict regression paths and limits are recorded separately.
-H11 is the new Docker `context_fixture.c:136` WNOWAIT assertion at `5b56328`;
-its errno and cause are unknown. Independent passing CI is not its diagnosis.
+The [CSH-069 triage and before/after evidence](../evidence/csh-069/README.md)
+reproduces a fixture race: the launch-time poll can legitimately reap `exit 12 &`
+before the fixture's unconditional WNOWAIT observation. Forced-ordering native
+and Docker attempts abort with ECHILD. The repaired fixture checks early
+collection and uses a pipe gate to prove next-boundary reaping separately;
+both cases are enforced by `make test-context` without changing production code.
 
-This ticket remains open for causal investigation/triage and recurrence. The
-parent audit does not require those repairs before closure, but its scoped
-acceptance does not disable future assertions or declare these observations fixed.
+The original H11 job did not print errno, so its precise cause remains unknown.
+Its further scoped disposition accepts that historical occurrence after repairing
+the demonstrated mechanism, while preserving the failed job, not-run stages and
+new recurrence diagnostics. H01–H10 retain their individual unknown-cause
+dispositions; no later pass or unrelated repair is assigned as their cause.
+
+The finite triage is ready for review. After integration, reopen this same ticket
+for recurrence or new causal evidence for **any H01–H11 entry**. Completion does
+not promise that failures cannot recur, waive strict tests, or reopen CSH-012
+unless the new finding invalidates its audit accounting.
 
 ## Implementation notes/evidence
 
@@ -52,3 +63,16 @@ at source `c8c1c91372e6e77cf2e7032765cd3c068fa1906d`.
 [Strict probe inputs and actual results](../evidence/csh-012/acceptance-c8c1c91/contracts.json)
 and [review evidence](../evidence/csh-012/acceptance-c8c1c91/README.md)
 are retained. No production repair or completion is claimed by this review.
+
+### CSH-069 implementation validation
+
+Native macOS and Docker/Linux `make -j4 test-context test-execute test-pipeline`
+pass: 60 context, 61 execution and 52 pipeline behaviors plus API/fault checks.
+Both normal and forced-schedule context variants run in the default test target.
+Native ASan/UBSan context checks pass. The first Docker sanitizer attempt fails
+at compilation due to the evidence recorder's 2 MiB file limit; tests were not
+run. The corrected-recorder attempt passes ASan/UBSan with Linux leak detection
+enabled. Both attempts are retained in
+[all-attempt evidence](../evidence/csh-069/README.md#validation-and-all-attempts).
+Exact inputs, binary identities, commands, platform/compiler and actual outcomes
+are recorded there; no hosted/full-suite result is newly claimed.

@@ -35,7 +35,7 @@ audit to close while those implementation tickets remain open.
 | [CSH-066 / #135](tickets/CSH-066-resource-bounded-nesting.md) | Remove arbitrary parser/executor/evaluation/expansion limits with safe resource handling. |
 | [CSH-067 / #136](tickets/CSH-067-shell-locale-pathname-qualification.md) | Qualify the finite shell locale/pattern/pathname conditions and repair demonstrated violations. |
 | [CSH-068 / #137](tickets/CSH-068-host-system-contract-inventory.md) | Supply and qualify the explicitly enumerated external utility contracts, or transfer individual contracts to narrower open owners. Inventory work is complete; availability does not establish these contracts. |
-| [CSH-069 / #138](tickets/CSH-069-historical-failure-dispositions.md) | Diagnose/triage H01–H11 and recurrence; audit-only acceptance does not establish root causes or repair the context-fixture assertion. |
+| [CSH-069 / #138](tickets/CSH-069-historical-failure-dispositions.md) | Finite H01–H11 triage ready for review; [CSH-069 evidence](evidence/csh-069/README.md) repairs a demonstrated fixture race while retaining unknown historical attribution. Same-ticket recurrence ownership continues after integration. |
 
 Native standard-PATH inventory lacks four base names: gettext, msgfmt, ngettext
 and timeout. The recorded Debian image lacks sixteen exec-required base names,
@@ -78,3 +78,13 @@ is their open qualification owner for this audit, using the retained CSH-064
 records and concrete capability prerequisites; vendor implementation ownership
 remains unchanged. Closing the bounded CSH-064 work does not qualify those
 conditions or leave the audit pointing only to a closed implementation ticket.
+
+## CSH-069 triage follow-up
+
+[CSH-069](evidence/csh-069/README.md) reproduces a concrete early-reaping race in
+the H11 fixture on native macOS and Linux, repairs its synchronization, and adds
+forced-schedule coverage to the strict default context suite. The historical
+job's missing errno remains unavailable; its exact cause is not retroactively
+claimed. H01–H10 dispositions and all original failed/skipped outcomes remain
+unchanged. CSH-069 owns recurrence for all eleven observations after integration;
+this finite triage does not change CSH-012's audit closure or conformance claims.

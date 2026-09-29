@@ -794,7 +794,8 @@ AddressSanitizer/UndefinedBehaviorSanitizer flags documented above.
 ## List, group, and background execution checks
 
 `make test-context` runs `tests/contexts.py` against the public `cshell`,
-`context_fixture` for owned PID/state/descriptor assertions, and
+`context_fixture` for owned PID/state/descriptor assertions,
+`context_schedule` for a forced child-completes-before-launch-poll ordering, and
 `execute_faults --context` for deterministic allocation, pipe, fork and wait
 failures. It is included in `make test`, Docker tests and native sanitizer CI.
 
@@ -807,7 +808,13 @@ asynchronous return, compares the helper's actual PID with the published
 background identifier (including pipeline final stages), checks unrelated-child
 ownership, and verifies reaping without changing shell status. Fault injection
 checks EINTR retry, retained ownership after failed reaping, and partial-launch
-cleanup for foreground and background group pipelines.
+cleanup for foreground and background group pipelines. The CSH-069 schedule
+fixture checks legitimate early collection; a separate pipe-gated zombie checks
+reaping at the next execution boundary without consuming an unrelated child's
+status. Both API variants keep the existing 20-second bound. Unexpected waitid
+failures print PID/errno; no sleep or timeout increase masks the original race.
+[Before/after evidence and historical limits](evidence/csh-069/README.md) distinguish
+the demonstrated fixture defect from the original H11 job's unrecorded errno.
 
 ```sh
 make test-context

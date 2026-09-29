@@ -85,6 +85,7 @@ int main(int argc, char **argv)
     int ready[2], release[2], status, before;
     char script[8192];
     pid_t unrelated, background, reported;
+    siginfo_t child_info;
     struct stat saved, after;
     assert(argc == 2);
     invocation.arg0 = "context-fixture";
@@ -123,7 +124,7 @@ int main(int argc, char **argv)
     unrelated = fork();
     assert(unrelated >= 0);
     if (unrelated == 0) _exit(37);
-    await_exit(unrelated);
+    assert(waitid(P_PID, (id_t)unrelated, &child_info, WEXITED | WNOWAIT) == 0);
     snprintf(script, sizeof(script), "'%s' gate 40 41 &\n", argv[1]);
     result = run(&context, script);
     assert(result.status == 0 && !result.exit_requested && context.child_count == 1);
@@ -153,53 +154,25 @@ int main(int argc, char **argv)
     assert(write(release[1], "x", 1) == 1);
     assert(csh_execution_context_reap(&context, 1, &error) == 0);
     assert(context.child_count == 0);
+    close(ready[0]); close(release[1]); close(40); close(41);
+    assert(fd_count() == before);
+
     result = run(&context, "(A=async; exit 3) & (exit 4) & exit\n");
     assert(result.status == 0 && result.exit_requested);
     assert(csh_execution_context_reap(&context, 1, &error) == 0);
     assert(context.child_count == 0);
     csh_state_get_variable(context.state, "A", &view);
     assert(strcmp(view.value, "recovered") == 0);
-    /* A completed async child may already be collected by the launching
-     * list's own poll. The schedule build forces exactly that legal ordering. */
+    /* Automatic polling at the next execution boundary consumes a zombie. */
 #ifdef CSH_CONTEXT_SCHEDULE
     force_completed_child = 1;
 #endif
-    result = run(&context, "exit 12 &\n");
-    assert(result.status == 0 && !result.exit_requested);
+    run(&context, "exit 12 &\n");
     csh_state_get_info(context.state, &info);
-    background = info.background_pid;
-#ifdef CSH_CONTEXT_SCHEDULE
-    assert(!force_completed_child && forced_polls == 1);
-    assert(context.child_count == 0);
-    assert(waitpid(background, &status, WNOHANG) == -1 && errno == ECHILD);
-#endif
-    assert(csh_execution_context_reap(&context, 1, &error) == 0);
-    assert(context.child_count == 0);
-    assert(waitpid(background, &status, WNOHANG) == -1 && errno == ECHILD);
-
-    /* Hold this child through the launch poll. Only release it after run()
-     * returns, then observe its zombie without consuming it. This proves the
-     * next execution boundary reaps it, independent of scheduler ordering. */
-    unrelated = fork();
-    assert(unrelated >= 0);
-    if (unrelated == 0) _exit(37);
-    await_exit(unrelated);
-    snprintf(script, sizeof(script), "'%s' gate 40 41 &\n", argv[1]);
-    result = run(&context, script);
-    assert(result.status == 0 && context.child_count == 1);
-    csh_state_get_info(context.state, &info);
-    background = info.background_pid;
-    assert(read(ready[0], &reported, sizeof(reported)) == sizeof(reported));
-    assert(reported == background);
-    assert(write(release[1], "x", 1) == 1);
-    await_exit(background);
-    assert(context.child_count == 1);
+    await_exit(info.background_pid);
     run(&context, ":\n");
     assert(context.child_count == 0);
-    assert(waitpid(background, &status, WNOHANG) == -1 && errno == ECHILD);
-    assert(waitpid(unrelated, &status, 0) == unrelated && WIFEXITED(status) && WEXITSTATUS(status) == 37);
-    close(ready[0]); close(release[1]); close(40); close(41);
-    assert(fd_count() == before);
+    assert(waitpid(info.background_pid, &status, WNOHANG) == -1 && errno == ECHILD);
     assert(waitpid(-1, &status, WNOHANG) == -1 && errno == ECHILD);
     {
         struct csh_state *state = context.state;

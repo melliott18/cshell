@@ -1,0 +1,77 @@
+diff --git a/Makefile b/Makefile
+index 08b520d..7ddf496 100644
+--- a/Makefile
++++ b/Makefile
+@@ -298,6 +298,14 @@ build/tests/context_fixture: tests/context_fixture.c $(EXECUTE_OBJECTS) $(EXECUT
+ 	mkdir -p $(dir $@)
+ 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(EXECUTE_OBJECTS) build/character.o $(LDLIBS)
+ 
++build/tests/context-schedule-execute.o: src/execute.c $(EXECUTE_HEADERS) tests/context_schedule.h
++	mkdir -p $(dir $@)
++	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/context_schedule.h -c $< -o $@
++
++build/tests/context_schedule: tests/context_fixture.c build/tests/context-schedule-execute.o $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o
++	mkdir -p $(dir $@)
++	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -DCSH_CONTEXT_SCHEDULE -o $@ $< build/tests/context-schedule-execute.o $(filter-out build/execute.o,$(EXECUTE_OBJECTS)) build/character.o $(LDLIBS)
++
+ test-context: cshell build/tests/context_fixture build/tests/execute_helper build/tests/execute_faults
+ 	$(PYTHON) tests/contexts.py ./cshell --helper build/tests/execute_helper --api-binary build/tests/context_fixture --fault-binary build/tests/execute_faults
+ 
+diff --git a/tests/context_fixture.c b/tests/context_fixture.c
+index 52eae0a..4b6a1dc 100644
+--- a/tests/context_fixture.c
++++ b/tests/context_fixture.c
+@@ -13,6 +13,39 @@
+ #include <sys/wait.h>
+ #include <unistd.h>
+ 
++/* Keep the failure's PID and errno: the original H11 assertion lost both. */
++static void await_exit(pid_t pid)
++{
++    siginfo_t info;
++    int rc, saved_errno;
++    do { rc = waitid(P_PID, (id_t)pid, &info, WEXITED | WNOWAIT); }
++    while (rc == -1 && errno == EINTR);
++    saved_errno = errno;
++    if (rc != 0)
++        fprintf(stderr, "context waitid pid=%ld errno=%d (%s)\n",
++            (long)pid, saved_errno, strerror(saved_errno));
++    assert(rc == 0);
++    assert(info.si_pid == pid && info.si_code == CLD_EXITED);
++}
++
++#ifdef CSH_CONTEXT_SCHEDULE
++static int force_completed_child;
++static unsigned forced_polls;
++
++/* Only the schedule build's execute.o calls this wrapper. Block immediately
++ * before its real WNOHANG poll, without consuming or fabricating any status. */
++pid_t csh_context_waitpid(pid_t pid, int *status, int options)
++{
++    if (force_completed_child && (options & WNOHANG)) {
++        assert(pid > 0);
++        force_completed_child = 0;
++        await_exit(pid);
++        ++forced_polls;
++    }
++    return waitpid(pid, status, options);
++}
++#endif
++
+ static struct csh_execution run(struct csh_execution_context *context, const char *text)
+ {
+     struct csh_input *input = NULL;
+@@ -131,9 +164,12 @@ int main(int argc, char **argv)
+     csh_state_get_variable(context.state, "A", &view);
+     assert(strcmp(view.value, "recovered") == 0);
+     /* Automatic polling at the next execution boundary consumes a zombie. */
++#ifdef CSH_CONTEXT_SCHEDULE
++    force_completed_child = 1;
++#endif
+     run(&context, "exit 12 &\n");
+     csh_state_get_info(context.state, &info);
+-    assert(waitid(P_PID, (id_t)info.background_pid, &child_info, WEXITED | WNOWAIT) == 0);
++    await_exit(info.background_pid);
+     run(&context, ":\n");
+     assert(context.child_count == 0);
+     assert(waitpid(info.background_pid, &status, WNOHANG) == -1 && errno == ECHILD);
