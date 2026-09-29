@@ -1,5 +1,8 @@
 # POSIX target and tracking
 
+The [CSH-012 acceptance review](conformance-acceptance-review.md) at `c8c1c91`
+records current requirement gaps, defect ownership, platform results and documentation corrections.
+
 ## Target
 
 cshell targets the shell language and `sh` behavior in POSIX.1-2024 (Issue 8).
@@ -88,7 +91,8 @@ fixtures preserve words, redirections, source positions, and nested here-documen
 allocation-failure checks cover partial compound trees. CSH-028 adds
 [execution evidence](control-flow.md) for control flow, function storage and
 invocation, expansion, redirection lifetimes, and error cleanup. Full conformance
-and later dot-script/trap integration remain separate work.
+remains open; dot-script and trap integration subsequently landed in CSH-031/035,
+with residual execution checks in CSH-055.
 
 ## Replacement value-expansion evidence
 
@@ -113,8 +117,8 @@ redirections, and parent builtin restoration. CSH-026 replaces its initial liter
 adapter with context-sensitive preparation. CSH-023 adds prefix
 assignment categories, selective restoration, and readonly error handling, with
 real external environment probes and resolved builtin/function dispatch fixtures.
-CSH-029 adds the state builtin family and utility inventory. Remaining builtin
-and function semantics remain separate tickets.
+CSH-029 adds the state builtin family and utility inventory. CSH-028/031 and
+CSH-048/049 record integrated function and builtin semantics.
 The public runtime uses integrated expansion and state builtins.
 
 CSH-020 adds replacement pipeline API evidence through `make test-pipeline`:
@@ -122,7 +126,7 @@ concurrent multi-stage execution, default last-stage status and negation,
 builtin subshell isolation, explicit redirection precedence, and partial-launch
 child/descriptor cleanup. Every stage's raw and converted status is retained.
 These API checks use `build/tests/execute_fixture`; CSH-018/CSH-039 also test
-pipelines through the public `cshell` in all input modes. `pipefail` remains with CSH-010; CSH-034 adds runtime process groups and job control. CSH-021 adds compound
+pipelines through the public `cshell` in all input modes. CSH-032 implements `pipefail`, with the CSH-051 option-context evidence; CSH-034 adds runtime process groups and job control. CSH-021 adds compound
 stages as described below.
 
 ## Replacement context evidence
@@ -131,8 +135,8 @@ CSH-021 adds public-runtime and API evidence through `make test-context` for seq
 AND/OR lists, brace/subshell state isolation, group redirection lifetimes,
 compound pipeline stages, asynchronous return and background PID ownership.
 Synchronization-based reaping checks and allocation/pipe/fork/wait injection
-cover cleanup. Background PID storage is implemented; general `$!` expansion remains outside
-this subset. CSH-034 adds retained wait statuses, idle SIGCHLD reaping and job
+cover cleanup. Background PID storage and `$!` expansion are implemented and
+covered by the expansion and jobs suites. CSH-034 adds retained wait statuses, idle SIGCHLD reaping and job
 control through the optional runtime job manager. See [Execution contexts](execution.md#lists-groups-and-background-contexts).
 
 ## Replacement alias evidence

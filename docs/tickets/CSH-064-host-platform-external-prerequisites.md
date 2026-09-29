@@ -88,4 +88,6 @@ CSH-064 retains qualification ownership pending those capabilities; selected
 utility/libc/platform vendors retain implementation ownership. Privileged Darwin,
 physical terminals and other unavailable requirements remain separate. Queries,
 measured credentials, fixture bounds and unmet requirements are not conflated.
-No parent utility or CSH-012 gate is promoted. Ready for review, not integrated.
+No parent utility or CSH-012 gate is promoted. The mapped qualification work was
+integrated by `3e82c1d`; this ticket retains review status and qualification
+ownership pending the documented external capabilities.

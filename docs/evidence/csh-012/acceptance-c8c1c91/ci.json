@@ -1,0 +1,366 @@
+{
+  "conclusion": "success",
+  "createdAt": "2026-09-29T01:24:18Z",
+  "databaseId": 36507732235,
+  "event": "push",
+  "headSha": "c8c1c91372e6e77cf2e7032765cd3c068fa1906d",
+  "jobs": [
+    {
+      "completedAt": "2026-09-29T01:34:17Z",
+      "conclusion": "success",
+      "databaseId": 109212844135,
+      "name": "Docker (Linux)",
+      "startedAt": "2026-09-29T01:24:20Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-09-29T01:24:21Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-09-29T01:24:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:24:22Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v6",
+          "number": 2,
+          "startedAt": "2026-09-29T01:24:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:27:20Z",
+          "conclusion": "success",
+          "name": "Build Linux image and test replacement APIs, cshell runtime, and selected behavior",
+          "number": 3,
+          "startedAt": "2026-09-29T01:24:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:27:26Z",
+          "conclusion": "success",
+          "name": "Test cshell and selected terminal behavior in Linux image",
+          "number": 4,
+          "startedAt": "2026-09-29T01:27:20Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:28:00Z",
+          "conclusion": "success",
+          "name": "Qualify host utilities in Linux image",
+          "number": 5,
+          "startedAt": "2026-09-29T01:27:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:28:11Z",
+          "conclusion": "success",
+          "name": "Test harness failure handling in Linux image",
+          "number": 6,
+          "startedAt": "2026-09-29T01:28:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:29:24Z",
+          "conclusion": "success",
+          "name": "Qualify controlled host identities and private devices",
+          "number": 7,
+          "startedAt": "2026-09-29T01:28:11Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:29:25Z",
+          "conclusion": "success",
+          "name": "Test unequal invocation identities in Linux image",
+          "number": 8,
+          "startedAt": "2026-09-29T01:29:24Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:29:52Z",
+          "conclusion": "success",
+          "name": "Check controlled host helpers with ASan and UBSan",
+          "number": 9,
+          "startedAt": "2026-09-29T01:29:25Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:34:16Z",
+          "conclusion": "success",
+          "name": "Check Linux build with ASan and UBSan",
+          "number": 10,
+          "startedAt": "2026-09-29T01:29:52Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:34:16Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v6",
+          "number": 20,
+          "startedAt": "2026-09-29T01:34:16Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:34:16Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 21,
+          "startedAt": "2026-09-29T01:34:16Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/melliott18/cshell/actions/runs/36507732235/job/109212844135"
+    },
+    {
+      "completedAt": "2026-09-29T01:30:33Z",
+      "conclusion": "success",
+      "databaseId": 109212844346,
+      "name": "Native (ubuntu-24.04, gcc)",
+      "startedAt": "2026-09-29T01:24:20Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-09-29T01:24:22Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-09-29T01:24:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:24:24Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v6",
+          "number": 2,
+          "startedAt": "2026-09-29T01:24:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:24:24Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-09-29T01:24:24Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:24:44Z",
+          "conclusion": "success",
+          "name": "Install Linux build dependencies",
+          "number": 4,
+          "startedAt": "2026-09-29T01:24:24Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:24:44Z",
+          "conclusion": "skipped",
+          "name": "Install macOS profile dependencies",
+          "number": 5,
+          "startedAt": "2026-09-29T01:24:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:24:47Z",
+          "conclusion": "success",
+          "name": "Build",
+          "number": 6,
+          "startedAt": "2026-09-29T01:24:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:26:13Z",
+          "conclusion": "success",
+          "name": "Test replacement APIs, cshell runtime, and selected behavior",
+          "number": 7,
+          "startedAt": "2026-09-29T01:24:47Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:26:15Z",
+          "conclusion": "success",
+          "name": "Test cshell terminal behavior and selected terminal suite",
+          "number": 8,
+          "startedAt": "2026-09-29T01:26:13Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:26:44Z",
+          "conclusion": "success",
+          "name": "Qualify host utilities and rerun runtime with selected PATH",
+          "number": 9,
+          "startedAt": "2026-09-29T01:26:15Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:26:56Z",
+          "conclusion": "success",
+          "name": "Test harness failure handling",
+          "number": 10,
+          "startedAt": "2026-09-29T01:26:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:30:30Z",
+          "conclusion": "success",
+          "name": "Check replacement modules and cshell runtime with ASan and UBSan",
+          "number": 11,
+          "startedAt": "2026-09-29T01:26:56Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:30:30Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 21,
+          "startedAt": "2026-09-29T01:30:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:30:31Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v6",
+          "number": 22,
+          "startedAt": "2026-09-29T01:30:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:30:31Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 23,
+          "startedAt": "2026-09-29T01:30:31Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/melliott18/cshell/actions/runs/36507732235/job/109212844346"
+    },
+    {
+      "completedAt": "2026-09-29T02:22:47Z",
+      "conclusion": "success",
+      "databaseId": 109212844494,
+      "name": "Native (macos-15, clang)",
+      "startedAt": "2026-09-29T01:45:23Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-09-29T01:45:25Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-09-29T01:45:24Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:45:27Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v6",
+          "number": 2,
+          "startedAt": "2026-09-29T01:45:25Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:45:27Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v6",
+          "number": 3,
+          "startedAt": "2026-09-29T01:45:27Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:45:27Z",
+          "conclusion": "skipped",
+          "name": "Install Linux build dependencies",
+          "number": 4,
+          "startedAt": "2026-09-29T01:45:27Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:45:30Z",
+          "conclusion": "success",
+          "name": "Install macOS profile dependencies",
+          "number": 5,
+          "startedAt": "2026-09-29T01:45:27Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:45:32Z",
+          "conclusion": "success",
+          "name": "Build",
+          "number": 6,
+          "startedAt": "2026-09-29T01:45:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:47:53Z",
+          "conclusion": "success",
+          "name": "Test replacement APIs, cshell runtime, and selected behavior",
+          "number": 7,
+          "startedAt": "2026-09-29T01:45:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:47:56Z",
+          "conclusion": "success",
+          "name": "Test cshell terminal behavior and selected terminal suite",
+          "number": 8,
+          "startedAt": "2026-09-29T01:47:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:48:43Z",
+          "conclusion": "success",
+          "name": "Qualify host utilities and rerun runtime with selected PATH",
+          "number": 9,
+          "startedAt": "2026-09-29T01:47:56Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T01:49:01Z",
+          "conclusion": "success",
+          "name": "Test harness failure handling",
+          "number": 10,
+          "startedAt": "2026-09-29T01:48:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T02:22:42Z",
+          "conclusion": "success",
+          "name": "Check replacement modules and cshell runtime with ASan and UBSan",
+          "number": 11,
+          "startedAt": "2026-09-29T01:49:01Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T02:22:42Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v6",
+          "number": 21,
+          "startedAt": "2026-09-29T02:22:42Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T02:22:42Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v6",
+          "number": 22,
+          "startedAt": "2026-09-29T02:22:42Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-29T02:22:44Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 23,
+          "startedAt": "2026-09-29T02:22:42Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/melliott18/cshell/actions/runs/36507732235/job/109212844494"
+    }
+  ],
+  "status": "completed",
+  "updatedAt": "2026-09-29T02:22:47Z",
+  "url": "https://github.com/melliott18/cshell/actions/runs/36507732235",
+  "captured_utc": "2026-09-29T02:23:40.914522+00:00"
+}

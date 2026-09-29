@@ -1,5 +1,8 @@
 # CSH-037 independent evidence review
 
+This is a historical snapshot. See the [current acceptance review](conformance-acceptance-review.md)
+for the subsequent requirement, defect, platform and documentation decisions.
+
 For current integration dispositions and residual owners, see the
 [2026-09-28 evidence reconciliation](evidence-reconciliation.md). The findings
 and run records below retain their original reviewed revisions.

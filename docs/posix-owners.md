@@ -1,5 +1,8 @@
 # Requirements by owning ticket
 
+The [CSH-012 acceptance review](conformance-acceptance-review.md) at `c8c1c91`
+records current requirement gaps, defect ownership, platform results and documentation corrections.
+
 Use this reverse index with the [language/invocation matrix](posix-matrix.md),
 [utilities and options](posix-utilities.md), and [evidence conventions](posix-evidence.md).
 Each requirement link lands on its source, scope, intended fixture and current
@@ -56,6 +59,14 @@ covered by an existing ticket.
 | [CSH-057](tickets/CSH-057-job-lifecycle-boundaries.md) | [EXEC-009](posix-matrix.md#exec-009), [JOB-001](posix-matrix.md#job-001), [JOB-002](posix-matrix.md#job-002), [JOB-003](posix-matrix.md#job-003), [U-032](posix-utilities.md#u-032) |
 | [CSH-058](tickets/CSH-058-signal-edge-evidence.md) | [SIG-001](posix-matrix.md#sig-001), [SIG-002](posix-matrix.md#sig-002), [SIG-003](posix-matrix.md#sig-003), [U-015](posix-utilities.md#u-015), [U-026](posix-utilities.md#u-026), [U-032](posix-utilities.md#u-032) |
 
+| [CSH-065](tickets/CSH-065-interactive-parser-recovery.md) | [SH-008](posix-matrix.md#sh-008), [GRAM-005](posix-matrix.md#gram-005), [EXEC-015](posix-matrix.md#exec-015) |
+| [CSH-066](tickets/CSH-066-resource-bounded-nesting.md) | [SH-006](posix-matrix.md#sh-006), [GRAM-002](posix-matrix.md#gram-002), [GRAM-004](posix-matrix.md#gram-004), [GRAM-005](posix-matrix.md#gram-005), [EXP-001](posix-matrix.md#exp-001), [EXP-005](posix-matrix.md#exp-005), [EXP-006](posix-matrix.md#exp-006), [EXEC-014](posix-matrix.md#exec-014) |
+| [CSH-067](tickets/CSH-067-shell-locale-pathname-qualification.md) | [SH-003](posix-matrix.md#sh-003), [LEX-002](posix-matrix.md#lex-002), [LEX-004](posix-matrix.md#lex-004), [LEX-005](posix-matrix.md#lex-005), [ENV-004](posix-matrix.md#env-004), [EXP-004](posix-matrix.md#exp-004), [EXP-007](posix-matrix.md#exp-007), [EXP-008](posix-matrix.md#exp-008), [EXP-009](posix-matrix.md#exp-009), [EXP-010](posix-matrix.md#exp-010), [EXEC-012](posix-matrix.md#exec-012), [U-017](posix-utilities.md#u-017), [U-027](posix-utilities.md#u-027), [U-031](posix-utilities.md#u-031) |
+| [CSH-068](tickets/CSH-068-host-system-contract-inventory.md) | [U-034](posix-utilities.md#u-034), [U-040](posix-utilities.md#u-040) |
+
+CSH-069 owns the finite historical validation disposition ledger in the current review;
+it does not acquire implementation ownership for every family exercised by those runs.
+
 ## Supporting and audit tickets
 
 - [CSH-001](tickets/CSH-001-project-foundation.md) provides the baseline build and
@@ -94,14 +105,14 @@ and exact assertions, not whole utility families.
 
 The current qualification owner is
 [CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md).
-All 28 stable conditions in `tests/host_capability_limits.py` retain individual
+All 30 stable conditions in `tests/host_capability_limits.py` retain individual
 sources, actual environments, executable identities, reasons and separate
-implementation owners. [CSH-063 evidence](evidence/csh-063/README.md) preserves
+implementation owners. [CSH-064 evidence](evidence/csh-064/README.md) preserves
 204 strict unequal-ID predicate failures per tested vendor, unsupported tmpfs
-ACL setup and the separate `fakeowner` bind failures. Missing privileged Darwin,
+ACL setup and the separate `fakeowner` socket-metadata and chmod failures. Missing privileged Darwin,
 locales, controlled credentials and physical terminals remain capability limits.
 
-The [current CSH-012 reconciliation](evidence-reconciliation-current.md) records
+The [current CSH-012 acceptance review](conformance-acceptance-review.md) records
 completed scoped tickets and the remaining milestone gates. Qualification
 ownership does not replace the original implementation owners in the table,
 promote U-034–U-037/U-040, or close the system-wide utility obligation.

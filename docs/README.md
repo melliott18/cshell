@@ -58,3 +58,5 @@ so the information remains accessible in a plain Markdown reader.
 - [External host prerequisites](evidence/csh-064/README.md): CSH-064 namespace qualification, fakeowner diagnosis and individually retained requirements.
 
 - [Residual execution contracts (CSH-055)](execution-contracts.md): prefix PATH, inherited descriptors, read errors, and nested control evidence.
+
+The [CSH-012 requirement, defect, platform and documentation review](conformance-acceptance-review.md) records the current acceptance decisions and open limitations.

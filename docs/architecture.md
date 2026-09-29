@@ -68,8 +68,8 @@ expand words.
 
 See [Shell state](shell-state.md) for variable ownership, readonly errors, and
 allocation-free checkpoint restoration. State stores option bits without
-implementing their runtime behavior, and leaves special startup variable
-initialization to CSH-029. CSH-023 uses selective variable saves for temporary
+implementing their runtime behavior; startup initialization is implemented by
+CSH-029 and the CSH-048 corrections. CSH-023 uses selective variable saves for temporary
 prefixes, preserving unrelated handler changes. Full-state checkpoints remain
 available for complete rollback. The state module neither reads nor modifies
 the process environment.
@@ -83,16 +83,16 @@ See [Simple-command execution](execution.md) for command ownership, execution
 categories, status and exit requests, child ownership, and descriptor restoration.
 The runtime preflights supported syntax and expands each reached command using
 CSH-026. Prefixes use CSH-023 assignment categories; resolved dispatch supplies
-the boundary for future function/builtin handlers. CSH-029 supplies
+the boundary for integrated function and builtin handlers. CSH-029 supplies
 [state builtins](state-builtins.md).
 
-## Target module boundaries
+## Module ownership boundaries
 
 The input, invocation, lexer, parser/AST, alias, quote, state, value-expansion,
 field-generation, simple-command execution, and redirection
-modules above exist. Add the remaining modules when their implementation
-tickets start. This table defines target
-responsibilities and does not claim that every listed module is implemented.
+modules above exist, together with control flow, builtins, traps and jobs.
+This table groups their responsibilities; conceptual names such as `signals`
+need not correspond to a separate source file.
 
 | Module | Owns | Must not own |
 | --- | --- | --- |
@@ -120,8 +120,8 @@ unsupported operator spellings are not compatibility requirements.
 
 ## Processing model
 
-The following diagram shows the processing model. Full trap integration remains
-planned; the other runtime boundaries exist.
+The following diagram shows the implemented processing model. Trap dispatch is
+integrated at safe input and execution boundaries; see [Traps and signals](traps-and-signals.md).
 Input, lexer, and parser construct a command tree (AST). The executor
 evaluates that tree and coordinates expansion, shell state, builtins,
 redirections, and child processes. Arrows below the executor show collaborating
@@ -158,8 +158,9 @@ fragments until expansion. Redirections preserve source order: `>out 2>&1` and
 
 ## Ownership and failure contracts
 
-These are design requirements for replacement modules, to be made concrete in
-their tickets:
+These ownership contracts are implemented by the module APIs and checked by
+their linked fixtures; the [current review](conformance-acceptance-review.md)
+records remaining behavioral limitations:
 
 - Each allocated object has one documented owner and a matching cleanup path.
   APIs state whether pointers are borrowed, transferred, or newly allocated.
@@ -209,8 +210,9 @@ fallback.
 CSH-018 and CSH-020. It switches the default `cshell` executable to the new path
 and verifies its documented bootstrap subset through native and Docker tests:
 input modes, external commands, `cd`, `exit`, redirections, and pipelines. This
-is an intermediate shell implementation; full builtin semantics and the
-remaining POSIX features continue in their tickets.
+was the initial bootstrap cutover. Later tickets integrated builtins, control
+flow, options, traps and jobs; remaining conformance obligations are recorded
+in the [acceptance review](conformance-acceptance-review.md).
 
 The cutover removes these migration dependencies:
 

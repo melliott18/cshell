@@ -1,5 +1,8 @@
 # CSH-012 evidence reconciliation at `07ee1cb`
 
+This is a historical snapshot. See the [current acceptance review](conformance-acceptance-review.md)
+for the subsequent requirement, defect, platform and documentation decisions.
+
 Reviewed integrated main `07ee1cb26ffcec0470977d03789ce0ebb156603a` on
 2026-09-29 UTC (2026-09-28 local). **CSH-012 remains in progress; its completion
 gate is not satisfied.** This review reconciles ticket lifecycle, requirement

@@ -1,0 +1,233 @@
+{
+  "retrieved_utc": "2026-09-29T02:09:38.720403+00:00",
+  "method": "HTTPS curl with certificate verification; web tool direct fetch returned 403",
+  "sources": [
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap01.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 76184,
+      "sha256": "9c010fcd7ff607111752fa6539357ba07b3799b80f47fc1cca5f91eb0b84b5b5",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/V3_chap01.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 357953,
+      "sha256": "0889867a53fe12508a71e8739ec23ecdddc95e6f67697c98e26acc8ff0ec1acd",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/V3_chap02.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/alias.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 14493,
+      "sha256": "8cea5106a27e91c9fdb17fc52593006423777ae8f2c859d2d3e99305110366f1",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/alias.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bg.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 13222,
+      "sha256": "e238b2905a3d6c37df514ef9549db90b3ac76445dcb1b2fdfbf4c1e00e1c2a9f",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/bg.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cd.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 25003,
+      "sha256": "6c62adc698387aa20c6331a59c069c520cce58868f1f36adb4eb1a26972d41ee",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/cd.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/command.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 27355,
+      "sha256": "43db4a94e14a93d7c3afff243853d0d5a5e284ef2b19324805660fa83b50e1ab",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/command.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/echo.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 14926,
+      "sha256": "bf06a3c6bffbb6ee66289551410c611d8fe13240c5acf2529ff82c05b1339efc",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/echo.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/false.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 6102,
+      "sha256": "b9e1b46b9996345f3746166b83d7ffb5cdb1c529d72b8c2a77bb06bb1b51e12c",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/false.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/fc.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 22579,
+      "sha256": "fafa1ea93ff203b6d4a94baf2cdec24b864b4f99ba8710b7ab1d5c7a705ce1ef",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/fc.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/fg.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 11504,
+      "sha256": "27889788d9d5cd6abcbcf9596e5cdbe3eb2bed73ab2a919ef805b6a5c40029b0",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/fg.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/getopts.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 21111,
+      "sha256": "564a92bdcae6cc38ea1d5d88d5ba4e15ab121eeafd7a8c02140e3cfd7fe46a4f",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/getopts.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/hash.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 12016,
+      "sha256": "615435c99f4a90eb1c76d1731c05c4d47507b75f706e6f8c513cd6d2241d53bc",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/hash.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/jobs.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 18589,
+      "sha256": "7063a42fe884c5cbfaa372164723fc92f343a21949b60ed578856411abd0c538",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/jobs.html",
+      "retried_utc": "2026-09-29T02:12:05.447069+00:00",
+      "initial_attempt": "curl timeout 28; no source bytes accepted"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/kill.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 20896,
+      "sha256": "b8a734e2a6c967cb8fbfd56d8e5efbec318e8bbae182754a75ad3d4d472ce12e",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/kill.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/printf.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 33375,
+      "sha256": "10a8cae0fcf8fba5c33a685266219c1eef19e9a40ceb34d3dd02ba01dc242a5e",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/printf.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 12366,
+      "sha256": "6c0724e219d469ac68640fc07c825a95e090931483b9cee2d089dec136efd7f6",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/pwd.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/read.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 19988,
+      "sha256": "2eec6366229acb50ba5cc984e972172033bbd9077f37af7d1c6fd2e5f5aea6e1",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/read.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sh.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 75412,
+      "sha256": "b6f11dc31fccb2145dd51ccd92704779dfce1faa00b3a5bec27f0007b711a054",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/sh.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 32085,
+      "sha256": "bc67634d25dde24c8e020a749f24e15d59c4bf6d3669a930b7e3133fce5272d8",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/test.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/true.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 7814,
+      "sha256": "85e102249592eb707d35b638d340e0792547d9e1ad4445184cdd15dcc9428694",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/true.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/type.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 9521,
+      "sha256": "751b5e2e0e55dea89f864568f743968ea72c1a0bbb0b0a1351f389b24709e2ba",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/type.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ulimit.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 15985,
+      "sha256": "c63de22080fec37644b6381f4345533091ed70380e2652d02b542de8b8fcd01a",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/ulimit.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/umask.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 15178,
+      "sha256": "f149967bc798774e259f430836b8582d61892280ebec5183f949156c3afc1254",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/umask.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/unalias.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 10216,
+      "sha256": "6a55559940ea84b8dfe3be5b4c77b27e4efbb3340bbfd688ec828ee3aaea0ba7",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/unalias.html"
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/wait.html",
+      "http_status": "200",
+      "status": 0,
+      "bytes": 18469,
+      "sha256": "284585bf126bc2207cf4e425a9e66ab16d869c9ab5fedcd8cb603493dc34f78e",
+      "error": null,
+      "local_file": "/tmp/csh012-normative/wait.html"
+    }
+  ]
+}

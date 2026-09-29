@@ -1,5 +1,8 @@
 # Expansion, parameter and locale evidence
 
+The [CSH-012 acceptance review](conformance-acceptance-review.md) at `c8c1c91`
+records current requirement gaps, defect ownership, platform results and documentation corrections.
+
 [CSH-047](tickets/CSH-047-expansion-evidence.md) decomposes ENV-002, ENV-004 and
 EXP-001–011 for the POSIX.1-2024 base profile. The inventory records selected
 runtime assertions, API-only contracts, implementation policies and remaining
