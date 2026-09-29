@@ -64,6 +64,16 @@ jobs:
         run: |
           make clean
           make -j2 test test-pty test-host-profile CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+      - name: Preserve retention timing and stack diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: retention-${{ matrix.os }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            build/retention-diagnostics/
+            build/retention-diagnostics-checks/
+          if-no-files-found: ignore
+          retention-days: 30
 
   docker:
     name: Docker (Linux)

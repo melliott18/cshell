@@ -409,6 +409,10 @@ reopens #99: its outer deadline expired after at least 448 successful fill
 iterations, with the last output received at 58.721 seconds. The specific cause
 of the elapsed time remains unconfirmed; the old acceptance does not cover this
 new failure, and the investigation proposes no runtime or deadline change.
+The [failure capture](evidence/csh-057-retention-diagnostics/README.md) adds
+per-child monotonic timestamps, read-only alarm observations and bounded macOS
+stack sampling while preserving the exact oracle and both deadlines. It does
+not disposition the recurrence or the newly recorded terminal-fault timeout.
 
 <a id="csh-058"></a>
 

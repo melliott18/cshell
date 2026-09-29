@@ -1150,6 +1150,46 @@ last output received at 58.721 seconds. It distinguishes aggregate deadline
 exhaustion from the still-unconfirmed reason for that elapsed time. CSH-057 is
 reopened; the retention case and both deadline levels remain unchanged.
 
+`make test-job-retention` now runs the original fixture and exact oracle through
+`tests/retention_diagnostics.py`. It retains each attempt under
+`build/retention-diagnostics/retention-*`: binary/platform/CI identity, the
+actual result, a bounded file-backed JSONL trace, and a watcher report with any
+stack samples. `CSH_RETENTION_TRACE` enables the test-only C observer. Its
+`CLOCK_MONOTONIC` records identify capacity, round, item and PID at fork,
+run/reap, wait, foreground, overflow and cleanup boundaries. Only the lifecycle
+fixture links the fork wrapper; production executor objects are unchanged.
+Children emit one entry record and close the trace descriptor before proceeding.
+
+Each trace record queries the actual SIGALRM mask, pending state, disposition
+and remaining `ITIMER_REAL`. The observer preserves errno and never changes a
+mask, disposition or alarm. These are observations at recorded boundaries;
+an alarm state reported for a later stall is explicitly last-known state.
+Trace writes are unbuffered and capped below the runner's existing file limit,
+with truncation reported as a diagnostic failure. Timing includes observer cost.
+
+An independent watcher samples the fixture root and at most one recorded child
+whose session ownership is verified. It triggers after two seconds in an
+individual operation, at 57 seconds of case time, or when the last observed
+timer projects expiry within the 2.5-second sampling budget plus 0.2 seconds.
+The two samplers run concurrently within that bounded budget; the original
+60-second case deadline and five-second phase alarms continue independently.
+Sampling failures and unsupported sampling remain explicit evidence. No signal
+handler is installed to collect alarm state, and sampling cannot turn a failed
+case into a pass. `make test-retention-diagnostics` checks observer invariants;
+its real stalled-child and inherited blocked-alarm controls retain their
+expected failures. Harness regressions separately check sampler cleanup,
+output bounds and ownership.
+
+The [diagnostic capture review](evidence/csh-057-retention-diagnostics/README.md)
+records this capability and its validation. It does not diagnose the hosted
+timeout. The normal review retained 94 passing harness checks, 148 passing jobs
+cases and 30 passing public jobs PTY cases, followed by a five-second timeout
+in the unchanged terminal fault fixture. A separate full normal run stopped
+in the CSH-058 QUIT probe. The terminal failure remains undispositioned under
+CSH-057 / #99; the signal probe belongs to CSH-058 / #100. Consult that evidence
+record for final sanitizer results and process observations; neither failure
+is erased by a later pass.
+
 The [foreground-resume follow-up](evidence/csh-057-pty-fix/README.md) extends the
 existing terminal fault fixture with a synchronized exit-before-SIGCONT case,
 portable EPERM/ESRCH branches and rejection for a stopped live child. Its

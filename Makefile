@@ -517,13 +517,28 @@ build/tests/lifecycle-jobs.o: src/jobs.c $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -Dsysconf=csh_lifecycle_sysconf -c $< -o $@
 
-build/tests/jobs_lifecycle: tests/jobs_lifecycle.c build/tests/lifecycle-jobs.o $(EXECUTE_OBJECTS) build/character.o build/stack.o
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/tests/lifecycle-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o build/stack.o $(LDLIBS)
+# Observe fork boundaries only in the lifecycle fixture's executor copy.
+build/tests/lifecycle-execute.o: src/execute.c $(EXECUTE_HEADERS) tests/retention_trace.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -DCSH_RETENTION_INTERPOSE_FORK -include tests/retention_trace.h -c $< -o $@
+
+build/tests/retention-trace.o: tests/retention_trace.c tests/retention_trace.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+build/tests/jobs_lifecycle: tests/jobs_lifecycle.c tests/retention_trace.h build/tests/lifecycle-jobs.o build/tests/lifecycle-execute.o build/tests/retention-trace.o $(EXECUTE_OBJECTS) build/character.o build/stack.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/tests/lifecycle-jobs.o build/tests/lifecycle-execute.o build/tests/retention-trace.o $(filter-out build/jobs.o build/execute.o,$(EXECUTE_OBJECTS)) build/character.o build/stack.o $(LDLIBS)
 
 test-jobs: test-job-retention
 .PHONY: test-job-retention
 test-job-retention: build/tests/jobs_lifecycle
-	$(PYTHON) tests/smoke.py ./build/tests/jobs_lifecycle --suite tests/fixtures/job-retention.json --timeout 60
+	$(PYTHON) tests/retention_diagnostics.py ./build/tests/jobs_lifecycle
+
+.PHONY: test-retention-diagnostics
+test-retention-diagnostics: build/tests/jobs_lifecycle
+	$(PYTHON) tests/retention_trace_checks.py ./build/tests/jobs_lifecycle
+
+test: test-retention-diagnostics
 
 test-jobs-pty: test-job-notifications
 .PHONY: test-job-notifications
