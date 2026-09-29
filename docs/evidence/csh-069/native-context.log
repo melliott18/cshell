@@ -1,0 +1,35 @@
+mkdir -p build/
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/main.c -o build/main.o
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/invocation.c -o build/invocation.o
+mkdir -p build/tests/
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2  -o build/tests/context_fixture tests/context_fixture.c build/jobs.o build/traps.o build/builtin.o build/utility.o build/execute.o build/prepare.o build/redirect.o build/parser.o build/ast.o build/lexer.o build/input.o build/quote.o build/state.o build/alias.o build/expand.o build/arithmetic.o build/fields.o build/pathname.o build/character.o 
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2  -DCSH_CONTEXT_SCHEDULE -o build/tests/context_schedule tests/context_fixture.c build/tests/context-schedule-execute.o build/jobs.o build/traps.o build/builtin.o build/utility.o build/prepare.o build/redirect.o build/parser.o build/ast.o build/lexer.o build/input.o build/quote.o build/state.o build/alias.o build/expand.o build/arithmetic.o build/fields.o build/pathname.o build/character.o 
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -include tests/execute_faults.h -c src/utility.c -o build/tests/execute-fault-utility.o
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -include tests/execute_faults.h -c src/jobs.c -o build/tests/execute-fault-jobs.o
+mkdir -p build/tests/
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -include tests/execute_faults.h -c src/traps.c -o build/tests/execute-fault-traps.o
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -include tests/execute_faults.h -c src/prepare.c -o build/tests/execute-fault-prepare.o
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -include tests/execute_faults.h -c src/expand.c -o build/tests/execute-fault-expand.o
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -include tests/execute_faults.h -c src/fields.c -o build/tests/execute-fault-fields.o
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -include tests/execute_faults.h -c src/pathname.c -o build/tests/execute-fault-pathname.o
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -include tests/execute_faults.h -c src/arithmetic.c -o build/tests/execute-fault-arithmetic.o
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -include tests/execute_faults.h -c src/execute.c -o build/tests/execute-fault-execute.o
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -include tests/execute_faults.h -c src/redirect.c -o build/tests/execute-fault-redirect.o
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -include tests/execute_faults.h -c src/state.c -o build/tests/execute-fault-state.o
+cc -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2  -o cshell build/main.o build/jobs.o build/traps.o build/builtin.o build/utility.o build/execute.o build/prepare.o build/redirect.o build/parser.o build/ast.o build/lexer.o build/input.o build/quote.o build/state.o build/alias.o build/expand.o build/arithmetic.o build/fields.o build/pathname.o build/invocation.o build/character.o 
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2  -o build/tests/execute_faults tests/execute_faults.c build/tests/execute-fault-utility.o build/tests/execute-fault-jobs.o build/tests/execute-fault-traps.o build/tests/execute-fault-prepare.o build/tests/execute-fault-expand.o build/tests/execute-fault-fields.o build/tests/execute-fault-pathname.o build/tests/execute-fault-arithmetic.o build/tests/execute-fault-execute.o build/tests/execute-fault-redirect.o build/tests/execute-fault-state.o build/parser.o build/ast.o build/lexer.o build/input.o build/quote.o build/alias.o build/builtin.o build/character.o 
+python3 tests/contexts.py ./cshell --helper build/tests/execute_helper --api-binary build/tests/context_fixture --schedule-binary build/tests/context_schedule --fault-binary build/tests/execute_faults
+context fixtures passed (60 behavior cases, API, forced schedule and fault checks)

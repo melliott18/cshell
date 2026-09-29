@@ -1,0 +1,102 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load .dockerignore
+#1 transferring context: 364B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.26kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/debian:bookworm-slim
+#3 ...
+
+#4 [auth] library/debian:pull token for registry-1.docker.io
+#4 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/debian:bookworm-slim
+#3 DONE 1.0s
+
+#5 [1/9] FROM docker.io/library/debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 transferring context: 1.74MB 0.1s done
+#6 DONE 0.1s
+
+#7 [2/9] RUN echo 'path-include=/usr/share/locale/fr/*' > /etc/dpkg/dpkg.cfg.d/zz-cshell-locale     && apt-get update     && apt-get install -y --no-install-recommends build-essential python3 procps locales ed busybox acl     && localedef -i en_US -f UTF-8 en_US.UTF-8     && localedef -i fr_FR -f UTF-8 fr_FR.UTF-8     && localedef -i de_DE -f UTF-8 de_DE.UTF-8     && localedef -i zh_CN -f GB18030 zh_CN.GB18030     && rm -rf /var/lib/apt/lists/*     && useradd --create-home --uid 10001 cshell     && mkdir /work     && chown cshell:cshell /work
+#7 CACHED
+
+#8 [3/9] WORKDIR /work
+#8 CACHED
+
+#9 [4/9] COPY --chown=cshell:cshell Makefile Dockerfile ./
+#9 DONE 0.1s
+
+#10 [5/9] COPY --chown=cshell:cshell include/ include/
+#10 DONE 0.0s
+
+#11 [6/9] COPY --chown=cshell:cshell src/ src/
+#11 DONE 0.2s
+
+#12 [7/9] COPY --chown=cshell:cshell tests/ tests/
+#12 DONE 0.1s
+
+#13 [8/9] COPY --chown=cshell:cshell tools/ tools/
+#13 DONE 0.0s
+
+#14 [9/9] RUN if [ -n "cshell" ]; then make "cshell"; fi
+#14 0.151 mkdir -p build/
+#14 0.153 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/main.c -o build/main.o
+#14 0.357 mkdir -p build/
+#14 0.359 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/jobs.c -o build/jobs.o
+#14 0.754 mkdir -p build/
+#14 0.755 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/traps.c -o build/traps.o
+#14 0.887 mkdir -p build/
+#14 0.887 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/builtin.c -o build/builtin.o
+#14 1.146 mkdir -p build/
+#14 1.147 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/utility.c -o build/utility.o
+#14 1.360 mkdir -p build/
+#14 1.361 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/execute.c -o build/execute.o
+#14 2.602 mkdir -p build/
+#14 2.603 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/prepare.c -o build/prepare.o
+#14 2.797 mkdir -p build/
+#14 2.798 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/redirect.c -o build/redirect.o
+#14 2.961 mkdir -p build/
+#14 2.962 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/parser.c -o build/parser.o
+#14 3.512 mkdir -p build/
+#14 3.514 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/ast.c -o build/ast.o
+#14 3.677 mkdir -p build/
+#14 3.678 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/lexer.c -o build/lexer.o
+#14 4.107 mkdir -p build/
+#14 4.108 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/input.c -o build/input.o
+#14 4.212 mkdir -p build/
+#14 4.213 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/quote.c -o build/quote.o
+#14 4.268 mkdir -p build/
+#14 4.268 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/state.c -o build/state.o
+#14 4.522 mkdir -p build/
+#14 4.524 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/alias.c -o build/alias.o
+#14 4.646 mkdir -p build/
+#14 4.647 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/expand.c -o build/expand.o
+#14 5.014 mkdir -p build/
+#14 5.015 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/arithmetic.c -o build/arithmetic.o
+#14 5.813 mkdir -p build/
+#14 5.815 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/fields.c -o build/fields.o
+#14 6.153 mkdir -p build/
+#14 6.154 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/pathname.c -o build/pathname.o
+#14 6.307 mkdir -p build/
+#14 6.308 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/invocation.c -o build/invocation.o
+#14 6.405 mkdir -p build/
+#14 6.407 cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/character.c -o build/character.o
+#14 6.434 cc -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2  -o cshell build/main.o build/jobs.o build/traps.o build/builtin.o build/utility.o build/execute.o build/prepare.o build/redirect.o build/parser.o build/ast.o build/lexer.o build/input.o build/quote.o build/state.o build/alias.o build/expand.o build/arithmetic.o build/fields.o build/pathname.o build/invocation.o build/character.o 
+#14 DONE 6.5s
+
+#15 exporting to image
+#15 exporting layers
+#15 exporting layers 0.1s done
+#15 writing image sha256:d06b6135387e1413af2b9fff2a952a4c19124e6bb712b241e36a87c720a11eac done
+#15 naming to docker.io/library/cshell-test:csh-069 done
+#15 DONE 0.1s
+
+What's Next?
+  View a summary of image vulnerabilities and recommendations → docker scout quickview

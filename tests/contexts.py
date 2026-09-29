@@ -14,6 +14,7 @@ def main():
     parser.add_argument('--helper', required=True)
     parser.add_argument('--api-binary', required=True)
     parser.add_argument('--fault-binary', required=True)
+    parser.add_argument('--schedule-binary', required=True)
     args = parser.parse_args()
     binary, helper_path, api, faults = (str(Path(p).resolve()) for p in
         (args.binary, args.helper, args.api_binary, args.fault_binary))
@@ -87,12 +88,13 @@ def main():
             run(f'{{ : 1>&{fd}; }} >private-test', status=1, diagnostic=True)
         run('{ >compound-output; if true; then true; fi; }')
         assert (cwd / 'compound-output').read_bytes() == b''
-        result = bounded_run([api, helper_path], cwd=cwd, env=env, timeout=20)
-        assert result.returncode == 0 and result.stdout == b'context API checks passed\n', result
-        assert result.stderr.count(b'cannot apply redirection') == 7, result
+        for fixture in (api, str(Path(args.schedule_binary).resolve())):
+            result = bounded_run([fixture, helper_path], cwd=cwd, env=env, timeout=20)
+            assert result.returncode == 0 and result.stdout == b'context API checks passed\n', result
+            assert result.stderr.count(b'cannot apply redirection') == 7, result
         result = bounded_run([faults, '--context'], cwd=cwd, env=env, timeout=30)
         assert result.returncode == 0 and result.stdout == b'context fault checks passed\n', result
-    print(f'context fixtures passed ({checked} behavior cases, API and fault checks)')
+    print(f'context fixtures passed ({checked} behavior cases, API, forced schedule and fault checks)')
 
 
 if __name__ == '__main__':

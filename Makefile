@@ -298,8 +298,16 @@ build/tests/context_fixture: tests/context_fixture.c $(EXECUTE_OBJECTS) $(EXECUT
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(EXECUTE_OBJECTS) build/character.o build/stack.o $(LDLIBS)
 
-test-context: cshell build/tests/context_fixture build/tests/execute_helper build/tests/execute_faults
-	$(PYTHON) tests/contexts.py ./cshell --helper build/tests/execute_helper --api-binary build/tests/context_fixture --fault-binary build/tests/execute_faults
+build/tests/context-schedule-execute.o: src/execute.c $(EXECUTE_HEADERS) tests/context_schedule.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/context_schedule.h -c $< -o $@
+
+build/tests/context_schedule: tests/context_fixture.c build/tests/context-schedule-execute.o $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -DCSH_CONTEXT_SCHEDULE -o $@ $< build/tests/context-schedule-execute.o $(filter-out build/execute.o,$(EXECUTE_OBJECTS)) build/character.o $(LDLIBS)
+
+test-context: cshell build/tests/context_fixture build/tests/context_schedule build/tests/execute_helper build/tests/execute_faults
+	$(PYTHON) tests/contexts.py ./cshell --helper build/tests/execute_helper --api-binary build/tests/context_fixture --schedule-binary build/tests/context_schedule --fault-binary build/tests/execute_faults
 
 test-execute: build/tests/execute_fixture build/tests/execute_helper build/tests/execute_faults build/tests/assignment_fixture
 	$(PYTHON) tests/execute.py build/tests/execute_fixture --helper build/tests/execute_helper --fault-binary build/tests/execute_faults --assignment-binary build/tests/assignment_fixture

@@ -30,7 +30,9 @@ completion**. This waives an additional causal-repair demonstration for that
 past attempt; it does not waive, skip, relax or normalize any current/future
 test, approve a known failing product behavior, or establish reliable operation
 under arbitrary load. [CSH-069 / #138](tickets/CSH-069-historical-failure-dispositions.md)
-retains diagnosis and recurrence ownership for all eleven entries.
+retains recurrence ownership for all eleven entries. The finite
+[CSH-069 triage](evidence/csh-069/README.md) preserves H01–H10 dispositions and
+adds a demonstrated H11 fixture-race repair with limited historical attribution.
 
 The reason for this scoped acceptance is that the observed failures, test
 oracles, available identities and missing details are explicit and independently
@@ -50,7 +52,7 @@ results. It never changes a historical failed, cancelled or not-run outcome.
 | <a id="h08"></a>H08 — CSH-055 harness setup/cleanup and descriptor/ignoreeof deadlines | Initial source digest a6b1b54ef172b710be3b8d704b676911ace0d3a6fcf1c7e967979302de64ce48; identities retain exact manifests. [native-harness-failed.log.gz](evidence/csh-055/native-harness-failed.log.gz), [docker-initial-sanitizer-failed.log.gz](evidence/csh-055/docker-initial-sanitizer-failed.log.gz), [docker-initial-sanitizer-identity.json](evidence/csh-055/docker-initial-sanitizer-identity.json), [README.md](evidence/csh-055/README.md) | [tests/execution_contracts.py](../tests/execution_contracts.py); [tests/runtime_cases.py](../tests/runtime_cases.py); [tests/test_harness.py](../tests/test_harness.py); [tests/test_pty_harness.py](../tests/test_pty_harness.py). 1s original ps cleanup, fixture setup marker, 5s descriptor/PTY. | Preserve the descriptor stop and later unrun stages. CSH-054 readiness fixes require matching evidence before being called causal repairs for these attempts. Accepted unresolved for audit only; CSH-069. |
 | <a id="h09"></a>H09 — CSH-057 four Linux sanitizer control-flow deadlines | adb9e5c103f7183836eb5f8f19ba180b134a004a; batch manifests qualify tested bytes. [docker-sanitizer-runtime-0.log.gz](evidence/csh-057/docker-sanitizer-runtime-0.log.gz), [docker-sanitizer-runtime-1.log.gz](evidence/csh-057/docker-sanitizer-runtime-1.log.gz), [docker-sanitizer-runtime-2.log.gz](evidence/csh-057/docker-sanitizer-runtime-2.log.gz), [docker-sanitizer-runtime-3.log.gz](evidence/csh-057/docker-sanitizer-runtime-3.log.gz), [docker-sanitizer-runtime-batches.json](evidence/csh-057/docker-sanitizer-runtime-batches.json) | [tests/control_flow_cases.py](../tests/control_flow_cases.py). 5s cases; same exact cases retained in batch manifest. | These control-flow timeouts are outside the formal CSH-057 retention disposition. Serial unchanged passes do not establish cause. Accepted unresolved for audit only; CSH-069. |
 | <a id="h10"></a>H10 — CSH-058 ps/PTY/setup bounds and native case-fallthrough deadline | 74bcc04e67a6b42503b86d52828a00aae903c50b; fixture correction 0dbf8d6 is distinguished in the source record. [native-full.log.gz](evidence/csh-058/native-full.log.gz), [docker-full.log.gz](evidence/csh-058/docker-full.log.gz), [sanitizer-full.log.gz](evidence/csh-058/sanitizer-full.log.gz), [README.md](evidence/csh-058/README.md) | [tests/pty_harness.py](../tests/pty_harness.py); [tests/test_harness.py](../tests/test_harness.py); [tests/test_pty_harness.py](../tests/test_pty_harness.py); [tests/control_flow_cases.py](../tests/control_flow_cases.py). 5s ps snapshot; 0.3s EOF-helper setup; 2s observation; 5s control plus 1s reap. | Separate these observations from the diagnosed four-second launcher alarm leaking through exec, which is repaired. No blanket load explanation. Accepted unresolved for audit only; CSH-069. |
-| <a id="h11"></a>H11 — New Docker context_fixture WNOWAIT assertion | 5b56328143adc72f48f8af581b93fcb758af060e; push run 36512726060, job 109228225575. [ci-36512726060.json](evidence/csh-012/closure-5b56328/ci-36512726060.json), [ci-job-109228225575.log.gz](evidence/csh-012/closure-5b56328/ci-job-109228225575.log.gz) | [tests/context_fixture.c:136](../tests/context_fixture.c); [tests/contexts.py](../tests/contexts.py). Existing context fixture assertion and runner bound, unchanged. | waitid(P_PID, background_pid, WEXITED | WNOWAIT) returned nonzero; fixture aborted with status -6. Errno was not printed. Early child collection is a hypothesis only. The separate PR Docker job passed without a rerun; this does not diagnose the failed push job. Accepted unresolved for audit only; CSH-069. |
+| <a id="h11"></a>H11 — New Docker context_fixture WNOWAIT assertion | 5b56328143adc72f48f8af581b93fcb758af060e; push run 36512726060, job 109228225575. [ci-36512726060.json](evidence/csh-012/closure-5b56328/ci-36512726060.json), [ci-job-109228225575.log.gz](evidence/csh-012/closure-5b56328/ci-job-109228225575.log.gz) | [original context_fixture.c:136](https://github.com/melliott18/cshell/blob/5b56328143adc72f48f8af581b93fcb758af060e/tests/context_fixture.c#L136); [tests/contexts.py](../tests/contexts.py). Original API bound: 20s. CSH-069 adds forced early collection and a pipe-gated next-boundary assertion; bounds unchanged. | waitid(P_PID, background_pid, WEXITED | WNOWAIT) returned nonzero; fixture aborted with status -6. Errno was not printed. CSH-069 now reproduces ECHILD by forcing child completion before the launch poll and repairs that fixture race. The historical errno remains unavailable, so attribution of this exact occurrence remains unknown; accept within the [further triage scope](evidence/csh-069/README.md#h11-demonstrated-fixture-race-limited-historical-attribution), retaining same-ticket recurrence. The separate passing PR job is not a diagnosis. |
 
 [Machine disposition records](evidence/csh-012/closure-5b56328/defect-dispositions.json)
 include hashes and byte counts for every cited local original record. For H01/H02
@@ -68,10 +70,12 @@ the Docker abort were not run. Both complete snapshots and available job logs
 are retained. These are separate from the all-green c8c1c91 baseline and from
 any later integration run. No repeat-until-green workflow was requested.
 
-H11 remains an assertion failure with unrecorded errno; source inspection alone
-does not prove ECHILD or a race. The unchanged default `test-context` continues
-to detect this condition. CSH-069 must record a causal fix or explicit further
-disposition when new evidence arrives.
+H11's historical errno remains unrecorded. CSH-069's forced native/Linux
+reproductions demonstrate an ECHILD fixture race, now repaired with enforced
+coverage for both early collection and next-boundary reaping. This supplies a
+further scoped disposition, not retrospective proof of the historical errno.
+The [triage record](evidence/csh-069/README.md) retains both failing reproductions
+and all validation attempts. Reopen CSH-069 on recurrence or new causal evidence.
 
 Reopen the relevant defect/qualification ticket on recurrence. Reopen CSH-012
 only if a new finding invalidates the completeness or truthfulness of its audit

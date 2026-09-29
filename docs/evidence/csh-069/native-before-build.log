@@ -1,0 +1,47 @@
+mkdir -p build/tests/
+mkdir -p build/
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -include tests/context_schedule.h -c src/execute.c -o build/tests/context-schedule-execute.o
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/jobs.c -o build/jobs.o
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/traps.c -o build/traps.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/builtin.c -o build/builtin.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/utility.c -o build/utility.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/execute.c -o build/execute.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/prepare.c -o build/prepare.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/redirect.c -o build/redirect.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/parser.c -o build/parser.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/ast.c -o build/ast.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/lexer.c -o build/lexer.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/input.c -o build/input.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/quote.c -o build/quote.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/state.c -o build/state.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/alias.c -o build/alias.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/expand.c -o build/expand.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/arithmetic.c -o build/arithmetic.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/fields.c -o build/fields.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/pathname.c -o build/pathname.o
+mkdir -p build/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/character.c -o build/character.o
+mkdir -p build/tests/
+# The helper observes descriptors after exec; sanitizer startup can reopen
+# intentionally closed standard descriptors before main on macOS.
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 \
+		 -o build/tests/execute_helper tests/execute_helper.c 
+mkdir -p build/tests/
+cc  -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2  -DCSH_CONTEXT_SCHEDULE -o build/tests/context_schedule tests/context_fixture.c build/tests/context-schedule-execute.o build/jobs.o build/traps.o build/builtin.o build/utility.o build/prepare.o build/redirect.o build/parser.o build/ast.o build/lexer.o build/input.o build/quote.o build/state.o build/alias.o build/expand.o build/arithmetic.o build/fields.o build/pathname.o build/character.o 
