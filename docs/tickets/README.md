@@ -78,6 +78,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-076](CSH-076-host-locale-catalogs.md) | Qualify host locale and message catalog utilities | [CSH-052](CSH-052-host-utility-evidence.md), [CSH-056](CSH-056-host-contract-gaps.md) | [#148](https://github.com/melliott18/cshell/issues/148) |
 | [CSH-077](CSH-077-host-terminal-utilities.md) | Qualify host terminal and session utilities | [CSH-052](CSH-052-host-utility-evidence.md), [CSH-056](CSH-056-host-contract-gaps.md) | [#149](https://github.com/melliott18/cshell/issues/149) |
 | [CSH-078](CSH-078-host-service-utilities.md) | Qualify host scheduling, mail and service utilities | [CSH-052](CSH-052-host-utility-evidence.md), [CSH-056](CSH-056-host-contract-gaps.md) | [#150](https://github.com/melliott18/cshell/issues/150) |
+| [CSH-081](CSH-081-host-terminal-residual-contracts.md) | Qualify residual terminal and session contracts | [CSH-077](CSH-077-host-terminal-utilities.md) | [#159](https://github.com/melliott18/cshell/issues/159) |
 
 ## Child implementation tickets
 

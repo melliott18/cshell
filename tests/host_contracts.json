@@ -187,9 +187,9 @@
       "prerequisite": "Supply missing catalog providers, generated disposable locales/catalogs and independent encoding/translation expectations. Shared French/German/UTF-8/GB18030 provisioning is owned here; per-utility behavior remains with its named contract owner."
     },
     {
-      "ticket": "CSH-077",
-      "path": "docs/tickets/CSH-077-host-terminal-utilities.md",
-      "title": "Qualify host terminal and session utilities",
+      "ticket": "CSH-081",
+      "path": "docs/tickets/CSH-081-host-terminal-residual-contracts.md",
+      "title": "Qualify residual terminal and session contracts",
       "utilities": [
         "stty",
         "tabs",
@@ -202,7 +202,7 @@
       "conditions": [
         "U-040/stty-physical-terminal"
       ],
-      "prerequisite": "Supply controlled PTYs, session records and terminal capabilities; physical serial/terminal assertions require supplied hardware. Message fixtures must use disposable owned sessions."
+      "prerequisite": "Supply disposable physical serial hardware, registered owned message sessions, additional terminal capability models, credentials and locale/signal/I/O/resource fault controls. Preserve CSH-077 selected witnesses separately."
     },
     {
       "ticket": "CSH-078",
@@ -232,5 +232,12 @@
     "U-035/locale-errors": "CSH-076",
     "U-037/permission-denial": "CSH-071",
     "U-037/block-device": "CSH-071"
+  },
+  "terminal_evidence": {
+    "ticket": "CSH-077",
+    "map": "docs/host-terminal-contracts.md",
+    "runner": "tests/host_terminal.py",
+    "scope": "128 strict bounded cases in five dispatch modes; not full-page qualification",
+    "residual_owner": "CSH-081"
   }
 }

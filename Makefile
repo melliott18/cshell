@@ -488,7 +488,7 @@ build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/pr
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_printf_faults.c $(LDLIBS)
 
-test-host-profile: test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
+test-host-profile: test-host-terminal-profile test-host-terminal-harness test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 
 # Public entry point with only the command input read syscall instrumented.
@@ -616,3 +616,25 @@ test-locale-pathname: cshell build/tests/locale_probe build/tests/pathname_runti
 test-host-inventory:
 	$(PYTHON) tests/host_contract_inventory.py
 	$(PYTHON) tests/test_host_contract_inventory.py
+
+.PHONY: test-host-terminal
+test-host-terminal: cshell build/tests/host_session_records
+	$(PYTHON) tests/host_terminal.py ./cshell --record build/tests/host-terminal-results.json $(HOST_TERMINAL_FLAGS)
+
+build/tests/host_session_records: tests/host_session_records.c
+	mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+HOST_TERMINAL_ADAPTERS = $(addprefix build/host-terminal-,tabs tput mesg who)
+$(HOST_TERMINAL_ADAPTERS): build/host-terminal-%: tools/host-profile/terminal.c
+	mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -DTERMINAL_UTILITY='"$*"' -DTERMINAL_PROVIDER='"/usr/bin/$*"' -o $@ $< $(LDLIBS)
+
+host-profile: $(HOST_TERMINAL_ADAPTERS)
+.PHONY: test-host-terminal-profile
+test-host-terminal-profile: cshell build/tests/host_session_records host-profile
+	$(PYTHON) tests/host_terminal.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-terminal-profile-results.json $(HOST_TERMINAL_FLAGS)
+
+.PHONY: test-host-terminal-harness
+test-host-terminal-harness:
+	$(PYTHON) tests/test_host_terminal.py

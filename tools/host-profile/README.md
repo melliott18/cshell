@@ -242,3 +242,18 @@ control. It checks the deadline, strict timeout record, measured IDs, disappeara
 of every owned PID (including zombies), and survival of an unrelated child.
 Only private files and processes are used. See
 [CSH-064 completion](../../docs/evidence/csh-064-completion/README.md) for validation.
+
+## CSH-077 terminal adapters
+
+The profile also builds `terminal.c` as standalone tabs/tput/mesg/who adapters
+for the four reproduced contracts described in the
+[terminal section map](../../docs/host-terminal-contracts.md). Each dispatches
+to `/usr/bin/<name>`; no system executable is changed. The tput adapter exposes
+clear/init/reset only, excluding terminfo query extensions.
+
+Linux provisioning additionally installs `ncurses-bin` and `bsdextrautils` for
+tic, tabs, tput and write. `make test-host-profile` includes 640 strict PTY/record
+witnesses and cleanup regressions. Records distinguish adapter/vendor hashes,
+package versions and actual PATH. Native and container evidence remain separate.
+Physical hardware and registered sender/recipient delivery are not qualified;
+[CSH-081](../../docs/tickets/CSH-081-host-terminal-residual-contracts.md) owns them.

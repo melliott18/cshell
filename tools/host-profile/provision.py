@@ -17,6 +17,8 @@ from host_utility_cases import HOSTS
 def provision(destination, gnu_bin=None):
     selected = {name: shutil.which(name, path=os.defpath) for name in HOSTS}
     overrides = {'printf': str(ROOT / 'build/host-printf')}
+    overrides.update({name: str(ROOT / ('build/host-terminal-' + name))
+                      for name in ('tabs', 'tput', 'mesg', 'who')})
     system = platform.system()
     if system == 'Darwin':
         # Homebrew's prefixed names do not change the system PATH or echo policy.

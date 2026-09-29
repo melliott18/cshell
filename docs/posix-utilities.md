@@ -192,3 +192,7 @@ and `pipefail`. Reference-shell disagreement is recorded through the
 and pathname residuals, including case, read and alias utilities. Its condition
 map assigns external prerequisites P1–P6 without promoting whole families or
 counting unavailable capabilities as passes.
+
+[CSH-077 terminal/session section map](host-terminal-contracts.md) records the
+strict selected profile and [CSH-081](tickets/CSH-081-host-terminal-residual-contracts.md)
+ownership of unqualified full contracts and physical-terminal prerequisites.

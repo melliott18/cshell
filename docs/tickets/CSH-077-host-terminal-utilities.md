@@ -1,11 +1,11 @@
 # CSH-077: Qualify host terminal and session utilities
 
-- Status: ready
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: Assigned when work starts
+- Branch: test/CSH-077-host-terminal-utilities
 - Issue: [#149](https://github.com/melliott18/cshell/issues/149)
 
 ## Goal
@@ -55,17 +55,17 @@ profiles and executable/environment identities, remains unchanged.
 
 ## Acceptance criteria
 
-- [ ] Select each required exec-accessible provider, supply missing packages/services,
+- [x] Select each required exec-accessible provider, supply missing packages/services,
   and retain exact PATH, realpath, executable hash, package and environment identity.
-- [ ] Map every applicable page section and common default to clause-derived
+- [x] Map every applicable page section and common default to clause-derived
   assertions or an individually justified disposition; repair required-contract
   failures. Selected examples alone do not complete a utility contract.
-- [ ] Resolve each assigned retained condition with its required capability and
+- [x] Resolve each assigned retained condition with its required capability and
   strict evidence, or transfer that individual condition to a concrete open owner.
   Preserve vendor ownership, setup failures and failed assertions separately.
-- [ ] Verify public cshell dispatch and direct exec access, exact output/status and
+- [x] Verify public cshell dispatch and direct exec access, exact output/status and
   relevant effects, with zero gap allowances for every declared qualified subset.
-- [ ] Update the inventory, current ownership manifest and clause maps with the
+- [x] Update the inventory, current ownership manifest and clause maps with the
   exact qualification boundary; keep stock-host, qualified subset and full-system
   claims separate.
 
@@ -81,6 +81,39 @@ processes and disposable files/services and verify cleanup after failure/timeout
 
 ## Implementation notes/evidence
 
-Work has not started. CSH-068 transfers ownership only; it supplies no new vendor
-implementation, service, privileged host or physical terminal. CSH-064 remains
-done for its bounded capability work and repaired probe cleanup.
+Implemented the bounded PTY/session-record profile, standalone opt-in provider
+repairs and [complete section accounting](../host-terminal-contracts.md). The
+128 declared cases run through direct exec, cshell -c, file, stdin and explicit
+exec (640 assertions). Independent termios/ioctl snapshots, an authored terminal
+capability model, ttyname and private native-format session records supply the
+oracles. All declared assertions are strict, with no gap allowance.
+
+Four selected adapter repairs address blank-separated tabs operands, tput's
+invalid-operand status and multiple operands, mesg error status, and missing who
+database diagnostics. Exact adapter/vendor hashes, package/build identities,
+PATH, environment, bounded failures and source identities are retained in the
+[all-attempt evidence](../evidence/csh-077/README.md). System providers and real
+login records are unchanged; Linux write is supplied by bsdextrautils in the
+reproducible Docker/CI setup.
+
+The section map explicitly dispositions unqualified portions to
+[CSH-081](CSH-081-host-terminal-residual-contracts.md), including every utility's
+remaining page/default requirements, live registered write sessions and the exact
+`U-040/stty-physical-terminal` condition. No physical hardware was supplied. This
+transfer is open work, not a full-contract or full-system qualification claim.
+CSH-064's immutable historical evidence remains unchanged.
+
+### Validation record
+
+Native macOS and Docker/Debian runs separately cover the 640 terminal assertions,
+six harness regressions and existing strict host-profile integration (1,162
+assertions, zero gaps). The ownership checker retains 156 names, 101 external
+contracts and 30 conditions with open owners. Native public runtime checks use the selected profile; the broader existing
+job-terminal fault fixture timed out and its cleanup remains unresolved. Final
+Docker logs pass, but subsequent Docker API failures prevented final raw artifact
+retrieval. These limitations remain explicit in the evidence. Exact command results, failed preliminary attempts,
+fixture corrections and the reproduced output/exit capture race are retained in
+the evidence README; only completed final runs are claimed there.
+
+Status remains review until integration; the full remaining contracts continue
+under CSH-081 regardless of CSH-077 integration.
