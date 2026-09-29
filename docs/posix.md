@@ -45,9 +45,10 @@ The [independent CSH-037 review](audit-review.md) accounts for all 131 rows:
 115 applicable rows were allocated to evidence owners CSH-046–CSH-052,
 and 16 rows retain the documented UP/XSI exclusions. Completing this audit does
 not turn those open evidence limitations into passing conformance requirements.
-The [2026-09-28 reconciliation](evidence-reconciliation.md) distinguishes
-completed scoped audits from the obligations open at that review; the original
-allocation is not a current ticket-status list. CSH-057's later
+The [current CSH-012 reconciliation](evidence-reconciliation-current.md) records
+CSH-049 completion, CSH-050 platform acceptance, CSH-064 host ownership, and
+current versus historical validation. The original audit allocation and
+[earlier reconciliation](evidence-reconciliation.md) remain historical snapshots. CSH-057's later
 [formal retention disposition](evidence/csh-057-retention-disposition/README.md)
 allows its scoped completion while retaining an unknown-cause historical failure
 and explicit reopening conditions. CSH-050 and CSH-012 keep their separate gates.

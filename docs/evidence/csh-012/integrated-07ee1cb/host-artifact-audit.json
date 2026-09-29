@@ -1,0 +1,223 @@
+{
+  "source_sha256": "b7f93888592686e2a92ee94462588b8b497d02c4032da52df4dff1075eda3832",
+  "residual_conditions": 28,
+  "records": {
+    "native-block.json.gz": {
+      "totals": {
+        "passed": 1168,
+        "failed": 0,
+        "gaps": 0
+      },
+      "failure_phases": {},
+      "limitations": 29,
+      "filesystem": {
+        "path": "/private/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T",
+        "device": 16777233,
+        "platform": "Darwin",
+        "mount": null
+      }
+    },
+    "native.json.gz": {
+      "totals": {
+        "passed": 1162,
+        "failed": 0,
+        "gaps": 0
+      },
+      "failure_phases": {},
+      "limitations": 30,
+      "filesystem": {
+        "path": "/private/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T",
+        "device": 16777233,
+        "platform": "Darwin",
+        "mount": null
+      }
+    },
+    "sid-bind.json.gz": {
+      "totals": {
+        "passed": 1162,
+        "failed": 1119,
+        "gaps": 0
+      },
+      "failure_phases": {
+        "assertion": 9,
+        "setup": 1110
+      },
+      "limitations": 30,
+      "filesystem": {
+        "path": "/fixtures",
+        "device": 42,
+        "platform": "Linux",
+        "mount": {
+          "mountpoint": "/fixtures",
+          "type": "fakeowner",
+          "source": "/host_mark/Users",
+          "options": "rw,nosuid,nodev,relatime",
+          "device": "0:44",
+          "root": "/mitchell/.codex/worktrees/csh-063-host-platform/cshell/build/csh063-disposable-fixtures"
+        }
+      }
+    },
+    "sid-controlled.json.gz": {
+      "totals": {
+        "passed": 2281,
+        "failed": 0,
+        "gaps": 0
+      },
+      "failure_phases": {},
+      "limitations": 30,
+      "filesystem": {
+        "path": "/tmp",
+        "device": 250,
+        "platform": "Linux",
+        "mount": {
+          "mountpoint": "/",
+          "type": "overlay",
+          "source": "overlay",
+          "options": "rw,relatime",
+          "device": "0:250",
+          "root": "/"
+        }
+      }
+    },
+    "sid-nonroot.json.gz": {
+      "totals": {
+        "passed": 1168,
+        "failed": 0,
+        "gaps": 0
+      },
+      "failure_phases": {},
+      "limitations": 29,
+      "filesystem": {
+        "path": "/tmp",
+        "device": 250,
+        "platform": "Linux",
+        "mount": {
+          "mountpoint": "/",
+          "type": "overlay",
+          "source": "overlay",
+          "options": "rw,relatime",
+          "device": "0:250",
+          "root": "/"
+        }
+      }
+    },
+    "sid-tmpfs.json.gz": {
+      "totals": {
+        "passed": 1183,
+        "failed": 1098,
+        "gaps": 0
+      },
+      "failure_phases": {
+        "setup": 1098
+      },
+      "limitations": 30,
+      "filesystem": {
+        "path": "/fixtures",
+        "device": 1048578,
+        "platform": "Linux",
+        "mount": {
+          "mountpoint": "/fixtures",
+          "type": "tmpfs",
+          "source": "tmpfs",
+          "options": "rw,nosuid,nodev,relatime",
+          "device": "0:258",
+          "root": "/"
+        }
+      }
+    },
+    "sid-unequal-sanitizer.json.gz": {
+      "totals": {
+        "passed": 2077,
+        "failed": 204,
+        "gaps": 0
+      },
+      "failure_phases": {
+        "assertion": 204
+      },
+      "limitations": 30,
+      "filesystem": {
+        "path": "/tmp",
+        "device": 250,
+        "platform": "Linux",
+        "mount": {
+          "mountpoint": "/",
+          "type": "overlay",
+          "source": "overlay",
+          "options": "rw,relatime",
+          "device": "0:250",
+          "root": "/"
+        }
+      }
+    },
+    "sid-unequal.json.gz": {
+      "totals": {
+        "passed": 2077,
+        "failed": 204,
+        "gaps": 0
+      },
+      "failure_phases": {
+        "assertion": 204
+      },
+      "limitations": 30,
+      "filesystem": {
+        "path": "/tmp",
+        "device": 250,
+        "platform": "Linux",
+        "mount": {
+          "mountpoint": "/",
+          "type": "overlay",
+          "source": "overlay",
+          "options": "rw,relatime",
+          "device": "0:250",
+          "root": "/"
+        }
+      }
+    },
+    "trixie-controlled.json.gz": {
+      "totals": {
+        "passed": 2281,
+        "failed": 0,
+        "gaps": 0
+      },
+      "failure_phases": {},
+      "limitations": 30,
+      "filesystem": {
+        "path": "/tmp",
+        "device": 240,
+        "platform": "Linux",
+        "mount": {
+          "mountpoint": "/",
+          "type": "overlay",
+          "source": "overlay",
+          "options": "rw,relatime",
+          "device": "0:240",
+          "root": "/"
+        }
+      }
+    },
+    "trixie-unequal.json.gz": {
+      "totals": {
+        "passed": 2077,
+        "failed": 204,
+        "gaps": 0
+      },
+      "failure_phases": {
+        "assertion": 204
+      },
+      "limitations": 30,
+      "filesystem": {
+        "path": "/tmp",
+        "device": 240,
+        "platform": "Linux",
+        "mount": {
+          "mountpoint": "/",
+          "type": "overlay",
+          "source": "overlay",
+          "options": "rw,relatime",
+          "device": "0:240",
+          "root": "/"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,77 @@
+[
+  {
+    "command": [
+      "make",
+      "-j4"
+    ],
+    "cwd": "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh012-reconciliation-hhs3lve5",
+    "status": 0,
+    "start_utc": "2026-09-29T00:10:22.803053+00:00",
+    "end_utc": "2026-09-29T00:10:27.838071+00:00",
+    "log": "build.log.gz",
+    "environment_overrides": {}
+  },
+  {
+    "command": [
+      "make",
+      "test-execution-evidence"
+    ],
+    "cwd": "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh012-reconciliation-hhs3lve5",
+    "status": 0,
+    "start_utc": "2026-09-29T00:10:27.838755+00:00",
+    "end_utc": "2026-09-29T00:10:44.811113+00:00",
+    "log": "execution.log.gz",
+    "environment_overrides": {}
+  },
+  {
+    "command": [
+      "make",
+      "test-jobs-signals"
+    ],
+    "cwd": "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh012-reconciliation-hhs3lve5",
+    "status": 0,
+    "start_utc": "2026-09-29T00:10:44.811445+00:00",
+    "end_utc": "2026-09-29T00:12:07.555606+00:00",
+    "log": "jobs-signals.log.gz",
+    "environment_overrides": {}
+  },
+  {
+    "command": [
+      "make",
+      "test-host-profile"
+    ],
+    "cwd": "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh012-reconciliation-hhs3lve5",
+    "status": 0,
+    "start_utc": "2026-09-29T00:12:07.556233+00:00",
+    "end_utc": "2026-09-29T00:12:33.976692+00:00",
+    "log": "host-profile.log.gz",
+    "environment_overrides": {}
+  },
+  {
+    "command": [
+      "make",
+      "test-runtime",
+      "test-pty"
+    ],
+    "cwd": "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh012-reconciliation-hhs3lve5",
+    "status": 0,
+    "start_utc": "2026-09-29T00:12:34.015290+00:00",
+    "end_utc": "2026-09-29T00:13:31.955852+00:00",
+    "log": "profile-runtime.log.gz",
+    "environment_overrides": {
+      "CSH_TEST_PATH": "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh012-reconciliation-hhs3lve5/build/host-profile/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+    }
+  },
+  {
+    "command": [
+      "make",
+      "test-harness"
+    ],
+    "cwd": "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh012-reconciliation-hhs3lve5",
+    "status": 0,
+    "start_utc": "2026-09-29T00:13:31.956691+00:00",
+    "end_utc": "2026-09-29T00:13:51.294173+00:00",
+    "log": "harness.log.gz",
+    "environment_overrides": {}
+  }
+]

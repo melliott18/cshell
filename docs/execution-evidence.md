@@ -356,11 +356,16 @@ and supplies assertions for its named execution conditions. [CSH-047](expansion-
 and [CSH-048](state-builtin-evidence.md) record expansion/declaration and
 environment/utility partitions with explicit limits; CSH-053 records multibyte lexical coverage and host capability limits.
 CSH-054/058 record signal contracts; [CSH-057](tickets/CSH-057-job-lifecycle-boundaries.md)
-retains the distinct PTY/retention timeouts; PR #112 fixed its status-1
-continuation defect. CSH-052/056/059/060 record host utilities, fallback shell
-provisioning and their qualified limits; [CSH-061](tickets/CSH-061-host-environment-residuals.md)
-owns the remaining host conditions.
+records integrated continuation/PTY repairs and the
+[formal disposition](evidence/csh-057-retention-disposition/README.md) of its
+unknown-cause historical retention timeout. CSH-052/056/059/060/061/062/063 record
+host utilities, fallback provisioning and bounded qualification;
+[CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md) owns current
+host qualification residuals.
 CSH-049 adds [explicit filesystem/target-expansion and context partitions](execution-residuals.md)
 and retains [cross-platform integration results](tickets/CSH-049-execution-evidence.md#integrated-validation-2026-09-28).
-These are applicable open obligations. Neither CSH-042 nor CSH-043's completed
-narrow scope verifies the entire execution/case/redirection family.
+CSH-049 is done for that scoped inventory. The
+[current reconciliation](evidence-reconciliation-current.md) distinguishes its
+completion from remaining CSH-012 requirement-level review and CSH-064 host
+qualification. Neither CSH-042 nor CSH-043's completed narrow scope verifies the
+entire execution/case/redirection family.

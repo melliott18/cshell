@@ -1,0 +1,18 @@
+{
+  "runtime_cases": 3905,
+  "runtime_unique_names": true,
+  "selections": {
+    "execution.json": {
+      "cases": 883,
+      "unique_names": true,
+      "exact_full_runtime_match": true,
+      "sha256": "92714ccedc35fe4a4846aca145118d4e135094bbd1e2bc3d6850b7da9d19d0b4"
+    },
+    "traps.json": {
+      "cases": 207,
+      "unique_names": true,
+      "exact_full_runtime_match": true,
+      "sha256": "db2892406d1d53e2ae560df9b11dc1c12fa22c2f80368317f6f260393b3bb862"
+    }
+  }
+}

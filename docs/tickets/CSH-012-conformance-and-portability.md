@@ -65,32 +65,38 @@ Completing one child does not establish the milestone or POSIX compliance.
 Passing a differential suite is useful evidence but does not itself prove POSIX
 conformance. External certification, if desired, is separate from this ticket.
 
-### Evidence reconciliation (2026-09-28)
+### Current evidence reconciliation (`07ee1cb`)
 
-The [post-integration review](../evidence-reconciliation.md) records the
-CSH-049/050 review dispositions, current matrix/owner accounting and an
-independently built runtime sample at `8ffb99e`. Both children and all four
-completion prerequisites (CSH-008/009/010/011) are done. That completes the
-dependency gate, not this milestone's original acceptance criteria.
+The [current reconciliation](../evidence-reconciliation-current.md) supersedes
+stale lifecycle and residual-owner statements in the
+[earlier snapshot](../evidence-reconciliation.md), while preserving its results.
+Both children and all four completion prerequisites are done. CSH-046–049,
+CSH-051/052 and CSH-057/061/062/063 are scoped completions; CSH-050 remains in
+review and CSH-064 owns current host qualification residuals.
 
-The classification/claim-policy boxes above reflect the existing base-profile,
-D-001–D-008 and clause-map documentation. Remaining boxes still need a combined
-requirement-level review: scoped passing fixtures and completed implementation
-tickets are not complete-family evidence. CSH-049/050 retain their unchecked
-platform criterion; CSH-057 retains its historical timeout under the later
-[formal disposition](../evidence/csh-057-retention-disposition/README.md), and CSH-061
-owns the host residual inventory, including the unequal-ID ACL failure.
-The linked review distinguishes historical CI passes from current-source
-validation and preserves capability skips. No compliance claim is authorized.
+The audit accounts for all 131 families (115 applicable, 16 profile exclusions)
+and all 416 forward/reverse ownership pairs. Of 640 retained artifact entries,
+638 match exactly; two README changes are traced to their original matching
+Git blobs and later documented corrections. Historical manifests and failed
+runs are preserved. The fresh clean-archive native sample and separately
+identified CI snapshots are linked from the review; pending CI is not a pass.
 
-### CSH-056 host-profile gate
+The classification and claim-policy criteria stay checked. The other four
+criteria and combined completion gate remain unchecked for the specific reasons
+in the review's acceptance table. This reconciliation does not supply a new
+sentence-level normative audit or full supported-platform qualification.
+No POSIX compliance claim is authorized.
+
+### Qualified host-profile gate
 
 The [qualified host profile](../host-contract-profile.md) resolves the five
-CSH-052 stock-host gaps and records selected residual witnesses. This applies
-only with the documented PATH and executable identities; stock macOS/Debian
-are not promoted. [CSH-059](CSH-059-host-boundary-capabilities.md) and
-[CSH-060](CSH-060-extended-host-environments.md) record subsequent bounded
-qualification. [CSH-061](CSH-061-host-environment-residuals.md) now owns each
-remaining host capability/limit in the linked inventory, including the strict
-unequal-ID ACL grant failure. U-034/U-040 and the
-system-wide §1.6 obligation remain open, so this completion gate stays closed.
+CSH-052 stock-host gaps only with its documented PATH and executable identities.
+CSH-059/060/061/062/063 add bounded qualification; stock macOS/Debian are not
+promoted. [CSH-064](CSH-064-host-platform-external-prerequisites.md) now owns the
+28 stable host residuals plus conditional limits, including strict unequal-ID
+ACL predicate failures and unqualified tmpfs/`fakeowner` profiles. U-034/U-040,
+other incomplete utility contracts and the system-wide §1.6 obligation remain
+open, so the milestone completion gate stays closed. CSH-057's
+[formal retention disposition](../evidence/csh-057-retention-disposition/README.md)
+accepts only the historical observation for its scoped completion; #99 retains
+recurrence ownership and the unchanged retention test stays enforced.

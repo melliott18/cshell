@@ -1,5 +1,12 @@
 # Qualified host contracts and remaining boundaries
 
+Current residual qualification belongs to
+[CSH-064](tickets/CSH-064-host-platform-external-prerequisites.md), after the
+integrated CSH-063 work. The numbered sections below retain their historical
+qualification scopes and handoffs. See [CSH-063 supplied platforms](#csh-063-supplied-platforms)
+for the latest result and [CSH-012 reconciliation](evidence-reconciliation-current.md)
+for milestone acceptance.
+
 [CSH-056](tickets/CSH-056-host-contract-gaps.md) qualifies the
 [opt-in profile](../tools/host-profile/README.md). Its
 [retained evidence](evidence/csh-056/README.md) is separate from the CSH-052
@@ -73,7 +80,7 @@ identify the environment to which its limitations apply. The machine-readable
 [condition inventory](../tests/host_capability_limits.py) emits each source page,
 reason, next owner and selected executable identity, including both test and
 bracket. Conditions remain **unqualified**, never passes or inapplicability decisions. The unequal-ID ACL grant additionally has a retained failing reproducer.
-The following table records the CSH-059 boundary snapshot; the CSH-060 additions above and the machine-readable inventory are the current scope. Each linked page is its normative source. CSH-061 owns the remaining portions of these conditions.
+The following table records the CSH-059 boundary snapshot; the later numbered sections extend it. Each linked page is its normative source. The current machine-readable inventory assigns residual qualification to CSH-064.
 
 | Utility / source page | Evidence boundary and remaining capability |
 | --- | --- |
@@ -153,3 +160,19 @@ All 28 residual rows remain individually sourced; conditional missing-root,
 locale and stat-only block witnesses remain separate and now also carry
 selected executable identities. [CSH-063](tickets/CSH-063-host-platform-residual-qualification.md)
 owns the remaining conditions. Utility families remain open and the CSH-012 gate stays closed.
+
+
+## CSH-063 supplied platforms
+
+[CSH-063 results](evidence/csh-063/README.md) add 144 controlled ACL cases for
+owner precedence, owning-group/no-fallback rules and creation modes. Equal-ID
+Debian 13 and sid overlay profiles pass 2,281 assertions. Each strict unequal-ID
+run retains **204 failures** (132 rejected grants, 72 false grants), with actual
+operations passing independently. These are utility/libc predicate failures.
+
+Unsupported tmpfs retains 1,098 setup failures. The `fakeowner` bind profile
+retains 1,110 setup failures and nine separate socket/chmod assertion failures;
+it is not a qualified Linux filesystem profile. The 28 stable residual conditions
+and conditional capability limits now belong to CSH-064. Privileged Darwin and
+physical-terminal qualification remain absent. No parent utility family or
+CSH-012 acceptance gate is promoted.
