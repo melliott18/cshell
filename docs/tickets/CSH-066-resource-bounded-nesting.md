@@ -1,6 +1,6 @@
 # CSH-066: Remove arbitrary shell nesting limits
 
-- Status: review
+- Status: done
 - Type: fix
 - Kind: implementation
 - Parent: None
