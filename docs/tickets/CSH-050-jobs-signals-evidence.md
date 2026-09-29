@@ -5,7 +5,7 @@
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-036, CSH-039
-- Branch: docs/CSH-050-acceptance-review
+- Branch: docs/CSH-050-retention-disposition
 - Issue: [#82](https://github.com/melliott18/cshell/issues/82)
 
 ## Goal
@@ -18,13 +18,20 @@ The retained witnesses remain scoped assertions rather than complete
 requirement-family evidence. CSH-044/045 and CSH-054/058 are integrated;
 CSH-057's lifecycle changes, foreground-resume and PTY timeout repairs, and
 diagnostic-worker isolation are integrated (PRs #109/#112/#121/#124).
-Its [formal retention disposition](../evidence/csh-057-retention-disposition/README.md)
-accepts the unknown-cause historical timeout for scoped CSH-057 completion;
-the unchanged test remains enforced and #99 owns any recurrence. This does not
-complete CSH-050's separate platform acceptance.
-The [baseline integration record](../evidence/csh-050/README.md) retains the
-original failure. The [unmet-criteria review](../evidence/csh-050-acceptance/README.md)
-records the current correction and remaining timeout ownership.
+The [current acceptance decision](../evidence/csh-050-disposition/README.md)
+applies CSH-057's later formal retention disposition to CSH-050's own scoped
+criteria: the old unknown-cause observation is accepted without changing its
+failed result, and #99 retains recurrence ownership under unchanged CI checks.
+It is no longer the reason to hold this ticket open.
+
+Platform acceptance remains unmet for a new CSH-050 failure: hosted macOS
+`kill state: ungrouped/CONT/after` terminated with SIGALRM in run 36497619126.
+The retention case passed in that job. CSH-050 / #82 owns this new observation;
+it is not covered by the historical retention decision. Current-main macOS
+validation was also incomplete at the retained snapshot. The
+[baseline](../evidence/csh-050/README.md),
+[partial-delivery](../evidence/csh-050-acceptance/README.md) and
+[earlier review](../evidence/csh-050-review/README.md) retain their original results.
 Base signal/asynchronous-list/wait semantics remain applicable while the UP
 utility profile is unselected; terminal capability conditions remain explicit.
 
@@ -294,6 +301,7 @@ records full validation, exact boundaries and remaining acceptance ownership.
 
 ### Merged-fix acceptance reconciliation (2026-09-28)
 
+Historical snapshot, superseded by the later decision below.
 Reviewed integrated `66f8900`. The [criterion-by-criterion review](../evidence/csh-050-review/README.md)
 accepts the merged partial-delivery and PTY repairs and retains three checked
 criteria. Platform acceptance remains unchecked because the historical
@@ -309,3 +317,27 @@ sanitizer run is claimed by this documentation review. All 184 entries in
 four retained artifact manifests match, and all 11 forward/reverse scope IDs
 agree. CSH-063 now owns the residual host-platform inventory after CSH-061/062;
 qualified external utilities remain distinct from stock-host gaps.
+
+
+### Later retention disposition applied to CSH-050 (2026-09-29 UTC)
+
+Reviewed main `07ee1cb`. The [independent acceptance decision](../evidence/csh-050-disposition/README.md)
+accepts the old retention observation's documented residual risk for this scoped
+audit. Its unknown cause and failed result remain; formal disposition is not a
+passing retry. CSH-057 completion alone neither checks nor blocks CSH-050's
+platform criterion.
+
+Current validation supplies a different reason to leave that criterion
+unchecked: run 36497619126 at `a561d63` reports 13/14 partial-kill cases passing,
+with `ungrouped/CONT/after` returning -14 and empty stdout. The fixture's
+four-second alarm fired; the log does not identify the active operation.
+Relevant runtime, fixture and runner paths are unchanged at reviewed main.
+CSH-050 owns investigation and supported repair or separate disposition of
+this failure; no root cause or load classification is inferred.
+
+The previously pending `66f8900` macOS job was cancelled. Runs 36494608216 and
+36494579415 completed all three platforms successfully at their own revisions.
+At the retained `07ee1cb` snapshot, Ubuntu and Docker passed and macOS was queued.
+No fresh local run or complete current-main pass is claimed. Three criteria
+remain checked; CSH-012 stays closed. CSH-063 is now scoped complete, with
+external platform prerequisites retained under CSH-064.

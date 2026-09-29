@@ -1,0 +1,48 @@
+{
+  "reviewed_commit": "07ee1cb26ffcec0470977d03789ce0ebb156603a",
+  "checked_at": "2026-09-29T00:09:49.241555+00:00",
+  "failing_source": "a561d638000970d5efa842985f8364790c27bbf3",
+  "compared_paths": [
+    "src",
+    "include",
+    "Makefile",
+    "tests/kill_job_state.c",
+    "tests/kill_job_state_cases.py",
+    "tests/smoke.py",
+    "tests/pty_harness.py",
+    "tests/jobs_lifecycle.c",
+    "tests/fixtures/job-retention.json",
+    ".github/workflows/tests.yml"
+  ],
+  "changed_compared_paths": [],
+  "fixture_alarm_seconds": 4,
+  "smoke_default_timeout_seconds": 5,
+  "retention_case_in_failing_job": "passed",
+  "new_observation_owner": "CSH-050 / #82",
+  "retention_disposition_integrated": true,
+  "verified_manifest_entries": {
+    "csh-050": 17,
+    "csh-050-acceptance": 19,
+    "csh-050-review": 4,
+    "csh-057-timeouts": 114,
+    "csh-057-retention-review": 34
+  },
+  "forward_reverse_ids": [
+    "EXEC-009",
+    "JOB-001",
+    "JOB-002",
+    "JOB-003",
+    "SIG-001",
+    "SIG-002",
+    "SIG-003",
+    "U-008",
+    "U-015",
+    "U-026",
+    "U-032"
+  ],
+  "documentation_validation": {
+    "local_link_targets_checked": 114,
+    "missing_targets": [],
+    "git_diff_check": "pass"
+  }
+}
