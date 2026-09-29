@@ -1,6 +1,6 @@
 # CSH-068: Inventory the complete required host utility contract
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
