@@ -1,8 +1,6 @@
 name: Terminal qualification
 
 on:
-  push:
-    branches: ['test/CSH-077-host-terminal-utilities']
   pull_request:
     paths:
       - 'tests/host_terminal*'

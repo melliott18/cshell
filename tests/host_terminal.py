@@ -44,7 +44,7 @@ def capture(*args, **kwargs):
 
 def _capture(argv, directory, env, master, slave, input_file, tty_fds=(), data=b'',
             timeout=TIMEOUT, limit=LIMIT, fd_map=None, extra_terminals=None,
-            terminal_input=b'', signal_after=None, credentials=None):
+            terminal_input=b'', credentials=None):
     """One owned process group; bounded pipes and PTY, even after leader exit."""
     fd_map = fd_map or {}
     extra_terminals = extra_terminals or {}
@@ -56,6 +56,9 @@ def _capture(argv, directory, env, master, slave, input_file, tty_fds=(), data=b
             os.setgroups([])
             os.setgid(credentials[1])
             os.setuid(credentials[0])
+            if (os.getresuid() != (credentials[0],) * 3 or
+                    os.getresgid() != (credentials[1],) * 3 or os.getgroups()):
+                raise RuntimeError('credential drop did not remove saved privileges')
 
     streams = dict(stdout=bytearray(), stderr=bytearray(), terminal=bytearray())
     streams.update({name: bytearray() for name in extra_terminals})
@@ -109,11 +112,6 @@ def _capture(argv, directory, env, master, slave, input_file, tty_fds=(), data=b
                         chunk = b''
                     if chunk:
                         streams[key.data].extend(chunk)
-                        if signal_after is not None:
-                            name, marker, signo = signal_after
-                            if marker in streams[name]:
-                                os.kill(process.pid, signo)
-                                signal_after = None
                     else:
                         selector.unregister(key.fileobj)
                 if sum(map(len, streams.values())) > limit:

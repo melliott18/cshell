@@ -44,6 +44,7 @@ def invoke(binary, providers, name, args, mode, directory, env, terminals, descr
         argv = [selected, *map(str, args)]
     elif mode == 'file':
         (directory / 'script').write_text(code + '\n')
+        (directory / 'script').chmod(0o644)
         argv = [str(binary), str(directory / 'script')]
     elif mode == 'stdin':
         argv, data = [str(binary)], (code + '\n').encode()
@@ -150,7 +151,8 @@ def run(binary, providers, directory, env, rows):
                         os.close(slave); os.close(master)
         terminals = []
         try:
-            terminals = [open_terminal(), open_terminal()]
+            for _ in range(2):
+                terminals.append(open_terminal())
             first, second = [os.ttyname(t[1]).removeprefix('/dev/') for t in terminals]
             records = directory / 'sessionsx'
             records.write_bytes(b'')

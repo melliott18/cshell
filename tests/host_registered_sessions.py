@@ -74,10 +74,13 @@ def main():
             binary.chmod(0o755)
             private_bin = directory / 'bin'
             private_bin.mkdir(mode=0o755)
+            private_bin.chmod(0o755)
             selected_who = providers['who']['path']
             shutil.copyfile(selected_who, private_bin / 'who')
             (private_bin / 'who').chmod(0o755)
-            providers['who'] = dict(providers['who'], selected_from=selected_who, path=str(private_bin / 'who'))
+            providers['who'] = dict(providers['who'], selected_from=selected_who,
+                path=str(private_bin / 'who'), realpath=str((private_bin / 'who').resolve()),
+                sha256=sha(private_bin / 'who'))
             env = environment(str(private_bin) + ':' + args.path, directory)
             for mode in MODES:
                 for name in ('payload', 'denial', 'am-i', 'am-I'):
@@ -135,7 +138,7 @@ def main():
                         rows.append(dict(name='registered/' + name, mode=mode,
                                          verdict='FAIL' if failures else 'PASS', failures=failures, actual=actual,
                                          sender=sender, recipient=recipient, uid=account.pw_uid, gid=tty_group,
-                                         credentials_method='setgroups([]), setgid, irreversible setuid before exec',
+                                         credentials_method='setgroups([]), setgid, setuid; verified real/effective/saved IDs and empty groups before exec',
                                          record_sha256=sha(records)))
                         if failures:
                             print('FAIL:', name, mode, failures, flush=True)
