@@ -7,8 +7,8 @@ cshell's builtin allocation. All tools are real exec-accessible programs;
 
 | Host | Selected replacements | Provisioning |
 | --- | --- | --- |
-| macOS | Standalone FreeBSD printf with adapters; Issue 8 test/bracket adapter over Homebrew `gtest`; chmod using BSD mode evaluation | `brew install coreutils`; prefixed binaries must be on the provisioning process's PATH |
-| Debian/Ubuntu | Standalone FreeBSD printf with adapters; Issue 8 test/bracket adapter; chmod using libbsd; BusyBox kill | `apt-get install build-essential python3 ed busybox locales acl libbsd-dev`; generate `fr_FR.UTF-8` |
+| macOS | Standalone FreeBSD printf with adapters; Issue 8 test/bracket adapter over Homebrew `gtest`; chmod using BSD mode evaluation; newgrp dispatch adapter | `brew install coreutils`; prefixed binaries must be on the provisioning process's PATH |
+| Debian/Ubuntu | Standalone FreeBSD printf with adapters; Issue 8 test/bracket adapter; chmod using libbsd; newgrp dispatch adapter; BusyBox kill | `apt-get install build-essential python3 ed busybox locales acl libbsd-dev`; generate `fr_FR.UTF-8` |
 
 Other scoped commands use `os.defpath` without additional symlinks, preserving
 cshell's PATH-associated pwd builtin selection. In particular, echo remains the system
@@ -69,6 +69,18 @@ opened; the parent environment owns their final removal. This qualifies stat
 predicates in the supplied namespace, not permission to call `mknod` there.
 
 ## Standalone printf provenance
+
+The selected `newgrp.c` first checks literal group names, then resolves an
+existing numeric GID to its canonical name before execing the absolute system
+provider recorded in `build/host-newgrp-provider.h`. For an unknown nonnumeric
+name it diagnoses the failed group assignment and execs the current user's
+password-database shell with unchanged credentials, cwd, umask and environment.
+It ignores the exported SHELL variable when choosing that fallback shell.
+This adapter has no set-ID installation and implements no authentication or
+credential changes. Known-group authorization/password handling and unsupported
+argument forms still belong to the inventoried vendor; their broader contracts
+remain open. `--session-controls` tests existing root/daemon and the `SUDO_USER`
+account on CI (or the Docker image's `cshell` account), without changing accounts.
 
 `vendor/printf.c` is derived from FreeBSD source at commit
 [`0b8224d1cc9dc6c9778ba04a75b2c8d47e5d7481`](https://github.com/freebsd/freebsd-src/blob/0b8224d1cc9dc6c9778ba04a75b2c8d47e5d7481/usr.bin/printf/printf.c).

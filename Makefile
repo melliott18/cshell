@@ -481,12 +481,18 @@ build/host-printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/printf.c $(LDLIBS)
 
-host-profile: build/host-printf build/host-test build/host-chmod
+host-profile: build/host-printf build/host-test build/host-chmod build/host-newgrp
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
 
 build/host-chmod: tools/host-profile/chmod.c
 	@mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS) $(if $(filter Linux,$(shell uname -s)),-lbsd)
+
+build/host-newgrp-provider.h: host-test-provider-check tools/host-profile/provision.py
+	$(PYTHON) tools/host-profile/provision.py $@ --newgrp-header
+
+build/host-newgrp: tools/host-profile/newgrp.c build/host-newgrp-provider.h
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -Ibuild -o $@ $< $(LDLIBS)
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
 	@mkdir -p $(@D)

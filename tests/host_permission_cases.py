@@ -184,3 +184,11 @@ def cases(controlled=False, sessions=False, residuals=False):
         yield case('newgrp', 'failed-group-still-shell', ['csh_071_no_such_group_8f7c'],
                    out=b'new-shell\n', shell_input=shell_input, status=23, err='nonempty',
                    session_gid=0, env={'CSH_071_EXPORTED': 'retained'}, umask=0o027)
+        unprivileged = pwd.getpwnam(os.environ.get('SUDO_USER', 'cshell'))
+        yield case('newgrp', 'failed-group-unprivileged', ['csh_071_no_such_group_8f7c'],
+                   credentials=[unprivileged.pw_uid, unprivileged.pw_uid],
+                   gids=[unprivileged.pw_gid, unprivileged.pw_gid],
+                   out=b'new-shell\n', shell_input=shell_input,
+                   status=23, err='nonempty', session_gid=unprivileged.pw_gid,
+                   session_identity={'uid': unprivileged.pw_uid, 'euid': unprivileged.pw_uid, 'groups': []},
+                   env={'CSH_071_EXPORTED': 'retained', 'SHELL': '/bin/false'}, umask=0o027)

@@ -191,6 +191,8 @@ def run_case(binary, tools, search_path, case, mode, fixture_root, sanitizer=Fal
                     session['cwd'] != str(root.resolve()) or session['umask'] != case['umask'] or
                     session['exported'] != 'retained'):
                 errors.append('newgrp environment differs from required preserved state')
+            if any(session.get(key) != value for key, value in case.get('session_identity', {}).items()):
+                errors.append('newgrp changed credentials after a rejected group')
         if case.get('ctime_update'):
             record['ctime_after_ns'] = (root / 'subject').stat().st_ctime_ns
             if record['ctime_after_ns'] <= record['ctime_before_ns']:

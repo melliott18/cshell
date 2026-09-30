@@ -60,6 +60,11 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo "$(command -v python3)" tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$PWD/build/host-profile/bin:$(getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults --controlled-identities --unequal-acl --record build/unequal-acl-qualification.json
+      - name: Linux selected newgrp sessions
+        working-directory: ${{ env.CSH_QUALIFICATION_ROOT }}
+        if: runner.os == 'Linux'
+        run: |
+          sudo "$(command -v python3)" tests/host_permissions.py ./cshell --path "$PWD/build/host-profile/bin:$(getconf PATH)" --session-controls --case-prefix newgrp/ --record build/newgrp-qualification.json
       - name: Darwin controlled unequal credentials and ACLs
         working-directory: ${{ env.CSH_QUALIFICATION_ROOT }}
         if: runner.os == 'macOS'
