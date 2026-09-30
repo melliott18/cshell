@@ -120,17 +120,23 @@ cases in all five areas, each through direct exec and cshell string/file/stdin:
   inventoried utility; missing, setup-failure or exec-failure markers fail the
   assertion. This does not supply a full filesystem, quota or EIO capability.
 
-The declared extension excludes strict unresolved provider contracts, whose
-expectations remain in `--provider-audit`. Native Apple `find` silently succeeds
-on a logical cycle; Apple `pax` returns zero for a truncated member, broken pipe
-and file-size-limit write error. Those four contracts remain unqualified under
-CSH-079. Linux pax also writes type bits in the 12-bit ustar mode field; strict
-type-graph writing remains in the provider audit on both platforms (native
-passes). Linux ENOSPC for pax passes in its separate audit; Linux pax EFBIG fails. The selected profile has
-zero allowances; diagnostic audit results cannot qualify a failed contract.
+The selected profile now requires the previously failing provider contracts with
+`--provider-audit`. It selects GNU find on macOS and a pinned locally built pax
+on both platforms. The latter preserves 12-bit ustar modes and drains final
+partial writes or returns failure. Its upstream source already handles truncated
+members and EPIPE correctly. [Source provenance and exact patches](../tools/host-profile/vendor/pax/CSHELL-CHANGES.md)
+are retained alongside the complete upstream release and license notices.
 
-[Extended evidence](evidence/csh-072/extended/README.md) retains each result,
-including the initial incorrect closed-input fixture and its correction.
-The focused filesystem workflow retains selected and strict audit artifacts on
-Ubuntu and macOS. Its diagnostic audit may fail without blocking the selected
-subset, and its JSON keeps every failure visible.
+The stock Apple find/pax and Linux pax failures remain real, separately retained
+failures. They are not repaired in the system installation. The focused workflow
+requires all selected assertions and runs the stock extension audit as a
+separate diagnostic step. Its passing selected step cannot be inferred from the
+workflow status alone; detailed results and audit exit codes remain artifacts.
+
+[Extended evidence](evidence/csh-072/extended/README.md) preserves the original
+failures and intermediate fixture/CI corrections. The
+[provider repair evidence](evidence/csh-072/repairs/README.md) records the new
+selected scope and its integration checks. The
+[remaining-environment table](tickets/CSH-079-filesystem-remaining-contracts.md#required-environments-and-manual-work)
+distinguishes automated local work, disposable privileged environments and any
+separate physical-terminal claim.

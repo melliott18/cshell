@@ -30,20 +30,23 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y build-essential ed busybox file pax
       - name: Supply macOS predicate providers
         if: runner.os == 'macOS'
-        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+        run: |
+          for package in coreutils findutils; do
+            brew list "$package" >/dev/null 2>&1 || brew install "$package"
+          done
       - name: Build selected profile and verify the harness
         run: make -j2 cshell host-profile test-host-inventory
       - name: Qualify the declared filesystem subset
         run: |
           mkdir -p build/tests
-          python3 tests/host_filesystem.py ./cshell --audit \
+          python3 tests/host_filesystem.py ./cshell --audit --provider-audit \
             --path "$PWD/build/host-profile/bin:$(getconf PATH)" \
             --record build/tests/filesystem-selected.json 2>&1 | tee build/tests/filesystem-selected.log
-      - name: Audit unqualified vendor contracts (strict diagnostic run)
+      - name: Audit stock vendor contracts (strict diagnostic run)
         continue-on-error: true
         run: |
           python3 tests/host_filesystem.py ./cshell --extended-only --provider-audit \
-            --path "$PWD/build/host-profile/bin:$(getconf PATH)" \
+            --path "$(getconf PATH)" \
             --record build/tests/filesystem-provider-audit.json 2>&1 | tee build/tests/filesystem-provider-audit.log
       - name: Retain identities, expectations, effects and strict failures
         if: always()

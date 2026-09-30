@@ -12,9 +12,9 @@ jobs:
   native:
     name: Native (${{ matrix.os }}, ${{ matrix.cc }})
     runs-on: ${{ matrix.os }}
-    # CSH-058 adds 2,464+ disposition/delivery cases, including controlling
-    # terminals. Keep individual case deadlines while budgeting the full matrix.
-    timeout-minutes: 45
+    # Native macOS continued making progress in sanitizer runtime tests at
+    # 45 minutes. Preserve per-case deadlines and budget the complete job.
+    timeout-minutes: ${{ matrix.os == 'macos-15' && 90 || 45 }}
     strategy:
       fail-fast: false
       matrix:
@@ -43,7 +43,10 @@ jobs:
           sudo localedef -i tests/locales/csh_067 -f UTF-8 csh_067.UTF-8
       - name: Install macOS profile dependencies
         if: runner.os == 'macOS'
-        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+        run: |
+          for package in coreutils findutils; do
+            brew list "$package" >/dev/null 2>&1 || brew install "$package"
+          done
       - name: Build
         run: make -j2
       - name: Test replacement APIs, cshell runtime, and selected behavior

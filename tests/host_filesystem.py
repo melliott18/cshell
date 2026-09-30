@@ -159,7 +159,7 @@ def main():
     parser.add_argument('--fixture-root', type=Path, default=Path(tempfile.gettempdir()))
     parser.add_argument('--audit', action='store_true')
     parser.add_argument('--sanitizer', action='store_true')
-    parser.add_argument('--provider-audit', action='store_true', help='Also require unqualified cycle/archive/fault contracts; failures remain fatal')
+    parser.add_argument('--provider-audit', action='store_true', help='Require cycle/archive/fault provider contracts; all are mandatory in the selected profile')
     parser.add_argument('--extended-only', action='store_true', help='Select only traversal/link/metadata/archive/I/O extensions')
     args = parser.parse_args()
     providers = inventory(args.path, UTILITIES)

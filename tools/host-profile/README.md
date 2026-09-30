@@ -7,8 +7,8 @@ cshell's builtin allocation. All tools are real exec-accessible programs;
 
 | Host | Selected replacements | Provisioning |
 | --- | --- | --- |
-| macOS | Standalone printf and local readlink/realpath; Homebrew `gtest` and `g[` | `brew install coreutils`; prefixed binaries must be on the provisioning process's PATH |
-| Debian/Ubuntu | Standalone printf and local readlink/realpath; BusyBox kill | `apt-get install build-essential python3 ed busybox locales acl file pax`; generate `fr_FR.UTF-8` |
+| macOS | Standalone printf and local readlink/realpath; Homebrew `gtest`, `g[` and `gfind`; pinned local pax | `brew install coreutils findutils`; prefixed binaries must be on the provisioning process's PATH |
+| Debian/Ubuntu | Standalone printf, local readlink/realpath and pinned pax; BusyBox kill | `apt-get install build-essential python3 ed busybox locales acl file pax`; generate `fr_FR.UTF-8` |
 
 Other scoped commands use `os.defpath` without additional symlinks, preserving
 cshell's PATH-associated pwd builtin selection. In particular, echo remains the system
@@ -255,3 +255,25 @@ setup requires `file` and `pax`, supplied by Docker and CI.
 See [filesystem scope and limits](../../docs/host-filesystem-evidence.md), including
 the 40-link missing-final fallback bound and remaining CSH-079 contracts. Neither
 provider is installed over a system executable or linked into cshell.
+
+
+## CSH-072 selected find and pax repairs
+
+On Darwin the profile now requires GNU `gfind`, supplied by Homebrew findutils
+(or an explicitly supplied prefixed executable on the provisioning PATH).
+Linux continues to use its distribution find. This repairs Apple's silent
+logical-cycle success without wrapping or changing system find.
+
+Both platforms select a standalone pax built offline from checked-in
+[MirCPIO 20240817 source and documented local changes](vendor/pax/CSHELL-CHANGES.md).
+The fixes constrain ustar mode fields to their specified bits and drain final
+partial writes or return failure. The selected profile now requires every
+cycle/archive/I/O provider assertion via `--provider-audit`; none are diagnostic
+allowances. Stock audit failures remain retained separately. CI still installs
+stock pax so the diagnostic comparison remains reproducible.
+
+`make host-profile` does not install host packages; missing gfind fails setup
+with the same explicit provisioning error as missing gtest. The new provider
+is never linked into cshell or installed over system pax. Record provider hashes
+and repeat filesystem, host integration and selected-PATH runtime checks after
+changing the profile.

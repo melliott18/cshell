@@ -142,3 +142,17 @@ ustar type bits and EFBIG remain unqualified alongside the native failures.
 All focused fixture cleanup checks pass; 23 ownership/harness regressions pass.
 The explicit Bash CI shell propagates test failures through tee. Initial failed
 and misleadingly green CI results remain retained in the extension evidence.
+
+
+## Selected provider repairs
+
+The opt-in profile now selects GNU find on Darwin and an offline build of
+pinned MirCPIO 20240817 pax on both platforms. Local pax fixes mask ustar mode
+to its 12 defined bits and finish buffered data after short final writes or
+return failure. An overlapping partial-buffer move uses memmove. All previous
+cycle/archive/I/O assertions are mandatory for the selected profile; stock
+failures and the original evidence remain unchanged. See
+[repair evidence](../evidence/csh-072/repairs/README.md) for final results and
+[CSH-079 environment requirements](CSH-079-filesystem-remaining-contracts.md#required-environments-and-manual-work)
+for the broader remaining scope. Native macOS CI gets 90 minutes after the
+recorded 45-minute timeout during actively progressing sanitizer runtime tests.

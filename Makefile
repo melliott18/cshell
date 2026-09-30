@@ -485,7 +485,15 @@ build/host-paths: tools/host-profile/paths.c
 	@mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
 
-host-profile: build/host-printf build/host-paths
+# Upstream pax uses feature probes and BSD extensions. Keep its own warning
+# policy while preserving caller optimisation, debug and sanitizer flags.
+HOST_PAX_SOURCES = $(wildcard tools/host-profile/vendor/pax/* tools/host-profile/vendor/pax/.linked/*)
+build/host-pax: $(HOST_PAX_SOURCES)
+	@mkdir -p build/host-pax-build
+	cd build/host-pax-build && CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(filter-out -Werror -Wpedantic -Wshadow,$(CFLAGS))" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" sh ../../tools/host-profile/vendor/pax/Build.sh > build.log 2>&1 || { cat build/host-pax-build/build.log; exit 1; }
+	cp build/host-pax-build/pax $@
+
+host-profile: build/host-printf build/host-paths build/host-pax
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
@@ -494,7 +502,7 @@ build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/pr
 
 test-host-profile: test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
-	$(PYTHON) tests/host_filesystem.py ./cshell --audit --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-profile.json $(HOST_FILESYSTEM_FLAGS) $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+	$(PYTHON) tests/host_filesystem.py ./cshell --audit --provider-audit --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-profile.json $(HOST_FILESYSTEM_FLAGS) $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 
 # Public entry point with only the command input read syscall instrumented.
 build/tests/command-read-input.o: src/input.c tests/command_read_faults.h $(INPUT_HEADERS)

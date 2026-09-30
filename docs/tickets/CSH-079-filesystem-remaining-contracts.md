@@ -31,14 +31,14 @@ unqualified dispositions. Informative sections are not runtime requirements.
 | [`df`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html) | Unspecified/default and 512-byte formats, all-filesystem enumeration, quotas, privilege-dependent availability and live capacity boundaries need a disposable filesystem oracle. |
 | [`du`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html) | Recursive allocation totals, hard-link deduplication, -a/-s/-x/-H/-L, unreadable subtrees, shared extents and overflow need independent filesystem-specific accounting. |
 | [`file`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html) | Non-empty/magic/encoding classification, -d/-h/-i/-M/-m, magic-file parsing/precedence, symlink errors and locale-dependent descriptions require supplied magic databases and independent samples. |
-| [`find`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html) | Remaining expressions/actions, batched exec, time/size/permissions, descriptor exhaustion and non-UTF-8 locale matching remain unqualified. Selected -H/-L traversal, physical operands, precedence and depth order have witnesses; logical-cycle diagnostic/status fails on native Apple find and remains in the strict provider audit. |
+| [`find`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html) | Remaining expressions/actions, batched exec, time/size/permissions, descriptor exhaustion and non-UTF-8 locale matching remain unqualified. Selected -H/-L traversal, physical operands, precedence and depth order have witnesses; logical-cycle diagnostic/status is required of the selected GNU find. Native Apple find still fails in the stock audit. |
 | [`ln`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html) | Interactive replacement, remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses. |
 | [`ls`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html) | Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified. |
 | [`mkdir`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html) | Remaining symbolic mode and intermediate-parent combinations, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified. Selected symbolic mode and parent umask 077 have witnesses. |
 | [`mkfifo`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html) | Remaining symbolic mode combinations, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified. Default umask 077 and one symbolic mode have witnesses; FIFO data transfer is outside the creation witness. |
 | [`mv`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mv.html) | Interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified. |
 | [`pathchk`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html) | -P and option combinations, inaccessible existing prefixes, empty operands, path total limits and alternate filesystems/character repertoires remain unqualified. |
-| [`pax`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html) | pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. Selected ustar reading of types/hard links, list/append/select/substitute and bad checksums have witnesses. Strict ustar type-graph writing passes natively but Linux pax includes file-type bits in the 12-bit mode field; that assertion remains in the provider audit. Truncated member, EPIPE and EFBIG fail on native Apple pax; Linux pax EFBIG also fails; virtual-device ENOSPC passes in the recorded Linux strict audit. |
+| [`pax`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html) | pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. The selected pinned pax repairs ustar mode encoding and final partial writes and requires the complete existing type-graph, truncation, EPIPE, EFBIG and Linux virtual-device ENOSPC assertions. Original Apple/Linux stock-provider failures remain separately retained. |
 | [`pwd`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html) | Logical/physical option precedence, inaccessible ancestors, deleted directories, total PATH_MAX and allocation/stdio failures remain unqualified by this new subset; historical witnesses remain separate. |
 | [`readlink`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html) | The selected local provider repairs the stock nonlink diagnostic and checks dynamic 600-byte links, -n, --, invalid operands and closed stdout. Arbitrary byte/locale combinations, allocation failure and true filesystem limits remain unqualified. |
 | [`realpath`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html) | The selected local provider repairs -e/-E, validates directory components despite Darwin libc trailing-slash behavior, and checks dangling links, missing prefixes, dot-dot, loops, last-option precedence and closed stdout. Permission/namespace races, allocation faults, double-leading-slash policy and exact resource boundaries remain unqualified. Missing-final fallback permits at most 40 link expansions. |
@@ -81,3 +81,27 @@ before claiming those behaviors. Linux virtual-device ENOSPC is tested separatel
 by CSH-072; it does not establish exhausted-filesystem behavior. Run
 `make test-host-filesystem-provider-audit` to retain strict traversal/archive/I/O
 provider failures independently of the passing declared subset.
+
+
+## Required environments and manual work
+
+The reproduced CSH-072 find/pax defects are addressed by selected providers in
+that PR. Their regression fixtures run automatically on ordinary macOS and
+Linux. No person must answer prompts; bounded PTYs supply terminal input.
+The remaining rows distinguish missing evidence from reproduced defects:
+
+| Remaining capability | Environment needed | Manual testing |
+| --- | --- | --- |
+| Expressions, options, formats, ordinary metadata, error continuation | Current macOS/Linux and authored private fixtures | None required. |
+| Non-C collation and encodings, magic classification | Installed locale definitions and authored magic/sample databases on each target | None required. |
+| Permission denials, ownership changes, ACL inheritance | Disposable credentials/filesystem; Linux root may drop to fixture identities; Darwin privileged coverage needs an isolated Mac or VM | Provisioning may need an administrator; assertions are automated. |
+| Mount boundaries, cross-device move, quotas and actual filesystem ENOSPC | Disposable Linux VM or privileged runner with two private filesystems, quota support and bounded capacity; Darwin equivalents need separately supplied volumes | Provisioning required; assertions can be automated. `/dev/full` does not cover these. |
+| Kernel EIO, short/interrupted I/O and races | Controlled fault filesystem/device or scoped syscall interposition, with real-provider probes | No manual testing required; injected faults and actual filesystem faults must remain distinct claims. |
+| Descriptor/depth/path exhaustion | Per-child limits and disposable trees; repeat for target filesystem/libc limits | None required. |
+| Physical terminal behavior beyond the owned PTY contract | Explicitly supplied physical terminal and operator | Only for a separate physical-terminal claim; not required for current filesystem fixtures. |
+
+The full macOS CI job reached its 45-minute cap while still making progress in
+sanitizer runtime tests. Its focused filesystem job passed. CSH-072 raises that job budget to 90
+minutes while preserving per-case timeouts. This is a CI capacity
+limitation, not evidence that manual filesystem testing is needed. Keep the broad
+job incomplete until it actually finishes, separately from focused passes.
