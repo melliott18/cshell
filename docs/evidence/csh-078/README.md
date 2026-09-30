@@ -38,7 +38,7 @@ investigation, not a waived service assertion. They are retained here because
 this validation encountered them. No conclusion about their root cause is
 inferred from a later pass.
 
-## Final verification environment failure
+## Earlier verification environment failure
 
 The final image built successfully as
 `sha256:73de8330899949faff4a1a42cd8dc9cc67d639a106298f832c6b3798785d7a9b`.
@@ -54,15 +54,45 @@ it is not substituted for final-source validation.
 The affected owned container is
 `cshell-services-4d829919ca1f42cd846deb945479925e`. The three stopped development
 containers `csh078-development`, `csh078-development-2`, and
-`csh078-development-3` also require removal once the daemon is responsive.
-No unrelated container or Docker Desktop instance was stopped or restarted.
-The last cleanup attempt is retained as `final-cleanup.json.gz`.
+`csh078-development-3` also required removal once the daemon became responsive.
+At that checkpoint no unrelated container or Docker Desktop instance had been
+stopped or restarted. That cleanup attempt remains in `final-cleanup.json.gz`;
+the recovery below resolves the outstanding cleanup.
 
 The final launcher additionally handles SIGTERM/interrupt cleanup and a create
 response timing out after the daemon may have allocated the container. These
-paths pass local failure-injection tests; a final live-Docker rerun remains
-required. CSH-078 remains in progress for that validation and its unqualified
+paths pass local failure-injection tests. The continuation below supplies a
+passing live-Docker rerun. CSH-078 remains in progress for its unqualified
 full-contract residuals.
+
+## Disposable-service continuation (2026-09-30 UTC)
+
+The [continuation records](continuation/files.json) retain decompressed SHA-256
+and size for every new artifact. They were produced after checkpoint
+`b1e2e2e`, on the same separate worktree branch. Each result records the exact
+source and provider identities used for that attempt.
+
+| Record under `continuation/` | Result and interpretation |
+| --- | --- |
+| `docker-restart-before.json.gz`, `docker-restart-after.json.gz` | Authorized Docker Desktop recovery after repeated HTTP 500 responses. The CSH-073 client had been waiting for 5h40m, but all three test stages had finished over five hours earlier. Their persisted statuses were 0, 0, 1; the audit had 552 passes and 18 failures. The stalled client ended during restart; no live test-stage termination was observed. Its command and logs/statuses are preserved for recovery, and no rerun was started. All four outstanding CSH-078 containers were subsequently removed successfully. |
+| `expanded-initial.json.gz`, `expanded-initial-launcher.json.gz`, `expanded-initial.log.gz` | **852 pass, 20 fail**, with successful cleanup. Ten logging failures came from fixture assumptions: expecting no util-linux warning with `-f` plus operands, and assuming `-f -` means stdin. The provider logs operands correctly and treats dash as a literal filename. Ten scheduler failures incorrectly required a group distinct from the daemon rather than the submitting environment. The corrected assertions preserve the actual required effects. |
+| `expanded-corrected.json.gz`, `expanded-corrected-launcher.json.gz`, `expanded-corrected.log.gz` | **872 pass, 0 fail**, successful container cleanup, after correcting the fixture assumptions. |
+| `expanded-final.json.gz`, `expanded-final-launcher.json.gz`, `expanded-final.log.gz` | **872 pass, 0 fail**, successful container cleanup, using the final harness and narrowed contract map. |
+| `native-final.json.gz`, `native-final.log.gz` | **490 native codec/date passes**, 12 inventory regression tests and 8 service/launcher harness tests pass. No native service invocation. |
+
+New observations include a/c queue selection and filtering, multi-ID removal,
+job UID/GID and absence of a controlling terminal, process groups distinct from
+submission, mail address/date/message-ID headers and no-subject delivery,
+logger operand precedence and literal-dash policy, and printing destination
+precedence across two queues. The print copy test pauses the queue, submits
+with `-c`, changes the source, then resumes the queue and checks the original
+bytes. This avoids a race in which the backend could finish before mutation.
+CUPS's byte sink still does not qualify hardcopy or completion notifications.
+
+The restart did not erase the earlier Docker failure or establish an unseen
+result for its old image. The fresh runs provide their own qualification and
+cleanup evidence. There are still 20 residual IDs; their descriptions now
+exclude the newly covered portions rather than claiming full-page closure.
 
 ## Reproduction
 

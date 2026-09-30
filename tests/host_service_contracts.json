@@ -10,7 +10,7 @@
     {
       "utility": "at",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/at.html",
-      "scope": "C-locale -f/-t/-l/-r/-m and now; queue a; cwd, environment, umask, local output/error and silent completion mail.",
+      "scope": "C-locale -f/-t/-l/-r/-m/-q and now; queues a/c and filtered listings/multi-ID removal; cwd, environment, umask, process-group separation from submission, no controlling terminal, UID/GID, local output/error and silent completion mail.",
       "case_prefixes": [
         "at-submit-file/",
         "at-list-selected/",
@@ -21,7 +21,14 @@
         "scheduled-effects/at-",
         "scheduled-mail/at-",
         "silent-completion-mail/at",
-        "scheduler-queue-cleanup/"
+        "scheduler-queue-cleanup/",
+        "at-submit-queue-a/",
+        "at-submit-queue-c/",
+        "at-list-queue-a/",
+        "at-list-queue-c/",
+        "at-remove-multiple/",
+        "at-queues-empty/",
+        "scheduled-process-context/at-"
       ],
       "sections": {
         "SYNOPSIS": "All declared cases run through direct exec and cshell -c, explicit exec, script and stdin. Utility-specific exceptions are listed in the scope.",
@@ -50,25 +57,26 @@
           "id": "at/queues",
           "owner": "CSH-078",
           "status": "unqualified",
-          "reason": "-q selection and -l queue filtering; multiple selected IDs and multi-ID removal; non-owned IDs and scheduler errors without submission."
+          "reason": "Multiple selected IDs in -l, non-owned IDs and scheduler errors without submission; a/c queue selection, filtered listing and multi-ID removal are covered."
         },
         {
           "id": "at/process-context",
           "owner": "CSH-078",
           "status": "unqualified",
-          "reason": "Separate process group/no controlling terminal, other SHELL selections, non-C locales, interactive prompts, access/resource failures and interrupted submission."
+          "reason": "Other SHELL selections, non-C locales, interactive prompts, access/resource failures and interrupted submission. Process group differs from the submitting environment; no controlling terminal and job UID/GID are covered."
         }
       ]
     },
     {
       "utility": "batch",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/batch.html",
-      "scope": "No-operand stdin jobs, queue execution, inherited cwd/environment/umask, output/error mail and mandatory silent completion mail.",
+      "scope": "No-operand stdin jobs, queue execution, inherited cwd/environment/umask, process-group separation from submission, no controlling terminal, UID/GID, output/error mail and mandatory silent completion mail.",
       "case_prefixes": [
         "batch-submit-execution/",
         "scheduled-effects/batch-",
         "scheduled-mail/batch-",
-        "silent-completion-mail/batch"
+        "silent-completion-mail/batch",
+        "scheduled-process-context/batch-"
       ],
       "sections": {
         "SYNOPSIS": "All declared cases run through direct exec and cshell -c, explicit exec, script and stdin. Utility-specific exceptions are listed in the scope.",
@@ -91,7 +99,7 @@
           "id": "batch/scheduling-context",
           "owner": "CSH-078",
           "status": "unqualified",
-          "reason": "Independent queue-b identity, process-group/terminal assertions, unset/alternate SHELL choices and submission resource/error cleanup."
+          "reason": "Independent queue-b identity, unset/alternate SHELL choices and submission resource/error cleanup. Process-group separation from submission, no controlling terminal and job UID/GID are covered."
         },
         {
           "id": "batch/environment",
@@ -197,14 +205,18 @@
     {
       "utility": "logger",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/logger.html",
-      "scope": "Private AF_UNIX syslog sink; operand joining, stdin/file lines, tag/header/timestamp/PID shape and all 72 required priority pairs.",
+      "scope": "Private syslog datagrams for operands/stdin/files, operands overriding -f, literal - filename policy, header/tag/PID shape, default and every required facility/level pair, missing-file/invalid-priority/missing-tag diagnostics.",
       "case_prefixes": [
         "logger-operands/",
         "logger-stdin/",
         "logger-file/",
         "logger-pid/",
         "logger-missing-file/",
-        "logger-priority-"
+        "logger-priority-",
+        "logger-file-operands/",
+        "logger-file-dash-literal/",
+        "logger-bad-priority/",
+        "logger-missing-tag/"
       ],
       "sections": {
         "SYNOPSIS": "All declared cases run through direct exec and cshell -c, explicit exec, script and stdin. Utility-specific exceptions are listed in the scope.",
@@ -216,7 +228,7 @@
         "ENVIRONMENT VARIABLES": "C/POSIX locale and explicitly listed variables only. XSI NLSPATH is excluded. Other locale diagnostics and applicable variables remain open.",
         "ASYNCHRONOUS EVENTS": "Default signal behavior is required but unqualified for this utility; CSH-078 owns independent signal and interrupted-effect witnesses.",
         "STDOUT": "Exact bytes or independently parsed implementation-defined envelope/metadata for declared cases only.",
-        "STDERR": "Empty on declared successes except specified scheduler notices; nonempty diagnostics with positive status on declared failures. Localization/content beyond these assertions remains open.",
+        "STDERR": "Empty on ordinary successes; exact util-linux warning retained for combined -f and string operands, with successful operand delivery independently asserted. Nonempty diagnostics and positive status on selected errors; other localization/content remains open.",
         "OUTPUT FILES": "Unspecified. The fixture records syslog datagrams directly; it does not claim host log storage/retention.",
         "EXTENDED DESCRIPTION": "None.",
         "EXIT STATUS": "Zero success and positive diagnosed failures tested. Signal and resource failures remain open.",
@@ -227,7 +239,7 @@
           "id": "logger/routing-errors",
           "owner": "CSH-078",
           "status": "unqualified",
-          "reason": "Operand precedence with -f, optional -f - policy, empty lines, multiple option orderings, invalid priorities, sink failure, resource limits and async defaults."
+          "reason": "Empty lines, further option orderings, sink failure, resource limits and async defaults. Operand precedence, literal - filename policy, invalid priority and missing tag/file diagnostics are covered."
         },
         {
           "id": "logger/environment",
@@ -240,14 +252,19 @@
     {
       "utility": "lp",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/lp.html",
-      "scope": "CUPS raw queue and disposable byte sink; -c/-d/-n/-s/-t/repeated -o, stdin/-/file, accepted job IDs and backend bytes/metadata.",
+      "scope": "Two CUPS raw queues and disposable byte sinks; -c copy independence with paused queue, -d/-n/-s/-t/repeated -o, stdin/-/file, accepted job IDs and backend bytes/metadata; -d > LPDEST > PRINTER > configured default routing and missing-destination failure.",
       "case_prefixes": [
         "lp-stdin/",
         "lp-dash/",
         "lp-file/",
         "lp-silent/",
         "lp-missing-file/",
-        "print-queue-cleanup"
+        "print-queue-cleanup",
+        "lp-option-over-env/",
+        "lp-lpdest-over-printer/",
+        "lp-printer-env/",
+        "lp-default-destination/",
+        "lp-no-destination/"
       ],
       "sections": {
         "SYNOPSIS": "All declared cases run through direct exec and cshell -c, explicit exec, script and stdin. Utility-specific exceptions are listed in the scope.",
@@ -282,19 +299,20 @@
           "id": "lp/destination-errors",
           "owner": "CSH-078",
           "status": "unqualified",
-          "reason": "-d > LPDEST > PRINTER precedence across distinct destinations, default absent device, async/resource/permission errors and non-C diagnostics."
+          "reason": "Async/resource/permission errors and non-C diagnostics. Distinct destination precedence, configured default and absent destination failure are covered."
         }
       ]
     },
     {
       "utility": "mailx",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mailx.html",
-      "scope": "Base send mode, two local recipients, -s subject, exact dot-containing text body, -E empty/nonempty, missing option argument.",
+      "scope": "Base send mode, two local recipients, -s subject, parsed To/From/Date/Message-ID, exact dot-containing text body, nonempty no-subject delivery, -E empty/nonempty, missing option argument.",
       "case_prefixes": [
         "mail-send-multiple-recipients/",
         "mail-E-empty/",
         "mail-E-nonempty/",
-        "mail-missing-subject/"
+        "mail-missing-subject/",
+        "mail-default-subject/"
       ],
       "sections": {
         "SYNOPSIS": "Only send mode is base. All UP receive/interactive forms are excluded.",
@@ -323,7 +341,7 @@
           "id": "mailx/delivery",
           "owner": "CSH-078",
           "status": "unqualified",
-          "reason": "No-subject/default empty-body delivery, independent RFC5322 header semantics beyond parsed Subject/body, eight-bit text and recipient/address boundary cases."
+          "reason": "Default empty-body delivery, further RFC5322 semantics beyond selected parsed headers, eight-bit text and recipient/address boundary cases. Nonempty no-subject delivery and parsed To/From/Date/Message-ID are covered."
         }
       ]
     },

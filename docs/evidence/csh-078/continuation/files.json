@@ -1,0 +1,72 @@
+[
+  {
+    "file": "docker-restart-before.json.gz",
+    "sha256": "e650a847758268bd0f07d9126208909477e0ca0b27be21f38d23f5c21a35b725",
+    "bytes": 6314
+  },
+  {
+    "file": "docker-restart-after.json.gz",
+    "sha256": "d66d9d42d737ba20dafd9136e99cc6aea63be52af3a3bdb8f5f6d20e71c6bae7",
+    "bytes": 2563
+  },
+  {
+    "file": "native-final.json.gz",
+    "sha256": "d7c40b9f4fb654713717b7285aa6feefb7bb9a71e6cf8a6905ddcbb643742dcb",
+    "bytes": 1652886
+  },
+  {
+    "file": "native-final.log.gz",
+    "sha256": "c1e2fa5af2bc7a60e3c87991a98acf2784a7e669a63b53da310eee5908620ff9",
+    "bytes": 881
+  },
+  {
+    "file": "final-build.log.gz",
+    "sha256": "a8c69f1bfc2d0bb705a0447901a3561aafe17e0fbb1361452086f68c4a0e6dcb",
+    "bytes": 7473
+  },
+  {
+    "file": "expanded-initial.json.gz",
+    "sha256": "ac4e2782c2d01efb2fc98d9ec160841c44e9e3bfa962ba54d861f8d81c54ca8d",
+    "bytes": 2182205
+  },
+  {
+    "file": "expanded-initial-launcher.json.gz",
+    "sha256": "7904160f0ce32775468c399cff60635cf5b9dab88bf0755a5e028f8995d98552",
+    "bytes": 4889
+  },
+  {
+    "file": "expanded-initial.log.gz",
+    "sha256": "086448cb39ec326f8e9d690e699e9925ebb7311a105189fbba9bc542e5967798",
+    "bytes": 929
+  },
+  {
+    "file": "expanded-corrected.json.gz",
+    "sha256": "f122fc1210f9636f082d85728be48acf16014dd4a4efa5b379530a7643430894",
+    "bytes": 2182922
+  },
+  {
+    "file": "expanded-corrected-launcher.json.gz",
+    "sha256": "954b848028d0e2891a82e2b46e6ad35c0ad13c37f9a6d68063568d868ef4ee8b",
+    "bytes": 4806
+  },
+  {
+    "file": "expanded-corrected.log.gz",
+    "sha256": "cd6946e5b68597c7cc4f05d96cb650ab5ba3f555b7b3b77e4fb7de87717cfdd9",
+    "bytes": 184
+  },
+  {
+    "file": "expanded-final.json.gz",
+    "sha256": "de558d7e05068b8f6093e94edb8d0edb8f5528e6e683a6558c78b5ae3bbc7357",
+    "bytes": 2184334
+  },
+  {
+    "file": "expanded-final-launcher.json.gz",
+    "sha256": "b81742c232eb082e3fbc27ee9d17a3fe0fd1e3d17b00f01d56ceadf3ec43411e",
+    "bytes": 4799
+  },
+  {
+    "file": "expanded-final.log.gz",
+    "sha256": "cd6946e5b68597c7cc4f05d96cb650ab5ba3f555b7b3b77e4fb7de87717cfdd9",
+    "bytes": 184
+  }
+]

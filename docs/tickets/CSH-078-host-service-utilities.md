@@ -97,3 +97,13 @@ printing, further calendar/locale/option combinations and error/signal contracts
 remain unqualified. The residuals stay with CSH-078 instead of being transferred
 or described as passing. The full-contract acceptance checkbox stays open.
 See [all attempts and validation](../evidence/csh-078/README.md).
+
+The 2026-09-30 UTC continuation verifies **872 disposable-service checks** and
+**490 native codec/date checks**, with 12 inventory and 8 harness tests passing.
+It adds queue filtering/removal, job process context, mail headers/no-subject
+send, logging precedence/error cases, and two-destination print routing plus
+paused-queue copy independence. Final-source Docker execution and cleanup are
+verified. Authorized Docker recovery removed all four previously stranded
+CSH-078 containers; the unrelated CSH-073 stages had already finished, and only
+its stalled Docker client ended. Both failed and passing continuation attempts
+and the restart record remain in the [evidence](../evidence/csh-078/README.md#disposable-service-continuation-2026-09-30-utc).

@@ -4,7 +4,7 @@ import argparse
 import base64
 import binascii
 from contextlib import contextmanager
-import hashlib
+from email.utils import getaddresses, parsedate_to_datetime
 import json
 import mailbox
 import os
@@ -143,7 +143,7 @@ class Suite:
             stdout, stderr = out.read(LIMIT + 1), err.read(LIMIT + 1)
         if len(stdout) > LIMIT or len(stderr) > LIMIT:
             failure = 'output limit'
-        return dict(argv=command, status=child.returncode, stdout=stdout, stderr=stderr,
+        return dict(argv=command, pid=child.pid, status=child.returncode, stdout=stdout, stderr=stderr,
                     failure=failure, seconds=round(time.monotonic() - started, 3))
 
     def invoke(self, name, utility, args, directory, mode, data=b'', stdout=b'',
@@ -336,8 +336,12 @@ def logging_cases(s):
                     ('stdin', ['-t', 'csh078'], b'one\ntwo\n', [b'one', b'two'], 13),
                     ('file', ['-t', 'csh078', '-f', 'messages'], b'ignored\n', [b'one', b'two'], 13),
                     ('pid', ['-i', '-t', 'csh078', 'pid'], b'', [b'pid'], 13),
+                    ('file-operands', ['-f', 'messages', '-t', 'csh078', 'operand', 'wins'],
+                     b'ignored\n', [b'operand wins'], 13),
+                    ('file-dash-literal', ['-f', '-', '-t', 'csh078'], b'ignored stdin\n', [b'literal dash file'], 13),
                 ):
                     (d / 'messages').write_bytes(b'one\ntwo\n')
+                    (d / '-').write_bytes(b'literal dash file\n')
                     before = len(packets())
                     received = []
                     def verify(actual):
@@ -351,10 +355,18 @@ def logging_cases(s):
                             pattern += rb'\[[0-9]+\]' if suffix == 'pid' else rb'(?:\[[0-9]+\])?'
                             assert re.fullmatch(pattern + rb': ' + re.escape(message), packet), packet
                         return True
-                    s.invoke('logger-' + suffix, 'logger', args, d, mode, data=data, check=verify)
+                    # util-linux diagnoses this combination but logs the operands,
+                    # as required. '-' is a literal filename on this provider.
+                    diagnostic = (b'logger: --file <file> and <message> are mutually exclusive, message is ignored\n'
+                                  if suffix == 'file-operands' else b'')
+                    s.invoke('logger-' + suffix, 'logger', args, d, mode, data=data,
+                             stderr=diagnostic, check=verify)
                     s.results[-1]['packets'] = serial(received)
-                s.invoke('logger-missing-file', 'logger', ['-f', 'missing'], d, mode,
-                         status='nonzero', stderr=re.compile(rb'.+', re.S))
+                for suffix, args in [('missing-file', ['-f', 'missing']),
+                                     ('bad-priority', ['-p', 'not-a-facility.not-a-level']),
+                                     ('missing-tag', ['-t'])]:
+                    s.invoke('logger-' + suffix, 'logger', args, d, mode,
+                             status='nonzero', stderr=re.compile(rb'.+', re.S))
             for facility, number in [('user', 1)] + [(f'local{i}', 16+i) for i in range(8)]:
                 for level, severity in zip(('emerg', 'alert', 'crit', 'err', 'warning', 'notice', 'info', 'debug'), range(8)):
                     priority = 8 * number + severity
@@ -391,6 +403,10 @@ def mail_cases(s):
                     m = messages(u)[-1]
                     assert str(m['Subject']) == subject
                     assert m.get_payload(decode=True) == body
+                    assert {address.split('@')[0] for _, address in getaddresses(m.get_all('To', []))} == {'cshell', 'recipient'}
+                    assert getaddresses(m.get_all('From', []))[0][1] == 'cshell@localhost'
+                    assert parsedate_to_datetime(m['Date']).utcoffset() is not None
+                    assert re.fullmatch(r'<[^<>\s]+@[^<>\s]+>', m['Message-ID'])
                 return True
             s.invoke('mail-send-multiple-recipients', 'mailx', ['-s', subject, 'cshell', 'recipient'],
                      d, mode, data=body, check=delivery)
@@ -401,12 +417,16 @@ def mail_cases(s):
                      d, mode, data=b'nonempty\n', check=lambda a: wait_for(
                          lambda: len(messages('recipient')) == before + 1) and
                          messages('recipient')[-1].get_payload(decode=True) == b'nonempty\n')
+            before = len(messages('recipient'))
+            body = b'no subject\nsecond literal line\n'
+            s.invoke('mail-default-subject', 'mailx', ['recipient'], d, mode, data=body,
+                     check=lambda a: wait_for(lambda: len(messages('recipient')) == before + 1)
+                     and messages('recipient')[-1].get_payload(decode=True) == body)
             s.invoke('mail-missing-subject', 'mailx', ['-s'], d, mode, status='nonzero',
                      stderr=re.compile(rb'.+', re.S))
 
 
 def scheduler_cases(s):
-    import datetime
     pending = []
     # Daemon is deliberately stopped until all submissions have been inspected.
     for mode in MODES:
@@ -423,6 +443,22 @@ def scheduler_cases(s):
                              stdout=re.compile(job_id.encode() + rb'\s+Tue Dec 31 12:30:00 2030 a cshell\n'))
                     s.invoke('at-remove', 'at', ['-r', job_id], d, mode)
                     s.invoke('at-list-empty', 'at', ['-l'], d, mode)
+            queue_jobs = {}
+            for queue in ('a', 'c'):
+                submitted = s.invoke('at-submit-queue-' + queue, 'at',
+                                     ['-q', queue, '-t', '203012311230'], d, mode, data=job,
+                                     stderr=re.compile(rb'(?:warning: commands will be executed using /bin/sh\n)?job [0-9]+ at Tue Dec 31 12:30:00 2030\n(?:Can\'t open /run/atd.pid to signal atd. No atd running\?\n)?'))
+                if submitted and submitted['status'] == 0:
+                    found = re.search(rb'job ([0-9]+) at ', submitted['stderr'])
+                    if found:
+                        queue_jobs[queue] = found[1].decode()
+            if len(queue_jobs) == 2:
+                for queue, job_id in queue_jobs.items():
+                    s.invoke('at-list-queue-' + queue, 'at', ['-l', '-q', queue], d, mode,
+                             stdout=re.compile(job_id.encode() + rb'\s+Tue Dec 31 12:30:00 2030 '
+                                               + queue.encode() + rb' cshell\n'))
+                s.invoke('at-remove-multiple', 'at', ['-r', *queue_jobs.values()], d, mode)
+                s.invoke('at-queues-empty', 'at', ['-l'], d, mode)
             s.invoke('at-invalid-time', 'at', ['-t', 'invalid'], d, mode,
                      status='nonzero', stderr=re.compile(rb'.+', re.S))
             # No job is allowed to escape the private container. The kept roots
@@ -432,20 +468,41 @@ def scheduler_cases(s):
             for utility in ('at', 'batch'):
                 d = root / (utility + '-' + mode); d.mkdir(); os.chown(d, 10001, 10001)
                 token = utility + '-' + mode
+                probe = d / 'context.py'
+                probe.write_text('import json, os\nfrom pathlib import Path\n'
+                                 'parent = os.getppid()\n'
+                                 'fields = Path(f"/proc/{parent}/stat").read_text().rsplit(")", 1)[1].split()\n'
+                                 'Path("context.json").write_text(json.dumps(dict(parent=parent, '
+                                 'pgrp=int(fields[2]), session=int(fields[3]), tty=int(fields[4]), '
+                                 'uid=os.getuid(), gid=os.getgid())))\n')
                 code = ('printf "%s\\n" "$CSH078_VALUE" > result\npwd >> result\numask >> result\n'
                         'printf "' + token + '\\n"\nprintf "error-' + token + '\\n" >&2\n')
+                code += '/usr/bin/python3 ' + shlex.quote(str(probe)) + '\n:\n'
                 result = s.invoke(utility + '-submit-execution', utility,
                                   ['-m', 'now'] if utility == 'at' else [], d, mode,
                                   data=code.encode(), env={'CSH078_VALUE': token},
                                   stderr=re.compile(rb'(?:warning: commands will be executed using /bin/sh\n)?job [0-9]+ at [^\n]+\n(?:Can\'t open /run/atd.pid to signal atd. No atd running\?\n)?', re.S))
-                pending.append((d, token))
+                pending.append((d, token, result))
         daemon = s.start(['/usr/sbin/atd', '-f', '-l', '1000000', '-b', '1'], root)
-        for d, token in pending:
+        for d, token, submission in pending:
             ok = wait_for(lambda: (d / 'result').exists() and len((d / 'result').read_bytes().splitlines()) == 3, 20)
             actual = (d / 'result').read_bytes() if (d / 'result').exists() else b''
             expected = (token + '\n' + str(d) + '\n0077\n').encode()
             s.record('scheduled-effects/' + token, token.split('-')[0], ok and actual == expected,
                      expected=expected, actual=actual)
+            context_file = d / 'context.json'
+            ready = wait_for(context_file.exists)
+            context = json.loads(context_file.read_text()) if ready else {}
+            # Compare with the submitting process group (call() starts a new
+            # session), not the service daemon's group. POSIX separates the
+            # job from its invoking environment, not from other daemon jobs.
+            s.record('scheduled-process-context/' + token, token.split('-')[0],
+                     ready and submission is not None and submission['status'] == 0
+                     and not submission['failure'] and context.get('pgrp', 0) > 0
+                     and context.get('pgrp') not in (os.getpgrp(), (submission or {}).get('pid'))
+                     and context.get('tty') == 0 and context.get('uid') == 10001
+                     and context.get('gid') == 10001, actual=context,
+                     submitting_group=(submission or {}).get('pid'), observer_group=os.getpgrp())
             arrived = wait_for(lambda: any((token + '\n').encode() in (m.get_payload(decode=True) or b'') and
                                            ('error-' + token + '\n').encode() in (m.get_payload(decode=True) or b'')
                                            for m in messages('cshell')), 10)
@@ -535,6 +592,8 @@ Allow all
             assert wait_for(lambda: Path('/run/cups/cups.sock').exists()), 'CUPS socket not ready'
             setup = s.call(['/usr/sbin/lpadmin', '-p', 'sink', '-E', '-v', 'csh078:/sink', '-m', 'raw'], d, user=False)
             assert setup['status'] == 0, setup
+            setup = s.call(['/usr/sbin/lpadmin', '-p', 'other', '-E', '-v', 'csh078:/other', '-m', 'raw'], d, user=False)
+            assert setup['status'] == 0 and not setup['failure'], setup
             setup = s.call(['/usr/sbin/lpadmin', '-d', 'sink'], d, user=False)
             assert setup['status'] == 0, setup
             for mode in MODES:
@@ -546,10 +605,16 @@ Allow all
                 ):
                     source = d / 'document'; source.write_bytes(b'print file\n')
                     before = set(spool.glob('*.json'))
+                    if suffix == 'file':
+                        paused = s.call(['/usr/sbin/cupsdisable', 'sink'], d, user=False)
+                        assert paused['status'] == 0 and not paused['failure'], paused
                     expected = data if suffix in ('stdin', 'dash') else b'print file\n'
                     def effect(a):
                         # -c permits immediate modification after lp returns.
-                        source.write_bytes(b'changed after submission\n')
+                        if suffix == 'file':
+                            source.write_bytes(b'changed after submission\n')
+                            resumed = s.call(['/usr/sbin/cupsenable', 'sink'], d, user=False)
+                            assert resumed['status'] == 0 and not resumed['failure'], resumed
                         assert wait_for(lambda: bool(set(spool.glob('*.json')) - before)), 'backend did not receive job'
                         paths = set(spool.glob('*.json')) - before
                         assert len(paths) == 1
@@ -564,11 +629,37 @@ Allow all
                     s.invoke('lp-' + suffix, 'lp', args, d, mode, data=data,
                              stdout=b'' if suffix == 'silent' else re.compile(rb'request id is sink-[0-9]+ \(' + (b'0' if suffix in ('stdin', 'dash') else b'1') + rb' file\(s\)\)\n'),
                              env={'LPDEST': 'sink'}, check=effect)
+                for suffix, args, environment, destination in (
+                    ('option-over-env', ['-d', 'sink'], {'LPDEST': 'other', 'PRINTER': 'other'}, 'sink'),
+                    ('lpdest-over-printer', [], {'LPDEST': 'sink', 'PRINTER': 'other'}, 'sink'),
+                    ('printer-env', [], {'PRINTER': 'other'}, 'other'),
+                    ('default-destination', [], {}, 'sink'),
+                ):
+                    before = set(spool.glob('*.json'))
+                    def delivered(a):
+                        assert wait_for(lambda: bool(set(spool.glob('*.json')) - before))
+                        paths = set(spool.glob('*.json')) - before
+                        assert len(paths) == 1
+                        path = paths.pop()
+                        metadata = json.loads(path.read_text())
+                        assert metadata['uri'] == 'csh078:/' + destination
+                        assert path.with_suffix('.data').read_bytes() == b'destination control\n'
+                        return True
+                    s.invoke('lp-' + suffix, 'lp', args, d, mode,
+                             data=b'destination control\n', env=environment,
+                             stdout=re.compile(rb'request id is ' + destination.encode() + rb'-[0-9]+ \(0 file\(s\)\)\n'),
+                             check=delivered)
                 s.invoke('lp-missing-file', 'lp', ['missing'], d, mode,
                          status='nonzero', stderr=re.compile(rb'.+', re.S), env={'LPDEST': 'sink'})
             # Drain/cancel owned jobs before stopping the private scheduler.
-            cleanup = s.call(['/usr/bin/cancel', '-a', 'sink'], d, user=False)
+            cleanup = s.call(['/usr/bin/cancel', '-a'], d, user=False)
             s.record('print-queue-cleanup', 'lp', cleanup['status'] == 0 and not cleanup['failure'], actual=cleanup)
+            for destination in ('sink', 'other'):
+                removed = s.call(['/usr/sbin/lpadmin', '-x', destination], d, user=False)
+                assert removed['status'] == 0 and not removed['failure'], removed
+            for mode in MODES:
+                s.invoke('lp-no-destination', 'lp', [], d, mode, data=b'no device\n',
+                         status='nonzero', stderr=re.compile(rb'.+', re.S))
         finally:
             s.stop(daemon)
 

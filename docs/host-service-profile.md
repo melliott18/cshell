@@ -82,17 +82,22 @@ priority pairs and final daemon-effect checks supplement those dispatch paths.
 Missing declared case prefixes cause failure. Diagnostic messages whose wording
 is unspecified are checked for nonempty stderr and positive status; every actual
 byte is retained. Scheduler dates/IDs and print IDs use independent structure
-checks. Utility output never generates its own expected bytes.
+checks. Utility output never generates its own expected bytes. The selected util-linux
+logger emits a warning for combined `-f` and string operands but correctly logs
+the operands; the warning bytes and independent datagrams are both checked.
+For this provider, `-f -` reads a literal file named `-`; it does not select stdin.
+Scheduler group checks compare jobs with their submitting environment; the
+foreground atd daemon and its jobs may share a service process group.
 
 | Utility | Selected observations | Important remaining boundary |
 | --- | --- | --- |
-| at | File/stdin submission, fixed `-t`, list/remove, failed time, `now`, inherited cwd/environment/umask, output/error and silent mail | Full timespec grammar, queue filtering, process-group/terminal assertions and other environments |
-| batch | Stdin execution and the same inherited state/mail observations, including silent completion | Queue/process-context and non-C environment details |
+| at | File/stdin submission, fixed `-t`, a/c queue selection and filtered listing, multi-ID removal, failed time, `now`, inherited cwd/environment/umask, process group distinct from submission, no controlling terminal, UID/GID, output/error and silent mail | Full timespec grammar, further queue/errors and other environments |
+| batch | Stdin execution, inherited state, process group distinct from submission, no controlling terminal, UID/GID and mail including silent completion | Independent queue-b identity, alternate shell and non-C environment details |
 | crontab | File/stdin replace/list/remove, failed-read preservation, wildcard execution, supplied default environment, percent stdin and mail | Calendar/range/list execution, day-field OR, escapes and interrupted/resource effects |
 | date | Independent fixed leap-day values, default output, common strftime conversions, TZ and `-u` | Other calendar/format/locale combinations and output/signal failures |
-| logger | Private syslog datagrams, operands/stdin/file, header/tag/PID shape, default and all required priorities | Routing/error/locale combinations and PID correspondence |
-| lp | Private CUPS raw spool, byte sink, `-c/-d/-n/-s/-t/-o`, stdin/dash/file, request IDs and backend metadata | No physical device: actual hardcopy, copies/banner/title rendering, class selection, notifications and destination precedence remain unqualified |
-| mailx | Base send, two recipients, subject/body, dot line, `-E` and missing option argument | Startup/address/environment, full RFC5322 semantics and further delivery/error boundaries |
+| logger | Private syslog datagrams, operands/stdin/file, operands overriding `-f`, literal dash filename, header/tag/PID shape, all required priorities and selected option/file errors | Further routing/error/locale combinations and PID correspondence |
+| lp | Two private CUPS raw queues, byte sinks, paused-queue `-c` copy independence, `-d/-n/-s/-t/-o`, stdin/dash/file, request IDs, backend metadata, destination precedence and absent destination error | No physical device: actual hardcopy, copies/banner/title rendering, class selection and notifications remain unqualified |
+| mailx | Base send, two recipients, subject/body, dot line, parsed To/From/Date/Message-ID, no-subject nonempty delivery, `-E` and missing option argument | Startup/address/environment, further RFC5322 semantics and delivery/error boundaries |
 | uuencode | Independent historical/Base64 algorithms, 11 lengths through 8192 bytes, all 256 byte values, modes, file/stdin and errors | Other modes/pathnames, I/O/signal/locale/resource boundaries |
 | uudecode | Independent encoded input, both algorithms/stdout cookies, file/stdin, preamble, `-o`, bytes and 0640 mode despite 0077 mask | Other output/mode/overwrite and I/O/signal/locale/resource boundaries |
 
