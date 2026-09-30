@@ -11,8 +11,9 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 
-from host_text_boundaries import child_setup, finish
+from host_text_boundaries import child_setup, collect, finish
 from host_utilities import serial, source_identity
 
 
@@ -36,6 +37,7 @@ def run_case(binary,path,library,utility,fault,mode):
         (root/'same').write_bytes(data)
         args={'cat':[], 'head':['-n','600'], 'cmp':['-','same'], 'sed':['s/x/y/']}[utility]
         if utility=='sed':data=b'x'*131072+b'\n'
+        (root/'input').write_bytes(data)
         expected=data if utility in ('cat','head') else b''
         fails=fault in ('read-eintr','read-eio','realloc-enomem')
         if fails: expected=b''
@@ -49,19 +51,23 @@ def run_case(binary,path,library,utility,fault,mode):
         try:
             if not selected:raise RuntimeError('Missing provider: '+utility)
             row['provider_sha256']=hashlib.sha256(Path(selected).read_bytes()).hexdigest()
-            process=subprocess.Popen(command,cwd=root,env=env,stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True,preexec_fn=child_setup)
-            out,err=process.communicate(data,timeout=5)
+            with (root/'input').open('rb') as source:
+                process=subprocess.Popen(command,cwd=root,env=env,stdin=source,
+                    stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True,preexec_fn=child_setup)
+            out,err=collect(process,time.monotonic()+5)
             attestation=trace.read_bytes() if trace.exists() else b''
             row['actual']=serial(dict(status=process.returncode,stdout=out,stderr=err,trace=attestation))
             status_ok=process.returncode>0 if fails else process.returncode==0
             row['verdict']='PASS' if (status_ok and out==expected and
                 (bool(err) if fails else err==b'') and attestation==b'fault\n') else 'FAIL'
-            if len(out)+len(err)>262144:row['verdict']='FAIL'
         except (OSError,RuntimeError,subprocess.SubprocessError) as error:
             row['error']=str(error)
         finally:
-            row['leader_reaped']=finish(process)
+            try:
+                row['leader_reaped']=finish(process)
+            except (OSError,subprocess.SubprocessError) as error:
+                row['leader_reaped']=False
+                row['cleanup_error']=str(error)
     row['fixture_removed']=not root.exists()
     if not row['leader_reaped'] or not row['fixture_removed']:row['verdict']='FAIL'
     return row
@@ -85,7 +91,7 @@ def main():
     args.record.write_text(json.dumps(dict(totals=totals,cases=rows,source_identity=source_identity(),
         platform=platform.platform(),library_sha256=hashlib.sha256(args.library.read_bytes()).hexdigest(),
         fault_contract='EINTR/EIO read returns are diagnosed as errors; short reads and cat short/EINTR writes preserve exact bytes; sed growth ENOMEM is diagnosed. No universal EINTR retry requirement.',
-        limits=dict(timeout_seconds=5,input_bytes_max=131073,capture_bytes=262144)),indent=2)+'\n')
+        limits=dict(timeout_seconds=5,input_bytes_max=131073,capture_bytes=65536)),indent=2)+'\n')
     print(totals)
     return int(bool(totals['fail']))
 

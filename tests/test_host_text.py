@@ -48,14 +48,36 @@ class TextEvidenceTests(unittest.TestCase):
         from unittest.mock import patch, MagicMock
         from host_text_faults import run_case as fault_run
         child=MagicMock()
-        child.communicate.return_value=(b'alpha\nbeta\ngamma\n'*200,b'')
         child.returncode=0
         with patch('host_text_faults.subprocess.Popen',return_value=child), \
+             patch('host_text_faults.collect',return_value=(b'alpha\nbeta\ngamma\n'*200,b'')), \
              patch('host_text_faults.finish',return_value=True):
             row=fault_run(Path('/bin/sh'),os.defpath,Path('/unused'),
                          'cat','read-short','direct')
         self.assertEqual(row['verdict'],'FAIL')
         self.assertTrue(row['fixture_removed'])
+
+    def test_unknown_disk_attachment_keeps_image_for_recovery(self):
+        import json, subprocess
+        from unittest.mock import patch
+        import host_text_capacity
+        with tempfile.TemporaryDirectory() as temporary:
+            record=Path(temporary)/'result.json'
+            def command(argv, **kwargs):
+                if argv[1]=='create':
+                    Path(argv[-1]).write_bytes(b'private test image')
+                    return subprocess.CompletedProcess(argv,0,b'created',b'')
+                if argv[1]=='attach':
+                    raise subprocess.TimeoutExpired(argv,30)
+                raise subprocess.CalledProcessError(1,argv,stderr=b'unknown attachment')
+            with patch.object(host_text_capacity.platform,'system',return_value='Darwin'), \
+                 patch.object(host_text_capacity.subprocess,'run',side_effect=command):
+                self.assertEqual(host_text_capacity.run(Path('/bin/sh'),os.defpath,record),1)
+            metadata=json.loads(record.with_suffix('.capacity.json').read_text())
+            self.assertFalse(metadata['detached'])
+            self.assertFalse(metadata['fixture_removed'])
+            self.assertTrue(Path(metadata['image']).exists())
+            self.assertIn('attachment_query_error',metadata)
 
     def test_effect_failure_is_not_a_pass(self):
         with tempfile.TemporaryDirectory() as root:
