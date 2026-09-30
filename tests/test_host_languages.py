@@ -98,11 +98,23 @@ class LanguageEvidenceTests(unittest.TestCase):
                 # The inherited group cleanup kills descendants; container PID 1
                 # may retain a dead orphan briefly, as in the shared smoke tests.
                 proc = Path('/proc') / str(pid) / 'stat'
-                if proc.exists():
-                    self.assertEqual(proc.read_text().rsplit(')', 1)[1].split()[0], 'Z')
-                else:
-                    with self.assertRaises(ProcessLookupError):
-                        os.kill(pid, 0)
+                deadline = time.monotonic() + 2
+                while True:
+                    try:
+                        if proc.exists():
+                            state = proc.read_text().rsplit(')', 1)[1].split()[0]
+                            if state == 'Z':
+                                break
+                        else:
+                            os.kill(pid, 0)
+                    except (FileNotFoundError, ProcessLookupError):
+                        break
+                    # SIGKILL delivery is asynchronous. Wait for observed death,
+                    # not merely successful signal delivery; a survivor still
+                    # fails within a fixed bound on both Linux and Darwin.
+                    if time.monotonic() >= deadline:
+                        self.fail(f'owned descendant {pid} survived cleanup')
+                    time.sleep(0.01)
             finally:
                 unrelated.terminate()
                 unrelated.wait(timeout=2)
