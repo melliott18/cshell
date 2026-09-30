@@ -100,6 +100,11 @@ the default suite.
 [Expanded attempts](../evidence/csh-074/expanded/README.md) retain the native
 provider failures and corrections. Dedicated native Linux/macOS CI jobs retain
 ordinary and sanitizer records independently of the broad runtime suites.
+Final ordinary and ASan/UBSan runs each pass all 705 checks on both local macOS
+and hosted Ubuntu 24.04, with an identical source-input digest in all four records.
+The final native selected profile passes 1162 existing checks plus 705 language
+checks, and the selected-PATH runtime passes 3950 checks. Earlier native PTY
+failures remain retained and are not claimed resolved.
 The [original evidence](../evidence/csh-074/README.md), including prior Linux
 signal races and native cleanup failures, remains unchanged. Local Docker
 validation is still unavailable because the daemon returns HTTP 500.

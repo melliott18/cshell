@@ -118,5 +118,55 @@
     "file": "linux-ci-sanitizer-attempt2.json.gz",
     "uncompressed_bytes": 1283113,
     "sha256": "0022bb241a824c330ac75ccb0bba4bf26a99c9b82fa6732018b68ea360a29682"
+  },
+  {
+    "file": "native-sanitizer-final.json.gz",
+    "uncompressed_bytes": 1292271,
+    "sha256": "3db1d12250086f1a715e8dc50e7d1366c999251dec3c08b3165225dba460d5d8"
+  },
+  {
+    "file": "native-sanitizer-final.log.gz",
+    "uncompressed_bytes": 22893,
+    "sha256": "bc27e503c0e2127524b3fb923361771de9e81fde289748d7e1334327e6adce40"
+  },
+  {
+    "file": "native-ordinary-final-705.json.gz",
+    "uncompressed_bytes": 1227942,
+    "sha256": "a6cc87976cca359b335fd52db1468e061332acb30dcd823b926c935335bb9edc"
+  },
+  {
+    "file": "native-ordinary-final-705.log.gz",
+    "uncompressed_bytes": 115414,
+    "sha256": "6fa90e93bebb84749d55481477fa3e8df4aa24b1d743f11d0fc4335b7f9a3305"
+  },
+  {
+    "file": "linux-ci-final.log.gz",
+    "uncompressed_bytes": 283588,
+    "sha256": "b057f8a552f210ff46057fbd249ca548a5b86c6cd4b827c2020ddf241eb6c94f"
+  },
+  {
+    "file": "linux-ordinary-final-705.json.gz",
+    "uncompressed_bytes": 1205044,
+    "sha256": "23d5ff1e88e0a632091c4a7019014c153fcea92e2521c857f33968dca7a67162"
+  },
+  {
+    "file": "linux-sanitizer-final-705.json.gz",
+    "uncompressed_bytes": 1279940,
+    "sha256": "ec3a533a864d03e689e2dcf08a73a29f30add049444dc5151abf02ba631ddf7e"
+  },
+  {
+    "file": "native-selected-profile-final.json.gz",
+    "uncompressed_bytes": 4698613,
+    "sha256": "9291838c60c9c02a0da48411aa7688361126f84eaca5be6dd9bfe23c68491e2b"
+  },
+  {
+    "file": "native-selected-profile-final.log.gz",
+    "uncompressed_bytes": 121679,
+    "sha256": "37b4b922f2e63095eec25ad8e3b14811eba6b47ca7dc100dbf37a0988b94a85f"
+  },
+  {
+    "file": "native-runtime-final.log.gz",
+    "uncompressed_bytes": 225491,
+    "sha256": "31f88f8330bf5d0069cf12551feadd1c1ae5e39bdbc75f8a89b3ffb698d42d4b"
   }
 ]

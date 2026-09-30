@@ -48,3 +48,30 @@ zero-byte prefix copy. The adapter now skips those copies before allocation.
 The signal runner additionally rejects child-editor sanitizer diagnostics, even
 on the HOME recovery path where ordinary diagnostics are allowed. A negative
 control proves that a recovered file cannot turn that sanitizer error into a pass.
+
+## Final operation-suite qualification
+
+| Platform | Ordinary | ASan/UBSan | Record |
+| --- | --- | --- | --- |
+| Native macOS | 705 pass / 0 fail | 705 pass / 0 fail | `native-ordinary-final-705.json.gz`, `native-sanitizer-final.json.gz` |
+| Hosted Ubuntu 24.04 | 705 pass / 0 fail | 705 pass / 0 fail | `linux-ordinary-final-705.json.gz`, `linux-sanitizer-final-705.json.gz` |
+
+All four records contain the identical source/build-input digest
+`c32b44ba846703ba5a34fd7f6392fc0718492278c5a838a5a31cedfa1675d397`.
+The Linux records and raw job log come from the successful
+[dedicated contract job](https://github.com/melliott18/cshell/actions/runs/36650501560/job/109683266994)
+at code revision `a058d5f`. The local ordinary rebuild restores uninstrumented
+executables after sanitizer validation. M4's record preserves requested and
+effective flags; its upstream build removes `-Werror` only, retaining both
+sanitizers. Fixture-level sanitizer diagnostics remain strict failures.
+
+Hosted macOS jobs remained queued during this validation; local macOS provides
+the native platform evidence. The local Docker daemon remained unavailable;
+the Ubuntu result is explicitly a hosted native run, not Docker evidence.
+These results qualify the stated operation subset, not the entire eight pages.
+
+The final local `make test-host-profile` passes all 1162 existing checks and all
+705 language checks, with zero gaps. The subsequent selected-PATH
+`make test-runtime` passes 3950 checks. The corresponding final logs and existing
+profile JSON are retained separately. The earlier PTY failure remains recorded;
+no whole-PTY or whole-system qualification is inferred from these results.
