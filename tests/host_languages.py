@@ -7,12 +7,14 @@ import json
 import os
 from pathlib import Path
 import platform
+import re
 import shlex
 import subprocess
 import sys
 import tempfile
 
 import smoke
+import pty_harness
 from host_language_cases import UTILITIES, BASE, cases
 from host_platform import filesystem_identity
 from host_utilities import inventory, serial, sha, source_identity, sanitizer_diagnostic, match
@@ -21,6 +23,8 @@ MODES = ('direct', 'string', 'file', 'stdin')
 
 
 def matches(expected, actual):
+    if isinstance(expected, dict) and 'regex' in expected:
+        return isinstance(actual, bytes) and re.fullmatch(expected['regex'], actual) is not None
     if expected == 'optional-diagnostic':
         return isinstance(actual, bytes)  # ed permits warning/diagnostic wording.
     if expected == 'normal':
@@ -65,8 +69,31 @@ def run_case(binary, path, case, mode, root, search_path, sanitizer=False):
                     fixture.update(args=['script'],stdin=b'')
                 else:
                     fixture.update(args=[],stdin=script)
+            if case.get('terminal'):
+                # A controlling PTY supplies interaction independently of utility
+                # data and shell source. Keep the other output stream separate:
+                # a correct transcript on the wrong fd must fail qualification.
+                tty_stdin = case['terminal'] == 'stdout'
+                source = '/dev/tty' if tty_stdin else 'input'
+                argv = [path] + case['args']
+                input_name = source
+                if mode != 'direct':
+                    script = 'exec ' + shlex.join([case['utility']] + case['args']) + ' <' + source + '\n'
+                    (directory/'script').write_text(script)
+                    argv = [str(binary)] + (['-c', script] if mode == 'string' else ['script'] if mode == 'file' else [])
+                    input_name = 'script' if mode == 'stdin' else source
+                helper = Path(__file__).with_name('host_language_helper.py').resolve()
+                fixture.update(transport='pty', steps=case['steps'],
+                    args=[str(helper), 'terminal-exec', case['terminal'], input_name] + argv)
+                executable = Path(sys.executable)
             record.update(phase='assertion', invocation=serial(dict(binary=str(executable),**fixture)))
             status,output,errors=smoke.capture(executable,fixture,directory,5,65536)
+            if case.get('terminal'):
+                other = (directory/'other-output').read_bytes()
+                output = {case['terminal']: bytes(output['output']),
+                          ('stderr' if case['terminal'] == 'stdout' else 'stdout'): other}
+                if sum(len(stream) for stream in output.values()) > 65536:
+                    errors.append('combined terminal/redirected output bound exceeded')
             actual_files={name:(directory/name).read_bytes() if (directory/name).is_file() else None
                           for name in case.get('files',{})}
             nonempty={name:(directory/name).is_file() and (directory/name).stat().st_size>0
@@ -80,7 +107,7 @@ def run_case(binary, path, case, mode, root, search_path, sanitizer=False):
                         data=entry.read_bytes() if regular else None,
                         mode=entry.stat().st_mode & 0o777 if regular else None))
                 valid=(len(entries)==rule['count'] and all(e['regular'] and
-                       all(e[key]==rule[key] for key in ('data','mode') if key in rule)
+                       all(matches(rule[key], e[key]) for key in ('data','mode') if key in rule)
                        for e in entries))
                 file_rules.append(dict(valid=valid,entries=entries))
             if sanitizer_diagnostic(output):
@@ -93,7 +120,7 @@ def run_case(binary, path, case, mode, root, search_path, sanitizer=False):
             record.update(verdict='PASS' if ok else 'FAIL', actual=serial(dict(
                 status=status,stdout=bytes(output['stdout']),stderr=bytes(output['stderr']),
                 files=actual_files,nonempty_files=nonempty,file_rules=file_rules,errors=errors)))
-        except (OSError,ValueError,subprocess.SubprocessError) as error:
+        except (OSError,ValueError,subprocess.SubprocessError,pty_harness.PtyUnavailable) as error:
             record.update(verdict='FAIL',error=str(error))
     record['fixture_removed']=not directory.exists()
     if not record['fixture_removed']:
@@ -200,14 +227,15 @@ def main():
                 source_identity=source_identity(),binary_sha256=sha(binary),
                 contracts_sha256=sha(manifest),scope=('repaired-provider regression selection' if args.provider_regressions else
                     'bounded operation contracts; full pages unqualified'),
-                limits={'case_seconds':5,'signal_seconds':7,'cleanup_seconds':1,'output_bytes':65536,
+                limits={'case_seconds':5,'signal_seconds':7,'cleanup_seconds':1,'terminal_cleanup_seconds':5,'output_bytes':65536,
                         'child_resources':'smoke.child_limits; 1 MiB files, 64 descriptors, no core dumps'},
                 selection=args.case,ed_faults=({"path":str(args.ed_faults.resolve()),"sha256":sha(args.ed_faults)} if args.ed_faults else None),extended_sigint=True,sanitizer=args.sanitizer,totals=counts,cases=records)
-    build_record=Path(__file__).resolve().parents[1]/'build/host-m4-build.json'
-    if build_record.is_file() and tools['m4']['path']:
-        identity=json.loads(build_record.read_text())
-        if identity['binary_sha256']==sha(Path(tools['m4']['path'])):
-            result['m4_build']=identity
+    for utility in ('m4', 'patch'):
+        build_record=Path(__file__).resolve().parents[1]/('build/host-'+utility+'-build.json')
+        if build_record.is_file() and tools[utility]['path']:
+            identity=json.loads(build_record.read_text())
+            if identity['binary_sha256']==sha(Path(tools[utility]['path'])):
+                result[utility+'_build']=identity
     command=(['dpkg-query','-W','-f=${Package} ${Version}\n'] if platform.system()=='Linux'
              else ['sw_vers'])
     identity=subprocess.run(command,capture_output=True,text=True,timeout=10)

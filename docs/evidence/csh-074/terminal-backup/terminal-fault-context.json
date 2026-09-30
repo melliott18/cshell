@@ -1,0 +1,13 @@
+{
+  "platform": "macOS-14.8.7-arm64-arm-64bit",
+  "binary": "build/tests/execute_faults",
+  "binary_sha256": "d1f736eb2ac98c1a80bea7ea8f71904bf1e9b263470dc2b3f619bb14df50fb76",
+  "base_commit": "f25fbb53748f9c7fc11aacf3475274aab04114ea",
+  "commands": [
+    "make -j4 build/tests/execute_faults",
+    "python3 tests/smoke.py ./build/tests/execute_faults --suite tests/fixtures/jobs-fault-pty.json",
+    "python3 tests/smoke.py ./build/tests/execute_faults --suite tests/fixtures/jobs-fault-pty.json --timeout 20",
+    "sample 99313 1 1 -file build/tests/terminal-fault-child.sample.txt"
+  ],
+  "disposition": "Unresolved local macOS job-control failure; not a CSH-074 provider or terminal qualification pass."
+}

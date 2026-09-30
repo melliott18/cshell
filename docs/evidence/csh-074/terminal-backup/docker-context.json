@@ -1,0 +1,8 @@
+{
+  "image_id": "sha256:990d7a251ec594fa4f689dfa1b6e8e872a6fa8be0920681971ccee8f31e9c112",
+  "created": "2026-09-30T05:39:42.86678488Z",
+  "architecture": "arm64",
+  "os": "linux",
+  "user": "cshell",
+  "engine_version": "24.0.6"
+}

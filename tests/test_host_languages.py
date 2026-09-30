@@ -5,6 +5,9 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
+
+import pty_harness
 
 from host_language_cases import UTILITIES, cases
 from host_languages import matches, run_case, run_signal
@@ -67,6 +70,7 @@ class LanguageEvidenceTests(unittest.TestCase):
                            {'nonempty_files':['missing']},{'stderr':b'wrong'},
                            {'file_rules':[dict(pattern='result',count=2)]},
                            {'file_rules':[dict(pattern='result',count=1,data=b'wrong')]},
+                           {'file_rules':[dict(pattern='result',count=1,data={'regex':rb'wrong.*'})]},
                            {'file_rules':[dict(pattern='missing*',count=1)]}):
                 result=run_case(provider,str(provider),dict(control,**change),'direct',root,os.defpath)
                 self.assertEqual(result['verdict'],'FAIL' if change else 'PASS')
@@ -132,6 +136,34 @@ class LanguageEvidenceTests(unittest.TestCase):
             self.assertEqual(result['verdict'],'FAIL')
             self.assertTrue(result['fixture_removed'])
             self.assertIn('error',result)
+
+    def test_terminal_streams_and_transcript_are_independent(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            provider = root/'provider'
+            row = dict(id='control/terminal', utility='provider', args=[], stdin=b'',
+                       terminal='stdout', steps=[{'send': 'y\n'}], status=0,
+                       stdout={'regex': rb'prompt\nreply:y\n'}, stderr=b'')
+            for fd, extra, expected in [(1, '', 'PASS'), (2, '', 'FAIL'),
+                                        (1, 'print("extra")', 'FAIL'),
+                                        (1, 'print("runtime error: injected")', 'FAIL')]:
+                provider.write_text('#!'+sys.executable+'\nimport os\n'+
+                    f'os.write({fd},b"prompt\\nreply:"+os.read(0,100))\n'+extra+'\n')
+                provider.chmod(0o700)
+                result = run_case(provider, str(provider), row, 'direct', root, os.defpath)
+                self.assertEqual(result['verdict'], expected, result)
+                self.assertTrue(result['fixture_removed'])
+
+    def test_terminal_unavailable_is_retained_failure(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            row = dict(id='control/no-terminal', utility='ed', args=[], stdin=b'',
+                       terminal='stdout', steps=[], status=0, stdout=b'', stderr=b'')
+            with patch('pty_harness.capture', side_effect=pty_harness.PtyUnavailable('no controlling tty')):
+                result = run_case(Path(sys.executable), sys.executable, row, 'direct', root, os.defpath)
+            self.assertEqual(result['verdict'], 'FAIL')
+            self.assertIn('no controlling tty', result['error'])
+            self.assertTrue(result['fixture_removed'])
 
     def test_signal_recovery_cannot_hide_editor_sanitizer_diagnostics(self):
         with tempfile.TemporaryDirectory() as temporary:

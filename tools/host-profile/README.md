@@ -245,7 +245,7 @@ Only private files and processes are used. See
 
 ## CSH-074 language/editor providers
 
-The profile builds private ed, xargs and m4 executables offline, alongside printf.
+The profile builds private ed, xargs, m4 and patch executables offline, alongside printf.
 `vendor/ed` is GNU ed 1.22.6, GPL-2.0-or-later; its COPYING and complete compiled
 sources are retained. `vendor/xargs` derives from FreeBSD commit
 `16a79708d089423ec0c3d32f25e7ca97ae58e97b`; each source retains its license.
@@ -268,8 +268,18 @@ The manifest records each real executable, including these overrides. No system
 programs are overwritten.
 
 `make test-host-languages` and `make test-host-profile` run the
-[705 assertions](../../docs/host-languages-evidence.md), including SIGINT by
+[773 assertions](../../docs/host-languages-evidence.md), including SIGINT by
 default. These qualify the declared operation subset only. Full pages remain
 open. The six M4 provider regressions (including the three formerly failing
 contracts) are now required by default and can be selected alone with
 `--provider-regressions`. Historical failures remain preserved.
+
+
+`vendor/patch` supplies GNU patch 2.8 with its complete source archive and
+GPL-3.0-or-later license. It preserves the first backup across multiple patches
+of one file; the local diff additionally backs up an existing `-o` output when
+`-b` is used. `build_patch.py` authenticates the archive and builds offline with
+the same upstream warning policy as M4. `build/host-patch-build.json` records
+archive/diff/binary hashes and requested/effective build flags. The suite now
+includes automated controlling-terminal editor and xargs prompt checks, and
+patch conditional-output and backup interactions.

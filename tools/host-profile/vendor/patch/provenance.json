@@ -1,0 +1,9 @@
+{
+  "version": "GNU patch 2.8",
+  "url": "https://ftp.gnu.org/gnu/patch/patch-2.8.tar.xz",
+  "archive_sha256": "f87cee69eec2b4fcbf60a396b030ad6aa3415f192aa5f7ee84cad5e11f7f5ae3",
+  "local_changes": [
+    "src/patch.c: save an existing -o output before truncation when -b is specified."
+  ],
+  "license": "GPL-3.0-or-later; see COPYING and complete source archive"
+}

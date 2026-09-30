@@ -119,7 +119,16 @@ def ed_signal(argv, action):
 
 
 if __name__ == '__main__':
-    if sys.argv[1]=='argv':
+    if sys.argv[1]=='terminal-exec':
+        # Keep the controlling terminal, replace only the selected descriptors,
+        # and exec in place so the harness retains session/leader ownership.
+        terminal, source = sys.argv[2:4]
+        with open(source, 'rb') as stream:
+            os.dup2(stream.fileno(), 0)
+        with open('other-output', 'wb') as stream:
+            os.dup2(stream.fileno(), 2 if terminal == 'stdout' else 1)
+        os.execv(sys.argv[4], sys.argv[4:])
+    elif sys.argv[1]=='argv':
         print(json.dumps(sys.argv[2:],ensure_ascii=True))
     elif sys.argv[1]=='ready':
         Path('ready').write_bytes(b'ready\n')

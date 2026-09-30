@@ -20,7 +20,8 @@ def provision(destination, gnu_bin=None):
     overrides = {'printf': str(ROOT / 'build/host-printf'),
                  'ed': str(ROOT / 'build/host-ed'),
                  'xargs': str(ROOT / 'build/host-xargs'),
-                 'm4': str(ROOT / 'build/host-m4')}
+                 'm4': str(ROOT / 'build/host-m4'),
+                 'patch': str(ROOT / 'build/host-patch')}
     system = platform.system()
     if system == 'Darwin':
         # Homebrew's prefixed names do not change the system PATH or echo policy.

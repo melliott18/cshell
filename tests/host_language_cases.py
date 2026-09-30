@@ -127,3 +127,9 @@ def cases():
 
     from host_language_provider_cases import cases as provider_cases
     yield from provider_cases()
+
+    from host_language_terminal_cases import cases as terminal_cases
+    yield from terminal_cases()
+
+    from host_language_patch_cases import cases as patch_cases
+    yield from patch_cases()

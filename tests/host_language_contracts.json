@@ -549,9 +549,9 @@
         {
           "section": "OUTPUT FILES",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_12",
-          "disposition": "unqualified",
+          "disposition": "not-applicable",
           "witnesses": [],
-          "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
+          "reason": "This normative section specifies None; file effects of commands/built-ins are accounted for under their defining sections.",
           "owner": "CSH-074"
         },
         {
@@ -758,7 +758,8 @@
           "witnesses": [
             "ed/signal-hup",
             "ed/signal-hup-home",
-            "ed/signal-int"
+            "ed/signal-int",
+            "ed/tty-quit-signal-ignored"
           ],
           "reason": "Selected private provider: SIGHUP cwd/HOME recovery and exact SIGINT stdout marker, command-mode return and preserved buffer. Other signal timings and inherited dispositions remain open.",
           "owner": "CSH-074"
@@ -777,7 +778,13 @@
             "ed/list",
             "ed/bad-address",
             "ed/write-failure",
-            "ed/bounded-buffer"
+            "ed/bounded-buffer",
+            "ed/tty-quit-warning",
+            "ed/tty-edit-warning",
+            "ed/tty-warning-rearmed",
+            "ed/tty-help-toggle",
+            "ed/tty-eof-warning",
+            "ed/tty-quit-signal-ignored"
           ],
           "reason": "Listed byte-exact outputs only; output write failures and all formatting/locale combinations remain unqualified.",
           "owner": "CSH-074"
@@ -839,7 +846,11 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_03",
           "disposition": "partial",
           "witnesses": [
-            "ed/null-address-search"
+            "ed/null-address-search",
+            "ed/tty-quit-warning",
+            "ed/tty-edit-warning",
+            "ed/tty-warning-rearmed",
+            "ed/tty-eof-warning"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -879,7 +890,8 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_07",
           "disposition": "partial",
           "witnesses": [
-            "ed/edit-clean"
+            "ed/edit-clean",
+            "ed/tty-edit-warning"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -927,17 +939,21 @@
         {
           "section": "Help Command",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_12",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Help Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/tty-help-toggle"
+          ],
+          "reason": "Controlling-terminal cases witness the listed C-locale interactions; other clause conditions remain unqualified.",
           "owner": "CSH-074"
         },
         {
           "section": "Help-Mode Command",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_13",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Help-Mode Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/tty-help-toggle"
+          ],
+          "reason": "Controlling-terminal cases witness the listed C-locale interactions; other clause conditions remain unqualified.",
           "owner": "CSH-074"
         },
         {
@@ -1025,7 +1041,10 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_22",
           "disposition": "partial",
           "witnesses": [
-            "ed/edit-clean"
+            "ed/edit-clean",
+            "ed/tty-quit-warning",
+            "ed/tty-warning-rearmed",
+            "ed/tty-eof-warning"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -1174,7 +1193,8 @@
             "ed/bad-address",
             "ed/write-failure",
             "ed/temp-create-failure",
-            "ed/temp-write-failure"
+            "ed/temp-write-failure",
+            "ed/tty-help-toggle"
           ],
           "reason": "Exact edit effects, output-path failure and separately instrumented tmpfile EMFILE/backing fwrite ENOSPC failures preserve the original file. Physical filesystem exhaustion, permission combinations and failures during recovery remain open.",
           "owner": "CSH-074"
@@ -1202,7 +1222,13 @@
         "ed/write-range",
         "ed/temp-create-failure",
         "ed/temp-write-failure",
-        "ed/temp-fault-control"
+        "ed/temp-fault-control",
+        "ed/tty-quit-warning",
+        "ed/tty-edit-warning",
+        "ed/tty-warning-rearmed",
+        "ed/tty-help-toggle",
+        "ed/tty-eof-warning",
+        "ed/tty-quit-signal-ignored"
       ],
       "open_contracts": []
     },
@@ -1288,9 +1314,9 @@
         {
           "section": "INPUT FILES",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_07",
-          "disposition": "unqualified",
+          "disposition": "not-applicable",
           "witnesses": [],
-          "reason": "Finite authored text files only; size, permissions, encoding and read-fault combinations remain unqualified.",
+          "reason": "This normative section specifies None; file effects of commands/built-ins are accounted for under their defining sections.",
           "owner": "CSH-074"
         },
         {
@@ -1341,9 +1367,9 @@
         {
           "section": "OUTPUT FILES",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_12",
-          "disposition": "unqualified",
+          "disposition": "not-applicable",
           "witnesses": [],
-          "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
+          "reason": "This normative section specifies None; file effects of commands/built-ins are accounted for under their defining sections.",
           "owner": "CSH-074"
         },
         {
@@ -1649,9 +1675,9 @@
         {
           "section": "OUTPUT FILES",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_12",
-          "disposition": "unqualified",
+          "disposition": "not-applicable",
           "witnesses": [],
-          "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
+          "reason": "This normative section specifies None; file effects of commands/built-ins are accounted for under their defining sections.",
           "owner": "CSH-074"
         },
         {
@@ -1867,11 +1893,11 @@
         {
           "section": "OUTPUT FILES",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_12",
-          "disposition": "partial",
+          "disposition": "not-applicable",
           "witnesses": [
             "m4/mkstemp-unique"
           ],
-          "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
+          "reason": "This normative section specifies None; file effects of commands/built-ins are accounted for under their defining sections.",
           "owner": "CSH-074"
         },
         {
@@ -2024,7 +2050,13 @@
             "patch/ed-format",
             "patch/explicit-normal-backup",
             "patch/strip-directory",
-            "patch/blank-insensitive"
+            "patch/blank-insensitive",
+            "patch/define-replacement",
+            "patch/backup-output-existing",
+            "patch/backup-output-new",
+            "patch/backup-overwrite",
+            "patch/backup-first-patch-only",
+            "patch/operand-overrides-header"
           ],
           "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
           "owner": "CSH-074"
@@ -2032,9 +2064,11 @@
         {
           "section": "OPERANDS",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_05",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "Selected operands and missing-file errors only; all operand forms and pathname/encoding boundaries remain unqualified.",
+          "disposition": "partial",
+          "witnesses": [
+            "patch/operand-overrides-header"
+          ],
+          "reason": "Explicit operand selection is witnessed; other clause conditions remain unqualified.",
           "owner": "CSH-074"
         },
         {
@@ -2111,7 +2145,13 @@
             "patch/unified",
             "patch/context",
             "patch/input-output",
-            "patch/explicit-normal-backup"
+            "patch/explicit-normal-backup",
+            "patch/define-replacement",
+            "patch/backup-output-existing",
+            "patch/backup-output-new",
+            "patch/backup-overwrite",
+            "patch/backup-first-patch-only",
+            "patch/operand-overrides-header"
           ],
           "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
           "owner": "CSH-074"
@@ -2140,7 +2180,8 @@
           "disposition": "partial",
           "witnesses": [
             "patch/strip-directory",
-            "patch/two-files"
+            "patch/two-files",
+            "patch/operand-overrides-header"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -2152,7 +2193,13 @@
           "witnesses": [
             "patch/blank-insensitive",
             "patch/offset-context",
-            "patch/two-files"
+            "patch/two-files",
+            "patch/define-replacement",
+            "patch/backup-output-existing",
+            "patch/backup-output-new",
+            "patch/backup-overwrite",
+            "patch/backup-first-patch-only",
+            "patch/operand-overrides-header"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -2197,7 +2244,13 @@
         "patch/blank-insensitive",
         "patch/offset-context",
         "patch/two-files",
-        "patch/missing-input"
+        "patch/missing-input",
+        "patch/define-replacement",
+        "patch/backup-output-existing",
+        "patch/backup-output-new",
+        "patch/backup-overwrite",
+        "patch/backup-first-patch-only",
+        "patch/operand-overrides-header"
       ],
       "open_contracts": []
     },
@@ -2287,7 +2340,12 @@
             "xargs/exit-size-no-count",
             "xargs/single-empty-nul",
             "xargs/blank-only-suppressed",
-            "xargs/carry-partial-argument"
+            "xargs/carry-partial-argument",
+            "xargs/tty-prompt-yes",
+            "xargs/tty-prompt-uppercase-yes",
+            "xargs/tty-prompt-no",
+            "xargs/tty-prompt-empty",
+            "xargs/tty-prompt-each-batch"
           ],
           "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
           "owner": "CSH-074"
@@ -2322,17 +2380,28 @@
         {
           "section": "INPUT FILES",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_07",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "Finite authored text files only; size, permissions, encoding and read-fault combinations remain unqualified.",
+          "disposition": "partial",
+          "witnesses": [
+            "xargs/tty-prompt-yes",
+            "xargs/tty-prompt-uppercase-yes",
+            "xargs/tty-prompt-no",
+            "xargs/tty-prompt-empty",
+            "xargs/tty-prompt-each-batch"
+          ],
+          "reason": "Controlling-terminal responses are independent of standard-input argument data; other encodings/locales remain unqualified.",
           "owner": "CSH-074"
         },
         {
           "section": "ENVIRONMENT VARIABLES",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_08",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Locale precedence, non-C collation/encoding, NLSPATH/catalogs and other listed variables remain unqualified.",
+          "disposition": "partial",
+          "witnesses": [
+            "xargs/tty-prompt-yes",
+            "xargs/tty-prompt-uppercase-yes",
+            "xargs/tty-prompt-no",
+            "xargs/tty-prompt-empty"
+          ],
+          "reason": "Controlling-terminal cases witness the listed C-locale interactions; other clause conditions remain unqualified.",
           "owner": "CSH-074"
         },
         {
@@ -2370,7 +2439,12 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_11",
           "disposition": "partial",
           "witnesses": [
-            "xargs/trace"
+            "xargs/trace",
+            "xargs/tty-prompt-yes",
+            "xargs/tty-prompt-uppercase-yes",
+            "xargs/tty-prompt-no",
+            "xargs/tty-prompt-empty",
+            "xargs/tty-prompt-each-batch"
           ],
           "reason": "Diagnostic presence only where wording is unspecified; localization, warnings and all error paths remain unqualified.",
           "owner": "CSH-074"
@@ -2378,9 +2452,9 @@
         {
           "section": "OUTPUT FILES",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_12",
-          "disposition": "unqualified",
+          "disposition": "not-applicable",
           "witnesses": [],
-          "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
+          "reason": "This normative section specifies None; file effects of commands/built-ins are accounted for under their defining sections.",
           "owner": "CSH-074"
         },
         {
@@ -2457,7 +2531,12 @@
         "xargs/single-empty-nul",
         "xargs/blank-only-input",
         "xargs/blank-only-suppressed",
-        "xargs/carry-partial-argument"
+        "xargs/carry-partial-argument",
+        "xargs/tty-prompt-yes",
+        "xargs/tty-prompt-uppercase-yes",
+        "xargs/tty-prompt-no",
+        "xargs/tty-prompt-empty",
+        "xargs/tty-prompt-each-batch"
       ],
       "open_contracts": []
     }

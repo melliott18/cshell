@@ -1,2 +1,3 @@
 # Unified patch context uses a single space for an empty source line.
 tools/host-profile/vendor/m4/cshell.patch whitespace=-blank-at-eol
+tools/host-profile/vendor/patch/cshell.patch whitespace=-blank-at-eol

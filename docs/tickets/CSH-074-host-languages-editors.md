@@ -82,13 +82,13 @@ processes and disposable files/services and verify cleanup after failure/timeout
 
 ## Implementation notes/evidence
 
-The [operation qualification](../host-languages-evidence.md) supplies 174 fixtures
-in four execution modes plus nine synchronized editor signal checks (705 checks,
+The [operation qualification](../host-languages-evidence.md) supplies 191 fixtures
+in four execution modes plus nine synchronized editor signal checks (773 checks,
 including separate test-only backing-store failures and supplemental XSI cases).
 The [normative heading map](../../tests/host_language_contracts.json) accounts for
 every selected fixture and retains the remaining page obligations.
 
-The private profile now builds GNU ed, GNU M4 and FreeBSD-derived xargs from pinned,
+The private profile now builds GNU ed, GNU M4, GNU patch and FreeBSD-derived xargs from pinned,
 licensed sources. ed emits the exact SIGINT stdout marker; xargs preserves empty
 NUL arguments, handles empty-input invocation, enforces/clamps byte limits and
 reports exec failures portably. M4 preserves wrap registration order and
@@ -106,13 +106,38 @@ The final native selected profile passes 1162 existing checks plus 705 language
 checks, and the selected-PATH runtime passes 3950 checks. Earlier native PTY
 failures remain retained and are not claimed resolved.
 The [original evidence](../evidence/csh-074/README.md), including prior Linux
-signal races and native cleanup failures, remains unchanged. Local Docker
-validation is still unavailable because the daemon returns HTTP 500.
+signal races and native cleanup failures, remains unchanged. The earlier local Docker
+HTTP 500 limitation is historical: the daemon is available for this continuation.
 
 Full-page acceptance remains open for contracts beyond the declared subset,
-including interactive prompts, broad locale/default handling and additional
+including remaining patch prompts, broad locale/default handling and additional
 resource/signal paths. The three native m4 failures are now repaired by the
 selected private provider and required in the default suite, alongside new
 wrap-order and temporary-file regressions. The provider/dispatch checkboxes
 apply to the declared subset, not complete utility conformance. Keep this ticket
 open; CSH-068 remains an ownership transfer and CSH-064 history is unchanged.
+
+
+### Terminal and backup continuation
+
+The next 68 assertions cover ed help/dirty-buffer warnings/EOF/SIGQUIT,
+xargs controlling-terminal confirmations with separate argument data, and patch
+conditional output, operand precedence and backup interactions. They exposed
+macOS patch replacing the first backup and GNU patch omitting the `-b -o`
+output backup. The private GNU patch 2.8 provider repairs these paths without
+changing system executables. Its archive, license and local correction are
+retained under `tools/host-profile/vendor/patch`.
+
+The [environment assessment](../host-languages-evidence.md#remaining-work-and-environment-requirements)
+distinguishes routine automated work, generated locales, isolated physical
+storage tests and the still-failing native macOS 14 job-control fixture. Neither
+prompt testing nor the remaining identified CSH-074 contracts require manual
+terminal typing. The latter fixture needs a clean macOS comparison; sampled
+kernel wait and failed cleanup are retained, not converted to a pass.
+
+[Continuation records](../evidence/csh-074/terminal-backup/README.md) retain both
+backup failures before repair and separate native/Docker qualification results.
+The final ordinary and ASan/UBSan runs each pass all 773 checks on both native
+macOS and Debian 12 Docker with the same source-input digest. Both ordinary
+profiles additionally pass 1162 existing checks; the native selected-PATH
+runtime passes 3950 checks. Full-page acceptance and this ticket remain open.

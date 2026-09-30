@@ -481,7 +481,7 @@ build/host-printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/printf.c $(LDLIBS)
 
-host-profile: build/host-printf build/host-ed build/host-xargs build/host-m4
+host-profile: build/host-printf build/host-ed build/host-xargs build/host-m4 build/host-patch
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
@@ -644,3 +644,7 @@ build/host-xargs: $(HOST_XARGS_SOURCES) $(HOST_XARGS_HEADERS)
 # M4 includes gnulib portability sources and retains its upstream build system.
 build/host-m4: tools/host-profile/build_m4.py $(wildcard tools/host-profile/vendor/m4/*)
 	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" $(PYTHON) tools/host-profile/build_m4.py
+
+# Pinned GPL-3.0-or-later patch preserves the first backup across repeated hunks.
+build/host-patch: tools/host-profile/build_patch.py $(wildcard tools/host-profile/vendor/patch/*)
+	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" $(PYTHON) tools/host-profile/build_patch.py
