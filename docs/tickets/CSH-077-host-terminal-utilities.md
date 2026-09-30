@@ -128,8 +128,10 @@ denial and who am i/I under dropped credentials, with a separate strict EOT/aler
 audit. See the [section map](../host-terminal-contracts.md#controlled-data-and-session-extension)
 for exact boundaries. Physical behavior remains unqualified under CSH-081.
 
-The complete-page repair criterion remains open under CSH-081, including the
-observed `write/POSIX-EOT` and `write/two-sender-alerts` differences. The
+At the extension stage, the complete-page repair criterion and the observed
+`write/POSIX-EOT`/`write/two-sender-alerts` differences remained under CSH-081.
+The subsequent repair pass below resolves these two differences for the selected
+Linux profile; complete-page qualification is still open. The
 [extension evidence](../evidence/csh-077-extension/README.md) records 730 strict
 PTY assertions plus six harness tests on native macOS and hosted Linux, both
 ordinary and sanitized, and 20 isolated Linux session assertions. These selected

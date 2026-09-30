@@ -1359,5 +1359,6 @@ Use `HOST_TERMINAL_FLAGS=--case=tty/` only for diagnosis.
 The Linux registered-session subset is opt-in and requires a private mount
 namespace. The [isolating command and scope](host-terminal-contracts.md#controlled-data-and-session-extension)
 cover 47 strict session assertions with dropped credentials, including EOT,
-sender alerts, canonical editing and synchronized SIGINT. The [extension evidence](evidence/csh-077-extension/README.md)
-retains normal and sanitizer results separately. No physical hardware was supplied.
+sender alerts, canonical editing and synchronized SIGINT. The [repair evidence](evidence/csh-077-repairs/README.md)
+retains current normal and sanitizer results separately; earlier extension
+evidence remains unchanged. No physical hardware was supplied.
