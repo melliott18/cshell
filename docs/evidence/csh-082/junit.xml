@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite name="cshell container suites" tests="3" failures="0" errors="0" skipped="0" time="73.157566"><testcase classname="cshell.make" name="test" time="62.934638"><system-out>Full output: test.log</system-out></testcase><testcase classname="cshell.make" name="test-pty" time="0.617065"><system-out>Full output: test-pty.log</system-out></testcase><testcase classname="cshell.make" name="test-harness" time="9.605863"><system-out>Full output: test-harness.log</system-out></testcase></testsuite>

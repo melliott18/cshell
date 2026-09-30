@@ -111,3 +111,36 @@ jobs:
           cshell-test:local sh -c "make clean && make -j2 test test-pty test-host-profile
           CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer'
           LDFLAGS='-fsanitize=address,undefined'"
+
+  container-runtime:
+    name: Application container
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build and check runtime under container restrictions
+        run: make docker-runtime-test
+      - name: Build Pipeline test image
+        run: make docker-pipeline-build
+      - name: Run application-owned tests under Pipeline restrictions
+        run: >-
+          docker run --name cshell-pipeline-check
+          --user 10001:10001 --network none --memory 1g --cpus 2 --pids-limit 256
+          --cap-drop ALL --security-opt no-new-privileges cshell-pipeline-test:local
+      - name: Collect application test reports
+        if: always()
+        run: |
+          if docker container inspect cshell-pipeline-check >/dev/null 2>&1; then
+            docker cp cshell-pipeline-check:/work/test-results ./container-test-results
+            cat container-test-results/junit.xml
+            tail -n 50 container-test-results/*.log
+          fi
+      - name: Retain application test reports
+        if: always() && hashFiles('container-test-results/**') != ''
+        uses: actions/upload-artifact@v7
+        with:
+          name: cshell-container-test-results
+          path: container-test-results/
+      - name: Remove application test container
+        if: always()
+        run: docker rm -f cshell-pipeline-check 2>/dev/null || true

@@ -27,6 +27,12 @@ retained below only as a superseded historical milestone.
 | [CSH-011](CSH-011-signals-and-job-control.md) | Implement signals, traps, and interactive job control | [CSH-033](CSH-033-pty-test-harness.md), [CSH-034](CSH-034-job-control.md), [CSH-035](CSH-035-traps-and-signal-semantics.md) | [#12](https://github.com/melliott18/cshell/issues/12) |
 | [CSH-012](CSH-012-conformance-and-portability.md) | Audit POSIX conformance and portability | [CSH-036](CSH-036-conformance-matrix.md), [CSH-037](CSH-037-portability-audit.md) | [#13](https://github.com/melliott18/cshell/issues/13) |
 
+## Container application preparation
+
+| Ticket | Deliverable | Depends on | GitHub |
+| --- | --- | --- | --- |
+| [CSH-082](CSH-082-container-readiness.md) | Prepare test/runtime images and Pipeline reports | CSH-039 | [#169](https://github.com/melliott18/cshell/issues/169) |
+
 ## Standalone work
 
 Foundation, front-end implementation, roadmap maintenance, and test infrastructure:
