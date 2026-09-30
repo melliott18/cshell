@@ -9,6 +9,7 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest import mock
 
 import pty_harness
 import retention_diagnostics as diagnostics
@@ -81,9 +82,44 @@ class RetentionDiagnosticsTests(unittest.TestCase):
             self.assertIn(str(item["target_pid"]), Path(item["output"]).read_text())
 
     def test_slow_round_with_progress_does_not_look_like_a_stalled_operation(self):
-        result = self.run_case(self.case("progress"), total_threshold=0.9)
-        self.assertEqual(result["failures"], [], result)
-        self.assertEqual(result["watcher"]["attempts"], [], result)
+        # Exercise the real watcher with a controlled clock and trace. A short
+        # wall-clock subprocess deadline confounds scheduler delay with a
+        # stalled operation, which is precisely what this test must distinguish.
+        now = [1000000]
+        rounds = [0]
+        trace = self.output / "trace.jsonl"
+
+        def emit(event):
+            with trace.open("a") as stream:
+                stream.write(json.dumps({"e": event, "p": 123, "t": now[0]}) + "\n")
+
+        for event in ("start", "round+", "run+"):
+            emit(event)
+
+        def progress(_delay):
+            now[0] += 50000
+            rounds[0] += 1
+            emit("run-")
+            if rounds[0] == 20:
+                emit("round-")
+                emit("finish")
+            else:
+                emit("run+")
+
+        config = self.output / "config.json"
+        config.write_text(json.dumps(dict(directory=str(self.output),
+            watch_deadline_us=20000000, parent_pid=os.getppid(),
+            operation_threshold=0.1, total_threshold=10, sample_timeout=0.2)))
+        with mock.patch.object(diagnostics, "monotonic_us", side_effect=lambda: now[0]), \
+             mock.patch.object(diagnostics.time, "sleep", side_effect=progress), \
+             mock.patch.object(diagnostics, "in_session", return_value=True), \
+             mock.patch.object(diagnostics.os, "getpgrp", return_value=-1), \
+             mock.patch.object(diagnostics, "sample_targets") as sample:
+            self.assertEqual(diagnostics.watch(config), 0)
+        sample.assert_not_called()
+        self.assertEqual(rounds[0], 20)
+        report = json.loads((self.output / "watcher.json").read_text())
+        self.assertEqual(report["status"], "completed-before-sampling")
 
     def test_missing_sampler_retains_original_timeout(self):
         result = self.run_case(self.case(), sample=None)
