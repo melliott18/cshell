@@ -107,7 +107,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "All bytes through 8 MiB, ordered/repeated stdin, -u invocation, FIFO TERM/INT, SIGPIPE, stopped-state/resumed copying and Linux blocked-write TERM/ENOSPC are covered. Native capacity, -u latency, read errors and actual EINTR/short-write recovery remain open."
+      "remaining_contracts": "All bytes through 8 MiB, ordered/repeated stdin, -u invocation, FIFO TERM/INT, SIGPIPE, stopped-state/resumed copying, Linux/Darwin observed blocked-write TERM and real ENOSPC are covered. Attested read EINTR/EIO diagnostics, short reads and short/EINTR writes cover the selected source provider. -u latency and arbitrary I/O faults remain open."
     },
     {
       "utility": "cksum",
@@ -255,7 +255,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Equal/difference/EOF, independent byte and line numbers, offset 2147483649, FIFO TERM/INT, SIGPIPE and stop/resume comparison are covered. Non-C messages, read errors, wider offset range and further non-regular inputs remain open."
+      "remaining_contracts": "Equal/difference/EOF, independent byte and line numbers, offset 2147483649, owned signals/stop-resume and Linux/Darwin blocked writes are covered. Selected source-provider read EINTR/EIO diagnostics and short reads are attested. Non-C messages, wider offset range and further non-regular inputs remain open."
     },
     {
       "utility": "comm",
@@ -785,7 +785,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Counts through INT32, byte/line multi-file headers, one million output lines, FIFO TERM/INT, SIGPIPE and stop/resume copying are covered. INT32+1 audit, larger counts, native blocked-write observation and further I/O faults remain open."
+      "remaining_contracts": "Counts through INT32+1, byte/line multi-file headers, one million output lines, owned signals/stop-resume and Linux/Darwin blocked writes are covered with the selected repaired provider. Read EINTR/EIO diagnostics and short reads are attested. Larger counts and further I/O faults remain open."
     },
     {
       "utility": "join",
@@ -1165,7 +1165,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Substitution, hold/exchange, N/P/D, range, branch, translation, append/insert/change, read/write/script files, UTF-8 class repetition and 1 MiB transformed pattern/hold are covered. Multibyte backreferences remain strict audit evidence; other addresses/BRE combinations and allocation exhaustion remain open."
+      "remaining_contracts": "Substitution, hold/exchange, N/P/D, range, branch, translation, append/insert/change, read/write/script files, UTF-8 repetition/backreferences and 1 MiB transformed pattern/hold are covered with repaired sed. Attested growth realloc ENOMEM requires a diagnostic. Other addresses/BRE combinations, maximum space and arbitrary allocation paths remain open."
     },
     {
       "utility": "sort",
