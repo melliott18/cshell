@@ -385,7 +385,13 @@
             "locale/operand-order",
             "locale/list",
             "locale/charmaps",
-            "locale/environment"
+            "locale/environment",
+            "locale/report-lang",
+            "locale/report-category",
+            "locale/report-override",
+            "locale/report-empty-category",
+            "locale/report-empty-lang",
+            "locale/report-end-options"
           ],
           "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
         },
@@ -427,7 +433,13 @@
           "witnesses": [
             "locale/LANG",
             "locale/category",
-            "locale/LC_ALL"
+            "locale/LC_ALL",
+            "locale/report-lang",
+            "locale/report-category",
+            "locale/report-override",
+            "locale/report-empty-category",
+            "locale/report-empty-lang",
+            "locale/report-end-options"
           ],
           "disposition": "Selected environment witnesses only; diagnostic catalogs and remaining locale combinations open. XSI NLSPATH lookup is outside the selected profile."
         },
@@ -444,7 +456,13 @@
             "locale/operand-order",
             "locale/list",
             "locale/charmaps",
-            "locale/environment"
+            "locale/environment",
+            "locale/report-lang",
+            "locale/report-category",
+            "locale/report-override",
+            "locale/report-empty-category",
+            "locale/report-empty-lang",
+            "locale/report-end-options"
           ],
           "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
         },
@@ -494,7 +512,13 @@
         "locale/list",
         "locale/named-keyword",
         "locale/operand-order",
-        "locale/usage-error"
+        "locale/usage-error",
+        "locale/report-lang",
+        "locale/report-category",
+        "locale/report-override",
+        "locale/report-empty-category",
+        "locale/report-empty-lang",
+        "locale/report-end-options"
       ]
     },
     "localedef": {
@@ -507,7 +531,10 @@
             "localedef/private-en_US",
             "localedef/private-zh_CN",
             "localedef/stdin-source",
-            "localedef/error-no-output"
+            "localedef/error-no-output",
+            "localedef/private-numeric",
+            "localedef/stdin-numeric",
+            "localedef/native-error-no-output"
           ],
           "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
         },
@@ -529,13 +556,17 @@
             "localedef/private-en_US",
             "localedef/private-zh_CN",
             "localedef/stdin-source",
-            "localedef/error-no-output"
+            "localedef/error-no-output",
+            "localedef/private-numeric",
+            "localedef/stdin-numeric",
+            "localedef/native-error-no-output"
           ],
           "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
         },
         "STDIN": {
           "witnesses": [
-            "localedef/stdin-source"
+            "localedef/stdin-source",
+            "localedef/stdin-numeric"
           ],
           "disposition": "Explicit file/stdin witnesses only; unused-stdin offset and inherited-descriptor assertions remain open."
         },
@@ -578,7 +609,10 @@
             "localedef/private-fr_FR",
             "localedef/private-de_DE",
             "localedef/private-en_US",
-            "localedef/private-zh_CN"
+            "localedef/private-zh_CN",
+            "localedef/private-numeric",
+            "localedef/stdin-numeric",
+            "localedef/native-error-no-output"
           ],
           "disposition": "Bounded private effects or independently authored input files. Unspecified binary formats are validated through libc catgets or Python GNUTranslations; complete failure atomicity remains open."
         },
@@ -600,13 +634,17 @@
             "localedef/private-en_US",
             "localedef/private-zh_CN",
             "localedef/stdin-source",
-            "localedef/error-no-output"
+            "localedef/error-no-output",
+            "localedef/private-numeric",
+            "localedef/stdin-numeric",
+            "localedef/native-error-no-output"
           ],
           "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
         },
         "CONSEQUENCES OF ERRORS": {
           "witnesses": [
-            "localedef/error-no-output"
+            "localedef/error-no-output",
+            "localedef/native-error-no-output"
           ],
           "disposition": "Selected errors only. Further operand continuation, I/O failures, cleanup and resource exhaustion remain open; msgfmt output after -cv failure is unspecified."
         }
@@ -618,7 +656,10 @@
         "localedef/private-fr_FR",
         "localedef/private-zh_CN",
         "localedef/stdin-source",
-        "localedef/usage-error"
+        "localedef/usage-error",
+        "localedef/private-numeric",
+        "localedef/stdin-numeric",
+        "localedef/native-error-no-output"
       ]
     },
     "msgfmt": {

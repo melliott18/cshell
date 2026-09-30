@@ -200,7 +200,7 @@ def main():
                    for name, reason in excluded.items()]
     if platform.system() != 'Linux':
         limitations.append(dict(condition='localedef/private-sources', owner='CSH-076',
-            reason='GNU locale source/charmap provisioning is Linux-only; Darwin generated locales remain unqualified'))
+            reason='Darwin private LC_NUMERIC generation and libc consumption are tested; other generated categories, charmaps and public installation remain unqualified'))
     result = dict(platform=platform.platform(), libc=platform.libc_ver(), path=args.path,
         inventory=providers, source_identity=source_identity(), binary_sha256=sha(args.binary),
         probe_sha256=sha(args.probe), selected_utility=args.utility, scope=args.scope,

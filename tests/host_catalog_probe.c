@@ -19,6 +19,13 @@ int main(int argc, char **argv)
         if (fwrite(message, 1, strlen(message), stdout) != strlen(message)) return 2;
         return catclose(catalog) || fflush(stdout) ? 2 : 0;
     }
+    if (argc == 3 && strcmp(argv[1], "numeric") == 0) {
+        struct lconv *numeric;
+        if (!setlocale(LC_NUMERIC, argv[2])) return 77;
+        numeric = localeconv();
+        printf("%s\n%s\n", numeric->decimal_point, numeric->thousands_sep);
+        return fflush(stdout) ? 2 : 0;
+    }
     if (argc == 3 && strcmp(argv[1], "locale") == 0) {
         if (!setlocale(LC_ALL, argv[2])) return 77;
         printf("%s\n%s\n", nl_langinfo(CODESET), localeconv()->decimal_point);

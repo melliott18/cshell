@@ -623,8 +623,9 @@ build/tests/host_catalog_probe: tests/host_catalog_probe.c
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
 
-test-host-catalog-harness: build/tests/catalog_adapter_fixture
+test-host-catalog-harness: build/tests/catalog_adapter_fixture build/tests/locale_adapter_fixture
 	./build/tests/catalog_adapter_fixture
+	./build/tests/locale_adapter_fixture
 	$(PYTHON) -m unittest discover -s tests -p 'test_host_catalog*.py'
 
 test-host-catalogs: host-catalog-fixtures cshell host-profile build/tests/host_catalog_probe test-host-catalog-harness
@@ -645,3 +646,7 @@ build/tests/catalog_adapter_fixture: tests/catalog_adapter_fixture.c tools/host-
 .PHONY: host-catalog-fixtures
 host-catalog-fixtures: host-locales host-profile build/tests/host_catalog_probe
 	$(PYTHON) tools/host-profile/provision_catalogs.py build/tests/host_catalog_probe --path "$(abspath build/host-profile/bin):$(shell getconf PATH)"
+
+build/tests/locale_adapter_fixture: tests/locale_adapter_fixture.c tools/host-profile/locale_adapter.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)

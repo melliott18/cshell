@@ -6,6 +6,40 @@ and unqualified page sections remain owned by CSH-076. The native current
 subset passed. Local Docker returned HTTP 500; subsequent hosted CI separately
 validated the native C adapter revision on Linux (see below).
 
+## Locale repair and native generation follow-up
+
+The profile now supplies a native `locale` environment-report adapter on both
+hosts; keyword/database queries still exec the recorded system vendor. Exact
+LANG/LC_ALL formatting and explicit/implied category quoting now pass. Native
+Darwin LC_NUMERIC generation, stdin source and missing-file cleanup are also
+covered, with an independent libc consumer using PATH_LOCALE.
+
+- `make test-host-catalogs`: [macOS 405 passed, 0 failed](locale-fix-native.json.gz)
+  and [Docker/Linux 425 passed, 0 failed](locale-fix-linux.json.gz). The Linux image
+  was rebuilt from the worktree for this run; source/provider hashes are retained.
+- Native strict audit: [405 passed, 15 failed](locale-fix-native-contracts.json.gz).
+  The remaining three failures in five modes are gencat streams, gencat unknown
+  escapes and iconv invalid-character policy. The repaired locale case is no
+  longer excluded.
+- The focused Linux `--utility locale --scope all --sanitizer` run passed
+  [90 cases under ASan/UBSan](locale-fix-linux-sanitize.json.gz). This run preceded
+  the added native numeric fixtures, and retains that exact source hash.
+- Native and Linux `make test-host-profile` passed all 1,162 existing host cases
+  after the locale adapter change, before the native numeric fixture addition.
+  Native adapter quoting self-tests also passed with
+  `-fsanitize=address,undefined -fno-omit-frame-pointer`; all nine Python harness
+  self-tests and ten ownership self-tests passed.
+
+[Hosted metadata for prior commit 6a5f272](ci-6a5f272.json) now confirms successful
+Ubuntu and Docker jobs, including sanitizer steps. The macOS ordinary checks all
+passed; its sanitizer step was cancelled at the 45-minute job limit. This remains
+an automated validation gap, not a manual-test requirement.
+
+Private native LC_NUMERIC generation requires no privileges. The full native
+category/charmap contract and success reporting remain open. Public-installation
+success requires a disposable environment with permission to write its locale
+database; no system-wide installation was attempted on the developer host.
+
 ## Current native implementation
 
 macOS 14.8.7 arm64, GNU gettext 0.26 from the installed

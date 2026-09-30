@@ -11,7 +11,11 @@ CSH-076 open for every remaining contract and its four conditional locale IDs.
 `make test-host-profile` includes `make test-host-catalogs`. The latter also runs
 adapter/harness self-tests. No cshell builtin or system executable is replaced.
 
-- `gencat`, `iconv`, `locale` and `localedef` use `os.defpath`.
+- `gencat`, `iconv` and `localedef` use `os.defpath`.
+- `locale` uses a native adapter for the no-operand environment report. It emits
+  explicit values without double quotes, implied category values in double quotes,
+  and preserves shell reentry quoting. Actual category selection uses libc; other
+  invocations exec the selected `os.defpath` vendor for keywords and databases.
 - The GNU gettext package supplies `gettext`, `ngettext` and `msgfmt`. Darwin
   setup uses `brew install gettext` and its `bin` directory on the provisioning
   PATH; Debian installs `gettext` in the disposable Docker image. The provisioner
@@ -28,7 +32,8 @@ adapter/harness self-tests. No cshell builtin or system executable is replaced.
   must pass before publication of a retained generation and update of that symlink. `LOCPATH` is passed to both
   the existing host runner and the new catalog runner. Darwin verifies the
   installed names, codesets and decimal separators instead; it does not claim
-  generated-locale coverage.
+  generated-locale coverage from provisioning alone. Separate Darwin tests
+  generate and consume a private LC_NUMERIC category through `PATH_LOCALE`.
 
 All setup failures are fatal. `build/host-profile/locales.json` records actual
 setup commands, source/charmap hashes, consumer output and generated hashes.
@@ -134,11 +139,11 @@ must never be described as passing. The actual failing assertions stay unchanged
 | Darwin | `gencat/stdin-stdout` | Required `-` stream operands rejected |
 | Darwin | `gencat/unknown-escape` | Diagnostic with success for a valid escape; XCU §1.4 STDERR requires error status for diagnostics |
 | Darwin | `iconv/invalid-policy` | `-s` still emits an invalid-character diagnostic |
-| Darwin | `locale/environment` | LANG and LC_ALL report differs from prescribed C-environment format |
 | Linux | `gencat/merge-replace-delete` | `$delset` fails to remove a set from an existing catalog |
 | Linux | `iconv/invalid-policy` | `-s` still emits an invalid-character diagnostic |
 
-CSH-076 retains these exact failed contracts, Darwin generated locales, and the
+CSH-076 retains these exact failed contracts, Darwin generated categories beyond
+LC_NUMERIC, and the
 per-section unqualified behavior in the machine map. Vendors retain implementation
 ownership. Shared locale availability resolves the four conditional prerequisites
 only on recorded successful profiles; printf/sed/find behavior remains with its
@@ -146,3 +151,31 @@ existing utility owners. The original stock-host inventories are immutable and
 are not relabeled by these selected-profile results.
 
 See [native and Linux evidence](evidence/csh-076/README.md).
+
+
+## Remaining work and environment requirements
+
+The selected-profile locale environment-report defect is fixed. Its tests cover
+explicit/implied values, LANG/category/LC_ALL precedence, empty values and end of
+options; a native unit fixture checks metacharacter quoting under sanitizers.
+The installed system `locale` executable is not changed.
+
+The remaining gencat and iconv defects can be reproduced automatically on the
+existing macOS and Docker/Linux environments. They require provider repairs or
+replacement implementations; suppressing all stderr would hide unrelated errors
+and is not an acceptable `iconv -s` repair. Additional catalog search, plural,
+format-check, charmap, signal, I/O and resource-limit coverage is also automatable.
+
+Native macOS private localedef generation needs no administrative access:
+`PATH_LOCALE` lets a libc consumer select generated LC_NUMERIC data. Neither an
+absolute setlocale name nor Linux's `LOCPATH` selected that private category in
+the retained experiment. This does not yet qualify all categories or charmaps;
+category-success stdout reporting also remains open. Public installation success
+and privileged failure cases belong in disposable environments. Linux Docker can
+supply those now; native public installation may require a disposable macOS
+environment with a writable locale database, because the selected Apple script
+uses `/usr/share/locale` for public names. No system-wide installation was attempted.
+
+No current fixture requires manual interaction. The macOS CI sanitizer job's
+45-minute limit is a separate automated validation gap: narrow down the delayed
+step before changing its budget or claiming sanitizer success.

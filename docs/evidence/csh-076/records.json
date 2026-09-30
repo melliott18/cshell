@@ -94,5 +94,41 @@
       "gaps": 0
     },
     "verified": null
+  },
+  {
+    "file": "locale-fix-native.json.gz",
+    "uncompressed_sha256": "995978906ee6ca04428718f896bd106eb86da3e326ba79cfd3f31b5fc58bd77a",
+    "source_sha256": "db627781856123ab3a8ed207876f856a0421be009a5269b8a81b83fa8a47ce41",
+    "totals": {
+      "passed": 405,
+      "failed": 0
+    }
+  },
+  {
+    "file": "locale-fix-linux.json.gz",
+    "uncompressed_sha256": "ff7e03b5f53d8b3396a4cce3410be967daf4e13d0acc7deecf57772c1f277d8a",
+    "source_sha256": "db627781856123ab3a8ed207876f856a0421be009a5269b8a81b83fa8a47ce41",
+    "totals": {
+      "passed": 425,
+      "failed": 0
+    }
+  },
+  {
+    "file": "locale-fix-native-contracts.json.gz",
+    "uncompressed_sha256": "89a1e6267016e8f56f4b466d4a0de1a2f927dfb99f32143e0618f8a0d21bcc9e",
+    "source_sha256": "db627781856123ab3a8ed207876f856a0421be009a5269b8a81b83fa8a47ce41",
+    "totals": {
+      "passed": 405,
+      "failed": 15
+    }
+  },
+  {
+    "file": "locale-fix-linux-sanitize.json.gz",
+    "uncompressed_sha256": "404f1045f24089766903c74822ba9fcfe3d2e4e736f2f2d46d4a0117c262a5b5",
+    "source_sha256": "802e2b5bbd57b18a4eec7a27c8b66f42aab93ee9f3fef11c46fbb9ccc0d07788",
+    "totals": {
+      "passed": 90,
+      "failed": 0
+    }
   }
 ]

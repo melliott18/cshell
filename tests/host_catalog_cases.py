@@ -142,6 +142,22 @@ def cases(system):
     ):
         yield case(env_name, 'locale', [step('locale', ['-k', 'decimal_point'], b'decimal_point=","\n')], env=env)
 
+    category_names = ('LC_CTYPE', 'LC_NUMERIC', 'LC_TIME', 'LC_COLLATE', 'LC_MONETARY', 'LC_MESSAGES')
+    for name, variables, implied, explicit in (
+        ('report-lang', {'LC_ALL': '', 'LANG': 'fr_FR.UTF-8'}, 'fr_FR.UTF-8', {}),
+        ('report-category', {'LC_ALL': '', 'LANG': 'C', 'LC_NUMERIC': 'de_DE.UTF-8'}, 'C',
+         {'LC_NUMERIC': 'de_DE.UTF-8'}),
+        ('report-override', {'LC_ALL': 'C', 'LANG': 'fr_FR.UTF-8', 'LC_NUMERIC': 'de_DE.UTF-8'}, 'C', {}),
+        ('report-empty-category', {'LC_ALL': '', 'LANG': 'C', 'LC_NUMERIC': ''}, 'C', {'LC_NUMERIC': ''}),
+        ('report-empty-lang', {'LC_ALL': '', 'LANG': ''}, 'C', {}),
+    ):
+        lines = ['LANG=' + variables['LANG']]
+        lines += [key + '=' + (explicit[key] if key in explicit else '"' + implied + '"')
+                  for key in category_names]
+        lines += ['LC_ALL=' + variables['LC_ALL']]
+        yield case(name, 'locale', [step('locale', [], ('\n'.join(lines) + '\n').encode())], env=variables)
+    yield case('report-end-options', 'locale', [step('locale', ['--'], 'locale-environment')])
+
     # Linux locale sources ship in the locales package. All output stays private.
     if system == 'Linux':
         for source, encoding, point in (('fr_FR', 'UTF-8', ','), ('de_DE', 'UTF-8', ','),
@@ -153,6 +169,20 @@ def cases(system):
             out='any', stdin_from='/usr/share/i18n/locales/en_US', timeout=30),
             step('@probe', ['locale', 'private'], b'UTF-8\n.\n')], env={'LOCPATH': '@ROOT'})
         yield case('error-no-output', 'localedef', [step('localedef', ['-f', 'UTF-8', '-i', 'absent', '@ROOT/private'],
+            status='greater3', err='nonempty')], no_output='private')
+
+    if system == 'Darwin':
+        numeric = b'LC_NUMERIC\ndecimal_point ","\nthousands_sep "."\ngrouping 3;3\nEND LC_NUMERIC\n'
+        # Darwin libc consumes private categories through PATH_LOCALE. This
+        # qualifies numeric effects only; category-success reporting stays open.
+        for name, args, options in (
+            ('private-numeric', ['-i', 'numeric', '@ROOT/private'], {}),
+            ('stdin-numeric', ['@ROOT/private'], {'stdin': numeric}),
+        ):
+            yield case(name, 'localedef', [step('localedef', args, out='any', **options),
+                step('@probe', ['numeric', 'private'], b',\n.\n')],
+                files={'numeric': numeric}, env={'PATH_LOCALE': '@ROOT'})
+        yield case('native-error-no-output', 'localedef', [step('localedef', ['-i', 'absent', '@ROOT/private'],
             status='greater3', err='nonempty')], no_output='private')
 
     # Base defaults: argument errors, missing files, actual exec in every mode.

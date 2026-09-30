@@ -97,9 +97,9 @@ that does not qualify printf, sed or find behavior owned by other tickets.
 The [machine clause map](../../tests/host_catalog_clauses.json) and
 [scope manifest](../../tests/host_catalog_scope.json) keep every remaining
 section and provider defect owned here. Required strict failures include native
-gencat stream operands/escape diagnostics, native locale reporting, iconv `-s`
+gencat stream operands/escape diagnostics, iconv `-s`
 on both hosts, and glibc gencat deletion of existing sets. No failure is converted
-to a passing assertion. Darwin generated-locale support, further normative
+to a passing assertion. Darwin generated categories beyond LC_NUMERIC, further normative
 sections/defaults remain outstanding.
 
 `make test-runtime` passed 3,950 native cases under the selected PATH. The first
@@ -117,3 +117,11 @@ Dependent tracks consume `build/host-profile/fixtures.json` with the shared
 without the full host profile. Both catalog and Linux locale generations are
 retained across reprovisioning. See the bounded fixture checks and consumer
 contract in [the shared-interface documentation](../host-locale-catalogs.md).
+
+The follow-up native locale adapter fixes environment-report quoting and adds
+precedence/empty-value assertions. The catalog subset now passes 405 native and 425 Docker/Linux cases,
+including native private LC_NUMERIC generation/consumption via PATH_LOCALE,
+stdin generation and failure effects. Native libc consumes these private
+categories without administrative access. The remaining provider defects and
+public-installation environment requirements are recorded in the shared profile
+documentation. System-wide installation is not performed on the developer host.

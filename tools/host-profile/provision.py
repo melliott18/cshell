@@ -55,11 +55,16 @@ def provision(destination, gnu_bin=None, catalog_bin=None, cc="cc", cflags="-std
     config = destination.parent / 'catalog_providers.h'
     # JSON ASCII string quoting is also a C string literal for these paths.
     config.write_text(''.join('#define CATALOG_' + name.upper() + ' ' +
-        json.dumps(path, ensure_ascii=True) + '\n' for name, path in catalog_providers.items()))
+        json.dumps(path, ensure_ascii=True) + '\n'
+        for name, path in dict(catalog_providers, locale=selected['locale']).items()))
     adapter_binary = destination.parent / 'catalog-adapter'
     compile_command = shlex.split(cc) + shlex.split(cppflags) + shlex.split(cflags) + shlex.split(ldflags) + ['-I', str(destination.parent),
         str(ROOT / 'tools/host-profile/catalog_adapter.c'), '-o', str(adapter_binary)] + shlex.split(ldlibs)
     subprocess.run(compile_command, check=True, timeout=60)
+    locale_adapter = destination.parent / 'locale-adapter'
+    locale_compile = shlex.split(cc) + shlex.split(cppflags) + shlex.split(cflags) + shlex.split(ldflags) + ['-I', str(destination.parent),
+        str(ROOT / 'tools/host-profile/locale_adapter.c'), '-o', str(locale_adapter)] + shlex.split(ldlibs)
+    subprocess.run(locale_compile, check=True, timeout=60)
     manifest = {'system': system, 'path': str(destination), 'executables': {}}
     for name, path in selected.items():
         target = destination / name
@@ -70,18 +75,21 @@ def provision(destination, gnu_bin=None, catalog_bin=None, cc="cc", cflags="-std
         # Leave ordinary host lookup (notably the PATH-associated pwd builtin)
         # unchanged; only the declared replacements belong in the prefix.
         adapter = None
-        if name in catalog_providers:
+        if name == 'locale':
+            adapter = locale_adapter
+            target.symlink_to(adapter)
+        elif name in catalog_providers:
             adapter = adapter_binary
             target.symlink_to(adapter)
         elif name in overrides:
             target.symlink_to(path)
         manifest['executables'][name] = {
-            'override': name in overrides or name in catalog_providers, 'target': str(target) if adapter else path,
+            'override': name in overrides or adapter is not None, 'target': str(target) if adapter else path,
             'provider': path, 'adapter': str(adapter) if adapter else None, 'realpath': os.path.realpath(adapter or path),
             'sha256': hashlib.sha256(Path(adapter or path).read_bytes()).hexdigest(),
             'provider_realpath': os.path.realpath(path),
             'provider_sha256': hashlib.sha256(Path(path).read_bytes()).hexdigest(),
-            'adapter_build': compile_command if adapter else None}
+            'adapter_build': (locale_compile if name == 'locale' else compile_command) if adapter else None}
     (destination.parent / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
     print(destination)
 
