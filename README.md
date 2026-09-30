@@ -60,6 +60,8 @@ make test-options  # Invocation/set, option effects, and environment interaction
 make test-host-inventory # Complete utility and residual ownership consistency
 make test-host-utilities # Stock-host integration, identities and known gaps
 make test-host-profile   # Opt-in qualified utilities, strict gaps and boundaries
+make host-catalog-fixtures # Shared verified locales/catalogs; no shell build
+make host-locales       # Locale-only setup for dependent tracks
 make test-host-catalogs  # Bounded locale/catalog subset; private Linux locales
 make test-host-catalog-contracts # Also run strict, currently failing vendor reproducers
 make test-evaluation # Evaluation, lookup, aliases, and remaining utilities

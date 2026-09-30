@@ -96,8 +96,11 @@ prints a FAIL diagnostic and verifies that provisioning publishes failure,
 cleans its temporary setup directory, and preserves an existing consumer's data.
 A second `make host-catalog-fixtures` followed by `load_fixtures` on both the old
 immutable manifest and latest manifest also passed; the generated roots differed
-and all retained input hashes remained valid. Linux publication of retained
-locale generations awaits validation of this update.
+and all retained input hashes remained valid. On exact commit
+`c32d1472ef922c89587d85d638582eb0a20a6b17`, the early hosted Ubuntu step
+**Supply shared locales and catalogs for dependent tracks** passed, validating
+Linux generation and fixture consumers. [Step metadata](ci-c32d147-early.json)
+retains that result; the rest of that workflow was still running when recorded.
 
 ## Hosted CI for native adapter revision 4460922
 

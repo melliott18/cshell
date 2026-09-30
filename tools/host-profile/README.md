@@ -245,6 +245,11 @@ Only private files and processes are used. See
 
 ## CSH-076 locale and catalog subset
 
+Dependent tracks can run `make host-locales` independently or
+`make host-catalog-fixtures` for verified catalogs and byte inputs too. The
+[shared interface](../../docs/host-locale-catalogs.md#shared-interface-for-dependent-tracks)
+documents `fixtures.json`, the Python loader and retained generation lifetimes.
+
 [Provider setup, independent assertions and exact unqualified contracts](../../docs/host-locale-catalogs.md)
 cover gencat/gettext/iconv/locale/localedef/msgfmt/ngettext. `make test-host-profile`
 includes the bounded strict subset; `make test-host-catalog-contracts` also runs

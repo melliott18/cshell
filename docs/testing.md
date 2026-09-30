@@ -1340,6 +1340,11 @@ This is an accounting check, not a conformance suite. See the
 
 ## Locale and message catalog providers
 
+`make host-catalog-fixtures` supplies shared immutable locale/catalog generations
+and the verified `build/host-profile/fixtures.json` manifest for dependent tracks.
+`make host-locales` supplies only the locale capabilities without requiring the
+full host profile. See the [consumer interface](host-locale-catalogs.md#shared-interface-for-dependent-tracks).
+
 `make test-host-catalogs` verifies the CSH-076 bounded subset and is included in
 `test-host-profile`. Setup requires GNU gettext in the provisioning PATH; Linux
 needs the locales package's sources and charmaps. The runner uses private Linux
