@@ -71,7 +71,7 @@ def build(destination, jobs):
         run(['tar','-xf',str(archive),'-C',str(work)], work, name+'-extract')
         source[name] = work/pin['directory']
 
-    run(['./configure','--disable-nls','--without-gmp'],source['coreutils'],'coreutils-configure')
+    run(['./configure','--disable-nls','--without-libgmp'],source['coreutils'],'coreutils-configure')
     # The all target generates gnulib headers before compiling program targets.
     run(['make','-j'+str(jobs)],source['coreutils'],'coreutils-build')
     run(['./configure','--disable-nls'],source['sed'],'sed-configure')
