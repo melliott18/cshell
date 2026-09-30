@@ -121,6 +121,26 @@ class LanguageEvidenceTests(unittest.TestCase):
             self.assertTrue(result['fixture_removed'])
             self.assertIn('error',result)
 
+    def test_signal_recovery_cannot_hide_editor_sanitizer_diagnostics(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            provider=root/'provider'
+            provider.write_text('#!'+sys.executable+'\n'+
+                'from pathlib import Path\nimport os,signal,sys\n'+
+                'def recover(*args):\n'+
+                '    Path(".home/ed.hup").write_bytes(b"recovered\\n")\n'+
+                '    os.write(2,b"ERROR: AddressSanitizer: injected\\n")\n'+
+                '    sys.exit(0)\n'+
+                'signal.signal(signal.SIGHUP,recover)\n'+
+                'print("recovered",flush=True)\n'+
+                'Path("ready").write_text("ready")\n'+
+                'while True: signal.pause()\n')
+            provider.chmod(0o700)
+            record=run_signal(provider,str(provider),'hup-home','direct',root,os.defpath)
+            self.assertEqual(record['verdict'],'FAIL')
+            self.assertIn('editor sanitizer diagnostic',record['actual']['errors'])
+            self.assertTrue(record['fixture_removed'])
+
 
 if __name__=='__main__':
     unittest.main()

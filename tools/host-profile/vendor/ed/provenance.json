@@ -19,6 +19,7 @@
   },
   "local_changes": [
     "main_loop.c: omit the terminal presentation newline preceding the POSIX SIGINT marker; keep stdout and recovery logic unchanged.",
-    "main.c and ed.h: specify void for the interactive prototype, preserving behavior under C99."
+    "main.c and ed.h: specify void for the interactive prototype, preserving behavior under C99.",
+    "regex.c: skip zero-length prefix copies before the replacement buffer is allocated, avoiding null-pointer arithmetic diagnosed by UBSan."
   ]
 }

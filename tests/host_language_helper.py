@@ -49,6 +49,10 @@ def ed_signal(argv, action):
                     if not block:
                         raise RuntimeError('ed exited before response: '+repr(bytes(observed)))
                     key.data.extend(block)
+                    # A final stdout response can share a readiness batch with
+                    # stderr EOF. Accept it before inspecting the next fd.
+                    if wanted in observed[start_out:] or wanted in diagnostics[start_err:]:
+                        return
     try:
         ready_command = shlex.join([sys.executable, str(Path(__file__).resolve()), 'ready'])
         send(b'a\nrecovered\n.\n1p\n!' + ready_command.encode() + b'\n' +

@@ -124,6 +124,10 @@ def run_signal(binary, path, action, mode, root, search_path, sanitizer=False):
         try:
             status,output,errors=smoke.capture(Path(sys.executable),fixture,directory,7,65536)
             detail=json.loads((directory/'signal.json').read_text()) if (directory/'signal.json').is_file() else None
+            if detail and sanitizer_diagnostic({
+                    stream: bytes.fromhex(detail.get(stream, ''))
+                    for stream in ('stdout', 'stderr')}):
+                errors.append('editor sanitizer diagnostic')
             ok=(status==0 and bytes(output['stdout'])==b'recovered and reaped\n'
                 and not output['stderr'] and not errors and detail is not None
                 and (directory/'original').read_bytes()==b'')

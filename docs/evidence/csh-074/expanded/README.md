@@ -40,3 +40,11 @@ final expanded-provider validation.
 Reproduce selected checks with `make test-host-languages`, the broader profile
 with `make test-host-profile`, and open m4 contracts using the command in
 [the scope document](../../../host-languages-evidence.md).
+
+Linux CI at `12e5bbd` passes all 705 ordinary checks and builds all sanitizer
+providers, then reports 693 pass / 12 fail. Native ASan/UBSan reproduces the same
+12 ed failures: upstream regex replacement forms a pointer from NULL for a
+zero-byte prefix copy. The adapter now skips those copies before allocation.
+The signal runner additionally rejects child-editor sanitizer diagnostics, even
+on the HOME recovery path where ordinary diagnostics are allowed. A negative
+control proves that a recovered file cannot turn that sanitizer error into a pass.
