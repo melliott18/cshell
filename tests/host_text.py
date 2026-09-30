@@ -29,11 +29,18 @@ def providers(path):
         row = dict(path=selected, realpath=os.path.realpath(selected) if selected else None)
         if selected:
             row['sha256'] = sha(selected)
+            build_manifest = Path(row['realpath']).parent.parent / 'manifest.json'
+            if build_manifest.is_file():
+                metadata = json.loads(build_manifest.read_text())
+                selected_build = metadata.get('executables', {}).get(name, {})
+                if selected_build.get('sha256') == row['sha256'] and 'recipe' in metadata:
+                    row['provider_build'] = metadata
             if shutil.which('dpkg-query'):
                 query = subprocess.run(['dpkg-query', '-S', selected, row['realpath']], capture_output=True, timeout=5)
                 row['package_query'] = serial(dict(status=query.returncode, stdout=query.stdout, stderr=query.stderr))
             else:
-                row['package_identity'] = 'OS build plus executable hash; selected system tools'
+                row['package_identity'] = ('Pinned local source build' if 'provider_build' in row
+                                           else 'OS build plus executable hash; selected system tools')
         result[name] = row
     return result
 

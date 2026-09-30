@@ -482,7 +482,7 @@ build/host-printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/printf.c $(LDLIBS)
 
 host-profile: build/host-printf
-	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
+	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin $(if $(HOST_TEXT_PROVIDER_BIN),--text-bin "$(HOST_TEXT_PROVIDER_BIN)")
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
 	@mkdir -p $(@D)
@@ -629,3 +629,12 @@ test-host-text-audit: cshell
 
 test-host-text-harness:
 	$(PYTHON) -m unittest discover -s tests -p 'test_host_text.py'
+
+# Explicit opt-in network fetch/build; never changes the system PATH.
+.PHONY: host-text-providers test-host-text-repaired
+host-text-providers:
+	$(PYTHON) tools/host-profile/text/build.py
+
+test-host-text-repaired: cshell host-text-providers
+	$(MAKE) host-profile HOST_TEXT_PROVIDER_BIN="$(abspath build/text-providers/bin)"
+	$(PYTHON) tests/host_text.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --boundaries --audit $(HOST_TEXT_FLAGS) --record build/tests/host-text-repaired.json

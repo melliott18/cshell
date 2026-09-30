@@ -429,6 +429,9 @@
         "cut/suppress",
         "cut/utf8-characters-required",
         "cut/utf8-no-split-required",
+        "cut/utf8-character-ranges-required",
+        "cut/utf8-byte-end-required",
+        "cut/utf8-byte-range-required",
         "cut/missing-input"
       ],
       "sections": {
@@ -1411,6 +1414,9 @@
         "tail/zero",
         "tail/large-offset",
         "tail/reverse-required",
+        "tail/reverse-count-required",
+        "tail/reverse-zero-required",
+        "tail/reverse-large-required",
         "tail/missing-input"
       ],
       "sections": {
@@ -1632,6 +1638,7 @@
       },
       "cases": [
         "tsort/chain",
+        "tsort/acyclic-w-required",
         "tsort/cycle-count-required",
         "tsort/missing-input"
       ],

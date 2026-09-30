@@ -14,7 +14,7 @@ sys.path.insert(0, str(ROOT / 'tests'))
 from host_utility_cases import HOSTS
 
 
-def provision(destination, gnu_bin=None):
+def provision(destination, gnu_bin=None, text_bin=None):
     selected = {name: shutil.which(name, path=os.defpath) for name in HOSTS}
     overrides = {'printf': str(ROOT / 'build/host-printf')}
     system = platform.system()
@@ -27,6 +27,18 @@ def provision(destination, gnu_bin=None):
         overrides['kill'] = shutil.which('busybox', path=os.defpath)
     else:
         raise ValueError('Only Darwin and Linux profiles are defined')
+    if text_bin:
+        manifest = json.loads((text_bin.parent / 'manifest.json').read_text())
+        expected = {'head', 'cut', 'tsort', 'sed', 'ed'}
+        if system == 'Linux':
+            expected.add('tail')
+        if set(manifest['executables']) != expected or manifest['recipe']['system'] != system:
+            raise ValueError('Text provider manifest does not match this host')
+        for name in expected:
+            candidate = text_bin / name
+            if hashlib.sha256(candidate.read_bytes()).hexdigest() != manifest['executables'][name]['sha256']:
+                raise ValueError('Text provider checksum mismatch: ' + name)
+            overrides[name] = str(candidate.resolve())
     selected.update(overrides)
     for name, path in selected.items():
         if not path or not Path(path).is_file() or not os.access(path, os.X_OK):
@@ -55,8 +67,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('destination', type=Path)
     parser.add_argument('--gnu-bin', type=Path)
+    parser.add_argument('--text-bin', type=Path)
     args = parser.parse_args()
     try:
-        provision(args.destination, args.gnu_bin)
+        provision(args.destination, args.gnu_bin, args.text_bin)
     except ValueError as error:
         parser.error(str(error))

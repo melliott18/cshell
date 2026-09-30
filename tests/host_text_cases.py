@@ -143,12 +143,25 @@ def cases(utf8=None, audit=False):
     if audit:
         yield case('head', 'beyond-int32', ['-n', '2147483648'], data=lines, out=lines)
         yield case('tail', 'reverse-required', ['-r'], data=lines, out=b'three\ntwo\none\n')
+        yield case('tail', 'reverse-count-required', ['-r', '-n', '2'], data=lines, out=b'three\ntwo\n')
+        yield case('tail', 'reverse-zero-required', ['-r', '-n', '0'], data=lines, out=b'')
+        from host_text_extended import repeat
+        yield case('tail', 'reverse-large-required', ['-r', 'input'], stdout_file='result',
+                   generated_inputs={'input': [repeat(b'first\n', 1), repeat(b'middle\n', 20000), repeat(b'last\n', 1)]},
+                   generated_files={'result': [repeat(b'last\n', 1), repeat(b'middle\n', 20000), repeat(b'first\n', 1)]})
+        yield case('tsort', 'acyclic-w-required', ['-w'], data=b'a b\nb c\n', out=b'a\nb\nc\n')
         yield case('tsort', 'cycle-count-required', ['-w'], data=b'a b\nb a\n', status=1, err='nonempty', stdout_re=rb'(?:a\nb\n|b\na\n)')
         yield case('cmp', 'default-format', ['a','b'], inputs={'a':b'a\n','b':b'b\n'}, out=b'a b differ: char 1, line 1\n', status=1)
         if utf8:
             yield case('sed', 'utf8-backreference', [r's/\(.\)\1/[\1]/g'], data='éé界界\n'.encode(), out='[é][界]\n'.encode(), env={'LC_ALL':utf8})
             yield case('cut', 'utf8-characters-required', ['-c','2'], data='é界x\n'.encode(), out='界\n'.encode(), env={'LC_ALL':utf8})
             yield case('cut', 'utf8-no-split-required', ['-b','1','-n'], data='éx\n'.encode(), out=b'\n', env={'LC_ALL':utf8})
+            yield case('cut', 'utf8-character-ranges-required', ['-c','1,3-4'],
+                       data='é界e\u0301z\n'.encode(), out='ée\u0301\n'.encode(), env={'LC_ALL':utf8})
+            yield case('cut', 'utf8-byte-end-required', ['-b','2','-n'],
+                       data='é界x\n'.encode(), out='é\n'.encode(), env={'LC_ALL':utf8})
+            yield case('cut', 'utf8-byte-range-required', ['-b','4-6','-n'],
+                       data='é界x\n'.encode(), out='界x\n'.encode(), env={'LC_ALL':utf8})
     # Missing-file consequences for every utility with input file operands;
     # tr has none and tee's operands are outputs.
     args={'cmp':['missing','other'], 'comm':['missing','other'], 'csplit':['missing','2'], 'cut':['-b','1','missing'], 'diff':['missing','other'], 'join':['missing','other'], 'sed':['p','missing']}
