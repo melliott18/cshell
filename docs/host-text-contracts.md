@@ -62,7 +62,8 @@ predicates reject signal death. Exact file lists are checked for successful
 splits, suffix exhaustion and csplit cleanup. The csplit `-k` error case checks
 the completed first piece; implementations may also retain an unfinished piece.
 
-The case ledger maps the supported slices and leaves the rest open:
+The following table records the initial slice. The extension and repair sections
+below and the machine ledger describe subsequent coverage; full pages remain open:
 
 | Utility | New bounded assertions | Significant open contract examples |
 | --- | --- | --- |
@@ -98,13 +99,16 @@ Optional shading never removes the unshaded utility's obligations.
 ## Retained conditions and signals
 
 - `U-040/cat-filesystem-limits`: direct exec and cshell `exec` run cat with an
-  already-open output file on a dedicated 1 MiB tmpfs. A private padding file
+  already-open output file on a dedicated 1 MiB Linux tmpfs or native private
+  1.44 MiB FAT12 disk image. A private padding file
   first encounters measured ENOSPC; cat must diagnose failure and leave zero
   output bytes. This is filesystem exhaustion, distinct from RLIMIT_FSIZE.
-  Native capacity remains unavailable. Only private files are removed afterward.
+  The Darwin wrapper verifies its mount, detaches its own device and removes
+  the image; uncertain attachment retains the image and fails cleanup.
 - `U-040/sed-space-limits`: UTF-8 alphabetic class plus bounded repetition
   (`éa` to `X`) supplies a new expression oracle beyond the old dot witness.
-  Backreferences and maximum/allocation space still remain open.
+  Repaired-provider backreferences and an attested growth ENOMEM diagnostic
+  are also covered. Maximum space and arbitrary allocation paths remain open.
 - `U-040/head-count-interruption`: FIFO writer rendezvous proves the selected
   head opened its input; TERM must terminate that PID. A separate audit measures
   INT32+1 acceptance. The recorded macOS rejection is a count boundary, not a
@@ -112,11 +116,12 @@ Optional shading never removes the unshaded utility's obligations.
 - `U-040/cmp-offset-interruption`: two sparse files have independent markers
   at zero-based offset 2³¹; `cmp -l` must identify byte 2147483649 with octal
   values 130/131. No checksum or selected utility computes the expected offset.
-  FIFO TERM and Linux write TERM are separate assertions.
-- `U-040/other-interruptions`: cat/head/cmp FIFO TERM and Linux blocked-write
+  FIFO TERM and Linux/Darwin observed write TERM are separate assertions.
+- `U-040/other-interruptions`: cat/head/cmp FIFO TERM and Linux/Darwin blocked-write
   TERM are per-utility assertions. Linux `/proc/PID/wchan` must report
   `pipe_write` after a private pipe is filled, before signalling the selected
-  process. macOS has no supplied equivalent observer and stays unqualified.
+  process. Darwin sample must show repeated write syscall frames for the owned
+  PID while its private pipe is held full without a reader draining it.
   No claim is made that the FIFO handshake observes a read syscall returning
   EINTR, or that termination establishes retry/recovery behavior.
 
@@ -124,8 +129,8 @@ The shared **ed** witness is explicitly coordinated with CSH-074: changed-buffer
 acknowledgement and the next `-p READY>` command prompt precede HUP, which
 must save exact `ed.hup` bytes without further
 stdout/stderr. The strict audit separately requires the POSIX SIGINT `?\n`
-stdout response and unchanged buffer on subsequent `1p`. This audit fails on the
-selected providers; it does not count as qualified recovery. CSH-074 retains ed's
+stdout response and unchanged buffer on subsequent `1p`. Stock-provider failures
+remain retained; the pinned patched ed passes both assertions. CSH-074 retains ed's
 complete page and the provider repair, while CSH-073 retains the shared condition.
 
 On Linux, ed must additionally reach `pipe_read` before the signal. The prompt
@@ -150,7 +155,7 @@ backreferences, and ed SIGINT output. Positive subset results do not qualify
 these requirements, the full pages, U-034/U-040 families, or the CSH-012 gate.
 The current ownership manifest links the section ledger; immutable CSH-064 and
 CSH-068 evidence remains unchanged. CSH-073 stays open for its per-utility
-remaining contracts, unavailable native capabilities and vendor requalification.
+remaining complete-page contracts and vendor requalification.
 
 
 ## Transformation, offset, large-input and interruption qualification
@@ -179,9 +184,9 @@ as by the child's RLIMIT_FSIZE.
 The new SIGPIPE witness supplies portable native write-interruption evidence;
 it does not claim to observe an already-blocked write or an EINTR return.
 Observed STOP/CONT resumption verifies bytes/status, not a particular syscall's
-restart implementation. Native blocked-write observation and capacity remain
-unavailable, and ed's exact SIGINT stdout contract remains a strict failure
-owned with CSH-074. No earlier failure expectation is relaxed.
+restart implementation. At the extension stage native blocked-write observation and capacity were
+unavailable, and ed's exact SIGINT stdout contract failed. The subsequent
+provider and native-capability repairs below address those gaps. No earlier failure expectation is relaxed.
 
 The dedicated `Host text qualification` workflow runs the strict subset and
 harness on native macOS, Ubuntu and Debian Docker with disposable capacity.
@@ -224,3 +229,10 @@ The Darwin job-control fault harness clears inherited Mach crash/corpse exceptio
 ports only in its deliberate SIGQUIT child. Default signal disposition and exact
 wait/output assertions remain unchanged. A native sample localized the previous
 hang to pending SIGQUIT delivery at sigprocmask, before the waitid race cases.
+
+Final capability results and all attempts are retained in
+[native/fault evidence](evidence/csh-073-native-capabilities/README.md): 792 native
+and Debian audit passes, 790 Ubuntu passes with two capacity checks unavailable,
+and 24 attested fault passes on each. All complete runtime/PTY regressions pass.
+Historical UE-state children and optional Valgrind limitations remain explicit
+in that record; no clean-up or skipped analysis is claimed as successful.

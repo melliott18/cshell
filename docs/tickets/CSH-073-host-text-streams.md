@@ -113,8 +113,8 @@ rewriting immutable earlier evidence.
 
 This change is ready for review as qualification infrastructure and bounded
 evidence. **Full ticket acceptance remains open.** The unchecked criteria retain
-required-contract failures and unavailable native capacity/write-observation
-capabilities; they are not waived by subset success. CSH-073 remains the concrete
+complete-page coverage obligations; the historical failures and capability gaps
+are preserved below alongside subsequent repairs. CSH-073 remains the concrete
 open qualification owner for every utility and condition listed above. Selected
 vendors own implementation repairs; CSH-074 shares the ed recovery repair.
 The individually described remaining contracts are in the section ledger and
@@ -212,7 +212,20 @@ pending fatal-signal delivery at sigprocmask. The unchanged module assertions
 now pass. Three previously stuck UE-state children remain an OS cleanup issue;
 no restart or reboot is performed by this change.
 
-The capability fixtures need no additional manual test environment. Hosted
-Linux and local macOS remain distinct qualification environments. Full native
-regressions and final patched-provider/hosted results are being recorded; full
-utility-page coverage remains open.
+Final audits at `c209012`: macOS **792 pass, 0 fail, 0 unavailable**;
+Ubuntu **790 pass, 0 fail, 2 capacity checks unavailable**; Debian **792 pass,
+0 fail, 0 unavailable**. All **24 attested faults** pass on each environment,
+as do all 17 harness regressions. Complete native and hosted Linux runtime/PTY
+regressions pass. Native host-profile validation passes 1162 prior assertions;
+the dedicated image fixture passes both native capacity checks. Source hashes,
+commands and all attempts are in the
+[native capability evidence](../evidence/csh-073-native-capabilities/README.md).
+
+These fixtures require no additional manual test environment. Hosted macOS 15
+remains queued; completed native evidence is macOS 14.8.7. Optional upstream sed
+checks pass 231 tests with 29 capability skips when Valgrind is unavailable.
+The installed Intel/Rosetta Valgrind hung before running its test, leaving one
+additional UE-state child after the owned attempt was stopped. That optional
+analysis needs a compatible Valgrind runtime; the required injected fault suite
+passes independently. OS cleanup of the four old UE children is unresolved;
+no reboot was performed. Complete utility-page qualification remains open.
