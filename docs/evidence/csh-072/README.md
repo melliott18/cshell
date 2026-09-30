@@ -13,6 +13,9 @@ The [selected-provider repairs](repairs/README.md) subsequently make every
 existing provider assertion mandatory and pass on the repaired selected PATH.
 Earlier failures and narrower passing scopes below remain historical evidence.
 
+The [Darwin cleanup follow-up](cleanup/README.md) removes system-wide ps
+snapshots and records a passing full native runtime rerun.
+
 ## Results
 
 | Run | Retained result | Decision |

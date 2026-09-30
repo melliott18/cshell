@@ -173,3 +173,11 @@ ps process. Enumeration remains bounded, retries full buffers, and verifies
 session membership before and after querying owned-process status. Denied or
 invalid metadata still fails cleanup; the runner cannot silently accept an
 incomplete snapshot. See [cleanup evidence](../evidence/csh-072/cleanup/README.md).
+
+
+Final cleanup validation: **93 harness tests**, **3950 runtime + 33 runtime PTY
+assertions**, **570 native filesystem** and **586 hosted Ubuntu filesystem** all
+pass. Final pipe reaping now has a separate bounded wait after snapshot failure.
+CI cancels superseded workflow/ref runs instead of accumulating stale macOS jobs.
+Earlier failures remain recorded and broader missing capabilities remain owned
+by CSH-079.
