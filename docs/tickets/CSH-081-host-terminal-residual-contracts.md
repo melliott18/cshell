@@ -58,3 +58,12 @@ Start with `make test-host-inventory test-host-terminal-profile` and
 `make test-host-profile`. Add strict cases to the declared qualified subset only
 when the required environment is supplied. Preserve failed attempts separately.
 See [CSH-077 evidence](../evidence/csh-077/README.md).
+
+## CSH-077 controlled extension boundary
+
+CSH-077 now adds bounded real-byte PTY transformations, three-terminal mesg
+selection, who -T/-m on private records, and a Linux isolated-session runner.
+These witnesses narrow the corresponding rows above only when their recorded
+strict runs pass; all untested combinations remain here. In particular,
+`write/POSIX-EOT` and `write/two-sender-alerts` remain explicit vendor obligations,
+with a separate `--strict-eot` audit. No physical hardware was supplied.

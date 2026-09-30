@@ -77,3 +77,44 @@ exception. The evidence records removal of the fixture directory. `tic` and
 session-fixture setup failures are distinct from utility assertions. Only the
 complete unfiltered invocation claims this declared subset; `--case` selects
 additional diagnosis, not a full-profile pass.
+
+## Controlled data and session extension
+
+`make test-host-terminal-effects` adds 90 strict witnesses, separate from the
+original 640. Eleven independently authored byte transformations cover ICRNL,
+INLCR, IGNCR, eight-bit input, ISTRIP, canonical erase/kill/EOF, echo on/off and
+unprocessed output. Four distinct-three-PTY cases verify mesg's fd0/fd1/fd2
+precedence for allow and deny, including fd1 fallback. Two private records on
+different owned PTYs verify who -T permission state and -m current-terminal
+selection. Each case runs through all five dispatch modes. The user explicitly
+supplied no physical hardware; no serial device is opened or configured.
+
+The Linux-only `tests/host_registered_sessions.py` requires root in a private
+mount namespace with private propagation. It mounts a disposable tmpfs at /run,
+creates only owned sender/recipient records, and drops supplementary groups and
+root credentials to nobody/tty before dispatch. The selected subset checks
+message bytes, denied-recipient behavior and who am i/I. It sends only to its
+explicit owned recipient PTY; the developer's real login database is inaccessible
+inside that private /run. Both PTYs, temporary files and the mount are cleaned up.
+
+Invoke only through the isolating command, after building the profile:
+
+```sh
+sudo unshare --mount --propagation private --fork \
+  python3 tests/host_registered_sessions.py ./cshell \
+  --path "$PWD/build/host-profile/bin:$(getconf PATH)" \
+  --record build/tests/host-registered-sessions.json
+```
+
+This session subset pins the selected util-linux greeting/data representation,
+not the complete write contract. Known vendor EOF versus POSIX EOT and sender
+alert differences are recorded as **unqualified conditions**, never POSIX passes.
+`--strict-eot` independently enforces those obligations and returns failure for
+either difference; it is a strict vendor reproducer, not a gap allowance.
+The exact selected/session qualification boundary remains visible in each JSON.
+
+The focused `Terminal qualification` workflow runs ordinary and ASan/UBSan PTY
+subsets on Linux/macOS, supplies the isolated Linux sessions, and uploads JSON
+on failure as well as success. Child environments preserve the supplied sanitizer
+controls; prior macOS CI's ten terminal-output mismatches lacked raw captures, so
+no specific sanitizer diagnostic is retroactively assigned as their cause.

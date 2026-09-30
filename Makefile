@@ -488,7 +488,7 @@ build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/pr
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_printf_faults.c $(LDLIBS)
 
-test-host-profile: test-host-terminal-profile test-host-terminal-harness test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
+test-host-profile: test-host-terminal-effects test-host-terminal-profile test-host-terminal-harness test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 
 # Public entry point with only the command input read syscall instrumented.
@@ -638,3 +638,7 @@ test-host-terminal-profile: cshell build/tests/host_session_records host-profile
 .PHONY: test-host-terminal-harness
 test-host-terminal-harness:
 	$(PYTHON) tests/test_host_terminal.py
+
+.PHONY: test-host-terminal-effects
+test-host-terminal-effects: cshell build/tests/host_session_records host-profile
+	$(PYTHON) tests/host_terminal_effects.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-terminal-effects.json

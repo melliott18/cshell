@@ -117,3 +117,13 @@ the evidence README; only completed final runs are claimed there.
 
 Status remains review until integration; the full remaining contracts continue
 under CSH-081 regardless of CSH-077 integration.
+
+### Controlled PTY/session extension
+
+The follow-up request explicitly supplies no physical hardware. The new
+`test-host-terminal-effects` target checks real data transformations, three-PTY
+mesg precedence, and private-record who -T/-m behavior in 90 strict cases.
+An isolated Linux session runner adds registered sender/recipient delivery,
+denial and who am i/I under dropped credentials, with a separate strict EOT/alert
+audit. See the [section map](../host-terminal-contracts.md#controlled-data-and-session-extension)
+for exact boundaries. Physical behavior remains unqualified under CSH-081.

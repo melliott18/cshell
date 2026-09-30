@@ -11,7 +11,7 @@ int main(int argc, char **argv)
 {
     struct utmpx row;
     int i;
-    if (argc != 3 || argv[1][0] != '/' || strstr(argv[1], "/csh077-") == NULL) {
+    if ((argc < 3 || argc > 5) || argv[1][0] != '/' || strstr(argv[1], "/csh077-") == NULL) {
         fputs("expected absolute private csh077 fixture path\n", stderr);
         return 2;
     }
@@ -30,8 +30,11 @@ int main(int argc, char **argv)
         memset(&row, 0, sizeof(row));
         row.ut_type = USER_PROCESS;
         row.ut_pid = getppid();
-        snprintf(row.ut_user, sizeof(row.ut_user), "csh077%c", 'a' + i);
-        snprintf(row.ut_line, sizeof(row.ut_line), "%s", argv[2]);
+        if (argc == 5)
+            snprintf(row.ut_user, sizeof(row.ut_user), "%s", argv[4]);
+        else
+            snprintf(row.ut_user, sizeof(row.ut_user), "csh077%c", 'a' + i);
+        snprintf(row.ut_line, sizeof(row.ut_line), "%s", argv[i && argc >= 4 ? 3 : 2]);
         memcpy(row.ut_id, i ? "077b" : "077a", 4);
         row.ut_tv.tv_sec = 946684800; /* 2000-01-01 00:00 UTC, authored oracle */
         if (!pututxline(&row)) {

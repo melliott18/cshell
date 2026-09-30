@@ -43,23 +43,36 @@ def capture(*args, **kwargs):
 
 
 def _capture(argv, directory, env, master, slave, input_file, tty_fds=(), data=b'',
-            timeout=TIMEOUT, limit=LIMIT):
+            timeout=TIMEOUT, limit=LIMIT, fd_map=None, extra_terminals=None,
+            terminal_input=b'', signal_after=None, credentials=None):
     """One owned process group; bounded pipes and PTY, even after leader exit."""
+    fd_map = fd_map or {}
+    extra_terminals = extra_terminals or {}
+
     def child():
         os.setpgrp()
         smoke.child_limits(timeout, limit)
+        if credentials is not None:
+            os.setgroups([])
+            os.setgid(credentials[1])
+            os.setuid(credentials[0])
 
     streams = dict(stdout=bytearray(), stderr=bytearray(), terminal=bytearray())
+    streams.update({name: bytearray() for name in extra_terminals})
     failures = []
     start = time.monotonic()
     process = subprocess.Popen(argv, cwd=directory, env=env,
-        stdin=slave if 0 in tty_fds else (subprocess.PIPE if data else input_file),
-        stdout=slave if 1 in tty_fds else subprocess.PIPE,
-        stderr=slave if 2 in tty_fds else subprocess.PIPE,
+        stdin=fd_map.get(0, slave if 0 in tty_fds else (subprocess.PIPE if data else input_file)),
+        stdout=fd_map.get(1, slave if 1 in tty_fds else subprocess.PIPE),
+        stderr=fd_map.get(2, slave if 2 in tty_fds else subprocess.PIPE),
         pass_fds=(slave,), preexec_fn=child)
     try:
         with selectors.DefaultSelector() as selector:
             selector.register(master, selectors.EVENT_READ, 'terminal')
+            for name, fd in extra_terminals.items():
+                selector.register(fd, selectors.EVENT_READ, name)
+            if terminal_input and os.write(master, terminal_input) != len(terminal_input):
+                raise OSError('short write of bounded terminal input')
             for stream, name in ((process.stdout, 'stdout'), (process.stderr, 'stderr')):
                 if stream:
                     os.set_blocking(stream.fileno(), False)
@@ -96,6 +109,11 @@ def _capture(argv, directory, env, master, slave, input_file, tty_fds=(), data=b
                         chunk = b''
                     if chunk:
                         streams[key.data].extend(chunk)
+                        if signal_after is not None:
+                            name, marker, signo = signal_after
+                            if marker in streams[name]:
+                                os.kill(process.pid, signo)
+                                signal_after = None
                     else:
                         selector.unregister(key.fileobj)
                 if sum(map(len, streams.values())) > limit:
@@ -373,6 +391,7 @@ def main():
         (directory / 'terminfo').mkdir()
         env = dict(PATH=args.path, LC_ALL='C', LANG='C', TZ='UTC0', HOME=temp,
                    TERMINFO=str(directory / 'terminfo'), TERMINFO_DIRS=str(directory / 'terminfo'))
+        env.update({key: os.environ[key] for key in ('ASAN_OPTIONS', 'UBSAN_OPTIONS', 'MallocNanoZone') if key in os.environ})
         try:
             subprocess.run([providers['tic']['path'], '-x', '-o', env['TERMINFO'],
                 str(Path(__file__).with_suffix('.ti').resolve())], check=True, capture_output=True, timeout=5)
