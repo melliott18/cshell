@@ -156,3 +156,10 @@ failures and the original evidence remain unchanged. See
 [CSH-079 environment requirements](CSH-079-filesystem-remaining-contracts.md#required-environments-and-manual-work)
 for the broader remaining scope. Native macOS CI gets 90 minutes after the
 recorded 45-minute timeout during actively progressing sanitizer runtime tests.
+
+
+Repair validation: **570/570 native filesystem**, **586/586 hosted Ubuntu**,
+**570/570 native provider ASan/UBSan**, and **1162/1162 host integration**.
+Runtime integration retained **3949 passes/1 ps-cleanup timeout**, with the exact
+case passing alone on retry; the 33-case runtime PTY suite passes. All original
+provider failures remain separately recorded; no assertion was relaxed.

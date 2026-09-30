@@ -9,6 +9,10 @@ The [subsequent five-area extension](extended/README.md) retains additional
 traversal, links, metadata, archive and I/O evidence. The records below remain
 immutable evidence for the original 402-assertion scope.
 
+The [selected-provider repairs](repairs/README.md) subsequently make every
+existing provider assertion mandatory and pass on the repaired selected PATH.
+Earlier failures and narrower passing scopes below remain historical evidence.
+
 ## Results
 
 | Run | Retained result | Decision |
