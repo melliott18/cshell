@@ -163,3 +163,13 @@ Repair validation: **570/570 native filesystem**, **586/586 hosted Ubuntu**,
 Runtime integration retained **3949 passes/1 ps-cleanup timeout**, with the exact
 case passing alone on retry; the 33-case runtime PTY suite passes. All original
 provider failures remain separately recorded; no assertion was relaxed.
+
+
+## Darwin cleanup follow-up
+
+Repeated local runtime cleanup timeouts are addressed in the shared test harness:
+Darwin session discovery uses libproc metadata instead of spawning a system-wide
+ps process. Enumeration remains bounded, retries full buffers, and verifies
+session membership before and after querying owned-process status. Denied or
+invalid metadata still fails cleanup; the runner cannot silently accept an
+incomplete snapshot. See [cleanup evidence](../evidence/csh-072/cleanup/README.md).

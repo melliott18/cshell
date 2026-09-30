@@ -501,16 +501,22 @@ verifies that no live session members remain. CSH-054 adds controlled slow and
 failed snapshot regressions, and uses a wakeup pipe in the Python terminal
 signal helper so a buffered read cannot delay its signal observation.
 
-PTY session discovery uses `/proc` on Linux and `/bin/ps` plus process-session
-queries on macOS. Both transports share the group-kill check: macOS can return
+PTY session discovery uses `/proc` on Linux and bounded `libproc` metadata
+plus process-session queries on macOS. The Darwin helper enumerates PIDs with
+`proc_listpids`, checks session ownership before reading short BSD status, and
+revalidates membership. It does not spawn a system-wide `/bin/ps` subprocess.
+Full PID buffers are retried within the deadline and 1 MiB bound; malformed or
+denied metadata remains a failure. Only disappeared processes and zombies are
+excluded. Both transports share the group-kill check: macOS can return
 `EPERM` when a group contains only zombies, so that error is accepted only after
 a fresh, bounded session snapshot proves there are no live members of the target
 group. The pipe post-exit check allows up to one second for this snapshot. Other
 permission errors, a live group, or a failed snapshot remain failures, including
 after an otherwise successful exit. The macOS snapshot facilities must therefore
 also be available when pipe cleanup encounters `EPERM`. See
-[CSH-040](tickets/CSH-040-macos-harness-cleanup.md) for deterministic regression
-evidence.
+[CSH-040](tickets/CSH-040-macos-harness-cleanup.md) for the original regression
+evidence and [CSH-072 cleanup follow-up](evidence/csh-072/cleanup/README.md) for
+the libproc implementation and native live/zombie checks.
 
 The candidate also receives POSIX resource limits: CPU time is limited to at most
 the effective timeout rounded up plus one second, each file is limited to the larger

@@ -9,7 +9,6 @@ import signal
 import struct
 import subprocess
 import sys
-import tempfile
 import termios
 import time
 
@@ -59,8 +58,8 @@ def open_terminal():
 def session_members(session, deadline):
     """Find all live members, including jobs that changed group or were orphaned.
 
-    Linux exposes these through procfs. Darwin needs a bounded ps snapshot and
-    getsid(), since its ps session column is not the numeric session ID.
+    Linux exposes these through procfs. Darwin uses bounded libproc metadata
+    and getsid(), avoiding a slow system-wide ps subprocess.
     """
     if sys.platform == "linux":
         entries = []
@@ -75,39 +74,15 @@ def session_members(session, deadline):
                 if int(fields[3]) == session and fields[0] not in ("Z", "X"):
                     entries.append((int(path.name), int(fields[2])))
         return entries
-    with tempfile.TemporaryFile() as snapshot:
-        remaining = deadline - time.monotonic()
-        if remaining <= 0:
-            raise TimeoutError("process snapshot exceeded cleanup deadline")
-        result = subprocess.run(["/bin/ps", "-axo", "pid=,stat="], stdout=snapshot,
-                                stderr=subprocess.DEVNULL, timeout=remaining,
-                                check=False)
-        if result.returncode:
-            raise OSError(f"ps failed with status {result.returncode}")
-        snapshot.seek(0)
-        raw = snapshot.read(1024 * 1024 + 1)
-    if len(raw) > 1024 * 1024:
-        raise OSError("process snapshot exceeds 1 MiB")
-    members = []
-    for line in raw.splitlines():
-        if time.monotonic() >= deadline:
-            raise TimeoutError("process snapshot exceeded cleanup deadline")
-        pid, state = line.split()
-        if state.startswith(b"Z"):
-            continue
-        pid = int(pid)
-        try:
-            if os.getsid(pid) == session:
-                members.append((pid, os.getpgid(pid)))
-        except ProcessLookupError:
-            pass
-    return members
+    if sys.platform == "darwin":
+        import darwin_processes
+        return darwin_processes.session_members(session, deadline)
+    raise OSError(errno.ENOSYS, "process snapshots support Linux and Darwin")
 
 
 def cleanup_session(process, master, timeout=5.0):
     """Bound session enumeration/killing separately from the final leader reap.
 
-    Darwin's system-wide ps can take over one second under concurrent builds.
     Give teardown the same five-second budget as a normal case, without using
     up the final reap budget when a snapshot fails or reaches its deadline.
     """
