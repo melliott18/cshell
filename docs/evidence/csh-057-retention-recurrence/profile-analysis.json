@@ -1,0 +1,122 @@
+{
+  "source": "60295934db1c971a2b3aac582f88b0f766eccce2",
+  "patch": "profile.patch",
+  "notes": [
+    "fork is nested within run; do not add their sums",
+    "run/reap cover capacity fills only; fork covers all context_job forks",
+    "four live/format fixture forks are not instrumented",
+    "these successful local probes cannot establish hosted timeout cause"
+  ],
+  "records": [
+    {
+      "name": "serial",
+      "elapsed_seconds": 20.482994750142097,
+      "failures": [],
+      "phases": {
+        "fork": {
+          "count": 615,
+          "sum_seconds": 10.941874,
+          "max_seconds": 0.046185
+        },
+        "run": {
+          "count": 576,
+          "sum_seconds": 10.751264,
+          "max_seconds": 0.051374
+        },
+        "reap": {
+          "count": 576,
+          "sum_seconds": 8.259656,
+          "max_seconds": 0.063165
+        }
+      }
+    },
+    {
+      "name": "concurrent-0",
+      "elapsed_seconds": 32.71764250006527,
+      "failures": [],
+      "phases": {
+        "fork": {
+          "count": 615,
+          "sum_seconds": 16.9592,
+          "max_seconds": 0.055447
+        },
+        "run": {
+          "count": 576,
+          "sum_seconds": 16.41284,
+          "max_seconds": 0.056006
+        },
+        "reap": {
+          "count": 576,
+          "sum_seconds": 14.259122,
+          "max_seconds": 0.375509
+        }
+      }
+    },
+    {
+      "name": "concurrent-1",
+      "elapsed_seconds": 32.761815916979685,
+      "failures": [],
+      "phases": {
+        "fork": {
+          "count": 615,
+          "sum_seconds": 16.946615,
+          "max_seconds": 0.066069
+        },
+        "run": {
+          "count": 576,
+          "sum_seconds": 16.407715,
+          "max_seconds": 0.067171
+        },
+        "reap": {
+          "count": 576,
+          "sum_seconds": 14.290208,
+          "max_seconds": 0.354892
+        }
+      }
+    },
+    {
+      "name": "concurrent-2",
+      "elapsed_seconds": 32.761504790978506,
+      "failures": [],
+      "phases": {
+        "fork": {
+          "count": 615,
+          "sum_seconds": 16.890533,
+          "max_seconds": 0.051653
+        },
+        "run": {
+          "count": 576,
+          "sum_seconds": 16.355446,
+          "max_seconds": 0.052669
+        },
+        "reap": {
+          "count": 576,
+          "sum_seconds": 14.350265,
+          "max_seconds": 0.363492
+        }
+      }
+    },
+    {
+      "name": "concurrent-3",
+      "elapsed_seconds": 32.6849197500851,
+      "failures": [],
+      "phases": {
+        "fork": {
+          "count": 615,
+          "sum_seconds": 16.974311,
+          "max_seconds": 0.090251
+        },
+        "run": {
+          "count": 576,
+          "sum_seconds": 16.462699,
+          "max_seconds": 0.097025
+        },
+        "reap": {
+          "count": 576,
+          "sum_seconds": 14.163215,
+          "max_seconds": 0.242277
+        }
+      }
+    }
+  ]
+}
