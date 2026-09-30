@@ -119,3 +119,15 @@ bounded extensions listed in the clause map. No full-page or full-system claim
 is made, no open contract is silently transferred, and no original failed
 assertion is waived. All 14 page contracts and six conditions remain owned here;
 selected utility/libc/platform vendors retain implementation ownership.
+
+
+### Fallback/resource/timing extension
+
+The [extension](../host-execution-evidence.md#fallback-resource-and-timing-extension)
+adds 80 strict assertions for nine `/bin/sh` programs and their ENOEXEC dispatch,
+256-byte stdin handoff through external process utilities, independently observed
+exec error stages, child descriptor exhaustion/recovery, and wall/self/child CPU
+timing bounds. Timeout assertions also reject completion before the requested
+duration. Native results and current Linux availability are retained in the
+[extension evidence](../evidence/csh-075/edges/README.md). The full-page criteria
+and vendor failures above remain open; these checks do not change their scope.

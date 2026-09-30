@@ -491,6 +491,7 @@ build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/pr
 test-host-profile: test-host-inventory cshell build/tests/host_execution_helper build/tests/host_utility_helper build/tests/host_printf_faults host-profile
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 	$(if $(HOST_EXECUTION_SUBSET),$(PYTHON) tests/host_execution.py ./cshell build/tests/host_execution_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --subset "$(HOST_EXECUTION_SUBSET)" $(HOST_EXECUTION_FLAGS) --record build/tests/host-execution-profile-results.json)
+	$(if $(HOST_EXECUTION_SUBSET),$(PYTHON) tests/host_execution_edges.py ./cshell build/tests/host_execution_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-execution-edges.json)
 
 # Public entry point with only the command input read syscall instrumented.
 build/tests/command-read-input.o: src/input.c tests/command_read_faults.h $(INPUT_HEADERS)
@@ -637,3 +638,7 @@ test-host-execution-profile: cshell build/tests/host_execution_helper build/host
 build/tests/host_execution_clock.so: tests/host_execution_clock.c
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -fPIC -shared -o $@ $<
+
+.PHONY: test-host-execution-edges
+test-host-execution-edges: cshell build/tests/host_execution_helper
+	$(PYTHON) tests/host_execution_edges.py ./cshell build/tests/host_execution_helper $(HOST_EXECUTION_EDGE_FLAGS) --record build/tests/host-execution-edges.json

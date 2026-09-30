@@ -1132,5 +1132,16 @@
         }
       }
     }
-  ]
+  ],
+  "extension": {
+    "runner": "tests/host_execution_edges.py",
+    "boundary": "80 explicit assertions; full pages and retained conditions remain unqualified.",
+    "families": {
+      "sh/fallback-*": "Nine independently authored programs through /bin/sh and three cshell fallback modes.",
+      "env,nice,nohup,time/stdin-bytes": "All 256 input byte values reach the invoked helper unchanged.",
+      "time/accuracy-*": "Wall wait, CPU load, waited-child CPU accounting, bounded by monotonic and getrusage measurements.",
+      "exec/*": "Independent ENOENT/EACCES/ENOEXEC return values and public-shell handoff.",
+      "resource/descriptor-exhaustion": "Child RLIMIT_NOFILE=32, EMFILE and successful open after closing owned descriptors."
+    }
+  }
 }

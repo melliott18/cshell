@@ -1349,3 +1349,10 @@ on macOS, or the corresponding `_linux.json` file in Docker. See the
 [clause map and control boundaries](host-execution-evidence.md) and
 [retained run records](evidence/csh-075/README.md). `make test-host-inventory`
 also checks section accounting and the evidence matcher/cleanup regressions.
+
+The CSH-075 extension target `make test-host-execution-edges` checks explicit
+fallback programs, external-command binary input, exec error stages, descriptor
+exhaustion/recovery and independently bounded `time` measurements. It is also
+run after the declared execution subset by `make test-host-profile` when
+`HOST_EXECUTION_SUBSET` is supplied. Retained platform results are linked from
+[the extension map](host-execution-evidence.md#fallback-resource-and-timing-extension).

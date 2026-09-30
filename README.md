@@ -61,6 +61,7 @@ make test-host-inventory # Complete utility and residual ownership consistency
 make test-host-utilities # Stock-host integration, identities and known gaps
 make test-host-profile   # Opt-in qualified utilities, strict gaps and boundaries
 make test-host-execution # Strict host execution/process assertions (provider failures remain)
+make test-host-execution-edges # Fallback shell, binary stdin, exec/resource errors and timing
 make test-evaluation # Evaluation, lookup, aliases, and remaining utilities
 make test-builtins # Replacement state builtins and executor integration
 make test-state-builtins # Clause-mapped runtime state and utility evidence

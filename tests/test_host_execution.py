@@ -4,17 +4,41 @@ from pathlib import Path
 import signal
 import os
 import subprocess
+import tempfile
 import unittest
 from unittest.mock import patch
 
 from host_execution import run_case, reap_owned
 from host_execution_controls import duration_total
+from host_execution_edges import timing_matches, execute
 from host_execution_cases import UTILITIES, cases, matches
 
 ROOT = Path(__file__).resolve().parent
 
 
 class ExecutionEvidenceTests(unittest.TestCase):
+    def test_timing_values_need_independent_lower_and_upper_bounds(self):
+        measured = dict(real=0.15, user=0.12, sys=0.0)
+        actual = dict(elapsed=0.20, child_user=0.13, child_sys=0.01,
+                      stderr=b'real 0.15\nuser 0.12\nsys 0.00\n')
+        self.assertTrue(timing_matches(actual, measured, 100))
+        for output in (b'real 0.00\nuser 0.00\nsys 0.00\n',
+                       b'real 9.00\nuser 9.00\nsys 9.00\n'):
+            self.assertFalse(timing_matches(dict(actual, stderr=output), measured, 100))
+        self.assertFalse(timing_matches(actual, dict(measured, user=float('nan')), 100))
+
+    def test_edge_spawn_failure_is_retained(self):
+        with tempfile.TemporaryDirectory() as directory:
+            actual = execute('/csh-075-does-not-exist', dict(args=[], stdin=''), Path(directory))
+        self.assertIsNone(actual['status'])
+        self.assertTrue(actual['errors'][0].startswith('setup: '))
+
+    def test_timeout_cannot_pass_before_its_requested_duration(self):
+        definitions = {row['id']: row for row in cases('/helper', Path('.'), 0)}
+        for name in ('expiry', 'foreground', 'preserve', 'signal-case'):
+            self.assertEqual(definitions['timeout/' + name]['minimum_seconds'], 1)
+        self.assertEqual(definitions['timeout/kill-after']['minimum_seconds'], 1.2)
+
     def test_duration_chunks_preserve_the_total_without_overflow(self):
         self.assertEqual(duration_total('2147483647 0\n1 0\n'), 2147483648 * 10**9)
         for text in (None, '', '-1 0\n', '1 1000000000\n', '1\n', 'bad data\n'):

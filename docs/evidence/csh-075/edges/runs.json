@@ -1,0 +1,24 @@
+{
+  "native-edges.json.gz": {
+    "totals": {
+      "passed": 80,
+      "failed": 0
+    },
+    "source_sha256": "d71cef9e0135c51ea0019613282030fc551ba0d4346f975d3642ebd44cf3a9da"
+  },
+  "native-profile.json.gz": {
+    "totals": {
+      "passed": 1162,
+      "failed": 0,
+      "gaps": 0
+    },
+    "source_sha256": "d71cef9e0135c51ea0019613282030fc551ba0d4346f975d3642ebd44cf3a9da"
+  },
+  "native-subset.json.gz": {
+    "totals": {
+      "passed": 242,
+      "failed": 0
+    },
+    "source_sha256": "d71cef9e0135c51ea0019613282030fc551ba0d4346f975d3642ebd44cf3a9da"
+  }
+}

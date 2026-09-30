@@ -1,0 +1,4 @@
+Attempt: docker info --format {{.ServerVersion}}
+Result: HTTP 500 for /v1.24/info on the configured Docker socket.
+New Linux execution unavailable; no daemon restart or host changes performed.
+Earlier Linux evidence remains in the parent evidence directory and does not validate this extension.

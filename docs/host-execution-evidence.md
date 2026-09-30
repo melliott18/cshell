@@ -113,3 +113,45 @@ The original immutable inventories and failure evidence are unchanged.
 [Retained runs](evidence/csh-075/README.md) separate stock, supplied profiles,
 strict failures, and declared subset results. Neither U-034/U-040 nor CSH-012 is
 promoted by this work.
+
+## Fallback, resource and timing extension
+
+`make test-host-execution-edges` runs 80 additional strict assertions. The selected
+profile also runs them when `HOST_EXECUTION_SUBSET` is supplied. These assertions
+are separate from the original case-ID subset and are never silently filtered.
+The [extension records](evidence/csh-075/edges/README.md) preserve validation and
+platform availability separately from the original evidence.
+
+- Nine shell programs run directly through the separately inventoried `/bin/sh`
+  and through cshell's no-shebang fallback in command-string, file and stdin modes.
+  The programs check quoted parameters, environment inheritance, function
+  parameters, trailing-newline removal in substitution, a quoted here-document,
+  subshell isolation, ordered redirection, EXIT traps/status, and syntax errors.
+  A shadow PATH `sh` exits 93; expectations are independently authored bytes and
+  effects, rather than output copied from that shell.
+- External `env`, `nice`, `nohup` and `time` must pass all 256 byte values from
+  stdin to an invoked helper in all four modes. Each stream, status and absence
+  of `nohup.out` is checked.
+- A direct execve probe reports ENOENT, EACCES or ENOEXEC. Public cshell dispatch
+  must produce 127, 126, or the fallback script's authored status 29 respectively.
+  These records distinguish the kernel-return stage from shell dispatch; they
+  do not infer that the invoked image entered its main function.
+- A helper limits only its own descriptors to 32, opens private descriptors to
+  `/dev/null` until EMFILE, closes every descriptor it opened, and proves that a
+  subsequent open succeeds. This qualifies descriptor exhaustion and recovery
+  in that supplied process, not memory exhaustion or a production loader stage.
+- `time -p` is exercised with a wall-clock wait, CPU work, and a waited-for CPU
+  child. The helper records monotonic elapsed time and getrusage values. Reported
+  values must lie between those inner measurements and the runner's whole-call
+  elapsed/child accounting, with a two-clock-tick allowance for quantization.
+  Zero or fabricated large timing values fail; matching output labels is
+  insufficient. This is finite workload evidence, not universal timing accuracy.
+
+The original timeout expiry/preserve/signal cases now also require at least the
+requested one second; the escalation case requires at least 1.2 seconds. The
+five-second watchdog remains a harness bound and is not a utility maximum.
+
+All six retained conditions remain explicitly listed as unqualified in the
+extension JSON, with CSH-075 retaining qualification ownership. Exact memory
+failure stages, env's internal-exec E2BIG, general duration limits and complete
+external-shell semantics are not inferred from these passing witnesses.
