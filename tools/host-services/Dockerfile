@@ -6,7 +6,7 @@ RUN printf '#!/bin/sh\nexit 101\n' > /usr/sbin/policy-rc.d \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
        build-essential python3 at cron bsd-mailx exim4-daemon-light \
-       cups-daemon cups-client sharutils busybox ed locales acl \
+       cups-daemon cups-client sharutils libbsd-dev busybox ed locales acl \
     && localedef -i fr_FR -f UTF-8 fr_FR.UTF-8 \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --create-home --uid 10001 cshell \
@@ -27,8 +27,8 @@ COPY docs/ docs/
 RUN make -j2 cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile \
     && cc -std=c99 -Wall -Wextra -Werror -fPIC -shared -o build/tests/host_service_clock.so tests/host_service_clock.c -ldl \
     && mkdir -p /work/build/host-services/bin \
-    && cp tools/host-services/batch build/host-services/bin/batch \
-    && chmod 755 build/host-services/bin/batch \
+    && cp tools/host-services/at tools/host-services/batch tools/host-services/logger build/host-services/bin/ \
+    && chmod 755 build/host-services/bin/at build/host-services/bin/batch build/host-services/bin/logger \
     && mkdir -p /work/build/tests \
     && chmod 755 /work /work/build /work/build/tests
 CMD ["python3", "tests/host_services.py", "./cshell", "--services", "--path", "/work/build/host-services/bin:/work/build/host-profile/bin:/usr/bin:/bin", "--record", "/work/build/tests/host-services.json"]

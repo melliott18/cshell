@@ -9,7 +9,7 @@ import subprocess
 import tempfile
 import time
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from host_services import Suite, require_container, main
 
@@ -66,6 +66,24 @@ class ServiceHarnessTests(unittest.TestCase):
             self.assertFalse(data['completed'])
             self.assertFalse(data['qualified_subset'])
             self.assertEqual(data['results'][0]['name'], 'profile-interrupted')
+
+    def test_unreaped_child_preserves_diagnostic_and_stops_profile(self):
+        suite = Suite(Path('/bin/sh'), os.defpath)
+        child = Mock(pid=999999999, returncode=None)
+        child.wait.side_effect = subprocess.TimeoutExpired('fixture', 2)
+        def launch(*args, **kwargs):
+            kwargs['stderr'].write(b'sanitizer diagnostic before abort\n')
+            return child
+        with suite.directory() as directory, \
+                patch('host_services.subprocess.Popen', side_effect=launch), \
+                patch('host_services.smoke.kill_group'), \
+                contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaisesRegex(RuntimeError, 'remains alive'):
+                suite.invoke('unreaped', 'date', [], directory, 'direct')
+        self.assertEqual(suite.results[-1]['verdict'], 'FAIL')
+        actual = suite.results[-1]['actual']
+        self.assertIn('was not reaped', actual['failure'])
+        self.assertEqual(bytes.fromhex(actual['stderr']['hex']), b'sanitizer diagnostic before abort\n')
 
     def test_output_limit_is_failure(self):
         suite = Suite(Path('/bin/sh'), os.defpath)

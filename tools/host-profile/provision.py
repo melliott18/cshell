@@ -16,10 +16,10 @@ from host_utility_cases import HOSTS
 
 def provision(destination, gnu_bin=None):
     selected = {name: shutil.which(name, path=os.defpath) for name in HOSTS}
-    overrides = {'printf': str(ROOT / 'build/host-printf')}
+    overrides = {'printf': str(ROOT / 'build/host-printf'),
+                 'uudecode': str(ROOT / 'build/host-uudecode')}
     system = platform.system()
     if system == 'Darwin':
-        overrides['uudecode'] = str(ROOT / 'build/host-uudecode')
         # Homebrew's prefixed names do not change the system PATH or echo policy.
         search = str(gnu_bin) if gnu_bin else os.environ.get('PATH', os.defpath)
         overrides.update({name: shutil.which('g' + name, path=search)

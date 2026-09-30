@@ -481,15 +481,16 @@ build/host-printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/printf.c $(LDLIBS)
 
-ifeq ($(shell uname -s),Darwin)
-HOST_UUDECODE = build/host-uudecode
+HOST_UUDECODE_LIBS = -lresolv
+ifeq ($(shell uname -s),Linux)
+HOST_UUDECODE_LIBS += -lbsd
 endif
 
 build/host-uudecode: tools/host-profile/uudecode.c tools/host-profile/vendor/uudecode.c
 	@mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/uudecode.c -lresolv $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/uudecode.c $(HOST_UUDECODE_LIBS) $(LDLIBS)
 
-host-profile: build/host-printf $(HOST_UUDECODE)
+host-profile: build/host-printf build/host-uudecode
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c

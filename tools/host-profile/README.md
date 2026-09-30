@@ -245,9 +245,9 @@ Only private files and processes are used. See
 
 ## CSH-078 codecs and services
 
-Linux codec qualification additionally requires `sharutils`. macOS profiles
-also build a standalone Apple/FreeBSD `uudecode` with the Issue 8 `-` stdout
-cookie correction; source commit, license and build adapters are documented in
+Linux codec qualification additionally requires `sharutils` and `libbsd-dev`.
+Both host profiles build a standalone Apple/FreeBSD `uudecode` with corrected
+stdout cookies, output paths, symbolic permissions and MIME decoding; source commit, license and build adapters are documented in
 [the service profile](../../docs/host-service-profile.md#selected-provider-repairs).
 `make test-host-profile` now includes safe native codec/read-only date witnesses.
 

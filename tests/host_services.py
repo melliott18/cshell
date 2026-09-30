@@ -31,6 +31,10 @@ TIMEOUT = 8
 LIMIT = 1024 * 1024
 
 
+class UnreapedChildError(RuntimeError):
+    """A command survived cleanup; no further utility work may start."""
+
+
 def limits(timeout, services=False):
     if not services:
         smoke.child_limits(timeout, LIMIT)
@@ -94,7 +98,7 @@ class Suite:
         self.daemons = []
         self.environment = dict(PATH=search, LANG='C', LC_ALL='C', TZ='UTC0',
                                 HOME='/home/cshell' if services else '/nonexistent',
-                                SHELL='/bin/sh')
+                                SHELL='/bin/sh', MAILRC='/dev/null', DEAD='/dev/null')
         for key in ('ASAN_OPTIONS', 'UBSAN_OPTIONS', 'MallocNanoZone'):
             if key in os.environ:
                 self.environment[key] = os.environ[key]
@@ -115,7 +119,7 @@ class Suite:
             print('FAIL:', name, flush=True)
         return ok
 
-    def call(self, argv, directory, data=b'', env=None, user=True, timeout=TIMEOUT):
+    def call(self, argv, directory, data=b'', env=None, user=True, timeout=TIMEOUT, stdout_fd=None):
         environment = {**self.environment, **(env or {})}
         command = list(map(str, argv))
         if self.services and user:
@@ -126,7 +130,8 @@ class Suite:
             inp.write(data); inp.seek(0)
             started = time.monotonic()
             child = subprocess.Popen(command, cwd=directory, env=environment,
-                                     stdin=inp, stdout=out, stderr=err, start_new_session=True,
+                                     stdin=inp, stdout=out if stdout_fd is None else stdout_fd,
+                                     stderr=err, start_new_session=True,
                                      preexec_fn=lambda: limits(timeout, self.services))
             failure = None
             try:
@@ -138,7 +143,10 @@ class Suite:
                     smoke.kill_group(child)
                 except (OSError, ValueError, subprocess.SubprocessError) as error:
                     failure = f'cleanup: {error}'
-                child.wait(timeout=2)
+                try:
+                    child.wait(timeout=2)
+                except subprocess.TimeoutExpired:
+                    failure = f'{failure}; owned process {child.pid} was not reaped'
             out.seek(0); err.seek(0)
             stdout, stderr = out.read(LIMIT + 1), err.read(LIMIT + 1)
         if len(stdout) > LIMIT or len(stderr) > LIMIT:
@@ -147,7 +155,7 @@ class Suite:
                     failure=failure, seconds=round(time.monotonic() - started, 3))
 
     def invoke(self, name, utility, args, directory, mode, data=b'', stdout=b'',
-               stderr=b'', status=0, env=None, check=None):
+               stderr=b'', status=0, env=None, check=None, stdout_fd=None):
         if self.services:
             for child in directory.iterdir():
                 if child.is_file() and not child.is_symlink():
@@ -175,7 +183,7 @@ class Suite:
             else:
                 argv = [self.binary]
                 input_data = command.encode()
-        actual = self.call(argv, directory, input_data, env)
+        actual = self.call(argv, directory, input_data, env, stdout_fd=stdout_fd)
         def match(want, got):
             if want == 'nonzero': return isinstance(got, int) and got > 0
             if isinstance(want, re.Pattern): return bool(want.fullmatch(got))
@@ -193,6 +201,8 @@ class Suite:
         self.record(name + '/' + mode, utility, ok, phase='assertion', actual=actual,
                     expected=dict(status=status, stdout=repr(stdout), stderr=repr(stderr)),
                     effects=extra)
+        if actual['status'] is None:
+            raise UnreapedChildError(f"owned child {actual['pid']} remains alive; stopping profile")
         return actual
 
     def start(self, argv, directory, env=None):
@@ -323,11 +333,13 @@ def logging_cases(s):
     with s.directory() as d:
         packets_file = d / 'packets.jsonl'
         receiver = s.start(['/usr/bin/python3', str(Path(__file__).with_name('host_service_syslog.py')), str(packets_file)], d)
-        def packets():
+        def packet_records():
             if not packets_file.exists(): return []
             # A final partial line is not a complete datagram record yet.
-            return [bytes.fromhex(json.loads(line)) for line in packets_file.read_text().splitlines(keepends=True)
+            return [json.loads(line) for line in packets_file.read_text().splitlines(keepends=True)
                     if line.endswith('\n')]
+        def packets():
+            return [bytes.fromhex(row['data']) for row in packet_records()]
         try:
             assert wait_for(lambda: Path('/dev/log').exists())
             for mode in MODES:
@@ -336,6 +348,8 @@ def logging_cases(s):
                     ('stdin', ['-t', 'csh078'], b'one\ntwo\n', [b'one', b'two'], 13),
                     ('file', ['-t', 'csh078', '-f', 'messages'], b'ignored\n', [b'one', b'two'], 13),
                     ('pid', ['-i', '-t', 'csh078', 'pid'], b'', [b'pid'], 13),
+                    ('empty-line', ['-t', 'csh078'], b'\n', [b''], 13),
+                    ('utf8', ['-t', 'csh078', 'café'], b'', ['café'.encode()], 13),
                     ('file-operands', ['-f', 'messages', '-t', 'csh078', 'operand', 'wins'],
                      b'ignored\n', [b'operand wins'], 13),
                     ('file-dash-literal', ['-f', '-', '-t', 'csh078'], b'ignored stdin\n', [b'literal dash file'], 13),
@@ -354,14 +368,23 @@ def logging_cases(s):
                             pattern = rb'<' + str(priority).encode() + rb'>[A-Z][a-z]{2} [ 0-9][0-9] [0-9:]{8} csh078'
                             pattern += rb'\[[0-9]+\]' if suffix == 'pid' else rb'(?:\[[0-9]+\])?'
                             assert re.fullmatch(pattern + rb': ' + re.escape(message), packet), packet
+                            if suffix == 'pid':
+                                claimed = int(re.search(rb'csh078\[([0-9]+)\]', packet)[1])
+                                matching = [row for row in packet_records()[before:]
+                                            if bytes.fromhex(row['data']) == packet]
+                                assert len(matching) == 1 and matching[0]['pid'] == claimed
+                                assert matching[0]['uid'] == 10001 and matching[0]['flags'] == 0
                         return True
                     # util-linux diagnoses this combination but logs the operands,
                     # as required. '-' is a literal filename on this provider.
                     diagnostic = (b'logger: --file <file> and <message> are mutually exclusive, message is ignored\n'
                                   if suffix == 'file-operands' else b'')
                     s.invoke('logger-' + suffix, 'logger', args, d, mode, data=data,
-                             stderr=diagnostic, check=verify)
+                             stderr=diagnostic, check=verify,
+                             env={'LC_ALL': 'fr_FR.UTF-8'} if suffix == 'utf8' else None)
                     s.results[-1]['packets'] = serial(received)
+                    s.results[-1]['sender_credentials'] = [row for row in packet_records()[before:]
+                        if bytes.fromhex(row['data']) in received]
                 for suffix, args in [('missing-file', ['-f', 'missing']),
                                      ('bad-priority', ['-p', 'not-a-facility.not-a-level']),
                                      ('missing-tag', ['-t'])]:
@@ -379,6 +402,9 @@ def logging_cases(s):
         finally:
             s.stop(receiver)
             Path('/dev/log').unlink(missing_ok=True)
+        for mode in MODES:
+            s.invoke('logger-no-sink', 'logger', ['-t', 'csh078', 'undeliverable'],
+                     d, mode, status='nonzero', stderr=re.compile(rb'.+', re.S))
 
 
 def messages(user):
@@ -390,8 +416,9 @@ def messages(user):
 
 
 def mail_cases(s):
-    Path('/home/cshell/.mailrc').write_text('set sendwait\n')
-    os.chown('/home/cshell/.mailrc', 10001, 10001)
+    # The base profile selects MAILRC=/dev/null. Keep the transport wait
+    # policy in the private system configuration, not a user startup file.
+    Path('/etc/mail.rc').write_text('set sendwait\n')
     for mode in MODES:
         with s.directory() as d:
             subject = 'CSH078 subject ' + mode
@@ -424,6 +451,36 @@ def mail_cases(s):
                      and messages('recipient')[-1].get_payload(decode=True) == body)
             s.invoke('mail-missing-subject', 'mailx', ['-s'], d, mode, status='nonzero',
                      stderr=re.compile(rb'.+', re.S))
+            for suffix, content, subject, environment in (
+                ('empty-default', b'', 'empty permitted', {}),
+                ('utf8', 'café\n'.encode(), 'UTF-8 body', {'LC_ALL': 'fr_FR.UTF-8'}),
+                ('subject-bound', b'bounded subject\n', 'x' * (os.sysconf('SC_LINE_MAX') - 10), {}),
+            ):
+                before = len(messages('recipient'))
+                def delivered(a):
+                    assert wait_for(lambda: len(messages('recipient')) == before + 1)
+                    message = messages('recipient')[-1]
+                    assert message.get_payload(decode=True) == content
+                    assert str(message['Subject']) == subject
+                    return True
+                s.invoke('mail-' + suffix, 'mailx', ['-s', subject, 'recipient'], d, mode,
+                         data=content, env=environment, check=delivered,
+                         stdout=b"Null message body; hope that's ok\n" if not content else b'')
+    # Deny the actual private transport executable, then restore its exact mode
+    # before scheduler/cron delivery. This cannot affect the developer host.
+    transport = Path('/usr/sbin/sendmail').resolve()
+    permissions = stat.S_IMODE(transport.stat().st_mode)
+    try:
+        transport.chmod(0)
+        for mode in MODES:
+            with s.directory() as d:
+                before = len(messages('recipient'))
+                s.invoke('mail-transport-denied', 'mailx', ['-s', 'must not arrive', 'recipient'],
+                         d, mode, data=b'undeliverable\n', status='nonzero',
+                         stderr=re.compile(rb'.+', re.S), check=lambda a: len(messages('recipient')) == before)
+    finally:
+        transport.chmod(permissions)
+
 
 
 def scheduler_cases(s):
@@ -440,7 +497,7 @@ def scheduler_cases(s):
                 if found:
                     job_id = found[1].decode()
                     s.invoke('at-list-selected', 'at', ['-l', job_id], d, mode,
-                             stdout=re.compile(job_id.encode() + rb'\s+Tue Dec 31 12:30:00 2030 a cshell\n'))
+                             stdout=re.compile(job_id.encode() + rb'\tTue Dec 31 12:30:00 2030\n'))
                     s.invoke('at-remove', 'at', ['-r', job_id], d, mode)
                     s.invoke('at-list-empty', 'at', ['-l'], d, mode)
             queue_jobs = {}
@@ -455,8 +512,11 @@ def scheduler_cases(s):
             if len(queue_jobs) == 2:
                 for queue, job_id in queue_jobs.items():
                     s.invoke('at-list-queue-' + queue, 'at', ['-l', '-q', queue], d, mode,
-                             stdout=re.compile(job_id.encode() + rb'\s+Tue Dec 31 12:30:00 2030 '
-                                               + queue.encode() + rb' cshell\n'))
+                             stdout=re.compile(job_id.encode() + rb'\tTue Dec 31 12:30:00 2030\n'))
+                lines = [job_id.encode() + b'\tTue Dec 31 12:30:00 2030\n' for job_id in queue_jobs.values()]
+                s.invoke('at-list-multiple', 'at', ['-l', *queue_jobs.values()], d, mode,
+                         stdout=re.compile(b'(?:' + re.escape(b''.join(lines)) + b'|'
+                                           + re.escape(b''.join(reversed(lines))) + b')'))
                 s.invoke('at-remove-multiple', 'at', ['-r', *queue_jobs.values()], d, mode)
                 s.invoke('at-queues-empty', 'at', ['-l'], d, mode)
             s.invoke('at-invalid-time', 'at', ['-t', 'invalid'], d, mode,
@@ -483,6 +543,13 @@ def scheduler_cases(s):
                                   data=code.encode(), env={'CSH078_VALUE': token},
                                   stderr=re.compile(rb'(?:warning: commands will be executed using /bin/sh\n)?job [0-9]+ at [^\n]+\n(?:Can\'t open /run/atd.pid to signal atd. No atd running\?\n)?', re.S))
                 pending.append((d, token, result))
+                if utility == 'batch':
+                    queue = s.call(['/usr/bin/at', '-l', '-q', 'b'], d)
+                    found = re.search(rb'job ([0-9]+) at ', result['stderr']) if result else None
+                    ids = [line.split()[0] for line in queue['stdout'].splitlines()]
+                    s.record('batch-queue-identity/' + mode, 'batch',
+                             bool(found) and found[1] in ids and queue['status'] == 0
+                             and not queue['failure'], actual=queue)
         daemon = s.start(['/usr/sbin/atd', '-f', '-l', '1000000', '-b', '1'], root)
         for d, token, submission in pending:
             ok = wait_for(lambda: (d / 'result').exists() and len((d / 'result').read_bytes().splitlines()) == 3, 20)
@@ -686,34 +753,47 @@ def main():
             require_container()
             record['services'] = {p: dict(realpath=os.path.realpath(p), sha256=sha(p)) for p in
                                   ('/usr/sbin/atd', '/usr/sbin/cron', '/usr/sbin/cupsd',
-                                   '/usr/sbin/exim4', '/usr/sbin/sendmail', '/bin/sh', '/usr/bin/python3')}
+                                   '/usr/sbin/exim4', '/usr/sbin/sendmail', '/usr/bin/at', '/usr/bin/logger',
+                                   '/bin/sh', '/usr/bin/python3')}
             record['packages'] = subprocess.check_output(['dpkg-query', '-W', '-f=${binary:Package}\t${Version}\n'], text=True)
             record['isolation'] = dict(network='loopback only', sys_time=False,
                                        mountinfo=Path('/proc/self/mountinfo').read_text(),
                                        status=Path('/proc/self/status').read_text())
         print('Running encoding and date witnesses', flush=True)
         encoding_cases(s)
+        from host_service_edges import codec_edges
+        codec_edges(s, encoded)
+        if args.services:
+            from host_service_edges import service_edges
+            service_edges(s, encoded)
         fake = Path('/work/build/tests/host_service_clock.so') if args.services else None
         if fake and not fake.is_file(): raise RuntimeError('test clock missing')
         if fake: record['clock_provider'] = dict(path=str(fake), sha256=sha(fake))
         date_cases(s, str(fake) if fake else None)
+        if fake:
+            from host_service_edges import date_edges
+            date_edges(s, str(fake))
         if args.services:
             for name, function in [('logger', logging_cases), ('mail', mail_cases),
                                    ('scheduler', scheduler_cases), ('cron', cron_cases), ('print', print_cases)]:
                 print('Running ' + name + ' witnesses', flush=True)
                 try:
                     function(s)
+                except UnreapedChildError:
+                    raise
                 except (OSError, ValueError, AssertionError, RuntimeError, subprocess.SubprocessError) as e:
                     utility = {'mail': 'mailx', 'scheduler': 'at', 'cron': 'crontab', 'print': 'lp'}.get(name, name)
                     s.record(name + '-setup', utility, False, phase='setup', reason=str(e))
         else:
             record['unavailable_capabilities'] = ['No developer-host service invocation', 'No controlled native clock']
+            if os.geteuid() == 0:
+                record['unavailable_capabilities'].append('Native denied-write checks need an unprivileged UID; covered in the service image')
         # Every declared prefix must have actually run; a swallowed setup error
         # or accidental fixture deletion cannot leave a profile qualified.
         for row in contract_map['utilities']:
             if not args.services and row['utility'] not in ('date', 'uuencode', 'uudecode'):
                 continue
-            for prefix in row['case_prefixes']:
+            for prefix in row['case_prefixes'] + (row.get('service_case_prefixes', []) if args.services else []):
                 if not args.services and prefix in ('date-default/', 'date-conversions/', 'date-zone/', 'date-u-overrides-zone/'):
                     continue
                 if not any(r['utility'] == row['utility'] and r['name'].startswith(prefix) for r in s.results):

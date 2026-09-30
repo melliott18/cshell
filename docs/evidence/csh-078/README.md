@@ -94,6 +94,55 @@ result for its old image. The fresh runs provide their own qualification and
 cleanup evidence. There are still 20 residual IDs; their descriptions now
 exclude the newly covered portions rather than claiming full-page closure.
 
+## Further repairs and environment audit (2026-09-30 UTC)
+
+The [edge-repair records](edge-repairs/files.json) preserve decompressed hashes,
+byte counts, exact source/provider identities, and the following failures and
+repairs after `80369de`:
+
+| Record prefix under `edge-repairs/` | Result |
+| --- | --- |
+| `native-initial` | **585 pass, 25 fail**: selected macOS decoder strips nested output paths, misinterprets literal `./-`, and rejects ignorable Base64 characters. |
+| `symbolic-mask-initial` | **610 pass, 10 fail**: symbolic `=rw` is incorrectly limited by the caller's umask. |
+| `linux-stock-codec` | **972 pass, 20 fail**: sharutils rejects symbolic modes and noisy/split Base64. The repaired standalone decoder is now selected on Linux with libbsd. |
+| `linux-sink-failure` | **1132 pass, 5 fail**: util-linux logger reports success with no `/dev/log`. The selected adapter enables socket error reporting. |
+| `linux-mail-fixture` | **1152 pass, 10 fail**: the same logger failures plus an incorrect fixture expectation that the empty-body informational message appears on stderr. The message belongs on stdout; delivery itself passed. |
+| `linux-list-format` | **1147 pass, 25 fail**: 20 strict listing assertions expose Debian at's additional queue/user columns; five empty-body fixture expectations also fail. The adapter removes only the extra listing columns. |
+| `linux-adapted` | **1172 pass, 0 fail**, cleanup verified. |
+| `linux-before-sanitizer-fix` | **1182 pass, 0 fail**, cleanup verified. Ordinary execution did not expose the pointer UB found below. |
+| `native-sanitizer-initial` | **505 pass, 1 setup failure**, incomplete. The sampled stack identifies UBSan's out-of-bounds handler in the split-quantum path: `inbuf + count4 + 1` briefly forms a pointer before the array when `count4 == -1`. The repaired code uses a nonnegative completed-byte count. |
+| `native-repaired` | **620 pass, 0 fail** after all decoder fixes. |
+| `native-sanitizer-repaired` | **620 pass, 0 fail** with Clang ASan/UBSan and `-Werror`; both sanitizers halt on error, leak detection disabled, abort-on-error disabled. |
+| `linux-final`, `linux-sanitized-final` | **1182 pass, 0 fail each**, exact final source hashes verified and both containers removed. The latter instruments the selected decoder with GCC ASan/UBSan and `-Werror`. |
+| `checks.log` | 12 inventory tests and 9 service/launcher harness tests pass. The added regression verifies that an unreaped child's diagnostic survives and aborts further profile work. |
+
+The first native sanitizer process, PID 82167, entered state `UEs` while aborting
+inside `__pthread_kill` after the UBSan finding. Its parent exited, and SIGKILL did
+not remove it. The sample and cleanup observations are retained; this is an
+unresolved native process-cleanup incident, not a passing cleanup assertion.
+The repaired sanitizer run completed independently. `native-cleanup-final.json.gz`
+records the final observation of this earlier process. No host restart or unrelated
+process termination was attempted.
+
+The Linux sanitizer build's first attempt used an image ID in `FROM`, which this
+builder tried to resolve through the registry; it failed before compilation.
+`sanitizer-image-resolution-failure.log.gz` retains that setup failure. The
+successful variant uses the locally built tag, records its resolved image, and
+rebuilds only the decoder with GCC ASan/UBSan and `-Werror`.
+
+New assertions also cover independent batch queue-b identity, multi-ID listings,
+permissions/overwrite/symlinks, tolerated EPERM from chmod of a foreign-owned
+writable file, option termination, French UTF-8 behavior, full output, selected
+calendar/DST/E/O cases, kernel-attested logger PID, and mail empty/UTF-8 bodies,
+subject length and actual transport permission failure. Base mail tests now set
+MAILRC and DEAD to `/dev/null`. Non-null startup-file behavior without UP is
+unspecified rather than an additional mandatory base contract.
+
+The [environment matrix](../../host-service-profile.md#remaining-environments-and-manual-work)
+and each residual's `execution_requirement` separate additional automation from
+external capabilities. No remaining clause was called complete merely because
+these tests passed; CSH-078 retains the 20 narrowed residual groups.
+
 ## Reproduction
 
 ```sh
@@ -103,10 +152,10 @@ make docker-test-host-services
 ```
 
 The inventory check passes for 156 names, 101 external contracts and 30 retained
-conditions, with 12 accounting regression tests. The service and launcher harnesses have eight
+conditions, with 12 accounting regression tests. The service and launcher harnesses have nine
 passing checks for native safety refusal, missing providers, false successes,
 owned timeout cleanup with an unrelated-process control, interrupted-profile
-reporting, output bounds, an unavailable Docker executable and cleanup after a timed-out create response. The independent case-prefix check prevents a
+reporting, output bounds, an unavailable Docker executable, cleanup after a timed-out create response, and retaining diagnostics before stopping on an unreaped child. The independent case-prefix check prevents a
 missing declared witness from being called a passing profile.
 
 For standalone decoder sanitizer reproduction:

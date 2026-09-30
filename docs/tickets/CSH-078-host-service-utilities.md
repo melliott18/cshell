@@ -107,3 +107,24 @@ verified. Authorized Docker recovery removed all four previously stranded
 CSH-078 containers; the unrelated CSH-073 stages had already finished, and only
 its stalled Docker client ended. Both failed and passing continuation attempts
 and the restart record remain in the [evidence](../evidence/csh-078/README.md#disposable-service-continuation-2026-09-30-utc).
+
+Further edge qualification repairs the selected decoder's pathname, symbolic
+mode/umask and Base64 behavior on macOS/Linux, including a sanitizer-detected
+pointer bounds defect. Disposable adapters correct `at -l` output and logger's
+missing-sink success status. Coverage now includes batch queue identity, codec
+permissions and output errors, locale/DST cases, kernel-attested logger PIDs,
+and mail boundary/transport failures. See the retained [edge attempts](../evidence/csh-078/README.md#further-repairs-and-environment-audit-2026-09-30-utc).
+
+Remaining environment requirements are now explicit in the contract map and
+[capability matrix](../host-service-profile.md#remaining-environments-and-manual-work).
+Most work is automated fixture development. Deterministic scheduler calendar
+coverage needs a controlled daemon clock or disposable VM; native macOS service
+claims need an isolated macOS environment. Actual hardcopy needs a dedicated
+printer and human inspection. Full-contract qualification remains open.
+
+Final edge validation: **1182 Docker checks** pass in both ordinary and decoder
+ASan/UBSan builds; **620 native checks** pass ordinarily and under Clang
+ASan/UBSan. Inventory (12) and harness (9) regressions pass. All final Docker
+containers were removed. An earlier native sanitizer abort left PID 82167 in
+an uninterruptible state despite SIGKILL; its sample and cleanup observations
+remain recorded separately from the repaired passing runs.

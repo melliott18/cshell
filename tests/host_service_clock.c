@@ -5,13 +5,26 @@
 #include <dlfcn.h>
 #include <time.h>
 #include <string.h>
+#include <stdlib.h>
+#include <errno.h>
 
-static const time_t fixture_time = 1709210096;
+static time_t fixture_time(void)
+{
+    const char *value = getenv("CSH078_CLOCK_EPOCH");
+    char *end;
+    long long parsed;
+    if (value == NULL || *value == '\0') return 1709210096;
+    errno = 0;
+    parsed = strtoll(value, &end, 10);
+    if (errno != 0 || *end != '\0' || (long long)(time_t)parsed != parsed)
+        abort();
+    return (time_t)parsed;
+}
 
 time_t time(time_t *result)
 {
-    if (result != NULL) *result = fixture_time;
-    return fixture_time;
+    if (result != NULL) *result = fixture_time();
+    return fixture_time();
 }
 
 int clock_gettime(clockid_t clock_id, struct timespec *result)
@@ -19,7 +32,7 @@ int clock_gettime(clockid_t clock_id, struct timespec *result)
     int (*original)(clockid_t, struct timespec *);
     void *symbol;
     if (clock_id == CLOCK_REALTIME) {
-        result->tv_sec = fixture_time;
+        result->tv_sec = fixture_time();
         result->tv_nsec = 0;
         return 0;
     }

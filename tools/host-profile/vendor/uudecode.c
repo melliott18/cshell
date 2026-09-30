@@ -41,7 +41,7 @@
 
 #include <netinet/in.h>
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 #include <assert.h>
 #endif
 #include <ctype.h>
@@ -52,7 +52,7 @@
 #include <pwd.h>
 #include <resolv.h>
 #include <stdbool.h>
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 #include <stddef.h>
 #endif
 #include <stdio.h>
@@ -60,25 +60,25 @@
 #include <string.h>
 #include <unistd.h>
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 #define apple_b64_pton b64_pton
 #endif
 
 extern int main_decode(int, char *[]);
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 extern int main_base64_decode(const char *, const char *);
 #else
 extern int main_base64_decode(const char *);
 #endif
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 #define COMPAT_MODE(command, mode) 1
 #endif
 
 static const char *infile, *outfile;
 static FILE *infp, *outfp;
 static bool base64, cflag, iflag, oflag, pflag, rflag, sflag;
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 static bool unix2003compat;
 #endif
 
@@ -90,7 +90,7 @@ static int	uu_decode(void);
 static int	base64_decode(void);
 
 int
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 main_base64_decode(const char *in, const char *out)
 #else
 main_base64_decode(const char *in)
@@ -98,7 +98,7 @@ main_base64_decode(const char *in)
 {
 	base64 = 1;
 	rflag = 1;
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 	if (in != NULL && strcmp(in, "-") != 0) {
 #else
 	if (in != NULL) {
@@ -111,7 +111,7 @@ main_base64_decode(const char *in)
 		infile = "stdin";
 		infp = stdin;
 	}
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 	if (out != NULL) {
 		if (strcmp(out, "-") == 0)
 			outfp = stdout;
@@ -172,7 +172,10 @@ main_decode(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
-#ifdef __APPLE__
+	/* CSH-078: the header names a pathname, not just its final component. */
+	sflag = true;
+
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 	unix2003compat = COMPAT_MODE("bin/uudecode", "Unix2003");
 #endif
 
@@ -203,7 +206,7 @@ decode(void)
 
 	if (rflag) {
 		/* relaxed alternative to decode2() */
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 		if (outfp == NULL) {
 			outfile = "/dev/stdout";
 			outfp = stdout;
@@ -234,6 +237,7 @@ static int
 decode2(void)
 {
 	int flags, fd, mode;
+	mode_t saved_mask;
 	size_t n, m;
 	char *p, *q;
 	void *handle;
@@ -268,19 +272,23 @@ decode2(void)
 			break;
 	}
 
+	/* Header permissions are independent of the decoder's umask,
+	 * including symbolic modes whose who field is omitted. */
+	saved_mask = umask(0);
 	handle = setmode(p);
+	umask(saved_mask);
 	if (handle == NULL) {
 		warnx("%s: unable to parse file mode", infile);
 		return (1);
 	}
 	mode = getmode(handle, 0)
-#ifndef __APPLE__
+#if !defined(__APPLE__) && !defined(CSH_POSIX_PROFILE)
 	    & 0666
 #endif
 	    ;
 	free(handle);
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 	/* POSIX says "/dev/stdout" is a 'magic cookie' not a special file. */
 	if ((strcmp(q, "/dev/stdout") == 0 || strcmp(q, "-") == 0))
 		outfp = stdout;
@@ -320,7 +328,7 @@ decode2(void)
 	if (!oflag)
 		outfile = q;
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 	if (!oflag && outfp != NULL) {
 	} else
 #endif
@@ -331,7 +339,7 @@ decode2(void)
 		flags = O_WRONLY | O_CREAT | O_EXCL;
 		if (lstat(outfile, &st) == 0) {
 			if (iflag
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 			    && !S_ISFIFO(st.st_mode)
 #endif
 			    ) {
@@ -340,14 +348,14 @@ decode2(void)
 			}
 			switch (st.st_mode & S_IFMT) {
 			case S_IFREG:
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 				flags |= O_NOFOLLOW | O_TRUNC;
 				flags &= ~O_EXCL;
 				break;
 #endif
 			case S_IFLNK:
 				/* avoid symlink attacks */
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 				/*
 				 * Section 2.9.1.4, P1003.3.2/D8 mandates
 				 * following symlink.
@@ -366,7 +374,7 @@ decode2(void)
 			case S_IFDIR:
 				warnc(EISDIR, "%s: %s", infile, outfile);
 				return (1);
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 			case S_IFIFO:
 				flags &= ~O_EXCL;
 				break;
@@ -389,7 +397,7 @@ decode2(void)
 			warn("%s: %s", infile, outfile);
 			return (1);
 		}
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 		if (fchmod(fileno(outfp), mode) && EPERM != errno) {
 			warn("%s: %s", infile, outfile);
 			close(fd);
@@ -408,7 +416,7 @@ static int
 get_line(char *buf, size_t size)
 {
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 	assert(size <= INT_MAX);
 	if (fgets(buf, (int)size, infp) != NULL)
 #else
@@ -531,13 +539,13 @@ uu_decode(void)
 static int
 base64_decode(void)
 {
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 	ptrdiff_t count4;
 	int n, count;
 #else
 	int n, count, count4;
 #endif
-	char inbuf[MAXPATHLEN + 1], *p;
+	char inbuf[MAXPATHLEN + 1], *p, *filtered;
 	unsigned char outbuf[MAXPATHLEN * 4];
 	char leftover[MAXPATHLEN + 1];
 
@@ -552,31 +560,25 @@ base64_decode(void)
 			return (checkout(1));
 		}
 
-		count = 0;
-		count4 = -1;
-		p = inbuf;
-		while (*p != '\0') {
-			/*
-			 * Base64 encoded strings have the following
-			 * characters in them: A-Z, a-z, 0-9 and +, / and =
-			 */
-#ifdef __APPLE__
-			/* base64url may include - and _. */
-			if (isalnum(*p) || *p == '+' || *p == '/' ||
-			    *p == '=' || *p == '-' || *p == '_')
-#else
-			if (isalnum(*p) || *p == '+' || *p == '/' || *p == '=')
-#endif
-				count++;
-			if (count % 4 == 0)
-				count4 = p - inbuf;
-			p++;
+		/* POSIX MIME decoding ignores every nonalphabet character, not
+		 * only whitespace. Compact before handing bytes to libc b64_pton;
+		 * unsigned ASCII comparisons also avoid locale/ctype undefined use.
+		 */
+		filtered = inbuf;
+		for (p = inbuf; *p != '\0'; p++) {
+			unsigned char c = (unsigned char)*p;
+			if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
+			    (c >= '0' && c <= '9') || c == '+' || c == '/' || c == '=')
+				*filtered++ = *p;
 		}
+		*filtered = '\0';
+		count = (int)(filtered - inbuf);
+		count4 = count - count % 4;
 
-		strcpy(leftover, inbuf + count4 + 1);
-		inbuf[count4 + 1] = 0;
+		strcpy(leftover, inbuf + count4);
+		inbuf[count4] = 0;
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(CSH_POSIX_PROFILE)
 		n = apple_b64_pton(inbuf, outbuf, sizeof(outbuf));
 #else
 		n = b64_pton(inbuf, outbuf, sizeof(outbuf));
@@ -596,7 +598,7 @@ usage(void)
 	(void)fprintf(stderr,
 	    "usage: uudecode [-cimprs] [file ...]\n"
 	    "       uudecode [-i] -o output_file [file]\n"
-#ifndef __APPLE__
+#if !defined(__APPLE__) && !defined(CSH_POSIX_PROFILE)
 	    "       b64decode [-cimprs] [file ...]\n"
 	    "       b64decode [-i] -o output_file [file]\n"
 #endif
