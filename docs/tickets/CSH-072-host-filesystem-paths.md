@@ -1,11 +1,11 @@
 # CSH-072: Qualify host filesystem and pathname utilities
 
-- Status: ready
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: Assigned when work starts
+- Branch: test/CSH-072-host-filesystem-paths
 - Issue: [#144](https://github.com/melliott18/cshell/issues/144)
 
 ## Goal
@@ -72,17 +72,17 @@ profiles and executable/environment identities, remains unchanged.
 
 ## Acceptance criteria
 
-- [ ] Select each required exec-accessible provider, supply missing packages/services,
+- [x] Select each required exec-accessible provider, supply missing packages/services,
   and retain exact PATH, realpath, executable hash, package and environment identity.
-- [ ] Map every applicable page section and common default to clause-derived
+- [x] Map every applicable page section and common default to clause-derived
   assertions or an individually justified disposition; repair required-contract
   failures. Selected examples alone do not complete a utility contract.
-- [ ] Resolve each assigned retained condition with its required capability and
+- [x] Resolve each assigned retained condition with its required capability and
   strict evidence, or transfer that individual condition to a concrete open owner.
   Preserve vendor ownership, setup failures and failed assertions separately.
-- [ ] Verify public cshell dispatch and direct exec access, exact output/status and
+- [x] Verify public cshell dispatch and direct exec access, exact output/status and
   relevant effects, with zero gap allowances for every declared qualified subset.
-- [ ] Update the inventory, current ownership manifest and clause maps with the
+- [x] Update the inventory, current ownership manifest and clause maps with the
   exact qualification boundary; keep stock-host, qualified subset and full-system
   claims separate.
 
@@ -98,6 +98,86 @@ processes and disposable files/services and verify cleanup after failure/timeout
 
 ## Implementation notes/evidence
 
-Work has not started. CSH-068 transfers ownership only; it supplies no new vendor
-implementation, service, privileged host or physical terminal. CSH-064 remains
-done for its bounded capability work and repaired probe cleanup.
+CSH-072 supplies the [strict filesystem profile](../host-filesystem-evidence.md),
+[section-by-section clause map](../../tests/host_filesystem_contracts.json), and
+[separate native/Linux evidence](../evidence/csh-072/README.md). The declared
+qualification is the exact passing case set, not complete utility pages.
+
+- All 21 selected providers are inventoried and directly executed as well as
+  dispatched by public cshell. Docker/Linux CI now supply file and pax packages.
+- Local opt-in readlink/realpath providers repair measured stock diagnostic and
+  Issue-8 option failures, with strict path, symlink, error and output tests.
+- Files, metadata, links and ustar archives use independently authored oracles;
+  a 512-byte child limit supplies bounded write failure without filling a disk.
+- The retained find/ls/rm conditions gain 64-level UTF-8 matching, 512 C-locale
+  entries and controlled-terminal yes/no witnesses. Physical pwd is checked at
+  a measured component-length boundary.
+- Each unqualified page section and remaining portion of all four retained
+  conditions transfers to concrete open [CSH-079](CSH-079-filesystem-remaining-contracts.md)
+  ([#158](https://github.com/melliott18/cshell/issues/158)). Vendor ownership and
+  original CSH-064 evidence are preserved. Quotas, mount boundaries, inaccessible
+  ancestors, EIO and filesystem-capacity exhaustion are not declared supplied.
+  Linux virtual-device ENOSPC is a distinct bounded extension.
+
+Validation commands, totals, source/provider identities, strict stock failures
+and integration limitations are retained in the evidence directory. Review
+status records implemented scoped qualification and individual dispositions;
+it does not promote U-034/U-040, a full utility contract or full-system compliance.
+
+
+The traversal/link/metadata/archive/I/O extension adds the contracts and strict
+vendor audit described in [extended evidence](../evidence/csh-072/extended/README.md).
+The clause map distinguishes passing selected assertions, Linux-only capabilities
+and unresolved provider-audit assertions. Native find cycle detection and pax
+truncation/EPIPE/EFBIG failures remain open in CSH-079; their positive-error
+expectations are preserved, not weakened. The harness also rejects unarmed I/O
+faults and duplicate/FIFO archive output. The dedicated filesystem CI workflow
+retains strict audit failures separately from its required selected subset.
+
+
+Final extension validation: selected native **550/550**, native instrumented
+pathname providers **550/550**, and hosted Ubuntu **562/562**. Strict native
+extension audit: **152 pass/16 fail**; Linux: **176 pass/8 fail**. Linux pax's
+ustar type bits and EFBIG remain unqualified alongside the native failures.
+All focused fixture cleanup checks pass; 23 ownership/harness regressions pass.
+The explicit Bash CI shell propagates test failures through tee. Initial failed
+and misleadingly green CI results remain retained in the extension evidence.
+
+
+## Selected provider repairs
+
+The opt-in profile now selects GNU find on Darwin and an offline build of
+pinned MirCPIO 20240817 pax on both platforms. Local pax fixes mask ustar mode
+to its 12 defined bits and finish buffered data after short final writes or
+return failure. An overlapping partial-buffer move uses memmove. All previous
+cycle/archive/I/O assertions are mandatory for the selected profile; stock
+failures and the original evidence remain unchanged. See
+[repair evidence](../evidence/csh-072/repairs/README.md) for final results and
+[CSH-079 environment requirements](CSH-079-filesystem-remaining-contracts.md#required-environments-and-manual-work)
+for the broader remaining scope. Native macOS CI gets 90 minutes after the
+recorded 45-minute timeout during actively progressing sanitizer runtime tests.
+
+
+Repair validation: **570/570 native filesystem**, **586/586 hosted Ubuntu**,
+**570/570 native provider ASan/UBSan**, and **1162/1162 host integration**.
+Runtime integration retained **3949 passes/1 ps-cleanup timeout**, with the exact
+case passing alone on retry; the 33-case runtime PTY suite passes. All original
+provider failures remain separately recorded; no assertion was relaxed.
+
+
+## Darwin cleanup follow-up
+
+Repeated local runtime cleanup timeouts are addressed in the shared test harness:
+Darwin session discovery uses libproc metadata instead of spawning a system-wide
+ps process. Enumeration remains bounded, retries full buffers, and verifies
+session membership before and after querying owned-process status. Denied or
+invalid metadata still fails cleanup; the runner cannot silently accept an
+incomplete snapshot. See [cleanup evidence](../evidence/csh-072/cleanup/README.md).
+
+
+Final cleanup validation: **93 harness tests**, **3950 runtime + 33 runtime PTY
+assertions**, **570 native filesystem** and **586 hosted Ubuntu filesystem** all
+pass. Final pipe reaping now has a separate bounded wait after snapshot failure.
+CI cancels superseded workflow/ref runs instead of accumulating stale macOS jobs.
+Earlier failures remain recorded and broader missing capabilities remain owned
+by CSH-079.

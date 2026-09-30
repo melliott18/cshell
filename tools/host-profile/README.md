@@ -7,8 +7,8 @@ cshell's builtin allocation. All tools are real exec-accessible programs;
 
 | Host | Selected replacements | Provisioning |
 | --- | --- | --- |
-| macOS | Standalone FreeBSD printf with adapters; Homebrew `gtest` and `g[` | `brew install coreutils`; prefixed binaries must be on the provisioning process's PATH |
-| Debian/Ubuntu | Standalone FreeBSD printf with adapters; BusyBox kill | `apt-get install build-essential python3 ed busybox locales acl`; generate `fr_FR.UTF-8` |
+| macOS | Standalone printf and local readlink/realpath; Homebrew `gtest`, `g[` and `gfind`; pinned local pax | `brew install coreutils findutils`; prefixed binaries must be on the provisioning process's PATH |
+| Debian/Ubuntu | Standalone printf, local readlink/realpath and pinned pax; BusyBox kill | `apt-get install build-essential python3 ed busybox locales acl file pax`; generate `fr_FR.UTF-8` |
 
 Other scoped commands use `os.defpath` without additional symlinks, preserving
 cshell's PATH-associated pwd builtin selection. In particular, echo remains the system
@@ -242,3 +242,38 @@ control. It checks the deadline, strict timeout record, measured IDs, disappeara
 of every owned PID (including zombies), and survival of an unrelated child.
 Only private files and processes are used. See
 [CSH-064 completion](../../docs/evidence/csh-064-completion/README.md) for validation.
+
+## CSH-072 filesystem providers
+
+`make host-profile` builds `paths.c` as standalone readlink and realpath programs
+in the opt-in PATH. They repair stock diagnostic/Issue-8 option gaps and check
+output errors. The provider manifest includes all 21 filesystem utilities; Linux
+setup requires `file` and `pax`, supplied by Docker and CI.
+
+`make test-host-profile` requires the strict filesystem audit with these providers.
+`make test-host-filesystem-audit` retains stock-provider failures separately.
+See [filesystem scope and limits](../../docs/host-filesystem-evidence.md), including
+the 40-link missing-final fallback bound and remaining CSH-079 contracts. Neither
+provider is installed over a system executable or linked into cshell.
+
+
+## CSH-072 selected find and pax repairs
+
+On Darwin the profile now requires GNU `gfind`, supplied by Homebrew findutils
+(or an explicitly supplied prefixed executable on the provisioning PATH).
+Linux continues to use its distribution find. This repairs Apple's silent
+logical-cycle success without wrapping or changing system find.
+
+Both platforms select a standalone pax built offline from checked-in
+[MirCPIO 20240817 source and documented local changes](vendor/pax/CSHELL-CHANGES.md).
+The fixes constrain ustar mode fields to their specified bits and drain final
+partial writes or return failure. The selected profile now requires every
+cycle/archive/I/O provider assertion via `--provider-audit`; none are diagnostic
+allowances. Stock audit failures remain retained separately. CI still installs
+stock pax so the diagnostic comparison remains reproducible.
+
+`make host-profile` does not install host packages; missing gfind fails setup
+with the same explicit provisioning error as missing gtest. The new provider
+is never linked into cshell or installed over system pax. Record provider hashes
+and repeat filesystem, host integration and selected-PATH runtime checks after
+changing the profile.

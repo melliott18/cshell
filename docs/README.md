@@ -68,3 +68,6 @@ The [CSH-012 requirement, defect, platform and documentation review](conformance
 
 - [Shell locale and pathname qualification](locale-pathname-qualification.md):
   CSH-067 clauses, exact witnesses, supplied definitions and external prerequisites.
+
+- [Filesystem and pathname qualification](host-filesystem-evidence.md): CSH-072
+  strict native/Linux subsets, provider repairs and individual remaining contracts.

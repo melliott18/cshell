@@ -1,0 +1,10 @@
+{
+  "name": "GNU findutils",
+  "version": "4.10.0",
+  "source": "https://ftp.gnu.org/gnu/findutils/findutils-4.10.0.tar.xz",
+  "source_sha256": "1387e0b67ff247d2abde998f90dfbf70c1491391a59ddfecb8ae698789f0a4f5",
+  "configure": "./configure --disable-nls --disable-dependency-tracking",
+  "build": "make -j4",
+  "provision": "gfind symlink in build/native-findutils/bin prepended to provisioning PATH; no host package installation",
+  "binary_sha256": "cc04c2a28dce26e175e85a84d51ec897d0b4d77cb2de0a897602781282338776"
+}

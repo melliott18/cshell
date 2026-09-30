@@ -59,6 +59,8 @@ make test-fields   # IFS splitting, pathname expansion, and cleanup checks
 make test-options  # Invocation/set, option effects, and environment interactions
 make test-host-inventory # Complete utility and residual ownership consistency
 make test-host-utilities # Stock-host integration, identities and known gaps
+make test-host-filesystem # Bounded filesystem/pathname provider witnesses
+make test-host-filesystem-audit # Strict stock Issue-8 pathname audit
 make test-host-profile   # Opt-in qualified utilities, strict gaps and boundaries
 make test-evaluation # Evaluation, lookup, aliases, and remaining utilities
 make test-builtins # Replacement state builtins and executor integration

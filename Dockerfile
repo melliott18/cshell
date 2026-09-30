@@ -5,7 +5,7 @@ FROM ${BASE_IMAGE}
 # diagnostics so CSH-042 exercises LC_MESSAGES as well as locale names.
 RUN echo 'path-include=/usr/share/locale/fr/*' > /etc/dpkg/dpkg.cfg.d/zz-cshell-locale \
     && apt-get update \
-    && apt-get install -y --no-install-recommends build-essential python3 procps locales ed busybox acl \
+    && apt-get install -y --no-install-recommends build-essential python3 procps locales ed busybox acl file pax \
     && localedef -i en_US -f UTF-8 en_US.UTF-8 \
     && localedef -i fr_FR -f UTF-8 fr_FR.UTF-8 \
     && localedef -i de_DE -f UTF-8 de_DE.UTF-8 \
