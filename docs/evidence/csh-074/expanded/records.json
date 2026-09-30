@@ -58,5 +58,40 @@
     "file": "inventory.log.gz",
     "uncompressed_bytes": 289,
     "sha256": "f60dc9e71509b09ddf7160911980ffc8526d3fa466b070e7a51db9ad05db4c07"
+  },
+  {
+    "file": "linux-ci-attempt1.log.gz",
+    "uncompressed_bytes": 88633,
+    "sha256": "cf069da2993913b4d319399145f58e578b78e336cd4edd9b0c27357634f87a1e"
+  },
+  {
+    "file": "linux-ci-native-681.json.gz",
+    "uncompressed_bytes": 1139726,
+    "sha256": "34a7c047141206560e9f539343493302b6c944282be5642a6d646494118cb019"
+  },
+  {
+    "file": "native-full-profile-681.log.gz",
+    "uncompressed_bytes": 120615,
+    "sha256": "6c5ceebfeb9aec531144db776bc1516b7ae6d79e0fbcd338b417fa1c079a6114"
+  },
+  {
+    "file": "native-runtime-pty-681.log.gz",
+    "uncompressed_bytes": 228027,
+    "sha256": "58acf90ef2f2f7e28e49342afff0a1f254007435487c2e17b096cf4081d399a5"
+  },
+  {
+    "file": "m4-candidate-regressions.json.gz",
+    "uncompressed_bytes": 45741,
+    "sha256": "626a546613a26c3f87ab12fa22ec0f5e61e0497f01cfa735bbb6b3bdaabb8266"
+  },
+  {
+    "file": "m4-candidate-existing.json.gz",
+    "uncompressed_bytes": 145264,
+    "sha256": "ce84c54328b4a215088b384c32b3851387087f398d1154b2b082b6c1f2373a75"
+  },
+  {
+    "file": "m4-provider-regressions.json.gz",
+    "uncompressed_bytes": 75144,
+    "sha256": "97dd50692cb3f73276297a56d914074c15a137c68db528a0407e17c0664b2437"
   }
 ]

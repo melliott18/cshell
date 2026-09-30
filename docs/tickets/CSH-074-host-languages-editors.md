@@ -82,16 +82,17 @@ processes and disposable files/services and verify cleanup after failure/timeout
 
 ## Implementation notes/evidence
 
-The [operation qualification](../host-languages-evidence.md) supplies 168 fixtures
-in four execution modes plus nine synchronized editor signal checks (681 checks,
+The [operation qualification](../host-languages-evidence.md) supplies 174 fixtures
+in four execution modes plus nine synchronized editor signal checks (705 checks,
 including separate test-only backing-store failures and supplemental XSI cases).
 The [normative heading map](../../tests/host_language_contracts.json) accounts for
 every selected fixture and retains the remaining page obligations.
 
-The private profile now builds GNU ed and FreeBSD-derived xargs from pinned,
+The private profile now builds GNU ed, GNU M4 and FreeBSD-derived xargs from pinned,
 licensed sources. ed emits the exact SIGINT stdout marker; xargs preserves empty
 NUL arguments, handles empty-input invocation, enforces/clamps byte limits and
-reports exec failures portably. System executables remain untouched. The
+reports exec failures portably. M4 preserves wrap registration order and
+nonzero numeric/temporary-file error status. System executables remain untouched. The
 instrumented editor separately verifies backing-store creation/write failures
 and input preservation. SIGINT and both SIGHUP recovery paths are required by
 the default suite.
@@ -103,11 +104,10 @@ The [original evidence](../evidence/csh-074/README.md), including prior Linux
 signal races and native cleanup failures, remains unchanged. Local Docker
 validation is still unavailable because the daemon returns HTTP 500.
 
-Full-page acceptance remains open. Three strict native m4 reproducers currently
-fail (wrap order, missing mkstemp, nonnumeric substr status); the
-`--remaining-contracts` command retains these normative expectations and fails
-without allowances. Other missing contracts are individually retained in the
-map and evidence scope, including interactive prompts, broad locale/default
-handling and additional resource/signal paths. The provider/dispatch checkboxes
+Full-page acceptance remains open for contracts beyond the declared subset,
+including interactive prompts, broad locale/default handling and additional
+resource/signal paths. The three native m4 failures are now repaired by the
+selected private provider and required in the default suite, alongside new
+wrap-order and temporary-file regressions. The provider/dispatch checkboxes
 apply to the declared subset, not complete utility conformance. Keep this ticket
 open; CSH-068 remains an ownership transfer and CSH-064 history is unchanged.

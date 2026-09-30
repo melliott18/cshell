@@ -124,3 +124,6 @@ def cases():
 
     from host_language_extended_cases import cases as extended_cases
     yield from extended_cases()
+
+    from host_language_provider_cases import cases as provider_cases
+    yield from provider_cases()

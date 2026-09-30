@@ -15,12 +15,16 @@ CSH_TEST_PATH="$PWD/build/host-profile/bin:$(getconf PATH)" make test-host-langu
 
 The Dockerfile and Linux CI explicitly install Debian/Ubuntu `bc` and `m4`.
 The private profile builds GNU ed 1.22.6 with the exact POSIX SIGINT marker
-and a FreeBSD-derived xargs with Issue 8 empty-input, NUL and size handling.
+a FreeBSD-derived xargs with Issue 8 empty-input, NUL and size handling,
+and GNU M4 1.4.20 with wrap-order and error-status corrections.
 Their checked-in source, upstream hashes, local changes and licenses are under
 `tools/host-profile/vendor`; neither executable is linked into cshell.
-macOS otherwise uses OS providers and selects the actual Xcode/Command Line Tools m4 found
-by `xcrun --find m4`. This avoids treating `/usr/bin/m4`, a developer-tool
-launcher, as the implementation identity. No host packages are installed by the
+The M4 provider builds offline from its pinned complete source archive and
+reviewable patch. GNU M4/gnulib retain their upstream warning policy: the build
+removes only `-Werror` from the requested CFLAGS, preserving sanitizer, language
+and optimization flags. Requested/effective flags, patch/archive hashes and
+the executable hash are retained in `build/host-m4-build.json` and the run record.
+The earlier native Xcode m4 observations remain historical evidence. No host packages are installed by the
 harness. The profile creates only private symlinks under `build/host-profile`.
 Every run records PATH, selected pathname, realpath, SHA-256, OS build or Debian
 package versions/owners, cshell hash, test/build input hashes, filesystem,
@@ -34,13 +38,13 @@ newly supplied bc/m4 do not rewrite its missing-provider entries.
 ## Assertions and clause accounting
 
 The [original cases](../tests/host_language_cases.py) and
-[operation cases](../tests/host_language_extended_cases.py) contain 168 fixtures:
-165 selected-provider cases and three explicitly instrumented backing-store
+[operation cases](../tests/host_language_extended_cases.py) contain 174 fixtures:
+171 selected-provider cases and three explicitly instrumented backing-store
 cases. Each runs through direct execution and cshell `-c`, script file and stdin;
 the instrumented cases use their separate executable in every mode. Utility
 input is independent of shell source input. Nine additional signal witnesses
 exercise SIGHUP, HOME fallback and SIGINT through direct/string/file execution.
-The selected suite therefore has 681 strict assertions with no gap allowances.
+The selected suite therefore has 705 strict assertions with no gap allowances.
 Eight assertions for legacy XSI `-I`/`-L` are supplemental regressions; they do not
 qualify the optional Issue 8 XSI profile.
 
@@ -112,17 +116,27 @@ Its error pipe transfers exec failure across `fork` so 126 and 127 are retained
 on both systems. Upstream `vfork` shared-memory assumptions failed on Darwin.
 Independent argument-vector and byte-budget oracles exercise these paths.
 
-Full-page acceptance remains open. In particular, the selected native m4 fails
-three additional strict [reproducers](../tests/host_language_residual_cases.py):
-wrap registration order, missing `mkstemp`, and nonnumeric `substr` error status.
-These are separate failing qualification attempts, never expected failures or
-passes in the declared subset:
+The private M4 provider repairs the three native failures: wrap text is copied
+onto a fresh obstack in registration order while preserving allocation lifetimes;
+failed temporary-file creation and nonnumeric arguments retain a nonzero final
+status. All six [provider regressions](../tests/host_language_provider_cases.py)
+are required by default. They include 64 ordered wrap registrations, expansion
+using earlier wrap definitions, continued processing after errors and two unique
+empty temporary files with mode 0600. File names are checked independently in
+the fixture directory rather than derived from M4 output.
+
+The selected provider regressions can also be run alone:
 
 ```sh
 python3 tests/host_languages.py ./cshell \
   --path "$PWD/build/host-profile/bin:$(getconf PATH)" \
-  --remaining-contracts --record build/tests/host-languages-remaining.json
+  --provider-regressions --record build/tests/host-languages-provider.json
 ```
+
+The legacy `--remaining-contracts` spelling is an alias for this selection;
+it no longer denotes excluded tests. The original failed m4 results remain in
+the evidence, and the default suite now requires their repaired expectations.
+Full-page acceptance remains open for the other obligations in the heading map.
 
 `--case 'xargs/*'` (repeatable) selects focused development checks and records the
 selection. Only an unfiltered run supports the complete declared subset.

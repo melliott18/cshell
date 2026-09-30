@@ -1,8 +1,8 @@
 # CSH-074 expanded operation contracts
 
 These continuation records preserve the original evidence directory unchanged.
-The selected suite grew from 82 to 168 fixtures, plus required SIGINT and SIGHUP
-checks. There are 681 assertions, including 12 explicitly instrumented ed checks
+The selected suite grew from 82 to 174 fixtures, plus required SIGINT and SIGHUP
+checks. There are 705 assertions, including 12 explicitly instrumented ed checks
 and eight supplemental XSI regressions; no known-gap allowance is used.
 
 - `native-attempt1`: 642 pass / 11 fail. Stock xargs drops an empty NUL argument
@@ -23,9 +23,19 @@ separately. Every JSON record contains selected paths/hashes, invocation,
 source/build identity, limits, effects and cleanup results. `records.json` hashes
 the uncompressed bytes; compressed files have deterministic gzip timestamps.
 
-`--remaining-contracts` is a separate strict failing suite for native m4 wrap
-order, mkstemp and nonnumeric substr status (12 failures). It is not counted
-as qualified coverage. Full CSH-074 page acceptance remains open.
+The initial `--remaining-contracts` run records 12 native m4 failures for wrap
+order, missing mkstemp and nonnumeric substr status. The private GNU M4 provider
+subsequently passes all 12 repaired checks, all 80 existing m4 checks, and a
+24-check regression selection including wrap stress and unique mode-0600 files.
+Those six cases now belong to the default 705-check suite.
+
+Linux CI at `dda3a0d` passes all 681 ordinary assertions, then fails compilation
+with GCC `-Werror` on xargs fallthrough/ignored-write diagnostics. The correction
+makes both control flows explicit. Its raw job log and native record are retained.
+Native full profile at that revision passes 1162 existing plus 681 new checks.
+Native runtime passes 3950 checks; the subsequent existing PTY failure-injection
+case fails and its log is retained. These earlier runs are separate from the
+final expanded-provider validation.
 
 Reproduce selected checks with `make test-host-languages`, the broader profile
 with `make test-host-profile`, and open m4 contracts using the command in

@@ -8,7 +8,6 @@ from pathlib import Path
 import platform
 import shutil
 import sys
-import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'tests'))
@@ -20,13 +19,10 @@ def provision(destination, gnu_bin=None):
     selected = {name: shutil.which(name, path=os.defpath) for name in dict.fromkeys(HOSTS + UTILITIES)}
     overrides = {'printf': str(ROOT / 'build/host-printf'),
                  'ed': str(ROOT / 'build/host-ed'),
-                 'xargs': str(ROOT / 'build/host-xargs')}
+                 'xargs': str(ROOT / 'build/host-xargs'),
+                 'm4': str(ROOT / 'build/host-m4')}
     system = platform.system()
     if system == 'Darwin':
-        # /usr/bin/m4 is a developer-tool launcher, not the language executable.
-        # Select and hash the resolved Xcode/Command Line Tools provider itself.
-        overrides['m4'] = subprocess.check_output(
-            ['/usr/bin/xcrun', '--find', 'm4'], text=True, timeout=10).strip()
         # Homebrew's prefixed names do not change the system PATH or echo policy.
         search = str(gnu_bin) if gnu_bin else os.environ.get('PATH', os.defpath)
         overrides.update({name: shutil.which('g' + name, path=search)

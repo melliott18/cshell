@@ -142,7 +142,7 @@
       "qualification": {
         "clause_map": "tests/host_language_contracts.json",
         "evidence": "docs/evidence/csh-074/README.md",
-        "scope": "Bounded language/editing/regex/patch/argv contracts, private ed and xargs repairs, SIGINT/SIGHUP recovery and controlled backing-store failures; full pages and strict m4 residuals remain open."
+        "scope": "Bounded language/editing/regex/patch/argv contracts, private ed/xargs/M4 repairs, SIGINT/SIGHUP recovery and controlled backing-store failures; complete normative pages remain open."
       }
     },
     {

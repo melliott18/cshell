@@ -481,7 +481,7 @@ build/host-printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/printf.c $(LDLIBS)
 
-host-profile: build/host-printf build/host-ed build/host-xargs
+host-profile: build/host-printf build/host-ed build/host-xargs build/host-m4
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
@@ -640,3 +640,7 @@ HOST_XARGS_HEADERS = $(wildcard tools/host-profile/vendor/xargs/*.h)
 build/host-xargs: $(HOST_XARGS_SOURCES) $(HOST_XARGS_HEADERS)
 	mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE -D_DEFAULT_SOURCE $(LDFLAGS) -o $@ $(HOST_XARGS_SOURCES) $(LDLIBS)
+
+# M4 includes gnulib portability sources and retains its upstream build system.
+build/host-m4: tools/host-profile/build_m4.py $(wildcard tools/host-profile/vendor/m4/*)
+	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" $(PYTHON) tools/host-profile/build_m4.py

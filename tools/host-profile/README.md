@@ -245,12 +245,13 @@ Only private files and processes are used. See
 
 ## CSH-074 language/editor providers
 
-The profile builds private ed and xargs executables offline, alongside printf.
+The profile builds private ed, xargs and m4 executables offline, alongside printf.
 `vendor/ed` is GNU ed 1.22.6, GPL-2.0-or-later; its COPYING and complete compiled
 sources are retained. `vendor/xargs` derives from FreeBSD commit
 `16a79708d089423ec0c3d32f25e7ca97ae58e97b`; each source retains its license.
-Each directory's `provenance.json` records upstream file hashes and all local
-changes. These are independent host processes, never linked into cshell.
+`vendor/m4` retains the complete GNU M4 1.4.20 source archive and GPL-3.0-or-later
+COPYING, plus a reviewable patch for FIFO wrap processing and error status.
+Each directory's `provenance.json` records upstream hashes and local changes. These are independent host processes, never linked into cshell.
 
 The ed adapter emits the exact POSIX SIGINT stdout marker. The xargs adapter
 preserves empty NUL arguments, implements empty-input invocation/`-r`, handles
@@ -258,13 +259,17 @@ strict byte limits and oversized `-s`, and uses a portable fork/error-pipe path.
 A separate test-only ed build injects backing-store creation and write failures.
 The production provider contains no fault-injection environment switches.
 
-Linux explicitly supplies `bc` and `m4`; macOS selects the actual developer-tool
-m4 returned by `xcrun --find m4`, rather than hashing the `/usr/bin/m4` launcher.
+Linux explicitly supplies `bc`; stock m4 remains installed for historical
+comparisons, while both platforms select the new private m4 executable.
+M4/gnulib use the upstream build and warning policy: only `-Werror` is removed
+from CFLAGS, retaining sanitizer instrumentation and all other flags. The
+requested and effective flags are retained in `build/host-m4-build.json`.
 The manifest records each real executable, including these overrides. No system
 programs are overwritten.
 
 `make test-host-languages` and `make test-host-profile` run the
-[681 assertions](../../docs/host-languages-evidence.md), including SIGINT by
+[705 assertions](../../docs/host-languages-evidence.md), including SIGINT by
 default. These qualify the declared operation subset only. Full pages remain
-open, including three strictly failing native m4 reproducers available through
-`--remaining-contracts`; no gap allowances convert them into passes.
+open. The six M4 provider regressions (including the three formerly failing
+contracts) are now required by default and can be selected alone with
+`--provider-regressions`. Historical failures remain preserved.

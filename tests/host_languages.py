@@ -71,15 +71,28 @@ def run_case(binary, path, case, mode, root, search_path, sanitizer=False):
                           for name in case.get('files',{})}
             nonempty={name:(directory/name).is_file() and (directory/name).stat().st_size>0
                       for name in case.get('nonempty_files',[])}
+            file_rules=[]
+            for rule in case.get('file_rules', []):
+                entries=[]
+                for entry in sorted(directory.glob(rule['pattern'])):
+                    regular=entry.is_file() and not entry.is_symlink()
+                    entries.append(dict(path=str(entry.relative_to(directory)), regular=regular,
+                        data=entry.read_bytes() if regular else None,
+                        mode=entry.stat().st_mode & 0o777 if regular else None))
+                valid=(len(entries)==rule['count'] and all(e['regular'] and
+                       all(e[key]==rule[key] for key in ('data','mode') if key in rule)
+                       for e in entries))
+                file_rules.append(dict(valid=valid,entries=entries))
             if sanitizer_diagnostic(output):
                 errors.append('sanitizer diagnostic')
             ok=(not errors and matches(case['status'],status)
                 and matches(case.get('stdout_rule',case['stdout']),bytes(output['stdout']))
                 and matches(case['stderr'],bytes(output['stderr']))
-                and actual_files==case.get('files',{}) and all(nonempty.values()))
+                and actual_files==case.get('files',{}) and all(nonempty.values())
+                and all(rule['valid'] for rule in file_rules))
             record.update(verdict='PASS' if ok else 'FAIL', actual=serial(dict(
                 status=status,stdout=bytes(output['stdout']),stderr=bytes(output['stderr']),
-                files=actual_files,nonempty_files=nonempty,errors=errors)))
+                files=actual_files,nonempty_files=nonempty,file_rules=file_rules,errors=errors)))
         except (OSError,ValueError,subprocess.SubprocessError) as error:
             record.update(verdict='FAIL',error=str(error))
     record['fixture_removed']=not directory.exists()
@@ -129,8 +142,8 @@ def main():
     parser.add_argument('binary',type=Path)
     parser.add_argument('--path',default=os.defpath)
     parser.add_argument('--sanitizer',action='store_true')
-    parser.add_argument('--remaining-contracts',action='store_true',
-                        help='Run strict open-contract reproducers instead of the qualified subset')
+    parser.add_argument('--provider-regressions','--remaining-contracts',action='store_true',
+                        help='Select repaired-provider regression cases only')
     parser.add_argument('--ed-faults',type=Path,help='Separately instrumented ed provider')
     parser.add_argument('--case',action='append',help='Select IDs by shell-style pattern; repeatable')
     parser.add_argument('--record',type=Path,required=True)
@@ -141,8 +154,8 @@ def main():
     tools=inventory(args.path,UTILITIES)
     records=[]
     selected = lambda name: not args.case or any(fnmatch.fnmatchcase(name, p) for p in args.case)
-    if args.remaining_contracts:
-        from host_language_residual_cases import cases as selected_cases
+    if args.provider_regressions:
+        from host_language_provider_cases import cases as selected_cases
     else:
         selected_cases = cases
     for case in selected_cases():
@@ -159,7 +172,7 @@ def main():
             print(record['verdict']+': '+record['id']+' ('+mode+')',flush=True)
             if record['verdict']=='FAIL':
                 print(json.dumps(record.get('actual',record)),flush=True)
-    if not args.remaining_contracts:
+    if not args.provider_regressions:
         for action in ('hup','hup-home','int'):
             if not selected('ed/signal-'+action):
                 continue
@@ -181,11 +194,16 @@ def main():
                 environment={'LANG':'C','LC_ALL':'C','HOME':'private .home','TMPDIR':'private .tmp'},
                 filesystem=filesystem_identity(Path(tempfile.gettempdir())),inventory=tools,
                 source_identity=source_identity(),binary_sha256=sha(binary),
-                contracts_sha256=sha(manifest),scope=('strict open-contract reproducers' if args.remaining_contracts else
+                contracts_sha256=sha(manifest),scope=('repaired-provider regression selection' if args.provider_regressions else
                     'bounded operation contracts; full pages unqualified'),
                 limits={'case_seconds':5,'signal_seconds':7,'cleanup_seconds':1,'output_bytes':65536,
                         'child_resources':'smoke.child_limits; 1 MiB files, 64 descriptors, no core dumps'},
                 selection=args.case,ed_faults=({"path":str(args.ed_faults.resolve()),"sha256":sha(args.ed_faults)} if args.ed_faults else None),extended_sigint=True,sanitizer=args.sanitizer,totals=counts,cases=records)
+    build_record=Path(__file__).resolve().parents[1]/'build/host-m4-build.json'
+    if build_record.is_file() and tools['m4']['path']:
+        identity=json.loads(build_record.read_text())
+        if identity['binary_sha256']==sha(Path(tools['m4']['path'])):
+            result['m4_build']=identity
     command=(['dpkg-query','-W','-f=${Package} ${Version}\n'] if platform.system()=='Linux'
              else ['sw_vers'])
     identity=subprocess.run(command,capture_output=True,text=True,timeout=10)

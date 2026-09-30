@@ -1,7 +1,7 @@
-"""Strict reproducers for obligations outside the selected qualified subset.
+"""Strict regressions for repaired M4 provider contracts.
 
-These retain normative oracles and failures, never expected-failure allowances.
-Run explicitly with host_languages.py --remaining-contracts.
+These retain normative oracles and historical stock-provider failures.
+They are required in the default suite; --provider-regressions selects only them.
 """
 from host_language_cases import BASE
 
@@ -20,3 +20,11 @@ def cases():
              b'after\n', 'nonzero', 'nonempty')
     yield m4('substr-nonnumeric', b"substr(`abc',`invalid')\n",
              b'\n', 'nonzero', 'nonempty')
+
+    yield m4('wrap-rescan-order', b"m4wrap(`define(`later',`expanded')')m4wrap(`later')dnl\n", b'expanded')
+    yield m4('wrap-many', b''.join(b"m4wrap(`" + str(i).encode() + b";')" for i in range(64)) + b'dnl\n',
+             b''.join(str(i).encode()+b';' for i in range(64)))
+    row = m4('mkstemp-unique', b"define(`first',mkstemp(`temporaryXXXXXX'))define(`second',mkstemp(`temporaryXXXXXX'))dnl\n")
+    row['clauses'].append('OUTPUT FILES')
+    row['file_rules'] = [dict(pattern='temporary??????', count=2, data=b'', mode=0o600)]
+    yield row

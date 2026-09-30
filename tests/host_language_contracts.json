@@ -1867,8 +1867,10 @@
         {
           "section": "OUTPUT FILES",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_12",
-          "disposition": "unqualified",
-          "witnesses": [],
+          "disposition": "partial",
+          "witnesses": [
+            "m4/mkstemp-unique"
+          ],
           "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
           "owner": "CSH-074"
         },
@@ -1889,7 +1891,13 @@
             "m4/divnum-discard",
             "m4/wrap",
             "m4/syscmd-status",
-            "m4/trace-dump"
+            "m4/trace-dump",
+            "m4/wrap-order",
+            "m4/mkstemp-failure",
+            "m4/substr-nonnumeric",
+            "m4/wrap-rescan-order",
+            "m4/wrap-many",
+            "m4/mkstemp-unique"
           ],
           "reason": "Selected language/algorithm operations only; remaining grammar, commands, expressions and interactions remain unqualified.",
           "owner": "CSH-074"
@@ -1907,7 +1915,13 @@
             "m4/diversion",
             "m4/include",
             "m4/exit",
-            "m4/missing-file"
+            "m4/missing-file",
+            "m4/wrap-order",
+            "m4/mkstemp-failure",
+            "m4/substr-nonnumeric",
+            "m4/wrap-rescan-order",
+            "m4/wrap-many",
+            "m4/mkstemp-unique"
           ],
           "reason": "Listed success/error values only; all remaining error and asynchronous outcomes remain unqualified.",
           "owner": "CSH-074"
@@ -1943,13 +1957,15 @@
         "m4/errprint",
         "m4/trace-dump",
         "m4/stdin-operand",
-        "m4/file-order"
-      ],
-      "open_contracts": [
+        "m4/file-order",
         "m4/wrap-order",
         "m4/mkstemp-failure",
-        "m4/substr-nonnumeric"
-      ]
+        "m4/substr-nonnumeric",
+        "m4/wrap-rescan-order",
+        "m4/wrap-many",
+        "m4/mkstemp-unique"
+      ],
+      "open_contracts": []
     },
     {
       "utility": "patch",
@@ -2479,29 +2495,6 @@
       "owner": "CSH-074"
     }
   ],
-  "optional_reproducers": [
-    {
-      "id": "m4/wrap-order",
-      "flag": "--remaining-contracts",
-      "disposition": "unqualified",
-      "reason": "Selected native m4 expands wrap arguments in reverse registration order; POSIX requires registration order.",
-      "owner": "CSH-074"
-    },
-    {
-      "id": "m4/mkstemp-failure",
-      "flag": "--remaining-contracts",
-      "disposition": "unqualified",
-      "reason": "Selected native m4 does not implement the required mkstemp macro.",
-      "owner": "CSH-074"
-    },
-    {
-      "id": "m4/substr-nonnumeric",
-      "flag": "--remaining-contracts",
-      "disposition": "unqualified",
-      "reason": "Selected native m4 diagnoses nonnumeric substr but returns zero; POSIX requires nonzero error status.",
-      "owner": "CSH-074"
-    }
-  ],
   "supplemental_cases": [
     {
       "id": "xargs/logical-lines",
@@ -2510,6 +2503,50 @@
     {
       "id": "xargs/replace",
       "reason": "-I is XSI shading, retained as a supplemental regression, not required base-profile qualification."
+    }
+  ],
+  "provider_regressions": [
+    {
+      "id": "m4/wrap-order",
+      "flag": "--provider-regressions",
+      "disposition": "selected-contract",
+      "reason": "Required in default suite. Private GNU M4 repairs wrap ordering and error status; mkstemp file effects are independently asserted.",
+      "owner": "CSH-074"
+    },
+    {
+      "id": "m4/mkstemp-failure",
+      "flag": "--provider-regressions",
+      "disposition": "selected-contract",
+      "reason": "Required in default suite. Private GNU M4 repairs wrap ordering and error status; mkstemp file effects are independently asserted.",
+      "owner": "CSH-074"
+    },
+    {
+      "id": "m4/substr-nonnumeric",
+      "flag": "--provider-regressions",
+      "disposition": "selected-contract",
+      "reason": "Required in default suite. Private GNU M4 repairs wrap ordering and error status; mkstemp file effects are independently asserted.",
+      "owner": "CSH-074"
+    },
+    {
+      "id": "m4/wrap-rescan-order",
+      "flag": "--provider-regressions",
+      "disposition": "selected-contract",
+      "reason": "Required in default suite. Private GNU M4 repairs wrap ordering and error status; mkstemp file effects are independently asserted.",
+      "owner": "CSH-074"
+    },
+    {
+      "id": "m4/wrap-many",
+      "flag": "--provider-regressions",
+      "disposition": "selected-contract",
+      "reason": "Required in default suite. Private GNU M4 repairs wrap ordering and error status; mkstemp file effects are independently asserted.",
+      "owner": "CSH-074"
+    },
+    {
+      "id": "m4/mkstemp-unique",
+      "flag": "--provider-regressions",
+      "disposition": "selected-contract",
+      "reason": "Required in default suite. Private GNU M4 repairs wrap ordering and error status; mkstemp file effects are independently asserted.",
+      "owner": "CSH-074"
     }
   ]
 }

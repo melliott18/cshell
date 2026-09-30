@@ -41,11 +41,11 @@ class LanguageEvidenceTests(unittest.TestCase):
                         section=next(s for s in page['sections'] if s['section']==clause)
                         self.assertIn(row['id'],section['witnesses'])
                     self.assertNotIn('gap',row)
-        from host_language_residual_cases import cases as remaining_cases
+        from host_language_provider_cases import cases as remaining_cases
         remaining=list(remaining_cases())
-        self.assertFalse(ids & {r['id'] for r in remaining})
+        self.assertTrue({r['id'] for r in remaining} <= ids)
         self.assertEqual({r['id'] for r in remaining},
-                         {r['id'] for r in manifest['optional_reproducers']})
+                         {r['id'] for r in manifest['provider_regressions']})
 
     def test_status_ranges_exclude_signal_death(self):
         for expectation in ('normal','nonzero','error','xargs-error'):
@@ -61,9 +61,13 @@ class LanguageEvidenceTests(unittest.TestCase):
             provider.write_text('#!'+sys.executable+'\nfrom pathlib import Path\nprint("actual")\nPath("result").write_bytes(b"actual")\n')
             provider.chmod(0o700)
             control=dict(id='control',utility='provider',args=[],stdin=b'',
-                         stdout=b'actual\n',stderr=b'',status=0,files={'result':b'actual'})
+                         stdout=b'actual\n',stderr=b'',status=0,files={'result':b'actual'},
+                         file_rules=[dict(pattern='result',count=1,data=b'actual')])
             for change in ({},{'stdout':b'wrong\n'},{'status':1},{'files':{'result':b'wrong'}},
-                           {'nonempty_files':['missing']},{'stderr':b'wrong'}):
+                           {'nonempty_files':['missing']},{'stderr':b'wrong'},
+                           {'file_rules':[dict(pattern='result',count=2)]},
+                           {'file_rules':[dict(pattern='result',count=1,data=b'wrong')]},
+                           {'file_rules':[dict(pattern='missing*',count=1)]}):
                 result=run_case(provider,str(provider),dict(control,**change),'direct',root,os.defpath)
                 self.assertEqual(result['verdict'],'FAIL' if change else 'PASS')
                 self.assertTrue(result['fixture_removed'])

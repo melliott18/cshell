@@ -639,6 +639,7 @@ exec:
 	case -1:
 		warn("fork");
 		xexit(*argv, 1);
+		return;
 	case 0:
 		close(error_pipe[0]);
 		if (oflag) {
@@ -654,7 +655,11 @@ exec:
 		}
 		execvp(argv[0], argv);
 		child_error = errno;
-		(void)write(error_pipe[1], &child_error, sizeof(child_error));
+		do {
+			received = write(error_pipe[1], &child_error, sizeof(child_error));
+		} while (received < 0 && errno == EINTR);
+		if (received != (ssize_t)sizeof(child_error))
+			_exit(1);
 		_exit(1);
 	}
 	close(error_pipe[1]);
