@@ -88,7 +88,7 @@ capabilities, limits and failures. If the needed capability is absent, report it
 as unqualified; do not call an unavailable or failed profile passing. Use owned
 processes and disposable files/services and verify cleanup after failure/timeout.
 
-## Implementation notes/evidence
+## Initial implementation snapshot
 
 Implemented the bounded [predicate, permission and identity suite](../host-permissions-identities.md)
 and [retained evidence](../evidence/csh-071/README.md) on the branch above in a
@@ -132,3 +132,20 @@ remains queued, so that boundary is still unqualified. Earlier local Docker and
 process-cleanup failures and vendor profiles remain unchanged in the original
 evidence directory. The full ticket remains open for its individually recorded
 page, alternate namespace/filesystem, fakeowner and session/vendor obligations.
+
+## Reproduced failure resolutions
+
+[Resolution evidence](../evidence/csh-071-resolutions/README.md) records the
+selected chmod replacement (124 checks on native and Linux; native ASan/UBSan),
+newgrp numeric/unknown-name dispatch repairs (24 Linux session checks, also with
+adapter ASan/UBSan), and all 2,281 strict host assertions passing in the original
+remapped namespace with parent-supplied stat-only device nodes. The namespace's
+own mknod denial remains measured and is not relabeled as success.
+
+The hosted Darwin controlled run failed its Python account-membership oracle;
+the child now reads libc process groups separately. Its corrected hosted rerun
+is queued, so privileged Darwin is not yet qualified. Native runtime passes
+3,950 checks; Linux runtime/PTY passes 4,015 summarized assertions. A fresh native
+permission profile has 979 passes and one timeout/reaping failure, retained as
+failed. Fakeowner implementation repairs, authentication/login-service fixtures,
+and the remaining individually listed full-page obligations stay open here.

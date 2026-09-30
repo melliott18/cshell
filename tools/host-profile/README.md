@@ -68,7 +68,7 @@ fixture symlink, and records the supplied path/device/inode. Neither node is
 opened; the parent environment owns their final removal. This qualifies stat
 predicates in the supplied namespace, not permission to call `mknod` there.
 
-## Standalone printf provenance
+## Newgrp dispatch adapter
 
 The selected `newgrp.c` first checks literal group names, then resolves an
 existing numeric GID to its canonical name before execing the absolute system
@@ -81,6 +81,8 @@ credential changes. Known-group authorization/password handling and unsupported
 argument forms still belong to the inventoried vendor; their broader contracts
 remain open. `--session-controls` tests existing root/daemon and the `SUDO_USER`
 account on CI (or the Docker image's `cshell` account), without changing accounts.
+
+## Standalone printf provenance
 
 `vendor/printf.c` is derived from FreeBSD source at commit
 [`0b8224d1cc9dc6c9778ba04a75b2c8d47e5d7481`](https://github.com/freebsd/freebsd-src/blob/0b8224d1cc9dc6c9778ba04a75b2c8d47e5d7481/usr.bin/printf/printf.c).

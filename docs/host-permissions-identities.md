@@ -43,6 +43,13 @@ the adapter; the
 strict Linux unequal-ID ACL qualification. The original vendor failures remain retained.
 `command -p` and stock-host evidence continue to use the system search path.
 
+The profile also supplies `host-chmod`, using BSD mode evaluation and physical
+recursive traversal, and a `host-newgrp` dispatch adapter. The latter resolves
+existing numeric IDs after literal-name lookup and starts the password-database
+shell after an unknown nonnumeric group, preserving credentials and environment.
+Vendor authorization and password handling remain delegated. See the
+[resolution evidence](evidence/csh-071-resolutions/README.md) for the exact scopes.
+
 Use `--path`, `--fixture-root`, and `--record` on `tests/host_permissions.py` for
 an explicit provider/filesystem selection. `--case-prefix` records a focused
 selection and rejects an empty match. `--controlled-identities` and
@@ -86,11 +93,11 @@ does not establish the behavioral page contract.
 | Utility | Exact selected behavior | Individually open behavior (owner CSH-071) |
 | --- | --- | --- |
 | test / [ | Defined 0–4 argument branches, empty/nonempty, !, all six integer comparisons, equality/inequality, collation, file/directory/link/FIFO/socket/set-ID/size predicates, hard-link identity, timestamps including missing operands, pipe/closed descriptors. Equal-ID mode grants/denials have actual read/write/exec controls under the same child credentials. Existing controlled profile adds ACLs and stat-only private devices. | Full LC_COLLATE/LC_CTYPE coverage, positive terminal and every descriptor boundary, every type/error/race combination, retained ACL/identity/filesystem conditions below. No device I/O. |
-| chmod | Octal and symbolic modes, u/g/o/a, +/−/=, empty perms, copies, clause/action ordering, basic X, set-ID executable files, omitted-who masks, directory X, recursion, multiple operands, symlink operand, invalid mode, absent file, controlled non-owner denial. Python stat checks effects independently. | Original-mode X interpretation is a strict GNU failure; metadata timestamp update, full grammar limits, set-ID implementation choices on non-regular files, traversal errors, ACL effects and alternate filesystems remain open. XSI sticky-bit semantics are excluded. |
-| chgrp / chown | Existing numeric and named IDs, multiple operands, missing path, controlled real changes, -h symlink ownership, -R with H/L/P and last-option precedence for argument and encountered links. -H changes a nested link's referent via chown() without traversing its children; -P does not follow it. | Numeric-looking database names, nonprivileged set-ID clearing, every authorization/ID mapping, filesystem failures and full timestamp semantics remain open. No H/L/P default is asserted because it is unspecified. |
+| chmod | Octal and symbolic modes, u/g/o/a, +/−/=, empty perms, copies, clause/action ordering, original-mode X, set-ID executable files, omitted-who masks, directory X, recursion, multiple operands, symlink operand, invalid mode, absent file, controlled non-owner denial and selected ctime updates. Python stat/fstat checks effects independently. | The selected provider repairs original-X; the original GNU failure remains retained. Full grammar limits, set-ID implementation choices on non-regular files, all traversal errors, ACL effects and alternate filesystems remain open. XSI sticky-bit semantics are excluded. |
+| chgrp / chown | Existing numeric and named IDs, multiple operands, missing path, controlled real changes, nonprivileged set-ID clearing, -h symlink ownership, -R with H/L/P and last-option precedence for argument and encountered links. -H changes a nested link's referent via chown() without traversing its children; -P does not follow it. | Numeric-looking database names, every authorization/ID mapping, filesystem failures and full timestamp semantics remain open. No H/L/P default is asserted because it is unspecified. |
 | id | Measured effective/real numeric IDs, names from independent pwd/grp APIs, current-user operand, distinct -G set, missing user, direct unequal real/effective IDs. Linux children record saved IDs and capabilities. | Default formatted identity line, unresolved names, complete supplementary-group/name/-G combinations, database membership boundaries and privilege-restricted user lookup remain open. |
 | logname | Same-session child getlogin() supplies the normative oracle; poisoned environment names must not replace it. Exact success line or failure diagnostic/status are enforced. | Creating controlled successful and failing login databases on both OSes, session transitions and locale branches remain open. A successful native getlogin or container failure qualifies only that observed session. |
-| newgrp | Separate disposable-root profile requests default/named/numeric and changed group; observes real/effective GIDs, cwd, umask, exported variable and returned shell status. Failed-group case strictly requires a new shell. | Provider rejection of numeric groups or failure-before-shell remains a strict failed assertion. -l, supplementary-list capacity/transitions, numeric-name precedence, password/PTY prompts, authentication/accounting policies and non-root membership remain open. |
+| newgrp | Separate disposable-root profile requests default/named/existing numeric and changed group; observes real/effective GIDs, cwd, umask, exported variable and returned shell status. Unknown nonnumeric groups create a shell for root and a dropped non-root user; the latter checks unchanged IDs/groups and poisoned SHELL. | Original vendor failures remain retained; selected numeric/unknown-name cases pass. Known-group authorization failure-before-shell, unmapped numeric IDs, -l, supplementary-list capacity/transitions, numeric-name precedence fixtures, password/PTY prompts, authentication/accounting policies and non-root membership changes remain open. |
 
 ## Retained condition ownership
 
@@ -102,11 +109,11 @@ with CSH-071 and utility/libc/filesystem vendors retain implementation ownership
 | Condition | Current disposition and required next evidence |
 | --- | --- |
 | U-037/ACLs | Selected adapter qualified on measured Linux ext4 and native Darwin owned ACL fixtures, including independent r/w/x operations. Additional filesystems and full utility contracts remain open. |
-| U-037/Darwin-ACLs | Native owner ACL ordering/inheritance qualifies without root. A disposable hosted workflow now supplies the controlled-identity plan; its Darwin job is queued, so privileged Darwin qualification remains open. |
-| U-037/unequal-identities | The changed adapter passes the strict swapped real/effective-ID ACL matrix on the measured Linux initial namespace. Original mapped-namespace failures remain retained; that additional mapping and all other credentials are not automatically qualified. |
+| U-037/Darwin-ACLs | Native owner ACL ordering/inheritance qualifies without root. Hosted controlled cases failed the Python account-membership oracle (240 failures); a libc process-group measurement fix is pushed and its Darwin rerun is queued. Privileged Darwin qualification remains open. |
+| U-037/unequal-identities | The changed adapter passes the strict swapped real/effective-ID ACL matrix in the measured Linux initial namespace and the original 0:0:1,1:20001:65535 mapping. Original failures remain retained; other mappings/credentials are not automatically qualified. |
 | U-037/fakeowner-socket-type | Open: no changed fakeowner implementation supplied. Ordinary socket type assertions do not repair its retained EINVAL; successful metadata and actual AF_UNIX transfer are both required there. |
 | U-040/fakeowner-chmod | Open: overlay non-owner denial cannot qualify fakeowner. Changed implementation must deny both syscall and selected utility under measured IDs/capabilities. |
-| U-037/device-namespaces | Existing disposable Linux controlled-node profile is rerun, stat only. Additional namespaces remain unqualified. |
+| U-037/device-namespaces | Initial-namespace private nodes and parent-supplied nodes in the original remapped namespace pass stat-only predicates. The remapped namespace still rejects mknod; no device I/O is qualified. |
 | U-040/chmod-ACL-identity-filesystem | Qualified selected non-owner chmod/chown/chgrp denials, set-ID clearing, group changes and ctime updates. Chmod interactions with every ACL/filesystem remain open. |
 | U-037/controlled-environment | Available only in the explicitly selected Linux-root controlled run; unavailable natively. |
 | U-037/permission-denial | Mode-000 native non-root and explicitly dropped Linux IDs supply bounded denial controls. Root baseline alone cannot demonstrate denial. |
@@ -140,8 +147,10 @@ supplementary groups, non-owner chmod/chown/chgrp denials, and the strict existi
 unequal-ID ACL suite. Darwin's `--darwin-credentials` uses sudo only on that
 runner, then drops to its existing runner/daemon accounts in both ID directions.
 Each child verifies loss of saved-root access before invoking the selected
-provider. No account database is modified. macOS may include the effective GID
-in getgroups(); no other unsupplied supplementary groups are accepted.
+provider. No account database is modified. Darwin now records the unextended
+libc process getgroups separately from CPython's account-membership list. macOS
+may include the effective GID in process getgroups; no other unsupplied process
+groups are accepted. The changed measurement still awaits a hosted Darwin result.
 
 Ordinary ownership checks include nonprivileged set-ID clearing, a real change
 to a supplied supplementary group, and strict file-status timestamp updates.
