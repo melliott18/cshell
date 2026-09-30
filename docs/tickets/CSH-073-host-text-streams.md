@@ -163,3 +163,34 @@ The dedicated [hosted run](https://github.com/melliott18/cshell/actions/runs/366
 completed Ubuntu and Debian successfully; macOS 15 was queued at evidence
 capture. Local Docker API failure is retained separately from hosted Debian
 success. Full ticket acceptance remains open.
+
+
+### Pinned provider repairs
+
+The [selected replacement profile](../../tools/host-profile/text/README.md)
+adds checksum-pinned GNU coreutils 9.11 (head/cut/tsort), GNU sed 4.9,
+GNU ed 1.22.6 with an exact SIGINT-output patch, and the Chimerautils/FreeBSD
+tail port on Linux. System tools and shell source are unchanged. Provisioning
+verifies binary hashes before selecting replacements; stock audit failures
+remain reproducible. Seven further audit cases add 28 cross-mode assertions
+for multibyte range endpoints, reverse counts/large input and acyclic tsort -w.
+
+All known text audit failures are automated and repaired for this selected
+profile. Native capacity and blocked-write observation still need specific
+Darwin test capabilities; actual EINTR/short-write/allocation recovery needs
+controlled fault injection. None requires manual terminal testing. Complete
+utility-page coverage and full CSH-073 acceptance remain open.
+
+Validation and all attempts are retained in
+[provider repair evidence](../evidence/csh-073-providers/README.md).
+
+Final strict repaired audits at `4f3de8e`: macOS **784 pass, 0 fail,
+8 unavailable**; Ubuntu **790 pass, 0 fail, 2 unavailable**; Debian **792 pass,
+0 fail, 0 unavailable**. All 14 harness regressions pass. Both final Linux
+jobs pass runtime and PTY regressions. Native broader host-profile validation
+passes 1162 existing assertions plus 726 text-subset assertions; public runtime
+and job-control cases pass. A separate native job-control fault module times
+out with both repaired and stock PATH, including failed cleanup of three
+Darwin UE-state children despite SIGKILL. Those exact failures remain retained;
+no complete native PTY pass is claimed. The final native strict text audit is
+unaffected. macOS 15 CI remained queued at evidence capture.
