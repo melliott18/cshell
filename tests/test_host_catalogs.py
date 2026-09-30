@@ -12,6 +12,51 @@ from host_catalogs import check_mo, matches, run_case
 
 
 class CatalogTests(unittest.TestCase):
+    def test_shared_fixture_rejects_failure_and_corruption(self):
+        import hashlib
+        from locale_catalog_fixtures import load_fixtures
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            sample = root / 'sample'
+            sample.write_bytes(b'authored')
+            manifest = root / 'manifest.json'
+            record = dict(schema_version=1, verified=True, failures=[], root=tmp,
+                          files={'sample': hashlib.sha256(b'authored').hexdigest()},
+                          locale_setup={})
+            manifest.write_text(json.dumps(record))
+            self.assertEqual(load_fixtures(manifest)['root'], tmp)
+            sample.write_bytes(b'corrupt')
+            with self.assertRaisesRegex(ValueError, 'hash mismatch'):
+                load_fixtures(manifest)
+            record['verified'] = False
+            manifest.write_text(json.dumps(record))
+            with self.assertRaisesRegex(ValueError, 'did not succeed'):
+                load_fixtures(manifest)
+
+    def test_failed_shared_setup_publishes_failure_and_preserves_consumers(self):
+        import importlib.util
+        from unittest.mock import patch
+        script = Path(__file__).resolve().parents[1] / 'tools/host-profile/provision_catalogs.py'
+        spec = importlib.util.spec_from_file_location('provision_catalogs_test', script)
+        provisioner = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(provisioner)
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            parent = root / 'build/host-profile'
+            parent.mkdir(parents=True)
+            (parent / 'locales.json').write_text(json.dumps(dict(failures=[],
+                locales=[dict(verified=True)] * 5)))
+            retained = parent / 'catalogs-existing'
+            retained.mkdir()
+            (retained / 'consumer').write_bytes(b'held')
+            with patch.object(provisioner, 'ROOT', root):
+                self.assertEqual(provisioner.provision(Path(sys.executable), ''), 1)
+            record = json.loads((parent / 'fixtures.json').read_text())
+            self.assertFalse(record['verified'])
+            self.assertIn('missing provider: gencat', record['failures'])
+            self.assertEqual((retained / 'consumer').read_bytes(), b'held')
+            self.assertFalse(list(parent.glob('.catalog-setup-*')))
+
     def test_clause_map_and_exclusions_cover_real_owned_cases(self):
         from host_catalog_cases import UTILITIES, cases
         root = Path(__file__).parent

@@ -25,7 +25,7 @@ adapter/harness self-tests. No cshell builtin or system executable is replaced.
 - `host-locales` uses Linux `localedef` to generate French/German/English UTF-8,
   Chinese GB18030 and French ISO-8859-1 locales under
   `build/host-profile/locales`. Generation and an independent libc consumer
-  must pass before replacement of that directory. `LOCPATH` is passed to both
+  must pass before publication of a retained generation and update of that symlink. `LOCPATH` is passed to both
   the existing host runner and the new catalog runner. Darwin verifies the
   installed names, codesets and decimal separators instead; it does not claim
   generated-locale coverage.
@@ -37,12 +37,57 @@ native adapter compiler/linker command. Qualification records add provider versi
 linked-library paths, platform/package identity and all build/test source hashes.
 These identities do not establish a full library dependency closure.
 
+## Shared interface for dependent tracks
+
+Run `make host-locales` for just the five locale capabilities; this no longer
+requires unrelated host utility providers. Run `make host-catalog-fixtures` for
+locales plus verified catalogs and encoding inputs. Neither target builds cshell
+or runs the full utility suite. `make test-host-catalogs` includes both setup and
+the independent five-mode utility qualification.
+
+`build/host-profile/fixtures.json` is the latest schema-version-1 manifest.
+Python consumers can use the shared loader from the repository's `tests` path:
+
+```python
+from pathlib import Path
+from locale_catalog_fixtures import load_fixtures
+
+fixtures = load_fixtures('build/host-profile/fixtures.json')
+root = Path(fixtures['root'])
+env = fixtures['profiles']['de_DE.UTF-8']['env']
+# Pass env explicitly to the consuming subprocess; LC_ALL and LANGUAGE are set.
+# env includes the selected PATH and Linux LOCPATH, where needed.
+input_bytes = (root / 'GB18030.txt').read_bytes()
+```
+
+The loader rejects unsuccessful provisioning and changed/missing inputs. Hold
+one returned record for the duration of a run. Every publication has an immutable
+catalog directory, its own `manifest.json`, and (Linux) an immutable locale
+generation. Reprovisioning atomically updates the latest manifest and the
+compatibility `locales` symlink; it retains older generations until `make clean`.
+Do not run `make clean` while another consumer uses that checkout's fixtures.
+Cross-worktree consumers must use the producer's absolute manifest path and keep
+that checkout available; copied manifests are not portable binary catalogs.
+
+The manifest names locale environments, codesets and decimal separators; hashes
+all supplied files; and records exact provider/probe/source identities and bounded
+verification commands. Shared files include `messages.po`, `messages.msg`,
+`messages.cat`, `compiled.mo`, both French and German hand-authored `demo` MO
+catalogs, and literal UTF-8/Latin-1/GB18030 input bytes. The French `compiled`
+domain supplies four independently checked plural outcomes. Only the French and
+German UTF-8 profiles supply translations; other locale profiles supply encoding
+and numeric capabilities. Catalog setup checks both independent MO-reader results
+and actual gettext/ngettext consumers, libc catgets results, and four iconv
+conversions. These fixture checks are a bounded qualification, not complete
+utility contracts. Setup failure publishes a failed latest record and exits
+nonzero; already-held successful generations remain available.
+
 ## Independent assertions and bounds
 
 Every selected case runs by direct absolute-path execution, public cshell PATH
 lookup in command-string/script-file/stdin modes, and explicit cshell `exec`.
 Catalog source, expected translations and expected encoding bytes are authored
-in `tests/host_catalog_cases.py`; utilities never generate their own oracle.
+in `tests/locale_catalog_fixtures.py` and `tests/host_catalog_cases.py`; utilities never generate their own oracle.
 
 - Hand-assembled GNU MO files test gettext independently of msgfmt. Domain
   precedence, missing messages, four plural outcomes, LANGUAGE/locale precedence,

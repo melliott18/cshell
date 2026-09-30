@@ -627,11 +627,11 @@ test-host-catalog-harness: build/tests/catalog_adapter_fixture
 	./build/tests/catalog_adapter_fixture
 	$(PYTHON) -m unittest discover -s tests -p 'test_host_catalog*.py'
 
-test-host-catalogs: host-locales cshell host-profile build/tests/host_catalog_probe test-host-catalog-harness
+test-host-catalogs: host-catalog-fixtures cshell host-profile build/tests/host_catalog_probe test-host-catalog-harness
 	$(PYTHON) tests/host_catalogs.py ./cshell build/tests/host_catalog_probe --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --locale-path "$(abspath build/host-profile/locales)" --record build/tests/host-catalog-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 
 .PHONY: host-locales test-host-catalog-contracts
-host-locales: host-profile build/tests/host_catalog_probe
+host-locales: build/tests/host_catalog_probe
 	$(PYTHON) tools/host-profile/provision_locales.py build/tests/host_catalog_probe build/host-profile/locales
 
 test-host-catalog-contracts: test-host-catalogs
@@ -640,3 +640,8 @@ test-host-catalog-contracts: test-host-catalogs
 build/tests/catalog_adapter_fixture: tests/catalog_adapter_fixture.c tools/host-profile/catalog_adapter.c
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+# Reusable fixtures for other utility tracks; no shell build or full suite needed.
+.PHONY: host-catalog-fixtures
+host-catalog-fixtures: host-locales host-profile build/tests/host_catalog_probe
+	$(PYTHON) tools/host-profile/provision_catalogs.py build/tests/host_catalog_probe --path "$(abspath build/host-profile/bin):$(shell getconf PATH)"

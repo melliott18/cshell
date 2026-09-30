@@ -8,6 +8,7 @@ import platform
 import shutil
 import sys
 import tempfile
+import uuid
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'tests'))
@@ -23,7 +24,7 @@ LOCALES = (('fr_FR.UTF-8', 'fr_FR', 'UTF-8', ','),
 
 def provision(probe, destination):
     # Restrict replacement/cleanup to this generated profile directory.
-    if destination.absolute() != ROOT / 'build/host-profile/locales' or destination.is_symlink():
+    if destination.absolute() != ROOT / 'build/host-profile/locales':
         raise ValueError('destination must be this checkout\'s build/host-profile/locales')
     destination.parent.mkdir(parents=True, exist_ok=True)
     result = dict(platform=platform.platform(), locales=[], setup=[], failures=[],
@@ -67,18 +68,24 @@ def provision(probe, destination):
                 if not ok:
                     result['failures'].append('locale capability failed: ' + name)
             if not result['failures'] and platform.system() == 'Linux':
-                if destination.exists():
-                    shutil.rmtree(destination)
-                destination.mkdir()
-                for name, _, _, _ in LOCALES:
-                    shutil.move(str(root / name), str(destination / name))
-                result['locale_path'] = str(destination)
-                result['generated_sha256'] = {str(p.relative_to(destination)): sha(p)
-                    for p in sorted(destination.rglob('*')) if p.is_file()}
+                # Published generations remain valid until make clean. A consumer
+                # holds the manifest's real path, never a mutable directory alias.
+                generation = destination.parent / ('locales-' + uuid.uuid4().hex)
+                root.rename(generation)
+                alias = destination.parent / ('.locales-' + uuid.uuid4().hex)
+                alias.symlink_to(generation.name, target_is_directory=True)
+                if destination.exists() and not destination.is_symlink():
+                    destination.rename(destination.parent / ('locales-legacy-' + uuid.uuid4().hex))
+                os.replace(alias, destination)
+                result['locale_path'] = str(generation)
+                result['generated_sha256'] = {str(p.relative_to(generation)): sha(p)
+                    for p in sorted(generation.rglob('*')) if p.is_file()}
         except (OSError, ValueError) as error:
             result['failures'].append(str(error))
     result['cleanup'] = not root.exists()
-    (destination.parent / 'locales.json').write_text(json.dumps(result, indent=2) + '\n')
+    record = destination.parent / ('.locales-' + uuid.uuid4().hex + '.json')
+    record.write_text(json.dumps(result, indent=2) + '\n')
+    os.replace(record, destination.parent / 'locales.json')
     for error in result['failures']:
         print('FAIL:', error, file=sys.stderr)
     print(f"Locales: {sum(row['verified'] for row in result['locales'])}/5 verified ({result['strategy']})")

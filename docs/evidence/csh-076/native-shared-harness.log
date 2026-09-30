@@ -1,0 +1,11 @@
+./build/tests/catalog_adapter_fixture
+gettext: option -d requires an argument
+PASS: native catalog adapter escapes and option/operand boundaries
+python3 -m unittest discover -s tests -p 'test_host_catalog*.py'
+..FAIL: missing provider: gencat
+.......
+----------------------------------------------------------------------
+Ran 9 tests in 0.316s
+
+OK
+Shared catalog fixtures: FAILED

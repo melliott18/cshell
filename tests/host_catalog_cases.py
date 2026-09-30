@@ -1,57 +1,7 @@
 """CSH-076 byte oracles. No selected utility supplies expected bytes."""
-import struct
+from locale_catalog_fixtures import HEADER, MESSAGES, PO, mo_bytes
 
 UTILITIES = ('gencat', 'gettext', 'iconv', 'locale', 'localedef', 'msgfmt', 'ngettext')
-HEADER = ('Content-Type: text/plain; charset=UTF-8\n'
-          'Plural-Forms: nplurals=4; plural=n==1?0:n==2?1:n==0?2:3;\n')
-MESSAGES = {'': HEADER, 'hello': 'bonjour', 'cafe': 'café',
-            'one\0many': 'un\0deux\0aucun\0plusieurs',
-            'line\n': 'ligne\n', 'joined': 'assemblé'}
-PO = ('''# translator comment
-#. generated comment
-#: source.c:1
-msgid ""
-msgstr ""
-"Content-Type: text/plain; charset=UTF-8\\n"
-"Plural-Forms: nplurals=4; plural=n==1?0:n==2?1:n==0?2:3;\\n"
-
-msgid "hello"
-msgstr "bonjour"
-msgid "cafe"
-msgstr "café"
-msgid "one"
-msgid_plural "many"
-msgstr[0] "un"
-msgstr[1] "deux"
-msgstr[2] "aucun"
-msgstr[3] "plusieurs"
-msgid "line\\n"
-msgstr "ligne\\n"
-msgid "join"
-"ed"
-msgstr "assem"
-"blé"
-#, fuzzy
-msgid "draft"
-msgstr "brouillon"
-''').encode()
-
-
-def mo_bytes(messages):
-    """Hand-assemble GNU revision-0 catalogs; this never invokes msgfmt."""
-    pairs = sorted((key.encode(), value.encode()) for key, value in messages.items())
-    count = len(pairs)
-    offset = 28 + count * 16
-    originals, translations, data = [], [], bytearray()
-    for key, _ in pairs:
-        originals.append((len(key), offset + len(data)))
-        data.extend(key + b'\0')
-    for _, value in pairs:
-        translations.append((len(value), offset + len(data)))
-        data.extend(value + b'\0')
-    header = struct.pack('<7I', 0x950412de, 0, count, 28, 28 + count * 8, 0, 0)
-    return header + b''.join(struct.pack('<2I', *entry) for entry in originals + translations) + data
-
 
 def step(utility, args=(), out=b'', status=0, err=b'', **kw):
     return dict(utility=utility, args=list(args), stdout=out, status=status, stderr=err, **kw)

@@ -66,5 +66,33 @@
     "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
     "totals": null,
     "source_sha256": null
+  },
+  {
+    "file": "native-shared-fixtures.json.gz",
+    "uncompressed_sha256": "a86750f288bcba3fd4afbbbb83a9dd542889c982e83a3d89a11118370fe37d58",
+    "source_sha256": "394dfe1d4961b4f3ea0899eada987c9491a96b581d3a16f7b32c389ffc94e5f0",
+    "totals": null,
+    "verified": true
+  },
+  {
+    "file": "native-shared-qualified.json.gz",
+    "uncompressed_sha256": "470a901eea985cdc47b1dd09300a56d5386d4da64fabc36ca36e2fddb8a8ed75",
+    "source_sha256": "394dfe1d4961b4f3ea0899eada987c9491a96b581d3a16f7b32c389ffc94e5f0",
+    "totals": {
+      "passed": 355,
+      "failed": 0
+    },
+    "verified": null
+  },
+  {
+    "file": "native-shared-profile.json.gz",
+    "uncompressed_sha256": "0982ac4b0db20d21092e5891c74cbff2c92778af8a32fb00be45f969ab3aad0a",
+    "source_sha256": "394dfe1d4961b4f3ea0899eada987c9491a96b581d3a16f7b32c389ffc94e5f0",
+    "totals": {
+      "passed": 1162,
+      "failed": 0,
+      "gaps": 0
+    },
+    "verified": null
   }
 ]

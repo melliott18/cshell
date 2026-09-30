@@ -3,8 +3,8 @@
 This records the [bounded locale/catalog profile](../../host-locale-catalogs.md).
 **CSH-076 is not complete.** Full utility contracts, retained vendor failures
 and unqualified page sections remain owned by CSH-076. The native current
-subset passed; the final Docker revision could not be validated after the shared
-Docker engine started returning HTTP 500 responses.
+subset passed. Local Docker returned HTTP 500; subsequent hosted CI separately
+validated the native C adapter revision on Linux (see below).
 
 ## Current native implementation
 
@@ -76,7 +76,39 @@ socket health check also failed. [Build failure](docker-final-build-failure.log)
 and [health response](docker-health-failure.log.gz) are retained; a later
 [final health check](docker-health-final.log.gz) still returns HTTP 500. Other active
 workloads used the shared engine, so it was not restarted. Final Linux adapter,
-combined-profile, runtime and sanitizer checks remain unverified.
+combined-profile, runtime and sanitizer checks were unverified locally at that
+point. Subsequent hosted results below resolve that gap for commit 4460922.
+
+## Shared fixture publication update
+
+Native `make host-catalog-fixtures` publishes five verified locale profiles and
+passes 16 bounded provider/consumer checks, plus independent MO parsing:
+[fixture record](native-shared-fixtures.json.gz). `make test-host-catalogs`
+passes 355 cases with the shared module and setup dependency:
+[subset record](native-shared-qualified.json.gz). The existing host profile
+passes 1,162 cases with zero gaps: [profile record](native-shared-profile.json.gz).
+Each retains its actual source hash; the profile run precedes the last harness
+failure-publication test, while the subset and fixture records include it.
+
+The native adapter fixture and nine Python harness tests pass:
+[harness log](native-shared-harness.log). The deliberate missing-provider test
+prints a FAIL diagnostic and verifies that provisioning publishes failure,
+cleans its temporary setup directory, and preserves an existing consumer's data.
+A second `make host-catalog-fixtures` followed by `load_fixtures` on both the old
+immutable manifest and latest manifest also passed; the generated roots differed
+and all retained input hashes remained valid. Linux publication of retained
+locale generations awaits validation of this update.
+
+## Hosted CI for native adapter revision 4460922
+
+[PR run 36631063411](https://github.com/melliott18/cshell/actions/runs/36631063411)
+ran exact head `446092248d5725f2512f66dd3529579898ccfe58`.
+The retained [job/step metadata](ci-4460922.json) records successful Ubuntu 24.04
+and Docker jobs, including host profile, runtime, PTY and sanitizer checks.
+The macOS job passed its ordinary build, tests, PTY, selected profile and harness
+steps, then its sanitizer step was cancelled. The overall run is **cancelled**;
+this is not an all-platform sanitizer pass. These results qualify that commit's
+bounded subset and do not cover later shared-fixture publication changes.
 
 ## Earlier attempts and oracle corrections
 

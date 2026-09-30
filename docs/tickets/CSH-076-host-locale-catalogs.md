@@ -87,9 +87,10 @@ this ticket must not be closed from these selected witnesses.
 [Separate native and Linux evidence](../evidence/csh-076/README.md) records the
 current native subset (355 passing cases), current existing host profile
 (1,162 passes, zero gaps), and an intermediate Linux subset (395 passes) with
-five verified private locales. The final native C adapter replacement has not
-been revalidated on Linux: the shared Docker engine returned HTTP 500 before
-the final rebuild. These source identities are deliberately kept separate.
+five verified private locales. Hosted Ubuntu and Docker CI subsequently passed the native C adapter commit
+4460922, including sanitizer checks; hosted macOS sanitizer execution was
+cancelled. The evidence page retains exact job metadata separately from the
+intermediate local Linux results.
 
 The four conditional locale prerequisites are supplied on the recorded hosts;
 that does not qualify printf, sed or find behavior owned by other tickets.
@@ -99,7 +100,7 @@ section and provider defect owned here. Required strict failures include native
 gencat stream operands/escape diagnostics, native locale reporting, iconv `-s`
 on both hosts, and glibc gencat deletion of existing sets. No failure is converted
 to a passing assertion. Darwin generated-locale support, further normative
-sections/defaults and final Linux validation remain outstanding.
+sections/defaults remain outstanding.
 
 `make test-runtime` passed 3,950 native cases under the selected PATH. The first
 PTY run and focused retry fail in the unchanged terminal handoff fault fixture;
@@ -109,3 +110,10 @@ validation failure, not a claimed catalog defect or a passing PTY result.
 The remaining native `make test-runtime-pty` target passes 33 cases when run
 independently. A stock-PATH control reproduces the terminal handoff timeout;
 its cause remains unestablished.
+
+Shared fixture publication is available through `make host-catalog-fixtures`.
+Dependent tracks consume `build/host-profile/fixtures.json` with the shared
+`load_fixtures` Python helper; locale-only users can run `make host-locales`
+without the full host profile. Both catalog and Linux locale generations are
+retained across reprovisioning. See the bounded fixture checks and consumer
+contract in [the shared-interface documentation](../host-locale-catalogs.md).

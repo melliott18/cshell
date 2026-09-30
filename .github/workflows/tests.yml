@@ -48,6 +48,8 @@ jobs:
           brew list coreutils >/dev/null 2>&1 || brew install coreutils
           brew list gettext >/dev/null 2>&1 || brew install gettext
           echo "$(brew --prefix gettext)/bin" >> "$GITHUB_PATH"
+      - name: Supply shared locales and catalogs for dependent tracks
+        run: make host-catalog-fixtures
       - name: Build
         run: make -j2
       - name: Test replacement APIs, cshell runtime, and selected behavior
