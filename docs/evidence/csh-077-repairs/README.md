@@ -153,3 +153,18 @@ private evidence directory was writable from the host. Mount cleanup passed.
 lossless. Source/provider hashes and actual captures live in each raw record;
 no earlier evidence was modified. CSH-077 remains review and CSH-081 remains the
 open owner of full-page and external-capability requirements.
+
+## Recovery of original stopped Docker fixtures
+
+With the Docker API available again, both original CSH-077 containers
+`csh077-verified` and `csh077-validation` were confirmed stopped with exit 0.
+Their final terminal/profile JSON was recovered separately as `recovered-*`
+artifacts, and both containers were removed successfully. This resolves the
+original retrieval/removal limitation without altering its historical evidence.
+Those old records are baseline evidence, not validation of the later repairs.
+
+The earlier Darwin fault-helper PID 42555 still has the exact owned worktree
+command and UE state, parent 1, after its prior SIGKILL attempt. The new read-only
+process snapshot is retained. No second fault fixture or machine restart was
+attempted. Clearing the kernel-blocked process may require host recovery/reboot;
+this is separate from the passing normal and sanitizer terminal subsets.
