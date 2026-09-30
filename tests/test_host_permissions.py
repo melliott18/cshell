@@ -8,9 +8,18 @@ from unittest.mock import patch
 
 from host_permission_cases import case
 from host_permissions import run_case
+from host_permissions_child import process_groups
 
 
 class PermissionsEvidenceTests(unittest.TestCase):
+    def test_darwin_process_groups_do_not_use_account_membership(self):
+        # Simulate CPython's directory-membership result differing from the
+        # process credentials; accepting it would hide inherited privileges.
+        with patch('host_permissions_child.sys.platform', 'darwin'), \
+                patch('host_permissions_child.os.getgroups', side_effect=AssertionError('account lookup')):
+            groups = process_groups()
+        self.assertTrue(all(isinstance(group, int) and group >= 0 for group in groups))
+
     def run_provider(self, content, expected):
         with tempfile.TemporaryDirectory(prefix='csh-permission-selftest-') as name:
             root = Path(name)

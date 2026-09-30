@@ -8,9 +8,35 @@ from pathlib import Path
 import sys
 
 
+def process_groups():
+    if sys.platform != 'darwin':
+        return os.getgroups()
+    # Modern CPython uses Darwin's extended account membership API for
+    # os.getgroups(), which is not changed by setgroups(). Read the process
+    # credentials through the unextended libc symbol instead (gid_t is uint32).
+    import ctypes
+    libc = ctypes.CDLL(None, use_errno=True)
+    getgroups = libc.getgroups
+    getgroups.argtypes = (ctypes.c_int, ctypes.POINTER(ctypes.c_uint32))
+    getgroups.restype = ctypes.c_int
+    count = getgroups(0, None)
+    if count < 0:
+        error = ctypes.get_errno()
+        raise OSError(error, os.strerror(error))
+    groups = (ctypes.c_uint32 * count)()
+    count = getgroups(count, groups)
+    if count < 0:
+        error = ctypes.get_errno()
+        raise OSError(error, os.strerror(error))
+    return list(groups)[:count]
+
+
 def identity():
     result = dict(uid=os.getuid(), euid=os.geteuid(), gid=os.getgid(),
-                  egid=os.getegid(), groups=os.getgroups())
+                  egid=os.getegid(), groups=process_groups())
+    if sys.platform == 'darwin':
+        result['account_groups'] = os.getgroups()
+        result['groups_api'] = 'libc getgroups (unextended)'
     if sys.platform.startswith('linux'):
         result['resuid'] = os.getresuid()
         result['resgid'] = os.getresgid()
