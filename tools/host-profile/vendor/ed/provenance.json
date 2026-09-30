@@ -1,0 +1,24 @@
+{
+  "version": "GNU ed 1.22.6",
+  "url": "https://ftp.gnu.org/gnu/ed/ed-1.22.6.tar.lz",
+  "archive_sha256": "3f33b22135219c39c3c695f7b7171c2567d3e2a17c798c0a90607320cbb268f2",
+  "upstream_sha256": {
+    "buffer.c": "ad96284868b4211bca07fca67449fe20e3e7872fc062d69fe245ca023667a516",
+    "io.c": "f35357a38fdf17c2fd9528890a82883407974cce89307a7a8a8be28356048760",
+    "carg_parser.c": "2fedb8962934ae43f2872499b58f4918d580392a07d1a6c2007498b0cdabe560",
+    "main_loop.c": "c360b80b3e92bb40e0d2bfeee4e9c192abd882f4efe151df24a10736a4d600a7",
+    "main.c": "4227d00f225724462d82050161de9b45f2bb8add2909dd0e604b6475fd312590",
+    "signal.c": "bbae40ebfec37e25690821274da628d7a63aac4eec729c360c9400dc9ca4bc14",
+    "global.c": "1e26ecb8af4a73d4ad77a6f81805eed45129cdf6e50cda0c45d0ea7aaa0391cc",
+    "regex.c": "f47434b40567b5631f4e70bfc180ea767f9b43076907568f5657c861e2902a55",
+    "ed.h": "1db7f2a7a92bd26a2d5ca6719e6a430a2c2a3b8e665d57ee430e4ad7b3401a7f",
+    "carg_parser.h": "4dce9ac377126862bd88a1b11c3e8bac023cb8f2de08ea1aecdc36019c1a42f0",
+    "COPYING": "022e9c2e9cc1aac3622313df6f971fbb39c1d1b0cb45324c16b8a1fe231c5ea6",
+    "README": "58bfb57f23d45365fe7f2bfffec442b0e36a5baab49eaa19bfe9547455ca6cbd",
+    "AUTHORS": "86f41bf76b3f2ee499fbcb02a787afac63d64cd4111d8701645f962b4db43a07"
+  },
+  "local_changes": [
+    "main_loop.c: omit the terminal presentation newline preceding the POSIX SIGINT marker; keep stdout and recovery logic unchanged.",
+    "main.c and ed.h: specify void for the interactive prototype, preserving behavior under C99."
+  ]
+}

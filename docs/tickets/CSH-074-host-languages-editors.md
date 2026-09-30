@@ -82,36 +82,32 @@ processes and disposable files/services and verify cleanup after failure/timeout
 
 ## Implementation notes/evidence
 
-The [bounded implementation](../host-languages-evidence.md) adds 82 fixtures in
-four execution modes plus six synchronized SIGHUP cases, provider provisioning,
-strict harness controls and a [normative heading map](../../tests/host_language_contracts.json).
-The selected subset passes 334 assertions on native macOS and on an earlier
-Docker/Linux snapshot. A later Linux run exposed two signal-readiness failures;
-the corrected native run and 18 focused recovery checks pass. Final Linux
-validation is blocked by Docker daemon HTTP 500 errors.
-[All attempts and identities](../evidence/csh-074/README.md) retain fixture
-corrections, unknown m4 launcher timeouts and separate SIGINT failures.
+The [operation qualification](../host-languages-evidence.md) supplies 168 fixtures
+in four execution modes plus nine synchronized editor signal checks (681 checks,
+including separate test-only backing-store failures and supplemental XSI cases).
+The [normative heading map](../../tests/host_language_contracts.json) accounts for
+every selected fixture and retains the remaining page obligations.
 
-The provider/dispatch/ownership checkboxes apply to this declared subset.
-SIGHUP buffer recovery and HOME fallback supply the requested retained capability;
-temporary backing-store exhaustion, capacity and other signal contracts remain
-with this same open ticket. No historical residual is removed or rewritten.
-The remaining full-page acceptance checkbox is intentionally open. Every heading
-has a disposition, but unqualified sections are not waived normative obligations.
-The strict opt-in `--ed-sigint` reproducer still fails on retained providers;
-macOS writes the marker to stderr, while GNU has a leading newline requiring
-further disposition. No provider repair is claimed.
+The private profile now builds GNU ed and FreeBSD-derived xargs from pinned,
+licensed sources. ed emits the exact SIGINT stdout marker; xargs preserves empty
+NUL arguments, handles empty-input invocation, enforces/clamps byte limits and
+reports exec failures portably. System executables remain untouched. The
+instrumented editor separately verifies backing-store creation/write failures
+and input preservation. SIGINT and both SIGHUP recovery paths are required by
+the default suite.
 
-Native `make test-host-inventory`, the five new harness controls, 86 existing
-harness controls and the focused selected subset pass. Native full
-`make test-host-profile` records two existing process-cleanup `ps` timeouts and
-is **not passing**. The earlier Linux full profile passes 1162 existing assertions plus 334
-new assertions, and the harness checks pass. Broader native runtime/PTY checks
-retain additional cleanup/terminal-fixture failures; they are not green.
-Commands, limits, package/toolchain
-identities, effects and cleanup outcomes are retained in the evidence above.
+[Expanded attempts](../evidence/csh-074/expanded/README.md) retain the native
+provider failures and corrections. Dedicated native Linux/macOS CI jobs retain
+ordinary and sanitizer records independently of the broad runtime suites.
+The [original evidence](../evidence/csh-074/README.md), including prior Linux
+signal races and native cleanup failures, remains unchanged. Local Docker
+validation is still unavailable because the daemon returns HTTP 500.
 
-Status `review` means the bounded implementation is reviewable. Keep this ticket
-open until remaining page contracts, provider failures and full acceptance are
-resolved. CSH-068 remains an ownership transfer and CSH-064 historical evidence
-is unchanged.
+Full-page acceptance remains open. Three strict native m4 reproducers currently
+fail (wrap order, missing mkstemp, nonnumeric substr status); the
+`--remaining-contracts` command retains these normative expectations and fails
+without allowances. Other missing contracts are individually retained in the
+map and evidence scope, including interactive prompts, broad locale/default
+handling and additional resource/signal paths. The provider/dispatch checkboxes
+apply to the declared subset, not complete utility conformance. Keep this ticket
+open; CSH-068 remains an ownership transfer and CSH-064 history is unchanged.

@@ -2,6 +2,7 @@
 """Strict CSH-074 host language/editor subset, never a whole-page claim."""
 import argparse
 import datetime
+import fnmatch
 import json
 import os
 from pathlib import Path
@@ -49,11 +50,13 @@ def run_case(binary, path, case, mode, root, search_path, sanitizer=False):
                 target.write_bytes(data)
             (directory/'input').write_bytes(case['stdin'])
             fixture=dict(args=case['args'], stdin=case['stdin'], env=environment(search_path, sanitizer))
+            fixture['env'].update(case.get('env', {}))
             executable=Path(path)
             if mode!='direct':
                 # PATH lookup in all public input modes; direct mode independently
                 # execs the selected pathname with the identical argument vector.
-                script=shlex.join([case['utility']]+case['args'])+' <input\n'
+                command = path if case.get('fault_provider') else case['utility']
+                script=shlex.join([command]+case['args'])+' <input\n'
                 executable=binary
                 if mode=='string':
                     fixture.update(args=['-c',script],stdin=b'')
@@ -126,15 +129,26 @@ def main():
     parser.add_argument('binary',type=Path)
     parser.add_argument('--path',default=os.defpath)
     parser.add_argument('--sanitizer',action='store_true')
+    parser.add_argument('--remaining-contracts',action='store_true',
+                        help='Run strict open-contract reproducers instead of the qualified subset')
+    parser.add_argument('--ed-faults',type=Path,help='Separately instrumented ed provider')
+    parser.add_argument('--case',action='append',help='Select IDs by shell-style pattern; repeatable')
     parser.add_argument('--record',type=Path,required=True)
     parser.add_argument('--ed-sigint',action='store_true',
-                        help='Strict optional SIGINT stream reproducer; current providers fail')
+                        help='Compatibility flag: SIGINT is now always required')
     args=parser.parse_args()
     binary=args.binary.resolve()
     tools=inventory(args.path,UTILITIES)
     records=[]
-    for case in cases():
-        path=tools[case['utility']]['path']
+    selected = lambda name: not args.case or any(fnmatch.fnmatchcase(name, p) for p in args.case)
+    if args.remaining_contracts:
+        from host_language_residual_cases import cases as selected_cases
+    else:
+        selected_cases = cases
+    for case in selected_cases():
+        if not selected(case['id']):
+            continue
+        path=(str(args.ed_faults.resolve()) if args.ed_faults else None) if case.get('fault_provider') else tools[case['utility']]['path']
         for mode in MODES:
             if path:
                 record=run_case(binary,path,case,mode,None,args.path,args.sanitizer)
@@ -145,14 +159,20 @@ def main():
             print(record['verdict']+': '+record['id']+' ('+mode+')',flush=True)
             if record['verdict']=='FAIL':
                 print(json.dumps(record.get('actual',record)),flush=True)
-    if tools['ed']['path']:
-        for action in ('hup','hup-home') + (('int',) if args.ed_sigint else ()):
+    if not args.remaining_contracts:
+        for action in ('hup','hup-home','int'):
+            if not selected('ed/signal-'+action):
+                continue
             for mode in ('direct','string','file'):
-                record=run_signal(binary,tools['ed']['path'],action,mode,None,args.path,args.sanitizer)
+                record=(run_signal(binary,tools['ed']['path'],action,mode,None,args.path,args.sanitizer)
+                        if tools['ed']['path'] else dict(id='ed/signal-'+action,mode=mode,
+                        verdict='FAIL',phase='setup',error='missing required provider: ed'))
                 records.append(record)
                 print(record['verdict']+': '+record['id']+' ('+mode+')',flush=True)
                 if record['verdict']=='FAIL':
                     print(json.dumps(record),flush=True)
+    if not records:
+        parser.error('case selection matched no assertions')
     counts={v:sum(r['verdict']==v for r in records) for v in ('PASS','FAIL')}
     manifest=Path(__file__).with_name('host_language_contracts.json')
     result=dict(recorded_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -161,10 +181,11 @@ def main():
                 environment={'LANG':'C','LC_ALL':'C','HOME':'private .home','TMPDIR':'private .tmp'},
                 filesystem=filesystem_identity(Path(tempfile.gettempdir())),inventory=tools,
                 source_identity=source_identity(),binary_sha256=sha(binary),
-                contracts_sha256=sha(manifest),scope='bounded C-locale witnesses; full pages unqualified',
+                contracts_sha256=sha(manifest),scope=('strict open-contract reproducers' if args.remaining_contracts else
+                    'bounded operation contracts; full pages unqualified'),
                 limits={'case_seconds':5,'signal_seconds':7,'cleanup_seconds':1,'output_bytes':65536,
                         'child_resources':'smoke.child_limits; 1 MiB files, 64 descriptors, no core dumps'},
-                extended_sigint=args.ed_sigint,sanitizer=args.sanitizer,totals=counts,cases=records)
+                selection=args.case,ed_faults=({"path":str(args.ed_faults.resolve()),"sha256":sha(args.ed_faults)} if args.ed_faults else None),extended_sigint=True,sanitizer=args.sanitizer,totals=counts,cases=records)
     command=(['dpkg-query','-W','-f=${Package} ${Version}\n'] if platform.system()=='Linux'
              else ['sw_vers'])
     identity=subprocess.run(command,capture_output=True,text=True,timeout=10)

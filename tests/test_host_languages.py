@@ -27,6 +27,8 @@ class LanguageEvidenceTests(unittest.TestCase):
         for page in manifest['pages']:
             self.assertEqual(len(page['source_sha256']),64)
             headings={s['section'] for s in page['sections']}
+            self.assertEqual(set(page['selected_contracts']),
+                             {r['id'] for r in rows if r['utility']==page['utility']})
             self.assertTrue(required <= headings)
             for section in page['sections']:
                 self.assertTrue(section['reason'])
@@ -35,7 +37,15 @@ class LanguageEvidenceTests(unittest.TestCase):
             for row in rows:
                 if row['utility']==page['utility']:
                     self.assertTrue(set(row['clauses']) <= headings)
+                    for clause in row['clauses']:
+                        section=next(s for s in page['sections'] if s['section']==clause)
+                        self.assertIn(row['id'],section['witnesses'])
                     self.assertNotIn('gap',row)
+        from host_language_residual_cases import cases as remaining_cases
+        remaining=list(remaining_cases())
+        self.assertFalse(ids & {r['id'] for r in remaining})
+        self.assertEqual({r['id'] for r in remaining},
+                         {r['id'] for r in manifest['optional_reproducers']})
 
     def test_status_ranges_exclude_signal_death(self):
         for expectation in ('normal','nonzero','error','xargs-error'):

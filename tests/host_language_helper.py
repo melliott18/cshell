@@ -40,8 +40,8 @@ def ed_signal(argv, action):
         with selectors.DefaultSelector() as sel:
             sel.register(read_fd, selectors.EVENT_READ, observed)
             sel.register(child.stderr, selectors.EVENT_READ, diagnostics)
-            while not ((len(observed) > start_out and observed.endswith(wanted)) or
-                       (len(diagnostics) > start_err and diagnostics.endswith(wanted))):
+            while not ((wanted in observed[start_out:]) or
+                       (wanted in diagnostics[start_err:])):
                 if len(observed) + len(diagnostics) > 65536 or time.monotonic() >= deadline:
                     raise RuntimeError('ed readiness/response bound exceeded: '+repr(bytes(observed)))
                 for key, _ in sel.select(max(0, deadline-time.monotonic())):
@@ -51,7 +51,8 @@ def ed_signal(argv, action):
                     key.data.extend(block)
     try:
         ready_command = shlex.join([sys.executable, str(Path(__file__).resolve()), 'ready'])
-        send(b'a\nrecovered\n.\n1p\n!' + ready_command.encode() + b'\n')
+        send(b'a\nrecovered\n.\n1p\n!' + ready_command.encode() + b'\n' +
+             (b'P\n' if action == 'int' else b''))
         read_until(b'recovered\n')
         # Seeing bytes in the pipe does not prove ed's stdio operation returned.
         # A later shell escape proves the print command completed before a signal
@@ -61,13 +62,18 @@ def ed_signal(argv, action):
             if time.monotonic() >= ready_deadline:
                 raise RuntimeError('ed did not reach the post-print readiness command')
             time.sleep(0.005)  # Handler and modified buffer are ready.
+        if action == 'int':
+            # The prompt after P proves system() returned and restored SIGINT.
+            # The shell-escape helper alone runs while system() ignores SIGINT.
+            if not observed.endswith(b'*'):
+                read_until(b'*')
         if action == 'hup-home':
             Path('ed.hup').mkdir()  # Deterministic cwd write failure, even as root.
         sent = signal.SIGINT if action == 'int' else signal.SIGHUP
         child.send_signal(sent)
         if action == 'int':
-            read_until(b'?\n')
-            send(b'1p\nw saved\nq\n')
+            read_until(b'?\n*')
+            send(b'P\n1p\nw saved\nq\n')
             read_until(b'recovered\n')
         # Keep stdin open until ed acknowledges SIGINT / exits on SIGHUP.
         child.wait(timeout=2)
@@ -81,7 +87,7 @@ def ed_signal(argv, action):
                            (Path('saved'),Path('ed.hup'),Path('.home/ed.hup')) if p.is_file()})
         Path('signal.json').write_text(json.dumps(result,indent=2)+'\n')
         if action == 'int':
-            ok=(bytes(observed)==b'recovered\n?\nrecovered\n' and not err
+            ok=(bytes(observed)==b'recovered\n*?\n*recovered\n' and not err
                 and child.returncode >= 0 and Path('saved').read_bytes()==b'recovered\n')
         else:
             recovery=Path('.home/ed.hup' if action=='hup-home' else 'ed.hup')

@@ -18,7 +18,9 @@ from host_language_cases import UTILITIES
 
 def provision(destination, gnu_bin=None):
     selected = {name: shutil.which(name, path=os.defpath) for name in dict.fromkeys(HOSTS + UTILITIES)}
-    overrides = {'printf': str(ROOT / 'build/host-printf')}
+    overrides = {'printf': str(ROOT / 'build/host-printf'),
+                 'ed': str(ROOT / 'build/host-ed'),
+                 'xargs': str(ROOT / 'build/host-xargs')}
     system = platform.system()
     if system == 'Darwin':
         # /usr/bin/m4 is a developer-tool launcher, not the language executable.

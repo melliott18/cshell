@@ -1,6 +1,6 @@
 {
-  "schema_version": 1,
-  "scope": "C-locale bounded witnesses, not full normative pages",
+  "schema_version": 2,
+  "scope": "Bounded operation contracts in C locale plus one UTF-8 regex witness; complete normative pages remain open.",
   "owner": "CSH-074",
   "pages": [
     {
@@ -72,7 +72,8 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_05",
           "disposition": "partial",
           "witnesses": [
-            "awk/program-files"
+            "awk/program-files",
+            "awk/file-counters"
           ],
           "reason": "Selected operands and missing-file errors only; all operand forms and pathname/encoding boundaries remain unqualified.",
           "owner": "CSH-074"
@@ -80,8 +81,11 @@
         {
           "section": "STDIN",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_06",
-          "disposition": "unqualified",
-          "witnesses": [],
+          "disposition": "partial",
+          "witnesses": [
+            "awk/range-reset",
+            "awk/record-separator"
+          ],
           "reason": "Finite C-locale input streams only; terminal interaction, read faults and interrupted input remain unqualified.",
           "owner": "CSH-074"
         },
@@ -98,8 +102,10 @@
         {
           "section": "ENVIRONMENT VARIABLES",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_08",
-          "disposition": "unqualified",
-          "witnesses": [],
+          "disposition": "partial",
+          "witnesses": [
+            "awk/environment"
+          ],
           "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Locale precedence, non-C collation/encoding, NLSPATH/catalogs and other listed variables remain unqualified.",
           "owner": "CSH-074"
         },
@@ -164,9 +170,11 @@
         {
           "section": "Overall Program Structure",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_01",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Overall Program Structure rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/next-default-action"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -174,9 +182,11 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_02",
           "disposition": "partial",
           "witnesses": [
-            "awk/arrays-loops"
+            "awk/arrays-loops",
+            "awk/operators",
+            "awk/multidimensional-array"
           ],
-          "reason": "The Expressions in awk rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -184,9 +194,13 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_03",
           "disposition": "partial",
           "witnesses": [
-            "awk/variables"
+            "awk/variables",
+            "awk/file-counters",
+            "awk/field-rebuild",
+            "awk/record-separator",
+            "awk/environment"
           ],
-          "reason": "The Variables and Special Variables rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -194,9 +208,10 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_04",
           "disposition": "partial",
           "witnesses": [
-            "awk/ere-range"
+            "awk/ere-range",
+            "awk/match-state"
           ],
-          "reason": "The Regular Expressions rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -204,33 +219,40 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_05",
           "disposition": "partial",
           "witnesses": [
-            "awk/ere-range"
+            "awk/ere-range",
+            "awk/next-default-action"
           ],
-          "reason": "The Patterns rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Special Patterns",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_06",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Special Patterns rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/next-default-action"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Expression Patterns",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_07",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Expression Patterns rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/next-default-action"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Pattern Ranges",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_08",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Pattern Ranges rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/range-reset"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -240,9 +262,11 @@
           "witnesses": [
             "awk/arrays-loops",
             "awk/function-control",
-            "awk/exit-end"
+            "awk/exit-end",
+            "awk/while-do",
+            "awk/next-default-action"
           ],
-          "reason": "The Actions rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -252,15 +276,17 @@
           "witnesses": [
             "awk/format-math"
           ],
-          "reason": "The Output Statements rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Functions",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_11",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Functions rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/remaining-functions"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -268,9 +294,10 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_12",
           "disposition": "partial",
           "witnesses": [
-            "awk/format-math"
+            "awk/format-math",
+            "awk/remaining-functions"
           ],
-          "reason": "The Arithmetic Functions rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -278,9 +305,11 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_13",
           "disposition": "partial",
           "witnesses": [
-            "awk/strings"
+            "awk/strings",
+            "awk/match-state",
+            "awk/remaining-functions"
           ],
-          "reason": "The String Functions rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -288,9 +317,10 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_14",
           "disposition": "partial",
           "witnesses": [
-            "awk/getline-output"
+            "awk/getline-output",
+            "awk/pipe-system-status"
           ],
-          "reason": "The Input/Output and General Functions rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -298,25 +328,32 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_15",
           "disposition": "partial",
           "witnesses": [
-            "awk/function-control"
+            "awk/function-control",
+            "awk/array-parameter"
           ],
-          "reason": "The User-Defined Functions rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Grammar",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_16",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Grammar rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/lexical-escapes",
+            "awk/operators",
+            "awk/while-do"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Lexical Conventions",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_17",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Lexical Conventions rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "awk/lexical-escapes"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -349,7 +386,35 @@
           "reason": "Listed missing inputs, invalid syntax or child failures only; remaining failures and interactive recovery remain unqualified.",
           "owner": "CSH-074"
         }
-      ]
+      ],
+      "selected_contracts": [
+        "awk/records-fields",
+        "awk/variables",
+        "awk/program-files",
+        "awk/arrays-loops",
+        "awk/function-control",
+        "awk/ere-range",
+        "awk/strings",
+        "awk/format-math",
+        "awk/getline-output",
+        "awk/exit-end",
+        "awk/missing-file",
+        "awk/lexical-escapes",
+        "awk/operators",
+        "awk/while-do",
+        "awk/next-default-action",
+        "awk/range-reset",
+        "awk/file-counters",
+        "awk/field-rebuild",
+        "awk/record-separator",
+        "awk/multidimensional-array",
+        "awk/match-state",
+        "awk/remaining-functions",
+        "awk/array-parameter",
+        "awk/environment",
+        "awk/pipe-system-status"
+      ],
+      "open_contracts": []
     },
     {
       "utility": "bc",
@@ -500,17 +565,23 @@
         {
           "section": "Grammar",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_13_01",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Grammar rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "bc/lexical-continuation",
+            "bc/assignment-increment",
+            "bc/array-parameter"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Lexical Conventions in bc",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_13_02",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Lexical Conventions in bc rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "bc/lexical-continuation"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -523,9 +594,14 @@
             "bc/bases",
             "bc/function-loop-array",
             "bc/math-library",
-            "bc/quit"
+            "bc/quit",
+            "bc/large-integer",
+            "bc/assignment-increment",
+            "bc/condition-while-break",
+            "bc/array-parameter",
+            "bc/automatic-locals"
           ],
-          "reason": "The Operations in bc rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -555,7 +631,24 @@
           "reason": "Listed missing inputs, invalid syntax or child failures only; remaining failures and interactive recovery remain unqualified.",
           "owner": "CSH-074"
         }
-      ]
+      ],
+      "selected_contracts": [
+        "bc/arithmetic",
+        "bc/scale",
+        "bc/bases",
+        "bc/function-loop-array",
+        "bc/file-then-stdin",
+        "bc/math-library",
+        "bc/quit",
+        "bc/missing-file",
+        "bc/large-integer",
+        "bc/lexical-continuation",
+        "bc/assignment-increment",
+        "bc/condition-while-break",
+        "bc/array-parameter",
+        "bc/automatic-locals"
+      ],
+      "open_contracts": []
     },
     {
       "utility": "ed",
@@ -611,32 +704,42 @@
         {
           "section": "OPTIONS",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_04",
-          "disposition": "unqualified",
-          "witnesses": [],
+          "disposition": "partial",
+          "witnesses": [
+            "ed/default-counts",
+            "ed/prompt-toggle"
+          ],
           "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
           "owner": "CSH-074"
         },
         {
           "section": "OPERANDS",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_05",
-          "disposition": "unqualified",
-          "witnesses": [],
+          "disposition": "partial",
+          "witnesses": [
+            "ed/default-counts"
+          ],
           "reason": "Selected operands and missing-file errors only; all operand forms and pathname/encoding boundaries remain unqualified.",
           "owner": "CSH-074"
         },
         {
           "section": "STDIN",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_06",
-          "disposition": "unqualified",
-          "witnesses": [],
+          "disposition": "partial",
+          "witnesses": [
+            "ed/temp-fault-control"
+          ],
           "reason": "Finite C-locale input streams only; terminal interaction, read faults and interrupted input remain unqualified.",
           "owner": "CSH-074"
         },
         {
           "section": "INPUT FILES",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_07",
-          "disposition": "unqualified",
-          "witnesses": [],
+          "disposition": "partial",
+          "witnesses": [
+            "ed/default-counts",
+            "ed/temp-fault-control"
+          ],
           "reason": "Finite authored text files only; size, permissions, encoding and read-fault combinations remain unqualified.",
           "owner": "CSH-074"
         },
@@ -657,7 +760,7 @@
             "ed/signal-hup-home",
             "ed/signal-int"
           ],
-          "reason": "Signal timing across other operations and inherited dispositions remains unqualified; ed has synchronized bounded recovery witnesses.",
+          "reason": "Selected private provider: SIGHUP cwd/HOME recovery and exact SIGINT stdout marker, command-mode return and preserved buffer. Other signal timings and inherited dispositions remain open.",
           "owner": "CSH-074"
         },
         {
@@ -692,9 +795,11 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_12",
           "disposition": "partial",
           "witnesses": [
-            "ed/substitute-write"
+            "ed/substitute-write",
+            "ed/temp-create-failure",
+            "ed/temp-write-failure"
           ],
-          "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
+          "reason": "Exact edit effects, output-path failure and separately instrumented tmpfile EMFILE/backing fwrite ENOSPC failures preserve the original file. Physical filesystem exhaustion, permission combinations and failures during recovery remain open.",
           "owner": "CSH-074"
         },
         {
@@ -712,9 +817,10 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_01",
           "disposition": "partial",
           "witnesses": [
-            "ed/global-bre"
+            "ed/global-bre",
+            "ed/substitute-backref"
           ],
-          "reason": "The Regular Expressions in ed rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -722,17 +828,20 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_02",
           "disposition": "partial",
           "witnesses": [
-            "ed/addresses-mark-number"
+            "ed/addresses-mark-number",
+            "ed/null-address-search"
           ],
-          "reason": "The Addresses in ed rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Commands in ed",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_03",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Commands in ed rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/null-address-search"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -742,7 +851,7 @@
           "witnesses": [
             "ed/append-insert-change-delete"
           ],
-          "reason": "The Append Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -752,7 +861,7 @@
           "witnesses": [
             "ed/append-insert-change-delete"
           ],
-          "reason": "The Change Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -762,15 +871,17 @@
           "witnesses": [
             "ed/append-insert-change-delete"
           ],
-          "reason": "The Delete Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Edit Command",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_07",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Edit Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/edit-clean"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -780,7 +891,7 @@
           "witnesses": [
             "ed/read-edit-filename"
           ],
-          "reason": "The Edit Without Checking Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -790,7 +901,7 @@
           "witnesses": [
             "ed/read-edit-filename"
           ],
-          "reason": "The Filename Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -800,15 +911,17 @@
           "witnesses": [
             "ed/global-bre"
           ],
-          "reason": "The Global Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Interactive Global Command",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_11",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Interactive Global Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/interactive-global"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -834,7 +947,7 @@
           "witnesses": [
             "ed/append-insert-change-delete"
           ],
-          "reason": "The Insert Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -844,7 +957,7 @@
           "witnesses": [
             "ed/copy-move-join-undo"
           ],
-          "reason": "The Join Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -854,7 +967,7 @@
           "witnesses": [
             "ed/addresses-mark-number"
           ],
-          "reason": "The Mark Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -864,7 +977,7 @@
           "witnesses": [
             "ed/list"
           ],
-          "reason": "The List Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -874,7 +987,7 @@
           "witnesses": [
             "ed/copy-move-join-undo"
           ],
-          "reason": "The Move Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -884,39 +997,47 @@
           "witnesses": [
             "ed/addresses-mark-number"
           ],
-          "reason": "The Number Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Print Command",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_20",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Print Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/default-counts"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Prompt Command",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_21",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Prompt Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/prompt-toggle"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Quit Command",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_22",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Quit Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/edit-clean"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Quit Without Checking Command",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_23",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Quit Without Checking Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/interactive-global"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -924,9 +1045,10 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_24",
           "disposition": "partial",
           "witnesses": [
-            "ed/read-edit-filename"
+            "ed/read-edit-filename",
+            "ed/shell-read-write"
           ],
-          "reason": "The Read Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -934,9 +1056,11 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_25",
           "disposition": "partial",
           "witnesses": [
-            "ed/substitute-write"
+            "ed/substitute-write",
+            "ed/substitute-backref",
+            "ed/substitute-occurrence"
           ],
-          "reason": "The Substitute Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -946,7 +1070,7 @@
           "witnesses": [
             "ed/copy-move-join-undo"
           ],
-          "reason": "The Copy Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -956,7 +1080,7 @@
           "witnesses": [
             "ed/copy-move-join-undo"
           ],
-          "reason": "The Undo Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -966,15 +1090,17 @@
           "witnesses": [
             "ed/global-bre"
           ],
-          "reason": "The Global Non-Matched Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Interactive Global Not-Matched Command",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_29",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Interactive Global Not-Matched Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/interactive-global"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -983,9 +1109,12 @@
           "disposition": "partial",
           "witnesses": [
             "ed/substitute-write",
-            "ed/write-failure"
+            "ed/write-failure",
+            "ed/default-counts",
+            "ed/shell-read-write",
+            "ed/write-range"
           ],
-          "reason": "The Write Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -995,23 +1124,27 @@
           "witnesses": [
             "ed/addresses-mark-number"
           ],
-          "reason": "The Line Number Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Shell Escape Command",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_32",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Shell Escape Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/shell-read-write"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Null Command",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_13_33",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Null Command rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "ed/null-address-search"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -1039,12 +1172,39 @@
           "disposition": "partial",
           "witnesses": [
             "ed/bad-address",
-            "ed/write-failure"
+            "ed/write-failure",
+            "ed/temp-create-failure",
+            "ed/temp-write-failure"
           ],
-          "reason": "Listed missing inputs, invalid syntax or child failures only; remaining failures and interactive recovery remain unqualified.",
+          "reason": "Exact edit effects, output-path failure and separately instrumented tmpfile EMFILE/backing fwrite ENOSPC failures preserve the original file. Physical filesystem exhaustion, permission combinations and failures during recovery remain open.",
           "owner": "CSH-074"
         }
-      ]
+      ],
+      "selected_contracts": [
+        "ed/substitute-write",
+        "ed/append-insert-change-delete",
+        "ed/copy-move-join-undo",
+        "ed/addresses-mark-number",
+        "ed/global-bre",
+        "ed/read-edit-filename",
+        "ed/list",
+        "ed/bad-address",
+        "ed/write-failure",
+        "ed/bounded-buffer",
+        "ed/default-counts",
+        "ed/edit-clean",
+        "ed/interactive-global",
+        "ed/null-address-search",
+        "ed/prompt-toggle",
+        "ed/shell-read-write",
+        "ed/substitute-backref",
+        "ed/substitute-occurrence",
+        "ed/write-range",
+        "ed/temp-create-failure",
+        "ed/temp-write-failure",
+        "ed/temp-fault-control"
+      ],
+      "open_contracts": []
     },
     {
       "utility": "expr",
@@ -1100,16 +1260,20 @@
         {
           "section": "OPTIONS",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_04",
-          "disposition": "unqualified",
-          "witnesses": [],
+          "disposition": "partial",
+          "witnesses": [
+            "expr/operand-terminator"
+          ],
           "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
           "owner": "CSH-074"
         },
         {
           "section": "OPERANDS",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_05",
-          "disposition": "unqualified",
-          "witnesses": [],
+          "disposition": "partial",
+          "witnesses": [
+            "expr/operand-terminator"
+          ],
           "reason": "Selected operands and missing-file errors only; all operand forms and pathname/encoding boundaries remain unqualified.",
           "owner": "CSH-074"
         },
@@ -1195,7 +1359,15 @@
             "expr/and",
             "expr/match-length",
             "expr/match-capture",
-            "expr/match-empty"
+            "expr/match-empty",
+            "expr/negative-division",
+            "expr/remainder",
+            "expr/left-associative",
+            "expr/string-comparison",
+            "expr/numeric-comparison",
+            "expr/and-false",
+            "expr/or-empty",
+            "expr/nested-groups"
           ],
           "reason": "Selected language/algorithm operations only; remaining grammar, commands, expressions and interactions remain unqualified.",
           "owner": "CSH-074"
@@ -1203,17 +1375,29 @@
         {
           "section": "Matching Expression",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_13_01",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Matching Expression rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "expr/anchored-match",
+            "expr/match-interval"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Identification as Integer or String",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_13_02",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Identification as Integer or String rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "expr/negative-division",
+            "expr/remainder",
+            "expr/left-associative",
+            "expr/string-comparison",
+            "expr/numeric-comparison",
+            "expr/and-false",
+            "expr/or-empty",
+            "expr/nested-groups"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -1245,7 +1429,31 @@
           "reason": "Listed missing inputs, invalid syntax or child failures only; remaining failures and interactive recovery remain unqualified.",
           "owner": "CSH-074"
         }
-      ]
+      ],
+      "selected_contracts": [
+        "expr/precedence",
+        "expr/parentheses",
+        "expr/zero",
+        "expr/comparison",
+        "expr/or",
+        "expr/and",
+        "expr/match-length",
+        "expr/match-capture",
+        "expr/match-empty",
+        "expr/invalid",
+        "expr/negative-division",
+        "expr/remainder",
+        "expr/left-associative",
+        "expr/string-comparison",
+        "expr/numeric-comparison",
+        "expr/and-false",
+        "expr/or-empty",
+        "expr/anchored-match",
+        "expr/match-interval",
+        "expr/nested-groups",
+        "expr/operand-terminator"
+      ],
+      "open_contracts": []
     },
     {
       "utility": "grep",
@@ -1303,7 +1511,14 @@
             "grep/file-list",
             "grep/missing-file",
             "grep/invalid-bre",
-            "grep/silent-missing"
+            "grep/silent-missing",
+            "grep/bre-backref",
+            "grep/bre-interval",
+            "grep/ere-repeat",
+            "grep/bracket-classes",
+            "grep/bracket-literals",
+            "grep/longest-subexpression",
+            "grep/utf8-character"
           ],
           "reason": "General processing is witnessed below; the complete utility language/algorithm remains unqualified.",
           "owner": "CSH-074"
@@ -1323,7 +1538,14 @@
             "grep/whole-line",
             "grep/multiple-patterns",
             "grep/file-list",
-            "grep/silent-missing"
+            "grep/silent-missing",
+            "grep/bre-backref",
+            "grep/bre-interval",
+            "grep/ere-repeat",
+            "grep/bracket-classes",
+            "grep/bracket-literals",
+            "grep/longest-subexpression",
+            "grep/empty-pattern-file"
           ],
           "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
           "owner": "CSH-074"
@@ -1333,7 +1555,9 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_05",
           "disposition": "partial",
           "witnesses": [
-            "grep/pattern-file"
+            "grep/pattern-file",
+            "grep/empty-pattern",
+            "grep/stdin-operand"
           ],
           "reason": "Selected operands and missing-file errors only; all operand forms and pathname/encoding boundaries remain unqualified.",
           "owner": "CSH-074"
@@ -1351,7 +1575,9 @@
             "grep/count",
             "grep/quiet",
             "grep/whole-line",
-            "grep/multiple-patterns"
+            "grep/multiple-patterns",
+            "grep/empty-pattern",
+            "grep/stdin-operand"
           ],
           "reason": "Finite C-locale input streams only; terminal interaction, read faults and interrupted input remain unqualified.",
           "owner": "CSH-074"
@@ -1361,7 +1587,8 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_07",
           "disposition": "partial",
           "witnesses": [
-            "grep/pattern-file"
+            "grep/pattern-file",
+            "grep/empty-pattern-file"
           ],
           "reason": "Finite authored text files only; size, permissions, encoding and read-fault combinations remain unqualified.",
           "owner": "CSH-074"
@@ -1369,9 +1596,11 @@
         {
           "section": "ENVIRONMENT VARIABLES",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_08",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Locale precedence, non-C collation/encoding, NLSPATH/catalogs and other listed variables remain unqualified.",
+          "disposition": "partial",
+          "witnesses": [
+            "grep/utf8-character"
+          ],
+          "reason": "C-locale cases plus one en_US.UTF-8 multibyte dot witness; missing locale fails. Locale precedence, other collation/encoding and message catalogs remain open.",
           "owner": "CSH-074"
         },
         {
@@ -1428,9 +1657,9 @@
         {
           "section": "EXTENDED DESCRIPTION",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_13",
-          "disposition": "unqualified",
+          "disposition": "not-applicable",
           "witnesses": [],
-          "reason": "Selected language/algorithm operations only; remaining grammar, commands, expressions and interactions remain unqualified.",
+          "reason": "The normative section is None; behavior is specified under DESCRIPTION and OPTIONS.",
           "owner": "CSH-074"
         },
         {
@@ -1467,7 +1696,35 @@
           "reason": "Listed missing inputs, invalid syntax or child failures only; remaining failures and interactive recovery remain unqualified.",
           "owner": "CSH-074"
         }
-      ]
+      ],
+      "selected_contracts": [
+        "grep/bre",
+        "grep/ere",
+        "grep/fixed",
+        "grep/ignore-case",
+        "grep/invert-number",
+        "grep/count",
+        "grep/quiet",
+        "grep/whole-line",
+        "grep/multiple-patterns",
+        "grep/pattern-file",
+        "grep/file-prefix",
+        "grep/file-list",
+        "grep/missing-file",
+        "grep/invalid-bre",
+        "grep/silent-missing",
+        "grep/bre-backref",
+        "grep/bre-interval",
+        "grep/ere-repeat",
+        "grep/bracket-classes",
+        "grep/bracket-literals",
+        "grep/longest-subexpression",
+        "grep/empty-pattern",
+        "grep/empty-pattern-file",
+        "grep/stdin-operand",
+        "grep/utf8-character"
+      ],
+      "open_contracts": []
     },
     {
       "utility": "m4",
@@ -1532,16 +1789,21 @@
         {
           "section": "OPERANDS",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_05",
-          "disposition": "unqualified",
-          "witnesses": [],
+          "disposition": "partial",
+          "witnesses": [
+            "m4/stdin-operand",
+            "m4/file-order"
+          ],
           "reason": "Selected operands and missing-file errors only; all operand forms and pathname/encoding boundaries remain unqualified.",
           "owner": "CSH-074"
         },
         {
           "section": "STDIN",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_06",
-          "disposition": "unqualified",
-          "witnesses": [],
+          "disposition": "partial",
+          "witnesses": [
+            "m4/stdin-operand"
+          ],
           "reason": "Finite C-locale input streams only; terminal interaction, read faults and interrupted input remain unqualified.",
           "owner": "CSH-074"
         },
@@ -1550,7 +1812,8 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_07",
           "disposition": "partial",
           "witnesses": [
-            "m4/include"
+            "m4/include",
+            "m4/file-order"
           ],
           "reason": "Finite authored text files only; size, permissions, encoding and read-fault combinations remain unqualified.",
           "owner": "CSH-074"
@@ -1594,7 +1857,9 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_11",
           "disposition": "partial",
           "witnesses": [
-            "m4/missing-file"
+            "m4/missing-file",
+            "m4/errprint",
+            "m4/trace-dump"
           ],
           "reason": "Diagnostic presence only where wording is unspecified; localization, warnings and all error paths remain unqualified.",
           "owner": "CSH-074"
@@ -1616,7 +1881,15 @@
             "m4/arithmetic-string",
             "m4/conditionals-stack",
             "m4/diversion",
-            "m4/include"
+            "m4/include",
+            "m4/quoted-rescan",
+            "m4/quote-comment-delimiters",
+            "m4/defn-shift-undefine",
+            "m4/eval-radix-padding",
+            "m4/divnum-discard",
+            "m4/wrap",
+            "m4/syscmd-status",
+            "m4/trace-dump"
           ],
           "reason": "Selected language/algorithm operations only; remaining grammar, commands, expressions and interactions remain unqualified.",
           "owner": "CSH-074"
@@ -1649,6 +1922,33 @@
           "reason": "Listed missing inputs, invalid syntax or child failures only; remaining failures and interactive recovery remain unqualified.",
           "owner": "CSH-074"
         }
+      ],
+      "selected_contracts": [
+        "m4/define-arguments",
+        "m4/define-option",
+        "m4/undefine-option",
+        "m4/arithmetic-string",
+        "m4/conditionals-stack",
+        "m4/diversion",
+        "m4/include",
+        "m4/exit",
+        "m4/missing-file",
+        "m4/quoted-rescan",
+        "m4/quote-comment-delimiters",
+        "m4/defn-shift-undefine",
+        "m4/eval-radix-padding",
+        "m4/divnum-discard",
+        "m4/wrap",
+        "m4/syscmd-status",
+        "m4/errprint",
+        "m4/trace-dump",
+        "m4/stdin-operand",
+        "m4/file-order"
+      ],
+      "open_contracts": [
+        "m4/wrap-order",
+        "m4/mkstemp-failure",
+        "m4/substr-nonnumeric"
       ]
     },
     {
@@ -1689,7 +1989,8 @@
             "patch/context",
             "patch/reverse",
             "patch/input-output",
-            "patch/reject"
+            "patch/reject",
+            "patch/two-files"
           ],
           "reason": "General processing is witnessed below; the complete utility language/algorithm remains unqualified.",
           "owner": "CSH-074"
@@ -1703,7 +2004,11 @@
             "patch/unified",
             "patch/context",
             "patch/reverse",
-            "patch/input-output"
+            "patch/input-output",
+            "patch/ed-format",
+            "patch/explicit-normal-backup",
+            "patch/strip-directory",
+            "patch/blank-insensitive"
           ],
           "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
           "owner": "CSH-074"
@@ -1774,8 +2079,10 @@
         {
           "section": "STDERR",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_11",
-          "disposition": "unqualified",
-          "witnesses": [],
+          "disposition": "partial",
+          "witnesses": [
+            "patch/missing-input"
+          ],
           "reason": "Diagnostic presence only where wording is unspecified; localization, warnings and all error paths remain unqualified.",
           "owner": "CSH-074"
         },
@@ -1787,7 +2094,8 @@
             "patch/normal",
             "patch/unified",
             "patch/context",
-            "patch/input-output"
+            "patch/input-output",
+            "patch/explicit-normal-backup"
           ],
           "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
           "owner": "CSH-074"
@@ -1803,25 +2111,34 @@
         {
           "section": "Patch File Format",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_13_01",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Patch File Format rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "patch/ed-format"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Filename Determination",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_13_02",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Filename Determination rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "patch/strip-directory",
+            "patch/two-files"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
           "section": "Patch Application",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_13_03",
-          "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "The Patch Application rules and their combinations are not exhaustively asserted; only the named witnesses below apply. Additional clause-derived coverage is required.",
+          "disposition": "partial",
+          "witnesses": [
+            "patch/blank-insensitive",
+            "patch/offset-context",
+            "patch/two-files"
+          ],
+          "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
         },
         {
@@ -1844,12 +2161,29 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_15",
           "disposition": "partial",
           "witnesses": [
-            "patch/reject"
+            "patch/reject",
+            "patch/missing-input"
           ],
           "reason": "Listed missing inputs, invalid syntax or child failures only; remaining failures and interactive recovery remain unqualified.",
           "owner": "CSH-074"
         }
-      ]
+      ],
+      "selected_contracts": [
+        "patch/normal",
+        "patch/unified",
+        "patch/context",
+        "patch/reverse",
+        "patch/input-output",
+        "patch/reject",
+        "patch/ed-format",
+        "patch/explicit-normal-backup",
+        "patch/strip-directory",
+        "patch/blank-insensitive",
+        "patch/offset-context",
+        "patch/two-files",
+        "patch/missing-input"
+      ],
+      "open_contracts": []
     },
     {
       "utility": "xargs",
@@ -1903,7 +2237,13 @@
             "xargs/unmatched-quote",
             "xargs/size-rejection",
             "xargs/child-exit-1",
-            "xargs/child-exit-255"
+            "xargs/child-exit-255",
+            "xargs/empty-invoke",
+            "xargs/empty-suppress",
+            "xargs/size-batches",
+            "xargs/minimum-command-size",
+            "xargs/blank-only-input",
+            "xargs/carry-partial-argument"
           ],
           "reason": "General processing is witnessed below; the complete utility language/algorithm remains unqualified.",
           "owner": "CSH-074"
@@ -1919,7 +2259,19 @@
             "xargs/replace",
             "xargs/eof",
             "xargs/trace",
-            "xargs/size-rejection"
+            "xargs/size-rejection",
+            "xargs/nul-input",
+            "xargs/empty-suppress",
+            "xargs/disable-eof",
+            "xargs/initial-args",
+            "xargs/size-batches",
+            "xargs/minimum-command-size",
+            "xargs/strict-size-boundary",
+            "xargs/oversized-size",
+            "xargs/exit-size-no-count",
+            "xargs/single-empty-nul",
+            "xargs/blank-only-suppressed",
+            "xargs/carry-partial-argument"
           ],
           "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
           "owner": "CSH-074"
@@ -1929,7 +2281,8 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_05",
           "disposition": "partial",
           "witnesses": [
-            "xargs/default-echo"
+            "xargs/default-echo",
+            "xargs/initial-args"
           ],
           "reason": "Selected operands and missing-file errors only; all operand forms and pathname/encoding boundaries remain unqualified.",
           "owner": "CSH-074"
@@ -1940,7 +2293,12 @@
           "disposition": "partial",
           "witnesses": [
             "xargs/quoting",
-            "xargs/unmatched-quote"
+            "xargs/unmatched-quote",
+            "xargs/nul-input",
+            "xargs/empty-quotes",
+            "xargs/single-empty-nul",
+            "xargs/blank-only-input",
+            "xargs/blank-only-suppressed"
           ],
           "reason": "Finite C-locale input streams only; terminal interaction, read faults and interrupted input remain unqualified.",
           "owner": "CSH-074"
@@ -2012,9 +2370,9 @@
         {
           "section": "EXTENDED DESCRIPTION",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html#tag_20_152_13",
-          "disposition": "unqualified",
+          "disposition": "not-applicable",
           "witnesses": [],
-          "reason": "Selected language/algorithm operations only; remaining grammar, commands, expressions and interactions remain unqualified.",
+          "reason": "The normative section is None; behavior is specified under DESCRIPTION and OPTIONS.",
           "owner": "CSH-074"
         },
         {
@@ -2054,7 +2412,38 @@
           "reason": "Listed missing inputs, invalid syntax or child failures only; remaining failures and interactive recovery remain unqualified.",
           "owner": "CSH-074"
         }
-      ]
+      ],
+      "selected_contracts": [
+        "xargs/quoting",
+        "xargs/batch-count",
+        "xargs/logical-lines",
+        "xargs/replace",
+        "xargs/eof",
+        "xargs/default-echo",
+        "xargs/trace",
+        "xargs/missing-utility",
+        "xargs/not-executable",
+        "xargs/unmatched-quote",
+        "xargs/size-rejection",
+        "xargs/child-exit-1",
+        "xargs/child-exit-255",
+        "xargs/nul-input",
+        "xargs/empty-invoke",
+        "xargs/empty-suppress",
+        "xargs/empty-quotes",
+        "xargs/disable-eof",
+        "xargs/initial-args",
+        "xargs/size-batches",
+        "xargs/minimum-command-size",
+        "xargs/strict-size-boundary",
+        "xargs/oversized-size",
+        "xargs/exit-size-no-count",
+        "xargs/single-empty-nul",
+        "xargs/blank-only-input",
+        "xargs/blank-only-suppressed",
+        "xargs/carry-partial-argument"
+      ],
+      "open_contracts": []
     }
   ],
   "common_defaults": [
@@ -2080,20 +2469,47 @@
         "ed/write-failure",
         "ed/signal-hup",
         "ed/signal-hup-home",
-        "ed/signal-int"
+        "ed/signal-int",
+        "ed/temp-create-failure",
+        "ed/temp-write-failure",
+        "ed/temp-fault-control"
       ],
       "disposition": "partial",
-      "reason": "4096-byte buffer, failed output pathname, synchronized SIGHUP cwd/HOME recovery and SIGINT command-mode recovery. Temp backing-store faults, capacity exhaustion and other signal timings remain open.",
+      "reason": "4096-byte buffer, output-path failure, synchronized SIGHUP cwd/HOME and SIGINT command-mode recovery, plus isolated tmpfile EMFILE and backing fwrite ENOSPC injection. These satisfy the retained bounded-fixture capability; physical capacity and other interruption timings remain open.",
       "owner": "CSH-074"
     }
   ],
   "optional_reproducers": [
     {
-      "id": "ed/signal-int",
-      "flag": "--ed-sigint",
+      "id": "m4/wrap-order",
+      "flag": "--remaining-contracts",
       "disposition": "unqualified",
-      "reason": "Strict stdout ?\\n and unchanged buffer recovery. macOS emits on stderr; GNU adds a newline. Keep failures outside the declared passing subset, without gap allowances.",
+      "reason": "Selected native m4 expands wrap arguments in reverse registration order; POSIX requires registration order.",
       "owner": "CSH-074"
+    },
+    {
+      "id": "m4/mkstemp-failure",
+      "flag": "--remaining-contracts",
+      "disposition": "unqualified",
+      "reason": "Selected native m4 does not implement the required mkstemp macro.",
+      "owner": "CSH-074"
+    },
+    {
+      "id": "m4/substr-nonnumeric",
+      "flag": "--remaining-contracts",
+      "disposition": "unqualified",
+      "reason": "Selected native m4 diagnoses nonnumeric substr but returns zero; POSIX requires nonzero error status.",
+      "owner": "CSH-074"
+    }
+  ],
+  "supplemental_cases": [
+    {
+      "id": "xargs/logical-lines",
+      "reason": "Legacy -L line batching is an extension observation; Issue 8 XSI line-as-one-argument semantics are not claimed by the selected base profile."
+    },
+    {
+      "id": "xargs/replace",
+      "reason": "-I is XSI shading, retained as a supplemental regression, not required base-profile qualification."
     }
   ]
 }

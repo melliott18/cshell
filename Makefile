@@ -481,17 +481,17 @@ build/host-printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/printf.c $(LDLIBS)
 
-host-profile: build/host-printf
+host-profile: build/host-printf build/host-ed build/host-xargs
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_printf_faults.c $(LDLIBS)
 
-test-host-profile: test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
+test-host-profile: test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults build/tests/host_ed_faults host-profile
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 	$(PYTHON) -m unittest discover -s tests -p 'test_host_languages.py'
-	$(PYTHON) tests/host_languages.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-languages-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+	$(PYTHON) tests/host_languages.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --ed-faults build/tests/host_ed_faults --record build/tests/host-languages-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 
 # Public entry point with only the command input read syscall instrumented.
 build/tests/command-read-input.o: src/input.c tests/command_read_faults.h $(INPUT_HEADERS)
@@ -620,6 +620,23 @@ test-host-inventory:
 	$(PYTHON) tests/test_host_contract_inventory.py
 
 .PHONY: test-host-languages
-test-host-languages: cshell
+test-host-languages: cshell host-profile build/tests/host_ed_faults
 	$(PYTHON) -m unittest discover -s tests -p 'test_host_languages.py'
-	$(PYTHON) tests/host_languages.py ./cshell --path "$(if $(CSH_TEST_PATH),$(CSH_TEST_PATH),$(shell getconf PATH))" --record build/tests/host-languages-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+	$(PYTHON) tests/host_languages.py ./cshell --path "$(if $(CSH_TEST_PATH),$(CSH_TEST_PATH),$(abspath build/host-profile/bin):$(shell getconf PATH))" --ed-faults build/tests/host_ed_faults --record build/tests/host-languages-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+# Standalone GPL-2.0-or-later host executable, never linked into cshell.
+HOST_ED_SOURCES = $(wildcard tools/host-profile/vendor/ed/*.c)
+HOST_ED_HEADERS = $(wildcard tools/host-profile/vendor/ed/*.h)
+build/host-ed: $(HOST_ED_SOURCES) $(HOST_ED_HEADERS)
+	mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE -D_DEFAULT_SOURCE -DPROGVERSION='"1.22.6-cshell.1"' $(LDFLAGS) -o $@ $(HOST_ED_SOURCES) $(LDLIBS)
+
+build/tests/host_ed_faults: $(HOST_ED_SOURCES) $(HOST_ED_HEADERS) tests/host_ed_faults.c tests/host_ed_faults.h
+	mkdir -p build/tests
+	$(CC) $(CPPFLAGS) $(CFLAGS) -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE -D_DEFAULT_SOURCE -DPROGVERSION='"1.22.6-cshell.1-faults"' -include tests/host_ed_faults.h $(LDFLAGS) -o $@ $(HOST_ED_SOURCES) tests/host_ed_faults.c $(LDLIBS)
+
+HOST_XARGS_SOURCES = $(wildcard tools/host-profile/vendor/xargs/*.c)
+HOST_XARGS_HEADERS = $(wildcard tools/host-profile/vendor/xargs/*.h)
+build/host-xargs: $(HOST_XARGS_SOURCES) $(HOST_XARGS_HEADERS)
+	mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE -D_DEFAULT_SOURCE $(LDFLAGS) -o $@ $(HOST_XARGS_SOURCES) $(LDLIBS)

@@ -121,3 +121,6 @@ def cases():
     yield case('xargs','size-rejection',['-x','-s','256']+helper,b'x'*1024+b'\n',status='xargs-error',err='nonempty',clauses=['OPTIONS','CONSEQUENCES OF ERRORS'])
     for code in (1,255):
         yield case('xargs','child-exit-'+str(code),['-n','1']+helper[:-1]+['exit',str(code)],b'a\nb\n',status='xargs-error',err='nonempty' if code==255 else b'',files={'calls':b'a\n' if code==255 else b'a\nb\n'},clauses=['EXIT STATUS','CONSEQUENCES OF ERRORS'])
+
+    from host_language_extended_cases import cases as extended_cases
+    yield from extended_cases()
