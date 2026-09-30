@@ -165,9 +165,24 @@ def _run_case(binary, helper, providers, search_path, name, mode):
                     effects['owned_status'] = None
                 ok &= effects['owned_status'] == -case['terminated']
             if 'priority_delta' in case:
+                # Query the kernel through a separate disposable helper. Darwin's
+                # ceiling is 20; Linux's is 19. Neither utility supplies this oracle.
+                control_directory = directory / 'priority-control'
+                control_directory.mkdir()
+                control_status, control_output, control_errors = smoke.capture(
+                    helper, dict(args=['nice-ceiling'], stdin=''), control_directory, 5, 65536)
+                row['priority_control'] = serial(dict(status=control_status,
+                    **control_output, errors=control_errors))
+                if control_status != 0 or control_output['stderr'] or control_errors:
+                    raise RuntimeError('priority ceiling control failed')
+                ceiling = int(control_output['stdout'])
+                effects['nice_ceiling_control'] = serial(dict(status=control_status,
+                    **control_output, errors=control_errors, ceiling=ceiling))
                 effects['nice_before'] = before_priority
                 effects['nice_after'] = os.getpriority(os.PRIO_PROCESS, pid)
-                ok &= effects['nice_after'] == min(19, before_priority + case['priority_delta'])
+                ok &= (control_status == 0 and not control_output['stderr'] and not control_errors
+                       and ceiling >= before_priority
+                       and effects['nice_after'] == min(ceiling, before_priority + case['priority_delta']))
             row.update(phase='assertion', verdict='PASS' if ok and not errors else 'FAIL',
                        actual=serial(dict(status=status, **output, errors=errors, effects=effects,
                                           elapsed_seconds=elapsed)), invocation=serial(fixture))

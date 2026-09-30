@@ -1356,3 +1356,19 @@ exhaustion/recovery and independently bounded `time` measurements. It is also
 run after the declared execution subset by `make test-host-profile` when
 `HOST_EXECUTION_SUBSET` is supplied. Retained platform results are linked from
 [the extension map](host-execution-evidence.md#fallback-resource-and-timing-extension).
+
+
+For the repaired CSH-075 execution profile, explicitly build the pinned timeout
+provider with `make host-timeout`, then run:
+
+```sh
+make test-host-profile HOST_EXECUTION_SUBSET=tests/host_execution_subset_repaired.json \
+  HOST_PROFILE_PROVISION_FLAGS='--timeout build/host-timeout'
+```
+
+Linux additionally selects BusyBox renice. The repaired subset omits only the
+still-failing getconf Issue 8 variable; full strict execution runs retain that
+failure. The [repair/environment map](host-execution-evidence.md#provider-repairs-and-required-environments)
+separates remaining implementation work from missing environments and manual
+provisioning. Provider source builds and all evidence stay in the isolated
+worktree/private profile; no global install is performed.

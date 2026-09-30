@@ -254,3 +254,40 @@ Issue 8 short options remain strict failures; a symlink does not qualify a page.
 
 See [execution evidence](../../docs/host-execution-evidence.md) for full and
 explicit-subset commands, independent controls, provider failures and limits.
+
+
+## CSH-075 repaired execution providers
+
+The execution profile (`--execution`) selects the installed BusyBox `renice` on
+Linux. Its `-n` is relative and successful changes have empty stdout. The stock
+util-linux provider remains available outside the private prefix. This repairs
+the measured PID increment contract; process-group and saved-user-ID semantics
+remain separate unqualified obligations.
+
+A newer GNU timeout is insufficient by itself: 9.11 accepts `-f`/`-p`, but returns
+an ordinary exit code for a signal after expiry with `-p`. The local
+[patch](timeout-preserve-signal.patch) reuses its existing disable-core-dumps,
+reset-disposition, unblock-and-raise path when preservation was requested. Normal
+child exits, including exit 143, retain normal exit status. The source is GNU
+coreutils 9.11 (GPL-3.0-or-later), fetched from the official release server and
+checked against the SHA-256 pinned in [build_timeout.py](build_timeout.py).
+Source, licenses, configure/build logs and a build manifest remain under `build/`.
+The executable is never linked into cshell or installed system-wide.
+
+```sh
+# Explicit network/source-build step. A compiler, make, patch and curl are needed.
+make host-timeout
+# Or supply the identical hash-verified local release archive:
+make host-timeout HOST_TIMEOUT_BUILD_FLAGS='--archive /path/to/coreutils-9.11.tar.xz'
+# Full strict run: the getconf Issue 8 failure is still expected to fail.
+make test-host-execution-profile HOST_PROFILE_PROVISION_FLAGS='--timeout build/host-timeout'
+# Explicit qualified subset, excluding only that getconf case:
+make test-host-profile HOST_EXECUTION_SUBSET=tests/host_execution_subset_repaired.json \
+  HOST_PROFILE_PROVISION_FLAGS='--timeout build/host-timeout'
+```
+
+Ordinary builds do not download source. Selection requires the explicit
+`--timeout` path; merely having a build artifact does not change the profile.
+`make clean` removes the local source build and provider. The earlier Darwin and
+Linux subset lists remain historical scopes; the repaired subset adds every
+current authored ordinary case except `getconf/issue8-environment`.

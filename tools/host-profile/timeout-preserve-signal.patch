@@ -1,0 +1,11 @@
+--- a/src/timeout.c
++++ b/src/timeout.c
+@@ -607,7 +607,7 @@
+               int sig = WTERMSIG (status);
+               if (WCOREDUMP (status))
+                 error (0, 0, _("the monitored command dumped core"));
+-              if (!timed_out && disable_core_dumps ())
++              if ((!timed_out || preserve_status) && disable_core_dumps ())
+                 {
+                   /* exit with the signal flag set.  */
+                   signal (sig, SIG_DFL);

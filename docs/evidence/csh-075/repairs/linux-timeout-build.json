@@ -1,0 +1,39 @@
+{
+  "upstream": "https://ftp.gnu.org/gnu/coreutils/coreutils-9.11.tar.xz",
+  "version": "9.11",
+  "archive_sha256": "394024eda0a5955217ceda9cd1201e65dc8fa3aa29c2951135a49521d57c3cc3",
+  "patch_sha256": "072bb2742a6f1d79eb72715d9f8d5a6f7bacec13803d8d4bb41af3a48f70195a",
+  "builder_sha256": "a08fc157d99442800c873960f61f43a7ec06598b021d3b829246e3f31a0b75be",
+  "source_sha256": "1d63b0af1b02b31ad903fc671ab211d88e65ad1c6abad14cc6841a20929a5b1d",
+  "executable_sha256": "fd41af5405b2ffbba724d97c5a0a53982293ddeca5829ac0f6bb044b6f1ebe2e",
+  "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+  "compiler": "gcc",
+  "commands": [
+    [
+      "/work/build/host-timeout-build/coreutils-9.11/configure",
+      "--disable-nls",
+      "--disable-acl",
+      "--disable-xattr",
+      "--disable-libcap",
+      "--cache-file=config.cache"
+    ],
+    [
+      "make",
+      "-j4",
+      "-f",
+      "csh-provider.mk",
+      "csh-built-sources"
+    ],
+    [
+      "make",
+      "-j4",
+      "src/timeout"
+    ]
+  ],
+  "license": "GPL-3.0-or-later; see retained source COPYING and gnulib licenses",
+  "logs": {
+    "configure.log": "9469e4f9ed3fb2790d8175334f463b062f5a1c121a875cfb0d30394cc1fbf41c",
+    "headers.log": "a5220eb27dcaeed04d8604faadd13c9a81d1f01f7ce3e0795d135f65f9585690",
+    "make.log": "8b044c5b98c5bcd31a65609e8bd9f00e99447bcf93a658c24cdfbbe665122f2d"
+  }
+}

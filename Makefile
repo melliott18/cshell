@@ -631,7 +631,7 @@ test-host-execution: cshell build/tests/host_execution_helper
 
 .PHONY: test-host-execution-profile
 test-host-execution-profile: cshell build/tests/host_execution_helper build/host-printf
-	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin --execution
+	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin --execution $(HOST_PROFILE_PROVISION_FLAGS)
 	$(PYTHON) tests/host_execution.py ./cshell build/tests/host_execution_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" $(HOST_EXECUTION_FLAGS) --record build/tests/host-execution-profile-results.json
 
 # Linux opt-in interposer; never preload it into an ordinary profile.
@@ -642,3 +642,8 @@ build/tests/host_execution_clock.so: tests/host_execution_clock.c
 .PHONY: test-host-execution-edges
 test-host-execution-edges: cshell build/tests/host_execution_helper
 	$(PYTHON) tests/host_execution_edges.py ./cshell build/tests/host_execution_helper $(HOST_EXECUTION_EDGE_FLAGS) --record build/tests/host-execution-edges.json
+
+# Explicit opt-in download/build; ordinary builds remain offline.
+.PHONY: host-timeout
+host-timeout:
+	$(PYTHON) tools/host-profile/build_timeout.py $(HOST_TIMEOUT_BUILD_FLAGS)

@@ -6,6 +6,7 @@ import os
 import subprocess
 import tempfile
 import unittest
+import importlib.util
 from unittest.mock import patch
 
 from host_execution import run_case, reap_owned
@@ -16,7 +17,56 @@ from host_execution_cases import UTILITIES, cases, matches
 ROOT = Path(__file__).resolve().parent
 
 
+def profile_module(name):
+    spec = importlib.util.spec_from_file_location(name, ROOT.parent / 'tools' / 'host-profile' / (name + '.py'))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 class ExecutionEvidenceTests(unittest.TestCase):
+    def test_timeout_build_rejects_wrong_archive_before_execution(self):
+        builder = profile_module('build_timeout')
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            archive = directory / 'wrong.tar.xz'
+            archive.write_bytes(b'not the pinned source')
+            with patch.object(builder, 'ROOT', directory), patch.object(builder.subprocess, 'run') as run:
+                with self.assertRaisesRegex(ValueError, 'checksum mismatch'):
+                    builder.build(archive)
+                run.assert_not_called()
+
+    def test_priority_control_failure_keeps_diagnostics(self):
+        from unittest.mock import MagicMock
+        child = MagicMock(pid=os.getpid())
+        outputs = [(0, dict(stdout=b'', stderr=b''), []),
+                   (2, dict(stdout=b'', stderr=b'controlled setpriority failure\n'), [])]
+        with patch('host_execution.owned_process', return_value=child), \
+             patch('host_execution.smoke.capture', side_effect=outputs):
+            row = run_case('/unused', Path('/unused'), {'renice': {'path': '/unused'}},
+                           '/missing', 'renice/relative-increment', 'direct')
+        self.assertEqual(row['verdict'], 'FAIL')
+        self.assertEqual(row['priority_control']['status'], 2)
+        self.assertEqual(row['priority_control']['stderr']['hex'], b'controlled setpriority failure\n'.hex())
+
+    def test_explicit_execution_providers_are_private_symlinks(self):
+        provisioner = profile_module('provision')
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            (directory / 'build').mkdir()
+            for name in ('build/host-printf', 'busybox', 'timeout'):
+                path = directory / name
+                path.write_text('#!/bin/sh\nexit 0\n')
+                path.chmod(0o755)
+            with patch.object(provisioner, 'ROOT', directory), \
+                 patch.object(provisioner.platform, 'system', return_value='Linux'), \
+                 patch.object(provisioner.shutil, 'which', return_value=str(directory / 'busybox')):
+                destination = directory / 'profile' / 'bin'
+                provisioner.provision(destination, execution=True, timeout=directory / 'timeout')
+            self.assertEqual((destination / 'renice').resolve(), (directory / 'busybox').resolve())
+            self.assertEqual((destination / 'timeout').resolve(), (directory / 'timeout').resolve())
+            self.assertFalse((destination / 'pwd').exists())
+
     def test_timing_values_need_independent_lower_and_upper_bounds(self):
         measured = dict(real=0.15, user=0.12, sys=0.0)
         actual = dict(elapsed=0.20, child_user=0.13, child_sys=0.01,
@@ -76,9 +126,17 @@ class ExecutionEvidenceTests(unittest.TestCase):
     def test_timeout_preserves_the_actual_signal(self):
         case = {}
         self.assertTrue(matches('term-status', -signal.SIGTERM, 'direct', case))
+        self.assertFalse(matches('term-status', 128 + signal.SIGTERM, 'direct', case))
         self.assertFalse(matches('term-status', -signal.SIGSEGV, 'direct', case))
         self.assertFalse(matches('term-status', 139, 'string', case))
         self.assertFalse(matches('kill-status', 139, 'string', case))
+
+    def test_timeout_preserved_exit_is_not_a_signal(self):
+        definitions = {row['id']: row for row in cases('/helper', Path('.'), 0)}
+        for name in ('preserve-exit-code', 'early-exit-code'):
+            case = definitions['timeout/' + name]
+            self.assertTrue(matches(case['status'], 143, 'direct', case))
+            self.assertFalse(matches(case['status'], -signal.SIGTERM, 'direct', case))
 
     def test_timing_requires_all_fields_and_clock_precision(self):
         with patch('host_execution_cases.os.sysconf', return_value=100):

@@ -14,7 +14,7 @@ sys.path.insert(0, str(ROOT / 'tests'))
 from host_utility_cases import HOSTS
 
 
-def provision(destination, gnu_bin=None, execution=False):
+def provision(destination, gnu_bin=None, execution=False, timeout=None):
     selected = {name: shutil.which(name, path=os.defpath) for name in HOSTS}
     if execution:
         from host_execution_cases import UTILITIES
@@ -30,8 +30,14 @@ def provision(destination, gnu_bin=None, execution=False):
             overrides['timeout'] = shutil.which('gtimeout', path=search)
     elif system == 'Linux':
         overrides['kill'] = shutil.which('busybox', path=os.defpath)
+        if execution:
+            overrides['renice'] = shutil.which('busybox', path=os.defpath)
     else:
         raise ValueError('Only Darwin and Linux profiles are defined')
+    if timeout:
+        if not execution:
+            raise ValueError('--timeout requires --execution')
+        overrides['timeout'] = str(timeout.resolve())
     selected.update(overrides)
     for name, path in selected.items():
         if not path or not Path(path).is_file() or not os.access(path, os.X_OK):
@@ -61,8 +67,9 @@ if __name__ == '__main__':
     parser.add_argument('destination', type=Path)
     parser.add_argument('--gnu-bin', type=Path)
     parser.add_argument('--execution', action='store_true', help='Also supply CSH-075 providers')
+    parser.add_argument('--timeout', type=Path, help='Explicit standalone timeout provider')
     args = parser.parse_args()
     try:
-        provision(args.destination, args.gnu_bin, args.execution)
+        provision(args.destination, args.gnu_bin, args.execution, args.timeout)
     except ValueError as error:
         parser.error(str(error))

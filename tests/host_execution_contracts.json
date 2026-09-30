@@ -587,18 +587,20 @@
         "DESCRIPTION": {
           "disposition": "partial",
           "cases": [
-            "renice/relative-increment"
+            "renice/relative-increment",
+            "renice/relative-zero",
+            "renice/relative-clamp"
           ],
-          "remaining": "Linux -n uses an absolute value and reports on stdout; the relative-increment assertion fails. Group/user selection, saved IDs, clamping, permission and multi-operand continuation remain open."
+          "remaining": "Original util-linux provider fails relative -n and empty stdout; the execution profile selects BusyBox. PID increment, zero and positive clamping have assertions. Group/user selection, saved IDs, negative bounds, permission and multi-operand continuation remain open."
         },
         "OPTIONS": {
           "disposition": "partial",
-          "remaining": "Linux -n uses an absolute value and reports on stdout; the relative-increment assertion fails. Group/user selection, saved IDs, clamping, permission and multi-operand continuation remain open.",
+          "remaining": "Original util-linux provider fails relative -n and empty stdout; the execution profile selects BusyBox. PID increment, zero and positive clamping have assertions. Group/user selection, saved IDs, negative bounds, permission and multi-operand continuation remain open.",
           "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
         },
         "OPERANDS": {
           "disposition": "partial",
-          "remaining": "Linux -n uses an absolute value and reports on stdout; the relative-increment assertion fails. Group/user selection, saved IDs, clamping, permission and multi-operand continuation remain open.",
+          "remaining": "Original util-linux provider fails relative -n and empty stdout; the execution profile selects BusyBox. PID increment, zero and positive clamping have assertions. Group/user selection, saved IDs, negative bounds, permission and multi-operand continuation remain open.",
           "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
         },
         "STDIN": {
@@ -619,12 +621,12 @@
         },
         "STDOUT": {
           "disposition": "partial",
-          "remaining": "Linux -n uses an absolute value and reports on stdout; the relative-increment assertion fails. Group/user selection, saved IDs, clamping, permission and multi-operand continuation remain open.",
+          "remaining": "Original util-linux provider fails relative -n and empty stdout; the execution profile selects BusyBox. PID increment, zero and positive clamping have assertions. Group/user selection, saved IDs, negative bounds, permission and multi-operand continuation remain open.",
           "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
         },
         "STDERR": {
           "disposition": "partial",
-          "remaining": "Linux -n uses an absolute value and reports on stdout; the relative-increment assertion fails. Group/user selection, saved IDs, clamping, permission and multi-operand continuation remain open.",
+          "remaining": "Original util-linux provider fails relative -n and empty stdout; the execution profile selects BusyBox. PID increment, zero and positive clamping have assertions. Group/user selection, saved IDs, negative bounds, permission and multi-operand continuation remain open.",
           "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
         },
         "OUTPUT FILES": {
@@ -637,7 +639,7 @@
         },
         "EXIT STATUS": {
           "disposition": "partial",
-          "remaining": "Linux -n uses an absolute value and reports on stdout; the relative-increment assertion fails. Group/user selection, saved IDs, clamping, permission and multi-operand continuation remain open.",
+          "remaining": "Original util-linux provider fails relative -n and empty stdout; the execution profile selects BusyBox. PID increment, zero and positive clamping have assertions. Group/user selection, saved IDs, negative bounds, permission and multi-operand continuation remain open.",
           "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
         },
         "CONSEQUENCES OF ERRORS": {
@@ -913,18 +915,22 @@
             "timeout/preserve",
             "timeout/signal-case",
             "timeout/kill-after",
-            "timeout/invalid-duration"
+            "timeout/invalid-duration",
+            "timeout/preserve-exit-code",
+            "timeout/early-exit-code",
+            "timeout/early-signal",
+            "timeout/foreground-preserve"
           ],
-          "remaining": "Selected GNU providers reject required -f/-p. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open."
+          "remaining": "Original GNU 9.1/9.3 providers reject -f/-p. The explicitly selected patched 9.11 provider has short-option and real wait-status assertions. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open."
         },
         "OPTIONS": {
           "disposition": "partial",
-          "remaining": "Selected GNU providers reject required -f/-p. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open.",
+          "remaining": "Original GNU 9.1/9.3 providers reject -f/-p. The explicitly selected patched 9.11 provider has short-option and real wait-status assertions. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open.",
           "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
         },
         "OPERANDS": {
           "disposition": "partial",
-          "remaining": "Selected GNU providers reject required -f/-p. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open.",
+          "remaining": "Original GNU 9.1/9.3 providers reject -f/-p. The explicitly selected patched 9.11 provider has short-option and real wait-status assertions. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open.",
           "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
         },
         "STDIN": {
@@ -945,12 +951,12 @@
         },
         "STDOUT": {
           "disposition": "partial",
-          "remaining": "Selected GNU providers reject required -f/-p. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open.",
+          "remaining": "Original GNU 9.1/9.3 providers reject -f/-p. The explicitly selected patched 9.11 provider has short-option and real wait-status assertions. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open.",
           "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
         },
         "STDERR": {
           "disposition": "partial",
-          "remaining": "Selected GNU providers reject required -f/-p. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open.",
+          "remaining": "Original GNU 9.1/9.3 providers reject -f/-p. The explicitly selected patched 9.11 provider has short-option and real wait-status assertions. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open.",
           "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
         },
         "OUTPUT FILES": {
@@ -963,7 +969,7 @@
         },
         "EXIT STATUS": {
           "disposition": "partial",
-          "remaining": "Selected GNU providers reject required -f/-p. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open.",
+          "remaining": "Original GNU 9.1/9.3 providers reject -f/-p. The explicitly selected patched 9.11 provider has short-option and real wait-status assertions. Descendant groups, stopped children/CONT, forwarded signals, inherited dispositions, suffix/fraction range and overflow remain open.",
           "assertions": "See DESCRIPTION case IDs; each case records exact arguments, streams and status. Remaining requirements are not qualified."
         },
         "CONSEQUENCES OF ERRORS": {

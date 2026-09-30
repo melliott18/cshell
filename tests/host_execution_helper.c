@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <grp.h>
+#include <limits.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,6 +32,12 @@ static int burn_cpu(void)
         if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &now)) return 2;
     } while (seconds(now) - seconds(start) < 0.12);
     return 0;
+}
+
+static void exit_on_term(int sig)
+{
+    (void)sig;
+    _exit(143);
 }
 
 int main(int argc, char **argv)
@@ -136,6 +143,10 @@ int main(int argc, char **argv)
     }
 #endif
     if (!strcmp(argv[1], "exit") && argc == 3) return atoi(argv[2]);
+    if (!strcmp(argv[1], "raise-term")) {
+        raise(SIGTERM);
+        return 2;
+    }
     if (!strcmp(argv[1], "args")) {
         for (i = 2; i < argc; ++i) printf("%zu:%s\n", strlen(argv[i]), argv[i]);
         return 0;
@@ -157,6 +168,15 @@ int main(int argc, char **argv)
         printf("%d\n", value);
         return 0;
     }
+    if (!strcmp(argv[1], "nice-ceiling")) {
+        int value;
+        if (setpriority(PRIO_PROCESS, 0, INT_MAX)) return 2;
+        errno = 0;
+        value = getpriority(PRIO_PROCESS, 0);
+        if (errno) return 2;
+        printf("%d\n", value);
+        return 0;
+    }
     if (!strcmp(argv[1], "hup")) {
         struct sigaction action;
         if (sigaction(SIGHUP, NULL, &action)) return 2;
@@ -164,8 +184,9 @@ int main(int argc, char **argv)
         return 0;
     }
     if (!strcmp(argv[1], "park") || !strcmp(argv[1], "timed-park") ||
-        !strcmp(argv[1], "timed-ignore-term")) {
+        !strcmp(argv[1], "timed-ignore-term") || !strcmp(argv[1], "timed-exit-term")) {
         if (!strcmp(argv[1], "timed-ignore-term") && signal(SIGTERM, SIG_IGN) == SIG_ERR) return 2;
+        if (!strcmp(argv[1], "timed-exit-term") && signal(SIGTERM, exit_on_term) == SIG_ERR) return 2;
         if (strncmp(argv[1], "timed-", 6) == 0) {
             FILE *file = fopen("child.pid", "w");
             if (!file) return 2;

@@ -155,3 +155,39 @@ All six retained conditions remain explicitly listed as unqualified in the
 extension JSON, with CSH-075 retaining qualification ownership. Exact memory
 failure stages, env's internal-exec E2BIG, general duration limits and complete
 external-shell semantics are not inferred from these passing witnesses.
+
+
+## Provider repairs and required environments
+
+The [repair evidence](evidence/csh-075/repairs/README.md) records subsequent
+qualification separately from both original runs. The execution profile now
+selects BusyBox renice on Linux. An explicit source-build target supplies GNU
+coreutils 9.11 timeout with a one-condition signal-preservation patch, selected
+only by `HOST_PROFILE_PROVISION_FLAGS='--timeout build/host-timeout'`. See the
+[build and provenance instructions](../tools/host-profile/README.md#csh-075-repaired-execution-providers).
+No expectation or original failure artifact is replaced.
+
+New cases distinguish timeout's actual SIGTERM termination from normal exit 143,
+both before expiry and after a handler receives the expiry signal. Combined
+`-fp` also preserves signal termination. Renice tests cover relative zero and
+positive clamping. The ceiling oracle calls setpriority/getpriority in a separate
+owned helper; the measured Darwin ceiling is 20 and Linux ceiling is 19.
+
+The repaired subset excludes only the unresolved getconf Issue 8 name. This
+list is an explicit scope, not a waiver or whole-page qualification. The strict
+full run continues to exercise that failing assertion.
+
+| Remaining work | Environment or manual work needed |
+| --- | --- |
+| getconf Issue 8 variables | A provider tied to the actual Issue 8 compilation environment, or a reviewed provider implementation. Existing macOS and Debian libc utilities lack the queried name. Do not fabricate support values. |
+| true/false memory and loader stages; env internal-exec E2BIG | Deterministic fault injection with an independent entry/syscall-stage observer. A disposable Linux container can host this work; the current descriptor and aggregate-size tests do not supply that observer. |
+| Additional kill credentials and resource failures | Disposable Linux root for owned children; the engine is available again. Corresponding privileged Darwin checks require a disposable macOS VM with permission to change fixture identities. |
+| Sleep conversion/overflow and broader timing | Automated bounded virtual clocks/instrumented providers; no years-long waits or manual stopwatch tests. Linux interposition does not qualify Darwin. |
+| Full external sh grammar/resource/locale coverage | More independently authored fixtures and controlled locales/resources on each claimed platform, with `/bin/sh` recorded separately from PATH sh. |
+| nohup terminal redirection and other remaining page sections | Automated PTYs and owned process groups can cover terminal behavior. No physical terminal is required for these CSH-075 cases. |
+
+Routine validation is automated. Additional environment access may need human
+provisioning, but manual observation cannot substitute for the missing stage
+oracles. All six retained conditions and all 14 whole-page contracts remain
+owned by CSH-075 until their complete scopes are qualified or explicitly
+transferred to another open ticket.

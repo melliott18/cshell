@@ -106,15 +106,15 @@ large sleep durations using a bounded, opt-in clock interposer. Linux timeout
 cleanup explicitly adopts and reaps orphaned helpers. Tests protect status,
 timing, duration, section accounting and unrelated-child cleanup.
 
-Native macOS's declared execution subset passes 242 assertions; Docker/Linux's
+The initial native macOS declared execution subset passes 242 assertions; Docker/Linux's
 passes 238. The existing host profiles pass 1,162 and 1,144 assertions respectively,
-with zero failed assertions or gap allowances. The strict expanded profile still
+with zero failed assertions or gap allowances. The initial strict expanded profile
 fails 12 assertions on macOS and 16 on Linux: required getconf Issue 8 names,
 timeout `-f`/`-p`, and Linux renice semantics. A native PTY cleanup timeout from
 an earlier concurrent run is retained separately; the serial rerun passes.
 
 **This ticket is not complete.** The two unchecked criteria remain unmet: required
-provider failures are not repaired, and the six retained conditions have only the
+getconf Issue 8 remains unresolved, and the six retained conditions have only the
 bounded extensions listed in the clause map. No full-page or full-system claim
 is made, no open contract is silently transferred, and no original failed
 assertion is waived. All 14 page contracts and six conditions remain owned here;
@@ -131,3 +131,45 @@ timing bounds. Timeout assertions also reject completion before the requested
 duration. Native results and current Linux availability are retained in the
 [extension evidence](../evidence/csh-075/edges/README.md). The full-page criteria
 and vendor failures above remain open; these checks do not change their scope.
+
+
+### Provider repairs and available environments
+
+Continued in the same isolated worktree. The execution profile selects BusyBox
+renice on Linux. `make host-timeout` explicitly downloads/hash-verifies and builds
+GNU coreutils 9.11 with a one-condition signal-preservation patch; selection is
+explicit via `--timeout build/host-timeout`. No system installation occurs.
+New assertions distinguish real SIGTERM termination from normal exit 143 before
+and after timeout expiry, exercise combined `-fp`, and check renice zero/clamping
+against an independent kernel ceiling (Darwin 20, Linux 19).
+
+Full repaired execution: native **274 pass / 4 fail**; disposable Linux with
+virtual-duration and credential controls **287 pass / 4 fail**. Only
+`getconf/issue8-environment` fails, separately in direct/string/file/stdin modes.
+No failed getconf expectation was relaxed. The repaired subset excludes exactly
+that ID; original subset files and retained evidence remain unchanged.
+See [repair records and validation](../evidence/csh-075/repairs/README.md).
+
+Docker is available again, and the 80 fallback/resource/timing extension assertions
+pass on Linux. Routine remaining checks can be automated. Privileged Darwin
+identity/resource parity requires a disposable macOS VM; Linux equivalents use
+disposable root containers. Production loader/memory stages and env internal-exec
+E2BIG still need deterministic instrumentation and independent stage observation.
+Getconf needs an actual Issue 8-aware provider/configuration. Broader shell,
+locale, PTY and duration qualification needs additional authored tests, not
+manual stopwatch or terminal testing. The
+[environment map](../host-execution-evidence.md#provider-repairs-and-required-environments)
+keeps these distinctions explicit. CSH-075 remains in progress with all six
+retained conditions and all whole-page obligations still owned here.
+
+
+The repaired combined profiles pass 1,516 assertions natively and 1,498 on Linux
+(existing profile + execution subset + edge suite). Both platforms pass 3,950
+runtime assertions. Linux passes all 65 notification/job/terminal assertions.
+Native passes notification, 30 job and 33 runtime PTY assertions, but the existing
+job-terminal fault helper times out both with the repaired profile and with the
+stock PATH. A serial retry reproduces it; all three logs are retained. This is
+an unresolved native validation issue, not a passing check or evidence against
+the timeout/renice provider repairs. Final targeted priority-control validation
+passes 18 assertions on each platform; fifteen execution regressions and ten
+ownership checks pass. No watchdog or failure allowance was relaxed.
