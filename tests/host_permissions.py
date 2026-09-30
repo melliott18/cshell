@@ -66,10 +66,13 @@ def setup(root, case):
     return connection
 
 
-def metadata(root, expected):
+def metadata(root, expected, descriptors=None):
     result = {}
     for name, fields in expected.items():
-        value = (root / name).lstat() if fields.get('nofollow') else (root / name).stat()
+        if descriptors and name in descriptors:
+            value = os.fstat(descriptors[name])
+        else:
+            value = (root / name).lstat() if fields.get('nofollow') else (root / name).stat()
         available = dict(mode=stat.S_IMODE(value.st_mode), uid=value.st_uid, gid=value.st_gid)
         result[name] = {key: available[key] for key in fields if key != 'nofollow'}
     return result
@@ -102,8 +105,11 @@ def run_case(binary, tools, search_path, case, mode, fixture_root, sanitizer=Fal
     temporary = tempfile.TemporaryDirectory(prefix='csh-permissions-', dir=fixture_root)
     root = Path(temporary.name)
     connection = None
+    descriptors = {}
     try:
         connection = setup(root, case)
+        if case.get('inspect_unsearchable_tree'):
+            descriptors['tree/leaf'] = os.open(root / 'tree/leaf', os.O_RDONLY)
         if case.get('initial_owner'):
             os.chown(root / 'subject', *case['initial_owner'])
         if case.get('acl'):
@@ -189,7 +195,7 @@ def run_case(binary, tools, search_path, case, mode, fixture_root, sanitizer=Fal
             record['ctime_after_ns'] = (root / 'subject').stat().st_ctime_ns
             if record['ctime_after_ns'] <= record['ctime_before_ns']:
                 errors.append('file status change timestamp was not updated')
-        observed = metadata(root, case.get('metadata', {}))
+        observed = metadata(root, case.get('metadata', {}), descriptors)
         expected = {p: {k: v for k, v in f.items() if k != 'nofollow'}
                     for p, f in case.get('metadata', {}).items()}
         if observed != expected:
@@ -201,6 +207,8 @@ def run_case(binary, tools, search_path, case, mode, fixture_root, sanitizer=Fal
     except (OSError, ValueError, subprocess.SubprocessError) as error:
         record['error'] = repr(error)
     finally:
+        for descriptor in descriptors.values():
+            os.close(descriptor)
         if connection is not None:
             connection.close()
         cleanup_errors = []

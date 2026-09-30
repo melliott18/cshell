@@ -194,6 +194,8 @@ def main():
                         default='darwin' if platform.system() == 'Darwin' else 'gnu')
     parser.add_argument('--block-device', type=Path,
                         help='Stat-only positive predicate witness; never opened')
+    parser.add_argument('--device-fixtures', type=Path,
+                        help='Private precreated block/character nodes for controlled stat-only cases')
     parser.add_argument('--sanitizer', action='store_true',
                         help='Set ASan/UBSan in the actual case environment; disable Linux leak scanning')
     args = parser.parse_args()
@@ -201,6 +203,8 @@ def main():
         parser.error('--controlled-identities requires --boundaries and Linux root')
     if args.unequal_acl and not args.controlled_identities:
         parser.error('--unequal-acl requires --controlled-identities')
+    if args.device_fixtures and not args.controlled_identities:
+        parser.error('--device-fixtures requires --controlled-identities')
     fixture_root = args.fixture_root.resolve() if args.fixture_root else Path(tempfile.gettempdir())
     if not fixture_root.is_dir():
         parser.error('--fixture-root must be an existing directory')
@@ -319,7 +323,7 @@ def main():
                 try:
                     try:
                         connection = setup(directory, case.get('input_files'))
-                        controlled = (setup_controlled(directory, case['controlled_fixture'])
+                        controlled = (setup_controlled(directory, case['controlled_fixture'], args.device_fixtures)
                                       if case.get('controlled_fixture') else None)
                     except (OSError, subprocess.SubprocessError) as error:
                         # Unsupported ACL/filesystem operations are failed setup,

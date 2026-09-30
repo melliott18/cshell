@@ -94,6 +94,18 @@ def cases(controlled=False, sessions=False, residuals=False):
     if residuals:
         yield case('chmod', 'original-X', ['u+x,g+X', 'subject'], initial=0o644,
                    metadata={'subject': {'mode': 0o744}})
+        yield case('chmod', 'original-X-after-clear', ['u-x,g+X', 'subject'], initial=0o744,
+                   metadata={'subject': {'mode': 0o654}})
+        yield case('chmod', 'recursive-original-X', ['-R', 'u+x,g+X', 'tree'], tree_mode=0o700,
+                   metadata={'tree': {'mode': 0o710}, 'tree/leaf': {'mode': 0o744}})
+        yield case('chmod', 'recursive-removes-search', ['-R', '000', 'tree'],
+                   metadata={'tree': {'mode': 0}, 'tree/leaf': {'mode': 0}},
+                   inspect_unsearchable_tree=True)
+        yield case('chmod', 'continues-after-missing', ['600', 'missing', 'subject'],
+                   status='nonzero', err='nonempty', metadata={'subject': {'mode': 0o600}})
+        yield case('chmod', 'recursive-symlinks', ['-R', '700', 'tree'], traversal=True,
+                   metadata={'tree': {'mode': 0o700}, 'tree/leaf': {'mode': 0o700},
+                             'outside': {'mode': 0o755}, 'outside/leaf': {'mode': 0o644}})
     for index, (mode, initial, expected) in enumerate(modes):
         yield case('chmod', f'mode-{index}', [mode, 'subject'],
                    initial=initial, metadata={'subject': {'mode': expected}})

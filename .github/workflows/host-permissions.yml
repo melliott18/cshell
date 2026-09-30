@@ -23,7 +23,7 @@ jobs:
           python-version: '3.11'
       - name: Linux dependencies
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y ed busybox acl
+        run: sudo apt-get update && sudo apt-get install -y ed busybox acl libbsd-dev
       - name: Darwin dependencies
         if: runner.os == 'macOS'
         run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
@@ -51,6 +51,10 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo "$(command -v python3)" tests/host_permissions.py ./cshell --path "$PWD/build/host-profile/bin:$(getconf PATH)" --qualification-only --controlled-identities --record build/controlled-qualification.json
+      - name: Chmod mode and traversal regressions
+        working-directory: ${{ env.CSH_QUALIFICATION_ROOT }}
+        run: |
+          python3 tests/host_permissions.py ./cshell --path "$PWD/build/host-profile/bin:$(getconf PATH)" --vendor-residuals --case-prefix chmod/ --record build/chmod-qualification.json
       - name: Linux strict unequal-ID ACLs
         working-directory: ${{ env.CSH_QUALIFICATION_ROOT }}
         if: runner.os == 'Linux'

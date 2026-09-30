@@ -481,8 +481,12 @@ build/host-printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/printf.c $(LDLIBS)
 
-host-profile: build/host-printf build/host-test
+host-profile: build/host-printf build/host-test build/host-chmod
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
+
+build/host-chmod: tools/host-profile/chmod.c
+	@mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS) $(if $(filter Linux,$(shell uname -s)),-lbsd)
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
 	@mkdir -p $(@D)

@@ -25,6 +25,7 @@ def test_provider(gnu_bin=None):
 def provision(destination, gnu_bin=None):
     selected = {name: shutil.which(name, path=os.defpath) for name in HOSTS}
     overrides = {'printf': str(ROOT / 'build/host-printf'),
+                 'chmod': str(ROOT / 'build/host-chmod'),
                  'test': str(ROOT / 'build/host-test'), '[': str(ROOT / 'build/host-test')}
     system = platform.system()
     if system == 'Linux':
