@@ -281,7 +281,9 @@ def capture(binary, case, directory, timeout, output_limit, file_size_limit=None
             for stream in (process.stdin, process.stdout, process.stderr):
                 stream.close()
             try:
-                process.wait(timeout=max(0, cleanup_deadline - time.monotonic()))
+                # An exhausted snapshot budget must not prevent reaping the
+                # leader after fallback SIGKILL. Keep this wait separately bounded.
+                process.wait(timeout=1.0)
             except subprocess.TimeoutExpired:
                 failures.append("pipe cleanup could not reap leader within 1s")
     return process.returncode, output, failures

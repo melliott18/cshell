@@ -492,8 +492,8 @@ process group. Pipe cleanup kills that group after success or failure, including
 descendants left behind by a candidate that exits early. PTY cleanup covers all
 process groups still in the candidate's session, including stopped foreground
 jobs, background groups, and descendants left after the leader exits. Terminal
-descriptors are closed on success and failure. Final pipe cleanup has its own
-one-second budget. PTY cleanup allows five
+descriptors are closed on success and failure. Final pipe cleanup has one second for group termination plus a separate
+one second for leader reaping, even if the snapshot fails. PTY cleanup allows five
 seconds for session enumeration/killing, then a separate one second to reap the
 leader, even after snapshot failure. These budgets are separate from the case
 timeout; failure to enumerate, kill or reap fails the case. PTY cleanup also

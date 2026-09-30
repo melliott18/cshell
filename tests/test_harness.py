@@ -245,6 +245,40 @@ class HarnessTests(unittest.TestCase):
                                     (process.stdin, process.stdout, process.stderr)))
                 self.assert_not_running(process.pid)
 
+    def test_snapshot_timeout_cannot_consume_the_leader_reap_budget(self):
+        marker = self.directory / "processes.json"
+        self.addCleanup(self.kill_recorded_group, marker)
+        item = case(args=["hang", str(marker)], timeout=0.15)
+        processes = []
+        popen = subprocess.Popen
+        monotonic = time.monotonic
+        elapsed = [0.0]
+
+        def snapshot_timeout(*args):
+            elapsed[0] += 2.0
+            raise TimeoutError("snapshot exhausted cleanup deadline")
+
+        def record_process(*args, **kwargs):
+            process = popen(*args, **kwargs)
+            wait = process.wait
+            def bounded_reap(*args, **kwargs):
+                self.assertGreater(kwargs['timeout'], 0, "reaping needs its own budget")
+                self.assertLessEqual(kwargs['timeout'], 1.0)
+                return wait(*args, **kwargs)
+            process.wait = bounded_reap
+            processes.append(process)
+            return process
+
+        with mock.patch.object(smoke, "kill_group", side_effect=snapshot_timeout), \
+                mock.patch.object(time, "monotonic", side_effect=lambda: monotonic() + elapsed[0]), \
+                mock.patch.object(subprocess, "Popen", side_effect=record_process):
+            failures = smoke.run_case(CANDIDATE, item, 1, 65536)
+        self.assertTrue(any("snapshot exhausted cleanup deadline" in f for f in failures))
+        self.assertFalse(any("could not reap" in f for f in failures), failures)
+        self.assertEqual(len(processes), 1)
+        self.assertIsNotNone(processes[0].returncode)
+        self.assert_not_running(processes[0].pid)
+
     def test_output_flood_fails_promptly_with_bounded_diagnostics(self):
         marker = self.directory / "processes.json"
         self.addCleanup(self.kill_recorded_group, marker)
