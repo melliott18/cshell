@@ -57,7 +57,7 @@ profiles and executable/environment identities, remains unchanged.
 
 - [x] Select each required exec-accessible provider, supply missing packages/services,
   and retain exact PATH, realpath, executable hash, package and environment identity.
-- [x] Map every applicable page section and common default to clause-derived
+- [ ] Map every applicable page section and common default to clause-derived
   assertions or an individually justified disposition; repair required-contract
   failures. Selected examples alone do not complete a utility contract.
 - [x] Resolve each assigned retained condition with its required capability and
@@ -98,7 +98,7 @@ reproducible Docker/CI setup.
 
 The section map explicitly dispositions unqualified portions to
 [CSH-081](CSH-081-host-terminal-residual-contracts.md), including every utility's
-remaining page/default requirements, live registered write sessions and the exact
+remaining page/default requirements, untested registered-session behavior and the exact
 `U-040/stty-physical-terminal` condition. No physical hardware was supplied. This
 transfer is open work, not a full-contract or full-system qualification claim.
 CSH-064's immutable historical evidence remains unchanged.
@@ -127,3 +127,10 @@ An isolated Linux session runner adds registered sender/recipient delivery,
 denial and who am i/I under dropped credentials, with a separate strict EOT/alert
 audit. See the [section map](../host-terminal-contracts.md#controlled-data-and-session-extension)
 for exact boundaries. Physical behavior remains unqualified under CSH-081.
+
+The complete-page repair criterion remains open under CSH-081, including the
+observed `write/POSIX-EOT` and `write/two-sender-alerts` differences. The
+[extension evidence](../evidence/csh-077-extension/README.md) records 730 strict
+PTY assertions plus six harness tests on native macOS and hosted Linux, both
+ordinary and sanitized, and 20 isolated Linux session assertions. These selected
+passes do not close the remaining full-page requirements.
