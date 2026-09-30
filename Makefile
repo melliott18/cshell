@@ -638,3 +638,15 @@ host-text-providers:
 test-host-text-repaired: cshell host-text-providers
 	$(MAKE) host-profile HOST_TEXT_PROVIDER_BIN="$(abspath build/text-providers/bin)"
 	$(PYTHON) tests/host_text.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --boundaries --audit $(HOST_TEXT_FLAGS) --record build/tests/host-text-repaired.json
+
+# Test-only provider interposition. Loader settings apply only after shell exec.
+.PHONY: test-host-text-faults test-host-text-native-capacity
+build/tests/host_text_faults.so: tests/host_text_faults.c
+	@mkdir -p $(@D)
+	$(CC) -std=c99 -Wall -Wextra -O2 -fPIC $(if $(filter Darwin,$(shell uname -s)),-dynamiclib,-shared) -o $@ $< $(if $(filter Linux,$(shell uname -s)),-ldl,)
+
+test-host-text-faults: cshell build/tests/host_text_faults.so
+	$(PYTHON) tests/host_text_faults.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --library build/tests/host_text_faults.so --record build/tests/host-text-faults.json
+
+test-host-text-native-capacity: cshell
+	$(PYTHON) tests/host_text_capacity.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --audit --record build/tests/host-text-native-capacity.json

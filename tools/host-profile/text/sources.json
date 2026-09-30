@@ -22,5 +22,11 @@
     "url": "https://codeload.github.com/chimera-linux/chimerautils/tar.gz/c480e578085becc3be9073696a6228e507a71c4a",
     "sha256": "681bf3637d03c99ac946a18b5602e6d84a7f0bb442716fee6599948f0617c0ab",
     "directory": "chimerautils-c480e578085becc3be9073696a6228e507a71c4a"
+  },
+  "diffutils": {
+    "version": "3.10",
+    "url": "https://ftp.gnu.org/gnu/diffutils/diffutils-3.10.tar.xz",
+    "sha256": "90e5e93cc724e4ebe12ede80df1634063c7a855692685919bfe60b556c9bd09e",
+    "directory": "diffutils-3.10"
   }
 }

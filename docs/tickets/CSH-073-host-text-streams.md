@@ -194,3 +194,25 @@ out with both repaired and stock PATH, including failed cleanup of three
 Darwin UE-state children despite SIGKILL. Those exact failures remain retained;
 no complete native PTY pass is claimed. The final native strict text audit is
 unaffected. macOS 15 CI remained queued at evidence capture.
+
+
+### Native capability and fault follow-up
+
+Native blocked-write observation now uses an owned-process `sample` call graph;
+a private `hdiutil` FAT12 image provides automated native ENOSPC. Test-only
+interposition adds 24 attested assertions for read EINTR/EIO, short reads,
+cat short/EINTR writes and sed buffer-growth ENOMEM. Source-built GNU cat and
+checksum-pinned diffutils 3.10 cmp permit injection without changing system
+executables. A local sed patch diagnoses getdelim failure without ferror/EOF;
+the unpatched native provider returned silent success in both execution modes.
+
+The native job-control fault harness clears inherited Mach crash/corpse ports
+only for its deliberate SIGQUIT child. Sampling localized the earlier hang to
+pending fatal-signal delivery at sigprocmask. The unchanged module assertions
+now pass. Three previously stuck UE-state children remain an OS cleanup issue;
+no restart or reboot is performed by this change.
+
+The capability fixtures need no additional manual test environment. Hosted
+Linux and local macOS remain distinct qualification environments. Full native
+regressions and final patched-provider/hosted results are being recorded; full
+utility-page coverage remains open.

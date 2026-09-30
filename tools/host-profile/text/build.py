@@ -29,9 +29,9 @@ def build(destination, jobs):
     env = dict(os.environ, LC_ALL='C')
     compiler = shlex.split(env.get('CC', 'cc'))
     compiler_version = subprocess.check_output(compiler+['--version'],text=True,env=env)
-    expected = {'head', 'cut', 'tsort', 'sed', 'ed'} | ({'tail'} if system == 'Linux' else set())
+    expected = {'cat', 'head', 'cut', 'tsort', 'sed', 'ed', 'cmp'} | ({'tail'} if system == 'Linux' else set())
     recipe = dict(system=system, machine=platform.machine(), release=platform.release(), sources=pins,
-                  build_script=sha(__file__), patch=sha(HERE/'ed-sigint.patch'),
+                  build_script=sha(__file__), patches={name:sha(HERE/name) for name in ('ed-sigint.patch','sed-getdelim.patch')},
                   compiler=compiler, compiler_version=compiler_version, environment={k:env.get(k) for k in
                   ('CFLAGS','CPPFLAGS','LDFLAGS','CC','SDKROOT','MACOSX_DEPLOYMENT_TARGET')})
     manifest_path = destination/'manifest.json'
@@ -58,7 +58,7 @@ def build(destination, jobs):
         if name == 'chimerautils' and system != 'Linux':
             continue
         archive = cache/(name + ('.tar.lz' if name == 'ed' else '.tar.xz'
-                                  if name in ('sed','coreutils') else '.tar.gz'))
+                                  if name in ('sed','coreutils','diffutils') else '.tar.gz'))
         if not archive.exists():
             partial = archive.with_suffix(archive.suffix+'.partial')
             run(['curl','--fail','--location','--silent','--show-error',
@@ -74,13 +74,17 @@ def build(destination, jobs):
     run(['./configure','--disable-nls','--without-libgmp'],source['coreutils'],'coreutils-configure')
     # The all target generates gnulib headers before compiling program targets.
     run(['make','-j'+str(jobs)],source['coreutils'],'coreutils-build')
+    run(['patch','--batch','-p1','-i',str(HERE/'sed-getdelim.patch')],source['sed'],'sed-patch')
     run(['./configure','--disable-nls'],source['sed'],'sed-configure')
     run(['make','-j'+str(jobs)],source['sed'],'sed-build')
     run(['patch','--batch','-p1','-i',str(HERE/'ed-sigint.patch')],source['ed'],'ed-patch')
     run(['./configure'],source['ed'],'ed-configure')
     run(['make','-j'+str(jobs)],source['ed'],'ed-build')
     run(['make','check'],source['ed'],'ed-check')
-    products = {n:source['coreutils']/'src'/n for n in ('head','cut','tsort')}
+    run(['./configure','--disable-nls'],source['diffutils'],'diffutils-configure')
+    run(['make','-j'+str(jobs)],source['diffutils'],'diffutils-build')
+    products = {n:source['coreutils']/'src'/n for n in ('cat','head','cut','tsort')}
+    products['cmp'] = source['diffutils']/'src/cmp'
     products.update(sed=source['sed']/'sed/sed', ed=source['ed']/'ed')
     if system == 'Linux':
         ch = source['chimerautils']

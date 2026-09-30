@@ -16,7 +16,7 @@ from host_utility_cases import HOSTS
 
 def text_overrides(text_bin, system):
     manifest = json.loads((text_bin.parent / 'manifest.json').read_text())
-    expected = {'head', 'cut', 'tsort', 'sed', 'ed'}
+    expected = {'cat', 'head', 'cut', 'tsort', 'sed', 'ed', 'cmp'}
     if system == 'Linux':
         expected.add('tail')
     if set(manifest['executables']) != expected or manifest['recipe']['system'] != system:

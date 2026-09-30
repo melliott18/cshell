@@ -109,6 +109,11 @@ jobs:
         run: brew install coreutils
       - name: Strict repaired audit
         run: make -j2 cshell test-host-inventory test-host-text-harness && make test-host-text-repaired
+      - name: Attested short-I/O, interruption and allocation faults
+        run: make test-host-text-faults
+      - name: Native disposable ENOSPC and blocked-write audit
+        if: runner.os == 'macOS'
+        run: make test-host-text-native-capacity
       - name: Runtime regression with selected providers
         shell: bash
         run: CSH_TEST_PATH="$PWD/build/host-profile/bin:$(getconf PATH)" make test-runtime test-pty
@@ -118,6 +123,8 @@ jobs:
           name: text-repaired-${{ matrix.os }}
           path: |
             build/tests/host-text-repaired.json
+            build/tests/host-text-faults.json
+            build/tests/host-text-native-capacity*.json
             build/text-providers/manifest.json
             build/text-providers/sources-*/*.log
             build/host-profile/manifest.json
@@ -145,6 +152,8 @@ jobs:
               cp build/text-providers/manifest.json /evidence/providers.json &&
               cp build/host-profile/manifest.json /evidence/profile.json &&
               python3 tests/host_text.py ./cshell --path /work/build/host-profile/bin:/usr/bin:/bin --boundaries --audit --capacity-root /capacity --record /evidence/audit.json &&
+              make test-host-text-faults &&
+              cp build/tests/host-text-faults.json /evidence/faults.json &&
               CSH_TEST_PATH=/work/build/host-profile/bin:/usr/bin:/bin make test-runtime test-pty'
       - uses: actions/upload-artifact@v7
         if: always()

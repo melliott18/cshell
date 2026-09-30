@@ -1375,3 +1375,14 @@ and runs the strict audit. See [provider setup and remaining environment needs](
 `make test-host-text-audit` retains stock-provider failures. Neither target
 installs over system tools. Repaired CI also tests public runtime and PTY
 fixtures with the selected PATH; disposable Debian capacity is recorded separately.
+
+
+CSH-073 native capability and fault targets require the repaired profile above.
+`make test-host-text-native-capacity` uses an owned macOS disk image and verifies
+attachment, ENOSPC, detachment and removal. Blocked writers are observed with
+`sample` on Darwin or `/proc/PID/wchan` on Linux before TERM delivery.
+`make test-host-text-faults` requires injection attestation and exact outputs for
+24 source-provider faults; it never injects faults into the shell itself.
+The deliberate SIGQUIT child in the native jobs fault module clears inherited
+Mach crash/corpse exception ports before signal delivery, preserving the default
+signal status while avoiding a launcher crash-reporting dependency.

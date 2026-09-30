@@ -193,7 +193,7 @@ See [follow-up evidence](evidence/csh-073-extensions/README.md).
 
 The opt-in [pinned text profile](../tools/host-profile/text/README.md) repairs the
 known audit failures without replacing system executables. GNU coreutils 9.11
-supplies head/cut/tsort, GNU sed 4.9 supplies sed, and GNU ed 1.22.6 has a local
+supplies cat/head/cut/tsort, GNU sed 4.9 supplies sed, and GNU ed 1.22.6 has a local
 one-line SIGINT output correction. Linux selects the pinned Chimerautils port
 of FreeBSD tail; macOS retains its OS tail. Source archives, build recipe,
 patch, compiler and executable hashes are recorded, and provisioning rejects
@@ -205,9 +205,22 @@ endpoints within multibyte characters. Expected bytes stay independent of the
 selected providers. The original failed stock-host evidence remains immutable.
 This is repair of the declared audit slice, not whole-page qualification.
 
-No known failing assertion requires manual interaction. Native capacity needs
-a dedicated disposable small filesystem; native blocked-write observation needs
-a Darwin-specific observer. Actual EINTR/short-write/allocation recovery needs
-controlled fault injection of selected source builds. Those capabilities and
-complete-page coverage remain open; portable signals or Linux ENOSPC do not
-silently qualify the corresponding native conditions.
+No known failing assertion requires manual interaction. Native capabilities now
+use owned `sample` observations and a disposable `hdiutil` FAT12 filesystem.
+`make test-host-text-native-capacity` supplies both to the full native audit;
+Linux retains `/proc/PID/wchan` and a private Docker tmpfs.
+
+`make test-host-text-faults` adds 24 assertions in direct and shell-exec modes.
+A test-only dynamic library attests one actual injected return: cat/head/cmp
+read EINTR/EIO and short reads, cat write EINTR/short writes, and sed growth
+realloc ENOMEM. Failed reads must diagnose a positive error; copying after short
+reads/writes and retried cat writes must preserve exact bytes. Allocation failure
+must not masquerade as successful EOF. GNU sed's local getdelim patch repairs
+that native failure. GNU cat and diffutils 3.10 cmp are source-built to allow
+interposition without changing protected macOS executables. These finite fault
+contracts do not imply universal EINTR retry, all allocation paths, or full pages.
+
+The Darwin job-control fault harness clears inherited Mach crash/corpse exception
+ports only in its deliberate SIGQUIT child. Default signal disposition and exact
+wait/output assertions remain unchanged. A native sample localized the previous
+hang to pending SIGQUIT delivery at sigprocmask, before the waitid race cases.

@@ -1,0 +1,11 @@
+--- a/sed/utils.c
++++ b/sed/utils.c
+@@ -252,7 +252,7 @@
+   if (!error)
+     {
+       result = getdelim (text, buflen, delim, stream);
+-      error = ferror (stream);
++      error = ferror (stream) || (result < 0 && !feof (stream));
+     }
+ 
+   if (error)

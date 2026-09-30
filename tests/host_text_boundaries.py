@@ -132,9 +132,6 @@ def signal_case(binary, path, selected, tool, kind, mode, fixture_root):
                 stdout, stderr = collect(process,deadline)
                 ok = process.returncode == -signal.SIGTERM and stdout == stderr == b''
             elif kind == 'write-termination':
-                if not Path('/proc/self/wchan').exists():
-                    row.update(verdict='UNAVAILABLE', reason='No Linux wchan blocked-write observer; native write interruption remains open')
-                    return row
                 reader, writer = os.pipe()
                 os.set_blocking(writer,False)
                 filled = 0
@@ -149,13 +146,14 @@ def signal_case(binary, path, selected, tool, kind, mode, fixture_root):
                 args = ['-l','a','b'] if tool == 'cmp' else ['-c','32768','a'] if tool == 'head' else ['-u','a']
                 process = launch(binary,path,selected,args,mode,directory,
                                  stdin=subprocess.DEVNULL,stdout=writer)
-                observed = ''
-                while 'pipe_write' not in observed:
-                    if process.poll() is not None or time.monotonic() >= deadline:
-                        raise TimeoutError('selected provider did not reach blocked pipe_write: '+observed)
-                    observed = Path('/proc/'+str(process.pid)+'/wchan').read_text().strip()
-                    time.sleep(.005)
-                row.update(handshake=observed, pipe_prefill_bytes=filled)
+                from host_text_observer import observe_write
+                try:
+                    observation = observe_write(process,directory,deadline)
+                except NotImplementedError as error:
+                    row.update(verdict='UNAVAILABLE',reason=str(error))
+                    return row
+                row.update(handshake=observation['state'], blocked_write=observation,
+                           pipe_prefill_bytes=filled)
                 process.send_signal(signal.SIGTERM)
                 _, stderr = collect(process,deadline)
                 stdout = b''

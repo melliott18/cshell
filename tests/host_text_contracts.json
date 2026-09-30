@@ -11,28 +11,28 @@
     "U-040/cat-filesystem-limits": {
       "owner": "CSH-073",
       "witness": "cat/filesystem-enospc",
-      "boundary": "Supplied dedicated Linux tmpfs only; native capacity unavailable. No filesystem maximum claim."
+      "boundary": "Dedicated Linux tmpfs or private Darwin FAT12 disk image, measured <=2 MiB and real ENOSPC; no filesystem maximum claim."
     },
     "U-040/sed-space-limits": {
       "owner": "CSH-073",
       "witness": "sed/utf8-class-repeat",
-      "boundary": "New multibyte class/repetition oracle; UTF-8 backreference audit and allocation/maximum space still open."
+      "boundary": "Multibyte repetition/backreference, 1 MiB pattern/hold growth, and attested >=64 KiB realloc ENOMEM diagnostic with selected patched sed. Maximum space and arbitrary allocation paths remain open."
     },
     "U-040/head-count-interruption": {
       "owner": "CSH-073",
       "witness": "head/read-termination",
-      "boundary": "Owned FIFO rendezvous and Linux blocked-write TERM; count audit separately measures INT32+1; no EINTR retry claim."
+      "boundary": "Owned FIFO rendezvous and Linux/Darwin observed blocked-write TERM; INT32+1 count; instrumented EINTR/EIO read diagnostics and short reads. No universal EINTR retry claim."
     },
     "U-040/cmp-offset-interruption": {
       "owner": "CSH-073",
       "witness": "cmp/large-offset",
-      "boundary": "Independent differing byte 2147483649 and octal 130/131; owned FIFO/Linux blocked-write TERM. No maximum offset claim."
+      "boundary": "Independent differing byte 2147483649 and octal 130/131; owned FIFO and Linux/Darwin observed blocked-write TERM; instrumented read EINTR/EIO and short reads. No maximum offset claim."
     },
     "U-040/other-interruptions": {
       "owner": "CSH-073",
       "related_owner": "CSH-074",
       "witness": "host_text_boundaries.py",
-      "boundary": "cat/head/cmp owned default SIGINT/TERM/SIGPIPE, stop/resume data preservation, Linux blocked-write TERM; tee -i survival with exact post-signal output/file; ed HUP buffer save. ed INT stdout contract remains strict failed audit owned with CSH-074. Actual EINTR-return retry and native blocked-write observation remain open."
+      "boundary": "cat/head/cmp owned INT/TERM/PIPE, STOP/CONT data preservation and Linux/Darwin observed blocked-write TERM; tee -i continuation; repaired ed INT response/recovery and HUP saving. Separate attested cat short/EINTR write preservation and read-error diagnostics. Arbitrary faults/dispositions remain open."
     }
   },
   "utilities": [
@@ -80,7 +80,7 @@
         },
         "ASYNCHRONOUS EVENTS": {
           "status": "partial",
-          "reason": "Portable owned SIGINT/SIGPIPE, observed stop/continue with exact remaining data for cat/head/cmp; tee default SIGINT and -i continued copy. Existing TERM and Linux blocked-write probes remain separate. No EINTR-return retry claim."
+          "reason": "Portable owned SIGINT/SIGPIPE, observed stop/continue with exact remaining data for cat/head/cmp; tee default SIGINT and -i continued copy. Existing TERM and Linux/Darwin observed blocked-write probes remain separate. No EINTR-return retry claim."
         },
         "STDOUT": {
           "status": "partial",
@@ -228,7 +228,7 @@
         },
         "ASYNCHRONOUS EVENTS": {
           "status": "partial",
-          "reason": "Portable owned SIGINT/SIGPIPE, observed stop/continue with exact remaining data for cat/head/cmp; tee default SIGINT and -i continued copy. Existing TERM and Linux blocked-write probes remain separate. No EINTR-return retry claim."
+          "reason": "Portable owned SIGINT/SIGPIPE, observed stop/continue with exact remaining data for cat/head/cmp; tee default SIGINT and -i continued copy. Existing TERM and Linux/Darwin observed blocked-write probes remain separate. No EINTR-return retry claim."
         },
         "STDOUT": {
           "status": "partial",
@@ -758,7 +758,7 @@
         },
         "ASYNCHRONOUS EVENTS": {
           "status": "partial",
-          "reason": "Portable owned SIGINT/SIGPIPE, observed stop/continue with exact remaining data for cat/head/cmp; tee default SIGINT and -i continued copy. Existing TERM and Linux blocked-write probes remain separate. No EINTR-return retry claim."
+          "reason": "Portable owned SIGINT/SIGPIPE, observed stop/continue with exact remaining data for cat/head/cmp; tee default SIGINT and -i continued copy. Existing TERM and Linux/Darwin observed blocked-write probes remain separate. No EINTR-return retry claim."
         },
         "STDOUT": {
           "status": "partial",
@@ -1519,7 +1519,7 @@
         },
         "ASYNCHRONOUS EVENTS": {
           "status": "partial",
-          "reason": "Portable owned SIGINT/SIGPIPE, observed stop/continue with exact remaining data for cat/head/cmp; tee default SIGINT and -i continued copy. Existing TERM and Linux blocked-write probes remain separate. No EINTR-return retry claim."
+          "reason": "Portable owned SIGINT/SIGPIPE, observed stop/continue with exact remaining data for cat/head/cmp; tee default SIGINT and -i continued copy. Existing TERM and Linux/Darwin observed blocked-write probes remain separate. No EINTR-return retry claim."
         },
         "STDOUT": {
           "status": "partial",

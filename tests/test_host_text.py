@@ -35,6 +35,28 @@ class TextEvidenceTests(unittest.TestCase):
         for bad in (b'3 4 5 7\n',b'3 4 5 6 rubbish\n',b'3 4 5 6 7\n'):
             self.assertFalse(stream_matches(od,'stdout',bad))
 
+    def test_darwin_write_observer_rejects_wrong_pid_and_nonwrite_samples(self):
+        from host_text_observer import sampled_write
+        sample = 'Process: cat [123]\nCall graph:\n  20 write  (in libsystem_kernel.dylib) + 8\nTotal number in stack\n'
+        self.assertTrue(sampled_write(sample,123))
+        self.assertFalse(sampled_write(sample,124))
+        self.assertFalse(sampled_write(sample.replace('20 write','20 read'),123))
+        self.assertFalse(sampled_write(sample.replace('20 write','1 write'),123))
+        self.assertFalse(sampled_write(sample.replace('Call graph:','Summary:'),123))
+
+    def test_fault_requires_injection_attestation(self):
+        from unittest.mock import patch, MagicMock
+        from host_text_faults import run_case as fault_run
+        child=MagicMock()
+        child.communicate.return_value=(b'alpha\nbeta\ngamma\n'*200,b'')
+        child.returncode=0
+        with patch('host_text_faults.subprocess.Popen',return_value=child), \
+             patch('host_text_faults.finish',return_value=True):
+            row=fault_run(Path('/bin/sh'),os.defpath,Path('/unused'),
+                         'cat','read-short','direct')
+        self.assertEqual(row['verdict'],'FAIL')
+        self.assertTrue(row['fixture_removed'])
+
     def test_effect_failure_is_not_a_pass(self):
         with tempfile.TemporaryDirectory() as root:
             tool=Path(root)/'fake'
@@ -214,7 +236,7 @@ class TextProviderIntegrityTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             bindir=Path(root)/'bin'; bindir.mkdir()
             metadata={'recipe':{'system':'Linux'},'executables':{}}
-            for name in ('head','cut','tsort','sed','ed','tail'):
+            for name in ('cat','head','cut','tsort','sed','ed','cmp','tail'):
                 (bindir/name).write_bytes(b'original provider')
                 metadata['executables'][name]={'sha256':hashlib.sha256(b'original provider').hexdigest()}
             (Path(root)/'manifest.json').write_text(json.dumps(metadata))
