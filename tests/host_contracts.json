@@ -237,7 +237,7 @@
     "ticket": "CSH-077",
     "map": "docs/host-terminal-contracts.md",
     "runner": "tests/host_terminal.py",
-    "scope": "128 strict bounded cases in five dispatch modes; not full-page qualification",
+    "scope": "133 strict bounded cases in five dispatch modes; not full-page qualification",
     "residual_owner": "CSH-081",
     "extensions": [
       {
@@ -246,8 +246,9 @@
       },
       {
         "runner": "tests/host_registered_sessions.py",
-        "scope": "Four selected vendor session cases in five dispatch modes; 20 strict assertions in a private Linux mount namespace",
-        "unqualified_conditions": [
+        "scope": "Nine strict session cases in five dispatch modes plus two synchronized SIGINT cases; 47 assertions in a private Linux mount namespace",
+        "unqualified_conditions": [],
+        "closed_selected_conditions": [
           "write/POSIX-EOT",
           "write/two-sender-alerts"
         ]

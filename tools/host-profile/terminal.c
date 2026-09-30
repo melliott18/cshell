@@ -9,6 +9,10 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#ifdef TERMINAL_TPUT
+#include <curses.h>
+#include <term.h>
+#endif
 
 static int diagnostic(const char *message, int status)
 {
@@ -61,6 +65,8 @@ int main(int argc, char **argv)
     } else if (strcmp(TERMINAL_UTILITY, "mesg") == 0) {
         if (argc > 2 || (argc == 2 && strcmp(argv[1], "y") && strcmp(argv[1], "n")))
             return diagnostic("expected y or n", 2);
+        if (!isatty(STDIN_FILENO) && !isatty(STDOUT_FILENO) && !isatty(STDERR_FILENO))
+            return diagnostic("no terminal on standard input, output or error", 2);
     } else if (strcmp(TERMINAL_UTILITY, "who") == 0) {
         /* Check a supplied database before vendors silently treat open failure
          * as an empty database. am i / am I are not database operands. */
@@ -76,10 +82,14 @@ int main(int argc, char **argv)
         char *type = NULL;
         int result = 0;
         i = 1;
-        if (i < argc && !strcmp(argv[i], "-T")) {
-            if (++i == argc)
-                return diagnostic("-T needs a terminal type", 2);
-            type = argv[i++];
+        while (i < argc && !strncmp(argv[i], "-T", 2)) {
+            if (argv[i][2]) {
+                type = argv[i++] + 2;
+            } else {
+                if (++i == argc)
+                    return diagnostic("-T needs a terminal type", 2);
+                type = argv[i++];
+            }
         }
         if (i < argc && !strcmp(argv[i], "--"))
             ++i;
@@ -101,9 +111,30 @@ int main(int argc, char **argv)
             }
             args[n++] = argv[i];
             args[n] = NULL;
+#ifdef TERMINAL_TPUT
+            if (!strcmp(argv[i], "clear")) {
+                int error;
+                char *capability;
+                /* A vendor status can mean either missing capability or I/O
+                 * failure. Inspect the capability, never waive an exit code. */
+                if (setupterm(type, STDOUT_FILENO, &error) != OK)
+                    return diagnostic("terminal type is unavailable", 3);
+                capability = tigetstr("clear");
+                if (capability == (char *)-1) {
+                    del_curterm(cur_term);
+                    return diagnostic("clear capability lookup failed", 5);
+                }
+                if (capability == NULL) {
+                    del_curterm(cur_term);
+                    continue;
+                }
+                del_curterm(cur_term);
+            }
+#endif
             status = invoke(args);
             if (status != 0)
                 result = status;
+
         }
         return result;
     }

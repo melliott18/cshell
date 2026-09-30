@@ -252,8 +252,47 @@ to `/usr/bin/<name>`; no system executable is changed. The tput adapter exposes
 clear/init/reset only, excluding terminfo query extensions.
 
 Linux provisioning additionally installs `ncurses-bin` and `bsdextrautils` for
-tic, tabs, tput and write. `make test-host-profile` includes 640 strict PTY/record
-witnesses and cleanup regressions. Records distinguish adapter/vendor hashes,
+tic, tabs, tput and stock-provider write comparisons; libncurses-dev supplies
+the adapter headers/library. `make test-host-profile` includes 755 strict
+PTY/record/data witnesses and cleanup regressions. Records distinguish adapter/vendor hashes,
 package versions and actual PATH. Native and container evidence remain separate.
-Physical hardware and registered sender/recipient delivery are not qualified;
-[CSH-081](../../docs/tickets/CSH-081-host-terminal-residual-contracts.md) owns them.
+Physical hardware and remaining full registered-session contracts stay with
+[CSH-081](../../docs/tickets/CSH-081-host-terminal-residual-contracts.md); the strict
+Linux delivery subset is described below.
+
+## Standalone write provenance
+
+`vendor/write.c` is derived from FreeBSD source at commit
+[`a179e72489f8601f37b9039c86d3f224c73b3d51`](https://github.com/freebsd/freebsd-src/blob/a179e72489f8601f37b9039c86d3f224c73b3d51/usr.bin/write/write.c).
+Its BSD-3-Clause license remains in the file. `build/host-write` is selected only
+by this opt-in PATH profile; it is never installed setuid/setgid or over the
+system provider. Kernel permissions still constrain terminal access.
+
+Local changes remove FreeBSD-only Capsicum APIs and use portable POSIX calls;
+they do not claim to reproduce the Capsicum sandbox. Session selection retains
+the latest-access-time policy and self-session fallback. Fixed-width session
+fields are bounded, recipient names cannot traverse out of /dev, symlinks and
+non-terminal recipients are rejected, and message permission is rechecked on
+the opened recipient descriptor. The sender terminal must also be writable.
+
+The repaired provider emits the specified greeting structure (date format
+`YYYY-MM-DD HH:MM:SS` in local time), alerts the sender exactly twice after a
+successful greeting, preserves print/space/bell characters, and appends `EOT\n`
+on EOF or SIGINT. Canonical erase/kill remain the terminal driver's job. Valid
+nonprinting characters retain the FreeBSD hexadecimal `<0xX>` policy; invalid
+multibyte input is an error. Locale/multibyte and additional IEXTEN combinations
+are not yet qualified. Selection information goes to the original stdout.
+
+Recipient stdio is unbuffered. The SIGINT handler uses only async-signal-safe
+write/_exit, avoiding the upstream stdio/exit handler; ordinary input/output
+errors fail. SIGHUP retains its default action. This is a local provider repair,
+not a claim that upstream FreeBSD or the stock util-linux provider was fixed.
+Linux registered sessions have 47 strict assertions; macOS currently verifies
+build and error-path dispatch, with positive registered sessions still requiring
+a supplied disposable environment.
+
+The tput adapter now links ncurses (`libncurses-dev` on Linux; the system SDK on
+macOS). It queries a known clear capability before dispatch, treating absence as
+a successful no-op without normalizing possibly ambiguous vendor failure codes.
+Attached/repeated -T options are supported. The mesg adapter diagnoses the lack
+of any terminal on fd 0/1/2. All other unqualified contracts remain with CSH-081.

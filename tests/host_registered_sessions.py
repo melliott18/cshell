@@ -3,7 +3,7 @@
 
 Run with sudo unshare --mount --propagation private --fork. This script mounts a
 private tmpfs on /run, NEVER writes a real login database, and sends only to its
-own PTYs under dropped nobody credentials. It does not claim POSIX EOT/alerts.
+own PTYs under dropped nobody credentials. Profile EOT/alerts are strict.
 """
 import argparse
 import grp
@@ -15,8 +15,10 @@ import pwd
 import re
 import shutil
 import socket
+import signal
 import subprocess
 import tempfile
+import termios
 import time
 
 from host_terminal import MODES, inventory
@@ -53,6 +55,8 @@ def main():
     parser.add_argument('--path', default=os.defpath)
     parser.add_argument('--record', type=Path, required=True)
     parser.add_argument('--strict-eot', action='store_true', help='Require POSIX EOT and sender alerts; failing vendor audit is not waived')
+    parser.add_argument('--write-policy', choices=('profile', 'vendor'), default='profile',
+                        help='Strict repaired profile, or explicitly retained historical vendor representation')
     args = parser.parse_args()
     if os.getsid(0) != os.getpid():
         os.setsid()
@@ -75,15 +79,21 @@ def main():
             private_bin = directory / 'bin'
             private_bin.mkdir(mode=0o755)
             private_bin.chmod(0o755)
-            selected_who = providers['who']['path']
-            shutil.copyfile(selected_who, private_bin / 'who')
-            (private_bin / 'who').chmod(0o755)
-            providers['who'] = dict(providers['who'], selected_from=selected_who,
-                path=str(private_bin / 'who'), realpath=str((private_bin / 'who').resolve()),
-                sha256=sha(private_bin / 'who'))
+            for utility in ('who', 'write'):
+                selected = providers[utility]['path']
+                shutil.copyfile(selected, private_bin / utility)
+                (private_bin / utility).chmod(0o755)
+                providers[utility] = dict(providers[utility], selected_from=selected,
+                    path=str(private_bin / utility), realpath=str((private_bin / utility).resolve()),
+                    sha256=sha(private_bin / utility))
             env = environment(str(private_bin) + ':' + args.path, directory)
             for mode in MODES:
-                for name in ('payload', 'denial', 'am-i', 'am-I'):
+                names = ['payload', 'denial', 'am-i', 'am-I']
+                if args.write_policy == 'profile':
+                    names += ['partial-eof', 'editing', 'controls', 'implicit', 'not-logged-in']
+                    if mode in ('direct', 'exec'):
+                        names += ['interrupt']
+                for name in names:
                     terminals = []
                     try:
                         # Index 0 is sender; index 1 is the sole recipient.
@@ -93,6 +103,10 @@ def main():
                         for _, fd in terminals:
                             os.fchown(fd, account.pw_uid, tty_group)
                             os.fchmod(fd, 0o620)
+                            attrs = termios.tcgetattr(fd)
+                            attrs[6][termios.VERASE] = b'\x7f'
+                            attrs[6][termios.VKILL] = b'\x15'
+                            termios.tcsetattr(fd, termios.TCSANOW, attrs)
                         records = directory / 'sessionsx'
                         records.write_bytes(b'')
                         subprocess.run([str(Path('build/tests/host_session_records').resolve()), str(records),
@@ -101,39 +115,58 @@ def main():
                         os.chmod('/run/utmp', 0o644)
                         if name == 'denial':
                             os.fchmod(terminals[1][1], 0o600)
+                        payloads = {
+                            'payload': (b'CSH077 message\t\a\n\x04', b'CSH077 message\t\a\n'),
+                            'partial-eof': (b'partial\x04\x04', b'partial'),
+                            'editing': (b'old\x15ab\x7fc\n\x04', b'ac\n'),
+                            'controls': (b'\x01\x00\v\f\t\a\n\x04', b'<0x1><0x0>\v\f\t\a\n'),
+                            'implicit': (b'implicit\n\x04', b'implicit\n'),
+                            'interrupt': (b'', b''),
+                        }
                         start = time.time()
                         if name.startswith('am-'):
                             actual = invoke(binary, providers, 'who', ['am', name[-1]], mode, directory, env,
                                             terminals, credentials=(account.pw_uid, tty_group))
                         else:
-                            actual = invoke(binary, providers, 'write', [account.pw_name, recipient], mode,
+                            operands = [account.pw_name] if name == 'implicit' else [account.pw_name, recipient]
+                            if name == 'not-logged-in':
+                                operands[0] = 'csh077-no-such-user'
+                            extra = {'signal_on_terminal': (b'\a\a', signal.SIGINT)} if name == 'interrupt' else {}
+                            actual = invoke(binary, providers, 'write', operands, mode,
                                             directory, env, terminals, credentials=(account.pw_uid, tty_group),
-                                            terminal_input=b'CSH077 message\t\a\n\x04')
+                                            terminal_input=payloads.get(name, payloads['payload'])[0], **extra)
                         end = time.time()
                         failures = list(actual['failures'])
-                        if name == 'denial':
-                            if actual['status'] <= 0 or not actual['stderr'] or actual['stdout'] or actual['terminal1']:
+                        if name in ('denial', 'not-logged-in'):
+                            if actual['status'] <= 0 or not actual['stderr'] or actual['stdout'] or actual['terminal1'] or actual['terminal']:
                                 failures.append('denied recipient accepted a message or lacked diagnostic')
                         elif name.startswith('am-'):
                             expected = [[account.pw_name.encode(), sender.encode(), b'Jan', b'1', b'00:00']]
                             if [line.split() for line in actual['stdout'].splitlines()] != expected or actual['status'] or actual['stderr'] or actual['terminal1']:
                                 failures.append('who am i/I did not select owned sender session')
                         else:
-                            # Pin the selected util-linux C-locale wire representation.
-                            # This is data/greeting evidence, NOT a POSIX EOT/alert pass.
-                            prefixes = [('\r\n\a\a\aMessage from ' + account.pw_name + '@' + socket.gethostname()
-                                + ' on ' + sender + ' at ' + time.strftime('%H:%M', time.gmtime(t)) + ' ...\r\n').encode()
-                                for t in (start, end)]
-                            expected_bodies = [prefix + b'CSH077 message\t\a\r\nEOF\r\n' for prefix in prefixes]
-                            if actual['terminal1'] not in expected_bodies or actual['status'] or actual['stdout'] or actual['stderr']:
-                                failures.append('selected provider message bytes/status mismatch')
+                            if args.write_policy == 'profile':
+                                prefixes = [('Message from ' + account.pw_name + ' (' + sender + ') ['
+                                    + time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(t)) + '] ...\n').encode()
+                                    for t in range(int(start), int(end) + 1)]
+                                expected_bodies = [prefix + payloads[name][1] + b'EOT\n' for prefix in prefixes]
+                                stdout = ((account.pw_name + ' is logged in more than once; writing to '
+                                           + recipient + '\n').encode() if name == 'implicit' else b'')
+                            else:
+                                prefixes = [('\r\n\a\a\aMessage from ' + account.pw_name + '@' + socket.gethostname()
+                                    + ' on ' + sender + ' at ' + time.strftime('%H:%M', time.gmtime(t)) + ' ...\r\n').encode()
+                                    for t in (start, end)]
+                                expected_bodies = [prefix + b'CSH077 message\t\a\r\nEOF\r\n' for prefix in prefixes]
+                                stdout = b''
+                            if actual['terminal1'] not in expected_bodies or actual['status'] or actual['stdout'] != stdout or actual['stderr']:
+                                failures.append('message bytes/status mismatch')
                             normative = []
                             if not actual['terminal1'].endswith(b'EOT\n'):
                                 normative.append('write/POSIX-EOT')
-                            if actual['terminal'].count(b'\a') != 2:
+                            if actual['terminal'] != b'\a\a':
                                 normative.append('write/two-sender-alerts')
                             gaps.extend(normative)
-                            if args.strict_eot:
+                            if args.strict_eot or args.write_policy == 'profile':
                                 failures.extend(normative)
                         rows.append(dict(name='registered/' + name, mode=mode,
                                          verdict='FAIL' if failures else 'PASS', failures=failures, actual=actual,
@@ -160,8 +193,8 @@ def main():
         rows.append(dict(name='source-stability', verdict='FAIL', reason='source changed during run'))
     report = dict(platform=platform.platform(), command=os.sys.argv, path=args.path,
                   providers=providers, packages=packages, source_identity=inputs, capabilities=capabilities,
-                  binary_sha256=sha(args.binary), strict_eot=args.strict_eot,
-                  qualification='selected data/denial/current-session subset only',
+                  binary_sha256=sha(args.binary), strict_eot=args.strict_eot, write_policy=args.write_policy,
+                  qualification='strict selected session subset; not complete page qualification',
                   unqualified_conditions=sorted(set(gaps)), residual_owner='CSH-081', cases=rows,
                   fixture_directory_removed=directory is None or not directory.exists(),
                   totals=dict(passed=sum(r['verdict']=='PASS' for r in rows), failed=sum(r['verdict']=='FAIL' for r in rows)))

@@ -44,7 +44,7 @@ def capture(*args, **kwargs):
 
 def _capture(argv, directory, env, master, slave, input_file, tty_fds=(), data=b'',
             timeout=TIMEOUT, limit=LIMIT, fd_map=None, extra_terminals=None,
-            terminal_input=b'', credentials=None):
+            terminal_input=b'', credentials=None, signal_on_terminal=None):
     """One owned process group; bounded pipes and PTY, even after leader exit."""
     fd_map = fd_map or {}
     extra_terminals = extra_terminals or {}
@@ -112,6 +112,10 @@ def _capture(argv, directory, env, master, slave, input_file, tty_fds=(), data=b
                         chunk = b''
                     if chunk:
                         streams[key.data].extend(chunk)
+                        if (signal_on_terminal is not None and key.data == 'terminal'
+                                and signal_on_terminal[0] in streams['terminal']):
+                            os.kill(process.pid, signal_on_terminal[1])
+                            signal_on_terminal = None
                     else:
                         selector.unregister(key.fileobj)
                 if sum(map(len, streams.values())) > limit:
@@ -198,6 +202,17 @@ def cases():
         row = c('tput/' + name, 'tput', arg, tty_fds=[1], term='absent-csh077' if name == 'type-override' else 'csh077plain')
         row['terminal'] = want; yield row
     row = c('tput/multiple', 'tput', ['clear', 'init', 'reset'], tty_fds=[1], term='csh077plain'); row['terminal'] = b'CLEARINITRESET'; yield row
+    for name, args, term, expected in (
+            ('no-operations', ['clear', 'init', 'reset'], 'csh077empty', b''),
+            ('missing-clear-continues', ['clear', 'init', 'reset'], 'csh077partial', b'INITRESET'),
+            ('attached-type', ['-Tcsh077plain', 'clear'], 'absent-csh077', b'CLEAR'),
+            ('repeated-type', ['-T', 'absent-csh077', '-Tcsh077plain', 'clear'], 'absent-csh077', b'CLEAR')):
+        row = c('tput/' + name, 'tput', args, tty_fds=[1], term=term)
+        row['terminal'] = expected
+        yield row
+    row = c('mesg/no-terminal', 'mesg', [], input_tty=False)
+    row.update(status='gt1', stderr='diagnostic')
+    yield row
     for label, args in (('zero', ['-0']), ('regular', ['-8']), ('default', []),
                         ('absolute', ['1,10,20,30']), ('relative', ['1 10 +10 +10']),
                         ('type-override', ['-T', 'csh077', '1,10,20,30'])):

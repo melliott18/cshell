@@ -134,3 +134,16 @@ observed `write/POSIX-EOT` and `write/two-sender-alerts` differences. The
 PTY assertions plus six harness tests on native macOS and hosted Linux, both
 ordinary and sanitized, and 20 isolated Linux session assertions. These selected
 passes do not close the remaining full-page requirements.
+
+### Remaining-issue repair pass
+
+The subsequent pass repairs selected write EOT/sender alerts with a portable
+FreeBSD-derived standalone provider, and tightens missing-operation/attached-type
+tput and no-terminal mesg behavior. The main PTY profile grows to 665 assertions
+plus the 90 data-effect assertions. Linux registered sessions now strictly check
+47 assertions (nine cases in five paths plus synchronized direct/exec SIGINT).
+Historical vendor failures stay in their original evidence; they do not become
+accepted gaps in the repaired profile. Current results and prerequisite needs
+are recorded in the [repair evidence](../evidence/csh-077-repairs/README.md) and
+[environment matrix](../host-terminal-contracts.md#remaining-environment-requirements).
+The full-page criterion remains open under CSH-081.

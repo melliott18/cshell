@@ -25,14 +25,14 @@ class TerminalHarnessTests(unittest.TestCase):
         self.assertEqual(len(rows), len({r['name'] for r in rows}))
         self.assertTrue(all('gap' not in r for r in rows))
 
-    def run_child(self, program, timeout=1, limit=1024):
+    def run_child(self, program, timeout=1, limit=1024, **kwargs):
         master, slave = open_terminal()
         try:
             with tempfile.TemporaryDirectory(prefix='csh077-harness-') as temp:
                 with open(os.devnull, 'rb') as source:
                     return capture([sys.executable, '-c', program], Path(temp),
-                        dict(PATH=os.defpath), master, slave, source,
-                        timeout=timeout, limit=limit)
+                        dict(PATH=os.defpath, CSH_TEST_SLAVE=str(slave)), master, slave, source,
+                        timeout=timeout, limit=limit, **kwargs)
         finally:
             os.close(master)
             os.close(slave)
@@ -83,6 +83,18 @@ class TerminalHarnessTests(unittest.TestCase):
             self.assertEqual(result['stdout'], b'tail\n')
             self.assertEqual(result['status'], 0)
             self.assertFalse(result['failures'])
+
+    def test_signal_waits_for_terminal_readiness(self):
+        result = self.run_child(
+            'import os,signal,sys,time\n'
+            'def stop(sig, frame): print("interrupted",flush=True); sys.exit(7)\n'
+            'signal.signal(signal.SIGINT,stop)\n'
+            'os.write(int(os.environ["CSH_TEST_SLAVE"]),b"\\a\\a")\n'
+            'time.sleep(30)', signal_on_terminal=(b'\a\a', signal.SIGINT))
+        self.assertEqual(result['terminal'], b'\a\a')
+        self.assertEqual(result['stdout'], b'interrupted\n')
+        self.assertEqual(result['status'], 7)
+        self.assertFalse(result['failures'])
 
     def test_output_flood_is_failure(self):
         result = self.run_child('import os;\nwhile True: os.write(1,b"x"*8192)')

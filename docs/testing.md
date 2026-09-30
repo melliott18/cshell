@@ -1350,7 +1350,7 @@ strict. `make test-host-terminal-profile` tests the opt-in repaired subset.
 `make test-host-profile` includes the latter, `test-host-terminal-effects`
 (90 real-byte, descriptor-priority and private-record assertions), and
 `test-host-terminal-harness`.
-The [section map](host-terminal-contracts.md) defines all 128 cases, five paths,
+The [section map](host-terminal-contracts.md) defines all 133 cases, five paths,
 bounds, independent oracles and remaining CSH-081 contracts. No real login
 records or recipient terminals are changed. Linux requires `ncurses-bin` and
 `bsdextrautils` (included in Docker/CI); native macOS uses system tic/write.
@@ -1358,6 +1358,6 @@ Use `HOST_TERMINAL_FLAGS=--case=tty/` only for diagnosis.
 
 The Linux registered-session subset is opt-in and requires a private mount
 namespace. The [isolating command and scope](host-terminal-contracts.md#controlled-data-and-session-extension)
-cover 20 selected vendor assertions with dropped credentials; POSIX EOT and
-sender alerts remain unqualified. The [extension evidence](evidence/csh-077-extension/README.md)
+cover 47 strict session assertions with dropped credentials, including EOT,
+sender alerts, canonical editing and synchronized SIGINT. The [extension evidence](evidence/csh-077-extension/README.md)
 retains normal and sanitizer results separately. No physical hardware was supplied.

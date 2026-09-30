@@ -628,9 +628,13 @@ build/tests/host_session_records: tests/host_session_records.c
 HOST_TERMINAL_ADAPTERS = $(addprefix build/host-terminal-,tabs tput mesg who)
 $(HOST_TERMINAL_ADAPTERS): build/host-terminal-%: tools/host-profile/terminal.c
 	mkdir -p $(@D)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -DTERMINAL_UTILITY='"$*"' -DTERMINAL_PROVIDER='"/usr/bin/$*"' -o $@ $< $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -DTERMINAL_UTILITY='"$*"' -DTERMINAL_PROVIDER='"/usr/bin/$*"' $(if $(filter tput,$*),-DTERMINAL_TPUT) -o $@ $< $(LDLIBS) $(if $(filter tput,$*),-lncurses)
 
-host-profile: $(HOST_TERMINAL_ADAPTERS)
+build/host-write: tools/host-profile/vendor/write.c
+	mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -D_DEFAULT_SOURCE -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -o $@ $< $(LDLIBS)
+
+host-profile: $(HOST_TERMINAL_ADAPTERS) build/host-write
 .PHONY: test-host-terminal-profile
 test-host-terminal-profile: cshell build/tests/host_session_records host-profile
 	$(PYTHON) tests/host_terminal.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-terminal-profile-results.json $(HOST_TERMINAL_FLAGS)
