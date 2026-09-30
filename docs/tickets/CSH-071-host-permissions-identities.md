@@ -149,3 +149,15 @@ is queued, so privileged Darwin is not yet qualified. Native runtime passes
 permission profile has 979 passes and one timeout/reaping failure, retained as
 failed. Fakeowner implementation repairs, authentication/login-service fixtures,
 and the remaining individually listed full-page obligations stay open here.
+
+## Named-group timeout triage
+
+[Chgrp triage](../evidence/csh-071-chgrp-timeout/README.md) reruns the same cshell
+and chgrp binaries: all 400 named/numeric assertions pass across direct, string,
+file and stdin modes, followed by 980 passing native permission assertions.
+The original five-second stall is not reproduced or relabeled as fixed.
+A deterministic harness regression identifies and repairs the shared cleanup/
+reap budget; final pipe cleanup now has a separate one-second leader wait.
+Permission evidence includes PID, timing, reap state and a bounded timeout
+process snapshot. Native and Linux each pass 88 harness and six permission-
+harness tests. The original failed run remains immutable.

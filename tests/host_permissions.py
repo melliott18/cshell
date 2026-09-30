@@ -151,7 +151,9 @@ def run_case(binary, tools, search_path, case, mode, fixture_root, sanitizer=Fal
             env.update(ASAN_OPTIONS='halt_on_error=1' + (':detect_leaks=0' if platform.system() == 'Linux' else ''),
                        UBSAN_OPTIONS='halt_on_error=1')
         fixture = dict(args=[str(CHILD), 'exec.json'], stdin=stdin, env=env)
-        status, output, errors = smoke.capture(Path(sys.executable), fixture, root, 5, 65536)
+        record['process'] = {}
+        status, output, errors = smoke.capture(Path(sys.executable), fixture, root, 5, 65536,
+                                              diagnostics=record['process'])
         record['phase'] = 'assertion'
         record['actual'] = serial(dict(status=status, **{k: bytes(v) for k, v in output.items()}, errors=errors))
         if sanitizer_diagnostic(output):

@@ -50,6 +50,11 @@ class PermissionsEvidenceTests(unittest.TestCase):
         self.assertEqual(len(result['actual']['errors']), 1)
         self.assertIn('timeout after 5s', result['actual']['errors'][0])
         pid = int(bytes.fromhex(result['actual']['stdout']['hex']))
+        self.assertEqual(result['process']['pid'], pid)
+        self.assertTrue(result['process']['reaped'])
+        self.assertGreaterEqual(result['process']['timeout_seconds'], 5)
+        self.assertTrue('timeout_process' in result['process'] or
+                        'timeout_process_error' in result['process'])
         with self.assertRaises(ProcessLookupError):
             os.kill(pid, 0)
 

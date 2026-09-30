@@ -492,9 +492,9 @@ process group. Pipe cleanup kills that group after success or failure, including
 descendants left behind by a candidate that exits early. PTY cleanup covers all
 process groups still in the candidate's session, including stopped foreground
 jobs, background groups, and descendants left after the leader exits. Terminal
-descriptors are closed on success and failure. Final pipe cleanup has its own
-one-second budget. PTY cleanup allows five
-seconds for session enumeration/killing, then a separate one second to reap the
+descriptors are closed on success and failure. Final pipe cleanup and PTY
+cleanup allow five seconds for group/session enumeration and killing, then a
+separate one second to reap the
 leader, even after snapshot failure. These budgets are separate from the case
 timeout; failure to enumerate, kill or reap fails the case. PTY cleanup also
 verifies that no live session members remain. CSH-054 adds controlled slow and
@@ -511,6 +511,14 @@ after an otherwise successful exit. The macOS snapshot facilities must therefore
 also be available when pipe cleanup encounters `EPERM`. See
 [CSH-040](tickets/CSH-040-macos-harness-cleanup.md) for deterministic regression
 evidence.
+
+Permission-test records additionally retain the leader PID, spawn/elapsed/cleanup
+times and whether it was reaped. On a case timeout they attempt a 0.5-second
+`ps` snapshot of that leader's state, wait channel and executable; snapshot
+errors are retained separately from the candidate's streams. The five-second
+permission-case deadline remains unchanged. The [CSH-071 chgrp triage](
+evidence/csh-071-chgrp-timeout/README.md) records an unreproduced original stall
+and the independent fix preventing group cleanup from exhausting the reap budget.
 
 The candidate also receives POSIX resource limits: CPU time is limited to at most
 the effective timeout rounded up plus one second, each file is limited to the larger

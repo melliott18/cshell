@@ -245,6 +245,42 @@ class HarnessTests(unittest.TestCase):
                                     (process.stdin, process.stdout, process.stderr)))
                 self.assert_not_running(process.pid)
 
+    def test_slow_group_cleanup_leaves_a_full_leader_reap_budget(self):
+        # Simulate a snapshot using up the group-cleanup deadline. A real child
+        # still has to be killed/reaped; elapsed enumeration must not turn its
+        # separate wait into wait(timeout=0).
+        popen = subprocess.Popen
+        monotonic = time.monotonic
+        waits = []
+        processes = []
+        offset = [0]
+
+        def record_process(*args, **kwargs):
+            process = popen(*args, **kwargs)
+            processes.append(process)
+            wait = process.wait
+
+            def record_wait(timeout=None):
+                waits.append(timeout)
+                return wait(timeout=timeout)
+            process.wait = record_wait
+            return process
+
+        def slow_cleanup(process, deadline=None):
+            offset[0] = 6
+            process.kill()
+
+        item = case(args=['hang'], timeout=0.05)
+        with mock.patch.object(subprocess, 'Popen', side_effect=record_process), \
+                mock.patch.object(smoke, 'kill_group', side_effect=slow_cleanup), \
+                mock.patch.object(smoke.time, 'monotonic', side_effect=lambda: monotonic() + offset[0]):
+            failures = smoke.run_case(CANDIDATE, item, 1, 65536)
+        self.assertTrue(any('timeout after' in failure for failure in failures), failures)
+        self.assertFalse(any('could not reap' in failure for failure in failures), failures)
+        self.assertEqual(waits, [1.0])
+        self.assertEqual(len(processes), 1)
+        self.assert_not_running(processes[0].pid)
+
     def test_output_flood_fails_promptly_with_bounded_diagnostics(self):
         marker = self.directory / "processes.json"
         self.addCleanup(self.kill_recorded_group, marker)
