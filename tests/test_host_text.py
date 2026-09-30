@@ -184,5 +184,47 @@ class TextEvidenceTests(unittest.TestCase):
         self.assertTrue(any('unknown case' in error for error in validate(dangling)))
 
 
+class TextProviderIntegrityTests(unittest.TestCase):
+    @staticmethod
+    def load_script(relative):
+        import importlib.util
+        path=Path(__file__).resolve().parents[1]/relative
+        spec=importlib.util.spec_from_file_location('provider_test_module',path)
+        module=importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def test_corrupt_cached_archive_is_rejected_before_extraction(self):
+        from unittest.mock import patch
+        builder=self.load_script('tools/host-profile/text/build.py')
+        with tempfile.TemporaryDirectory() as root:
+            destination=Path(root)
+            (destination/'downloads').mkdir()
+            (destination/'downloads/coreutils.tar.xz').write_bytes(b'not a verified archive')
+            with patch.object(builder.subprocess,'check_output',return_value='test compiler'), \
+                 patch.object(builder.subprocess,'run') as command:
+                with self.assertRaisesRegex(ValueError,'Cached archive checksum mismatch'):
+                    builder.build(destination,1)
+                command.assert_not_called()
+            self.assertFalse((destination/'bin').exists())
+
+    def test_modified_or_wrong_host_provider_cannot_enter_profile(self):
+        import hashlib,json
+        provision=self.load_script('tools/host-profile/provision.py')
+        with tempfile.TemporaryDirectory() as root:
+            bindir=Path(root)/'bin'; bindir.mkdir()
+            metadata={'recipe':{'system':'Linux'},'executables':{}}
+            for name in ('head','cut','tsort','sed','ed','tail'):
+                (bindir/name).write_bytes(b'original provider')
+                metadata['executables'][name]={'sha256':hashlib.sha256(b'original provider').hexdigest()}
+            (Path(root)/'manifest.json').write_text(json.dumps(metadata))
+            self.assertEqual(set(provision.text_overrides(bindir,'Linux')),set(metadata['executables']))
+            with self.assertRaisesRegex(ValueError,'does not match this host'):
+                provision.text_overrides(bindir,'Darwin')
+            (bindir/'cut').write_bytes(b'changed provider')
+            with self.assertRaisesRegex(ValueError,'checksum mismatch: cut'):
+                provision.text_overrides(bindir,'Linux')
+
+
 if __name__=='__main__':
     unittest.main()

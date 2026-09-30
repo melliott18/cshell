@@ -14,7 +14,8 @@ owner; selected utility/libc/platform vendors retain implementation ownership.
 make test-host-inventory test-host-text-harness
 make test-host-text
 make test-host-profile
-make test-host-text-audit  # strict audit, currently fails on both selected hosts
+make test-host-text-audit  # stock-provider audit; failures remain visible
+make test-host-text-repaired # opt-in pinned providers; full audit must pass
 ```
 
 `test-host-text` uses the stock standard PATH. `test-host-profile` also executes
@@ -187,3 +188,26 @@ harness on native macOS, Ubuntu and Debian Docker with disposable capacity.
 Strict audits are a separately labelled non-gating step: their actual nonzero
 exit statuses and full JSON are uploaded, not converted into qualifying passes.
 See [follow-up evidence](evidence/csh-073-extensions/README.md).
+
+## Selected provider repairs
+
+The opt-in [pinned text profile](../tools/host-profile/text/README.md) repairs the
+known audit failures without replacing system executables. GNU coreutils 9.11
+supplies head/cut/tsort, GNU sed 4.9 supplies sed, and GNU ed 1.22.6 has a local
+one-line SIGINT output correction. Linux selects the pinned Chimerautils port
+of FreeBSD tail; macOS retains its OS tail. Source archives, build recipe,
+patch, compiler and executable hashes are recorded, and provisioning rejects
+changed binaries. The repaired CI jobs require the strict audit to pass.
+
+Seven additional audit cases cover reverse line counts, zero and larger input,
+acyclic tsort -w, cut character ranges/combining characters, and byte-range
+endpoints within multibyte characters. Expected bytes stay independent of the
+selected providers. The original failed stock-host evidence remains immutable.
+This is repair of the declared audit slice, not whole-page qualification.
+
+No known failing assertion requires manual interaction. Native capacity needs
+a dedicated disposable small filesystem; native blocked-write observation needs
+a Darwin-specific observer. Actual EINTR/short-write/allocation recovery needs
+controlled fault injection of selected source builds. Those capabilities and
+complete-page coverage remain open; portable signals or Linux ENOSPC do not
+silently qualify the corresponding native conditions.

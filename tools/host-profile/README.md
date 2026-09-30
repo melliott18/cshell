@@ -252,3 +252,14 @@ sparse offsets, owned signal fixtures and explicitly supplied Linux ENOSPC.
 The strict provider audit retains failed contracts separately; no full utility
 page or common-default family is promoted. CSH-073 remains open for the listed
 residuals, with CSH-074 sharing the ed signal requirement.
+
+
+## CSH-073 pinned text repairs
+
+`make test-host-text-repaired` builds and selects the [pinned text providers](text/README.md)
+for the strict text audit. To select the same providers for the broader profile,
+run `make test-host-profile HOST_TEXT_PROVIDER_BIN="$PWD/build/text-providers/bin"`
+after `make host-text-providers`. Omitting the variable restores the original
+profile selection. Only declared symlinks in `build/host-profile/bin` change;
+stock PATH and system executables are unchanged. Download/source/compiler/patch
+and executable identities are retained in the build manifest and text results.

@@ -1366,3 +1366,12 @@ The CSH-073 transformation/offset/large-input extension runs in the same
 without unbounded capture; negative controls reject changed, short and extra
 bytes. `Host text qualification` CI retains native and Docker JSON artifacts
 and separate strict-audit statuses, even if other shell jobs fail.
+
+
+For CSH-073's repaired provider selection, `make test-host-text-repaired`
+explicitly downloads checksum-pinned sources, builds into `build/text-providers`,
+verifies the executables while provisioning the existing opt-in host profile,
+and runs the strict audit. See [provider setup and remaining environment needs](../tools/host-profile/text/README.md).
+`make test-host-text-audit` retains stock-provider failures. Neither target
+installs over system tools. Repaired CI also tests public runtime and PTY
+fixtures with the selected PATH; disposable Debian capacity is recorded separately.
