@@ -329,7 +329,10 @@ done(int signo)
 		if (n < 0 && errno == EINTR)
 			continue;
 		if (n <= 0) {
-			(void)write(STDERR_FILENO, "write: EOT output failed\n", sizeof("write: EOT output failed\n") - 1);
+			/* Best effort only: the EOT failure already determines exit 1. */
+			ssize_t diagnostic_bytes = write(STDERR_FILENO, "write: EOT output failed\n",
+			    sizeof("write: EOT output failed\n") - 1);
+			(void)diagnostic_bytes;
 			_exit(1);
 		}
 		message += n;
