@@ -166,3 +166,11 @@ unconfirmed. A recurrence after isolation, unexpected signal status, sanitizer
 finding, ownership failure or cleanup failure remains a failure owned by #99;
 capture the selected launch signal, inherited exception-port configuration,
 phase and process samples before proposing any further disposition.
+
+## Subsequent hosted closure audit
+
+The [2026-10-01 hosted verification](hosted-verification/README.md) confirms
+the terminal repair, including sanitizer coverage. A separate CSH-057 public
+PTY timeout and cleanup failure prevent closing the whole ticket. This later
+audit supersedes the earlier pending-hosted-validation statement above while
+preserving all original observations and their limits.

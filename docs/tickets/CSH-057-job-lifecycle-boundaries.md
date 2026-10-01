@@ -8,6 +8,22 @@
 - Branch: fix/CSH-057-terminal-fault-timeout
 - Issue: [#99](https://github.com/melliott18/cshell/issues/99)
 
+## Closure verification: 2026-10-01
+
+The [hosted verification](../evidence/csh-057-terminal-crash-notification/hosted-verification/README.md)
+confirms the terminal-fault repair in normal and ASan/UBSan macOS checks.
+Mach isolation and retention also passed both builds in both hosted runs.
+However, the push run's sanitizer `repeated background resumes preserve prompt
+and terminal` case timed out at five seconds while waiting for step 328, then
+failed to reap its leader within one second. This separate public PTY recurrence
+remains owned by CSH-057 / #99, so the condition for closing the whole ticket
+is not met. The passing peer does not erase it. The peer's overall macOS failure
+belongs to CSH-054 exit-operand tests. Ubuntu and Docker passed both runs.
+
+[PR #173](https://github.com/melliott18/cshell/pull/173) and its prerequisite
+PRs #172/#167 are unmerged. Status remains `review`; no issue is declared
+unsolvable and no failing result is converted to a pass.
+
 ## Current review: terminal crash-notification isolation
 
 The [terminal investigation](../evidence/csh-057-terminal-crash-notification/README.md)
@@ -38,8 +54,9 @@ the failure recurs after isolation.
 
 This change builds on retention-budget [PR #172](https://github.com/melliott18/cshell/pull/172),
 which builds on diagnostic [PR #167](https://github.com/melliott18/cshell/pull/167).
-CSH-057 remains at `review` pending integration and hosted validation. The
-historical terminal failure is not erased or converted into a passing run.
+CSH-057 remains at `review` pending integration and resolution of the public
+PTY recurrence above. The historical terminal failure is not erased or
+converted into a passing run.
 The distinct CSH-058 signal-probe observation below is not fixed by this
 child-specific change.
 
