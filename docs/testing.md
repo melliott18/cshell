@@ -1121,7 +1121,9 @@ Only that fixture's jobs object substitutes `_SC_CHILD_MAX` (32 and unknown,
 falling back to 256); the public runtime keeps the host limit. It uses real
 sequential children and retains one running and one stopped record while
 checking eviction. Each progress phase has a five-second alarm and retention
-has a 60-second outer bound. Flushed capacity/round/completion checkpoints
+has a 120-second outer bound. The [budget repair](evidence/csh-057-retention-budget/README.md)
+retains a hosted failure where short run/reap operations accumulated to 60
+seconds. Flushed capacity/round/completion checkpoints
 localize a timeout without changing those limits. Pipe timeouts report when
 output last arrived; PTY timeouts report the last completed step and elapsed
 time without advancement. Long output mismatches retain a bounded prefix and
@@ -1148,7 +1150,9 @@ The [2026-09-29 recurrence investigation](evidence/csh-057-retention-recurrence/
 retains a new macOS sanitizer timeout with 448 completed fill iterations and
 last output received at 58.721 seconds. It distinguishes aggregate deadline
 exhaustion from the still-unconfirmed reason for that elapsed time. CSH-057 is
-reopened; the retention case and both deadline levels remain unchanged.
+reopened at that stage; neither deadline changed in that investigation. The
+[new failure-time trace](evidence/csh-057-retention-budget/README.md) now supports
+a 120-second aggregate budget while retaining five-second phase alarms.
 
 `make test-job-retention` now runs the original fixture and exact oracle through
 `tests/retention_diagnostics.py`. It retains each attempt under
@@ -1169,10 +1173,10 @@ with truncation reported as a diagnostic failure. Timing includes observer cost.
 
 An independent watcher samples the fixture root and at most one recorded child
 whose session ownership is verified. It triggers after two seconds in an
-individual operation, at 57 seconds of case time, or when the last observed
+individual operation, at 117 seconds of case time, or when the last observed
 timer projects expiry within the 2.5-second sampling budget plus 0.2 seconds.
-The two samplers run concurrently within that bounded budget; the original
-60-second case deadline and five-second phase alarms continue independently.
+The two samplers run concurrently within that bounded budget; the
+120-second case deadline and five-second phase alarms continue independently.
 Sampling failures and unsupported sampling remain explicit evidence. No signal
 handler is installed to collect alarm state, and sampling cannot turn a failed
 case into a pass. `make test-retention-diagnostics` checks observer invariants;
@@ -1181,8 +1185,8 @@ expected failures. Harness regressions separately check sampler cleanup,
 output bounds and ownership.
 
 The [diagnostic capture review](evidence/csh-057-retention-diagnostics/README.md)
-records this capability and its validation. It does not diagnose the hosted
-timeout. The normal review retained 94 passing harness checks, 148 passing jobs
+records this capability and its validation before the later budget repair.
+The normal review retained 94 passing harness checks, 148 passing jobs
 cases and 30 passing public jobs PTY cases, followed by a five-second timeout
 in the unchanged terminal fault fixture. A separate full normal run stopped
 in the CSH-058 QUIT probe. The terminal failure remains undispositioned under

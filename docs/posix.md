@@ -57,7 +57,11 @@ current versus historical validation. The original audit allocation and
 [earlier reconciliation](evidence-reconciliation.md) remain historical snapshots. CSH-057's later
 [formal retention disposition](evidence/csh-057-retention-disposition/README.md)
 allows its scoped completion while retaining an unknown-cause historical failure
-and explicit reopening conditions. CSH-050 and CSH-012 keep their separate gates.
+and explicit reopening conditions. The ticket subsequently reopened; a
+[later hosted trace and test-budget repair](evidence/csh-057-retention-budget/README.md)
+now establishes aggregate exhaustion during short operations in that captured
+run. Its separate terminal-fault observation remains open. CSH-050 and CSH-012
+keep their separate gates.
 
 ## Runtime baseline
 

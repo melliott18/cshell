@@ -412,7 +412,13 @@ new failure, and the investigation proposes no runtime or deadline change.
 The [failure capture](evidence/csh-057-retention-diagnostics/README.md) adds
 per-child monotonic timestamps, read-only alarm observations and bounded macOS
 stack sampling while preserving the exact oracle and both deadlines. It does
-not disposition the recurrence or the newly recorded terminal-fault timeout.
+not disposition the recurrence or the newly recorded terminal-fault timeout. The
+[later hosted trace and budget repair](evidence/csh-057-retention-budget/README.md)
+measures 59.503 seconds of progressing run/reap work before the outer kill.
+Retention now has a finite 120-second aggregate budget, with all 619 children,
+exact assertions, same-manager reuse and five-second phase alarms preserved.
+This corrects the demonstrated budget mismatch; the separate terminal-fault
+observation remains open under #99.
 
 <a id="csh-058"></a>
 

@@ -5,53 +5,50 @@
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-034, CSH-035
-- Branch: test/CSH-057-retention-diagnostics
+- Branch: fix/CSH-057-retention-budget
 - Issue: [#99](https://github.com/melliott18/cshell/issues/99)
 
-## Current review: diagnostic capture and unresolved failures
+## Current review: retention aggregate-budget repair
 
-The 2026-09-29 macOS sanitizer recurrence remains unresolved under issue #99.
-The [recorded-progress investigation](../evidence/csh-057-retention-recurrence/README.md)
-establishes that the 60-second outer deadline expired after at least 448
-successful capacity-fill iterations. The runner received the last checkpoint
-at 58.721 seconds; this is a receipt time, not a per-child completion timestamp.
-It does not establish a five-second operation stall or identify the cause of
-the hosted elapsed time. The same source tree passed the peer sanitizer job in
-51.183 seconds. Local unmodified and instrumented sanitizer probes pass but do
-not diagnose or repair the hosted failure.
+The [new hosted failure capture and budget repair](../evidence/csh-057-retention-budget/README.md)
+diagnoses the instrumented macOS sanitizer timeout in run 36662308140:
+completed run and reap intervals consumed 59.503 seconds, no interval took
+more than 0.153 seconds, and 573 of 576 capacity fills completed before the
+60-second outer deadline. All recorded SIGALRM states were default
+and unblocked. The next child was launched and entered its wait just before
+the runner killed the fixture. This demonstrates aggregate-budget exhaustion
+during observed progress; the final child's unobserved outcome remains unknown.
+It does not identify the reason for host-to-host cost variation or recover the
+missing telemetry from the original empty-output failure.
 
-Runtime, assertions and deadlines remain unchanged. Closure requires a
-demonstrated corrective change or an explicit new disposition of this
-recurrence and its aggregate budget; another passing retry is insufficient.
-The historical acceptance below does not apply to this new failure.
+The fix raises the finite retention outer budget to **120 seconds** and moves
+case-age stack sampling to 117 seconds. Both the JSON case and diagnostic
+runner enforce that bound. All 619 children, exact output/status assertions,
+two-round manager reuse, five-second phase alarms, two-second operation-stall
+sampling, and bounded cleanup remain. No runtime code, sanitizer setting,
+retry policy or expected-failure allowance changes. The linked evidence
+retains the actual failed run and explains the explicit budget tradeoff.
 
-The requested diagnostic capability is implemented on
-`test/CSH-057-retention-diagnostics` and ready for review. This review status
-does not mark the hosted timeout repaired or the ticket complete. The
-[diagnostic capture evidence](../evidence/csh-057-retention-diagnostics/README.md)
-records final validation and all failed attempts.
+This branch builds on the diagnostic observer in [PR #167](https://github.com/melliott18/cshell/pull/167).
+The [original diagnostic review](../evidence/csh-057-retention-diagnostics/README.md)
+remains a historical record, including its separate failures. This ticket is
+at `review` pending integration and disposition of the terminal-fault
+observation below. The retention failure is not proved unsolvable, and no
+unresolved shell defect is relabeled as fixed by increasing its test budget.
 
-The test-only observer records file-backed `CLOCK_MONOTONIC` fork/child,
-run/reap, wait and cleanup boundaries with capacity/round/item/PID identity.
-It queries the actual SIGALRM mask, pending state, disposition and remaining
-`ITIMER_REAL` without changing them, installing handlers, or changing errno.
-The lifecycle fixture alone links the fork wrapper; children close the trace
-descriptor after their entry snapshot. Bounded trace writes and explicit
-truncation keep diagnostics below the existing file limit. Recorded alarm
-state is last-known state, and observed timings include diagnostic cost.
+Validation on this repair passed native macOS and Linux/Docker retention,
+ASan/UBSan retention, 94 harness checks per platform, jobs/PTY checks and the
+five-second stalled-child controls. A temporary 100 ms per-fork delay makes
+the same sanitized binary fail at the former 60-second bound, then pass all
+619 children and exact assertions in 90.578 seconds under the new bound.
+The delay is diagnostic-only; the linked evidence retains both outcomes and
+platform/flag limitations. No new full-suite or fixed-branch hosted pass is
+claimed.
 
-An independent watcher starts bounded samplers for the root and at most one
-recorded, session-verified child after a two-second individual-operation stall,
-57 seconds of case time, or projected alarm expiry within 2.7 seconds. Both
-samplers run concurrently within a 2.5-second budget while the original case
-deadline and alarms remain in force. The original fixture oracle, assertions,
-60-second outer bound and five-second phase alarms are unchanged. Diagnostic
-controls exercise a real stalled child and an externally inherited blocked
-SIGALRM. Their actual outcomes, sampler errors and cleanup failures are retained
-separately from the unchanged fixture result.
+### Separate failures retained from the diagnostic review
 
-Current native normal validation passed 94 harness checks, 148 jobs cases and
-30 public jobs PTY cases. The subsequent unchanged `execute_faults
+The diagnostic PR's native normal validation passed 94 harness checks, 148 jobs
+cases and 30 public jobs PTY cases. The subsequent unchanged `execute_faults
 --jobs-terminal` case hit its five-second outer deadline with empty output;
 cleanup exhausted its snapshot budget and reported fallback EPERM for leader
 group 18494. This new terminal-fault observation remains undispositioned under
