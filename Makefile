@@ -371,7 +371,7 @@ build/tests/jobs-pty.json: tests/jobs_cases.py build/tests/jobs_helper
 
 .PHONY: test-jobs-pty
 test-jobs-pty: cshell build/tests/jobs-pty.json build/tests/execute_faults
-	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/jobs-pty.json
+	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/jobs-pty.json --timeout 10
 	$(PYTHON) tests/smoke.py ./build/tests/execute_faults --suite tests/fixtures/jobs-fault-pty.json
 
 build/tests/jobs_fixture: tests/jobs_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o build/stack.o

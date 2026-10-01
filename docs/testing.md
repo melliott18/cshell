@@ -1205,6 +1205,22 @@ job manager's status. The existing five-second PTY limit and ten-second fault
 alarm remain unchanged. The unchanged public 32-cycle case can be repeated
 with `python3 docs/evidence/csh-057-pty-fix/repeat_pty.py`.
 
+The [PTY teardown and timing follow-up](evidence/csh-057-pty-teardown/README.md)
+reproduces Darwin exit waiting for unread terminal output after SIGKILL.
+Cleanup now consumes and closes the master after owned-group teardown and
+before the unchanged one-second leader reap. It preserves captured output and
+all earlier failures. A pipe-synchronized queued-output regression retains an
+extra slave reference to expose the old drain/reap dependency deterministically.
+
+The 32-cycle repeated-resume fixture has a ten-second aggregate budget; its
+419 steps, exact output, status 130 and foreground checks are unchanged. The
+other 29 public jobs PTY cases explicitly retain five seconds. `test-jobs-pty`
+passes a ten-second runner ceiling; custom smoke invocations still impose the
+minimum of their CLI ceiling and each case budget. Whole-case timeouts remain
+failures, including deliberate slow controls. The native CI job has a separate
+60-minute aggregate limit because both previous 45-minute jobs were cancelled
+while still passing cases; no other case deadline changes.
+
 `make test-job-crash-notification` is included in `test-jobs` and hence `make
 test`. On macOS it holds a controlled inherited task `EXC_CRASH` request,
 verifies that SIGKILL cannot complete the already-started exit until the reply,
@@ -1243,7 +1259,7 @@ For this fork-heavy matrix, run address/undefined-behavior instrumentation with
 The signal driver forwards these options (and MallocNanoZone) into its controlled
 environment. This is ASan/UBSan evidence, not LeakSanitizer evidence; leak scanning
 at every helper/shell exit can dominate the per-case deadline in Linux containers.
-CI uses the same explicit setting and budgets 45 minutes for native jobs and
+CI uses the same explicit setting and budgets 60 minutes for native jobs and
 30 for Docker, retaining the five-second signal-case bounds. The launch helper
 cancels its own watchdog before exec; it does not add a pending ALRM to cshell.
 

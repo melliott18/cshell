@@ -10,8 +10,8 @@ import signal
 def cases(helper, shell):
     result = []
 
-    def terminal(name, steps, output, status=0):
-        result.append(dict(name=name, transport="pty", steps=steps,
+    def terminal(name, steps, output, status=0, timeout=5):
+        result.append(dict(name=name, transport="pty", steps=steps, timeout=timeout,
                            expect=dict(output=output, status=status)))
 
     for monitor in ("+m", "-m"):
@@ -68,8 +68,10 @@ def cases(helper, shell):
             {"foreground": "other"}, {"control": "C"}, {"expect": "$ "}])
         output += "ready\n" + stopped + resumed + label + "\n$ "
     steps.extend([{"foreground": "leader"}, {"send": "exit\n"}])
+    # 32 real launches share this aggregate bound. Sanitizer startup costs can
+    # exceed the ordinary single-case budget while every cycle still progresses.
     terminal("repeated background resumes preserve prompt and terminal", steps,
-             output, 128 + signal.SIGINT)
+             output, 128 + signal.SIGINT, timeout=10)
     label = f"{helper} producer | {helper} pipeline"
     terminal("pipeline stop resume group and wait", [
         {"expect": "$ "}, {"send": label + "\n"}, {"expect": "pipeline-ready\n"},

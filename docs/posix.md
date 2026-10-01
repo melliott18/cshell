@@ -62,7 +62,9 @@ and explicit reopening conditions. The ticket subsequently reopened; a
 now establishes aggregate exhaustion during short operations in that captured
 run. The [terminal fixture repair](evidence/csh-057-terminal-crash-notification/README.md)
 then isolates a reproduced inherited crash-handler dependency; the original
-handler remains unconfirmed and CSH-057 remains at review. CSH-050 and CSH-012
+handler remains unconfirmed. The [PTY teardown follow-up](evidence/csh-057-pty-teardown/README.md)
+then repairs a reproduced unread-output exit dependency and scoped aggregate
+budgets. CSH-057 remains at review. CSH-050 and CSH-012
 keep their separate gates.
 
 ## Runtime baseline

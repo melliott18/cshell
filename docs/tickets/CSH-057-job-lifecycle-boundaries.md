@@ -8,7 +8,32 @@
 - Branch: fix/CSH-057-terminal-fault-timeout
 - Issue: [#99](https://github.com/melliott18/cshell/issues/99)
 
-## Closure verification: 2026-10-01
+## Current repair: public PTY teardown and aggregate timing
+
+The [follow-up diagnosis](../evidence/csh-057-pty-teardown/README.md) reproduces
+the remaining cleanup failure with the real sanitizer shell. After killing its
+owned groups, the open PTY master can hold the leader in exit while unread
+output remains. An empty session snapshot does not prove the child is waitable.
+Closing that master releases the exact-child wait immediately. Cleanup now
+closes it after group teardown and before the unchanged one-second reap. A
+queued-output regression fails under the old cleanup and passes with the fix;
+the captured transcript and any original timeout failure remain unchanged.
+
+The same 32-cycle shell/fixture binary, with a controlled 160 ms startup delay
+per helper, exceeds five seconds but passes all 419 steps in about 6.3 seconds.
+Only that case receives ten seconds of aggregate headroom. All 29 other public
+jobs PTY cases retain five seconds. Separately, both subsequent hosted macOS
+jobs exhausted their 45-minute job budget while still passing tests. The native
+job budget is now 60 minutes, with individual case bounds unchanged apart from
+the explicitly scoped repeated-resume correction.
+
+These changes repair demonstrated harness and budget defects; they do not
+reconstruct every historical scheduling interval or prove an unsolvable shell
+bug. Status remains `review` pending integration and hosted checks on the final
+repair. Prior failures below remain in the record, including separate CSH-054
+exit-operand observations.
+
+## Earlier closure verification: 2026-10-01
 
 The [hosted verification](../evidence/csh-057-terminal-crash-notification/hosted-verification/README.md)
 confirms the terminal-fault repair in normal and ASan/UBSan macOS checks.
