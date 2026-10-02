@@ -232,5 +232,13 @@
     "U-035/locale-errors": "CSH-076",
     "U-037/permission-denial": "CSH-071",
     "U-037/block-device": "CSH-071"
+  },
+  "qualification_profiles": {
+    "CSH-076": {
+      "clauses": "tests/host_catalog_clauses.json",
+      "scope": "tests/host_catalog_scope.json",
+      "evidence": "docs/evidence/csh-076/README.md",
+      "status": "bounded subset; full contracts remain open"
+    }
   }
 }

@@ -29,3 +29,7 @@
 !docs/evidence/csh-012/closure-5b56328/provider-inventory.py
 !docs/evidence/csh-064/
 !docs/evidence/csh-064/prerequisites.json
+
+# CSH-076 current profile accounting and evidence index.
+!docs/evidence/csh-076/
+!docs/evidence/csh-076/README.md

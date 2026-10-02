@@ -101,6 +101,12 @@ def validate(contracts, root=ROOT):
         pair = current.get(row['condition'])
         if pair is None or pair[1] != row['reason'] or not row['source'].endswith('/' + pair[0] + '.html'):
             errors.append(f"retained residual changed: {row['condition']}")
+    for ticket, profile in contracts.get('qualification_profiles', {}).items():
+        if ticket not in tickets:
+            errors.append(f'{ticket}: unknown qualification owner')
+        for key in ('clauses', 'scope', 'evidence'):
+            if not (root / profile[key]).is_file():
+                errors.append(f'{ticket}: missing qualification {key}: {profile[key]}')
     return errors
 
 

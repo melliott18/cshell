@@ -1,0 +1,134 @@
+[
+  {
+    "file": "native-qualified.json.gz",
+    "uncompressed_sha256": "640745314302d770794ba8df925e6445e08c400eecb3dedd49ee1e59a23926c8",
+    "platform": "macOS-14.8.7-arm64-arm-64bit",
+    "totals": {
+      "passed": 355,
+      "failed": 0
+    },
+    "source_sha256": "fbe0c7096cd992b10ddeba90a74e947c4aeb0551b2994c3cd71d09802eed918f"
+  },
+  {
+    "file": "native-contracts.json.gz",
+    "uncompressed_sha256": "47a827b746b7c86bae7208b392b53c81183c411b6b0759d37b8ead9d002e7e89",
+    "platform": "macOS-14.8.7-arm64-arm-64bit",
+    "totals": {
+      "passed": 355,
+      "failed": 20
+    },
+    "source_sha256": "fbe0c7096cd992b10ddeba90a74e947c4aeb0551b2994c3cd71d09802eed918f"
+  },
+  {
+    "file": "native-profile.json.gz",
+    "uncompressed_sha256": "7a60694d232dde42760aae25ff384c4e627156171ef6c41d8ef4274013599a66",
+    "platform": "macOS-14.8.7-arm64-arm-64bit",
+    "totals": {
+      "passed": 1162,
+      "failed": 0,
+      "gaps": 0
+    },
+    "source_sha256": "47eb44d055573a327abd54ad5b094f6bc5c625e69f1ef480d5278f7725456e33"
+  },
+  {
+    "file": "native-first.json.gz",
+    "uncompressed_sha256": "c325b1953b18b1b2a65ba3cf804e814db6033f7baeda42f0171718e2cf9b8ff9",
+    "platform": "macOS-14.8.7-arm64-arm-64bit",
+    "totals": {
+      "passed": 340,
+      "failed": 30
+    },
+    "source_sha256": "81cfc3a607fd53bad81198e4fcc666ad7eb5ca74382cc7b610ba70ea2595b820"
+  },
+  {
+    "file": "linux-first.json.gz",
+    "uncompressed_sha256": "a85ede7c60c61468ada1b6b9fb78d3b92192ef2696ff55d7084361d4ff74fe50",
+    "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+    "totals": {
+      "passed": 350,
+      "failed": 50
+    },
+    "source_sha256": "81cfc3a607fd53bad81198e4fcc666ad7eb5ca74382cc7b610ba70ea2595b820"
+  },
+  {
+    "file": "linux-qualified-intermediate.json.gz",
+    "uncompressed_sha256": "17dcacf23af3389a91d859ba6a3209966421051e9ccd2eab0c80c4abb142d688",
+    "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+    "totals": {
+      "passed": 395,
+      "failed": 0
+    },
+    "source_sha256": "81b590fe78e0c552ec9a65fb20a4fdd12ecb99463c8d62bf8783dbb056a1d783"
+  },
+  {
+    "file": "linux-locales-intermediate.json.gz",
+    "uncompressed_sha256": "e933d7c2404915f1c0f3c000b878af651a20d43288f41b1e094a6ba1577597ca",
+    "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+    "totals": null,
+    "source_sha256": null
+  },
+  {
+    "file": "native-shared-fixtures.json.gz",
+    "uncompressed_sha256": "a86750f288bcba3fd4afbbbb83a9dd542889c982e83a3d89a11118370fe37d58",
+    "source_sha256": "394dfe1d4961b4f3ea0899eada987c9491a96b581d3a16f7b32c389ffc94e5f0",
+    "totals": null,
+    "verified": true
+  },
+  {
+    "file": "native-shared-qualified.json.gz",
+    "uncompressed_sha256": "470a901eea985cdc47b1dd09300a56d5386d4da64fabc36ca36e2fddb8a8ed75",
+    "source_sha256": "394dfe1d4961b4f3ea0899eada987c9491a96b581d3a16f7b32c389ffc94e5f0",
+    "totals": {
+      "passed": 355,
+      "failed": 0
+    },
+    "verified": null
+  },
+  {
+    "file": "native-shared-profile.json.gz",
+    "uncompressed_sha256": "0982ac4b0db20d21092e5891c74cbff2c92778af8a32fb00be45f969ab3aad0a",
+    "source_sha256": "394dfe1d4961b4f3ea0899eada987c9491a96b581d3a16f7b32c389ffc94e5f0",
+    "totals": {
+      "passed": 1162,
+      "failed": 0,
+      "gaps": 0
+    },
+    "verified": null
+  },
+  {
+    "file": "locale-fix-native.json.gz",
+    "uncompressed_sha256": "995978906ee6ca04428718f896bd106eb86da3e326ba79cfd3f31b5fc58bd77a",
+    "source_sha256": "db627781856123ab3a8ed207876f856a0421be009a5269b8a81b83fa8a47ce41",
+    "totals": {
+      "passed": 405,
+      "failed": 0
+    }
+  },
+  {
+    "file": "locale-fix-linux.json.gz",
+    "uncompressed_sha256": "ff7e03b5f53d8b3396a4cce3410be967daf4e13d0acc7deecf57772c1f277d8a",
+    "source_sha256": "db627781856123ab3a8ed207876f856a0421be009a5269b8a81b83fa8a47ce41",
+    "totals": {
+      "passed": 425,
+      "failed": 0
+    }
+  },
+  {
+    "file": "locale-fix-native-contracts.json.gz",
+    "uncompressed_sha256": "89a1e6267016e8f56f4b466d4a0de1a2f927dfb99f32143e0618f8a0d21bcc9e",
+    "source_sha256": "db627781856123ab3a8ed207876f856a0421be009a5269b8a81b83fa8a47ce41",
+    "totals": {
+      "passed": 405,
+      "failed": 15
+    }
+  },
+  {
+    "file": "locale-fix-linux-sanitize.json.gz",
+    "uncompressed_sha256": "404f1045f24089766903c74822ba9fcfe3d2e4e736f2f2d46d4a0117c262a5b5",
+    "source_sha256": "802e2b5bbd57b18a4eec7a27c8b66f42aab93ee9f3fef11c46fbb9ccc0d07788",
+    "totals": {
+      "passed": 90,
+      "failed": 0
+    }
+  }
+]

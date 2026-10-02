@@ -1,11 +1,11 @@
 # CSH-076: Qualify host locale and message catalog utilities
 
-- Status: ready
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: Assigned when work starts
+- Branch: test/CSH-076-host-locale-catalogs
 - Issue: [#148](https://github.com/melliott18/cshell/issues/148)
 
 ## Goal
@@ -52,17 +52,17 @@ Conditional prerequisite reports also owned here: `U-035/German-locale`, `U-040/
 
 ## Acceptance criteria
 
-- [ ] Select each required exec-accessible provider, supply missing packages/services,
+- [x] Select each required exec-accessible provider, supply missing packages/services,
   and retain exact PATH, realpath, executable hash, package and environment identity.
 - [ ] Map every applicable page section and common default to clause-derived
   assertions or an individually justified disposition; repair required-contract
   failures. Selected examples alone do not complete a utility contract.
-- [ ] Resolve each assigned retained condition with its required capability and
+- [x] Resolve each assigned retained condition with its required capability and
   strict evidence, or transfer that individual condition to a concrete open owner.
   Preserve vendor ownership, setup failures and failed assertions separately.
 - [ ] Verify public cshell dispatch and direct exec access, exact output/status and
   relevant effects, with zero gap allowances for every declared qualified subset.
-- [ ] Update the inventory, current ownership manifest and clause maps with the
+- [x] Update the inventory, current ownership manifest and clause maps with the
   exact qualification boundary; keep stock-host, qualified subset and full-system
   claims separate.
 
@@ -78,6 +78,50 @@ processes and disposable files/services and verify cleanup after failure/timeout
 
 ## Implementation notes/evidence
 
-Work has not started. CSH-068 transfers ownership only; it supplies no new vendor
-implementation, service, privileged host or physical terminal. CSH-064 remains
-done for its bounded capability work and repaired probe cleanup.
+Implementation is in progress on the branch above. The [bounded profile](../host-locale-catalogs.md)
+supplies GNU catalog providers with native option/escape adapters, private Linux
+locales, independent catalog consumers and byte oracles, all five dispatch modes,
+strict failure reproducers and per-section accounting. Full contracts remain open;
+this ticket must not be closed from these selected witnesses.
+
+[Separate native and Linux evidence](../evidence/csh-076/README.md) records the
+current native subset (355 passing cases), current existing host profile
+(1,162 passes, zero gaps), and an intermediate Linux subset (395 passes) with
+five verified private locales. Hosted Ubuntu and Docker CI subsequently passed the native C adapter commit
+4460922, including sanitizer checks; hosted macOS sanitizer execution was
+cancelled. The evidence page retains exact job metadata separately from the
+intermediate local Linux results.
+
+The four conditional locale prerequisites are supplied on the recorded hosts;
+that does not qualify printf, sed or find behavior owned by other tickets.
+The [machine clause map](../../tests/host_catalog_clauses.json) and
+[scope manifest](../../tests/host_catalog_scope.json) keep every remaining
+section and provider defect owned here. Required strict failures include native
+gencat stream operands/escape diagnostics, iconv `-s`
+on both hosts, and glibc gencat deletion of existing sets. No failure is converted
+to a passing assertion. Darwin generated categories beyond LC_NUMERIC, further normative
+sections/defaults remain outstanding.
+
+`make test-runtime` passed 3,950 native cases under the selected PATH. The first
+PTY run and focused retry fail in the unchanged terminal handoff fault fixture;
+logs retain the five-second timeout and cleanup diagnostics. This is a distinct
+validation failure, not a claimed catalog defect or a passing PTY result.
+
+The remaining native `make test-runtime-pty` target passes 33 cases when run
+independently. A stock-PATH control reproduces the terminal handoff timeout;
+its cause remains unestablished.
+
+Shared fixture publication is available through `make host-catalog-fixtures`.
+Dependent tracks consume `build/host-profile/fixtures.json` with the shared
+`load_fixtures` Python helper; locale-only users can run `make host-locales`
+without the full host profile. Both catalog and Linux locale generations are
+retained across reprovisioning. See the bounded fixture checks and consumer
+contract in [the shared-interface documentation](../host-locale-catalogs.md).
+
+The follow-up native locale adapter fixes environment-report quoting and adds
+precedence/empty-value assertions. The catalog subset now passes 405 native and 425 Docker/Linux cases,
+including native private LC_NUMERIC generation/consumption via PATH_LOCALE,
+stdin generation and failure effects. Native libc consumes these private
+categories without administrative access. The remaining provider defects and
+public-installation environment requirements are recorded in the shared profile
+documentation. System-wide installation is not performed on the developer host.

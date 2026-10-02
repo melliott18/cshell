@@ -1,0 +1,17 @@
+python3 tests/host_contract_inventory.py
+PASS: 156 utility names; 101 external contracts; 30 retained conditions; current open owners
+python3 tests/test_host_contract_inventory.py
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 0.130s
+
+OK
+./build/tests/catalog_adapter_fixture
+gettext: option -d requires an argument
+PASS: native catalog adapter escapes and option/operand boundaries
+python3 -m unittest discover -s tests -p 'test_host_catalog*.py'
+.......
+----------------------------------------------------------------------
+Ran 7 tests in 0.226s
+
+OK

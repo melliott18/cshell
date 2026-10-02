@@ -1,0 +1,38 @@
+python3 tests/runtime_cases.py --helper build/tests/execute_helper --output build/tests/runtime-pty.json
+python3 tests/smoke.py ./cshell --suite build/tests/runtime-pty.json \
+		--timeout "5" --output-limit "65536"
+Suite: cshell runtime [replacement] candidate=/Users/mitchell/.codex/worktrees/csh-076-locale-catalogs/cshell/cshell
+PASS: terminal main parser syntax recovery
+PASS: options: terminal ignoreeof
+PASS: options: terminal ignoreeof disable
+PASS: options: terminal invocation job defaults
+PASS: options: terminal nounset recovery
+PASS: options: terminal noexec honored
+PASS: options: terminal monitor default
+PASS: options: terminal recursive noexec
+PASS: options: terminal arithmetic nounset recovery
+PASS: terminal exit status
+PASS: terminal EOF initially
+PASS: terminal invalid exit bad
+PASS: terminal invalid exit 1 2
+PASS: terminal failure then EOF
+PASS: terminal exit redirection error continues
+PASS: terminal signal parent continues
+PASS: terminal multiline and blank prompts
+PASS: terminal heredoc prompts
+PASS: terminal expansion error recovers
+PASS: terminal function preserves private descriptors
+PASS: terminal control operand error recovers
+PASS: terminal eval syntax error recovers
+PASS: terminal read continuation prompt
+PASS: terminal read literal PS2 and raw suppression
+PASS: terminal heredoc literal PS2
+PASS: terminal command foreground interrupt
+PASS: traps: idle Ctrl-C resets prompt
+PASS: traps: trapped idle Ctrl-C
+PASS: traps: Ctrl-C discards continuation
+PASS: traps: interactive hangup exits
+PASS: traps: caught signal preserves partial input
+PASS: traps: idle action can exit
+PASS: traps: hangup signals background job
+Result: 33 passed, 0 failed, 0 skipped

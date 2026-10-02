@@ -272,3 +272,10 @@ The category tables in builtin.c and execute.c contain no additional intrinsics;
 this source inspection complements the finite name tests. U-041/selected-set
 lookup is verified for this revision; it is not a claim about every string or
 prefix-PATH selection (the known pwd prefix defect remains CSH-055).
+
+## CSH-076 locale and catalog subset
+
+[Provider setup, independent assertions and exact unqualified contracts](host-locale-catalogs.md)
+cover gencat/gettext/iconv/locale/localedef/msgfmt/ngettext. `make test-host-profile`
+includes the bounded strict subset; `make test-host-catalog-contracts` also runs
+retained failing vendor reproducers. Full utility contracts remain open.

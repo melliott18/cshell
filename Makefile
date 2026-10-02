@@ -482,14 +482,14 @@ build/host-printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/printf.c $(LDLIBS)
 
 host-profile: build/host-printf
-	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
+	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin --cc="$(CC)" --cppflags="$(CPPFLAGS)" --cflags="$(CFLAGS)" --ldflags="$(LDFLAGS)" --ldlibs="$(LDLIBS)"
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_printf_faults.c $(LDLIBS)
 
-test-host-profile: test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
-	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+test-host-profile: test-host-catalogs test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
+	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --locale-path "$(abspath build/host-profile/locales)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 
 # Public entry point with only the command input read syscall instrumented.
 build/tests/command-read-input.o: src/input.c tests/command_read_faults.h $(INPUT_HEADERS)
@@ -640,3 +640,37 @@ test-locale-pathname: cshell build/tests/locale_probe build/tests/pathname_runti
 test-host-inventory:
 	$(PYTHON) tests/host_contract_inventory.py
 	$(PYTHON) tests/test_host_contract_inventory.py
+
+# CSH-076: catalog/locale providers, independent consumers, bounded fixtures.
+.PHONY: test-host-catalogs test-host-catalog-harness
+build/tests/host_catalog_probe: tests/host_catalog_probe.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+test-host-catalog-harness: build/tests/catalog_adapter_fixture build/tests/locale_adapter_fixture
+	./build/tests/catalog_adapter_fixture
+	./build/tests/locale_adapter_fixture
+	$(PYTHON) -m unittest discover -s tests -p 'test_host_catalog*.py'
+
+test-host-catalogs: host-catalog-fixtures cshell host-profile build/tests/host_catalog_probe test-host-catalog-harness
+	$(PYTHON) tests/host_catalogs.py ./cshell build/tests/host_catalog_probe --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --locale-path "$(abspath build/host-profile/locales)" --record build/tests/host-catalog-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+.PHONY: host-locales test-host-catalog-contracts
+host-locales: build/tests/host_catalog_probe
+	$(PYTHON) tools/host-profile/provision_locales.py build/tests/host_catalog_probe build/host-profile/locales
+
+test-host-catalog-contracts: test-host-catalogs
+	$(PYTHON) tests/host_catalogs.py ./cshell build/tests/host_catalog_probe --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --locale-path "$(abspath build/host-profile/locales)" --scope all --record build/tests/host-catalog-contract-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+build/tests/catalog_adapter_fixture: tests/catalog_adapter_fixture.c tools/host-profile/catalog_adapter.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+# Reusable fixtures for other utility tracks; no shell build or full suite needed.
+.PHONY: host-catalog-fixtures
+host-catalog-fixtures: host-locales host-profile build/tests/host_catalog_probe
+	$(PYTHON) tools/host-profile/provision_catalogs.py build/tests/host_catalog_probe --path "$(abspath build/host-profile/bin):$(shell getconf PATH)"
+
+build/tests/locale_adapter_fixture: tests/locale_adapter_fixture.c tools/host-profile/locale_adapter.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
