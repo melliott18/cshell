@@ -60,7 +60,11 @@ allows its scoped completion while retaining an unknown-cause historical failure
 and explicit reopening conditions. The ticket subsequently reopened; a
 [later hosted trace and test-budget repair](evidence/csh-057-retention-budget/README.md)
 now establishes aggregate exhaustion during short operations in that captured
-run. Its separate terminal-fault observation remains open. CSH-050 and CSH-012
+run. The [terminal fixture repair](evidence/csh-057-terminal-crash-notification/README.md)
+then isolates a reproduced inherited crash-handler dependency; the original
+handler remains unconfirmed. The [PTY teardown follow-up](evidence/csh-057-pty-teardown/README.md)
+then repairs a reproduced unread-output exit dependency and scoped aggregate
+budgets. CSH-057 remains at review. CSH-050 and CSH-012
 keep their separate gates.
 
 ## Runtime baseline

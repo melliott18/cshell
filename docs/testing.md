@@ -1189,10 +1189,13 @@ records this capability and its validation before the later budget repair.
 The normal review retained 94 passing harness checks, 148 passing jobs
 cases and 30 passing public jobs PTY cases, followed by a five-second timeout
 in the unchanged terminal fault fixture. A separate full normal run stopped
-in the CSH-058 QUIT probe. The terminal failure remains undispositioned under
-CSH-057 / #99; the signal probe belongs to CSH-058 / #100. Consult that evidence
-record for final sanitizer results and process observations; neither failure
-is erased by a later pass.
+in the CSH-058 QUIT probe. The later
+[terminal investigation](evidence/csh-057-terminal-crash-notification/README.md)
+reproduces an inherited Mach crash-receiver dependency and isolates the
+fixture's deliberate SIGQUIT child from it. The exact historical receiver
+remains unknown under CSH-057 / #99; the signal probe belongs to CSH-058 / #100.
+Consult the original evidence for its sanitizer results and process observations;
+neither historical failure is erased by a later pass.
 
 The [foreground-resume follow-up](evidence/csh-057-pty-fix/README.md) extends the
 existing terminal fault fixture with a synchronized exit-before-SIGCONT case,
@@ -1201,6 +1204,33 @@ readiness pipe retries EINTR; WNOWAIT confirms exit/stop without consuming the
 job manager's status. The existing five-second PTY limit and ten-second fault
 alarm remain unchanged. The unchanged public 32-cycle case can be repeated
 with `python3 docs/evidence/csh-057-pty-fix/repeat_pty.py`.
+
+The [PTY teardown and timing follow-up](evidence/csh-057-pty-teardown/README.md)
+reproduces Darwin exit waiting for unread terminal output after SIGKILL.
+Cleanup now consumes and closes the master after owned-group teardown and
+before the unchanged one-second leader reap. It preserves captured output and
+all earlier failures. A pipe-synchronized queued-output regression retains an
+extra slave reference to expose the old drain/reap dependency deterministically.
+
+The 32-cycle repeated-resume fixture has a ten-second aggregate budget; its
+419 steps, exact output, status 130 and foreground checks are unchanged. The
+other 29 public jobs PTY cases explicitly retain five seconds. `test-jobs-pty`
+passes a ten-second runner ceiling; custom smoke invocations still impose the
+minimum of their CLI ceiling and each case budget. Whole-case timeouts remain
+failures, including deliberate slow controls. The native CI job has a separate
+60-minute aggregate limit because both previous 45-minute jobs were cancelled
+while still passing cases; no other case deadline changes.
+
+`make test-job-crash-notification` is included in `test-jobs` and hence `make
+test`. On macOS it holds a controlled inherited task `EXC_CRASH` request,
+verifies that SIGKILL cannot complete the already-started exit until the reply,
+then checks that the test helper removes that dependency while preserving
+SIGQUIT termination. All owned requests, Mach rights and children have bounded
+cleanup. Other platforms explicitly report this Mac-specific control as
+unavailable; their existing jobs/terminal fixtures still run. The helper is
+called only in the fault fixture's deliberate SIGQUIT child. It clears no
+production process's port and changes no POSIX disposition, mask, oracle or
+timeout. Host/thread fallback and corpse reporting remain possible.
 
 ## Signal edge evidence (CSH-058)
 
@@ -1229,7 +1259,7 @@ For this fork-heavy matrix, run address/undefined-behavior instrumentation with
 The signal driver forwards these options (and MallocNanoZone) into its controlled
 environment. This is ASan/UBSan evidence, not LeakSanitizer evidence; leak scanning
 at every helper/shell exit can dominate the per-case deadline in Linux containers.
-CI uses the same explicit setting and budgets 45 minutes for native jobs and
+CI uses the same explicit setting and budgets 60 minutes for native jobs and
 30 for Docker, retaining the five-second signal-case bounds. The launch helper
 cancels its own watchdog before exec; it does not add a pending ALRM to cshell.
 

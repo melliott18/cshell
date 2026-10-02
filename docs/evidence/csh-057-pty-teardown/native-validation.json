@@ -1,0 +1,443 @@
+{
+  "base": "0f80030053cfb4648e403da9b2ef1ec9cd236036",
+  "platform": "ProductName:\t\tmacOS\nProductVersion:\t\t14.8.7\nBuildVersion:\t\t23J520\n",
+  "compiler": "Apple clang version 15.0.0 (clang-1500.3.9.4)\nTarget: arm64-apple-darwin23.6.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin\n",
+  "controlled_identities": {
+    "base": "0f80030053cfb4648e403da9b2ef1ec9cd236036",
+    "binaries": {
+      "cshell": "cce2b164c10e11fad049e50cf6dca39fc77b6ea0a4c65c3c04badd9db0d98263",
+      "build/tests/jobs_helper": "7259845b807a6f3236c4201aca0a72787cc5603d044bb13e598960d8b19ca2f2"
+    },
+    "controlled_helper_sha256": "8f36513f88a6d92127917a47efc8ee0a322efc52d3b55c1f5784127aa6d2867e",
+    "sanitizer_flags": "-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+    "link_flags": "-fsanitize=address,undefined",
+    "forwarded_environment": {
+      "MallocNanoZone": "0"
+    }
+  },
+  "probe_summary": {
+    "probe-baseline": [
+      {
+        "round": 1,
+        "seconds": 1.4750183748546988,
+        "cleanup_seconds": 0.07678366708569229,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 2,
+        "seconds": 0.9803629580419511,
+        "cleanup_seconds": 0.04194470914080739,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 3,
+        "seconds": 0.9801370829809457,
+        "cleanup_seconds": 0.0741514170076698,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 4,
+        "seconds": 1.0371579581405967,
+        "cleanup_seconds": 0.07364075002260506,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 5,
+        "seconds": 1.0174294579774141,
+        "cleanup_seconds": 0.04201087518595159,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 6,
+        "seconds": 1.1534376668278128,
+        "cleanup_seconds": 0.07356837508268654,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 7,
+        "seconds": 1.1050133749376982,
+        "cleanup_seconds": 0.04184879083186388,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 8,
+        "seconds": 1.0308651658706367,
+        "cleanup_seconds": 0.0748777911067009,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 9,
+        "seconds": 1.053005208959803,
+        "cleanup_seconds": 0.041348583064973354,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 10,
+        "seconds": 1.0321122079622,
+        "cleanup_seconds": 0.04181641596369445,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 11,
+        "seconds": 1.0244046249426901,
+        "cleanup_seconds": 0.07687920797616243,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 12,
+        "seconds": 1.0601360001601279,
+        "cleanup_seconds": 0.07956645800732076,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 13,
+        "seconds": 1.5829034589696676,
+        "cleanup_seconds": 0.07682991703040898,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 14,
+        "seconds": 1.1731134580913931,
+        "cleanup_seconds": 0.07521437504328787,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 15,
+        "seconds": 1.0646454580128193,
+        "cleanup_seconds": 0.04088066704571247,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 16,
+        "seconds": 1.315792249981314,
+        "cleanup_seconds": 0.07463029189966619,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 17,
+        "seconds": 1.147191750118509,
+        "cleanup_seconds": 0.04192912485450506,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 18,
+        "seconds": 1.0490012501832098,
+        "cleanup_seconds": 0.041767959017306566,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 19,
+        "seconds": 1.08917379216291,
+        "cleanup_seconds": 0.041442584013566375,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 20,
+        "seconds": 1.2228536671027541,
+        "cleanup_seconds": 0.04049875005148351,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      }
+    ],
+    "probe-delayed-five": [
+      {
+        "round": 1,
+        "seconds": 5.001085500000045,
+        "cleanup_seconds": 1.1288068329449743,
+        "completed_steps": 301,
+        "returncode": null,
+        "interaction_failures": [
+          "PTY timeout after 5s waiting for step 302: {'expect': 'ready\\n'}; last completed step 301 at 4.809s; no step advancement for 0.192s; session cleanup requested"
+        ],
+        "cleanup_failures": [
+          "PTY cleanup could not reap leader within 1s"
+        ]
+      }
+    ],
+    "probe-delayed-ten": [
+      {
+        "round": 1,
+        "seconds": 6.333551625022665,
+        "cleanup_seconds": 0.045894459122791886,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      }
+    ],
+    "probe-close": [
+      {
+        "round": 1,
+        "seconds": 5.001914500026032,
+        "cleanup_seconds": 0.10928424983285367,
+        "completed_steps": 314,
+        "returncode": -9,
+        "interaction_failures": [
+          "PTY timeout after 5s waiting for step 315: {'expect': 'ready\\n'}; last completed step 314 at 4.869s; no step advancement for 0.132s; session cleanup requested"
+        ],
+        "cleanup_failures": []
+      }
+    ],
+    "probe-close-repeats": [
+      {
+        "round": 1,
+        "seconds": 5.001564250094816,
+        "cleanup_seconds": 1.138353749876842,
+        "completed_steps": 314,
+        "returncode": null,
+        "interaction_failures": [
+          "PTY timeout after 5s waiting for step 315: {'expect': 'ready\\n'}; last completed step 314 at 4.839s; no step advancement for 0.162s; session cleanup requested"
+        ],
+        "cleanup_failures": [
+          "PTY cleanup could not reap leader within 1s"
+        ]
+      }
+    ],
+    "probe-fixed-five": [
+      {
+        "round": 1,
+        "seconds": 5.0020682499744,
+        "cleanup_seconds": 0.10553312511183321,
+        "completed_steps": 314,
+        "returncode": -9,
+        "interaction_failures": [
+          "PTY timeout after 5s waiting for step 315: {'expect': 'ready\\n'}; last completed step 314 at 4.813s; no step advancement for 0.189s; session cleanup requested"
+        ],
+        "cleanup_failures": []
+      }
+    ],
+    "probe-fixed-ten": [
+      {
+        "round": 1,
+        "seconds": 6.311389499809593,
+        "cleanup_seconds": 0.05017708404920995,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 2,
+        "seconds": 6.394809416960925,
+        "cleanup_seconds": 0.05096166697330773,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      },
+      {
+        "round": 3,
+        "seconds": 6.351319708861411,
+        "cleanup_seconds": 0.05015066685155034,
+        "completed_steps": 419,
+        "returncode": 130,
+        "interaction_failures": [],
+        "cleanup_failures": []
+      }
+    ]
+  },
+  "normal_command": "make -j2 test-jobs test-jobs-pty",
+  "sanitizer_command": "MallocNanoZone=0 make -j2 test-jobs-pty CFLAGS=<controlled_identities.sanitizer_flags> LDFLAGS=-fsanitize=address,undefined",
+  "harness_review": {
+    "platform": "macOS-14.8.7-arm64-arm-64bit",
+    "python": "3.12.2 (v3.12.2:6abddd9f6a, Feb  6 2024, 17:02:06) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "old_harness_from": "0f80030053cfb4648e403da9b2ef1ec9cd236036",
+    "final_source_sha256": {
+      "tests/pty_harness.py": "f0d11145482d4a76689f88879ff103766956deae68fa8ef54017829c660c9591",
+      "tests/test_pty_harness.py": "34e545514b237675c1dee2be5ec79f3483d6c037841fb26dbb8005839995190f",
+      "tests/test_cleanup_harness.py": "2dfa0188f0b2a525e2f482266ef903d82cd66c2f163acbc6064d87e4b797a652",
+      "tests/helpers/pty_candidate.py": "d6f8e4bb364c9fe0419fbe8ee06d81c7c437398d34e5cb60c5fdadc18fc6ca7e"
+    },
+    "old_control": {
+      "returncode": 1,
+      "log": "old-regression-held-slave.log",
+      "failure": "PTY cleanup could not reap leader within 1s",
+      "seconds_reported_by_unittest": 1.138
+    },
+    "fixed_control": {
+      "command": [
+        "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_pty_harness.py",
+        "-k",
+        "test_cleanup_reaps_a_killed_leader_with_unread_terminal_output",
+        "-v"
+      ],
+      "returncode": 0,
+      "seconds": 0.49423537496477365,
+      "log": "fixed-regression.log"
+    },
+    "full_native_harness": {
+      "command": "python3 -m unittest discover -s tests -p test_*harness.py -v",
+      "returncode": 0,
+      "tests": 95,
+      "seconds_reported_by_unittest": 24.411,
+      "log": "Observed in tool session 9904; complete log not saved to this directory."
+    },
+    "notes": [
+      "Initial old control without extra slave reference failed ownership assertion only; old-regression.log retained, not claimed to reproduce 1 s reap timeout.",
+      "Final held-slave regression confirms queued output through separate pipe; no sleeps used for synchronization.",
+      "Abandoned opt-in instrumentation remains only in temp patch, not shipping source."
+    ]
+  },
+  "final_source_sha256": {
+    ".github/workflows/tests.yml": "21fb8593ef00a66143077a246f8dd10a4c8db37b54f25fe3292ebb6af27e4cb9",
+    "Makefile": "52b42d07f5d93b5f14143d35beee8f009680d6dd5ca37e9fb1f48f18a199445d",
+    "tests/pty_harness.py": "f0d11145482d4a76689f88879ff103766956deae68fa8ef54017829c660c9591",
+    "tests/test_pty_harness.py": "34e545514b237675c1dee2be5ec79f3483d6c037841fb26dbb8005839995190f",
+    "tests/test_cleanup_harness.py": "2dfa0188f0b2a525e2f482266ef903d82cd66c2f163acbc6064d87e4b797a652",
+    "tests/helpers/pty_candidate.py": "d6f8e4bb364c9fe0419fbe8ee06d81c7c437398d34e5cb60c5fdadc18fc6ca7e",
+    "tests/jobs_cases.py": "546336cf433371380559c7cf253ea974bddc2745099b6ac2072882c8f5a0cc82"
+  },
+  "notes": [
+    "Per-step observer stores timestamps in memory; no candidate stdout modification. Cleanup observation wraps existing calls without adding snapshots during original cleanup.",
+    "Initial delayed five/ten runs briefly overlapped; explicit same-child held/closed comparison and independent pipe-synchronized regression separately establish master dependency.",
+    "Bare-child, failed-setup and abandoned observer experiments are retained as such, not shipped.",
+    "Final harness differs from root sanitizer copy only by comments; normalized ASTs match.",
+    "Whole native harness 95 tests passed in agent tool output; full log was not saved, and its exact command/outcome are retained in cleanup-review/regression-validation.json.",
+    "No hosted result for this final repair is claimed."
+  ],
+  "archive": "native-artifacts.tar.gz",
+  "archive_sha256": "1ed6127b87eed801f643da5655b96f3cb0311c9012dc753d6b610f0f17331708",
+  "members_sha256": {
+    "cleanup-review/abandoned-opt-in-diagnostics.patch": "70e07b3d9b491f830fb08aec543a9edffb82899d98013b04a71da301ace53410",
+    "cleanup-review/compile.json": "6379c17d798191f995d43b0950ea7787779fe29c9af7354b25de37a514ff207d",
+    "cleanup-review/exit_visibility": "067ded98413047e3fabb7fedba4a71fb41a520ffbe0340add4fbdda468394893",
+    "cleanup-review/exit_visibility.c": "f16d22ec0e509eb18bda3f530af050776582f8a4867c83b5ceaea942b9fb0a82",
+    "cleanup-review/exit_visibility.log": "c436b290568fb956f64b541994621226b7da656836fb0029e5d706cb96fed67c",
+    "cleanup-review/fixed-regression.log": "5c6726f9f7784df0dfe647ff44e1001490ed025f83fa1c584f3a9c041f7df310",
+    "cleanup-review/identity.json": "1e453a8eabd761d7c465ffc7d5ad18b88634bb5b2d062672afde3800f4259bbf",
+    "cleanup-review/old-regression-held-slave.log": "d03606853a512f6eb0f52a527e0cbde8c0c0c6b2a83b87f35cf48a085e58dcfb",
+    "cleanup-review/old-regression.log": "a494a5aa5af1de736c29c099c7318607878284aeffaf191355f973b414f5e5fa",
+    "cleanup-review/pty_candidate.py": "d6f8e4bb364c9fe0419fbe8ee06d81c7c437398d34e5cb60c5fdadc18fc6ca7e",
+    "cleanup-review/pty_harness-before.py": "8f5521d9e407b974171fa6fb16931887d90c8cfb305f7d70522284e0e4fd25e7",
+    "cleanup-review/pty_harness.py": "f0d11145482d4a76689f88879ff103766956deae68fa8ef54017829c660c9591",
+    "cleanup-review/regression-validation.json": "a5512b44f78755949c471a47a0d0dac24e7399a9165d8fa91a0de4826742e207",
+    "cleanup-review/run-old-control.py": "e4ad9c3e768501315d4c9bd6d9561bbd0e7decd0a38edc445a122555a57cfc8a",
+    "cleanup-review/test_cleanup_harness.py": "2dfa0188f0b2a525e2f482266ef903d82cd66c2f163acbc6064d87e4b797a652",
+    "cleanup-review/test_pty_harness.py": "34e545514b237675c1dee2be5ec79f3483d6c037841fb26dbb8005839995190f",
+    "controlled/controlled-delay.patch": "3bdd5c3f018a0b2d5d6639dd44489c9387e8f4b9f5e17d6b9a565154fef0ceab",
+    "controlled/controlled-identities.json": "f4ebf5803aba02c0424330b6fa00280ebef24ceeff69e29202328d1c5e4f22bf",
+    "controlled/controlled-jobs_helper.c": "8f36513f88a6d92127917a47efc8ee0a322efc52d3b55c1f5784127aa6d2867e",
+    "controlled/probe-baseline/case.json": "52cdf3c458e7287cacf57acd5824358c1db99db075ca574d117f6b2c9c5cc2ec",
+    "controlled/probe-baseline/rounds.jsonl": "4493190f55cab05750d87ffd38b0beb10f934cf0a45146d0a9b052a2c4556f2a",
+    "controlled/probe-close-repeats/case.json": "52cdf3c458e7287cacf57acd5824358c1db99db075ca574d117f6b2c9c5cc2ec",
+    "controlled/probe-close-repeats/rounds.jsonl": "b187761a1303445db4a9f066afe573bf39b0fe640b0e1343fabfb4bffc5acc50",
+    "controlled/probe-close/case.json": "52cdf3c458e7287cacf57acd5824358c1db99db075ca574d117f6b2c9c5cc2ec",
+    "controlled/probe-close/rounds.jsonl": "c3134b2a719ee22d7715b08e58c29c4425ee45304e713bfc343fbfb274f4feb8",
+    "controlled/probe-delayed-five/case.json": "52cdf3c458e7287cacf57acd5824358c1db99db075ca574d117f6b2c9c5cc2ec",
+    "controlled/probe-delayed-five/rounds.jsonl": "372a02e85fad3822db931b7045e41034ee90de97148b53b87f1b9f302453bfe5",
+    "controlled/probe-delayed-ten/case.json": "52cdf3c458e7287cacf57acd5824358c1db99db075ca574d117f6b2c9c5cc2ec",
+    "controlled/probe-delayed-ten/rounds.jsonl": "71414a635df360280564856fa4a81649ca5ff225662fa5e3c3ecafa24390ea0b",
+    "controlled/probe-fixed-five/case.json": "3d7369adbf47c27d6bcc4095eeab33baafcb3dfd41c3d4bf68c348ecf75d502c",
+    "controlled/probe-fixed-five/rounds.jsonl": "7dce646c673d789929c0b854b493476e86dbbf8ef3cd7d3e4613e7c09ca6e4c2",
+    "controlled/probe-fixed-ten/case.json": "3d7369adbf47c27d6bcc4095eeab33baafcb3dfd41c3d4bf68c348ecf75d502c",
+    "controlled/probe-fixed-ten/rounds.jsonl": "18b739820bb09fb15261212fe73a7b06e341ac0059af8956ed06e99b3dd406f7",
+    "drivers-and-validation/csh057-pty-native.log": "5e5fb05a9b54ecd424cda6cfccb9a05d466c5e0eb268e80c81192786165b764a",
+    "drivers-and-validation/csh057-pty-sanitizer.log": "24880ec1d68ce9aee0b7b05da7ee8997cb4051f12cb093125fbb8ea20a50b8ac",
+    "drivers-and-validation/csh057-resume-build.log": "35c7ff6b06110b9493ff42d492d76c19214eb6f1d2be36377cc92f363bd49355",
+    "drivers-and-validation/csh057-resume-delayed-build.log": "560480af98472894102e80c70812ef5d4d36db5de1943067d5f13803370811e7",
+    "drivers-and-validation/csh057_resume_close_probe.py": "93c62bf87a90532831d6f6d094401da28b988afde0b829d498ba9fd9f58d23a8",
+    "drivers-and-validation/csh057_resume_probe.py": "5a5fcd541488b24f00d270d121c3682878da1d673fb4365ac02917a4c2c54317",
+    "final-source/.github/workflows/tests.yml": "21fb8593ef00a66143077a246f8dd10a4c8db37b54f25fe3292ebb6af27e4cb9",
+    "final-source/Makefile": "52b42d07f5d93b5f14143d35beee8f009680d6dd5ca37e9fb1f48f18a199445d",
+    "final-source/tests/helpers/pty_candidate.py": "d6f8e4bb364c9fe0419fbe8ee06d81c7c437398d34e5cb60c5fdadc18fc6ca7e",
+    "final-source/tests/jobs_cases.py": "546336cf433371380559c7cf253ea974bddc2745099b6ac2072882c8f5a0cc82",
+    "final-source/tests/pty_harness.py": "f0d11145482d4a76689f88879ff103766956deae68fa8ef54017829c660c9591",
+    "final-source/tests/test_cleanup_harness.py": "2dfa0188f0b2a525e2f482266ef903d82cd66c2f163acbc6064d87e4b797a652",
+    "final-source/tests/test_pty_harness.py": "34e545514b237675c1dee2be5ec79f3483d6c037841fb26dbb8005839995190f",
+    "independent/README.md": "f179600cff74cab18e02f0b83eaba702c61934a48caada338ebc7af533aa5ae7",
+    "independent/baseline.json": "84b3169ac639f23bda93eccda371231a1753567ad1ac0d30a1230ba1538af57a",
+    "independent/cleanup-results.json": "e0a484b5553abae327d3087c25330a83dd67903f3c7f3e09165968c624deb7c0",
+    "independent/cleanup.log": "91834e83d2897cd6d5bbf1e400723432a8095191936715543f6efffd10c3bf04",
+    "independent/cleanup_probe.py": "2f49e7b244c12f3d96492b84bde40fd057c48db6f72f50addd93715b8c1e5957",
+    "independent/close.json": "09f4826dad331bfe7cd439c0e42a5beff582c73d678f1b0fe0794f97fba8535f",
+    "independent/drain.json": "9cc06a7ddbda05f9f43a1bba07e7e35405e95665b3b3c33d258a323ff025eb93",
+    "independent/foreground-old-results.json": "fdf64644ffc9424f63a51a0ee450349f48a266790fff1f2e89b16cb4de5486db",
+    "independent/foreground-old.log": "3f6bc77abd123f8a2b875443ea829572fff498ebc6e2c356e663567927706097",
+    "independent/foreground.log": "ead528aa67d990deee741f2e779e75655db179669703ec17aa2ebe7e076eed51",
+    "independent/foreground_old_probe.py": "6dd66ebed27ae0a4f74f5836b12637639c7d5077604c14a963937481e53c82fa",
+    "independent/foreground_probe.py": "44cd94550f6e552750148cef12ee88fe3798c40bf5918e8c32284aaefc44aaeb",
+    "independent/held-slave-cleanup-results.json": "d6f522f74ba21c7eb226e23ef9803a147abb8d9c67e49714f067bf4596042781",
+    "independent/held-slave-cleanup.log": "7d81281ec977133b7d5638b067156c105369681f5ab273ad2fb91a2085b6ec2e",
+    "independent/held_slave_cleanup_probe.py": "40d5dbe01bc2b5355013052160a847da43d39ea3d526db79a67965d9b7dda7a2",
+    "independent/manifest.json": "6ca19a942bbd527197471d4fc559328b00f218ab72f249dfb407cfcbb8829c0c",
+    "independent/probe.log": "240e1816fdde606b9482a22f025f6daa3663d30865c1f993d879f821c61be9fc",
+    "independent/probe.py": "0ff1a0e981d7dee70ced27577cc277b63a8c75fe1ca03630db5a73180749ac53",
+    "independent/pty_harness.py": "8f5521d9e407b974171fa6fb16931887d90c8cfb305f7d70522284e0e4fd25e7",
+    "independent/unread": "057642c938653096fd1483e5bf2ee93197bf595928bcfeac785191dcd21539d4",
+    "independent/unread-long-results.json": "962f2f2988f3ae74a5dc8b398916c1ca96c527d2b715c06b1b6498cc9b29a6cf",
+    "independent/unread-long.log": "aa6057a0b2f3bd0bba41368e47ae5ebfcb4126606b9808add20410e5a243e1c0",
+    "independent/unread-results.json": "e75278505a7877651c8c722f7b07d56356df55b5f26694c0eab75b1118f07aa6",
+    "independent/unread.c": "b84b2f34599b85c8eadf649fcfa7f517febd233aa255fc84eb0f260b0e6cad24",
+    "independent/unread.log": "726fea711bf5405d4fe802e93cf6c5f2f31090638b9f3af7d03fe349ed78ab73",
+    "independent/unread_foreground": "ec40fefe18ce9d7213cb2cd536486260ec0eacab7d5e547ca410fa2f2d65c984",
+    "independent/unread_foreground.c": "57206bdb24008642c18dd488d489b242d126f2e916c14d823a30ab209dee01e6",
+    "independent/unread_long_probe.py": "a1761d643f81fb1e1492571b5b62f934faee9364d11858a2fd27fc90dfca5d4c",
+    "independent/unread_probe.py": "61f6c949088411fa4778d590a538abb3d341572349241781d89efc46693286be"
+  }
+}

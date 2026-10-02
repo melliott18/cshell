@@ -12,9 +12,9 @@ jobs:
   native:
     name: Native (${{ matrix.os }}, ${{ matrix.cc }})
     runs-on: ${{ matrix.os }}
-    # CSH-058 adds 2,464+ disposition/delivery cases, including controlling
-    # terminals. Keep individual case deadlines while budgeting the full matrix.
-    timeout-minutes: 45
+    # CSH-057: hosted normal + sanitizer suites can still be progressing at
+    # 45 minutes. Keep every case deadline while bounding the full job at 60.
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:

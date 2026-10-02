@@ -417,8 +417,18 @@ not disposition the recurrence or the newly recorded terminal-fault timeout. The
 measures 59.503 seconds of progressing run/reap work before the outer kill.
 Retention now has a finite 120-second aggregate budget, with all 619 children,
 exact assertions, same-manager reuse and five-second phase alarms preserved.
-This corrects the demonstrated budget mismatch; the separate terminal-fault
-observation remains open under #99.
+This corrects the demonstrated budget mismatch. The subsequent
+[terminal isolation repair](evidence/csh-057-terminal-crash-notification/README.md)
+reproduces a five-second fault-fixture timeout caused by an inherited Mach
+crash receiver. Only the deliberate SIGQUIT test child clears that task port;
+exact signal/terminal assertions remain. A held-reply negative control and
+no-op mutation verify the fix. The historical receiver was not recorded, and
+#99 remains at review pending integration and hosted validation. The
+[public PTY teardown repair](evidence/csh-057-pty-teardown/README.md) subsequently
+closes the master before reaping the killed leader and gives the unchanged
+32-cycle oracle a ten-second aggregate budget; the other 29 cases remain at
+five seconds. Both later hosted macOS jobs hit the 45-minute job limit while
+progressing, so that independent aggregate budget becomes 60 minutes.
 
 <a id="csh-058"></a>
 

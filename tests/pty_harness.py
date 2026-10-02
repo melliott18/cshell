@@ -105,7 +105,7 @@ def session_members(session, deadline):
 
 
 def cleanup_session(process, master, timeout=5.0):
-    """Bound session enumeration/killing separately from the final leader reap.
+    """Consume master; bound session cleanup separately from the leader reap.
 
     Darwin's system-wide ps can take over one second under concurrent builds.
     Give teardown the same five-second budget as a normal case, without using
@@ -150,6 +150,15 @@ def cleanup_session(process, master, timeout=5.0):
                 pass
             except OSError as error:
                 failures.append(f"PTY cleanup could not kill group {group}: {error}")
+        # Darwin's exit path can wait for queued terminal output even
+        # after SIGKILL. We have stopped capturing and no longer need the
+        # master for group ownership checks; closing it releases that drain.
+        # The transcript and any existing timeout failure remain unchanged.
+        if master is not None and master >= 0:
+            try:
+                os.close(master)
+            except OSError as error:
+                failures.append(f"PTY cleanup could not close master: {error}")
         try:
             process.wait(timeout=1.0)
         except subprocess.TimeoutExpired:
@@ -235,7 +244,8 @@ def capture(binary, case, directory, timeout, output_limit, environment, limit_f
     finally:
         try:
             if process is not None:
-                failures.extend(cleanup_session(process, master))
+                cleanup_master, master = master, None
+                failures.extend(cleanup_session(process, cleanup_master))
         finally:
             for fd in (master, slave, setup_read, setup_write):
                 if fd is not None:
