@@ -5,10 +5,10 @@
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-034, CSH-035
-- Branch: docs/CSH-057-retention-recurrence
+- Branch: test/CSH-057-retention-diagnostics
 - Issue: [#99](https://github.com/melliott18/cshell/issues/99)
 
-## Current review: hosted recurrence
+## Current review: diagnostic capture and unresolved failures
 
 The 2026-09-29 macOS sanitizer recurrence remains unresolved under issue #99.
 The [recorded-progress investigation](../evidence/csh-057-retention-recurrence/README.md)
@@ -24,6 +24,51 @@ Runtime, assertions and deadlines remain unchanged. Closure requires a
 demonstrated corrective change or an explicit new disposition of this
 recurrence and its aggregate budget; another passing retry is insufficient.
 The historical acceptance below does not apply to this new failure.
+
+The requested diagnostic capability is implemented on
+`test/CSH-057-retention-diagnostics` and ready for review. This review status
+does not mark the hosted timeout repaired or the ticket complete. The
+[diagnostic capture evidence](../evidence/csh-057-retention-diagnostics/README.md)
+records final validation and all failed attempts.
+
+The test-only observer records file-backed `CLOCK_MONOTONIC` fork/child,
+run/reap, wait and cleanup boundaries with capacity/round/item/PID identity.
+It queries the actual SIGALRM mask, pending state, disposition and remaining
+`ITIMER_REAL` without changing them, installing handlers, or changing errno.
+The lifecycle fixture alone links the fork wrapper; children close the trace
+descriptor after their entry snapshot. Bounded trace writes and explicit
+truncation keep diagnostics below the existing file limit. Recorded alarm
+state is last-known state, and observed timings include diagnostic cost.
+
+An independent watcher starts bounded samplers for the root and at most one
+recorded, session-verified child after a two-second individual-operation stall,
+57 seconds of case time, or projected alarm expiry within 2.7 seconds. Both
+samplers run concurrently within a 2.5-second budget while the original case
+deadline and alarms remain in force. The original fixture oracle, assertions,
+60-second outer bound and five-second phase alarms are unchanged. Diagnostic
+controls exercise a real stalled child and an externally inherited blocked
+SIGALRM. Their actual outcomes, sampler errors and cleanup failures are retained
+separately from the unchanged fixture result.
+
+Current native normal validation passed 94 harness checks, 148 jobs cases and
+30 public jobs PTY cases. The subsequent unchanged `execute_faults
+--jobs-terminal` case hit its five-second outer deadline with empty output;
+cleanup exhausted its snapshot budget and reported fallback EPERM for leader
+group 18494. This new terminal-fault observation remains undispositioned under
+issue #99. The separate full normal suite stopped in the unchanged CSH-058
+`runtime/QUIT/interactive=0/entry-ignore=0/action=0/subshell/reset=False`
+probe with status 142 and only `default:` output, owned by
+[CSH-058 / #100](CSH-058-signal-edge-evidence.md).
+
+Both attempts left owned children reported as `UE` after SIGKILL: terminal
+fixture child 18538 and signal-probe child 99718. Preserved samples locate the
+terminal child in `context_job` through `sigprocmask`, and the signal-probe
+child in `raise` through `__pthread_kill`. These observations do not establish
+a shared cause or a connection to hosted retention timing. The cleanup EPERM
+names the terminal leader's group, not child 18538's group; a snapshot-budget
+failure does not by itself prove one slow `ps` invocation. No complete normal
+suite pass is claimed. Final sanitizer outcomes belong to the linked evidence
+record and are not inferred here.
 
 ## Historical review disposition
 
