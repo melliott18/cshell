@@ -645,7 +645,7 @@ build/tests/catalog_adapter_fixture: tests/catalog_adapter_fixture.c tools/host-
 # Reusable fixtures for other utility tracks; no shell build or full suite needed.
 .PHONY: host-catalog-fixtures
 host-catalog-fixtures: host-locales host-profile build/tests/host_catalog_probe
-	$(PYTHON) tools/host-profile/provision_catalogs.py build/tests/host_catalog_probe --path "$(abspath build/host-profile/bin):$(shell getconf PATH)"
+	$(PYTHON) tools/host-profile/provision_catalogs.py build/tests/host_catalog_probe --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 
 build/tests/locale_adapter_fixture: tests/locale_adapter_fixture.c tools/host-profile/locale_adapter.c
 	@mkdir -p $(@D)

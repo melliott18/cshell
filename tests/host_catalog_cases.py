@@ -39,6 +39,25 @@ def cases(system):
         step('@probe', ['catalog', './out.cat', '1', '1'], 'café'.encode())],
         files={'source': '$set 1\n1 café\n'.encode()}, env={'LC_ALL': 'fr_FR.UTF-8'})
 
+    yield case('default-set-per-file', 'gencat', [step('@probe', ['limits'], b'1\n'),
+        step('gencat', ['out.cat', 'one', 'two']),
+        step('@probe', ['catalog', './out.cat', '1', '1'], b'default'),
+        step('@probe', ['catalog', './out.cat', '3', '1'], b'third')],
+        files={'one': b'$set 3\n1 third\n', 'two': b'1 default\n'})
+    yield case('empty-replaces-existing', 'gencat', [step('gencat', ['out.cat', 'one']),
+        step('gencat', ['out.cat', 'two']),
+        step('@probe', ['catalog', './out.cat', '1', '1'], b''),
+        step('@probe', ['catalog', './out.cat', '1', '2'], b'')],
+        files={'one': b'$set 1\n1 old\n2 old\n', 'two': b'$set 1\n$quote "\n1 ""\n2 \n'})
+    yield case('delete-set-recreate', 'gencat', [step('gencat', ['out.cat', 'one']),
+        step('gencat', ['out.cat', 'two']),
+        step('@probe', ['catalog', './out.cat', '3', '1'], b'<missing>'),
+        step('@probe', ['catalog', './out.cat', '3', '2'], b'new')],
+        files={'one': b'$set 3\n1 old\n', 'two': b'$delset 3\n$set 3\n2 new\n'})
+
+    yield case('closed-stdout', 'gencat', [step('gencat', ['-', 'source'],
+        status='nonzero', err='nonempty', close_stdout=True)], files={'source': b'$set 1\n1 text\n'})
+
     # gettext reads independently authored MO files, not msgfmt output.
     catalogs = {'messages/fr_FR.UTF-8/LC_MESSAGES/demo.mo': mo_bytes(MESSAGES),
                 'messages/de_DE.UTF-8/LC_MESSAGES/demo.mo': mo_bytes({'': HEADER, 'hello': 'hallo'}),
@@ -123,6 +142,24 @@ def cases(system):
         out=b'ab\n' if '-c' in flags else b'a', status='nonzero',
         err=b'' if '-s' in flags else 'nonempty', stdin=b'a\xffb\n')
         for flags in ([], ['-s'], ['-c'], ['-c', '-s'])])
+
+    for name, flags in (('invalid-s', ['-s']), ('invalid-c', ['-c']), ('invalid-cs', ['-cs'])):
+        yield case(name, 'iconv', [step('iconv', ['-f', 'UTF-8', '-t', 'UTF-8'] + flags,
+            out=b'ab\n' if name != 'invalid-s' else b'a', status='nonzero',
+            err='nonempty' if name == 'invalid-c' else b'', stdin=b'a\xffb\n')])
+    yield case('silent-missing-file', 'iconv', [step('iconv', ['-s', '-f', 'UTF-8', '-t', 'UTF-8', 'absent'],
+        status='nonzero', err='nonempty')])
+    yield case('unmappable-cs', 'iconv', [step('iconv', ['-cs', '-f', 'UTF-8', '-t', 'ASCII'],
+        b'ab', status='nonzero', stdin=b'a\xc3\xa9b')])
+    yield case('truncated-s', 'iconv', [step('iconv', ['-s', '-f', 'UTF-8', '-t', 'UTF-8'],
+        b'a', status='nonzero', stdin=b'a\xe4\xb8')])
+    yield case('buffer-boundary', 'iconv', [step('iconv', ['-f', 'UTF-8', '-t', 'ISO-8859-1'],
+        b'a' * 4095 + b'\xe9', stdin=b'a' * 4095 + b'\xc3\xa9')])
+    yield case('shift-state', 'iconv', [step('iconv', ['-f', 'ISO-2022-JP', '-t', 'UTF-8'],
+        '日本'.encode(), stdin=b'\x1b$BF|K\\\x1b(B')])
+    yield case('closed-stdout', 'iconv', [step('iconv', ['-s', '-f', 'UTF-8', '-t', 'UTF-8'],
+        status='nonzero', err='nonempty', close_stdout=True, stdin=b'text\n')])
+
 
     for name, args, out in (
         ('keyword', ['decimal_point'], b'.\n'),

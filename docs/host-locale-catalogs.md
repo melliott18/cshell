@@ -11,7 +11,14 @@ CSH-076 open for every remaining contract and its four conditional locale IDs.
 `make test-host-profile` includes `make test-host-catalogs`. The latter also runs
 adapter/harness self-tests. No cshell builtin or system executable is replaced.
 
-- `gencat`, `iconv` and `localedef` use `os.defpath`.
+- `gencat` is built from pinned Apple/Alfalfa (Darwin) or glibc (Linux) source,
+  with stream, deletion, empty-message and per-file default-set repairs. Catalog
+  format compatibility is verified by the independent libc consumer.
+- Code-name `iconv` uses a checksum-pinned private GNU libiconv 1.19 build. Its
+  local diagnostic patch preserves error status under all `-c`/`-s` combinations;
+  unrelated file/output failures remain diagnostic. Charmap-file operands route
+  to the system utility and remain a distinct unqualified boundary.
+- `localedef` uses `os.defpath`.
 - `locale` uses a native adapter for the no-operand environment report. It emits
   explicit values without double quotes, implied category values in double quotes,
   and preserves shell reentry quoting. Actual category selection uses libc; other
@@ -19,7 +26,10 @@ adapter/harness self-tests. No cshell builtin or system executable is replaced.
 - The GNU gettext package supplies `gettext`, `ngettext` and `msgfmt`. Darwin
   setup uses `brew install gettext` and its `bin` directory on the provisioning
   PATH; Debian installs `gettext` in the disposable Docker image. The provisioner
-  only selects existing programs. `--catalog-bin` selects a specific package.
+  selects existing gettext programs. `--catalog-bin` selects a specific package.
+  GNU libiconv is instead compiled privately on first setup; HTTPS access, curl,
+  trusted CA certificates, make and a C compiler are needed. Subsequent setup
+  reuses verified builds. No system program or library is replaced.
 - Private native launchers adapt POSIX `msgfmt -S` to GNU `--strict`, and decode C
   simple/octal/hex escapes for `gettext -e` and `ngettext -e` before invoking
   the vendor with `-E`. Domain names and plural counts are not decoded.
@@ -129,28 +139,23 @@ The [scope manifest](../tests/host_catalog_scope.json) identifies remaining
 behavior by utility and exact provider-failure reproducers. XSI NLSPATH behavior
 is unselected; no missing base behavior is called optional.
 
-`make test-host-catalogs` runs only the declared subset, with zero failure or gap
-allowances. `make test-host-catalog-contracts` additionally runs the retained
-strict reproducers; its nonzero exit is expected on the recorded vendors and
-must never be described as passing. The actual failing assertions stay unchanged:
+`make test-host-catalogs` and `make test-host-catalog-contracts` now run the same
+strict assertions: the previously excluded gencat/iconv failures are repaired,
+and neither host has a failure exclusion. The original failure evidence remains
+in the evidence archive; its old counts are not current results. The retained
+cases verify native stream operands and unknown escapes, glibc set deletion,
+locale-report formatting and iconv invalid-character policy. Added cases cover
+per-file default sets, empty-message replacement, set recreation, closed stdout,
+conversion buffer boundaries, shift state and missing-file diagnostics under `-s`.
 
-| Host | Strict reproducer | Unqualified behavior |
-| --- | --- | --- |
-| Darwin | `gencat/stdin-stdout` | Required `-` stream operands rejected |
-| Darwin | `gencat/unknown-escape` | Diagnostic with success for a valid escape; XCU §1.4 STDERR requires error status for diagnostics |
-| Darwin | `iconv/invalid-policy` | `-s` still emits an invalid-character diagnostic |
-| Linux | `gencat/merge-replace-delete` | `$delset` fails to remove a set from an existing catalog |
-| Linux | `iconv/invalid-policy` | `-s` still emits an invalid-character diagnostic |
+Full utility contracts still remain open in the per-section map. Darwin generated
+categories beyond LC_NUMERIC and the other unqualified behavior keep explicit
+ownership here. Shared locale availability resolves the four conditional
+prerequisites on recorded successful profiles; printf/sed/find behavior remains
+with existing owners. Historical stock-host inventories are unchanged.
 
-CSH-076 retains these exact failed contracts, Darwin generated categories beyond
-LC_NUMERIC, and the
-per-section unqualified behavior in the machine map. Vendors retain implementation
-ownership. Shared locale availability resolves the four conditional prerequisites
-only on recorded successful profiles; printf/sed/find behavior remains with its
-existing utility owners. The original stock-host inventories are immutable and
-are not relabeled by these selected-profile results.
-
-See [native and Linux evidence](evidence/csh-076/README.md).
+See [native and Linux evidence](evidence/csh-076/README.md), and
+[provider provenance, patches and licenses](../tools/host-profile/vendor/catalog-providers.md).
 
 
 ## Remaining work and environment requirements
@@ -160,11 +165,9 @@ explicit/implied values, LANG/category/LC_ALL precedence, empty values and end o
 options; a native unit fixture checks metacharacter quoting under sanitizers.
 The installed system `locale` executable is not changed.
 
-The remaining gencat and iconv defects can be reproduced automatically on the
-existing macOS and Docker/Linux environments. They require provider repairs or
-replacement implementations; suppressing all stderr would hide unrelated errors
-and is not an acceptable `iconv -s` repair. Additional catalog search, plural,
-format-check, charmap, signal, I/O and resource-limit coverage is also automatable.
+The retained gencat and iconv defects are repaired in the selected providers.
+The remaining work includes catalog search, plural,
+format-check, charmap, signal, I/O and resource-limit coverage; these are automatable.
 
 Native macOS private localedef generation needs no administrative access:
 `PATH_LOCALE` lets a libc consumer select generated LC_NUMERIC data. Neither an
@@ -177,5 +180,7 @@ environment with a writable locale database, because the selected Apple script
 uses `/usr/share/locale` for public names. No system-wide installation was attempted.
 
 No current fixture requires manual interaction. The macOS CI sanitizer job's
-45-minute limit is a separate automated validation gap: narrow down the delayed
-step before changing its budget or claiming sanitizer success.
+45-minute limit was traced to continuing successful runtime assertions, not a
+stalled case. The job now has a 75-minute budget, with all per-case deadlines
+unchanged. A completed hosted run is still required before claiming that full
+macOS sanitizer job passes.

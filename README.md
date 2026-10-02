@@ -63,7 +63,7 @@ make test-host-profile   # Opt-in qualified utilities, strict gaps and boundarie
 make host-catalog-fixtures # Shared verified locales/catalogs; no shell build
 make host-locales       # Locale-only setup for dependent tracks
 make test-host-catalogs  # Bounded locale/catalog subset; private Linux locales
-make test-host-catalog-contracts # Also run strict, currently failing vendor reproducers
+make test-host-catalog-contracts # Strict complete retained case set (no failure exclusions)
 make test-evaluation # Evaluation, lookup, aliases, and remaining utilities
 make test-builtins # Replacement state builtins and executor integration
 make test-state-builtins # Clause-mapped runtime state and utility evidence

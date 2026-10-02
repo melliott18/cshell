@@ -57,6 +57,22 @@ class CatalogTests(unittest.TestCase):
             self.assertEqual((retained / 'consumer').read_bytes(), b'held')
             self.assertFalse(list(parent.glob('.catalog-setup-*')))
 
+    def test_provider_archive_checksum_precedes_build(self):
+        import importlib.util
+        from unittest.mock import patch
+        script = Path(__file__).resolve().parents[1] / 'tools/host-profile/build_iconv.py'
+        spec = importlib.util.spec_from_file_location('build_iconv_test', script)
+        builder = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(builder)
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / 'libiconv-1.19.tar.gz').write_bytes(b'corrupt archive')
+            with patch.object(builder.platform, 'platform', return_value='test'), \
+                    patch.object(builder.subprocess, 'run') as run:
+                with self.assertRaisesRegex(ValueError, 'checksum mismatch'):
+                    builder.build(root, 'cc', '', '-O2', '')
+                run.assert_not_called()
+
     def test_clause_map_and_exclusions_cover_real_owned_cases(self):
         from host_catalog_cases import UTILITIES, cases
         root = Path(__file__).parent

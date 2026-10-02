@@ -13,7 +13,7 @@ cshell's builtin allocation. All tools are real exec-accessible programs;
 Other scoped commands use `os.defpath` without additional symlinks, preserving
 cshell's PATH-associated pwd builtin selection. In particular, echo remains the system
 executable, with its explicitly recorded Apple/GNU policy. The Dockerfile
-installs ed and BusyBox and generates the French locale. CI installs native
+installs ed, BusyBox, curl and trusted CA certificates and generates the French locale. CI installs native
 profile dependencies separately. macOS coreutils 9.3 and Debian coreutils 9.1 /
 BusyBox 1.35.0 are the recorded package versions; future versions must pass the
 same assertions, not acquire an automatic compatibility claim.
@@ -253,4 +253,11 @@ documents `fixtures.json`, the Python loader and retained generation lifetimes.
 [Provider setup, independent assertions and exact unqualified contracts](../../docs/host-locale-catalogs.md)
 cover gencat/gettext/iconv/locale/localedef/msgfmt/ngettext. `make test-host-profile`
 includes the bounded strict subset; `make test-host-catalog-contracts` also runs
-retained failing vendor reproducers. Full utility contracts remain open.
+all retained reproducers without exclusions. Full utility contracts remain open.
+
+CSH-076 now builds pinned standalone gencat providers and a private GNU libiconv
+CLI for code-name conversions. Their strict retained reproducers pass with no
+failure exclusions. First catalog setup downloads and checks the pinned GNU
+archive; builds are private and reused after verification. See
+[provider provenance and licenses](vendor/catalog-providers.md) for patches,
+compiler policy, source hashes, charmap fallback and redistribution notices.

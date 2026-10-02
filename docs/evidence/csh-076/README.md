@@ -1,12 +1,52 @@
 # CSH-076 validation
 
 This records the [bounded locale/catalog profile](../../host-locale-catalogs.md).
-**CSH-076 is not complete.** Full utility contracts, retained vendor failures
-and unqualified page sections remain owned by CSH-076. The native current
-subset passed. Local Docker returned HTTP 500; subsequent hosted CI separately
-validated the native C adapter revision on Linux (see below).
+**CSH-076 is not complete.** The retained provider failures are now repaired;
+full utility-page coverage remains open. Earlier results below retain their
+original failures, source identities and environment limitations.
 
-## Locale repair and native generation follow-up
+## Standalone provider repairs (current)
+
+The selected profile now builds patched, standalone native catalog writers and
+a pinned private GNU libiconv CLI. Original sources, local patches and licenses
+are recorded in [provider provenance](../../../tools/host-profile/vendor/catalog-providers.md).
+No host installation is performed. The strict subset has no excluded failures.
+
+| Validation | Result | Record |
+| --- | --- | --- |
+| Native `make -j2 test-host-profile test-host-inventory` | 485 catalog cases; 1,162 existing host cases; no failures or gaps | [catalog](providers-native.json.gz), [host](providers-native-profile.json.gz), [log](providers-native.log.gz) |
+| Linux `make test-host-profile` in rebuilt Debian bookworm arm64 image | 500 catalog cases; 1,162 existing host cases; no failures or gaps | [catalog](providers-linux.json.gz), [host](providers-linux-profile.json.gz) |
+| Native instrumented providers and libc probe, ordinary cshell, `tests/host_catalogs.py --sanitizer` | 485 passed | [record](providers-native-sanitize.json.gz) |
+| Linux clean ASan/UBSan build of cshell, providers and probe, `make -j2 test-host-catalogs` | 500 passed | [record](providers-linux-sanitize.json.gz), [fixture setup](providers-linux-sanitize-fixtures.json.gz), [log](providers-linux-sanitize.log.gz) |
+| Native selected-PATH `make test-runtime test-pty` | 3,950 runtime and 65 PTY checks passed | [log](providers-native-runtime.log.gz) |
+
+These records retain their actual source hashes. Linux ordinary and native
+provider sanitizer runs precede the final nested-make flag isolation and shared
+fixture sanitizer-environment fix; the Linux sanitized run includes both.
+Sanitizer setup now explicitly uses the suite's established Linux
+`detect_leaks=0` policy for external process-lifetime allocations. Address and
+undefined-behavior checks remain enabled, and stderr is checked without filtering.
+The successful PTY rerun does not establish a cause for the historical timeout.
+
+New boundary witnesses found and repaired default-set handling across source
+files, empty-message replacement, set deletion/recreation, and Darwin closed
+stdout reuse. Conversion tests cover all four `-c`/`-s` combinations, unmappable
+and truncated input, missing files, closed stdout, buffer boundaries and shift
+state. All ten catalog harness self-tests and ten ownership self-tests pass.
+
+The prior macOS hosted job on `873a653` was cancelled at 45 minutes while its
+runtime assertions were still passing: [job log](ci-873a653-macos.log.gz),
+[hosted job](https://github.com/melliott18/cshell/actions/runs/36674096274/job/109755181962).
+Its budget is now 75 minutes with unchanged per-case deadlines. A completed
+hosted run for the new revision remains required; local provider qualification
+is not an all-platform full-workflow result.
+
+No retained fixture requires manual testing. Full public locale installation
+needs a disposable environment with permission to write the locale database;
+other remaining clause coverage is automatable. Existing shared locales and
+catalogs are available to dependent tracks now via `make host-catalog-fixtures`.
+
+## Historical locale repair and native generation follow-up
 
 The profile now supplies a native `locale` environment-report adapter on both
 hosts; keyword/database queries still exec the recorded system vendor. Exact
@@ -40,7 +80,7 @@ category/charmap contract and success reporting remain open. Public-installation
 success requires a disposable environment with permission to write its locale
 database; no system-wide installation was attempted on the developer host.
 
-## Current native implementation
+## Historical native adapter implementation
 
 macOS 14.8.7 arm64, GNU gettext 0.26 from the installed
 `/usr/local/Cellar/gettext/0.26_1` package. Provider/launcher paths, hashes,

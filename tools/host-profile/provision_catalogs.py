@@ -4,6 +4,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import platform
 import shutil
 import sys
 import tempfile
@@ -18,7 +19,7 @@ from locale_catalog_fixtures import (ENCODINGS, GB18030_UTF8, GERMAN, MESSAGES,
                                     PO, mo_bytes)
 
 
-def provision(probe, search):
+def provision(probe, search, sanitizer=False):
     parent = ROOT / 'build/host-profile'
     parent.mkdir(parents=True, exist_ok=True)
     record = dict(schema_version=1, owner='CSH-076', verified=False, checks=[], failures=[],
@@ -32,6 +33,12 @@ def provision(probe, search):
                 raise ValueError('shared locales are not verified; run make host-locales')
             record['locale_setup'] = locales
             base_env = dict(PATH=search, LC_ALL='C', LANG='C', LANGUAGE='')
+            if sanitizer:
+                # Match the strict suite's Linux policy for external providers
+                # whose process-lifetime allocations are released by exit.
+                base_env.update(ASAN_OPTIONS='halt_on_error=1' +
+                    (':detect_leaks=0' if platform.system() == 'Linux' else ''),
+                    UBSAN_OPTIONS='halt_on_error=1')
             if locales.get('locale_path'):
                 base_env['LOCPATH'] = locales['locale_path']
             for name in ('gencat', 'msgfmt', 'gettext', 'ngettext', 'iconv'):
@@ -65,6 +72,12 @@ def provision(probe, search):
             (root / 'messages.po').write_bytes(PO)
             run('msgfmt', ['-o', 'compiled.mo', 'messages.po'])
             check_mo(root / 'compiled.mo', MESSAGES)
+            profile_path = parent / 'manifest.json'
+            if profile_path.exists():
+                profile = json.loads(profile_path.read_text())
+                if all(profile['executables'][name]['target'] == row['path']
+                       for name, row in record['providers'].items()):
+                    record['profile'] = profile
             record['mo_reader'] = 'Python gettext.GNUTranslations: exact authored message map'
             for locale, messages in (('fr_FR.UTF-8', MESSAGES), ('de_DE.UTF-8', GERMAN)):
                 directory = root / 'messages' / locale / 'LC_MESSAGES'
@@ -118,5 +131,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('probe', type=Path)
     parser.add_argument('--path', required=True)
+    parser.add_argument('--sanitizer', action='store_true')
     args = parser.parse_args()
-    raise SystemExit(provision(args.probe.resolve(), args.path))
+    raise SystemExit(provision(args.probe.resolve(), args.path, args.sanitizer))

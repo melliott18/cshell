@@ -1,0 +1,27 @@
+[
+  {
+    "file": "gencat-darwin/genlib.c",
+    "url": "https://raw.githubusercontent.com/apple-oss-distributions/adv_cmds/6bed8737a34dbb54782a18f47dccf933a9967a12/gencat/genlib.c",
+    "upstream_sha256": "82a19b5441e907d0fd9142ac84e741c4d417932abce6bbdcad4cc83f321442f4"
+  },
+  {
+    "file": "gencat-darwin/gencat.h",
+    "url": "https://raw.githubusercontent.com/apple-oss-distributions/adv_cmds/6bed8737a34dbb54782a18f47dccf933a9967a12/gencat/gencat.h",
+    "upstream_sha256": "04eecccb8ca671740fca82d6bf5632a0599969c1071e67147059365dbe88c65c"
+  },
+  {
+    "file": "gencat-darwin/msgcat.h",
+    "url": "https://raw.githubusercontent.com/apple-oss-distributions/Libc/71bbe350ab79eef58113991d817ccc6165061a64/nls/FreeBSD/msgcat.h",
+    "upstream_sha256": "875be437583dc5e2faa625c520821847acbb7bd663d11eef4035ef7d2019f928"
+  },
+  {
+    "file": "gencat-glibc/gencat.c",
+    "url": "https://raw.githubusercontent.com/bminor/glibc/e97cfe2293ed097eb3d0b4c18274d22855e65130/catgets/gencat.c",
+    "upstream_sha256": "e9f8ef73567bb9b72e9425cb5be5cffd040e2df7cb19014f9efc5f52e3833747"
+  },
+  {
+    "file": "gencat-glibc/catgetsinfo.h",
+    "url": "https://raw.githubusercontent.com/bminor/glibc/e97cfe2293ed097eb3d0b4c18274d22855e65130/catgets/catgetsinfo.h",
+    "upstream_sha256": "09f470d07297eb4b7db76b6f491d3764e92b31ed66557215c74972b2f99b6bd5"
+  }
+]

@@ -1349,6 +1349,6 @@ full host profile. See the [consumer interface](host-locale-catalogs.md#shared-i
 `test-host-profile`. Setup requires GNU gettext in the provisioning PATH; Linux
 needs the locales package's sources and charmaps. The runner uses private Linux
 locales and independently checks installed Darwin locale identities.
-`make test-host-catalog-contracts` additionally runs the strict vendor-gap
-reproducers and currently fails on both recorded hosts. See the
+`make test-host-catalog-contracts` runs the complete strict retained
+reproducers; the repaired selected providers have no failure exclusions. See the
 [clause map, bounds, providers and open contracts](host-locale-catalogs.md).

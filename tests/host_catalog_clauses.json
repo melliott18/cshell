@@ -11,7 +11,11 @@
           "witnesses": [
             "gencat/source-grammar",
             "gencat/merge-replace-delete",
-            "gencat/unknown-escape"
+            "gencat/unknown-escape",
+            "gencat/default-set-per-file",
+            "gencat/delete-set-recreate",
+            "gencat/empty-replaces-existing",
+            "gencat/closed-stdout"
           ],
           "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
         },
@@ -19,7 +23,10 @@
           "witnesses": [
             "gencat/source-grammar",
             "gencat/merge-replace-delete",
-            "gencat/unknown-escape"
+            "gencat/unknown-escape",
+            "gencat/default-set-per-file",
+            "gencat/delete-set-recreate",
+            "gencat/empty-replaces-existing"
           ],
           "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
         },
@@ -40,7 +47,10 @@
         "INPUT FILES": {
           "witnesses": [
             "gencat/source-grammar",
-            "gencat/merge-replace-delete"
+            "gencat/merge-replace-delete",
+            "gencat/default-set-per-file",
+            "gencat/delete-set-recreate",
+            "gencat/empty-replaces-existing"
           ],
           "disposition": "Bounded private effects or independently authored input files. Unspecified binary formats are validated through libc catgets or Python GNUTranslations; complete failure atomicity remains open."
         },
@@ -58,13 +68,18 @@
           "witnesses": [
             "gencat/source-grammar",
             "gencat/merge-replace-delete",
-            "gencat/unknown-escape"
+            "gencat/unknown-escape",
+            "gencat/default-set-per-file",
+            "gencat/delete-set-recreate",
+            "gencat/empty-replaces-existing",
+            "gencat/closed-stdout"
           ],
           "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
         },
         "STDERR": {
           "witnesses": [
-            "gencat/usage-error"
+            "gencat/usage-error",
+            "gencat/closed-stdout"
           ],
           "disposition": "Exact empty stderr on success and nonempty diagnostic on selected errors. Diagnostic wording is unspecified; successful diagnostics are not silently accepted."
         },
@@ -87,18 +102,27 @@
           "witnesses": [
             "gencat/source-grammar",
             "gencat/merge-replace-delete",
-            "gencat/unknown-escape"
+            "gencat/unknown-escape",
+            "gencat/default-set-per-file",
+            "gencat/delete-set-recreate",
+            "gencat/empty-replaces-existing",
+            "gencat/closed-stdout"
           ],
           "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
         },
         "CONSEQUENCES OF ERRORS": {
           "witnesses": [
-            "gencat/missing-file"
+            "gencat/missing-file",
+            "gencat/closed-stdout"
           ],
           "disposition": "Selected errors only. Further operand continuation, I/O failures, cleanup and resource exhaustion remain open; msgfmt output after -cv failure is unspecified."
         }
       },
       "cases": [
+        "gencat/closed-stdout",
+        "gencat/default-set-per-file",
+        "gencat/delete-set-recreate",
+        "gencat/empty-replaces-existing",
         "gencat/merge-replace-delete",
         "gencat/missing-file",
         "gencat/source-grammar",
@@ -257,7 +281,16 @@
             "iconv/gb18030-reverse",
             "iconv/ordered-files",
             "iconv/list",
-            "iconv/invalid-policy"
+            "iconv/invalid-policy",
+            "iconv/buffer-boundary",
+            "iconv/invalid-c",
+            "iconv/invalid-cs",
+            "iconv/invalid-s",
+            "iconv/shift-state",
+            "iconv/silent-missing-file",
+            "iconv/truncated-s",
+            "iconv/unmappable-cs",
+            "iconv/closed-stdout"
           ],
           "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
         },
@@ -269,7 +302,15 @@
             "iconv/gb18030-reverse",
             "iconv/ordered-files",
             "iconv/list",
-            "iconv/invalid-policy"
+            "iconv/invalid-policy",
+            "iconv/buffer-boundary",
+            "iconv/invalid-c",
+            "iconv/invalid-cs",
+            "iconv/invalid-s",
+            "iconv/shift-state",
+            "iconv/silent-missing-file",
+            "iconv/truncated-s",
+            "iconv/unmappable-cs"
           ],
           "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
         },
@@ -295,7 +336,15 @@
         },
         "INPUT FILES": {
           "witnesses": [
-            "iconv/ordered-files"
+            "iconv/ordered-files",
+            "iconv/buffer-boundary",
+            "iconv/invalid-c",
+            "iconv/invalid-cs",
+            "iconv/invalid-s",
+            "iconv/shift-state",
+            "iconv/silent-missing-file",
+            "iconv/truncated-s",
+            "iconv/unmappable-cs"
           ],
           "disposition": "Bounded private effects or independently authored input files. Unspecified binary formats are validated through libc catgets or Python GNUTranslations; complete failure atomicity remains open."
         },
@@ -318,13 +367,23 @@
             "iconv/gb18030-reverse",
             "iconv/ordered-files",
             "iconv/list",
-            "iconv/invalid-policy"
+            "iconv/invalid-policy",
+            "iconv/buffer-boundary",
+            "iconv/invalid-c",
+            "iconv/invalid-cs",
+            "iconv/invalid-s",
+            "iconv/shift-state",
+            "iconv/silent-missing-file",
+            "iconv/truncated-s",
+            "iconv/unmappable-cs",
+            "iconv/closed-stdout"
           ],
           "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
         },
         "STDERR": {
           "witnesses": [
-            "iconv/usage-error"
+            "iconv/usage-error",
+            "iconv/closed-stdout"
           ],
           "disposition": "Exact empty stderr on success and nonempty diagnostic on selected errors. Diagnostic wording is unspecified; successful diagnostics are not silently accepted."
         },
@@ -346,22 +405,37 @@
             "iconv/gb18030-reverse",
             "iconv/ordered-files",
             "iconv/list",
-            "iconv/invalid-policy"
+            "iconv/invalid-policy",
+            "iconv/buffer-boundary",
+            "iconv/invalid-c",
+            "iconv/invalid-cs",
+            "iconv/invalid-s",
+            "iconv/shift-state",
+            "iconv/silent-missing-file",
+            "iconv/truncated-s",
+            "iconv/unmappable-cs",
+            "iconv/closed-stdout"
           ],
           "disposition": "Bounded witnesses only; remaining combinations and implementation limits are open in scope.unqualified."
         },
         "CONSEQUENCES OF ERRORS": {
           "witnesses": [
-            "iconv/missing-file"
+            "iconv/missing-file",
+            "iconv/closed-stdout"
           ],
           "disposition": "Selected errors only. Further operand continuation, I/O failures, cleanup and resource exhaustion remain open; msgfmt output after -cv failure is unspecified."
         }
       },
       "cases": [
+        "iconv/buffer-boundary",
+        "iconv/closed-stdout",
         "iconv/empty",
         "iconv/gb18030",
         "iconv/gb18030-reverse",
+        "iconv/invalid-c",
+        "iconv/invalid-cs",
         "iconv/invalid-policy",
+        "iconv/invalid-s",
         "iconv/latin1",
         "iconv/list",
         "iconv/locale-default--f",
@@ -369,7 +443,11 @@
         "iconv/missing-file",
         "iconv/ordered-files",
         "iconv/reverse",
+        "iconv/shift-state",
+        "iconv/silent-missing-file",
         "iconv/stdin-dash",
+        "iconv/truncated-s",
+        "iconv/unmappable-cs",
         "iconv/usage-error"
       ]
     },

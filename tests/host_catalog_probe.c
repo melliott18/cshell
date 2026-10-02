@@ -6,9 +6,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
+#include <unistd.h>
 
 int main(int argc, char **argv)
 {
+    if (argc >= 3 && strcmp(argv[1], "closed-stdout") == 0) {
+        if (close(STDOUT_FILENO)) return 125;
+        execv(argv[2], argv + 2);
+        perror("execv");
+        return 126;
+    }
     if (argc == 5 && strcmp(argv[1], "catalog") == 0) {
         nl_catd catalog;
         const char *message;

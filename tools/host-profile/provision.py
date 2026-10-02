@@ -14,6 +14,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'tests'))
 from host_utility_cases import HOSTS
+from build_iconv import build as build_iconv
 
 
 def provision(destination, gnu_bin=None, catalog_bin=None, cc="cc", cflags="-std=c99 -O2 -Wall -Wextra -Wpedantic", cppflags="", ldflags="", ldlibs=""):
@@ -52,11 +53,13 @@ def provision(destination, gnu_bin=None, catalog_bin=None, cc="cc", cflags="-std
             raise ValueError(f'Missing executable for {name}; see tools/host-profile/README.md')
     destination = destination.absolute()
     destination.mkdir(parents=True, exist_ok=True)
+    iconv_record = build_iconv(destination.parent, cc, cppflags, cflags, ldflags)
     config = destination.parent / 'catalog_providers.h'
     # JSON ASCII string quoting is also a C string literal for these paths.
     config.write_text(''.join('#define CATALOG_' + name.upper() + ' ' +
         json.dumps(path, ensure_ascii=True) + '\n'
-        for name, path in dict(catalog_providers, locale=selected['locale']).items()))
+        for name, path in dict(catalog_providers, locale=selected['locale'], iconv=iconv_record['path'],
+                               system_iconv=selected['iconv']).items()))
     adapter_binary = destination.parent / 'catalog-adapter'
     compile_command = shlex.split(cc) + shlex.split(cppflags) + shlex.split(cflags) + shlex.split(ldflags) + ['-I', str(destination.parent),
         str(ROOT / 'tools/host-profile/catalog_adapter.c'), '-o', str(adapter_binary)] + shlex.split(ldlibs)
@@ -65,7 +68,17 @@ def provision(destination, gnu_bin=None, catalog_bin=None, cc="cc", cflags="-std
     locale_compile = shlex.split(cc) + shlex.split(cppflags) + shlex.split(cflags) + shlex.split(ldflags) + ['-I', str(destination.parent),
         str(ROOT / 'tools/host-profile/locale_adapter.c'), '-o', str(locale_adapter)] + shlex.split(ldlibs)
     subprocess.run(locale_compile, check=True, timeout=60)
-    manifest = {'system': system, 'path': str(destination), 'executables': {}}
+    compiler = shlex.split(cc) + shlex.split(cppflags) + shlex.split(cflags) + shlex.split(ldflags)
+    extra_adapters = {}
+    for utility, source in (('gencat', 'gencat_darwin.c' if system == 'Darwin' else 'gencat_glibc.c'),
+                            ('iconv', 'iconv_adapter.c')):
+        binary = destination.parent / (utility + '-adapter')
+        command = compiler + ['-D_DEFAULT_SOURCE', '-D_POSIX_C_SOURCE=200809L',
+            '-I', str(destination.parent), '-I', str(ROOT / 'tools/host-profile/vendor/gencat-glibc'),
+            str(ROOT / 'tools/host-profile' / source), '-o', str(binary)] + shlex.split(ldlibs)
+        subprocess.run(command, check=True, timeout=60)
+        extra_adapters[utility] = (binary, command)
+    manifest = {'system': system, 'path': str(destination), 'executables': {}, 'libiconv': iconv_record}
     for name, path in selected.items():
         target = destination / name
         if target.is_symlink():
@@ -75,7 +88,10 @@ def provision(destination, gnu_bin=None, catalog_bin=None, cc="cc", cflags="-std
         # Leave ordinary host lookup (notably the PATH-associated pwd builtin)
         # unchanged; only the declared replacements belong in the prefix.
         adapter = None
-        if name == 'locale':
+        if name in extra_adapters:
+            adapter = extra_adapters[name][0]
+            target.symlink_to(adapter)
+        elif name == 'locale':
             adapter = locale_adapter
             target.symlink_to(adapter)
         elif name in catalog_providers:
@@ -83,13 +99,18 @@ def provision(destination, gnu_bin=None, catalog_bin=None, cc="cc", cflags="-std
             target.symlink_to(adapter)
         elif name in overrides:
             target.symlink_to(path)
+        primary = iconv_record['path'] if name == 'iconv' else str(adapter) if name == 'gencat' else path
         manifest['executables'][name] = {
             'override': name in overrides or adapter is not None, 'target': str(target) if adapter else path,
-            'provider': path, 'adapter': str(adapter) if adapter else None, 'realpath': os.path.realpath(adapter or path),
+            'provider': primary, 'adapter': str(adapter) if adapter else None, 'realpath': os.path.realpath(adapter or path),
             'sha256': hashlib.sha256(Path(adapter or path).read_bytes()).hexdigest(),
-            'provider_realpath': os.path.realpath(path),
-            'provider_sha256': hashlib.sha256(Path(path).read_bytes()).hexdigest(),
-            'adapter_build': (locale_compile if name == 'locale' else compile_command) if adapter else None}
+            'provider_realpath': os.path.realpath(primary),
+            'provider_sha256': hashlib.sha256(Path(primary).read_bytes()).hexdigest(),
+            'system_provider': dict(path=path, sha256=hashlib.sha256(Path(path).read_bytes()).hexdigest())
+                               if name in ('gencat', 'iconv') else None,
+            'adapter_build': (extra_adapters[name][1] if name in extra_adapters else
+                              locale_compile if name == 'locale' else compile_command) if adapter else None}
+    manifest['gencat_sources'] = json.loads((ROOT / 'tools/host-profile/vendor/catalog-provenance.json').read_text())
     (destination.parent / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
     print(destination)
 

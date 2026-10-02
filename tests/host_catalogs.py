@@ -112,6 +112,9 @@ def run_case(case, mode, binary, probe, providers, search, fixture_root=None, lo
                     stdin = Path(step['stdin_from']).read_bytes()
                 fixture = dict(env=env, args=argv, stdin=stdin)
                 executable = Path(path)
+                if mode == 'direct' and step.get('close_stdout'):
+                    executable = probe
+                    fixture['args'] = ['closed-stdout', path] + argv
                 if mode != 'direct' and utility != '@probe':
                     executable = binary
                     prefix = ('exec ' + shlex.quote(path)) if mode == 'exec' else shlex.quote(utility)
@@ -121,6 +124,8 @@ def run_case(case, mode, binary, probe, providers, search, fixture_root=None, lo
                     script += ' <step-input'
                     if step.get('redirect'):
                         script += ' >' + shlex.quote(step['redirect'])
+                    if step.get('close_stdout'):
+                        script += ' 1>&-'
                     script += '\n'
                     fixture['stdin'] = b''
                     if mode in ('string', 'exec'):
@@ -210,7 +215,8 @@ def main():
         limitations=limitations, missing_providers=missing, cases=records,
         totals=dict(passed=sum(r['verdict'] == 'PASS' for r in records),
                     failed=sum(r['verdict'] == 'FAIL' for r in records)))
-    profile = Path(__file__).resolve().parents[1] / 'build/host-profile/manifest.json'
+    profile = (Path(providers['gettext']['path']).parent.parent / 'manifest.json'
+               if providers['gettext']['path'] else Path('/nonexistent-csh-profile'))
     locale_record = profile.with_name('locales.json')
     if locale_record.exists():
         result['locale_provisioning'] = json.loads(locale_record.read_text())

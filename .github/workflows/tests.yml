@@ -12,17 +12,19 @@ jobs:
   native:
     name: Native (${{ matrix.os }}, ${{ matrix.cc }})
     runs-on: ${{ matrix.os }}
-    # CSH-058 adds 2,464+ disposition/delivery cases, including controlling
-    # terminals. Keep individual case deadlines while budgeting the full matrix.
-    timeout-minutes: 45
+    # The macOS ASan log still advances through passing runtime assertions at
+    # 45 minutes. Preserve per-case deadlines and budget the full job separately.
+    timeout-minutes: ${{ matrix.timeout }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: ubuntu-24.04
             cc: gcc
+            timeout: 45
           - os: macos-15
             cc: clang
+            timeout: 75
     env:
       CC: ${{ matrix.cc }}
     steps:
@@ -34,7 +36,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential locales ed busybox acl gettext
+          sudo apt-get install -y build-essential locales ed busybox acl gettext curl ca-certificates
           sudo localedef -i en_US -f UTF-8 en_US.UTF-8
           sudo localedef -i fr_FR -f UTF-8 fr_FR.UTF-8
           sudo localedef -i fr_FR -f ISO-8859-1 fr_FR.ISO8859-1

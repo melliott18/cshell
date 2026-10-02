@@ -130,5 +130,91 @@
       "passed": 90,
       "failed": 0
     }
+  },
+  {
+    "file": "providers-native.json.gz",
+    "uncompressed_sha256": "a628e97478eb8dfe4054b6f98943f63d27041e3cc0dbc97a106f8268e6805111",
+    "source_sha256": "ce4e08f6c48d79a96ac90b915f5f8a8b4ed8b886e9ec2f2268a5f171cc321750",
+    "totals": {
+      "passed": 485,
+      "failed": 0
+    }
+  },
+  {
+    "file": "providers-native-profile.json.gz",
+    "uncompressed_sha256": "62e837788d1964c5fb6c481a386b7cdadc7db96a4ad7e6865d402ec847ff819b",
+    "source_sha256": "ce4e08f6c48d79a96ac90b915f5f8a8b4ed8b886e9ec2f2268a5f171cc321750",
+    "totals": {
+      "passed": 1162,
+      "failed": 0,
+      "gaps": 0
+    }
+  },
+  {
+    "file": "providers-native-sanitize.json.gz",
+    "uncompressed_sha256": "521ff72aa12aecada9c665e16d89ad9252da6733a99dad12734be7f391054a07",
+    "source_sha256": "8160b2dc8341f999633853a60c15ac8d89a7c6b45033ae503967b23f062eccf5",
+    "totals": {
+      "passed": 485,
+      "failed": 0
+    }
+  },
+  {
+    "file": "providers-linux.json.gz",
+    "uncompressed_sha256": "4c372bf456139a0e9d6e641263083bea35d6935cfeaf967d1f78510d586a2be2",
+    "source_sha256": "8160b2dc8341f999633853a60c15ac8d89a7c6b45033ae503967b23f062eccf5",
+    "totals": {
+      "passed": 500,
+      "failed": 0
+    }
+  },
+  {
+    "file": "providers-linux-profile.json.gz",
+    "uncompressed_sha256": "154c5347779de95a146c87d644a4f4831357cc7ab345dab2113b6e4335f7a7ae",
+    "source_sha256": "8160b2dc8341f999633853a60c15ac8d89a7c6b45033ae503967b23f062eccf5",
+    "totals": {
+      "passed": 1162,
+      "failed": 0,
+      "gaps": 0
+    }
+  },
+  {
+    "file": "providers-linux-sanitize.json.gz",
+    "uncompressed_sha256": "1d363878fbad6c51c291244c60340eb7c2ad34b2b9ee9b43e535d5e810a47a8b",
+    "source_sha256": "ce4e08f6c48d79a96ac90b915f5f8a8b4ed8b886e9ec2f2268a5f171cc321750",
+    "totals": {
+      "passed": 500,
+      "failed": 0
+    }
+  },
+  {
+    "file": "providers-linux-sanitize-fixtures.json.gz",
+    "uncompressed_sha256": "0191d10b3f9b06a6399e35bd65028a2c64a25e6013b4ad94cf3ccda94685b709",
+    "source_sha256": "ce4e08f6c48d79a96ac90b915f5f8a8b4ed8b886e9ec2f2268a5f171cc321750",
+    "totals": null,
+    "verified": true
+  },
+  {
+    "file": "providers-native-fixtures.json.gz",
+    "uncompressed_sha256": "b880d05e78029f10b4cc82761fad89909e2dc9b1115ea35071eb0741c6d6de7e",
+    "source_sha256": "ce4e08f6c48d79a96ac90b915f5f8a8b4ed8b886e9ec2f2268a5f171cc321750",
+    "totals": null,
+    "verified": true
+  },
+  {
+    "file": "providers-native.log.gz",
+    "uncompressed_sha256": "1c8419475c8683ea391efb0b67c1d9660e2a442e24d827e60daedfb103f657d3"
+  },
+  {
+    "file": "providers-native-runtime.log.gz",
+    "uncompressed_sha256": "e3dd0eb3a332994e5cf1a3a8a6ce40870564e6a442f6502e93003c7ab335a370"
+  },
+  {
+    "file": "providers-linux-sanitize.log.gz",
+    "uncompressed_sha256": "a84d9f50a6f8df683146c871292d8f6234ccd7bb30b688102516f50b12d4d32a"
+  },
+  {
+    "file": "ci-873a653-macos.log.gz",
+    "uncompressed_sha256": "b3e679e1b3cc47d418660082d025bf22f7f96b4066edccbf28692d21ad5d59a3"
   }
 ]
