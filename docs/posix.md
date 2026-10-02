@@ -64,7 +64,9 @@ run. The [terminal fixture repair](evidence/csh-057-terminal-crash-notification/
 then isolates a reproduced inherited crash-handler dependency; the original
 handler remains unconfirmed. The [PTY teardown follow-up](evidence/csh-057-pty-teardown/README.md)
 then repairs a reproduced unread-output exit dependency and scoped aggregate
-budgets. CSH-057 remains at review. CSH-050 and CSH-012
+budgets. [Final hosted verification and integration](evidence/csh-057-final-verification/README.md)
+complete CSH-057 while retaining its recurrence policy and historical unknowns.
+Separate hosted exit-operand timeouts reopen CSH-054 / #90. CSH-050 and CSH-012
 keep their separate gates.
 
 ## Runtime baseline

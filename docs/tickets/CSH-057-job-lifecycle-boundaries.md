@@ -1,6 +1,6 @@
 # CSH-057: Verify remaining job lifecycle boundaries
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
@@ -8,7 +8,33 @@
 - Branch: fix/CSH-057-terminal-fault-timeout
 - Issue: [#99](https://github.com/melliott18/cshell/issues/99)
 
-## Current repair: public PTY teardown and aggregate timing
+## Final verification and integration: 2026-10-02
+
+[Final hosted evidence](../evidence/csh-057-final-verification/README.md)
+verifies repair head `48af5bc` in the complete PR workflow: Ubuntu, Docker and
+macOS normal/sanitizer checks passed. The duplicate push workflow passed Ubuntu
+and Docker; its macOS job failed 17 separate CSH-054 exit-operand batches.
+Both macOS jobs passed retention, crash-notification isolation, repeated
+resumes, terminal faults and the new queued-output cleanup regression. The
+push failure remains a failure, owned by reopened [CSH-054 / #90](CSH-054-signal-contract-gaps.md).
+
+Independent review found no actionable blocker. PRs
+[#167](https://github.com/melliott18/cshell/pull/167),
+[#172](https://github.com/melliott18/cshell/pull/172), and
+[#173](https://github.com/melliott18/cshell/pull/173) are integrated into `main`
+as `0938eeb`, `d06891e`, and `57e8c40`, respectively. The final integration tree
+is byte-for-byte identical to the verified repair head and PR merge tree.
+All eight acceptance criteria have their mapped evidence, so this ticket is
+complete. These repairs change tests, diagnostics and their aggregate budgets;
+production runtime sources remain unchanged by this stack.
+
+This disposition does not prove every historical failure's cause or declare
+an unsolvable bug. The unrecorded historical Mach receiver remains a potential
+host/fixture issue. A new CSH-057 timeout, status/ownership error, sanitizer
+finding or cleanup failure reopens #99; a passing retry does not erase it.
+CSH-054, CSH-058 and the broader conformance gates retain their separate owners.
+
+## Integrated repair: public PTY teardown and aggregate timing
 
 The [follow-up diagnosis](../evidence/csh-057-pty-teardown/README.md) reproduces
 the remaining cleanup failure with the real sanitizer shell. After killing its
@@ -29,9 +55,8 @@ the explicitly scoped repeated-resume correction.
 
 These changes repair demonstrated harness and budget defects; they do not
 reconstruct every historical scheduling interval or prove an unsolvable shell
-bug. Status remains `review` pending integration and hosted checks on the final
-repair. Prior failures below remain in the record, including separate CSH-054
-exit-operand observations.
+bug. Final verification and integration are recorded above. Prior failures
+below remain in the record, including separate CSH-054 exit-operand observations.
 
 ## Earlier closure verification: 2026-10-01
 
@@ -41,15 +66,16 @@ Mach isolation and retention also passed both builds in both hosted runs.
 However, the push run's sanitizer `repeated background resumes preserve prompt
 and terminal` case timed out at five seconds while waiting for step 328, then
 failed to reap its leader within one second. This separate public PTY recurrence
-remains owned by CSH-057 / #99, so the condition for closing the whole ticket
-is not met. The passing peer does not erase it. The peer's overall macOS failure
+was owned by CSH-057 / #99, so the condition for closing the whole ticket
+was not then met. The passing peer did not erase it. The peer's overall macOS failure
 belongs to CSH-054 exit-operand tests. Ubuntu and Docker passed both runs.
 
 [PR #173](https://github.com/melliott18/cshell/pull/173) and its prerequisite
-PRs #172/#167 are unmerged. Status remains `review`; no issue is declared
-unsolvable and no failing result is converted to a pass.
+PRs #172/#167 were then unmerged and status remained `review`. The final
+verification above supersedes that hold; no issue is declared unsolvable and
+no failing result is converted to a pass.
 
-## Current review: terminal crash-notification isolation
+## Integrated repair: terminal crash-notification isolation
 
 The [terminal investigation](../evidence/csh-057-terminal-crash-notification/README.md)
 reproduces the terminal-fault timeout with a controlled inherited Mach
@@ -79,9 +105,9 @@ the failure recurs after isolation.
 
 This change builds on retention-budget [PR #172](https://github.com/melliott18/cshell/pull/172),
 which builds on diagnostic [PR #167](https://github.com/melliott18/cshell/pull/167).
-CSH-057 remains at `review` pending integration and resolution of the public
-PTY recurrence above. The historical terminal failure is not erased or
-converted into a passing run.
+CSH-057 then remained at `review` pending integration and resolution of the
+public PTY recurrence above; final verification now closes that hold. The
+historical terminal failure is not erased or converted into a passing run.
 The distinct CSH-058 signal-probe observation below is not fixed by this
 child-specific change.
 
