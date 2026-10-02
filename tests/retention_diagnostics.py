@@ -375,8 +375,11 @@ def watch(config_path):
                 os.killpg(os.getpid(), signal.SIGKILL)
 
 
-def run_case(binary, case, output, timeout=60, output_limit=65536, *,
-             operation_threshold=2.0, total_threshold=57.0, sample_timeout=2.5,
+# The 619 sequential children exceeded 60s under macOS ASan while observed
+# launch/reap intervals stayed below 0.16s. Keep a finite aggregate bound separately
+# from the fixture's unchanged five-second phase alarms.
+def run_case(binary, case, output, timeout=120, output_limit=65536, *,
+             operation_threshold=2.0, total_threshold=117.0, sample_timeout=2.5,
              sample_limit=1048576, sampler_command=None):
     """Run one exact fixture; overrides are Python-only for controlled tests."""
     for name, value in (("timeout", timeout), ("operation_threshold", operation_threshold),
