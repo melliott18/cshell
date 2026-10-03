@@ -1,0 +1,32 @@
+{
+  "suite_summaries": [
+    {
+      "passed": 3950,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "passed": 30,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0
+    }
+  ],
+  "totals": {
+    "passed": 3981,
+    "failed": 1,
+    "skipped": 0
+  },
+  "failures": [
+    "FAIL: process group and terminal handoff restoration failures"
+  ]
+}

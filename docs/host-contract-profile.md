@@ -212,3 +212,7 @@ defect. [The completion record](evidence/csh-064-completion/README.md) validates
 process-group cleanup and descendant reaping through the actual nested path.
 The ticket records acceptance; this repair is independent of the external
 capabilities required for vendor requalification.
+
+CSH-071 adds [predicate, permission and identity qualification](host-permissions-identities.md),
+including `make test-host-permissions`, direct exec, public cshell dispatch,
+independent effects, and explicit unqualified vendor/session/platform branches.

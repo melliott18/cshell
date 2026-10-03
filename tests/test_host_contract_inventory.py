@@ -38,6 +38,10 @@ class ContractOwnershipTests(unittest.TestCase):
         self.assertIn('conditional prerequisite ownership differs from emitted conditions',
                       validate(self.contracts))
 
+    def test_partial_qualification_cannot_claim_complete(self):
+        self.contracts['owners'][1]['qualification']['status'] = 'complete'
+        self.assertIn('CSH-071: open contracts cannot claim complete qualification', validate(self.contracts))
+
     def test_closed_owner(self):
         original = Path.read_text
         target = ROOT / self.contracts['owners'][0]['path']

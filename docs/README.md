@@ -68,3 +68,7 @@ The [CSH-012 requirement, defect, platform and documentation review](conformance
 
 - [Shell locale and pathname qualification](locale-pathname-qualification.md):
   CSH-067 clauses, exact witnesses, supplied definitions and external prerequisites.
+
+CSH-071 adds [predicate, permission and identity qualification](host-permissions-identities.md),
+including `make test-host-permissions`, direct exec, public cshell dispatch,
+independent effects, and explicit unqualified vendor/session/platform branches.

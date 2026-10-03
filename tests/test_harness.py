@@ -173,6 +173,26 @@ class HarnessTests(unittest.TestCase):
         self.assert_failure(result, "timeout", "last output at", "no output for",
                             "checkpoint before stall")
 
+    def test_timeout_snapshot_includes_owned_child_and_excludes_runner(self):
+        marker = self.directory / 'processes.json'
+        self.addCleanup(self.kill_recorded_group, marker)
+        diagnostics = {}
+        item = case(args=['fork-hang', str(marker)])
+        status, output, failures = smoke.capture(
+            CANDIDATE, item, self.directory, 1, 65536, diagnostics=diagnostics)
+        self.assertTrue(any('timeout after' in failure for failure in failures), failures)
+        self.assertEqual(output, {'stdout': b'', 'stderr': b''})
+        record = self.process_record(marker)
+        self.assertEqual(diagnostics['timeout_process']['status'], 0)
+        rows = [line.split(None, 5) for line in diagnostics['timeout_group']['stdout'].splitlines()]
+        self.assertEqual({int(row[0]) for row in rows}, {record['parent'], record['child']})
+        self.assertTrue(all(int(row[2]) == record['parent'] for row in rows))
+        self.assertNotIn(os.getpid(), {int(row[0]) for row in rows})
+        self.assertTrue(diagnostics['reaped'])
+        self.assertEqual(status, -signal.SIGKILL)
+        self.assert_not_running(record['parent'])
+        self.assert_not_running(record['child'])
+
     def test_long_output_diagnostic_keeps_failure_tail(self):
         item = case(stdin="initial context\n" + "x" * 4000 + "\nlate failure detail")
         result = self.run_suite([item])
@@ -244,6 +264,42 @@ class HarnessTests(unittest.TestCase):
                 self.assertTrue(all(stream.closed for stream in
                                     (process.stdin, process.stdout, process.stderr)))
                 self.assert_not_running(process.pid)
+
+    def test_slow_group_cleanup_leaves_a_full_leader_reap_budget(self):
+        # Simulate a snapshot using up the group-cleanup deadline. A real child
+        # still has to be killed/reaped; elapsed enumeration must not turn its
+        # separate wait into wait(timeout=0).
+        popen = subprocess.Popen
+        monotonic = time.monotonic
+        waits = []
+        processes = []
+        offset = [0]
+
+        def record_process(*args, **kwargs):
+            process = popen(*args, **kwargs)
+            processes.append(process)
+            wait = process.wait
+
+            def record_wait(timeout=None):
+                waits.append(timeout)
+                return wait(timeout=timeout)
+            process.wait = record_wait
+            return process
+
+        def slow_cleanup(process, deadline=None):
+            offset[0] = 6
+            process.kill()
+
+        item = case(args=['hang'], timeout=0.05)
+        with mock.patch.object(subprocess, 'Popen', side_effect=record_process), \
+                mock.patch.object(smoke, 'kill_group', side_effect=slow_cleanup), \
+                mock.patch.object(smoke.time, 'monotonic', side_effect=lambda: monotonic() + offset[0]):
+            failures = smoke.run_case(CANDIDATE, item, 1, 65536)
+        self.assertTrue(any('timeout after' in failure for failure in failures), failures)
+        self.assertFalse(any('could not reap' in failure for failure in failures), failures)
+        self.assertEqual(waits, [1.0])
+        self.assertEqual(len(processes), 1)
+        self.assert_not_running(processes[0].pid)
 
     def test_output_flood_fails_promptly_with_bounded_diagnostics(self):
         marker = self.directory / "processes.json"

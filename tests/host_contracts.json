@@ -44,7 +44,20 @@
         "U-037/device-namespaces",
         "U-040/chmod-ACL-identity-filesystem"
       ],
-      "prerequisite": "Supply disposable controlled credentials, privileged Darwin ACLs, and measured filesystem/namespace implementations; require actual read/write/execute controls alongside predicates. Preserve false grants, rejected grants, socket stat EINVAL and non-owner chmod failures independently."
+      "prerequisite": "Supply disposable controlled credentials, privileged Darwin ACLs, and measured filesystem/namespace implementations; require actual read/write/execute controls alongside predicates. Preserve false grants, rejected grants, socket stat EINVAL and non-owner chmod failures independently.",
+      "qualification": {
+        "status": "partial",
+        "clause_map": "docs/host-permissions-identities.md",
+        "runner": "tests/host_permissions.py",
+        "selected_target": "make test-host-permissions",
+        "strict_reproducers": [
+          "--vendor-residuals --case-prefix chmod/original-X",
+          "--session-controls --case-prefix newgrp/"
+        ],
+        "full_contracts": "open; all retained conditions remain assigned to CSH-071",
+        "focused_evidence": "docs/evidence/csh-071-acl-qualification/README.md",
+        "focused_workflow": ".github/workflows/host-permissions.yml"
+      }
     },
     {
       "ticket": "CSH-072",

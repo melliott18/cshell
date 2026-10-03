@@ -179,7 +179,7 @@ def kill_group(process, deadline=None):
     pty_harness.kill_group(process.pid, process.pid, deadline)
 
 
-def capture(binary, case, directory, timeout, output_limit, file_size_limit=None):
+def capture(binary, case, directory, timeout, output_limit, file_size_limit=None, diagnostics=None):
     environment = {
         "PATH": os.environ.get("CSH_TEST_PATH", os.defpath), "LANG": "C", "LC_ALL": "C",
         "HOME": str(directory / ".home"), "TMPDIR": str(directory / ".tmp"),
@@ -207,6 +207,8 @@ def capture(binary, case, directory, timeout, output_limit, file_size_limit=None
         start_new_session=True,
         preexec_fn=lambda: child_limits(timeout, output_limit, file_size_limit),
     )
+    if diagnostics is not None:
+        diagnostics.update(pid=process.pid, spawn_seconds=time.monotonic() - started)
     try:
         with selectors.DefaultSelector() as selector:
             for stream, name in ((process.stdout, "stdout"), (process.stderr, "stderr")):
@@ -233,6 +235,37 @@ def capture(binary, case, directory, timeout, output_limit, file_size_limit=None
                         f"no output for {time.monotonic() - last_output:.3f}s")
                     failures.append(f"timeout after {timeout:g}s ({progress}; "
                                     f"{captured} bytes captured; process group killed)")
+                    if diagnostics is not None:
+                        diagnostics['timeout_seconds'] = time.monotonic() - started
+                        try:
+                            # A shell leader may be waiting normally while its
+                            # child is stalled. Retain both, without recording
+                            # unrelated processes or command-line arguments.
+                            with tempfile.TemporaryFile() as listing:
+                                snapshot = subprocess.run(
+                                    ['/bin/ps', '-axo',
+                                     'pid=,ppid=,pgid=,stat=,wchan=,comm='],
+                                    stdout=listing, stderr=subprocess.PIPE, timeout=0.5)
+                                listing.seek(0)
+                                raw = listing.read(1024 * 1024 + 1)
+                            if len(raw) > 1024 * 1024:
+                                raise OSError('timeout process snapshot exceeds 1 MiB')
+                            leader, group = [], []
+                            for line in raw.decode(errors='replace').splitlines():
+                                columns = line.split(None, 5)
+                                if len(columns) < 6:
+                                    continue
+                                if columns[0] == str(process.pid):
+                                    leader.append(line)
+                                if columns[2] == str(process.pid):
+                                    group.append(line)
+                            diagnostics['timeout_process'] = dict(status=snapshot.returncode,
+                                stdout='\n'.join(leader)[:4096],
+                                stderr=snapshot.stderr.decode(errors='replace')[:4096])
+                            diagnostics['timeout_group'] = dict(pgid=process.pid,
+                                stdout='\n'.join(group)[:16384])
+                        except (OSError, subprocess.SubprocessError) as error:
+                            diagnostics['timeout_process_error'] = str(error)
                     break
                 for key, _ in selector.select(min(remaining, 0.05)):
                     stream, name = key.fileobj, key.data
@@ -266,7 +299,11 @@ def capture(binary, case, directory, timeout, output_limit, file_size_limit=None
                     break
     finally:
         # Also runs on interruption, I/O errors, and normal completion.
-        cleanup_deadline = time.monotonic() + 1.0
+        # Darwin's group cleanup can require a bounded ps snapshot to distinguish
+        # live members from zombie-only EPERM. Do not spend the leader's reap
+        # budget on that enumeration (the PTY path uses separate budgets too).
+        cleanup_started = time.monotonic()
+        cleanup_deadline = cleanup_started + 5.0
         try:
             kill_group(process, cleanup_deadline)
         except (OSError, ValueError, subprocess.SubprocessError) as error:
@@ -281,9 +318,13 @@ def capture(binary, case, directory, timeout, output_limit, file_size_limit=None
             for stream in (process.stdin, process.stdout, process.stderr):
                 stream.close()
             try:
-                process.wait(timeout=max(0, cleanup_deadline - time.monotonic()))
+                process.wait(timeout=1.0)
             except subprocess.TimeoutExpired:
                 failures.append("pipe cleanup could not reap leader within 1s")
+            if diagnostics is not None:
+                diagnostics.update(cleanup_seconds=time.monotonic() - cleanup_started,
+                                   elapsed_seconds=time.monotonic() - started,
+                                   returncode=process.returncode, reaped=process.returncode is not None)
     return process.returncode, output, failures
 
 

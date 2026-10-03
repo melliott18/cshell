@@ -481,14 +481,24 @@ build/host-printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/printf.c $(LDLIBS)
 
-host-profile: build/host-printf
+host-profile: build/host-printf build/host-test build/host-chmod build/host-newgrp
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
+
+build/host-chmod: tools/host-profile/chmod.c
+	@mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS) $(if $(filter Linux,$(shell uname -s)),-lbsd)
+
+build/host-newgrp-provider.h: host-test-provider-check tools/host-profile/provision.py
+	$(PYTHON) tools/host-profile/provision.py $@ --newgrp-header
+
+build/host-newgrp: tools/host-profile/newgrp.c build/host-newgrp-provider.h
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -Ibuild -o $@ $< $(LDLIBS)
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_printf_faults.c $(LDLIBS)
 
-test-host-profile: test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
+test-host-profile: test-host-inventory test-host-permissions cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 
 # Public entry point with only the command input read syscall instrumented.
@@ -640,3 +650,18 @@ test-locale-pathname: cshell build/tests/locale_probe build/tests/pathname_runti
 test-host-inventory:
 	$(PYTHON) tests/host_contract_inventory.py
 	$(PYTHON) tests/test_host_contract_inventory.py
+
+.PHONY: test-host-permissions
+test-host-permissions: cshell host-profile test-host-permissions-harness
+	$(PYTHON) tests/host_permissions.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-permissions-results.json $(HOST_PERMISSIONS_FLAGS) $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+.PHONY: host-test-provider-check
+build/host-test-provider.h: host-test-provider-check tools/host-profile/provision.py
+	$(PYTHON) tools/host-profile/provision.py $@ --test-header
+
+build/host-test: tools/host-profile/test.c build/host-test-provider.h
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Ibuild $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+.PHONY: test-host-permissions-harness
+test-host-permissions-harness:
+	$(PYTHON) tests/test_host_permissions.py

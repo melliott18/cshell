@@ -50,6 +50,13 @@ def validate(contracts, root=ROOT):
         tickets.append(ticket)
         utilities.extend(owner['utilities'])
         conditions.extend(owner['conditions'])
+        qualification = owner.get('qualification')
+        if qualification:
+            for key in ('clause_map', 'runner'):
+                if not (root / qualification[key]).is_file():
+                    errors.append(f'{ticket}: missing qualification {key}')
+            if qualification['status'] != 'partial':
+                errors.append(f'{ticket}: open contracts cannot claim complete qualification')
         path = root / owner['path']
         if not path.is_file():
             errors.append(f'{ticket}: missing ticket {path}')

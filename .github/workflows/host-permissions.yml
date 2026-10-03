@@ -1,0 +1,84 @@
+name: Permission qualification
+on:
+  pull_request:
+    paths:
+      - 'tools/host-profile/**'
+      - 'tests/host_*'
+      - '.github/workflows/host-permissions.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  permissions:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Linux dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ed busybox acl libbsd-dev
+      - name: Darwin dependencies
+        if: runner.os == 'macOS'
+        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+      - name: Supply exec-accessible disposable source tree
+        run: |
+          qualification=$(mktemp -d /tmp/cshell-permission.XXXXXX)
+          chmod 755 "$qualification"
+          for entry in Makefile Dockerfile .dockerignore src include tests tools docs; do
+            cp -R "$GITHUB_WORKSPACE/$entry" "$qualification/$entry"
+          done
+          echo "CSH_QUALIFICATION_ROOT=$qualification" >> "$GITHUB_ENV"
+      - name: Build isolated profile
+        working-directory: ${{ env.CSH_QUALIFICATION_ROOT }}
+        run: |
+          umask 022
+          make -j2 cshell host-profile build/tests/host_utility_helper build/tests/host_printf_faults
+      - name: Ordinary ownership and Darwin ACLs
+        working-directory: ${{ env.CSH_QUALIFICATION_ROOT }}
+        run: |
+          flags=()
+          if [ "$RUNNER_OS" = macOS ]; then flags+=(--darwin-acls); fi
+          python3 tests/host_permissions.py ./cshell --path "$PWD/build/host-profile/bin:$(getconf PATH)" --qualification-only "${flags[@]}" --record build/ordinary-qualification.json
+      - name: Linux controlled credentials and ownership
+        working-directory: ${{ env.CSH_QUALIFICATION_ROOT }}
+        if: runner.os == 'Linux'
+        run: |
+          sudo "$(command -v python3)" tests/host_permissions.py ./cshell --path "$PWD/build/host-profile/bin:$(getconf PATH)" --qualification-only --controlled-identities --record build/controlled-qualification.json
+      - name: Chmod mode and traversal regressions
+        working-directory: ${{ env.CSH_QUALIFICATION_ROOT }}
+        run: |
+          python3 tests/host_permissions.py ./cshell --path "$PWD/build/host-profile/bin:$(getconf PATH)" --vendor-residuals --case-prefix chmod/ --record build/chmod-qualification.json
+      - name: Linux strict unequal-ID ACLs
+        working-directory: ${{ env.CSH_QUALIFICATION_ROOT }}
+        if: runner.os == 'Linux'
+        run: |
+          sudo "$(command -v python3)" tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$PWD/build/host-profile/bin:$(getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults --controlled-identities --unequal-acl --record build/unequal-acl-qualification.json
+      - name: Linux selected newgrp sessions
+        working-directory: ${{ env.CSH_QUALIFICATION_ROOT }}
+        if: runner.os == 'Linux'
+        run: |
+          sudo "$(command -v python3)" tests/host_permissions.py ./cshell --path "$PWD/build/host-profile/bin:$(getconf PATH)" --session-controls --case-prefix newgrp/ --record build/newgrp-qualification.json
+      - name: Darwin controlled unequal credentials and ACLs
+        working-directory: ${{ env.CSH_QUALIFICATION_ROOT }}
+        if: runner.os == 'macOS'
+        run: |
+          sudo "$(command -v python3)" tests/host_permissions.py ./cshell --path "$PWD/build/host-profile/bin:$(getconf PATH)" --qualification-only --darwin-acls --darwin-credentials --record build/controlled-qualification.json
+      - name: Retain qualification records
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: permission-qualification-${{ runner.os }}
+          path: ${{ env.CSH_QUALIFICATION_ROOT }}/build/*qualification.json
+      - name: Remove disposable source tree
+        if: always()
+        run: |
+          case "$CSH_QUALIFICATION_ROOT" in
+            /tmp/cshell-permission.*) rm -rf "$CSH_QUALIFICATION_ROOT" ;;
+          esac

@@ -103,7 +103,7 @@ def cases(paths, helper, printf_faults, locales, controlled, unequal_acl=False):
                            controlled_fixture=kind)
 
 
-def setup_controlled(directory, kind):
+def setup_controlled(directory, kind, device_fixtures=None):
     """Root-only disposable Linux fixtures. Devices are created/stat'ed, never opened."""
     if isinstance(kind, dict):
         return setup_acl(directory, kind)
@@ -111,7 +111,16 @@ def setup_controlled(directory, kind):
     target = directory / 'controlled'
     if kind in ('block', 'character'):
         mode = stat.S_IFBLK if kind == 'block' else stat.S_IFCHR
-        os.mknod(target, mode | 0o600, os.makedev(7, 255) if kind == 'block' else os.makedev(1, 3))
+        if device_fixtures is None:
+            os.mknod(target, mode | 0o600, os.makedev(7, 255) if kind == 'block' else os.makedev(1, 3))
+        else:
+            source = (device_fixtures / kind).absolute()
+            witness = source.lstat()
+            if stat.S_IFMT(witness.st_mode) != mode:
+                raise OSError('supplied device witness has wrong type: ' + str(source))
+            # A parent namespace may supply private nodes when this namespace
+            # cannot mknod. These predicates only stat the target; never open it.
+            target.symlink_to(source)
     else:
         target.write_bytes(b'private\n')
         if kind == 'owner':
@@ -129,6 +138,11 @@ def setup_controlled(directory, kind):
     observed = target.stat()
     result = dict(kind=kind, uid=observed.st_uid, gid=observed.st_gid,
                   mode=oct(observed.st_mode), rdev=observed.st_rdev)
+    if kind in ('block', 'character') and device_fixtures is not None:
+        if (observed.st_dev, observed.st_ino) != (witness.st_dev, witness.st_ino):
+            raise OSError('supplied device witness changed during setup')
+        result['supplied_device'] = dict(path=str(source), device=witness.st_dev,
+                                         inode=witness.st_ino, stat_only=True)
     if kind == 'acl':
         result['acl'] = subprocess.check_output(['getfacl', '-cpn', str(target)], timeout=5).decode()
         verify_acl_metadata(dict(acl_entries='u::---,u:10001:r--,g::---,m::r--,o::---',
