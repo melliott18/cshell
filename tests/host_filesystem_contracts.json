@@ -11,7 +11,7 @@
       "utility": "basename",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/basename.html",
       "source_sha256": "76c256427a758fc4388559e7a71fcc9351ed0cfb19afc5af07d38c4cf25c8ab2",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "basename/path-6-620a",
@@ -92,7 +92,7 @@
       "utility": "dirname",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html",
       "source_sha256": "f218ded1508843cdd90913db7cd56ee938d43f67050d6f0645d88cbf916ec6c4",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "dirname/0",
@@ -170,7 +170,7 @@
       "utility": "cp",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html",
       "source_sha256": "777d1c06255117e8ea9d8c5ede3996ef77b7c5ddecd1cbf9e584deef239a5836",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "cp/bytes",
@@ -274,7 +274,7 @@
       "utility": "dd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dd.html",
       "source_sha256": "876cebeba49456b8e22b53057bc861120f092c36522193823685cea8b821e249",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "dd/copy",
@@ -373,7 +373,7 @@
       "utility": "df",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html",
       "source_sha256": "afbeec1b5e25c2ebf0de45fcffdcff03cf9f3bf4aa6960fc09b426cfc1a45a11",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "df/portable-k",
@@ -449,7 +449,7 @@
       "utility": "du",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html",
       "source_sha256": "659c1410d265ef1d4056a784611c6af0df45495f99ff9abfbdbc3c9eb516c100",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "du/file-k",
@@ -525,7 +525,7 @@
       "utility": "file",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html",
       "source_sha256": "c2e7590cab2534dbf4a0b3fbd8cc77312990c495c6a448243ca63c14074067bb",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "file/empty",
@@ -601,7 +601,7 @@
       "utility": "find",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html",
       "source_sha256": "6293363b063c9de0bc4d190b62a09d3cd03906a1fa40d3ddc52ecd6a09a62502",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "find/regular",
@@ -704,7 +704,7 @@
       "utility": "ln",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html",
       "source_sha256": "c4e793bb510483faef398e4c16fb7adc2d60b99c712ea7e6b5f2751a4c6c453c",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "ln/hard",
@@ -804,7 +804,7 @@
       "utility": "ls",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
       "source_sha256": "cd4db85f09dbadf3d529b1bf6a8c157806759c5a22d3ca616aad0cc0363f07bc",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "ls/512-c-order",
@@ -881,7 +881,7 @@
       "utility": "mkdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html",
       "source_sha256": "7d37d11b3829422919fbc928cf3e4e0e2c9ba3d0eaba2e2e36362e80f4086576",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "mkdir/parents",
@@ -973,7 +973,7 @@
       "utility": "mkfifo",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html",
       "source_sha256": "508f579e25f7ac32d94c2f57aef1a12448e4984fc60d467120cb2bb66157c3ed",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "mkfifo/mode",
@@ -1062,7 +1062,7 @@
       "utility": "mv",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mv.html",
       "source_sha256": "c17c6279d2fdf408e2aa82bd674d5eff5130f391361b2e175e4862d6c4a89662",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "mv/rename",
@@ -1152,7 +1152,7 @@
       "utility": "pathchk",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html",
       "source_sha256": "ce446d31316645a78d6aa4df6ff45829afbdbd3d667c84ae2c6a3bdfe0ce825a",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "pathchk/portable",
@@ -1230,7 +1230,7 @@
       "utility": "pax",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html",
       "source_sha256": "398b008eab3110cd482eee2e62797adaf915405e488b1f36bc73fc2a29591efb",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "pax/copy-tree",
@@ -1393,7 +1393,7 @@
       "utility": "pwd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html",
       "source_sha256": "6c0724e219d469ac68640fc07c825a95e090931483b9cee2d089dec136efd7f6",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "pwd/physical",
@@ -1469,7 +1469,7 @@
       "utility": "readlink",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html",
       "source_sha256": "b8af59cd805ca79ad73dab35ad008a55b9f8bbef0fc84ce7334ffac7b8f0f4dc",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "readlink/link",
@@ -1565,7 +1565,7 @@
       "utility": "realpath",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html",
       "source_sha256": "dfded63f96378a20c8952547dea666f07d0006e8868fa37a883b8553de684cc5",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "realpath/existing",
@@ -1672,7 +1672,7 @@
       "utility": "rm",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html",
       "source_sha256": "7ea788ea4ed4cc0f309bfc9681b650da0cbcec9d535604cb12bfd57fbddb9839",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "rm/file",
@@ -1767,7 +1767,7 @@
       "utility": "rmdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html",
       "source_sha256": "44451db47f43a6dfb058b6e8f71aee7db1fec99961573246380f7deb0c54bc9f",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "rmdir/empty",
@@ -1845,7 +1845,7 @@
       "utility": "touch",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html",
       "source_sha256": "ae8c1a8fc027372a6a50561b7c07bea8c30a471458ee72c00d7b35c039d756b7",
-      "owner": "CSH-079",
+      "owner": "CSH-083",
       "full_contract_qualified": false,
       "assertions": [
         "touch/reference",

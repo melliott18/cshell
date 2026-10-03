@@ -113,7 +113,7 @@ qualification is the exact passing case set, not complete utility pages.
   entries and controlled-terminal yes/no witnesses. Physical pwd is checked at
   a measured component-length boundary.
 - Each unqualified page section and remaining portion of all four retained
-  conditions transfers to concrete open [CSH-079](CSH-079-filesystem-remaining-contracts.md)
+  conditions transfers to concrete open [CSH-083](CSH-083-filesystem-remaining-contracts.md)
   ([#158](https://github.com/melliott18/cshell/issues/158)). Vendor ownership and
   original CSH-064 evidence are preserved. Quotas, mount boundaries, inaccessible
   ancestors, EIO and filesystem-capacity exhaustion are not declared supplied.
@@ -129,7 +129,7 @@ The traversal/link/metadata/archive/I/O extension adds the contracts and strict
 vendor audit described in [extended evidence](../evidence/csh-072/extended/README.md).
 The clause map distinguishes passing selected assertions, Linux-only capabilities
 and unresolved provider-audit assertions. Native find cycle detection and pax
-truncation/EPIPE/EFBIG failures remain open in CSH-079; their positive-error
+truncation/EPIPE/EFBIG failures remain open in CSH-083; their positive-error
 expectations are preserved, not weakened. The harness also rejects unarmed I/O
 faults and duplicate/FIFO archive output. The dedicated filesystem CI workflow
 retains strict audit failures separately from its required selected subset.
@@ -153,7 +153,7 @@ return failure. An overlapping partial-buffer move uses memmove. All previous
 cycle/archive/I/O assertions are mandatory for the selected profile; stock
 failures and the original evidence remain unchanged. See
 [repair evidence](../evidence/csh-072/repairs/README.md) for final results and
-[CSH-079 environment requirements](CSH-079-filesystem-remaining-contracts.md#required-environments-and-manual-work)
+[CSH-083 environment requirements](CSH-083-filesystem-remaining-contracts.md#required-environments-and-manual-work)
 for the broader remaining scope. Native macOS CI gets 90 minutes after the
 recorded 45-minute timeout during actively progressing sanitizer runtime tests.
 
@@ -180,4 +180,4 @@ assertions**, **570 native filesystem** and **586 hosted Ubuntu filesystem** all
 pass. Final pipe reaping now has a separate bounded wait after snapshot failure.
 CI cancels superseded workflow/ref runs instead of accumulating stale macOS jobs.
 Earlier failures remain recorded and broader missing capabilities remain owned
-by CSH-079.
+by CSH-083.

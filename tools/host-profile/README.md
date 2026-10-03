@@ -253,7 +253,7 @@ setup requires `file` and `pax`, supplied by Docker and CI.
 `make test-host-profile` requires the strict filesystem audit with these providers.
 `make test-host-filesystem-audit` retains stock-provider failures separately.
 See [filesystem scope and limits](../../docs/host-filesystem-evidence.md), including
-the 40-link missing-final fallback bound and remaining CSH-079 contracts. Neither
+the 40-link missing-final fallback bound and remaining CSH-083 contracts. Neither
 provider is installed over a system executable or linked into cshell.
 
 

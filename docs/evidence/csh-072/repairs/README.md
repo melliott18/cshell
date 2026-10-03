@@ -4,7 +4,7 @@ Five reproduced contracts are repaired in the opt-in PATH: find logical-cycle
 errors, pax truncated-input errors, EPIPE, final EFBIG/partial-write errors and
 ustar mode encoding. The historical stock failures remain real and unchanged.
 Complete utility pages and the broader environment-dependent contracts remain
-open under [CSH-079](../../../tickets/CSH-079-filesystem-remaining-contracts.md).
+open under [CSH-079](../../../tickets/CSH-083-filesystem-remaining-contracts.md).
 
 ## Results
 

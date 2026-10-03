@@ -75,7 +75,7 @@ covered by an existing ticket.
 | [CSH-076](tickets/CSH-076-host-locale-catalogs.md) | [U-034](posix-utilities.md#u-034), [U-040](posix-utilities.md#u-040) |
 | [CSH-077](tickets/CSH-077-host-terminal-utilities.md) | [U-034](posix-utilities.md#u-034), [U-040](posix-utilities.md#u-040) |
 | [CSH-078](tickets/CSH-078-host-service-utilities.md) | [U-034](posix-utilities.md#u-034), [U-040](posix-utilities.md#u-040) |
-| [CSH-079](tickets/CSH-079-filesystem-remaining-contracts.md) | [U-034](posix-utilities.md#u-034), [U-040](posix-utilities.md#u-040) |
+| [CSH-083](tickets/CSH-083-filesystem-remaining-contracts.md) | [U-034](posix-utilities.md#u-034), [U-040](posix-utilities.md#u-040) |
 
 CSH-069 owns the finite historical validation disposition ledger in the current review;
 it does not acquire implementation ownership for every family exercised by those runs.

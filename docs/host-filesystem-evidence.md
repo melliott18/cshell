@@ -2,7 +2,7 @@
 
 CSH-072 adds a **bounded selected profile** for 21 exec-accessible utilities.
 It does not qualify complete utility pages, U-034/U-040 as a whole, or a complete
-POSIX system. [CSH-079](tickets/CSH-079-filesystem-remaining-contracts.md) owns each
+POSIX system. [CSH-083](tickets/CSH-083-filesystem-remaining-contracts.md) owns each
 remaining contract and the four original retained conditions. Implementation
 ownership stays with the selected utility/libc/platform vendor.
 
@@ -93,7 +93,7 @@ The four retained condition IDs stay in the ownership ledger. CSH-072 supplies
 larger-directory, deep UTF-8 and terminal-prompt capabilities; inaccessible
 ancestors, total pathname limits, actual descriptor exhaustion, non-C collation,
 mount boundaries, quotas, filesystem-capacity exhaustion/EIO, further archive formats and other individual page
-contracts remain explicitly open in CSH-079. No protected mount or real disk
+contracts remain explicitly open in CSH-083. No protected mount or real disk
 contents are used. [Retained results and commands](evidence/csh-072/README.md)
 separate the stock audit, qualified subset and full-system limitations.
 
@@ -137,6 +137,6 @@ workflow status alone; detailed results and audit exit codes remain artifacts.
 failures and intermediate fixture/CI corrections. The
 [provider repair evidence](evidence/csh-072/repairs/README.md) records the new
 selected scope and its integration checks. The
-[remaining-environment table](tickets/CSH-079-filesystem-remaining-contracts.md#required-environments-and-manual-work)
+[remaining-environment table](tickets/CSH-083-filesystem-remaining-contracts.md#required-environments-and-manual-work)
 distinguishes automated local work, disposable privileged environments and any
 separate physical-terminal claim.
