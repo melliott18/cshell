@@ -1416,3 +1416,23 @@ rows and unassigned conditional prerequisite reports. Regression checks exercise
 these failure cases and the runner's emitted ownership without invoking utilities.
 This is an accounting check, not a conformance suite. See the
 [current individual contracts](host-system-inventory.md#current-contract-ownership).
+
+## Terminal and session providers (CSH-077)
+
+`make test-host-terminal` tests stock providers; known contract failures stay
+strict. `make test-host-terminal-profile` tests the opt-in repaired subset.
+`make test-host-profile` includes the latter, `test-host-terminal-effects`
+(90 real-byte, descriptor-priority and private-record assertions), and
+`test-host-terminal-harness`.
+The [section map](host-terminal-contracts.md) defines all 133 cases, five paths,
+bounds, independent oracles and remaining CSH-081 contracts. No real login
+records or recipient terminals are changed. Linux requires `ncurses-bin` and
+`bsdextrautils` (included in Docker/CI); native macOS uses system tic/write.
+Use `HOST_TERMINAL_FLAGS=--case=tty/` only for diagnosis.
+
+The Linux registered-session subset is opt-in and requires a private mount
+namespace. The [isolating command and scope](host-terminal-contracts.md#controlled-data-and-session-extension)
+cover 47 strict session assertions with dropped credentials, including EOT,
+sender alerts, canonical editing and synchronized SIGINT. The [repair evidence](evidence/csh-077-repairs/README.md)
+retains current normal and sanitizer results separately; earlier extension
+evidence remains unchanged. No physical hardware was supplied.

@@ -1,0 +1,74 @@
+name: Terminal qualification
+
+on:
+  pull_request:
+    paths:
+      - 'tests/host_terminal*'
+      - 'tests/test_host_terminal.py'
+      - 'tests/host_registered_sessions.py'
+      - 'tests/host_session_records.c'
+      - 'tools/host-profile/**'
+      - '.github/workflows/terminal-qualification.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  terminal:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Linux providers
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y busybox ncurses-bin libncurses-dev bsdextrautils
+      - name: macOS profile providers
+        if: runner.os == 'macOS'
+        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+      - name: Strict terminal and data-effect subsets
+        run: make -j2 test-host-terminal-profile test-host-terminal-effects test-host-terminal-harness
+      - name: Isolated registered sessions
+        if: runner.os == 'Linux'
+        run: |
+          sudo unshare --mount --propagation private --fork \
+            python3 tests/host_registered_sessions.py ./cshell \
+            --path "$PWD/build/host-profile/bin:$(getconf PATH)" \
+            --record build/tests/host-registered-sessions.json
+      - name: Preserve normal records before sanitizer rebuild
+        if: always()
+        run: |
+          mkdir -p build/terminal-evidence
+          cp build/tests/host-terminal*.json build/terminal-evidence/ || true
+          cp build/tests/host-registered-sessions.json build/terminal-evidence/ || true
+      - name: Sanitized terminal subsets
+        env:
+          ASAN_OPTIONS: halt_on_error=1:detect_leaks=0
+          UBSAN_OPTIONS: halt_on_error=1
+          MallocNanoZone: '0'
+        run: |
+          make -B -j2 test-host-terminal-profile test-host-terminal-effects test-host-terminal-harness \
+            CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' \
+            LDFLAGS='-fsanitize=address,undefined'
+      - name: Sanitized isolated sessions
+        if: runner.os == 'Linux'
+        run: |
+          sudo env ASAN_OPTIONS=halt_on_error=1:detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1 \
+            unshare --mount --propagation private --fork \
+            python3 tests/host_registered_sessions.py ./cshell \
+            --path "$PWD/build/host-profile/bin:$(getconf PATH)" \
+            --record build/tests/host-registered-sessions-asan.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: terminal-${{ matrix.os }}
+          path: |
+            build/tests/host-terminal*.json
+            build/tests/host-registered-sessions*.json
+            build/terminal-evidence/*.json

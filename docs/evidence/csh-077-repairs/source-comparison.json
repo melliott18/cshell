@@ -1,0 +1,8 @@
+{
+  "hosted_final_matches_current_build_test_sources": true,
+  "current_source_sha256": "d76ab2355c0f5f5b2e546edd437ffb5df76ace331f02bce514d0fa35c6874eb0",
+  "native_changed_source_files": [
+    "tools/host-profile/vendor/write.c"
+  ],
+  "native_normal_write_binary_unchanged": true
+}

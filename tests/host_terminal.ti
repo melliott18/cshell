@@ -1,0 +1,15 @@
+# CSH-077 authored fixture. No inheritance from the host terminal database.
+# Five repetitive stops at a width of 40; literal capabilities have no padding.
+csh077|CSH-077 disposable terminal,
+    cols#41, lines#24,
+    clear=CLEAR, is2=INIT, rs2=RESET,
+    tbc=CLEAR_TABS, hts=SET_TAB, cr=^M,
+
+csh077plain|CSH-077 terminal without hardware tabs,
+    cols#41, lines#24, clear=CLEAR, is2=INIT, rs2=RESET,
+
+csh077empty|CSH-077 known terminal with no operations,
+    cols#41, lines#24,
+
+csh077partial|CSH-077 terminal without clear,
+    cols#41, lines#24, is2=INIT, rs2=RESET,

@@ -68,3 +68,7 @@ The [CSH-012 requirement, defect, platform and documentation review](conformance
 
 - [Shell locale and pathname qualification](locale-pathname-qualification.md):
   CSH-067 clauses, exact witnesses, supplied definitions and external prerequisites.
+
+[CSH-077 terminal/session section map](host-terminal-contracts.md) records the
+strict selected profile and [CSH-081](tickets/CSH-081-host-terminal-residual-contracts.md)
+ownership of unqualified full contracts and physical-terminal prerequisites.

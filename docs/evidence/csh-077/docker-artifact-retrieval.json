@@ -1,0 +1,14 @@
+{
+  "result": "Docker API HTTP 500 after successful final test logs",
+  "unretrieved": [
+    "csh077-verified:/work/build/tests/host-terminal-profile-results.json",
+    "csh077-verified:/work/build/tests/host-profile-results.json",
+    "csh077-validation:/work/build/tests/host-terminal-profile-results.json"
+  ],
+  "image_inspection": "unavailable",
+  "removal_unconfirmed": [
+    "csh077-verified",
+    "csh077-validation"
+  ],
+  "build_log_image_sha256": "7f8c2915d18ff04ec55c73b1882945dbba0d75c51fd51e23007a82cafe25096a"
+}
