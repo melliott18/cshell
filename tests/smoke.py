@@ -238,12 +238,32 @@ def capture(binary, case, directory, timeout, output_limit, file_size_limit=None
                     if diagnostics is not None:
                         diagnostics['timeout_seconds'] = time.monotonic() - started
                         try:
-                            snapshot = subprocess.run(
-                                ['/bin/ps', '-p', str(process.pid), '-o',
-                                 'pid=,ppid=,pgid=,stat=,wchan=,comm='],
-                                capture_output=True, text=True, timeout=0.5)
+                            # A shell leader may be waiting normally while its
+                            # child is stalled. Retain both, without recording
+                            # unrelated processes or command-line arguments.
+                            with tempfile.TemporaryFile() as listing:
+                                snapshot = subprocess.run(
+                                    ['/bin/ps', '-axo',
+                                     'pid=,ppid=,pgid=,stat=,wchan=,comm='],
+                                    stdout=listing, stderr=subprocess.PIPE, timeout=0.5)
+                                listing.seek(0)
+                                raw = listing.read(1024 * 1024 + 1)
+                            if len(raw) > 1024 * 1024:
+                                raise OSError('timeout process snapshot exceeds 1 MiB')
+                            leader, group = [], []
+                            for line in raw.decode(errors='replace').splitlines():
+                                columns = line.split(None, 5)
+                                if len(columns) < 6:
+                                    continue
+                                if columns[0] == str(process.pid):
+                                    leader.append(line)
+                                if columns[2] == str(process.pid):
+                                    group.append(line)
                             diagnostics['timeout_process'] = dict(status=snapshot.returncode,
-                                stdout=snapshot.stdout[:4096], stderr=snapshot.stderr[:4096])
+                                stdout='\n'.join(leader)[:4096],
+                                stderr=snapshot.stderr.decode(errors='replace')[:4096])
+                            diagnostics['timeout_group'] = dict(pgid=process.pid,
+                                stdout='\n'.join(group)[:16384])
                         except (OSError, subprocess.SubprocessError) as error:
                             diagnostics['timeout_process_error'] = str(error)
                     break

@@ -161,3 +161,13 @@ reap budget; final pipe cleanup now has a separate one-second leader wait.
 Permission evidence includes PID, timing, reap state and a bounded timeout
 process snapshot. Native and Linux each pass 88 harness and six permission-
 harness tests. The original failed run remains immutable.
+
+[Observer follow-up](../evidence/csh-071-chgrp-observer/README.md) adds 2,000
+passing named/numeric replays, including `/bin/sh` controls, with the same
+executables. Short delays occur outside cshell too; no natural five-second
+stall or usable stack was captured. Timeout evidence now retains the owned
+process group as well as its leader, verified with a real hung parent/child
+regression on macOS and Linux. Each platform passes 31 pipe harness tests;
+the six native permission-harness tests also pass. A deliberate sleep control
+confirms local stack sampling works without another macOS environment. The
+original stall remains unresolved pending a captured recurrence.
