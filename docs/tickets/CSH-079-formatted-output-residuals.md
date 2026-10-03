@@ -7,6 +7,7 @@
 - Depends on: CSH-052, CSH-056
 - Branch: `test/CSH-079-formatted-output-environments`
 - Issue: [#157](https://github.com/melliott18/cshell/issues/157)
+- Pull request: [#175](https://github.com/melliott18/cshell/pull/175)
 
 ## Goal
 
@@ -120,3 +121,21 @@ unkillable-process observation remains unresolved; no root-cause or vendor-fix
 claim follows. Timeout cleanup is independently exercised before and after
 exec. Checked acceptance boxes refer to this scoped investigation and the
 explicit individual dispositions, not universal qualification or ticket closure.
+
+
+## Final validation
+
+At assertion/provider revision `fd3cba6`, native formatted qualification passes
+693 assertions; Docker/Linux normal and instrumented qualification each pass
+698. Both complete host profiles pass 1,162 assertions with zero allowances.
+Native ordinary-provider sanitizers pass 602 assertions; separately instrumented
+new native helpers pass 34. Native and Linux runtime/PTY integrations pass
+3,950 runtime cases and all PTY stages, with 95 harness self-tests. Hosted macOS
+and Ubuntu each pass 688 contract assertions. The retained disposable Darwin
+low-stack diagnostic fails with SIGSEGV and successful cleanup as described
+above. Current ownership checks and the retained-evidence audit pass.
+
+[Final identities, limitations and reproduction details](../evidence/csh-079/README.md#final-validation)
+retain every failed, interrupted and successful attempt separately. All newly
+owned local containers were stopped and removed. This is a reviewable bounded
+implementation, with the individual unqualified contracts still open here.

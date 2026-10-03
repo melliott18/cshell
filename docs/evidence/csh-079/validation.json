@@ -1,0 +1,119 @@
+{
+  "source_revision": "fd3cba6",
+  "final_build_test_input_sha256": "e464f6ac2834009d7a4a6c50b648b099dd3a171ba94327a04b92c15472b299b9",
+  "results": {
+    "native-verified": {
+      "totals": {
+        "PASS": 693,
+        "FAIL": 0
+      },
+      "platform": "macOS-14.8.7-arm64-arm-64bit",
+      "source_identity": "e464f6ac2834009d7a4a6c50b648b099dd3a171ba94327a04b92c15472b299b9",
+      "binary_sha256": "1366988642c41424c2d0a1099e9deff76109f8af8d2f178628f271c17b825409"
+    },
+    "native-sanitizer-verified": {
+      "totals": {
+        "PASS": 602,
+        "FAIL": 0
+      },
+      "platform": "macOS-14.8.7-arm64-arm-64bit",
+      "source_identity": "e464f6ac2834009d7a4a6c50b648b099dd3a171ba94327a04b92c15472b299b9",
+      "binary_sha256": "1366988642c41424c2d0a1099e9deff76109f8af8d2f178628f271c17b825409"
+    },
+    "native-profile-verified": {
+      "totals": {
+        "passed": 1162,
+        "failed": 0,
+        "gaps": 0
+      },
+      "platform": "macOS-14.8.7-arm64-arm-64bit",
+      "source_identity": "e464f6ac2834009d7a4a6c50b648b099dd3a171ba94327a04b92c15472b299b9",
+      "binary_sha256": "1366988642c41424c2d0a1099e9deff76109f8af8d2f178628f271c17b825409"
+    },
+    "linux-verified-normal": {
+      "totals": {
+        "PASS": 698,
+        "FAIL": 0
+      },
+      "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+      "source_identity": "e464f6ac2834009d7a4a6c50b648b099dd3a171ba94327a04b92c15472b299b9",
+      "binary_sha256": "01db4d7d05f8d91402df59d7bb90debaf3c03b7fdd88f5066316a0b16574175d"
+    },
+    "linux-verified-sanitizer": {
+      "totals": {
+        "PASS": 698,
+        "FAIL": 0
+      },
+      "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+      "source_identity": "e464f6ac2834009d7a4a6c50b648b099dd3a171ba94327a04b92c15472b299b9",
+      "binary_sha256": "8b48fb8a1dff9575c8b19ffac8a6a946426b362de6eb426f556677a72c8dacf0"
+    },
+    "linux-verified-profile": {
+      "totals": {
+        "passed": 1162,
+        "failed": 0,
+        "gaps": 0
+      },
+      "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+      "source_identity": "e464f6ac2834009d7a4a6c50b648b099dd3a171ba94327a04b92c15472b299b9",
+      "binary_sha256": "01db4d7d05f8d91402df59d7bb90debaf3c03b7fdd88f5066316a0b16574175d"
+    },
+    "linux-verified-sanitizer-profile": {
+      "totals": {
+        "passed": 1162,
+        "failed": 0,
+        "gaps": 0
+      },
+      "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+      "source_identity": "e464f6ac2834009d7a4a6c50b648b099dd3a171ba94327a04b92c15472b299b9",
+      "binary_sha256": "8b48fb8a1dff9575c8b19ffac8a6a946426b362de6eb426f556677a72c8dacf0"
+    },
+    "native-integration.log": {
+      "results": [
+        "Result: 3950 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 30 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 33 passed, 0 failed, 0 skipped"
+      ],
+      "harness": [
+        "Ran 95 tests in 22.570s"
+      ]
+    },
+    "linux-verified-normal.log": {
+      "results": [
+        "Result: 1162 passed, 0 failed, 0 gaps",
+        "Result: 3950 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 30 passed, 0 failed, 0 skipped",
+        "Result: 1 passed, 0 failed, 0 skipped",
+        "Result: 33 passed, 0 failed, 0 skipped"
+      ],
+      "harness": [
+        "Ran 10 tests in 0.127s",
+        "Ran 8 tests in 0.364s",
+        "Ran 95 tests in 15.097s"
+      ]
+    }
+  },
+  "normal_flags": "-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2",
+  "linux_sanitizer_flags": "-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+  "linux_sanitizer_ldflags": "-fsanitize=address,undefined",
+  "workflow_sha256": "c8f4b3a3350404faa74e4303171c6b00f99a7f03260015e1f98d9c2d3e7a3694",
+  "post_validation_changes": {
+    "tests/host_contracts.json": {
+      "scope": "ownership text updated with actual hosted diagnostic disposition; assertions and providers unchanged",
+      "sha256": "10d185be0a8152c6e64a6f63b2ca6b92a1953c76bd582d06e9a4cb506f6b17a5"
+    }
+  },
+  "hosted_final": {
+    "databaseId": 37138543435,
+    "headSha": "fd3cba6aa9dffb2b9285a9d4dbeefad86361a06a",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "qualified_linux_integration": {
+    "exit_status": 0,
+    "log": "linux-qualified-integration.log"
+  }
+}

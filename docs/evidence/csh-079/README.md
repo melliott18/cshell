@@ -185,3 +185,45 @@ probes. The separate `--sanitizer` option still selects dedicated instrumented
 provider paths and omits the resource probes. Both disable leak/symbolizer
 subprocesses but retain ASan/UBSan error detection. The focused sanitizer retry
 and ordinary Linux runtime/PTY stages have separate records and outcomes.
+
+### Final validation
+
+Implementation/assertion revision: `fd3cba6`. Final build/test input SHA-256:
+`e464f6ac2834009d7a4a6c50b648b099dd3a171ba94327a04b92c15472b299b9`.
+Subsequent evidence and ownership-description updates do not change assertion,
+provider or supervisor code; the updated ownership ledger is checked separately.
+[Summary](validation.json), [archive inventory](inventory.json) and
+[retained runs](runs.tar.gz) contain commands/logs, source manifests, executable
+identities and failed/intermediate attempts. `python3 docs/evidence/csh-079/audit.py`
+checks the archive hashes, exact passing totals, the retained crash, and cleanup.
+
+| Environment / stage | Outcome |
+| --- | --- |
+| macOS 14.8.7, Darwin 23.6.0 arm64, Apple Clang 15; `make test-host-inventory test-host-formatted test-host-profile` | 693 formatted assertions, 1,162 host-profile assertions, ten ownership regressions and eight focused harness regressions pass; zero allowances. Darwin internal-libc exhaustion and low-stack capacities remain explicitly unqualified. |
+| Same native host; `make test-host-formatted-sanitize` | 602 ordinary provider assertions pass under ASan/UBSan; omitted resource/failure scope is explicit. Separately compiled instrumented helpers pass all 34 new API-error/interruption assertions. |
+| Same native shell binary; qualified-PATH `make test-runtime test-pty test-harness` | 3,950 runtime assertions, all PTY stages (1 notification, 30 jobs, 1 failure-control, 33 runtime cases) and 95 harness tests pass. |
+| Debian bookworm, Linux 6.4.16-linuxkit aarch64, GCC 12.2/glibc 2.36; normal full profile | 698 formatted assertions and 1,162 host-profile assertions pass, zero allowances; inventory and eight focused regressions pass. |
+| Same Docker image source; clean ASan/UBSan build with normal-path `--instrumented` qualification | All 698 formatted and 1,162 host-profile assertions pass, including actual interrupted I/O and API-error helpers. Resource helper deliberately excludes sanitizer flags. No sanitizer diagnostics; LeakSanitizer is not qualified. |
+| Same Docker source; normal runtime, PTY and harness | 3,950 runtime assertions, all PTY stages and 95 harness tests pass. A separate qualified-PATH runtime/PTY invocation passes the same strict assertions. |
+| Hosted Darwin 24.6.0 arm64 and Ubuntu x86_64; focused contracts at the final implementation source | 688 assertions per platform pass. Hosted source/kernel/compiler identities are retained. |
+| Hosted disposable Darwin low-stack diagnostic at `d9c4d09` | FAIL retained: SIGSEGV at 1 MiB stack; every child reaped/absent. Four 8 MiB configurations pass; unattempted low-stack combinations are not promoted. |
+
+The local Linux sanitizer retry explicitly separates focused instrumented
+provider qualification from ordinary runtime/PTY integration. The earlier
+unfinished broad sanitizer runtime run is not reported as passing. The source
+has no changed production cshell module. Native integration uses the same
+binary SHA-256 as the final native formatted record.
+
+All CSH-079-owned local containers were observed stopped with PID 0, removed,
+and an empty final name-filter inventory recorded. The historical
+`cshell-csh070-extra-2` container was observed already stopped with PID 0 and
+exit status 2; this is present-state evidence, not a successful historical run.
+No engine reset or cleanup of unrelated containers was performed.
+
+Normal flags are `-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2`. Linux sanitizer
+flags add `-Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer`
+with `LDFLAGS=-fsanitize=address,undefined`. The dedicated native sanitizer
+target's exact compilation is in its log; manually instrumented new helpers
+also used `-Wshadow -Werror`. Python warning-as-error compilation and
+`git diff --check` pass. Historical observations retain their original hashes
+and are not overwritten by these results.

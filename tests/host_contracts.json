@@ -19,7 +19,7 @@
         "U-036/alternative-policies",
         "U-036/argument-limits"
       ],
-      "prerequisite": "CSH-079 supplies EUC-JP, denied catalog, numeric boundary, caught-EINTR/default-SIGALRM and libc API-error witnesses. Still requires internal Darwin libc allocation injection, further codesets/catalogs and a disposable macOS kernel/exec environment; see the individual dispositions in docs/evidence/csh-079/README.md."
+      "prerequisite": "CSH-079 supplies EUC-JP, denied catalog, numeric boundary, caught-EINTR/default-SIGALRM and libc API-error witnesses. Hosted Darwin 24.6.0 reproduces a low-stack SIGSEGV with verified cleanup. Original Darwin 23.6.0 stuck-exec diagnosis, internal libc allocation injection and further codesets/catalogs remain open; see docs/evidence/csh-079/README.md."
     },
     {
       "ticket": "CSH-071",
@@ -267,7 +267,7 @@
     "U-036/argument-limits": {
       "ticket": "CSH-079",
       "evidence": "docs/evidence/csh-079/README.md",
-      "boundary": "Safe native/Linux thresholds record every successful child reap and PID disappearance. Darwin low-stack calls are rejected before launch. Prior seven unkillable PIDs and native inventory failures remain unresolved; disposable macOS with reset capability is not supplied.",
+      "boundary": "Safe native/Linux thresholds own each child before exec and verify reap/PID disappearance. Ordinary Darwin low-stack calls are rejected before launch. Disposable hosted Darwin 24.6.0 passed four 8 MiB controls then failed at 1 MiB with SIGSEGV; every child was reaped and absent. Other low-stack configurations and original Darwin 23.6.0 stuck-exec/ps failures remain open.",
       "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
     }
   }
