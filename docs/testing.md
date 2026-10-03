@@ -1416,3 +1416,52 @@ rows and unassigned conditional prerequisite reports. Regression checks exercise
 these failure cases and the runner's emitted ownership without invoking utilities.
 This is an accounting check, not a conformance suite. See the
 [current individual contracts](host-system-inventory.md#current-contract-ownership).
+
+
+## Host text and byte stream contracts (CSH-073)
+
+`make test-host-text` checks the declared stock-PATH subset through direct exec
+and all three public cshell invocation modes. `make test-host-profile` includes
+the same cases with the opt-in PATH. `make test-host-text-audit` additionally
+executes strict still-unqualified provider contracts and currently returns
+failure on the recorded macOS and Debian providers. No failed audit assertion
+is treated as a passing subset result or a known-gap allowance.
+
+JSON is written to `build/tests/host-text-results.json` or
+`build/tests/host-text-audit.json`, including per-case expected/actual bytes,
+status, effects, setup failures, cleanup, source hashes and provider identities.
+`HOST_TEXT_FLAGS='--capacity-root /capacity'` selects an explicitly supplied
+small disposable filesystem; use a dedicated Docker tmpfs, never a working
+filesystem. Missing native blocked-write/capacity capabilities are individually
+unavailable, not passing tests. `make test-host-text-harness` checks independent
+CRC answers, rejection of wrong output/effects, timeout cleanup, and section
+accounting mutations. `make test-host-inventory` also validates the new ledger.
+See [qualification scope and reproduction](host-text-contracts.md).
+
+
+The CSH-073 transformation/offset/large-input extension runs in the same
+`test-host-text` and `test-host-profile` targets. Reports now include separate
+`qualification_groups` totals. File recipes permit exact multi-MiB comparisons
+without unbounded capture; negative controls reject changed, short and extra
+bytes. `Host text qualification` CI retains native and Docker JSON artifacts
+and separate strict-audit statuses, even if other shell jobs fail.
+
+
+For CSH-073's repaired provider selection, `make test-host-text-repaired`
+explicitly downloads checksum-pinned sources, builds into `build/text-providers`,
+verifies the executables while provisioning the existing opt-in host profile,
+and runs the strict audit. See [provider setup and remaining environment needs](../tools/host-profile/text/README.md).
+`make test-host-text-audit` retains stock-provider failures. Neither target
+installs over system tools. Repaired CI also tests public runtime and PTY
+fixtures with the selected PATH; disposable Debian capacity is recorded separately.
+
+
+CSH-073 native capability and fault targets require the repaired profile above.
+`make test-host-text-native-capacity` uses an owned macOS disk image and verifies
+attachment, ENOSPC, detachment and removal. Blocked writers are observed with
+`sample` on Darwin or `/proc/PID/wchan` on Linux before TERM delivery.
+`make test-host-text-faults` requires injection attestation and exact outputs for
+24 source-provider faults; it never injects faults into the shell itself.
+The deliberate SIGQUIT child in the native jobs fault module clears inherited
+Mach crash/corpse exception ports before signal delivery, preserving the default
+signal status while avoiding a launcher crash-reporting dependency.

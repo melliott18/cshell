@@ -212,3 +212,13 @@ defect. [The completion record](evidence/csh-064-completion/README.md) validates
 process-group cleanup and descendant reaping through the actual nested path.
 The ticket records acceptance; this repair is independent of the external
 capabilities required for vendor requalification.
+
+
+## CSH-073 text stream subset
+
+The [text/byte clause map](host-text-contracts.md) and
+[section ledger](../tests/host_text_contracts.json) add bounded assertions for all 25 CSH-073 utilities,
+sparse offsets, owned signal fixtures and explicitly supplied Linux ENOSPC.
+The strict provider audit retains failed contracts separately; no full utility
+page or common-default family is promoted. CSH-073 remains open for the listed
+residuals, with CSH-074 sharing the ed signal requirement.

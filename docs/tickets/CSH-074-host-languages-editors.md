@@ -85,3 +85,15 @@ processes and disposable files/services and verify cleanup after failure/timeout
 Work has not started. CSH-068 transfers ownership only; it supplies no new vendor
 implementation, service, privileged host or physical terminal. CSH-064 remains
 done for its bounded capability work and repaired probe cleanup.
+
+
+## Shared interruption witness with CSH-073
+
+[CSH-073's signal fixtures](../host-text-contracts.md#retained-conditions-and-signals)
+explicitly supply ed changed-buffer HUP saving and a strict SIGINT response/
+recovery audit. The selected macOS ed writes the response to stderr with an
+extra newline; GNU ed adds a leading newline on stdout. Both fail the strict
+`?\n` stdout assertion. HUP saving is a separate bounded pass. CSH-074 owns the
+ed provider repair and full-page qualification; CSH-073 retains the shared
+`U-040/other-interruptions` condition and fixture. No passing sleep or cat signal
+case qualifies ed recovery. See [retained results](../evidence/csh-073/README.md).

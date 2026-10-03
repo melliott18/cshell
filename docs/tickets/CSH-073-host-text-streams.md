@@ -1,11 +1,11 @@
 # CSH-073: Qualify host text and byte stream utilities
 
-- Status: ready
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: Assigned when work starts
+- Branch: test/CSH-073-host-text-streams
 - Issue: [#145](https://github.com/melliott18/cshell/issues/145)
 
 ## Goal
@@ -77,7 +77,7 @@ profiles and executable/environment identities, remains unchanged.
 
 ## Acceptance criteria
 
-- [ ] Select each required exec-accessible provider, supply missing packages/services,
+- [x] Select each required exec-accessible provider, supply missing packages/services,
   and retain exact PATH, realpath, executable hash, package and environment identity.
 - [ ] Map every applicable page section and common default to clause-derived
   assertions or an individually justified disposition; repair required-contract
@@ -85,9 +85,9 @@ profiles and executable/environment identities, remains unchanged.
 - [ ] Resolve each assigned retained condition with its required capability and
   strict evidence, or transfer that individual condition to a concrete open owner.
   Preserve vendor ownership, setup failures and failed assertions separately.
-- [ ] Verify public cshell dispatch and direct exec access, exact output/status and
+- [x] Verify public cshell dispatch and direct exec access, exact output/status and
   relevant effects, with zero gap allowances for every declared qualified subset.
-- [ ] Update the inventory, current ownership manifest and clause maps with the
+- [x] Update the inventory, current ownership manifest and clause maps with the
   exact qualification boundary; keep stock-host, qualified subset and full-system
   claims separate.
 
@@ -103,6 +103,129 @@ processes and disposable files/services and verify cleanup after failure/timeout
 
 ## Implementation notes/evidence
 
-Work has not started. CSH-068 transfers ownership only; it supplies no new vendor
-implementation, service, privileged host or physical terminal. CSH-064 remains
-done for its bounded capability work and repaired probe cleanup.
+The [implementation and clause map](../host-text-contracts.md) supplies strict
+independent byte/text oracles for all 25 utilities, four execution modes,
+per-page section accounting, owned signal fixtures shared with CSH-074, a
+2 GiB sparse offset, and disposable Linux filesystem exhaustion. The
+[machine section ledger](../../tests/host_text_contracts.json) is checked by
+`make test-host-inventory`; `tests/host_contracts.json` links that map without
+rewriting immutable earlier evidence.
+
+This change is ready for review as qualification infrastructure and bounded
+evidence. **Full ticket acceptance remains open.** The unchecked criteria retain
+complete-page coverage obligations; the historical failures and capability gaps
+are preserved below alongside subsequent repairs. CSH-073 remains the concrete
+open qualification owner for every utility and condition listed above. Selected
+vendors own implementation repairs; CSH-074 shares the ed recovery repair.
+The individually described remaining contracts are in the section ledger and
+clause map. No wholesale utility or U-034/U-040 promotion is made.
+
+The [all-attempt record](../evidence/csh-073/README.md) distinguishes exploratory
+fixture corrections, strict vendor failures, passing subsets and unavailable
+capabilities. Use `make test-host-text-audit` to reproduce the unqualified
+requirements without changing expectations. CSH-064 remains done for its
+historical bounded work and repaired probe cleanup.
+
+
+### Validation results
+
+Final focused subset: native macOS **532 pass, 0 fail, 8 unavailable**;
+Docker/Linux **540 pass, 0 fail**. Final strict audit: native **548 pass,
+14 fail, 8 unavailable**; Docker **552 pass, 18 fail**. Both retain nonzero
+statuses for failed audits. Both pass inventory/section accounting and all
+eight new harness regression tests. Native `make test-host-profile` retains
+one existing PTY cleanup `ps` timeout (1161 pass, 1 fail); Docker's full profile
+passes (1162 prior assertions plus 540 text assertions). The final ed prompt
+handshake/capture hardening is validated by the later focused completion runs.
+Exact commands, source/provider identities, all attempts and diagnoses are in
+the linked evidence. No native full-profile pass or complete utility
+qualification is claimed.
+
+
+### Transformation, offset, large-input and interruption extension
+
+The [four-group qualification](../host-text-contracts.md#transformation-offset-large-input-and-interruption-qualification)
+adds 194 strict assertions: 68 transformations, 56 offsets, 48 large-input
+assertions and 22 owned signal assertions. Large byte-for-byte comparisons
+include 8 MiB copies, 1 MiB transformations and one million lines. SIGINT,
+SIGPIPE, measured STOP/CONT resumption and tee -i continued copying are distinct
+from earlier TERM termination and failed ed recovery. Native SIGPIPE now has
+portable write evidence; already-blocked write observation remains a separate
+unavailable capability. Exact qualification and new retained attempts are in
+[extension evidence](../evidence/csh-073-extensions/README.md).
+
+Final extension subset results: macOS 14.8.7 **726 pass, 0 fail, 8 unavailable**;
+Ubuntu **732 pass, 0 fail, 2 unavailable**; Debian **734 pass, 0 fail,
+0 unavailable**. All 194 added assertions pass in each environment, with no
+unavailable extension rows. All 12 harness regressions pass. Final Linux strict
+audits retain 18 vendor failures each; the retained native audit has 14.
+The dedicated [hosted run](https://github.com/melliott18/cshell/actions/runs/36644920521)
+completed Ubuntu and Debian successfully; macOS 15 was queued at evidence
+capture. Local Docker API failure is retained separately from hosted Debian
+success. Full ticket acceptance remains open.
+
+
+### Pinned provider repairs
+
+The [selected replacement profile](../../tools/host-profile/text/README.md)
+adds checksum-pinned GNU coreutils 9.11 (head/cut/tsort), GNU sed 4.9,
+GNU ed 1.22.6 with an exact SIGINT-output patch, and the Chimerautils/FreeBSD
+tail port on Linux. System tools and shell source are unchanged. Provisioning
+verifies binary hashes before selecting replacements; stock audit failures
+remain reproducible. Seven further audit cases add 28 cross-mode assertions
+for multibyte range endpoints, reverse counts/large input and acyclic tsort -w.
+
+All known text audit failures are automated and repaired for this selected
+profile. Native capacity and blocked-write observation still need specific
+Darwin test capabilities; actual EINTR/short-write/allocation recovery needs
+controlled fault injection. None requires manual terminal testing. Complete
+utility-page coverage and full CSH-073 acceptance remain open.
+
+Validation and all attempts are retained in
+[provider repair evidence](../evidence/csh-073-providers/README.md).
+
+Final strict repaired audits at `4f3de8e`: macOS **784 pass, 0 fail,
+8 unavailable**; Ubuntu **790 pass, 0 fail, 2 unavailable**; Debian **792 pass,
+0 fail, 0 unavailable**. All 14 harness regressions pass. Both final Linux
+jobs pass runtime and PTY regressions. Native broader host-profile validation
+passes 1162 existing assertions plus 726 text-subset assertions; public runtime
+and job-control cases pass. A separate native job-control fault module times
+out with both repaired and stock PATH, including failed cleanup of three
+Darwin UE-state children despite SIGKILL. Those exact failures remain retained;
+no complete native PTY pass is claimed. The final native strict text audit is
+unaffected. macOS 15 CI remained queued at evidence capture.
+
+
+### Native capability and fault follow-up
+
+Native blocked-write observation now uses an owned-process `sample` call graph;
+a private `hdiutil` FAT12 image provides automated native ENOSPC. Test-only
+interposition adds 24 attested assertions for read EINTR/EIO, short reads,
+cat short/EINTR writes and sed buffer-growth ENOMEM. Source-built GNU cat and
+checksum-pinned diffutils 3.10 cmp permit injection without changing system
+executables. A local sed patch diagnoses getdelim failure without ferror/EOF;
+the unpatched native provider returned silent success in both execution modes.
+
+The native job-control fault harness clears inherited Mach crash/corpse ports
+only for its deliberate SIGQUIT child. Sampling localized the earlier hang to
+pending fatal-signal delivery at sigprocmask. The unchanged module assertions
+now pass. Three previously stuck UE-state children remain an OS cleanup issue;
+no restart or reboot is performed by this change.
+
+Final audits at `c209012`: macOS **792 pass, 0 fail, 0 unavailable**;
+Ubuntu **790 pass, 0 fail, 2 capacity checks unavailable**; Debian **792 pass,
+0 fail, 0 unavailable**. All **24 attested faults** pass on each environment,
+as do all 17 harness regressions. Complete native and hosted Linux runtime/PTY
+regressions pass. Native host-profile validation passes 1162 prior assertions;
+the dedicated image fixture passes both native capacity checks. Source hashes,
+commands and all attempts are in the
+[native capability evidence](../evidence/csh-073-native-capabilities/README.md).
+
+These fixtures require no additional manual test environment. Hosted macOS 15
+remains queued; completed native evidence is macOS 14.8.7. Optional upstream sed
+checks pass 231 tests with 29 capability skips when Valgrind is unavailable.
+The installed Intel/Rosetta Valgrind hung before running its test, leaving one
+additional UE-state child after the owned attempt was stopped. That optional
+analysis needs a compatible Valgrind runtime; the required injected fault suite
+passes independently. OS cleanup of the four old UE children is unresolved;
+no reboot was performed. Complete utility-page qualification remains open.

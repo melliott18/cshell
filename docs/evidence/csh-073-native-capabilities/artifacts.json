@@ -1,0 +1,1281 @@
+{
+  "tested_commit": "c209012f4b7e87939647a27b28af650a6a37d478",
+  "source_identity": "9acd6480f7838414c8d2501f015043c728bf8c0c139f092f3d6e20465c1eb8fa",
+  "audits": [
+    {
+      "path": "build/capabilities-ci-bounded/text-repaired-debian-capacity/audit.json",
+      "totals": {
+        "pass": 792,
+        "fail": 0,
+        "unavailable": 0
+      },
+      "source_sha256": "f2fb046ed4f9b1e42787aca20954a78650880a515fc314f4f0f52de69a5f9e6f",
+      "source_mismatches": [
+        "tests/host_text_contracts.json"
+      ]
+    },
+    {
+      "path": "build/capabilities-ci-bounded/text-repaired-debian-capacity/faults.json",
+      "totals": {
+        "pass": 24,
+        "fail": 0
+      },
+      "source_sha256": "f2fb046ed4f9b1e42787aca20954a78650880a515fc314f4f0f52de69a5f9e6f",
+      "source_mismatches": [
+        "tests/host_text_contracts.json"
+      ]
+    },
+    {
+      "path": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/tests/host-text-faults.json",
+      "totals": {
+        "pass": 24,
+        "fail": 0
+      },
+      "source_sha256": "f2fb046ed4f9b1e42787aca20954a78650880a515fc314f4f0f52de69a5f9e6f",
+      "source_mismatches": [
+        "tests/host_text_contracts.json"
+      ]
+    },
+    {
+      "path": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/tests/host-text-repaired.json",
+      "totals": {
+        "pass": 790,
+        "fail": 0,
+        "unavailable": 2
+      },
+      "source_sha256": "f2fb046ed4f9b1e42787aca20954a78650880a515fc314f4f0f52de69a5f9e6f",
+      "source_mismatches": [
+        "tests/host_text_contracts.json"
+      ]
+    },
+    {
+      "path": "build/capabilities-ci-final/text-repaired-debian-capacity/audit.json",
+      "totals": {
+        "pass": 792,
+        "fail": 0,
+        "unavailable": 0
+      },
+      "source_sha256": "9acd6480f7838414c8d2501f015043c728bf8c0c139f092f3d6e20465c1eb8fa",
+      "source_mismatches": []
+    },
+    {
+      "path": "build/capabilities-ci-final/text-repaired-debian-capacity/faults.json",
+      "totals": {
+        "pass": 24,
+        "fail": 0
+      },
+      "source_sha256": "9acd6480f7838414c8d2501f015043c728bf8c0c139f092f3d6e20465c1eb8fa",
+      "source_mismatches": []
+    },
+    {
+      "path": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/tests/host-text-faults.json",
+      "totals": {
+        "pass": 24,
+        "fail": 0
+      },
+      "source_sha256": "9acd6480f7838414c8d2501f015043c728bf8c0c139f092f3d6e20465c1eb8fa",
+      "source_mismatches": []
+    },
+    {
+      "path": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/tests/host-text-repaired.json",
+      "totals": {
+        "pass": 790,
+        "fail": 0,
+        "unavailable": 2
+      },
+      "source_sha256": "9acd6480f7838414c8d2501f015043c728bf8c0c139f092f3d6e20465c1eb8fa",
+      "source_mismatches": []
+    },
+    {
+      "path": "build/capabilities-ci-initial/text-repaired-debian-capacity/audit.json",
+      "totals": {
+        "pass": 792,
+        "fail": 0,
+        "unavailable": 0
+      },
+      "source_sha256": "67135cbbe20301ed6369d59543dffd28bdd68b4e8cdd96f933bca5bd0cf4e05d",
+      "source_mismatches": [
+        "tests/host_text_contracts.json",
+        "tests/host_text_faults.py",
+        "tests/test_host_text.py"
+      ]
+    },
+    {
+      "path": "build/capabilities-ci-initial/text-repaired-debian-capacity/faults.json",
+      "totals": {
+        "pass": 24,
+        "fail": 0
+      },
+      "source_sha256": "67135cbbe20301ed6369d59543dffd28bdd68b4e8cdd96f933bca5bd0cf4e05d",
+      "source_mismatches": [
+        "tests/host_text_contracts.json",
+        "tests/host_text_faults.py",
+        "tests/test_host_text.py"
+      ]
+    },
+    {
+      "path": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/tests/host-text-faults.json",
+      "totals": {
+        "pass": 24,
+        "fail": 0
+      },
+      "source_sha256": "67135cbbe20301ed6369d59543dffd28bdd68b4e8cdd96f933bca5bd0cf4e05d",
+      "source_mismatches": [
+        "tests/host_text_contracts.json",
+        "tests/host_text_faults.py",
+        "tests/test_host_text.py"
+      ]
+    },
+    {
+      "path": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/tests/host-text-repaired.json",
+      "totals": {
+        "pass": 790,
+        "fail": 0,
+        "unavailable": 2
+      },
+      "source_sha256": "67135cbbe20301ed6369d59543dffd28bdd68b4e8cdd96f933bca5bd0cf4e05d",
+      "source_mismatches": [
+        "tests/host_text_contracts.json",
+        "tests/host_text_faults.py",
+        "tests/test_host_text.py"
+      ]
+    },
+    {
+      "path": "build/native-capabilities-exploratory-2.json",
+      "totals": {
+        "pass": 792,
+        "fail": 0,
+        "unavailable": 0
+      },
+      "source_sha256": "eb90ad0b176764c45884cac641a0494b61339c2b52089b77170c2751c0d31f40",
+      "source_mismatches": [
+        "tests/host_text_contracts.json",
+        "tests/host_text_faults.py",
+        "tests/test_host_text.py",
+        "tools/host-profile/text/README.md"
+      ]
+    },
+    {
+      "path": "build/native-faults-intermediate.json",
+      "totals": {
+        "pass": 22,
+        "fail": 2
+      },
+      "source_sha256": "67135cbbe20301ed6369d59543dffd28bdd68b4e8cdd96f933bca5bd0cf4e05d",
+      "source_mismatches": [
+        "tests/host_text_contracts.json",
+        "tests/host_text_faults.py",
+        "tests/test_host_text.py"
+      ]
+    },
+    {
+      "path": "build/tests/host-profile-results.json",
+      "totals": {
+        "passed": 1162,
+        "failed": 0,
+        "gaps": 0
+      },
+      "source_sha256": "9acd6480f7838414c8d2501f015043c728bf8c0c139f092f3d6e20465c1eb8fa",
+      "source_mismatches": []
+    },
+    {
+      "path": "build/tests/host-text-faults.json",
+      "totals": {
+        "pass": 24,
+        "fail": 0
+      },
+      "source_sha256": "9acd6480f7838414c8d2501f015043c728bf8c0c139f092f3d6e20465c1eb8fa",
+      "source_mismatches": []
+    },
+    {
+      "path": "build/tests/host-text-native-capacity.json",
+      "totals": {
+        "pass": 792,
+        "fail": 0,
+        "unavailable": 0
+      },
+      "source_sha256": "9acd6480f7838414c8d2501f015043c728bf8c0c139f092f3d6e20465c1eb8fa",
+      "source_mismatches": []
+    },
+    {
+      "path": "build/tests/host-text-results.json",
+      "totals": {
+        "pass": 732,
+        "fail": 0,
+        "unavailable": 2
+      },
+      "source_sha256": "9acd6480f7838414c8d2501f015043c728bf8c0c139f092f3d6e20465c1eb8fa",
+      "source_mismatches": []
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "capabilities-ci-bounded__job-109765531671.log.gz",
+      "original": "build/capabilities-ci-bounded/job-109765531671.log",
+      "bytes": 448897,
+      "sha256": "fcb3d12ce550126fe0280584bb640605826263719f75ffed62b1ee59f9a73b7a"
+    },
+    {
+      "path": "capabilities-ci-bounded__job-109765531811.log.gz",
+      "original": "build/capabilities-ci-bounded/job-109765531811.log",
+      "bytes": 502254,
+      "sha256": "907c8ad23882cd813945fb93774e4eb31ca034a6c0ffc0cc9af9aee037445e95"
+    },
+    {
+      "path": "capabilities-ci-bounded__jobs.json.gz",
+      "original": "build/capabilities-ci-bounded/jobs.json",
+      "bytes": 12214,
+      "sha256": "632aac0f4d62e2417d029b892f34d671ab92108bb80e6fa79a2e17490e4d257a"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-debian-capacity__audit.json.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-debian-capacity/audit.json",
+      "bytes": 1264585,
+      "sha256": "504131d56fe29278396f0a737b99c8ba92a4c004678e8514f2e2c92a41da87bc"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-debian-capacity__faults.json.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-debian-capacity/faults.json",
+      "bytes": 150523,
+      "sha256": "ecd5a755e27063e90047302e6fdc977bdfbdd037ba3115adf6988079fffa1c05"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-debian-capacity__image.json.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-debian-capacity/image.json",
+      "bytes": 3810,
+      "sha256": "95fc70618452c73cf35d6622831540825aceda1c714da8b044848052528a235d"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-debian-capacity__profile.json.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-debian-capacity/profile.json",
+      "bytes": 5090,
+      "sha256": "639aaee80abbc561bccc7412c9cd911c8c51b6211dfdbe91ef0d4c8085b977a1"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-debian-capacity__providers.json.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-debian-capacity/providers.json",
+      "bytes": 4528,
+      "sha256": "33290385314c3fb1d41a4fd9660a7a10a0e8522e643591b621d5fc34393cb522"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__host-profile__manifest.json.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/host-profile/manifest.json",
+      "bytes": 5584,
+      "sha256": "a4e89734e3e894fb647e81336d5c5690dc2228c48a03dba59a3eb35577642c2f"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__tests__host-text-faults.json.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/tests/host-text-faults.json",
+      "bytes": 151459,
+      "sha256": "65f9e4079f521727f67e667394d0996905c93787966b84332682f72febc3f484"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__tests__host-text-repaired.json.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/tests/host-text-repaired.json",
+      "bytes": 1339658,
+      "sha256": "0d407228df62688ab201bfd624d6840bd4779c25b061bbd1e31aab9a1557bb71"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__manifest.json.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/manifest.json",
+      "bytes": 4982,
+      "sha256": "ba23aee6de660042939293a8df51330d7877d095618ee1a09a5c5b04e0c93da8"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__chimerautils-download.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/chimerautils-download.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__chimerautils-extract.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/chimerautils-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__coreutils-build.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/coreutils-build.log",
+      "bytes": 28633,
+      "sha256": "ad8adca112cd37db26f45e746bf4178244074cc5ebfd333de28b1b973a5710f2"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__coreutils-configure.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/coreutils-configure.log",
+      "bytes": 48625,
+      "sha256": "1283be0b07019a7b887692b74aeb11a63ad99824da7c045fe015f2914ab0a7cf"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__coreutils-download.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/coreutils-download.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__coreutils-extract.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/coreutils-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__diffutils-build.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/diffutils-build.log",
+      "bytes": 9018,
+      "sha256": "92cd2855fdd12b583d882cb7b9c2bbe9bb7185f5d3ccfea529434099b6505f5c"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__diffutils-configure.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/diffutils-configure.log",
+      "bytes": 21750,
+      "sha256": "175422a20814068dd9cb1dcfadd485738522b200444c4df69fdf32b15b1069ef"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__diffutils-download.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/diffutils-download.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__diffutils-extract.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/diffutils-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__ed-build.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/ed-build.log",
+      "bytes": 712,
+      "sha256": "642803df3409d672993d98f29abde40db9578fee1229be44f7ad3701b3c4fb05"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__ed-check.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/ed-check.log",
+      "bytes": 270,
+      "sha256": "ecef15fb0be6b757f13a0dba64938b8598784f8c9d2d4b78feed83e8feb4471c"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__ed-configure.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/ed-configure.log",
+      "bytes": 330,
+      "sha256": "ccd0efe5d32d08ae2fac900c35e0f48ed9374576b7b5bf6eca4b8c7ba1c843fb"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__ed-download.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/ed-download.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__ed-extract.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/ed-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__ed-patch.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/ed-patch.log",
+      "bytes": 26,
+      "sha256": "6089e1c5ea880a45e1100b9d3434cbd829b95f143231831644a509ed20ded506"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__sed-build.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/sed-build.log",
+      "bytes": 5904,
+      "sha256": "825256b8665f004f021f96bbcd22236607d8545cb84e1ad75bd9c6989cdf5d37"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__sed-configure.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/sed-configure.log",
+      "bytes": 21842,
+      "sha256": "d170e4a929445a10a48f105cd1568f8cd500831806cdc9d2edae3f692e3edb82"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__sed-download.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/sed-download.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__sed-extract.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/sed-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__sed-patch.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/sed-patch.log",
+      "bytes": 26,
+      "sha256": "5e1f2fffc5812a34d3106e372ff29920bd25966767297dc3d36b5935f835e804"
+    },
+    {
+      "path": "capabilities-ci-bounded__text-repaired-ubuntu-24.04__text-providers__sources-_wrei8_o__tail-build.log.gz",
+      "original": "build/capabilities-ci-bounded/text-repaired-ubuntu-24.04/text-providers/sources-_wrei8_o/tail-build.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-final__job-109765778327.log.gz",
+      "original": "build/capabilities-ci-final/job-109765778327.log",
+      "bytes": 502433,
+      "sha256": "ae0596eff839a14e6e2a07dd6e564711cba8ece1ca48b491d6f5d295b060f023"
+    },
+    {
+      "path": "capabilities-ci-final__job-109765778422.log.gz",
+      "original": "build/capabilities-ci-final/job-109765778422.log",
+      "bytes": 448894,
+      "sha256": "d974a699557cd06de4f2ae1e8328c652e374b2b2e5c50026fc52f81e01162300"
+    },
+    {
+      "path": "capabilities-ci-final__jobs.json.gz",
+      "original": "build/capabilities-ci-final/jobs.json",
+      "bytes": 12214,
+      "sha256": "92257e650e86df8ba5f0fc09f04a8ce5ae699f99101571e9526b53410adff667"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-debian-capacity__audit.json.gz",
+      "original": "build/capabilities-ci-final/text-repaired-debian-capacity/audit.json",
+      "bytes": 1264585,
+      "sha256": "675b0707d016ad9a37a2c557f13903dfd78020997e5fa966b1deef107c55f855"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-debian-capacity__faults.json.gz",
+      "original": "build/capabilities-ci-final/text-repaired-debian-capacity/faults.json",
+      "bytes": 150523,
+      "sha256": "d2915ae5c9674127fd717ce3f047826847907f11b2d30e8340284c84a07d0579"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-debian-capacity__image.json.gz",
+      "original": "build/capabilities-ci-final/text-repaired-debian-capacity/image.json",
+      "bytes": 3811,
+      "sha256": "6776a5d730adef259566ff7491e22fa990814c82cea9a32a1130cc035a6f9415"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-debian-capacity__profile.json.gz",
+      "original": "build/capabilities-ci-final/text-repaired-debian-capacity/profile.json",
+      "bytes": 5090,
+      "sha256": "a4d420356b7e2815751a4ce16c1be34cec341c40b33072ff041a8b2ba513186f"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-debian-capacity__providers.json.gz",
+      "original": "build/capabilities-ci-final/text-repaired-debian-capacity/providers.json",
+      "bytes": 4528,
+      "sha256": "4c529486bace18eb9a1c7c80bc295c5639740252a16098a9c9e46cff807b36e2"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__host-profile__manifest.json.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/host-profile/manifest.json",
+      "bytes": 5584,
+      "sha256": "427e935353689a89801db1a923149501c01c065f306a43efabb93d6fb099af22"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__tests__host-text-faults.json.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/tests/host-text-faults.json",
+      "bytes": 151459,
+      "sha256": "9330ee6da102cb9d4c65ec765842058d3abb391a06fbeb7bdd7b88d6d71e134e"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__tests__host-text-repaired.json.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/tests/host-text-repaired.json",
+      "bytes": 1339655,
+      "sha256": "72de6cd3fcb9098be4710202cd95976e79f76d7ae3004ca0572dcb573335b978"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__manifest.json.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/manifest.json",
+      "bytes": 4982,
+      "sha256": "a95b37291f724281afe6bed35ebd1d1ec02ae0607d9e89a76c9f24f94a8f6c40"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__chimerautils-download.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/chimerautils-download.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__chimerautils-extract.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/chimerautils-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__coreutils-build.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/coreutils-build.log",
+      "bytes": 28633,
+      "sha256": "22d5be0bc47b7c059cf63366434bfd2e80340d9b70d07320af2cf59ff3b31824"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__coreutils-configure.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/coreutils-configure.log",
+      "bytes": 48625,
+      "sha256": "6919ee669be88e760c9dbc72fcdeabf8ee190a92c63afc270f7c5c631a63e2b7"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__coreutils-download.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/coreutils-download.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__coreutils-extract.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/coreutils-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__diffutils-build.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/diffutils-build.log",
+      "bytes": 9018,
+      "sha256": "0ceb5b16b536e18ce09c760c36791aa462a28b2b3171c5e5dd97e6e97edd9dbd"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__diffutils-configure.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/diffutils-configure.log",
+      "bytes": 21750,
+      "sha256": "175422a20814068dd9cb1dcfadd485738522b200444c4df69fdf32b15b1069ef"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__diffutils-download.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/diffutils-download.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__diffutils-extract.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/diffutils-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__ed-build.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/ed-build.log",
+      "bytes": 712,
+      "sha256": "bb18acfd7565ffd7bb2f7cc09e765634b8ee1b2ee239ac59ef97a389a5991d7e"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__ed-check.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/ed-check.log",
+      "bytes": 270,
+      "sha256": "2047206d268e6da9b16f89a9f77f1760bf9d1c6cf3db9165760ead84ab12eabb"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__ed-configure.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/ed-configure.log",
+      "bytes": 330,
+      "sha256": "ccd0efe5d32d08ae2fac900c35e0f48ed9374576b7b5bf6eca4b8c7ba1c843fb"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__ed-download.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/ed-download.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__ed-extract.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/ed-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__ed-patch.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/ed-patch.log",
+      "bytes": 26,
+      "sha256": "6089e1c5ea880a45e1100b9d3434cbd829b95f143231831644a509ed20ded506"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__sed-build.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/sed-build.log",
+      "bytes": 5904,
+      "sha256": "c09ce86d1c01e71472f4b8f8e1df429c8417661272fb6b68e15f6d0ac7ff1ed9"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__sed-configure.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/sed-configure.log",
+      "bytes": 21842,
+      "sha256": "a9004b785fe3f8a9b9dc8728a08d110d15e0a43ba24f90d96de656b941d610f3"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__sed-download.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/sed-download.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__sed-extract.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/sed-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__sed-patch.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/sed-patch.log",
+      "bytes": 26,
+      "sha256": "5e1f2fffc5812a34d3106e372ff29920bd25966767297dc3d36b5935f835e804"
+    },
+    {
+      "path": "capabilities-ci-final__text-repaired-ubuntu-24.04__text-providers__sources-97z0ubso__tail-build.log.gz",
+      "original": "build/capabilities-ci-final/text-repaired-ubuntu-24.04/text-providers/sources-97z0ubso/tail-build.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-initial__job-109764903337.log.gz",
+      "original": "build/capabilities-ci-initial/job-109764903337.log",
+      "bytes": 501843,
+      "sha256": "0ec027576ea965f8677036d09122f4398bb65678bc3376053aa37ab4345f2360"
+    },
+    {
+      "path": "capabilities-ci-initial__job-109764903597.log.gz",
+      "original": "build/capabilities-ci-initial/job-109764903597.log",
+      "bytes": 448893,
+      "sha256": "4302f126bc89ccdfb65f2fe62ac00b277ba0382026541edd5e80d4f1004e0503"
+    },
+    {
+      "path": "capabilities-ci-initial__jobs.json.gz",
+      "original": "build/capabilities-ci-initial/jobs.json",
+      "bytes": 12214,
+      "sha256": "ff334ba5ce96397420aa9eefd492ecc8b962bc5e58beab4496090905f6f7de23"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-debian-capacity__audit.json.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-debian-capacity/audit.json",
+      "bytes": 1264585,
+      "sha256": "6a582d610efb5caf8e80a7ff713de23f4c548bdadd169f44db074e8fc2efcdfc"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-debian-capacity__faults.json.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-debian-capacity/faults.json",
+      "bytes": 150524,
+      "sha256": "06c55c12f33d61c9dfab71214f3610ce0367427120e7ccb2eac68ffb989b28c0"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-debian-capacity__image.json.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-debian-capacity/image.json",
+      "bytes": 3809,
+      "sha256": "cdef435c717135f764adb5e3323d666e8169e4be245102e8bf959db88621d790"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-debian-capacity__profile.json.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-debian-capacity/profile.json",
+      "bytes": 5090,
+      "sha256": "05ceeec83fe950af435abf49fab66182adbf8115046d630c4c14d0a8366d8f64"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-debian-capacity__providers.json.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-debian-capacity/providers.json",
+      "bytes": 4528,
+      "sha256": "b06d5d74455984323fd07a5e964b07117c8ddfa760c25061d76bd35eced78d6b"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__host-profile__manifest.json.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/host-profile/manifest.json",
+      "bytes": 5584,
+      "sha256": "f9da227dc2400efe44d75e8b0929481762651c1b880520d5048d722736cf7ef4"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__tests__host-text-faults.json.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/tests/host-text-faults.json",
+      "bytes": 151460,
+      "sha256": "d600ba3f738731494edbab048f4af3957729635ae0e7e59b4dec6fdb9412136b"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__tests__host-text-repaired.json.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/tests/host-text-repaired.json",
+      "bytes": 1339655,
+      "sha256": "2bdfcc28fe38ef701ea9f8aaced4da06078a9d644cfde441e4663835e0e0bda1"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__manifest.json.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/manifest.json",
+      "bytes": 4982,
+      "sha256": "13ef6ada1531b196413077c71831f1a77cd0f6f10f493949e9ab36c5326e4175"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__chimerautils-download.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/chimerautils-download.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__chimerautils-extract.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/chimerautils-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__coreutils-build.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/coreutils-build.log",
+      "bytes": 28633,
+      "sha256": "547f3c0c293e1653722c099576adb8cddedf2e08b7913c6abfe21dc830188ce4"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__coreutils-configure.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/coreutils-configure.log",
+      "bytes": 48625,
+      "sha256": "5395c23b3587e9538b04e9f3455b82357a43962e48357405ce819e576c177161"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__coreutils-download.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/coreutils-download.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__coreutils-extract.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/coreutils-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__diffutils-build.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/diffutils-build.log",
+      "bytes": 9018,
+      "sha256": "dc6c573048fabc39ddb63bbda122e0e271faeb2448d254d53c2a3f7723635691"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__diffutils-configure.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/diffutils-configure.log",
+      "bytes": 21750,
+      "sha256": "175422a20814068dd9cb1dcfadd485738522b200444c4df69fdf32b15b1069ef"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__diffutils-download.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/diffutils-download.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__diffutils-extract.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/diffutils-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__ed-build.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/ed-build.log",
+      "bytes": 712,
+      "sha256": "2d34f6cdbe2afdfbbe78eec70d15430e43e2765755ddbf82aa097550b578f308"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__ed-check.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/ed-check.log",
+      "bytes": 270,
+      "sha256": "72b966c0159fe604b39a242073754d55b72c5502ec1eba0d9278824e60357dfb"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__ed-configure.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/ed-configure.log",
+      "bytes": 330,
+      "sha256": "ccd0efe5d32d08ae2fac900c35e0f48ed9374576b7b5bf6eca4b8c7ba1c843fb"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__ed-download.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/ed-download.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__ed-extract.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/ed-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__ed-patch.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/ed-patch.log",
+      "bytes": 26,
+      "sha256": "6089e1c5ea880a45e1100b9d3434cbd829b95f143231831644a509ed20ded506"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__sed-build.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/sed-build.log",
+      "bytes": 5904,
+      "sha256": "823d6bbb808593bfc75659c5ea28beb333259f245ad0f285ba08e0eab5156a06"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__sed-configure.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/sed-configure.log",
+      "bytes": 21842,
+      "sha256": "a9004b785fe3f8a9b9dc8728a08d110d15e0a43ba24f90d96de656b941d610f3"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__sed-download.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/sed-download.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__sed-extract.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/sed-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__sed-patch.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/sed-patch.log",
+      "bytes": 26,
+      "sha256": "5e1f2fffc5812a34d3106e372ff29920bd25966767297dc3d36b5935f835e804"
+    },
+    {
+      "path": "capabilities-ci-initial__text-repaired-ubuntu-24.04__text-providers__sources-3rcm1u6p__tail-build.log.gz",
+      "original": "build/capabilities-ci-initial/text-repaired-ubuntu-24.04/text-providers/sources-3rcm1u6p/tail-build.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "csh-073-native-capacity__attach.plist.gz",
+      "original": "build/csh-073-native-capacity/attach.plist",
+      "bytes": 551,
+      "sha256": "ac0a2baf9691c4a516850fc775d9ffe90b91b3c390e8baaf864e6d17664b0acc"
+    },
+    {
+      "path": "host-profile__manifest.json.gz",
+      "original": "build/host-profile/manifest.json",
+      "bytes": 5835,
+      "sha256": "37b1acd1ace1607034e7b6671c6d0cca55dde4ac8aadd5a6e9558c8fd98d5261"
+    },
+    {
+      "path": "native-capabilities-exploratory-2.capacity.json.gz",
+      "original": "build/native-capabilities-exploratory-2.capacity.json",
+      "bytes": 1537,
+      "sha256": "5e6bebba8e66843dfaf5816775819fa0899f0b5953d3b441ac5c790ae6f2ffd4"
+    },
+    {
+      "path": "native-capabilities-exploratory-2.json.gz",
+      "original": "build/native-capabilities-exploratory-2.json",
+      "bytes": 1385483,
+      "sha256": "41bbc861e613efd4d79b5fd09fd4879b4e05d0feac8174d06a0be44327fa9f89"
+    },
+    {
+      "path": "native-capabilities-exploratory-2.log.gz",
+      "original": "build/native-capabilities-exploratory-2.log",
+      "bytes": 29724,
+      "sha256": "0b62aa210d75001505712d74553167dc974d74274d0a752179e040e9eaa81e9d"
+    },
+    {
+      "path": "native-capabilities-exploratory.capacity.json.gz",
+      "original": "build/native-capabilities-exploratory.capacity.json",
+      "bytes": 748,
+      "sha256": "2de353cf5ee9dc3d783aa1d2951621a23c60bf67ab108c66f84d173190345fd0"
+    },
+    {
+      "path": "native-capabilities-exploratory.log.gz",
+      "original": "build/native-capabilities-exploratory.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "native-capabilities-final-audit.log.gz",
+      "original": "build/native-capabilities-final-audit.log",
+      "bytes": 29952,
+      "sha256": "4bc56018e40581cedcdc46a5064398b5456c011d3fa8e64311c046b6adee8ee9"
+    },
+    {
+      "path": "native-capabilities-final-faults.log.gz",
+      "original": "build/native-capabilities-final-faults.log",
+      "bytes": 977,
+      "sha256": "d281961a88805560ef7c274872c52d96f6fad5ef8b235cdee9cb242a876149c4"
+    },
+    {
+      "path": "native-capabilities-final-profile-setup.log.gz",
+      "original": "build/native-capabilities-final-profile-setup.log",
+      "bytes": 246,
+      "sha256": "5d02064e9d35813eac21b68f1cd70ccd9bab81aace162f33b791c8a2dd352168"
+    },
+    {
+      "path": "native-capabilities-full-profile.log.gz",
+      "original": "build/native-capabilities-full-profile.log",
+      "bytes": 126288,
+      "sha256": "550815fa499fd19bd2bce4f58cb8bcfa18567ff7b11db8cf8572461c72cd38ca"
+    },
+    {
+      "path": "native-capabilities-harness-bounded.log.gz",
+      "original": "build/native-capabilities-harness-bounded.log",
+      "bytes": 176,
+      "sha256": "7671276ff975d591270db08e363e028893626f89550f6575b7453b6d6aa724c2"
+    },
+    {
+      "path": "native-capabilities-harness-final-17.log.gz",
+      "original": "build/native-capabilities-harness-final-17.log",
+      "bytes": 588,
+      "sha256": "38107e0d07b341523ae8e257bc9173077ef0d559b801e4d26ae19ba014ff8321"
+    },
+    {
+      "path": "native-capabilities-harness-final.log.gz",
+      "original": "build/native-capabilities-harness-final.log",
+      "bytes": 588,
+      "sha256": "a57804d3ec248ae92a5c3369954ef5f25a3967ead194611c0084c3f85956c6c8"
+    },
+    {
+      "path": "native-capabilities-harness.log.gz",
+      "original": "build/native-capabilities-harness.log",
+      "bytes": 586,
+      "sha256": "75fefdaf96c8d1abb530c82736bed03e9158d43b9d9da4f3e879b12baab78d7c"
+    },
+    {
+      "path": "native-capabilities-inventory-final.log.gz",
+      "original": "build/native-capabilities-inventory-final.log",
+      "bytes": 411,
+      "sha256": "69ef89be78ecb237c8ce56cabfaf02702da8b5fa81b31c90c9dc5c9b32d53974"
+    },
+    {
+      "path": "native-capabilities-process-state-final.txt.gz",
+      "original": "build/native-capabilities-process-state-final.txt",
+      "bytes": 438,
+      "sha256": "945cfd174e92d7a06300ff304090846473e9a0013c1f050c8b7b294bdfcd06c3"
+    },
+    {
+      "path": "native-capabilities-process-state.txt.gz",
+      "original": "build/native-capabilities-process-state.txt",
+      "bytes": 388,
+      "sha256": "7194e90c6b3af0955f29fdd8ae8ebdb8f6664e7c46c969f4eb568233336b7046"
+    },
+    {
+      "path": "native-capabilities-profile-setup.log.gz",
+      "original": "build/native-capabilities-profile-setup.log",
+      "bytes": 246,
+      "sha256": "5d02064e9d35813eac21b68f1cd70ccd9bab81aace162f33b791c8a2dd352168"
+    },
+    {
+      "path": "native-capabilities-retention-check.log.gz",
+      "original": "build/native-capabilities-retention-check.log",
+      "bytes": 1829,
+      "sha256": "e1648e809e5bf4b2f624472b218b2fd790f21ec5426392f47e6772bf8646dfd8"
+    },
+    {
+      "path": "native-capabilities-runtime-pty.log.gz",
+      "original": "build/native-capabilities-runtime-pty.log",
+      "bytes": 229164,
+      "sha256": "99e4ea9e7d201a881225ad2549765f6b6fc502a5b831e5fa59f8895092492130"
+    },
+    {
+      "path": "native-capacity-exploratory.json.gz",
+      "original": "build/native-capacity-exploratory.json",
+      "bytes": 915,
+      "sha256": "68f0f101d020f6620cbf6db7b96d59f39986a8dcb15e030692156ae642eb8614"
+    },
+    {
+      "path": "native-cat-write.sample.gz",
+      "original": "build/native-cat-write.sample",
+      "bytes": 7869,
+      "sha256": "3b64a03aba11b3b3737007d9ebbf817a7ed3b145159d28013f04990d016bdd6d"
+    },
+    {
+      "path": "native-faults-exploratory.json.gz",
+      "original": "build/native-faults-exploratory.json",
+      "bytes": 59947,
+      "sha256": "533dcebf2de7cfd243ba1656f21a72820dd670f0a5f9fa6e559553f22c896518"
+    },
+    {
+      "path": "native-faults-intermediate.json.gz",
+      "original": "build/native-faults-intermediate.json",
+      "bytes": 151283,
+      "sha256": "6f4ff69016da260a463d0d0e6e0637729eb768fa54e756f740e2dbf0f80df08e"
+    },
+    {
+      "path": "native-faults-intermediate.log.gz",
+      "original": "build/native-faults-intermediate.log",
+      "bytes": 2221,
+      "sha256": "5106bf7ab7d1ad0a02cd157d6733033b386af3729195a6b0e8601ade23dc2de9"
+    },
+    {
+      "path": "native-job-child.sample.gz",
+      "original": "build/native-job-child.sample",
+      "bytes": 8231,
+      "sha256": "9cab8c5fd46639a6f1e951c869227f3ee39f04aece69b16e8477f37211be3000"
+    },
+    {
+      "path": "native-job-repair-build-final.log.gz",
+      "original": "build/native-job-repair-build-final.log",
+      "bytes": 696,
+      "sha256": "d8a214e2ca6120beeb5ef4a3598665e7dbbf45eec47dbbb95e0cc3a85db0a650"
+    },
+    {
+      "path": "native-job-repair-build.log.gz",
+      "original": "build/native-job-repair-build.log",
+      "bytes": 696,
+      "sha256": "d8a214e2ca6120beeb5ef4a3598665e7dbbf45eec47dbbb95e0cc3a85db0a650"
+    },
+    {
+      "path": "native-job-repair-exploratory.log.gz",
+      "original": "build/native-job-repair-exploratory.log",
+      "bytes": 243,
+      "sha256": "3503e7d692181363907ea2da1ac3dbaf32b479ed8565cd3b0ef79633300afee6"
+    },
+    {
+      "path": "native-job-repair-exploratory.status.gz",
+      "original": "build/native-job-repair-exploratory.status",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "native-job-repair-final.log.gz",
+      "original": "build/native-job-repair-final.log",
+      "bytes": 243,
+      "sha256": "3503e7d692181363907ea2da1ac3dbaf32b479ed8565cd3b0ef79633300afee6"
+    },
+    {
+      "path": "native-sed-memory-repaired.json.gz",
+      "original": "build/native-sed-memory-repaired.json",
+      "bytes": 2133,
+      "sha256": "d0dec8de306801377e00a67d2febd1e2ad72e74f6464a969acb2056cabbb7b8e"
+    },
+    {
+      "path": "native-sed-upstream-check.log.gz",
+      "original": "build/native-sed-upstream-check.log",
+      "bytes": 528,
+      "sha256": "c3d46aca597f1bce35026cd2caf77f430819767ff916071f7a9bfa88668e3bb1"
+    },
+    {
+      "path": "native-sed-upstream-controlled.log.gz",
+      "original": "build/native-sed-upstream-controlled.log",
+      "bytes": 31294,
+      "sha256": "3f29ba8301c65eb3c46a8a41a4581a4d23364350b245c4be3815223dd7938f55"
+    },
+    {
+      "path": "native-sed-upstream-controlled.status.gz",
+      "original": "build/native-sed-upstream-controlled.status",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "native-sed-upstream-exploratory.json.gz",
+      "original": "build/native-sed-upstream-exploratory.json",
+      "bytes": 479,
+      "sha256": "61ae8a2a9f8fb3f98b3bf9f4801f46bf182ed81184e80b6e76dcb5b17aada060"
+    },
+    {
+      "path": "native-sed-valgrind-child.sample.gz",
+      "original": "build/native-sed-valgrind-child.sample",
+      "bytes": 1308,
+      "sha256": "7ecfcdaa35ff9aa6ef8e6eb817249ae04b622ffd2a6136ed25487b1cb45aea9c"
+    },
+    {
+      "path": "tests__host-profile-results.json.gz",
+      "original": "build/tests/host-profile-results.json",
+      "bytes": 4701372,
+      "sha256": "baa2a508ddc6daad40bf46dce25229f7ac48878e8fcbe053b95ed1d5ea5bbea9"
+    },
+    {
+      "path": "tests__host-text-faults.json.gz",
+      "original": "build/tests/host-text-faults.json",
+      "bytes": 151814,
+      "sha256": "4cd5fcf0f00343420488732936610709fba999a59f02b534b9a5239b1df38043"
+    },
+    {
+      "path": "tests__host-text-native-capacity.capacity.json.gz",
+      "original": "build/tests/host-text-native-capacity.capacity.json",
+      "bytes": 1578,
+      "sha256": "157b800eae3f599d8b7bbbeb09cc903e32d1ac0ba7ae259628b25cbc4001facc"
+    },
+    {
+      "path": "tests__host-text-native-capacity.json.gz",
+      "original": "build/tests/host-text-native-capacity.json",
+      "bytes": 1430514,
+      "sha256": "d7b662ab02ad029bb4788102455a2c221c84d9ede1b0938ba21e4a68375490e3"
+    },
+    {
+      "path": "tests__host-text-results.json.gz",
+      "original": "build/tests/host-text-results.json",
+      "bytes": 1338552,
+      "sha256": "be17b724a63817f61a86358cae6d67adab12c99c43ea1bae625e75cc9c21f5b4"
+    },
+    {
+      "path": "text-native-capabilities-build.log.gz",
+      "original": "build/text-native-capabilities-build.log",
+      "bytes": 303,
+      "sha256": "8300d2a86ea3ba5ab15f09e409c30912bbaede165ce84f4bb03a6f304230a037"
+    },
+    {
+      "path": "text-native-capabilities-final-build.log.gz",
+      "original": "build/text-native-capabilities-final-build.log",
+      "bytes": 313,
+      "sha256": "53365cccf9dda5e993547f56e1eb910a43e1eb0dbb13c5cf4d20a581b5239eef"
+    },
+    {
+      "path": "text-provider-sources__sed-memory-repair-build.log.gz",
+      "original": "build/text-provider-sources/sed-memory-repair-build.log",
+      "bytes": 602,
+      "sha256": "b11a053c8f7da5a7c44315e95457061b2207c286c744e1ae5b898ea8388afe8a"
+    },
+    {
+      "path": "text-providers__manifest.json.gz",
+      "original": "build/text-providers/manifest.json",
+      "bytes": 5037,
+      "sha256": "5080dafad76c1afbff894f84d350e64ddcf22c889fc8c7629730130b8b9390eb"
+    },
+    {
+      "path": "text-providers__sources-3gb0nnay__coreutils-build.log.gz",
+      "original": "build/text-providers/sources-3gb0nnay/coreutils-build.log",
+      "bytes": 65274,
+      "sha256": "fed8bf162b5dfb7f4dff195349ce2f72c3cde2f20a5ce71858e0377e11669ff3"
+    },
+    {
+      "path": "text-providers__sources-3gb0nnay__coreutils-configure.log.gz",
+      "original": "build/text-providers/sources-3gb0nnay/coreutils-configure.log",
+      "bytes": 48786,
+      "sha256": "0e4e21b56f38a70c4bed21aa9ad7d528f6f7c8fe9800ca70997c9da4f86c64ad"
+    },
+    {
+      "path": "text-providers__sources-3gb0nnay__coreutils-extract.log.gz",
+      "original": "build/text-providers/sources-3gb0nnay/coreutils-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "text-providers__sources-3gb0nnay__diffutils-build.log.gz",
+      "original": "build/text-providers/sources-3gb0nnay/diffutils-build.log",
+      "bytes": 6963,
+      "sha256": "c2b2e799e32a8b070313ca6c2b21a9e450cfdfbda4a90cbb59539653830e1e03"
+    },
+    {
+      "path": "text-providers__sources-3gb0nnay__diffutils-configure.log.gz",
+      "original": "build/text-providers/sources-3gb0nnay/diffutils-configure.log",
+      "bytes": 21680,
+      "sha256": "3467811ad7699c0daf2f1aeb76e6a1a11b4c2e6b127e1a1dcd537f96675e6b3a"
+    },
+    {
+      "path": "text-providers__sources-3gb0nnay__diffutils-extract.log.gz",
+      "original": "build/text-providers/sources-3gb0nnay/diffutils-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "text-providers__sources-3gb0nnay__ed-build.log.gz",
+      "original": "build/text-providers/sources-3gb0nnay/ed-build.log",
+      "bytes": 493,
+      "sha256": "34a5187c80ba9dcdd98a01e68f20c15e8df88674791eb6b259ce35805cd9b238"
+    },
+    {
+      "path": "text-providers__sources-3gb0nnay__ed-check.log.gz",
+      "original": "build/text-providers/sources-3gb0nnay/ed-check.log",
+      "bytes": 51,
+      "sha256": "5c9f330f5f660b952783ef27d3ffaa5eabf7645c0a1ebbdd4603d05400ffe9ed"
+    },
+    {
+      "path": "text-providers__sources-3gb0nnay__ed-configure.log.gz",
+      "original": "build/text-providers/sources-3gb0nnay/ed-configure.log",
+      "bytes": 330,
+      "sha256": "ccd0efe5d32d08ae2fac900c35e0f48ed9374576b7b5bf6eca4b8c7ba1c843fb"
+    },
+    {
+      "path": "text-providers__sources-3gb0nnay__ed-extract.log.gz",
+      "original": "build/text-providers/sources-3gb0nnay/ed-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "text-providers__sources-3gb0nnay__ed-patch.log.gz",
+      "original": "build/text-providers/sources-3gb0nnay/ed-patch.log",
+      "bytes": 26,
+      "sha256": "6089e1c5ea880a45e1100b9d3434cbd829b95f143231831644a509ed20ded506"
+    },
+    {
+      "path": "text-providers__sources-3gb0nnay__sed-build.log.gz",
+      "original": "build/text-providers/sources-3gb0nnay/sed-build.log",
+      "bytes": 6504,
+      "sha256": "5d56dd63505b7d3087e8606eab3564dbfa6c332332187d8f4fc51c0b1cde999d"
+    },
+    {
+      "path": "text-providers__sources-3gb0nnay__sed-configure.log.gz",
+      "original": "build/text-providers/sources-3gb0nnay/sed-configure.log",
+      "bytes": 23110,
+      "sha256": "6cacef7cfcc3bc38e034f5b7f3d1e05f36bde3ea4327021b62f3eda423823e3e"
+    },
+    {
+      "path": "text-providers__sources-3gb0nnay__sed-extract.log.gz",
+      "original": "build/text-providers/sources-3gb0nnay/sed-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "text-providers__sources-3gb0nnay__sed-patch.log.gz",
+      "original": "build/text-providers/sources-3gb0nnay/sed-patch.log",
+      "bytes": 26,
+      "sha256": "5e1f2fffc5812a34d3106e372ff29920bd25966767297dc3d36b5935f835e804"
+    },
+    {
+      "path": "text-providers__sources-sf_znp6d__coreutils-build.log.gz",
+      "original": "build/text-providers/sources-sf_znp6d/coreutils-build.log",
+      "bytes": 65274,
+      "sha256": "6c4316febb74ba39ed55371c17c5fcd82c35f1861e335758e3b9da7c6689cffc"
+    },
+    {
+      "path": "text-providers__sources-sf_znp6d__coreutils-configure.log.gz",
+      "original": "build/text-providers/sources-sf_znp6d/coreutils-configure.log",
+      "bytes": 48786,
+      "sha256": "75501e8d929f614f791bbf7b28af9e0db623c67d715e1e563bf565f05a8db671"
+    },
+    {
+      "path": "text-providers__sources-sf_znp6d__coreutils-extract.log.gz",
+      "original": "build/text-providers/sources-sf_znp6d/coreutils-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "text-providers__sources-sf_znp6d__diffutils-build.log.gz",
+      "original": "build/text-providers/sources-sf_znp6d/diffutils-build.log",
+      "bytes": 6963,
+      "sha256": "5850e3c83b9a77efc23ca6a5d4ba5cb45e305859216648c1595a35b124cba854"
+    },
+    {
+      "path": "text-providers__sources-sf_znp6d__diffutils-configure.log.gz",
+      "original": "build/text-providers/sources-sf_znp6d/diffutils-configure.log",
+      "bytes": 21680,
+      "sha256": "3467811ad7699c0daf2f1aeb76e6a1a11b4c2e6b127e1a1dcd537f96675e6b3a"
+    },
+    {
+      "path": "text-providers__sources-sf_znp6d__diffutils-extract.log.gz",
+      "original": "build/text-providers/sources-sf_znp6d/diffutils-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "text-providers__sources-sf_znp6d__ed-build.log.gz",
+      "original": "build/text-providers/sources-sf_znp6d/ed-build.log",
+      "bytes": 493,
+      "sha256": "34a5187c80ba9dcdd98a01e68f20c15e8df88674791eb6b259ce35805cd9b238"
+    },
+    {
+      "path": "text-providers__sources-sf_znp6d__ed-check.log.gz",
+      "original": "build/text-providers/sources-sf_znp6d/ed-check.log",
+      "bytes": 51,
+      "sha256": "5c9f330f5f660b952783ef27d3ffaa5eabf7645c0a1ebbdd4603d05400ffe9ed"
+    },
+    {
+      "path": "text-providers__sources-sf_znp6d__ed-configure.log.gz",
+      "original": "build/text-providers/sources-sf_znp6d/ed-configure.log",
+      "bytes": 330,
+      "sha256": "ccd0efe5d32d08ae2fac900c35e0f48ed9374576b7b5bf6eca4b8c7ba1c843fb"
+    },
+    {
+      "path": "text-providers__sources-sf_znp6d__ed-extract.log.gz",
+      "original": "build/text-providers/sources-sf_znp6d/ed-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "text-providers__sources-sf_znp6d__ed-patch.log.gz",
+      "original": "build/text-providers/sources-sf_znp6d/ed-patch.log",
+      "bytes": 26,
+      "sha256": "6089e1c5ea880a45e1100b9d3434cbd829b95f143231831644a509ed20ded506"
+    },
+    {
+      "path": "text-providers__sources-sf_znp6d__sed-build.log.gz",
+      "original": "build/text-providers/sources-sf_znp6d/sed-build.log",
+      "bytes": 6504,
+      "sha256": "393e4c932896d39158d1dd4b7a240f37f59c6b077fa4c8503d922f7a93356f99"
+    },
+    {
+      "path": "text-providers__sources-sf_znp6d__sed-configure.log.gz",
+      "original": "build/text-providers/sources-sf_znp6d/sed-configure.log",
+      "bytes": 23110,
+      "sha256": "6cacef7cfcc3bc38e034f5b7f3d1e05f36bde3ea4327021b62f3eda423823e3e"
+    },
+    {
+      "path": "text-providers__sources-sf_znp6d__sed-extract.log.gz",
+      "original": "build/text-providers/sources-sf_znp6d/sed-extract.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}
