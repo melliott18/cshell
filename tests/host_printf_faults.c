@@ -5,26 +5,28 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int fail_call(const char *kind)
+static int fail_call(const char *kind, const char *site)
 {
     const char *selected = getenv("CSH_PRINTF_FAIL");
-    if (selected && !strcmp(selected, kind)) {
+    const char *selected_site = getenv("CSH_PRINTF_FAIL_SITE");
+    if (selected && !strcmp(selected, kind) &&
+        (!selected_site || !*selected_site || !strcmp(selected_site, site))) {
         errno = ENOMEM;
         return 1;
     }
     return 0;
 }
 
-static char *fault_strdup(const char *text)
+static char *fault_strdup(const char *text, const char *site)
 {
-    return fail_call("strdup") ? NULL : strdup(text);
+    return fail_call("strdup", site) ? NULL : strdup(text);
 }
 
-static void *fault_realloc(void *pointer, size_t size)
+static void *fault_realloc(void *pointer, size_t size, const char *site)
 {
-    return fail_call("realloc") ? NULL : realloc(pointer, size);
+    return fail_call("realloc", site) ? NULL : realloc(pointer, size);
 }
 
-#define strdup fault_strdup
-#define realloc fault_realloc
+#define strdup(text) fault_strdup((text), __func__)
+#define realloc(pointer, size) fault_realloc((pointer), (size), __func__)
 #include "../tools/host-profile/printf.c"

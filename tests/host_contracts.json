@@ -4,9 +4,9 @@
   "residual_evidence": "docs/evidence/csh-064/prerequisites.json",
   "owners": [
     {
-      "ticket": "CSH-070",
-      "path": "docs/tickets/CSH-070-host-formatted-output.md",
-      "title": "Qualify host printf and echo contracts",
+      "ticket": "CSH-079",
+      "path": "docs/tickets/CSH-079-formatted-output-residuals.md",
+      "title": "Qualify remaining formatted-output environments",
       "utilities": [
         "printf",
         "echo"
@@ -19,7 +19,7 @@
         "U-036/alternative-policies",
         "U-036/argument-limits"
       ],
-      "prerequisite": "Select catalog-capable printf and declared echo policies; supply libc allocation/stack fault controls and bounded exec-threshold measurements."
+      "prerequisite": "Supply Darwin libc allocation instrumentation and a disposable macOS kernel/exec environment; extend independently authored locale, conversion, default-signal and interrupted-output assertions. See CSH-070 bounded evidence."
     },
     {
       "ticket": "CSH-071",
@@ -224,7 +224,7 @@
     }
   ],
   "conditional_owners": {
-    "U-035/allocation-injection": "CSH-070",
+    "U-035/allocation-injection": "CSH-079",
     "U-035/German-locale": "CSH-076",
     "U-040/GB18030-locale": "CSH-076",
     "U-037/controlled-environment": "CSH-071",
@@ -232,5 +232,41 @@
     "U-035/locale-errors": "CSH-076",
     "U-037/permission-denial": "CSH-071",
     "U-037/block-device": "CSH-071"
+  },
+  "condition_updates": {
+    "U-035/locale-catalogs": {
+      "ticket": "CSH-070",
+      "evidence": "docs/evidence/csh-070/README.md",
+      "boundary": "French/German catalogs, NLSPATH %l/%L/%N and search-list lookup, missing-set fallback and explicit Darwin/glibc malformed-catalog policies supplied; additional encodings and unreadable catalogs remain open.",
+      "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
+    },
+    "U-035/other-locales": {
+      "ticket": "CSH-070",
+      "evidence": "docs/evidence/csh-070/README.md",
+      "boundary": "French/German locale precedence, numeric and UTF-8 witnesses supplied; additional codesets remain open."
+    },
+    "U-035/format-allocation-limits": {
+      "ticket": "CSH-070",
+      "evidence": "docs/evidence/csh-070/README.md",
+      "boundary": "Linux libc ENOMEM and post-startup 64 KiB stack controls retained; workspace, numeric-format and %b allocation failures isolated by call site. SIGPIPE and 1024-byte file limits checked with default/ignored dispositions and partial-byte effects. Darwin libc allocation controls remain open.",
+      "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
+    },
+    "U-035/full-format": {
+      "ticket": "CSH-070",
+      "evidence": "docs/evidence/csh-070/README.md",
+      "boundary": "Numbered reuse through operand nine, flags/bases/precision, binary stop/reuse, locale floats and diagnostic continuation checked. Default/ignored SIGPIPE and SIGXFSZ checked through direct and replacing exec paths. Further ranges/combinations and other signal/interruption contracts remain open.",
+      "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
+    },
+    "U-036/alternative-policies": {
+      "ticket": "CSH-070",
+      "evidence": "docs/evidence/csh-070/README.md",
+      "boundary": "Repository literal echo policy checks n/e/E combinations, control bytes, catalogs, default/ignored SIGPIPE and SIGXFSZ; stock Apple/GNU/BusyBox builds keep separately recorded scopes.",
+      "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
+    },
+    "U-036/argument-limits": {
+      "ticket": "CSH-070",
+      "evidence": "docs/evidence/csh-070/README.md",
+      "boundary": "Adjacent success/E2BIG for fixed layouts, two environment sizes, Linux 1/8 MiB stacks and Darwin 8 MiB; Darwin 1 MiB failed cleanup is retained and excluded from the qualified subset."
+    }
   }
 }

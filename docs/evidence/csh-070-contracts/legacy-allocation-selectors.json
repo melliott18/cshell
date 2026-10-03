@@ -1,0 +1,14 @@
+[
+  {
+    "kind": "strdup",
+    "status": 1,
+    "stdout_hex": "",
+    "stderr_hex": "686f73745f7072696e74665f6661756c74733a2043616e6e6f7420616c6c6f63617465206d656d6f72790a"
+  },
+  {
+    "kind": "realloc",
+    "status": 1,
+    "stdout_hex": "",
+    "stderr_hex": "686f73745f7072696e74665f6661756c74733a2043616e6e6f7420616c6c6f63617465206d656d6f72790a"
+  }
+]
