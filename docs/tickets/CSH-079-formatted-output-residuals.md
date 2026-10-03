@@ -1,6 +1,6 @@
 # CSH-079: Qualify remaining formatted-output environments
 
-- Status: in-progress
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
@@ -37,14 +37,14 @@ manifest links this boundary without rewriting the historical observations.
 
 ## Acceptance criteria
 
-- [ ] Account for each retained condition above separately with new supplied
+- [x] Account for each retained condition above separately with new supplied
   capabilities and strict assertions, or an explicit individual disposition.
-- [ ] Investigate the Darwin near-ARG_MAX low-stack exec failure with kernel/OS
+- [x] Investigate the Darwin near-ARG_MAX low-stack exec failure with kernel/OS
   identity and owned-process disappearance, including timeout cleanup. Do not
   repeat it on a personal host merely to retry a failed run.
-- [ ] Supply independent libc/locale/conversion and signal/error oracles; keep
+- [x] Supply independent libc/locale/conversion and signal/error oracles; keep
   setup failure, implementation failure and missing capability distinct.
-- [ ] Update the whole-page section map, ownership manifest and native/Linux
+- [x] Update the whole-page section map, ownership manifest and native/Linux
   evidence without promoting finite witnesses to complete POSIX conformance.
 
 ## Additional retained observation
@@ -110,3 +110,13 @@ ENOMEM test injects the vprintf API return and is explicitly not an allocator
 experiment. Other remaining environments have individual open dispositions.
 Historical failures remain retained; this implementation does not close the
 whole ticket or declare whole-page conformance.
+
+
+The disposable investigation ran on GitHub-hosted Darwin 24.6.0 arm64: all
+8 MiB controls passed; the first 1 MiB search produced SIGSEGV near the argument
+limit, with successful reap and verified PID disappearance. Remaining low-stack
+configurations were not run after this failure. The prior Darwin 23.6.0
+unkillable-process observation remains unresolved; no root-cause or vendor-fix
+claim follows. Timeout cleanup is independently exercised before and after
+exec. Checked acceptance boxes refer to this scoped investigation and the
+explicit individual dispositions, not universal qualification or ticket closure.

@@ -166,3 +166,22 @@ only strict contract assertions; low-stack diagnostics run on explicit workflow
 dispatch and still return failure for the same observation. The code also
 suppresses sanitizer tracer subprocesses in threshold children; those fixed
 environment bytes are included in future threshold measurements.
+
+### Sanitizer supervision correction
+
+Two local Linux sanitizer commands were explicitly stopped and retained as
+incomplete attempts. The first also selected the entire sanitizer runtime
+suite, which was outside the focused formatted-output sanitizer stage; the
+second selected focused providers. Neither yielded a final result before it
+was superseded. The evidence includes their progress logs and stopped-container
+states, not invented passing totals.
+
+Inspection showed that smoke deliberately builds a clean child environment.
+Setting ASAN_OPTIONS on `docker create` therefore did not configure ordinary
+formatted-output cases. `--instrumented`, selected by Make for sanitizer builds,
+now injects the controls into every capture fixture, including stdin and
+catalog checks. It keeps the normal provider paths and all resource/failure
+probes. The separate `--sanitizer` option still selects dedicated instrumented
+provider paths and omits the resource probes. Both disable leak/symbolizer
+subprocesses but retain ASan/UBSan error detection. The focused sanitizer retry
+and ordinary Linux runtime/PTY stages have separate records and outcomes.

@@ -1444,9 +1444,15 @@ have separate instrumentation evidence. See [CSH-079 evidence](evidence/csh-079/
 for each capability and its remaining limitations.
 
 The dedicated `Formatted-output environments` workflow checks macOS/Linux and
-runs `host_formatted_disposable.py --disposable-darwin` only on a GitHub-hosted
-macOS runner. It checkpoints the low-stack experiment and stops at its first
+runs `host_formatted_disposable.py --disposable-darwin` only on explicit
+workflow dispatch to a GitHub-hosted macOS runner. It checkpoints the low-stack experiment and stops at its first
 failure. Do not spoof runner variables or repeat that configuration on a
 personal host. Normal threshold calls reject Darwin stacks below 8 MiB before
 forking. Every launched threshold child is owned before exec and has bounded
 wait/kill/reap with explicit PID-disappearance evidence.
+
+Sanitizer Make builds pass `--instrumented` to the normal formatted-output
+runner so every clean child environment receives explicit ASan/UBSan controls.
+This preserves all normal resource/failure probes and is distinct from the
+`--sanitizer` selection of dedicated provider binaries. Neither result claims
+LeakSanitizer coverage.

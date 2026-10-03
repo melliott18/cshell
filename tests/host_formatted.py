@@ -42,7 +42,16 @@ def main():
     parser.add_argument('--scope', choices=('all', 'contracts'), default='all',
                         help='contracts omits existing stack/memory and exec-capacity probes')
     parser.add_argument('--sanitizer', action='store_true', help='Use instrumented providers; resource/threshold scopes run separately')
+    parser.add_argument('--instrumented', action='store_true',
+                        help='Current normal-path binaries are instrumented; keep all probes but disable tracer subprocesses')
     args = parser.parse_args()
+
+    def run_capture(target, fixture, parent, limit):
+        if args.sanitizer or args.instrumented:
+            fixture['env'].update(ASAN_OPTIONS='halt_on_error=1:detect_leaks=0:symbolize=0',
+                                  UBSAN_OPTIONS='halt_on_error=1:print_stacktrace=0')
+        return capture(target, fixture, parent, limit)
+
     providers = {'printf': ROOT / 'build/host-printf', 'echo': ROOT / 'build/host-echo-literal'}
     if args.sanitizer:
         providers = {name: ROOT / 'build/host-formatted-sanitizer' / name for name in providers}
@@ -82,8 +91,6 @@ def main():
         for case in selected_cases:
             for mode in ('direct', 'exec', 'string', 'file', 'stdin'):
                 fixture = dict(env=dict(PATH=search, **case['env']), args=[], stdin='')
-                if args.sanitizer:
-                    fixture['env'].update(ASAN_OPTIONS='halt_on_error=1:detect_leaks=0', UBSAN_OPTIONS='halt_on_error=1')
                 # Preserve independently specified non-UTF-8 argument bytes in all modes.
                 raw_args = [os.fsencode(item) for item in [case['utility']] + case['argv']]
                 script = b' '.join(b"'" + item.replace(b"'", b"'\\''") + b"'" for item in raw_args) + b'\n'
@@ -100,7 +107,7 @@ def main():
                     fixture['args'] = ['script']
                 else:
                     fixture['stdin'] = script
-                status, output, errors, _ = capture(target, fixture, directory, 65536)
+                status, output, errors, _ = run_capture(target, fixture, directory, 65536)
                 # err(3) identifies the basename of the selected invocation path.
                 program = 'printf'
                 expected_err = case['stderr'].replace(b'{program}', program.encode())
@@ -122,7 +129,7 @@ def main():
                 # Both descriptors refer to one open file description.
                 fixture = dict(args=['-c', 'exec 3<input; ' + script.replace('<input', '<&3')],
                                stdin='', env={'PATH': search})
-                status, output, errors, _ = capture(binary, fixture, directory, 65536)
+                status, output, errors, _ = run_capture(binary, fixture, directory, 65536)
                 ok = (not errors and status == expected_status and output['stdout'] == expected_out and
                       (bool(output['stderr']) if expected_err is None else output['stderr'] == expected_err))
                 records.append(dict(name=utility + ' stdin/closed stdout ' + script, verdict='PASS' if ok else 'FAIL',
@@ -132,7 +139,7 @@ def main():
             fixture = dict(args=['-c', 'echo value >&-'], stdin='',
                            env=dict(PATH=search, LC_ALL=locale,
                                     NLSPATH=str(ROOT / 'build/host-profile/catalogs' / (lang + '.cat'))))
-            status, output, errors, _ = capture(binary, fixture, directory, 65536)
+            status, output, errors, _ = run_capture(binary, fixture, directory, 65536)
             ok = not errors and status == 1 and not output['stdout'] and output['stderr'] == expected.encode()
             records.append(dict(name='echo catalog ' + lang, verdict='PASS' if ok else 'FAIL',
                                 invocation=serial(fixture), actual=serial(dict(status=status, **output, errors=errors))))
@@ -153,7 +160,7 @@ def main():
                                          owner='CSH-079', verdict='UNQUALIFIED'))
                 continue
             fixture = dict(args=[kind], stdin='', env={'PATH': search})
-            status, output, errors, measured = capture(ROOT / 'build/tests/host_printf_resources', fixture,
+            status, output, errors, measured = run_capture(ROOT / 'build/tests/host_printf_resources', fixture,
                                                             directory, 400000)
             ok = (not errors and measured and measured['soft'] == (65536 if kind == 'stack' else 16777216) and
                   (status == 0 and output['stdout'] == b'x' * 262145 and not output['stderr'] if kind == 'stack'
@@ -185,7 +192,7 @@ def main():
     stable = input_sources == final_sources and not changed_inputs
     records.append(dict(name='qualification input stability', verdict='PASS' if stable else 'FAIL',
                         source_changed=input_sources != final_sources, changed_inputs=changed_inputs))
-    result = dict(scope=args.scope, sanitizer=args.sanitizer, catalog_failure_policy=catalog_policy, platform=platform.platform(), uname=list(platform.uname()), libc=platform.libc_ver(),
+    result = dict(scope=args.scope, sanitizer=args.sanitizer, instrumented=args.instrumented, catalog_failure_policy=catalog_policy, platform=platform.platform(), uname=list(platform.uname()), libc=platform.libc_ver(),
                   source_identity=input_sources, final_source_identity=final_sources, input_hashes=input_hashes, path=search, binary_sha256=sha(binary),
                   providers={name: dict(path=str(path), realpath=str(path.resolve()), sha256=sha(path),
                                        package='repository source build; see source_identity')
