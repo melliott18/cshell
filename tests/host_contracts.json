@@ -220,7 +220,8 @@
         "uuencode"
       ],
       "conditions": [],
-      "prerequisite": "Supply disposable scheduler, mail transport, print spool and logging services plus controlled time; verify queue/delivery/output effects and cleanup. mailx send mode remains base. Never enqueue jobs, deliver mail or change clocks on the developer host."
+      "prerequisite": "Supply disposable scheduler, mail transport, print spool and logging services plus controlled time; verify queue/delivery/output effects and cleanup. mailx send mode remains base. Never enqueue jobs, deliver mail or change clocks on the developer host.",
+      "qualification_map": "tests/host_service_contracts.json"
     }
   ],
   "conditional_owners": {

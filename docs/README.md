@@ -68,3 +68,5 @@ The [CSH-012 requirement, defect, platform and documentation review](conformance
 
 - [Shell locale and pathname qualification](locale-pathname-qualification.md):
   CSH-067 clauses, exact witnesses, supplied definitions and external prerequisites.
+
+- [Disposable host service profile](host-service-profile.md): native codecs and isolated scheduler, mail, logging, print and clock witnesses.

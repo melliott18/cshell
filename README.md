@@ -59,7 +59,9 @@ make test-fields   # IFS splitting, pathname expansion, and cleanup checks
 make test-options  # Invocation/set, option effects, and environment interactions
 make test-host-inventory # Complete utility and residual ownership consistency
 make test-host-utilities # Stock-host integration, identities and known gaps
-make test-host-profile   # Opt-in qualified utilities, strict gaps and boundaries
+make test-host-profile   # Opt-in qualified utilities, codecs, strict gaps and boundaries
+make test-host-service-harness # Service fixture timeout/failure cleanup
+make docker-test-host-services # Disposable scheduler/mail/log/print service witnesses
 make test-evaluation # Evaluation, lookup, aliases, and remaining utilities
 make test-builtins # Replacement state builtins and executor integration
 make test-state-builtins # Clause-mapped runtime state and utility evidence

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Regression checks for lost ownership and current report attribution."""
 import re
+import json
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -60,6 +61,36 @@ class ContractOwnershipTests(unittest.TestCase):
 
         with patch.object(Path, 'read_text', read):
             self.assertIn('printf: inventory owner differs from CSH-070', validate(self.contracts))
+
+    def test_service_map_cannot_claim_full_qualification(self):
+        original = Path.read_text
+        target = ROOT / 'tests/host_service_contracts.json'
+
+        def read(path, *args, **kwargs):
+            text = original(path, *args, **kwargs)
+            if path == target:
+                document = json.loads(text)
+                document['full_contract_qualified'] = True
+                return json.dumps(document)
+            return text
+
+        with patch.object(Path, 'read_text', read):
+            self.assertIn('CSH-078: incorrect bounded qualification boundary', validate(self.contracts))
+
+    def test_service_map_cannot_drop_page_section(self):
+        original = Path.read_text
+        target = ROOT / 'tests/host_service_contracts.json'
+
+        def read(path, *args, **kwargs):
+            text = original(path, *args, **kwargs)
+            if path == target:
+                document = json.loads(text)
+                del document['utilities'][0]['sections']['ASYNCHRONOUS EVENTS']
+                return json.dumps(document)
+            return text
+
+        with patch.object(Path, 'read_text', read):
+            self.assertIn('CSH-078/at: missing page-section disposition', validate(self.contracts))
 
     def test_live_residual_reports_preserve_evidence(self):
         environment = {'platform': 'fixture'}
