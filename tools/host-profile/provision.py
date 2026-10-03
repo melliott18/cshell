@@ -12,11 +12,16 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'tests'))
 from host_utility_cases import HOSTS
+from host_language_cases import UTILITIES
 
 
 def provision(destination, gnu_bin=None):
-    selected = {name: shutil.which(name, path=os.defpath) for name in HOSTS}
-    overrides = {'printf': str(ROOT / 'build/host-printf')}
+    selected = {name: shutil.which(name, path=os.defpath) for name in dict.fromkeys(HOSTS + UTILITIES)}
+    overrides = {'printf': str(ROOT / 'build/host-printf'),
+                 'ed': str(ROOT / 'build/host-ed'),
+                 'xargs': str(ROOT / 'build/host-xargs'),
+                 'm4': str(ROOT / 'build/host-m4'),
+                 'patch': str(ROOT / 'build/host-patch')}
     system = platform.system()
     if system == 'Darwin':
         # Homebrew's prefixed names do not change the system PATH or echo policy.

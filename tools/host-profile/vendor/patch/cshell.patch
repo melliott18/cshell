@@ -1,0 +1,18 @@
+--- a/src/patch.c
++++ b/src/patch.c
+@@ -1590,7 +1590,14 @@
+ open_outfile (char *name)
+ {
+   if (strcmp (name, "-") != 0)
+-    return create_output_file (&(struct outfile) { .name = name }, 0);
++    {
++      /* POSIX -b with -o saves an existing output, not the input file.
++         Save it once, before opening the shared output stream truncates it. */
++      struct stat previous;
++      if (make_backups && ! dry_run && stat_file (name, &previous) == 0)
++        create_backup (name, &previous, true);
++      return create_output_file (&(struct outfile) { .name = name }, 0);
++    }
+   else
+     {
+       int stdout_dup = dup (STDOUT_FILENO);

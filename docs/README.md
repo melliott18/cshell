@@ -68,3 +68,5 @@ The [CSH-012 requirement, defect, platform and documentation review](conformance
 
 - [Shell locale and pathname qualification](locale-pathname-qualification.md):
   CSH-067 clauses, exact witnesses, supplied definitions and external prerequisites.
+
+- [Host languages, editors and argument construction](host-languages-evidence.md): CSH-074 bounded assertions, clause dispositions, signal recovery and retained failures.

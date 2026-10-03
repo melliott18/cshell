@@ -1,0 +1,152 @@
+[
+  {
+    "file": "docker-build.log.gz",
+    "uncompressed_bytes": 6391,
+    "sha256": "ba8edcc59873433a4d88ca2080ea4e702f45a92c83460a7ac33ccad39a0fd1dd"
+  },
+  {
+    "file": "docker-final-create-failure.log.gz",
+    "uncompressed_bytes": 267,
+    "sha256": "3dd4543bdcb8a38322bb8bc9373e8d6fbf60f7c231ab60715d38ef1bef386bd5"
+  },
+  {
+    "file": "docker-image.json.gz",
+    "uncompressed_bytes": 4135,
+    "sha256": "7a235e090755a201d295e4b6d51291fbfeab5e17764241f29f3fad02844c4313"
+  },
+  {
+    "file": "linux-attempt1.json.gz",
+    "uncompressed_bytes": 582828,
+    "sha256": "eb95100547f54446fa2efefe6cc66aadd9d6f4dd33f81eb87c1e438a1f57d887"
+  },
+  {
+    "file": "linux-existing-profile.json.gz",
+    "uncompressed_bytes": 4603897,
+    "sha256": "ae299be8c3da514b3562c52b3f2401e37847adb4025d0d95d7d6264923b5297c"
+  },
+  {
+    "file": "linux-final.json.gz",
+    "uncompressed_bytes": 576527,
+    "sha256": "d361027dd5a62825e777cc4506c7a84118bb473e56032d09b65c264fcca1825c"
+  },
+  {
+    "file": "linux-full-profile.log.gz",
+    "uncompressed_bytes": 124169,
+    "sha256": "6db69cf70b74455fabac28c1343fca4e265c88d877d385f3e46811d0f573997d"
+  },
+  {
+    "file": "linux-initial-profile.log.gz",
+    "uncompressed_bytes": 116523,
+    "sha256": "0ed691035cdc550bcfde40b4e029645832bc539cc11f3f75557a133951253439"
+  },
+  {
+    "file": "linux-profile-final.json.gz",
+    "uncompressed_bytes": 4603897,
+    "sha256": "76c2afeb1bba3e24656a1ccbb5b6230a5acbba4afc2610f047031757ab6d631f"
+  },
+  {
+    "file": "linux-signal-sync-attempt.json.gz",
+    "uncompressed_bytes": 578729,
+    "sha256": "ba7dde047abe7b372b5d493d49c7d6b2ac3292042f9ab5d6d4459fcde9f80df5"
+  },
+  {
+    "file": "linux-signal-sync-attempt.log.gz",
+    "uncompressed_bytes": 14536,
+    "sha256": "e4b8d388a65511da3c1d80df1afac9a8dce7e917c62a4b0baa44dd5a97e091b0"
+  },
+  {
+    "file": "native-attempt1.json.gz",
+    "uncompressed_bytes": 598656,
+    "sha256": "548077d0c7e08b76a57c2ec583fa3334ec5b5e39af58681e3ae1febeaf737bfe"
+  },
+  {
+    "file": "native-before-ready.json.gz",
+    "uncompressed_bytes": 622855,
+    "sha256": "f95e099feee2b36f0a20345843ba637ee554c802342ddda1b82d74ef64ab582f"
+  },
+  {
+    "file": "native-existing-profile.json.gz",
+    "uncompressed_bytes": 4693841,
+    "sha256": "ea1b2830f5ce00dc724a2b4483470a4702c6746b6e5dfca9d42246e9c3d03dd2"
+  },
+  {
+    "file": "native-existing-profile.log.gz",
+    "uncompressed_bytes": 98761,
+    "sha256": "154676faa0c438af922b94b296efa4758c1a5dc9068f97b469d2145b55504fa5"
+  },
+  {
+    "file": "native-final.json.gz",
+    "uncompressed_bytes": 622855,
+    "sha256": "fe262e353b9a9ff56da968a9acbf55607edefa5eb9335bf9e42296ec5847bf40"
+  },
+  {
+    "file": "native-final.log.gz",
+    "uncompressed_bytes": 10581,
+    "sha256": "f6f46af7352b99fcf070e9667fa3817e17c52f35b115ff8e901140fa0d8546f7"
+  },
+  {
+    "file": "native-harness.log.gz",
+    "uncompressed_bytes": 13239,
+    "sha256": "d67eff6215eebbf1447d5a306fb03b696d0fbdec988d2ee4c47ec93043505f45"
+  },
+  {
+    "file": "native-identity.json.gz",
+    "uncompressed_bytes": 1129,
+    "sha256": "a78694639b80d885ad8bd08e605a2ddee63383d2fb43c6b56078aa1330de0529"
+  },
+  {
+    "file": "native-inventory.log.gz",
+    "uncompressed_bytes": 289,
+    "sha256": "35d08a82be070c9f491182606a7a7a85d61f389ebebfce0179ba40ce845230f8"
+  },
+  {
+    "file": "native-pty.log.gz",
+    "uncompressed_bytes": 6809,
+    "sha256": "85ad20690eeb6b67b3ff55cbafb2b18d5dd080719b152bb36bffe3c55ed24910"
+  },
+  {
+    "file": "native-runtime.log.gz",
+    "uncompressed_bytes": 225633,
+    "sha256": "b906f4135efed982f3cfd378c8b47194b0c19c960371a73cf49d9e0de93692ea"
+  },
+  {
+    "file": "native-sigint-final.json.gz",
+    "uncompressed_bytes": 28191,
+    "sha256": "7d4ed3d56a0c412eb0ad6f4d9e931e10496002910d663d7399b160306f315caf"
+  },
+  {
+    "file": "native-sigint-gated.json.gz",
+    "uncompressed_bytes": 27451,
+    "sha256": "e228d73ad0888964756281e59345872d7abb56a55123a7c3675221370598a6a3"
+  },
+  {
+    "file": "native-sigint-strict.json.gz",
+    "uncompressed_bytes": 630863,
+    "sha256": "a30a3469609c6831a9fe38ecaa5dc3530bec62573de52572ceac7af0f14995dc"
+  },
+  {
+    "file": "native-signal-gate.json.gz",
+    "uncompressed_bytes": 43294,
+    "sha256": "14ec4306eee95d38d9466e18c180b9e6eaaa83100727eff04bddfdb070c53579"
+  },
+  {
+    "file": "native-signals-attempt2.json.gz",
+    "uncompressed_bytes": 4009,
+    "sha256": "45a77cef03c47e26b0d2009c2bdcc8f01d9f90e4f122654f6fd6467dfe14b348"
+  },
+  {
+    "file": "native-signals-attempt3.json.gz",
+    "uncompressed_bytes": 1941,
+    "sha256": "d4c71668062c1d71324619526a1931ef7e043cf9039262f3f764cbbfdbf90b34"
+  },
+  {
+    "file": "native-subset-attempt2.json.gz",
+    "uncompressed_bytes": 622838,
+    "sha256": "ea2177e92e82361fbb87902b2112a2d009a1a7d211b355771318f9733e028df3"
+  },
+  {
+    "file": "validation.json.gz",
+    "uncompressed_bytes": 2193,
+    "sha256": "95e66fc84b9bfd0f803289e91153c091866b65c807598c6cee353c3213748827"
+  }
+]

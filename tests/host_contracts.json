@@ -138,7 +138,12 @@
       "conditions": [
         "U-040/ed-buffer-temp-signal"
       ],
-      "prerequisite": "Supply clause-derived programs, regular expressions, editing sessions, patch effects and argument vectors; bound editor temporary-file and signal recovery tests and descendant cleanup."
+      "prerequisite": "Supply clause-derived programs, regular expressions, editing sessions, patch effects and argument vectors; bound editor temporary-file and signal recovery tests and descendant cleanup.",
+      "qualification": {
+        "clause_map": "tests/host_language_contracts.json",
+        "evidence": "docs/evidence/csh-074/README.md",
+        "scope": "Bounded language/editing/regex/patch/argv contracts, private ed/xargs/M4 repairs, SIGINT/SIGHUP recovery and controlled backing-store failures; complete normative pages remain open."
+      }
     },
     {
       "ticket": "CSH-075",

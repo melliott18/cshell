@@ -34,7 +34,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential locales ed busybox acl
+          sudo apt-get install -y build-essential locales ed busybox acl bc m4
           sudo localedef -i en_US -f UTF-8 en_US.UTF-8
           sudo localedef -i fr_FR -f UTF-8 fr_FR.UTF-8
           sudo localedef -i de_DE -f UTF-8 de_DE.UTF-8
@@ -74,6 +74,49 @@ jobs:
             build/retention-diagnostics-checks/
           if-no-files-found: ignore
           retention-days: 30
+
+  host-languages:
+    name: Host language contracts (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Supply Linux profile and locale
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential locales ed busybox bc m4
+          sudo localedef -i en_US -f UTF-8 en_US.UTF-8
+      - name: Supply macOS profile
+        if: runner.os == 'macOS'
+        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+      - name: Qualify native language contracts
+        run: |
+          make -j2 test-host-languages
+          cp build/tests/host-languages-results.json "$RUNNER_TEMP/csh074-native.json"
+      - name: Qualify language contracts with sanitizers
+        env:
+          ASAN_OPTIONS: halt_on_error=1:detect_leaks=0
+          MallocNanoZone: '0'
+          UBSAN_OPTIONS: halt_on_error=1
+        run: |
+          make clean
+          make -j2 test-host-languages CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: csh074-${{ matrix.os }}
+          path: |
+            ${{ runner.temp }}/csh074-native.json
+            build/tests/host-languages-results.json
+            build/host-profile/manifest.json
 
   docker:
     name: Docker (Linux)

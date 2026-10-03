@@ -42,9 +42,9 @@ def source_identity():
     return dict(sha256=digest, files=hashes)
 
 
-def inventory(search_path=os.defpath):
+def inventory(search_path=os.defpath, names=HOSTS):
     result = {}
-    for name in HOSTS:
+    for name in names:
         path = shutil.which(name, path=search_path)
         entry = {'path': path, 'realpath': os.path.realpath(path) if path else None}
         if path:

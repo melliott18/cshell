@@ -8,7 +8,7 @@ cshell's builtin allocation. All tools are real exec-accessible programs;
 | Host | Selected replacements | Provisioning |
 | --- | --- | --- |
 | macOS | Standalone FreeBSD printf with adapters; Homebrew `gtest` and `g[` | `brew install coreutils`; prefixed binaries must be on the provisioning process's PATH |
-| Debian/Ubuntu | Standalone FreeBSD printf with adapters; BusyBox kill | `apt-get install build-essential python3 ed busybox locales acl`; generate `fr_FR.UTF-8` |
+| Debian/Ubuntu | Standalone FreeBSD printf with adapters; BusyBox kill | `apt-get install build-essential python3 ed busybox locales acl bc m4`; generate `fr_FR.UTF-8` |
 
 Other scoped commands use `os.defpath` without additional symlinks, preserving
 cshell's PATH-associated pwd builtin selection. In particular, echo remains the system
@@ -242,3 +242,44 @@ control. It checks the deadline, strict timeout record, measured IDs, disappeara
 of every owned PID (including zombies), and survival of an unrelated child.
 Only private files and processes are used. See
 [CSH-064 completion](../../docs/evidence/csh-064-completion/README.md) for validation.
+
+## CSH-074 language/editor providers
+
+The profile builds private ed, xargs, m4 and patch executables offline, alongside printf.
+`vendor/ed` is GNU ed 1.22.6, GPL-2.0-or-later; its COPYING and complete compiled
+sources are retained. `vendor/xargs` derives from FreeBSD commit
+`16a79708d089423ec0c3d32f25e7ca97ae58e97b`; each source retains its license.
+`vendor/m4` retains the complete GNU M4 1.4.20 source archive and GPL-3.0-or-later
+COPYING, plus a reviewable patch for FIFO wrap processing and error status.
+Each directory's `provenance.json` records upstream hashes and local changes. These are independent host processes, never linked into cshell.
+
+The ed adapter emits the exact POSIX SIGINT stdout marker. The xargs adapter
+preserves empty NUL arguments, implements empty-input invocation/`-r`, handles
+strict byte limits and oversized `-s`, and uses a portable fork/error-pipe path.
+A separate test-only ed build injects backing-store creation and write failures.
+The production provider contains no fault-injection environment switches.
+
+Linux explicitly supplies `bc`; stock m4 remains installed for historical
+comparisons, while both platforms select the new private m4 executable.
+M4/gnulib use the upstream build and warning policy: only `-Werror` is removed
+from CFLAGS, retaining sanitizer instrumentation and all other flags. The
+requested and effective flags are retained in `build/host-m4-build.json`.
+The manifest records each real executable, including these overrides. No system
+programs are overwritten.
+
+`make test-host-languages` and `make test-host-profile` run the
+[773 assertions](../../docs/host-languages-evidence.md), including SIGINT by
+default. These qualify the declared operation subset only. Full pages remain
+open. The six M4 provider regressions (including the three formerly failing
+contracts) are now required by default and can be selected alone with
+`--provider-regressions`. Historical failures remain preserved.
+
+
+`vendor/patch` supplies GNU patch 2.8 with its complete source archive and
+GPL-3.0-or-later license. It preserves the first backup across multiple patches
+of one file; the local diff additionally backs up an existing `-o` output when
+`-b` is used. `build_patch.py` authenticates the archive and builds offline with
+the same upstream warning policy as M4. `build/host-patch-build.json` records
+archive/diff/binary hashes and requested/effective build flags. The suite now
+includes automated controlling-terminal editor and xargs prompt checks, and
+patch conditional-output and backup interactions.
