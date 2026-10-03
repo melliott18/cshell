@@ -1,0 +1,14 @@
+[
+  {
+    "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/printf.html",
+    "sha256": "10a8cae0fcf8fba5c33a685266219c1eef19e9a40ceb34d3dd02ba01dc242a5e"
+  },
+  {
+    "source": "https://github.com/apple-oss-distributions/Libc/blob/Libc-1592.100.35/locale/FreeBSD/euc.c",
+    "sha256": "b3bbd36156f8a4663101db78f9bfe466165612cdcd3e8e117857eb7d1077853a"
+  },
+  {
+    "source": "installed Darwin locale definition",
+    "sha256": "eb8e46218d92be454371d99ea0ae86fbc6d7844af35b28e2a68a184d761fdb86"
+  }
+]

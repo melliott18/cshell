@@ -1431,3 +1431,22 @@ assertions plus bounded I/O/allocation failures, without rerunning the existing
 stack/memory or exec-threshold probes. The JSON marks those scopes not run;
 it is not a substitute for the complete host-profile target. The full target
 includes the additional cases automatically.
+
+
+### CSH-079 formatted-output environment probes
+
+`make test-host-formatted` includes exact conversion/range cases, EUC-JP byte
+inputs, denied catalog fallback, vprintf API-return faults and actual caught
+EINTR/default SIGALRM on a full private pipe. `test-host-formatted-contracts`
+omits resource/exec-capacity searches. `test-host-formatted-sanitize` checks
+ordinary provider cases with ASan/UBSan; the source-including failure helpers
+have separate instrumentation evidence. See [CSH-079 evidence](evidence/csh-079/README.md)
+for each capability and its remaining limitations.
+
+The dedicated `Formatted-output environments` workflow checks macOS/Linux and
+runs `host_formatted_disposable.py --disposable-darwin` only on a GitHub-hosted
+macOS runner. It checkpoints the low-stack experiment and stops at its first
+failure. Do not spoof runner variables or repeat that configuration on a
+personal host. Normal threshold calls reject Darwin stacks below 8 MiB before
+forking. Every launched threshold child is owned before exec and has bounded
+wait/kill/reap with explicit PID-disappearance evidence.

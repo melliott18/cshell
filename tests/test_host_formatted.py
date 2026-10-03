@@ -4,14 +4,38 @@ from pathlib import Path
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from host_echo_threshold import threshold
 from host_formatted_failures import run_owned
 
 
 class ThresholdFailures(unittest.TestCase):
+    def test_darwin_low_stack_is_rejected_before_any_process_launch(self):
+        with patch('host_echo_threshold.platform.system', return_value='Darwin'), \
+             patch('host_echo_threshold.os.fork') as launch:
+            result = threshold('/unused', 'single', 0, 1024 * 1024)
+        launch.assert_not_called()
+        self.assertEqual(result['verdict'], 'UNQUALIFIED')
+        self.assertEqual(result['trials'], [])
+        self.assertEqual(result['owner'], 'CSH-079')
+
+    def test_disposable_flag_alone_cannot_enable_low_stack(self):
+        with patch('host_echo_threshold.platform.system', return_value='Darwin'), \
+             patch.dict(os.environ, {}, clear=True), \
+             patch('host_echo_threshold.os.fork') as launch:
+            result = threshold('/unused', 'single', 0, 1024 * 1024, disposable_darwin=True)
+        launch.assert_not_called()
+        self.assertEqual(result['verdict'], 'UNQUALIFIED')
+
+    def test_exec_setup_failure_is_not_e2big(self):
+        result = threshold('/no-such-csh079-provider', 'single', 0, 8 * 1024 * 1024)
+        self.assertEqual(result['verdict'], 'FAIL')
+        self.assertEqual(result['trials'][0]['phase'], 'exec')
+        self.assertTrue(result['trials'][0]['pid_disappeared'])
+
     def test_utility_failure_is_not_e2big(self):
-        result = threshold('/usr/bin/false', 'single', 0, 1024 * 1024)
+        result = threshold('/usr/bin/false', 'single', 0, 8 * 1024 * 1024)
         self.assertEqual(result['verdict'], 'FAIL')
         self.assertIn('output/status mismatch', result['error'])
         self.assertEqual(result['trials'][0]['status'], 1)
@@ -24,7 +48,7 @@ class ThresholdFailures(unittest.TestCase):
                 helper = Path(temporary) / 'slow'
                 helper.write_text('#!/bin/sh\nexec /bin/sleep 20\n')
                 helper.chmod(0o700)
-                result = threshold(helper, 'single', 0, 1024 * 1024, timeout=0.1)
+                result = threshold(helper, 'single', 0, 8 * 1024 * 1024, timeout=0.1)
             self.assertEqual(result['verdict'], 'FAIL')
             trial = result['trials'][0]
             self.assertEqual(trial['error'], 'timeout')
@@ -46,6 +70,7 @@ class ProviderFailureCleanup(unittest.TestCase):
                                    diagnostic, timeout=0.1)
             self.assertEqual(record['errors'], ['execution timeout'])
             self.assertTrue(record['reaped'])
+            self.assertTrue(record['pid_disappeared'])
             with self.assertRaises(ProcessLookupError):
                 os.kill(record['pid'], 0)
             self.assertIsNone(unrelated.poll())

@@ -19,7 +19,7 @@
         "U-036/alternative-policies",
         "U-036/argument-limits"
       ],
-      "prerequisite": "Supply Darwin libc allocation instrumentation and a disposable macOS kernel/exec environment; extend independently authored locale, conversion, default-signal and interrupted-output assertions. See CSH-070 bounded evidence."
+      "prerequisite": "CSH-079 supplies EUC-JP, denied catalog, numeric boundary, caught-EINTR/default-SIGALRM and libc API-error witnesses. Still requires internal Darwin libc allocation injection, further codesets/catalogs and a disposable macOS kernel/exec environment; see the individual dispositions in docs/evidence/csh-079/README.md."
     },
     {
       "ticket": "CSH-071",
@@ -235,38 +235,40 @@
   },
   "condition_updates": {
     "U-035/locale-catalogs": {
-      "ticket": "CSH-070",
-      "evidence": "docs/evidence/csh-070/README.md",
-      "boundary": "French/German catalogs, NLSPATH %l/%L/%N and search-list lookup, missing-set fallback and explicit Darwin/glibc malformed-catalog policies supplied; additional encodings and unreadable catalogs remain open.",
+      "ticket": "CSH-079",
+      "evidence": "docs/evidence/csh-079/README.md",
+      "boundary": "Mode-000 catalog fallback requires independently observed EACCES; root/bypass identities remain explicitly unqualified. Prior search/malformed/set witnesses remain separate; other encodings and installation layouts stay open.",
       "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
     },
     "U-035/other-locales": {
-      "ticket": "CSH-070",
-      "evidence": "docs/evidence/csh-070/README.md",
-      "boundary": "French/German locale precedence, numeric and UTF-8 witnesses supplied; additional codesets remain open."
+      "ticket": "CSH-079",
+      "evidence": "docs/evidence/csh-079/README.md",
+      "boundary": "EUC-JP byte slicing, binary output, literal echo and separately declared Darwin packed/glibc Unicode character constants added. Stateful encodings and other locale families remain open.",
+      "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
     },
     "U-035/format-allocation-limits": {
-      "ticket": "CSH-070",
-      "evidence": "docs/evidence/csh-070/README.md",
-      "boundary": "Linux libc ENOMEM and post-startup 64 KiB stack controls retained; workspace, numeric-format and %b allocation failures isolated by call site. SIGPIPE and 1024-byte file limits checked with default/ignored dispositions and partial-byte effects. Darwin libc allocation controls remain open.",
+      "ticket": "CSH-079",
+      "evidence": "docs/evidence/csh-079/README.md",
+      "boundary": "Source-including probe injects ENOMEM/EINTR/EOVERFLOW/zero-errno vprintf returns with no stream error; this validates adapter propagation, not libc-internal allocator failure. Real Darwin libc exhaustion remains open; earlier Linux RLIMIT_AS evidence stays separate.",
       "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
     },
     "U-035/full-format": {
-      "ticket": "CSH-070",
-      "evidence": "docs/evidence/csh-070/README.md",
-      "boundary": "Numbered reuse through operand nine, flags/bases/precision, binary stop/reuse, locale floats and diagnostic continuation checked. Default/ignored SIGPIPE and SIGXFSZ checked through direct and replacing exec paths. Further ranges/combinations and other signal/interruption contracts remain open.",
+      "ticket": "CSH-079",
+      "evidence": "docs/evidence/csh-079/README.md",
+      "boundary": "Exact rounding, range overflow/underflow with continued output, character constants and numbered precision added. Full-pipe actual caught EINTR/default SIGALRM probes have matching success controls; other interruption points, restart/partial transfer and conversion combinations stay open.",
       "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
     },
     "U-036/alternative-policies": {
-      "ticket": "CSH-070",
-      "evidence": "docs/evidence/csh-070/README.md",
-      "boundary": "Repository literal echo policy checks n/e/E combinations, control bytes, catalogs, default/ignored SIGPIPE and SIGXFSZ; stock Apple/GNU/BusyBox builds keep separately recorded scopes.",
+      "ticket": "CSH-079",
+      "evidence": "docs/evidence/csh-079/README.md",
+      "boundary": "The selected literal provider gains EUC-JP and full-pipe caught EINTR/default SIGALRM probes. No new stock vendor or XSI policy is selected; those require separate identities and oracles.",
       "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
     },
     "U-036/argument-limits": {
-      "ticket": "CSH-070",
-      "evidence": "docs/evidence/csh-070/README.md",
-      "boundary": "Adjacent success/E2BIG for fixed layouts, two environment sizes, Linux 1/8 MiB stacks and Darwin 8 MiB; Darwin 1 MiB failed cleanup is retained and excluded from the qualified subset."
+      "ticket": "CSH-079",
+      "evidence": "docs/evidence/csh-079/README.md",
+      "boundary": "Safe native/Linux thresholds record every successful child reap and PID disappearance. Darwin low-stack calls are rejected before launch. Prior seven unkillable PIDs and native inventory failures remain unresolved; disposable macOS with reset capability is not supplied.",
+      "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
     }
   }
 }

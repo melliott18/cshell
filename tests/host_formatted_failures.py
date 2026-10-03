@@ -14,7 +14,7 @@ import subprocess
 import tempfile
 
 
-def run_owned(argv, environment, stdout, stderr, *, ignored=(), file_limit=65536, timeout=5):
+def run_owned(argv, environment, stdout, stderr, *, ignored=(), file_limit=65536, timeout=5, cwd=None):
     """Return strict status/cleanup evidence, including setup and timeout failures."""
     def setup():
         resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
@@ -30,11 +30,11 @@ def run_owned(argv, environment, stdout, stderr, *, ignored=(), file_limit=65536
                        UBSAN_OPTIONS='halt_on_error=1:print_stacktrace=0')
     record = dict(argv=argv, environment=environment, file_limit=file_limit,
                   ignored_signals=list(ignored), timeout_seconds=timeout,
-                  cleanup_seconds=2, pid=None, status=None, reaped=False, errors=[])
+                  cleanup_seconds=2, pid=None, status=None, reaped=False, pid_disappeared=False, errors=[])
     try:
         process = subprocess.Popen(argv, env=environment, stdin=subprocess.DEVNULL,
                                    stdout=stdout, stderr=stderr, start_new_session=True,
-                                   preexec_fn=setup)
+                                   preexec_fn=setup, cwd=cwd)
     except (OSError, subprocess.SubprocessError) as error:
         record['errors'].append('setup: ' + str(error))
         return record
@@ -52,6 +52,14 @@ def run_owned(argv, environment, stdout, stderr, *, ignored=(), file_limit=65536
         try:
             record['status'] = process.wait(timeout=2)
             record['reaped'] = True
+            try:
+                os.kill(process.pid, 0)
+            except ProcessLookupError:
+                record['pid_disappeared'] = True
+            except PermissionError:
+                record['errors'].append('owned PID disappearance unverified: permission denied')
+            else:
+                record['errors'].append('owned PID still exists after reap')
         except subprocess.TimeoutExpired:
             record['errors'].append('cleanup timeout')
     return record

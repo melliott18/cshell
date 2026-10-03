@@ -1,11 +1,11 @@
 # CSH-079: Qualify remaining formatted-output environments
 
-- Status: ready
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: Assigned when work starts
+- Branch: `test/CSH-079-formatted-output-environments`
 - Issue: [#157](https://github.com/melliott18/cshell/issues/157)
 
 ## Goal
@@ -94,3 +94,19 @@ encodings, Darwin libc exhaustion and unsafe exec configurations stay open.
 Passing hosted Linux CI at the original PR source additionally supplies runtime,
 PTY and sanitizer integration; it does not repair the local Docker engine or
 native cleanup failures. New assertion revisions retain separate validation.
+
+
+## Implementation record
+
+The [CSH-079 evidence and dispositions](../evidence/csh-079/README.md) add 99
+strict assertions: 65 ordinary input-mode cases and 34 API-error/signal probes.
+Selected native/Docker profiles pass with zero allowances. The supervisor now
+owns threshold PIDs before exec so its timeout covers exec itself, and enforces
+the personal-host Darwin low-stack exclusion. A separate disposable hosted
+macOS diagnostic checkpoints the excluded configuration and stops on failure.
+
+Internal Darwin libc allocation exhaustion is still unsupplied: the new
+ENOMEM test injects the vprintf API return and is explicitly not an allocator
+experiment. Other remaining environments have individual open dispositions.
+Historical failures remain retained; this implementation does not close the
+whole ticket or declare whole-page conformance.

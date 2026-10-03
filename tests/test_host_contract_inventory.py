@@ -71,7 +71,7 @@ class ContractOwnershipTests(unittest.TestCase):
             self.assertEqual(row['condition'], condition)
             self.assertEqual(row['reason'], reason)
             if row['condition'].startswith(('U-035/', 'U-036/')):
-                self.assertEqual(row['current_qualification']['ticket'], 'CSH-070')
+                self.assertEqual(row['current_qualification']['ticket'], 'CSH-079')
             self.assertIs(row['environment'], environment)
             self.assertIs(row['executable'], identities[utility])
             self.assertNotIn(row['owner'], ('CSH-064', 'CSH-068'))

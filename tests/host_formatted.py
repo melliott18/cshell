@@ -6,7 +6,6 @@ import json
 import os
 from pathlib import Path
 import platform
-import shlex
 import subprocess
 import tempfile
 
@@ -14,6 +13,8 @@ import smoke
 from host_formatted_cases import cases, additional_cases
 from host_formatted_failures import io_cases, allocation_cases
 from host_echo_threshold import threshold
+from host_formatted_environments import (conversion_cases, locale_cases, denied_catalog_cases,
+                                         api_error_cases, interrupt_cases)
 from host_utilities import serial, sha, source_identity
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -50,6 +51,7 @@ def main():
     input_sources = source_identity()
     input_paths = [binary, *providers.values(), ROOT / 'build/tests/host_printf_resources',
                    ROOT / 'build/tests/host_printf_faults',
+                   ROOT / 'build/tests/host_printf_interrupt', ROOT / 'build/tests/host_echo_interrupt',
                    *sorted((ROOT / 'build/host-profile/catalogs').glob('*.cat'))]
     input_hashes = {str(path): sha(path) for path in input_paths}
     records = []
@@ -73,23 +75,28 @@ def main():
         (catalogs / 'invalid.cat').write_bytes(b'not a message catalog\n')
         (catalogs / 'directory.cat').mkdir()
         (catalogs / 'incomplete.cat').write_bytes((ROOT / 'build/host-profile/catalogs/incomplete.cat').read_bytes())
-        selected_cases = list(cases(ROOT / 'build/host-profile/catalogs')) + list(additional_cases(catalogs, catalog_policy))
+        selected_cases = (list(cases(ROOT / 'build/host-profile/catalogs')) +
+                          list(additional_cases(catalogs, catalog_policy)) +
+                          list(conversion_cases()) + list(locale_cases(limitations)) +
+                          list(denied_catalog_cases(catalogs, limitations)))
         for case in selected_cases:
             for mode in ('direct', 'exec', 'string', 'file', 'stdin'):
                 fixture = dict(env=dict(PATH=search, **case['env']), args=[], stdin='')
                 if args.sanitizer:
                     fixture['env'].update(ASAN_OPTIONS='halt_on_error=1:detect_leaks=0', UBSAN_OPTIONS='halt_on_error=1')
-                script = shlex.join([case['utility']] + case['argv']) + '\n'
+                # Preserve independently specified non-UTF-8 argument bytes in all modes.
+                raw_args = [os.fsencode(item) for item in [case['utility']] + case['argv']]
+                script = b' '.join(b"'" + item.replace(b"'", b"'\\''") + b"'" for item in raw_args) + b'\n'
                 target = binary
                 if mode == 'direct':
                     target = prefix / case['utility']
                     fixture['args'] = case['argv']
                 elif mode == 'exec':
-                    fixture['args'] = ['-c', 'exec ' + script]
+                    fixture['args'] = ['-c', b'exec ' + script]
                 elif mode == 'string':
                     fixture['args'] = ['-c', script]
                 elif mode == 'file':
-                    (directory / 'script').write_text(script)
+                    (directory / 'script').write_bytes(script)
                     fixture['args'] = ['script']
                 else:
                     fixture['stdin'] = script
@@ -101,7 +108,7 @@ def main():
                       output['stdout'] == case['stdout'] and output['stderr'] == expected_err)
                 records.append(dict(name=case['name'], mode=mode, verdict='PASS' if ok else 'FAIL',
                                     expected=serial(dict(status=case['status'], stdout=case['stdout'], stderr=expected_err)),
-                                    invocation=fixture, actual=serial(dict(status=status, **output, errors=errors))))
+                                    invocation=serial(fixture), actual=serial(dict(status=status, **output, errors=errors))))
                 if not ok:
                     print('FAIL:', case['name'], mode, serial(dict(status=status, **output, errors=errors)))
         # Private input remains unread; output failure is in the selected utility.
@@ -119,7 +126,7 @@ def main():
                 ok = (not errors and status == expected_status and output['stdout'] == expected_out and
                       (bool(output['stderr']) if expected_err is None else output['stderr'] == expected_err))
                 records.append(dict(name=utility + ' stdin/closed stdout ' + script, verdict='PASS' if ok else 'FAIL',
-                                    invocation=fixture, actual=serial(dict(status=status, **output, errors=errors))))
+                                    invocation=serial(fixture), actual=serial(dict(status=status, **output, errors=errors))))
         for lang, locale, expected in [('fr', 'fr_FR.UTF-8', 'echo : erreur d’écriture\n'),
                                         ('de', 'de_DE.UTF-8', 'echo: Schreibfehler\n')]:
             fixture = dict(args=['-c', 'echo value >&-'], stdin='',
@@ -128,10 +135,14 @@ def main():
             status, output, errors, _ = capture(binary, fixture, directory, 65536)
             ok = not errors and status == 1 and not output['stdout'] and output['stderr'] == expected.encode()
             records.append(dict(name='echo catalog ' + lang, verdict='PASS' if ok else 'FAIL',
-                                invocation=fixture, actual=serial(dict(status=status, **output, errors=errors))))
+                                invocation=serial(fixture), actual=serial(dict(status=status, **output, errors=errors))))
         if not args.sanitizer:
             records.extend(io_cases(binary, prefix))
             records.extend(allocation_cases(binary, prefix, ROOT / 'build/tests/host_printf_faults'))
+            records.extend(api_error_cases(binary, prefix, ROOT / 'build/tests/host_printf_faults'))
+            records.extend(interrupt_cases(binary, prefix, {
+                'printf': ROOT / 'build/tests/host_printf_interrupt',
+                'echo': ROOT / 'build/tests/host_echo_interrupt'}))
         if args.scope == 'contracts':
             limitations.append(dict(scope='stack/memory and exec capacities', verdict='NOT-RUN',
                                      reason='Explicit contracts scope; previous full-profile measurements remain separate'))
@@ -191,7 +202,7 @@ def main():
         result['package_versions'] = subprocess.check_output(['dpkg-query', '-W', '-f=${Package} ${Version}\n'], text=True, timeout=5)
     args.record.parent.mkdir(parents=True, exist_ok=True)
     args.record.write_text(json.dumps(result, indent=2) + '\n')
-    print('CSH-070:', result['totals'], 'limitations:',
+    print('CSH-070/079:', result['totals'], 'limitations:',
           {verdict: sum(item['verdict'] == verdict for item in limitations)
            for verdict in ('UNQUALIFIED', 'NOT-RUN')})
     return int(bool(result['totals']['FAIL']))

@@ -678,3 +678,14 @@ test-host-formatted-sanitize: cshell build/host-formatted-sanitizer/printf build
 test-host-formatted-contracts: cshell build/host-printf build/host-echo-literal build/tests/host_printf_resources build/tests/host_printf_faults build/host-profile/catalogs/fr.cat build/host-profile/catalogs/de.cat build/host-profile/catalogs/incomplete.cat
 	$(PYTHON) tests/test_host_formatted.py
 	$(PYTHON) tests/host_formatted.py --scope contracts --record build/tests/host-formatted-contracts.json
+
+# Actual interrupted stdio on a private full pipe, normal and test-only copies.
+build/tests/host_printf_interrupt: tests/host_formatted_interrupt.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+build/tests/host_echo_interrupt: tests/host_formatted_interrupt.c tools/host-profile/echo.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -DHOST_FORMATTED_ECHO -o $@ $< $(LDLIBS)
+
+test-host-formatted test-host-formatted-contracts test-host-formatted-sanitize: build/tests/host_printf_interrupt build/tests/host_echo_interrupt

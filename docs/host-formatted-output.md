@@ -137,3 +137,22 @@ and setup failures that must not be mistaken for signal termination. It does
 not replace the general smoke/PTY descendant supervisor or qualify its retained
 native cleanup failures. CSH-079 still owns other signals, interrupted writes,
 Darwin libc allocation controls, broader locales and unsafe exec configurations.
+
+## CSH-079 environment extension
+
+[CSH-079 evidence and individual dispositions](evidence/csh-079/README.md)
+extend the whole-page map without closing its remaining contracts:
+
+| Whole-page section | New finite witnesses |
+| --- | --- |
+| DESCRIPTION / OPERANDS / STDOUT / EXTENDED DESCRIPTION | Exact binary rounding, negative zero, precision versus width, quoted constants, numbered precision/reuse, binary escapes and signed/unsigned range errors with continuation. |
+| ENVIRONMENT VARIABLES / NLSPATH | Independently specified EUC-JP byte and character-code policies in all five invocation modes; permission-denied catalog fallback only after an independent EACCES control. |
+| ASYNCHRONOUS EVENTS / STDERR / EXIT STATUS / CONSEQUENCES OF ERRORS | Actual caught EINTR on a full private pipe and default SIGALRM, with exact output/status/diagnostic and success controls. Source-including instrumentation is distinct from production provider binaries. |
+| U-034 / U-040 | Direct and public-shell access, byte-preserving inputs, bounded resources, per-PID reap/disappearance and a prelaunch guard excluding unsafe Darwin low-stack exec. |
+
+Libc API-return injection independently checks adapter failure propagation with
+ferror clear; it is not Darwin internal allocation exhaustion. INPUT FILES,
+OUTPUT FILES, STDIN, OPTIONS and unselected XSI policy retain the preceding
+section dispositions. CSH-079 remains the open owner of unsupplied environments
+and the historical low-stack and ps/PTY failures. In particular, no unsafe
+Darwin exec is repeated without a disposable OS with reset capability.
