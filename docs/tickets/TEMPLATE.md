@@ -41,3 +41,8 @@ For a milestone, use `Kind: milestone`, add a `Children` metadata field and a
 Completion gate section linking every child. Preserve the original acceptance
 criteria. Children depend on their own explicit prerequisites, not implicitly
 on the parent's prerequisites, and never on their parent itself.
+
+Before replacing CSH-NNN, create the unnumbered GitHub issue and reserve its ID
+using `python3 tools/tickets.py reserve --issue ISSUE_NUMBER`. Follow the
+[allocation procedure](../../CONTRIBUTING.md#reserve-a-ticket-number); local
+index scans do not reserve a number.
