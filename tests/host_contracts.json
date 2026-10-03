@@ -4,9 +4,9 @@
   "residual_evidence": "docs/evidence/csh-064/prerequisites.json",
   "owners": [
     {
-      "ticket": "CSH-070",
-      "path": "docs/tickets/CSH-070-host-formatted-output.md",
-      "title": "Qualify host printf and echo contracts",
+      "ticket": "CSH-079",
+      "path": "docs/tickets/CSH-079-formatted-output-residuals.md",
+      "title": "Qualify remaining formatted-output environments",
       "utilities": [
         "printf",
         "echo"
@@ -19,7 +19,7 @@
         "U-036/alternative-policies",
         "U-036/argument-limits"
       ],
-      "prerequisite": "Select catalog-capable printf and declared echo policies; supply libc allocation/stack fault controls and bounded exec-threshold measurements."
+      "prerequisite": "CSH-079 supplies EUC-JP, denied catalog, numeric boundary, caught-EINTR/default-SIGALRM and libc API-error witnesses. Hosted Darwin 24.6.0 reproduces a low-stack SIGSEGV with verified cleanup. Original Darwin 23.6.0 stuck-exec diagnosis, internal libc allocation injection and further codesets/catalogs remain open; see docs/evidence/csh-079/README.md."
     },
     {
       "ticket": "CSH-071",
@@ -224,7 +224,7 @@
     }
   ],
   "conditional_owners": {
-    "U-035/allocation-injection": "CSH-070",
+    "U-035/allocation-injection": "CSH-079",
     "U-035/German-locale": "CSH-076",
     "U-040/GB18030-locale": "CSH-076",
     "U-037/controlled-environment": "CSH-071",
@@ -232,5 +232,43 @@
     "U-035/locale-errors": "CSH-076",
     "U-037/permission-denial": "CSH-071",
     "U-037/block-device": "CSH-071"
+  },
+  "condition_updates": {
+    "U-035/locale-catalogs": {
+      "ticket": "CSH-079",
+      "evidence": "docs/evidence/csh-079/README.md",
+      "boundary": "Mode-000 catalog fallback requires independently observed EACCES; root/bypass identities remain explicitly unqualified. Prior search/malformed/set witnesses remain separate; other encodings and installation layouts stay open.",
+      "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
+    },
+    "U-035/other-locales": {
+      "ticket": "CSH-079",
+      "evidence": "docs/evidence/csh-079/README.md",
+      "boundary": "EUC-JP byte slicing, binary output, literal echo and separately declared Darwin packed/glibc Unicode character constants added. Stateful encodings and other locale families remain open.",
+      "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
+    },
+    "U-035/format-allocation-limits": {
+      "ticket": "CSH-079",
+      "evidence": "docs/evidence/csh-079/README.md",
+      "boundary": "Source-including probe injects ENOMEM/EINTR/EOVERFLOW/zero-errno vprintf returns with no stream error; this validates adapter propagation, not libc-internal allocator failure. Real Darwin libc exhaustion remains open; earlier Linux RLIMIT_AS evidence stays separate.",
+      "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
+    },
+    "U-035/full-format": {
+      "ticket": "CSH-079",
+      "evidence": "docs/evidence/csh-079/README.md",
+      "boundary": "Exact rounding, range overflow/underflow with continued output, character constants and numbered precision added. Full-pipe actual caught EINTR/default SIGALRM probes have matching success controls; other interruption points, restart/partial transfer and conversion combinations stay open.",
+      "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
+    },
+    "U-036/alternative-policies": {
+      "ticket": "CSH-079",
+      "evidence": "docs/evidence/csh-079/README.md",
+      "boundary": "The selected literal provider gains EUC-JP and full-pipe caught EINTR/default SIGALRM probes. No new stock vendor or XSI policy is selected; those require separate identities and oracles.",
+      "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
+    },
+    "U-036/argument-limits": {
+      "ticket": "CSH-079",
+      "evidence": "docs/evidence/csh-079/README.md",
+      "boundary": "Safe native/Linux thresholds own each child before exec and verify reap/PID disappearance. Ordinary Darwin low-stack calls are rejected before launch. Disposable hosted Darwin 24.6.0 passed four 8 MiB controls then failed at 1 MiB with SIGSEGV; every child was reaped and absent. Other low-stack configurations and original Darwin 23.6.0 stuck-exec/ps failures remain open.",
+      "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
+    }
   }
 }

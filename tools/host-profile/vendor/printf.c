@@ -70,7 +70,7 @@
 
 /* CSH-059 local patch: preserve decoded NUL bytes in %b output. */
 static int	 printb(const char *, int, int, const char *, size_t);
-static int	 asciicode(void);
+static int	 asciicode(int *);
 static char	*printf_doformat(char *, int *);
 static int	 escape(char *, int, size_t *);
 static int	 getchr(void);
@@ -85,6 +85,10 @@ static void	 usage(void);
 static const char digits[] = "0123456789";
 
 static char end_fmt[1];
+/* CSH-070: formats can approach ARG_MAX; do not put that input on the stack.
+ * The standalone adapter releases this shared, non-recursive workspace. */
+static char *conversion_format;
+static size_t conversion_capacity;
 
 static int  myargc;
 static char **myargv;
@@ -173,7 +177,7 @@ main(int argc, char *argv[])
 		gargv = maxargv;
 
 		if (end == 1) {
-			warnx("missing format character");
+			warnx("%s", host_message(1, "missing format character"));
 #ifdef SHELL
 			INTON;
 #endif
@@ -200,11 +204,22 @@ printf_doformat(char *fmt, int *rval)
 	static const char skip1[] = "#'-+ 0";
 	int fieldwidth, haveprec, havewidth, mod_ldbl, precision;
 	char convch, nextch;
-	char start[strlen(fmt) + 1];
+	char *start;
+	size_t required = strlen(fmt) + 1;
 	char **fargv;
 	char *dptr;
 	int l;
 
+	if (required > conversion_capacity) {
+		char *buffer = realloc(conversion_format, required);
+		if (buffer == NULL) {
+			warnx("%s", strerror(ENOMEM));
+			return (NULL);
+		}
+		conversion_format = buffer;
+		conversion_capacity = required;
+	}
+	start = conversion_format;
 	dptr = start;
 	*dptr++ = '%';
 	*dptr = 0;
@@ -243,7 +258,7 @@ printf_doformat(char *fmt, int *rval)
 		if ((l > 0) && (fmt[l] == '$')) {
 			int idx = atoi(fmt);
 			if (fargv == NULL) {
-				warnx("incomplete use of n$");
+				warnx("%s", host_message(2, "incomplete use of n$"));
 				return (NULL);
 			}
 			if (idx <= myargc) {
@@ -253,7 +268,7 @@ printf_doformat(char *fmt, int *rval)
 			}
 			fmt += l + 1;
 		} else if (fargv != NULL) {
-			warnx("incomplete use of n$");
+			warnx("%s", host_message(2, "incomplete use of n$"));
 			return (NULL);
 		}
 
@@ -287,7 +302,7 @@ printf_doformat(char *fmt, int *rval)
 			if ((l > 0) && (fmt[l] == '$')) {
 				int idx = atoi(fmt);
 				if (fargv == NULL) {
-					warnx("incomplete use of n$");
+					warnx("%s", host_message(2, "incomplete use of n$"));
 					return (NULL);
 				}
 				if (idx <= myargc) {
@@ -297,7 +312,7 @@ printf_doformat(char *fmt, int *rval)
 				}
 				fmt += l + 1;
 			} else if (fargv != NULL) {
-				warnx("incomplete use of n$");
+				warnx("%s", host_message(2, "incomplete use of n$"));
 				return (NULL);
 			}
 
@@ -320,7 +335,7 @@ printf_doformat(char *fmt, int *rval)
 	} else
 		haveprec = 0;
 	if (!*fmt) {
-		warnx("missing format character");
+		warnx("%s", host_message(1, "missing format character"));
 		return (NULL);
 	}
 	*dptr++ = *fmt;
@@ -340,7 +355,7 @@ printf_doformat(char *fmt, int *rval)
 		mod_ldbl = 1;
 		fmt++;
 		if (!strchr("aAeEfFgG", *fmt)) {
-			warnx("bad modifier L for %%%c", *fmt);
+			warnx(host_message(3, "bad modifier L for %%%c"), *fmt);
 			return (NULL);
 		}
 	} else {
@@ -428,7 +443,7 @@ printf_doformat(char *fmt, int *rval)
 		break;
 	}
 	default:
-		warnx("illegal format character %c", convch);
+		warnx(host_message(4, "illegal format character %c"), convch);
 		return (NULL);
 	}
 	*fmt = nextch;
@@ -489,7 +504,7 @@ printb(const char *format, int width, int precision, const char *bytes, size_t l
 		}
 	return (0);
 range:
-	warnx("%%b width or precision exceeds INT_MAX");
+	warnx("%s", host_message(5, "%b width or precision exceeds INT_MAX"));
 	return (1);
 }
 
@@ -640,11 +655,12 @@ getnum(intmax_t *ip, uintmax_t *uip, int signedconv)
 		return (0);
 	}
 	if (**gargv == '"' || **gargv == '\'') {
+		rval = 0;
 		if (signedconv)
-			*ip = asciicode();
+			*ip = asciicode(&rval);
 		else
-			*uip = asciicode();
-		return (0);
+			*uip = asciicode(&rval);
+		return (rval);
 	}
 	rval = 0;
 	errno = 0;
@@ -653,11 +669,11 @@ getnum(intmax_t *ip, uintmax_t *uip, int signedconv)
 	else
 		*uip = strtoumax(*gargv, &ep, 0);
 	if (ep == *gargv) {
-		warnx("%s: expected numeric value", *gargv);
+		warnx(host_message(6, "%s: expected numeric value"), *gargv);
 		rval = 1;
 	}
 	else if (*ep != '\0') {
-		warnx("%s: not completely converted", *gargv);
+		warnx(host_message(7, "%s: not completely converted"), *gargv);
 		rval = 1;
 	}
 	if (errno == ERANGE) {
@@ -678,10 +694,6 @@ getfloating(long double *dp, int mod_ldbl)
 		*dp = 0.0;
 		return (0);
 	}
-	if (**gargv == '"' || **gargv == '\'') {
-		*dp = asciicode();
-		return (0);
-	}
 	rval = 0;
 	errno = 0;
 	if (mod_ldbl)
@@ -689,10 +701,10 @@ getfloating(long double *dp, int mod_ldbl)
 	else
 		*dp = strtod(*gargv, &ep);
 	if (ep == *gargv) {
-		warnx("%s: expected numeric value", *gargv);
+		warnx(host_message(6, "%s: expected numeric value"), *gargv);
 		rval = 1;
 	} else if (*ep != '\0') {
-		warnx("%s: not completely converted", *gargv);
+		warnx(host_message(7, "%s: not completely converted"), *gargv);
 		rval = 1;
 	}
 	if (errno == ERANGE) {
@@ -704,25 +716,32 @@ getfloating(long double *dp, int mod_ldbl)
 }
 
 static int
-asciicode(void)
+asciicode(int *rval)
 {
 	int ch;
 	wchar_t wch;
+	size_t consumed;
 	mbstate_t mbs;
 
 	ch = (unsigned char)**gargv;
 	if (ch == '\'' || ch == '"') {
 		memset(&mbs, 0, sizeof(mbs));
-		switch (mbrtowc(&wch, *gargv + 1, MB_LEN_MAX, &mbs)) {
+		consumed = mbrtowc(&wch, *gargv + 1, MB_LEN_MAX, &mbs);
+		switch (consumed) {
 		case (size_t)-2:
 		case (size_t)-1:
 			wch = (unsigned char)gargv[0][1];
+			consumed = 1;
 			break;
 		case 0:
 			wch = 0;
 			break;
 		}
 		ch = wch;
+		if (consumed && gargv[0][1 + consumed]) {
+			warnx(host_message(7, "%s: not completely converted"), *gargv);
+			*rval = 1;
+		}
 	}
 	++gargv;
 	return (ch);
@@ -731,5 +750,5 @@ asciicode(void)
 static void
 usage(void)
 {
-	(void)fprintf(stderr, "usage: printf format [arguments ...]\n");
+	(void)fprintf(stderr, "%s", host_message(8, "usage: printf format [arguments ...]\n"));
 }

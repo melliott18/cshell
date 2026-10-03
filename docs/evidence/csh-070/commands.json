@@ -1,0 +1,104 @@
+[
+  {
+    "attempt": "native build",
+    "command": "make -j4 cshell host-profile build/host-echo-literal build/tests/host_printf_resources build/host-profile/catalogs/fr.cat build/host-profile/catalogs/de.cat",
+    "exit_status": 0,
+    "outcome": "format-security warnings retained; subsequently repaired"
+  },
+  {
+    "attempt": "native focused 1",
+    "command": "make -j4 test-host-formatted",
+    "exit_status": 2,
+    "outcome": "fixture directory reuse setup failure; no final JSON"
+  },
+  {
+    "attempt": "native focused 2",
+    "command": "make -j4 test-host-formatted",
+    "exit_status": 2,
+    "outcome": "wrong program-name expectation; serialization failure; raw log only; low-stack searches entered"
+  },
+  {
+    "attempt": "native focused 3",
+    "command": "make -j4 test-host-formatted",
+    "exit_status": 2,
+    "outcome": "349 passes; four failed low-stack searches; stuck processes and failed cleanup"
+  },
+  {
+    "attempt": "Docker build",
+    "command": "docker build -t cshell-csh070 .",
+    "exit_status": 0,
+    "outcome": "Debian source image"
+  },
+  {
+    "attempt": "Linux profile 1",
+    "command": "make -j4 test-host-profile",
+    "exit_status": 2,
+    "outcome": "gencat UTF-8 setup failed under C; tests not run"
+  },
+  {
+    "attempt": "native profile 4",
+    "command": "make -j4 test-host-profile",
+    "exit_status": 2,
+    "outcome": "focused 351 passes; host profile 1161 passes and one PTY cleanup failure"
+  },
+  {
+    "attempt": "Linux profile 2",
+    "command": "make -j4 test-host-profile",
+    "exit_status": 0,
+    "outcome": "focused 356 passes; profile 1162 passes; intermediate snapshot"
+  },
+  {
+    "attempt": "native baseline",
+    "command": "python3 docs/evidence/csh-070/reproduce_before.py --record docs/evidence/csh-070/native-before.json",
+    "exit_status": 0,
+    "outcome": "recorded two expected failing baseline assertions"
+  },
+  {
+    "attempt": "native final",
+    "command": "make -j4 test-host-inventory test-host-profile test-host-formatted-sanitize",
+    "exit_status": 0,
+    "outcome": "ownership and threshold regressions pass; 351 focused, 346 sanitized, 1162 full-profile passes"
+  },
+  {
+    "attempt": "Linux final",
+    "command": "make -j4 test-host-profile",
+    "exit_status": 0,
+    "outcome": "ownership and threshold regressions pass; 356 focused and 1162 full-profile passes"
+  },
+  {
+    "attempt": "native integration",
+    "command": "CSH_TEST_PATH=\"$PWD/build/host-profile/bin:$(getconf PATH)\" make test-runtime test-pty",
+    "exit_status": 2,
+    "outcome": "3949 runtime passes; one cleanup failure; following PTY stage not run"
+  },
+  {
+    "attempt": "native PTY",
+    "command": "CSH_TEST_PATH=\"$PWD/build/host-profile/bin:$(getconf PATH)\" make test-pty",
+    "exit_status": 2,
+    "outcome": "notification and 30 job cases pass; failure-injection PTY times out; main runtime PTY not run"
+  },
+  {
+    "attempt": "native runtime PTY",
+    "command": "CSH_TEST_PATH=\"$PWD/build/host-profile/bin:$(getconf PATH)\" make test-runtime-pty",
+    "exit_status": 2,
+    "outcome": "32 passes, one ps cleanup failure"
+  },
+  {
+    "attempt": "Linux follow-on 1",
+    "command": "python3 reproduce_before.py --run-only --record /tmp/before.json && make test-host-formatted-sanitize && CSH_TEST_PATH=/work/build/host-profile/bin:/bin:/usr/bin make test-runtime test-pty",
+    "exit_status": 1,
+    "outcome": "baseline output file ownership setup failed; sanitizers/integration not run"
+  },
+  {
+    "attempt": "Linux follow-on 2",
+    "command": "chown -R cshell:cshell /work/build/csh070-before; su cshell -c \"python3 reproduce_before.py --run-only --record /tmp/before.json && make test-host-formatted-sanitize && CSH_TEST_PATH=/work/build/host-profile/bin:/bin:/usr/bin make test-runtime test-pty\"",
+    "exit_status": null,
+    "outcome": "four original-provider defects reproduced; sanitizer incomplete after Docker API failure; queued runtime/PTY not observed to start"
+  },
+  {
+    "attempt": "native final ownership",
+    "command": "make test-host-inventory",
+    "exit_status": 0,
+    "outcome": "all 156 names/101 external contracts/30 conditions, 10 regressions pass"
+  }
+]

@@ -47,7 +47,7 @@ class ContractOwnershipTests(unittest.TestCase):
             return re.sub(r'^- Status: .*$', '- Status: done', text, flags=re.M) if path == target else text
 
         with patch.object(Path, 'read_text', read):
-            self.assertIn('CSH-070: outstanding contracts require an open ticket',
+            self.assertIn('CSH-079: outstanding contracts require an open ticket',
                           validate(self.contracts))
 
     def test_stale_markdown_owner(self):
@@ -56,10 +56,10 @@ class ContractOwnershipTests(unittest.TestCase):
 
         def read(path, *args, **kwargs):
             text = original(path, *args, **kwargs)
-            return text.replace('[CSH-070](', '[CSH-068](') if path == target else text
+            return text.replace('[CSH-079](', '[CSH-068](') if path == target else text
 
         with patch.object(Path, 'read_text', read):
-            self.assertIn('printf: inventory owner differs from CSH-070', validate(self.contracts))
+            self.assertIn('printf: inventory owner differs from CSH-079', validate(self.contracts))
 
     def test_live_residual_reports_preserve_evidence(self):
         environment = {'platform': 'fixture'}
@@ -70,6 +70,8 @@ class ContractOwnershipTests(unittest.TestCase):
         for row, (condition, utility, reason) in zip(rows, RESIDUAL):
             self.assertEqual(row['condition'], condition)
             self.assertEqual(row['reason'], reason)
+            if row['condition'].startswith(('U-035/', 'U-036/')):
+                self.assertEqual(row['current_qualification']['ticket'], 'CSH-079')
             self.assertIs(row['environment'], environment)
             self.assertIs(row['executable'], identities[utility])
             self.assertNotIn(row['owner'], ('CSH-064', 'CSH-068'))

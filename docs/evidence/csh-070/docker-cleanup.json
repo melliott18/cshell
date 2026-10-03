@@ -1,0 +1,10 @@
+{
+  "command": [
+    "docker",
+    "kill",
+    "cshell-csh070-extra-2"
+  ],
+  "status": 1,
+  "stdout": "",
+  "stderr": "request returned Internal Server Error for API route and version http://%2FUsers%2Fmitchell%2F.docker%2Frun%2Fdocker.sock/v1.24/containers/cshell-csh070-extra-2/kill, check if the server supports the requested API version\n"
+}

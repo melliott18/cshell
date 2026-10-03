@@ -1,11 +1,11 @@
 # CSH-070: Qualify host printf and echo contracts
 
-- Status: ready
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: Assigned when work starts
+- Branch: test/CSH-070-host-formatted-output
 - Issue: [#142](https://github.com/melliott18/cshell/issues/142)
 
 ## Goal
@@ -57,17 +57,17 @@ Conditional prerequisite reports also owned here: `U-035/allocation-injection`.
 
 ## Acceptance criteria
 
-- [ ] Select each required exec-accessible provider, supply missing packages/services,
+- [x] Select each required exec-accessible provider, supply missing packages/services,
   and retain exact PATH, realpath, executable hash, package and environment identity.
-- [ ] Map every applicable page section and common default to clause-derived
+- [x] Map every applicable page section and common default to clause-derived
   assertions or an individually justified disposition; repair required-contract
   failures. Selected examples alone do not complete a utility contract.
-- [ ] Resolve each assigned retained condition with its required capability and
+- [x] Resolve each assigned retained condition with its required capability and
   strict evidence, or transfer that individual condition to a concrete open owner.
   Preserve vendor ownership, setup failures and failed assertions separately.
-- [ ] Verify public cshell dispatch and direct exec access, exact output/status and
+- [x] Verify public cshell dispatch and direct exec access, exact output/status and
   relevant effects, with zero gap allowances for every declared qualified subset.
-- [ ] Update the inventory, current ownership manifest and clause maps with the
+- [x] Update the inventory, current ownership manifest and clause maps with the
   exact qualification boundary; keep stock-host, qualified subset and full-system
   claims separate.
 
@@ -83,6 +83,44 @@ processes and disposable files/services and verify cleanup after failure/timeout
 
 ## Implementation notes/evidence
 
-Work has not started. CSH-068 transfers ownership only; it supplies no new vendor
-implementation, service, privileged host or physical terminal. CSH-064 remains
-done for its bounded capability work and repaired probe cleanup.
+[CSH-070 evidence](../evidence/csh-070/README.md) records separately selected
+repository builds, French/German catalogs, independent conversion/echo oracles,
+controlled libc/stack failures and adjacent exec thresholds. The
+[whole-page section map](../host-formatted-output.md) accounts for all behavior
+sections and optional/unspecified input decisions. All six retained IDs and the
+conditional allocation-helper prerequisite transfer individually to the concrete
+open owner [CSH-079 / #157](CSH-079-formatted-output-residuals.md).
+
+Four printf provider defects are repaired: ignored libc formatting failures,
+input-sized stack allocation, silent trailing text in character constants, and
+non-strtod floating operands. The external literal echo selection has a declared
+base-profile policy and exact byte/status/catalog assertions; stock echo remains
+separately inventoried. No cshell runtime code or host installation changes.
+
+Final native and Docker/Linux full host profiles each pass 1162 assertions with
+zero gaps. Focused profiles pass 351 native / 356 Linux assertions. Native
+ASan/UBSan passes 346 ordinary assertions; resource limits run separately.
+The evidence retains failed setup attempts, original-provider counterexamples,
+Darwin low-stack exec cleanup failures and broader native runtime/PTY cleanup
+failures. Passing subsets do not erase these failures; their diagnosis and
+remaining environments are explicitly owned by CSH-079. Linux sanitizer completion could not be verified after Docker API errors;
+queued Linux runtime/PTY stages were not observed to start. See the evidence
+for exact results, cleanup limitations and not-run stages.
+
+This ticket is ready for review of its supplied subset and individual transfers,
+not full utility/system conformance. Mark done only after integration.
+
+### Continued contract qualification
+
+The [additional qualification record](../evidence/csh-070-contracts/README.md)
+adds numbering/reuse, numeric/binary and echo policy interactions, catalog search
+and malformed-input policies, independent allocation-site controls, and actual
+SIGPIPE/SIGXFSZ/file-size boundaries through direct and public replacing exec.
+No selected provider implementation changes are needed for these new assertions.
+The initial Darwin catalog oracle failure is retained and corrected using the
+vendor's published policy. `test-host-formatted-contracts` runs this subset
+without repeating stack/memory or exec-capacity probes.
+
+The final native subset passes 589 checks; ASan/UBSan passes 537 ordinary
+checks and 40 separately supervised I/O assertions. Input identities are stable,
+and all owned I/O/fault children are reaped. Leak scanning is outside this scope.

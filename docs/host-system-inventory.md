@@ -91,7 +91,7 @@ hashes are separate fields in the snapshots.
 | <a id="utility-diff"></a>[`diff`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/diff.html) | base | Required | `/usr/bin/diff` / `/bin/diff` | Open full utility contract: [CSH-073](tickets/CSH-073-host-text-streams.md). Availability only; behavioral qualification not established. |
 | <a id="utility-dirname"></a>[`dirname`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html) | base | Required | `/usr/bin/dirname` / `/bin/dirname` | Open full utility contract: [CSH-072](tickets/CSH-072-host-filesystem-paths.md). Availability only; behavioral qualification not established. |
 | <a id="utility-du"></a>[`du`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html) | base | Required | `/usr/bin/du` / `/bin/du` | Open full utility contract: [CSH-072](tickets/CSH-072-host-filesystem-paths.md). Availability only; behavioral qualification not established. |
-| <a id="utility-echo"></a>[`echo`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/echo.html) | base | Required | `/bin/echo` / `/bin/echo` | Open full utility contract: [CSH-070](tickets/CSH-070-host-formatted-output.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). |
+| <a id="utility-echo"></a>[`echo`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/echo.html) | base | Required | `/bin/echo` / `/bin/echo` | Open full utility contract: [CSH-079](tickets/CSH-079-formatted-output-residuals.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). |
 | <a id="utility-ed"></a>[`ed`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html) | base | Required | `/bin/ed` / `/bin/ed` | Open full utility contract: [CSH-074](tickets/CSH-074-host-languages-editors.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). |
 | <a id="utility-env"></a>[`env`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/env.html) | base | Required | `/usr/bin/env` / `/bin/env` | Open full utility contract: [CSH-075](tickets/CSH-075-host-execution-processes.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). |
 | <a id="utility-ex"></a>[`ex`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ex.html) | conditional UP | Not selected | `/usr/bin/ex` / **missing** | Conditional UP not selected; re-evaluate complete page if selected. |
@@ -150,7 +150,7 @@ hashes are separate fields in the snapshots.
 | <a id="utility-pathchk"></a>[`pathchk`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html) | base | Required | `/usr/bin/pathchk` / `/bin/pathchk` | Open full utility contract: [CSH-072](tickets/CSH-072-host-filesystem-paths.md). Availability only; behavioral qualification not established. |
 | <a id="utility-pax"></a>[`pax`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html) | base | Required | `/bin/pax` / **missing** | Open full utility contract: [CSH-072](tickets/CSH-072-host-filesystem-paths.md). Availability only; behavioral qualification not established. |
 | <a id="utility-pr"></a>[`pr`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pr.html) | base | Required | `/usr/bin/pr` / `/bin/pr` | Open full utility contract: [CSH-073](tickets/CSH-073-host-text-streams.md). Availability only; behavioral qualification not established. |
-| <a id="utility-printf"></a>[`printf`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/printf.html) | base | Required | `/usr/bin/printf` / `/bin/printf` | Open full utility contract: [CSH-070](tickets/CSH-070-host-formatted-output.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). |
+| <a id="utility-printf"></a>[`printf`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/printf.html) | base | Required | `/usr/bin/printf` / `/bin/printf` | Open full utility contract: [CSH-079](tickets/CSH-079-formatted-output-residuals.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). |
 | <a id="utility-prs"></a>[`prs`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/prs.html) | conditional XSI | Not selected | **missing** / **missing** | Conditional XSI not selected; re-evaluate complete page if selected. |
 | <a id="utility-ps"></a>[`ps`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ps.html) | base | Required | `/bin/ps` / `/bin/ps` | Open full utility contract: [CSH-075](tickets/CSH-075-host-execution-processes.md). Availability only; behavioral qualification not established. |
 | <a id="utility-pwd"></a>[`pwd`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html) | base | Required | `/bin/pwd` / `/bin/pwd` | Open full utility contract: [CSH-072](tickets/CSH-072-host-filesystem-paths.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). |
@@ -287,7 +287,7 @@ ticket, and that both directions of the Markdown utility ledger agree.
 
 | Open owner | Individual external contracts | Stable conditions |
 | --- | --- | --- |
-| [CSH-070](tickets/CSH-070-host-formatted-output.md) | `printf`, `echo` | 6 |
+| [CSH-079](tickets/CSH-079-formatted-output-residuals.md) | `printf`, `echo` | 6 |
 | [CSH-071](tickets/CSH-071-host-permissions-identities.md) | `test`, `[`, `chmod`, `chgrp`, `chown`, `id`, `logname`, `newgrp` | 7 |
 | [CSH-072](tickets/CSH-072-host-filesystem-paths.md) | `basename`, `dirname`, `cp`, `dd`, `df`, `du`, `file`, `find`, `ln`, `ls`, `mkdir`, `mkfifo`, `mv`, `pathchk`, `pax`, `pwd`, `readlink`, `realpath`, `rm`, `rmdir`, `touch` | 4 |
 | [CSH-073](tickets/CSH-073-host-text-streams.md) | `cat`, `cksum`, `cmp`, `comm`, `csplit`, `cut`, `diff`, `expand`, `fold`, `head`, `join`, `od`, `paste`, `pr`, `sed`, `sort`, `split`, `strings`, `tail`, `tee`, `tr`, `tsort`, `unexpand`, `uniq`, `wc` | 5 |
@@ -309,3 +309,15 @@ an exact required capability for every stable condition, and its original
 qualification records retain actual environment/executable identities and vendor
 implementation owners. New reports use current qualification owners; historical
 reports remain unchanged. CSH-064 is complete and is not reopened.
+
+### CSH-070 formatted-output boundary
+
+[CSH-070](tickets/CSH-070-host-formatted-output.md) supplies the selected
+catalog-capable FreeBSD printf adapter and a separate literal echo build.
+[Whole-page section accounting](host-formatted-output.md) and
+[native/Linux evidence](evidence/csh-070/README.md) identify the finite assertions,
+resource repairs, failed attempts and Darwin low-stack cleanup limitation.
+The six retained conditions and allocation-helper prerequisite now belong to
+[CSH-079](tickets/CSH-079-formatted-output-residuals.md). Historical inventory
+identities/reasons remain unchanged; `condition_updates` in the current manifest
+records the new bounded results. Neither full utility page is promoted.

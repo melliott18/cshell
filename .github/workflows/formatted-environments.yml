@@ -1,0 +1,45 @@
+name: Formatted-output environments
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  formatted:
+    name: CSH-079 (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Supply selected Linux locales
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y locales
+          sudo localedef -i en_US -f UTF-8 en_US.UTF-8
+          sudo localedef -i fr_FR -f UTF-8 fr_FR.UTF-8
+          sudo localedef -i de_DE -f UTF-8 de_DE.UTF-8
+          sudo localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP
+      - name: Check strict formatted-output contracts
+        run: make -j2 test-host-inventory test-host-formatted-contracts
+      - name: Investigate exec limits in this disposable OS
+        if: runner.os == 'macOS' && github.event_name == 'workflow_dispatch'
+        run: python3 tests/host_formatted_disposable.py --disposable-darwin --record build/tests/host-formatted-disposable.json
+      - name: Retain exact assertions and cleanup observations
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: formatted-${{ matrix.os }}-${{ github.run_id }}
+          path: build/tests/host-formatted*.json
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,60 @@
+[
+  {
+    "command": "make test-host-formatted-contracts",
+    "attempt": 1,
+    "status": 2,
+    "result": "523 passes, 30 failed quiet-catalog assumptions on Darwin; vendor policy diagnosis retained"
+  },
+  {
+    "command": "make test-host-formatted-contracts",
+    "attempt": 2,
+    "status": 0,
+    "result": "553 passes after independently sourcing Darwin catalog policy"
+  },
+  {
+    "command": "make test-host-formatted-contracts",
+    "attempt": 3,
+    "status": 0,
+    "result": "588 passes after adding two additional printf writer paths and literal echo control bytes"
+  },
+  {
+    "command": "make test-host-formatted-sanitize",
+    "attempt": 1,
+    "status": 0,
+    "result": "536 passes; intermediate result predates input-stability guard"
+  },
+  {
+    "command": "make test-host-formatted-contracts",
+    "attempt": "before-sanitizer-controls",
+    "status": 0,
+    "result": "588 contract assertions plus input-stability assertion pass; four supervisor/threshold regressions pass"
+  },
+  {
+    "command": "make test-host-formatted-sanitize",
+    "attempt": "before-sanitizer-controls",
+    "status": 0,
+    "result": "536 ordinary assertions plus input-stability assertion pass; I/O/allocation/capacity probes explicitly not run under sanitizers"
+  },
+  {
+    "command": "make test-host-inventory",
+    "status": 0,
+    "result": "156 utilities / 101 external contracts / 30 retained conditions and 10 regressions pass"
+  },
+  {
+    "command": "make test-host-formatted-contracts",
+    "attempt": "final",
+    "status": 0,
+    "result": "589 passes and four harness regressions pass; leak/symbolizer subprocess controls enabled"
+  },
+  {
+    "command": "make test-host-formatted-sanitize",
+    "attempt": "final",
+    "status": 0,
+    "result": "537 passes; ASan/UBSan enabled, LeakSanitizer disabled"
+  },
+  {
+    "command": "io_cases(cshell, build/host-formatted-sanitizer)",
+    "status": 0,
+    "result": "40 instrumented-provider I/O checks pass; all owned processes reaped; source identity unchanged"
+  }
+]
