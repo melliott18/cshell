@@ -3,7 +3,7 @@
 Qualification is limited to the exact selected assertions in the
 [clause map](../../../tests/host_filesystem_contracts.json). No complete utility
 page or full-system requirement is promoted. Remaining sections and the four
-original conditions belong to [CSH-079](../../tickets/CSH-083-filesystem-remaining-contracts.md).
+original conditions belong to [CSH-079](../../tickets/CSH-080-filesystem-remaining-contracts.md).
 
 The [subsequent five-area extension](extended/README.md) retains additional
 traversal, links, metadata, archive and I/O evidence. The records below remain

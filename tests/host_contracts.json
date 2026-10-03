@@ -47,8 +47,8 @@
       "prerequisite": "Supply disposable controlled credentials, privileged Darwin ACLs, and measured filesystem/namespace implementations; require actual read/write/execute controls alongside predicates. Preserve false grants, rejected grants, socket stat EINVAL and non-owner chmod failures independently."
     },
     {
-      "ticket": "CSH-083",
-      "path": "docs/tickets/CSH-083-filesystem-remaining-contracts.md",
+      "ticket": "CSH-080",
+      "path": "docs/tickets/CSH-080-filesystem-remaining-contracts.md",
       "title": "Qualify remaining filesystem provider and fault contracts",
       "utilities": [
         "basename",

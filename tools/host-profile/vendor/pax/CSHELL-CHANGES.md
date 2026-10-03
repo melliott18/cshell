@@ -25,4 +25,4 @@ system directories. Its build runs upstream feature probes in `build/` and
 preserves sanitizer flags, but omits the cshell-specific `-Werror`, `-Wpedantic`
 and `-Wshadow` policy for upstream source. Qualification covers only asserted
 contracts; multi-volume devices, privileged identities and complete pax/cpio
-formats remain open under CSH-083.
+formats remain open under CSH-080.

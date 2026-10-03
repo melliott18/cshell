@@ -219,6 +219,6 @@ The [filesystem clause map](host-filesystem-evidence.md) adds 21 selected provid
 independent metadata/archive oracles, bounded write failure, larger/deeper trees
 and terminal rm decisions. The opt-in PATH builds local readlink/realpath providers
 to repair the recorded Issue-8 gaps; stock failures remain separate.
-[CSH-083](tickets/CSH-083-filesystem-remaining-contracts.md) owns each unqualified
+[CSH-080](tickets/CSH-080-filesystem-remaining-contracts.md) owns each unqualified
 page contract and the four original filesystem conditions. No utility family or
 full-system requirement is promoted.
