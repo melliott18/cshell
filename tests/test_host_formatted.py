@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import subprocess
 import tempfile
+import time
 import unittest
 from unittest.mock import patch
 
@@ -27,6 +28,16 @@ class ThresholdFailures(unittest.TestCase):
             result = threshold('/unused', 'single', 0, 1024 * 1024, disposable_darwin=True)
         launch.assert_not_called()
         self.assertEqual(result['verdict'], 'UNQUALIFIED')
+
+    def test_timeout_covers_child_setup_before_exec(self):
+        # A delay before exec used to occur inside Popen, outside wait's
+        # deadline. The fork supervisor must already own and reap this PID.
+        with patch('host_echo_threshold.resource.setrlimit', side_effect=lambda *_: time.sleep(2)):
+            result = threshold('/bin/echo', 'single', 0, 8 * 1024 * 1024, timeout=0.1)
+        self.assertEqual(result['verdict'], 'FAIL')
+        self.assertEqual(result['trials'][0]['error'], 'timeout')
+        self.assertTrue(result['trials'][0]['reaped'])
+        self.assertTrue(result['trials'][0]['pid_disappeared'])
 
     def test_exec_setup_failure_is_not_e2big(self):
         result = threshold('/no-such-csh079-provider', 'single', 0, 8 * 1024 * 1024)

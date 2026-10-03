@@ -108,7 +108,8 @@ This supervision repair does not claim it can kill a kernel-stuck process.
 `tests/host_formatted_disposable.py` checkpoints runner/kernel/provider identity
 before each configuration. It checks the 8 MiB controls before trying 1 MiB,
 with both argv layouts and padding sizes. A failure stops further experiments;
-retained PIDs/reap/disappearance are uploaded even if the job fails. The
+retained PIDs/reap/disappearance are uploaded even if the job fails. The diagnostic runs on explicit workflow dispatch, separately from PR contract
+qualification. The
 15-minute job budget and ephemeral runner teardown provide the outer boundary.
 No personal-host environment variables should be fabricated to run this probe.
 
@@ -143,3 +144,25 @@ configuration above justify the corrected platform policy; no provider code
 was changed. The failed JSON/log remain retained. The first inventory/full
 attempt stopped before utility tests because an ownership regression still
 expected CSH-070; its assertion now expects the deliberate CSH-079 update.
+
+### Disposable hosted Darwin result
+
+[Run 37137862085](https://github.com/melliott18/cshell/actions/runs/37137862085)
+ran source `d9c4d09` on Darwin 24.6.0 arm64 (macOS 15 hosted VM). Both native
+hosted platforms passed all 688 contract assertions. The diagnostic passed all
+four 8 MiB controls, then failed the first 1 MiB/single-operand/no-padding
+configuration: an argument of 1,047,552 bytes (1,047,610 total argv bytes
+including NULs for that pathname) terminated by SIGSEGV, with no output.
+Larger bracketing inputs returned E2BIG. Every launched child, including the
+crashed child and rejected execs, was reaped and observed absent. The diagnostic
+stopped immediately; the other three low-stack combinations were not run.
+
+This is a failed low-stack qualification, not a passing allowance and not a
+reproduction of historical unkillable processes on Darwin 23.6.0. It narrows the
+observation to a launch/stack boundary on a second kernel while proving cleanup
+on this runner. No root cause or vendor repair is claimed. The initial workflow
+failure and its complete diagnostic remain retained. Normal PR CI now selects
+only strict contract assertions; low-stack diagnostics run on explicit workflow
+dispatch and still return failure for the same observation. The code also
+suppresses sanitizer tracer subprocesses in threshold children; those fixed
+environment bytes are included in future threshold measurements.

@@ -33,7 +33,7 @@ jobs:
       - name: Check strict formatted-output contracts
         run: make -j2 test-host-inventory test-host-formatted-contracts
       - name: Investigate exec limits in this disposable OS
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && github.event_name == 'workflow_dispatch'
         run: python3 tests/host_formatted_disposable.py --disposable-darwin --record build/tests/host-formatted-disposable.json
       - name: Retain exact assertions and cleanup observations
         if: always()

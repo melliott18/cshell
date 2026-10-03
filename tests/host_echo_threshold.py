@@ -26,7 +26,11 @@ def threshold(executable, shape, padding, stack, timeout=5, *, disposable_darwin
         return dict(verdict='UNQUALIFIED', owner='CSH-079', trials=[],
                     reason='Darwin low-stack exec requires a disposable OS with reset capability',
                     stack_soft=stack, stack_hard=stack)
-    env = {'LC_ALL': 'C', 'PAD': 'e' * padding}
+    # Keep the non-forking provider contract even when CI instruments it.
+    # These fixed bytes are part of each measured environment/threshold.
+    env = {'LC_ALL': 'C', 'PAD': 'e' * padding,
+           'ASAN_OPTIONS': 'halt_on_error=1:detect_leaks=0:symbolize=0',
+           'UBSAN_OPTIONS': 'halt_on_error=1:print_stacktrace=0'}
     trials = []
 
     def limits():
