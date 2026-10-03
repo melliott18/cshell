@@ -1,0 +1,113 @@
+{
+  "source_base_commit": "02cb5e1227c02da7199f4ead1d5f0518025955df",
+  "source_patch": "tested-source.patch in linux-validation.tar.gz",
+  "source_sha256": {
+    "Makefile": "5b340124b5662541fc8058f10cca5296b0f75de25d0702c35bf2681da974af95",
+    "tests/execute_faults.c": "097e7f9811edaf08da0d99ed7900b1bef56ca68dcbf3d7659111284f02dffc08",
+    "tests/crash_notification.c": "35688c9cf805f774517f2d54c2e9e38314a41b6ce2dd136822260fe39b657e43",
+    "tests/crash_notification.h": "bbaa2d9298a1a93a3aa301a3ce67b9afb7f92fa00dc5fd94797a497802a1c694"
+  },
+  "platform": {
+    "uname": [
+      "Linux",
+      "215ecd925f8b",
+      "6.4.16-linuxkit",
+      "#1 SMP PREEMPT Thu Nov 16 10:49:20 UTC 2023",
+      "aarch64",
+      ""
+    ],
+    "compiler": "cc (Debian 12.2.0-14+deb12u1) 12.2.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+    "python": "3.11.2 (main, May 12 2026, 05:17:27) [GCC 12.2.0]"
+  },
+  "docker_server_version": "24.0.6",
+  "docker_image": "sha256:076245259ad6ce1afb53bbff9c5654786e08703c29964faae328668d3bbdf523",
+  "normal_targets": [
+    "test-jobs",
+    "test-jobs-pty",
+    "test-harness"
+  ],
+  "normal_pass_counts": {
+    "harness": 94,
+    "jobs": 148,
+    "public_jobs_pty": 30,
+    "lifecycle_pty": 14,
+    "notifications": 1,
+    "terminal_faults": 1,
+    "retention": 1
+  },
+  "sanitized_targets": [
+    "build/tests/execute_faults",
+    "test-job-crash-notification",
+    "python3 tests/smoke.py ./build/tests/execute_faults --suite tests/fixtures/jobs-fault-pty.json"
+  ],
+  "sanitized_terminal_faults": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0
+  },
+  "sanitizer_cflags": "-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+  "sanitizer_ldflags": "-fsanitize=address,undefined",
+  "mach_control": {
+    "normal": "UNAVAILABLE: CSH-057 Mach crash notification checks require macOS",
+    "sanitized": "UNAVAILABLE: CSH-057 Mach crash notification checks require macOS",
+    "meaning": "The portable source/build boundary was exercised. Linux does not implement the Mach regression and these outcomes are not passes of its macOS mechanism."
+  },
+  "normal_retention": {
+    "duration_seconds": 0.30695554199337494,
+    "case_failures": [],
+    "diagnostic_failures": [],
+    "watcher_cleanup_failures": [],
+    "trace_summary": {
+      "bytes": 483172,
+      "truncated": false,
+      "partial_final_record": false,
+      "errors": [],
+      "events": 5572,
+      "root_pid": 269,
+      "root_finished": true,
+      "first_time_us": 79947263355,
+      "last_time_us": 79947521270,
+      "alarm_states": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "alarm_query_failures": 0
+    }
+  },
+  "container_runs": [
+    {
+      "name": "csh057-terminal-review-normal",
+      "image": "sha256:076245259ad6ce1afb53bbff9c5654786e08703c29964faae328668d3bbdf523",
+      "command": [
+        "make",
+        "-j2",
+        "test-jobs",
+        "test-jobs-pty",
+        "test-harness"
+      ],
+      "started_at": "2026-10-01T15:06:24.097011847Z",
+      "finished_at": "2026-10-01T15:06:43.130553217Z",
+      "exit_code": 0
+    },
+    {
+      "name": "csh057-terminal-review-sanitized",
+      "image": "sha256:076245259ad6ce1afb53bbff9c5654786e08703c29964faae328668d3bbdf523",
+      "command": [
+        "/bin/sh",
+        "-c",
+        "make -j2 build/tests/execute_faults test-job-crash-notification CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined' && python3 tests/smoke.py ./build/tests/execute_faults --suite tests/fixtures/jobs-fault-pty.json"
+      ],
+      "started_at": "2026-10-01T15:06:24.045457263Z",
+      "finished_at": "2026-10-01T15:06:30.128908377Z",
+      "exit_code": 0
+    }
+  ],
+  "unexpected_failures": [],
+  "archive": "linux-validation.tar.gz",
+  "archive_sha256": "8d800ac2e1a138097847f279441425aed235482eb7fe1d3ae5b1f0632755a8f1",
+  "source_matches_shared_tree_before_cleanup_hardening": true,
+  "source_snapshot_note": "These hashes identify the independently tested snapshot before macOS-only regression cleanup hardening and a header-comment clarification. Original logs/archive are unchanged; final macOS regression sources and checks are retained in final-regression/. No Linux rerun of the later snapshot is claimed."
+}
