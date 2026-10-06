@@ -202,7 +202,7 @@
       "conditions": [
         "U-040/stty-physical-terminal"
       ],
-      "prerequisite": "Supply disposable physical serial hardware, registered owned message sessions, additional terminal capability models, credentials and locale/signal/I/O/resource fault controls. Preserve CSH-077 selected witnesses separately."
+      "prerequisite": "Retain the strict CSH-077/081 software witnesses. Supply disposable physical serial hardware and a privileged disposable Darwin VM; complete remaining per-utility locale/signal/I/O/resource and login-record cases in the section map."
     },
     {
       "ticket": "CSH-078",
@@ -234,7 +234,7 @@
     "U-037/block-device": "CSH-071"
   },
   "terminal_evidence": {
-    "ticket": "CSH-077",
+    "ticket": "CSH-081",
     "map": "docs/host-terminal-contracts.md",
     "runner": "tests/host_terminal.py",
     "scope": "133 strict bounded cases in five dispatch modes; not full-page qualification",
@@ -246,12 +246,16 @@
       },
       {
         "runner": "tests/host_registered_sessions.py",
-        "scope": "Nine strict session cases in five dispatch modes plus two synchronized SIGINT cases; 47 assertions in a private Linux mount namespace",
+        "scope": "21 strict registered-session cases in five dispatch modes; 105 assertions in a private Linux mount namespace",
         "unqualified_conditions": [],
         "closed_selected_conditions": [
           "write/POSIX-EOT",
           "write/two-sender-alerts"
         ]
+      },
+      {
+        "runner": "tests/host_terminal_residuals.py",
+        "scope": "115 strict cases in five dispatch modes; 575 assertions; remaining full-page contracts stay open"
       }
     ]
   }

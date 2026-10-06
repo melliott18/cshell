@@ -1,11 +1,11 @@
 # CSH-081: Qualify residual terminal and session contracts
 
-- Status: backlog
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-077
-- Branch: Assigned when work starts
+- Branch: test/CSH-081-terminal-residuals
 - Issue: [#159](https://github.com/melliott18/cshell/issues/159)
 
 ## Goal
@@ -22,7 +22,7 @@ supplying environments, strict assertions and repairs or vendor reports.
 | Utility / normative page | Remaining contract and required capability |
 | --- | --- |
 | [`stty`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/stty.html) | Serial control modes, baud rates and physical effects require supplied disposable hardware. CSH-077 now proves eleven selected PTY byte transformations; other flag combinations and physical effects remain open. Complete parity/combination modes, ek/sane semantics, -a token content, lower-case circumflex encodings, locales, signal and I/O failure partitions. |
-| [`tabs`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tabs.html) | Supply additional terminal capability models, unsupported-tab terminal, all single-digit intervals, tab/newline blank separators, type/default/environment precedence, limits and physical terminal effects. XSI language presets remain excluded by the base profile. |
+| [`tabs`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tabs.html) | Supply additional terminal capability models, unsupported-tab terminal, all single-digit intervals, space/tab blank separators (newline is not a blank), type/default/environment precedence, limits and physical terminal effects. XSI language presets remain excluded by the base profile. |
 | [`tput`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tput.html) | CSH-077 now supplies missing-operation/partial-capability models and verifies successful continuation plus attached/repeated -T. Unset/null TERM, remaining option/error partitions, initialization/reset side effects, write errors and signals remain open. The selected adapter deliberately exposes only clear/init/reset, not terminfo query extensions. |
 | [`tty`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tty.html) | Verify write-error statuses (>1), signal and locale/error partitions, descriptor exhaustion and multiple device-name aliases. Existing name/non-terminal/invalid-option witnesses remain bounded. |
 | [`mesg`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mesg.html) | Distinct simultaneous PTY precedence is now witnessed by CSH-077. No-terminal status and diagnostic are now verified. Permission-denied operations and remaining sender/recipient credential combinations are open. Metadata changes alone do not prove accessibility for all credentials. |
@@ -42,14 +42,14 @@ excluded optional shading, selected assertions or these open dispositions.
 
 ## Acceptance criteria
 
-- [ ] Retain exact provider/package/build and environment identities for each run.
+- [x] Retain exact provider/package/build and environment identities for each run.
 - [ ] Resolve each row with independent clause-derived oracles, repairs and strict
   failures; do not replace complete contracts with selected witnesses.
 - [ ] Supply the physical-terminal condition or transfer it individually with its
   exact identifier and capability requirement.
-- [ ] Exercise public cshell paths and direct exec, including timeout/failure
+- [x] Exercise public cshell paths and direct exec, including timeout/failure
   cleanup for owned message sessions; retain native and Linux results separately.
-- [ ] Update the current ownership manifest and section map without changing
+- [x] Update the current ownership manifest and section map without changing
   immutable earlier evidence or promoting full-system claims.
 
 ## Validation
@@ -75,3 +75,37 @@ can run on the available native macOS and disposable Linux environments. Physica
 serial effects need supplied hardware; real display effects need a specified
 terminal/emulator; privileged Darwin session combinations need a disposable
 macOS VM. Only hardware connection/identification inherently needs manual setup.
+
+
+## Implementation and review boundary
+
+The branch adds 115 strict residual cases in five dispatch paths (575 assertions)
+and expands registered Linux sessions to 21 cases in five paths (105 assertions).
+It repairs selected stty combination/report behavior, tabs interval boundaries
+and output handling, tput clear output handling/default selection, and tty
+nonterminal-output failures. See the [current section map](../host-terminal-contracts.md#csh-081-residual-implementation)
+for each tested contract and each outstanding partition, and the
+[all-attempt evidence](../evidence/csh-081/README.md) for validation.
+
+The user explicitly confirmed that disposable serial hardware and a privileged
+disposable macOS VM are unavailable. The exact condition
+`U-040/stty-physical-terminal` and positive Darwin session contracts therefore
+remain unqualified. The implementation also leaves the explicitly listed
+software partitions open; this is a reviewable increment, not completion of
+CSH-081's complete-page acceptance criterion. Do not close the issue on the basis
+of the selected passing counts.
+
+The branch starts from CSH-077 and includes current main's integrated CSH-057
+fixes. CSH-077 itself remains review; this work does not mark that dependency done.
+
+
+### Validation record
+
+Native macOS and Docker Debian each pass 1,330 strict terminal/data assertions,
+nine harness tests, ten ownership regressions and the existing 1,162-assertion
+host profile with zero gaps. ASan/UBSan plus -Werror pass all 1,330 terminal/data
+assertions and nine harness tests on each platform. Linux private registered
+sessions pass 105 assertions in each ordinary/sanitized build. Raw captures,
+failed attempts, environment/source identities and cleanup are retained in the
+[evidence directory](../evidence/csh-081/README.md). The issue remains in-progress
+because complete-page and unavailable-environment criteria are still open.

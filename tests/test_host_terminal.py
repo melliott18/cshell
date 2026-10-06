@@ -10,7 +10,8 @@ import unittest
 from unittest.mock import patch
 import selectors
 
-from host_terminal import capture, cases, tab_effect
+from host_terminal import capture, cases, tab_effect, run_case, MODES
+from host_terminal_residuals import cases as residual_cases
 from pty_harness import open_terminal
 
 
@@ -24,6 +25,30 @@ class TerminalHarnessTests(unittest.TestCase):
         rows = list(cases())
         self.assertEqual(len(rows), len({r['name'] for r in rows}))
         self.assertTrue(all('gap' not in r for r in rows))
+
+    def test_residual_names_unique_and_strict(self):
+        rows = list(residual_cases())
+        self.assertGreater(len(rows), 70)
+        self.assertEqual(len(rows), len({row['name'] for row in rows}))
+        self.assertTrue(all('gap' not in row and 'status' in row for row in rows))
+
+    def test_unused_offset_detects_consumption_in_every_shell_path(self):
+        binary = Path('cshell').resolve()
+        with tempfile.TemporaryDirectory(prefix='csh077-offset-') as temp:
+            directory = Path(temp)
+            provider = directory / 'tty'
+            provider.write_text('#!' + sys.executable + '\nimport os\nos.read(0,1)\nprint("not a tty")\nraise SystemExit(1)\n')
+            provider.chmod(0o755)
+            (directory / 'input').write_bytes(b'unused')
+            providers = {'tty': {'path': str(provider)}}
+            case = dict(name='consume-input', utility='tty', args=[], stdout=b'not a tty\n',
+                        stderr=b'', terminal=b'', status=1)
+            for mode in MODES:
+                with self.subTest(mode=mode):
+                    row = run_case(case, mode, binary, providers, directory,
+                                   dict(PATH=temp + ':' + os.defpath, LC_ALL='C'))
+                    self.assertEqual(row['input_offset'], 1)
+                    self.assertEqual(row['failures'], ['unused stdin consumed'])
 
     def run_child(self, program, timeout=1, limit=1024, **kwargs):
         master, slave = open_terminal()

@@ -2,8 +2,11 @@
  * These executables are never linked into cshell or installed on the host.
  * TERMINAL_PROVIDER is an absolute build-time vendor path, never PATH lookup.
  */
+#define _POSIX_C_SOURCE 200809L
 #include <errno.h>
+#include <signal.h>
 #include <fcntl.h>
+#include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,30 +41,103 @@ static int invoke(char **args)
     return WIFEXITED(status) ? WEXITSTATUS(status) : 5;
 }
 
+/* stty reports depend on stdin, so relay stdout through a bounded buffer.
+ * Catch real write/flush failures even when a vendor ignores its stdio error. */
+static int report(char **args)
+{
+    int descriptors[2], status, failed = 0;
+    pid_t pid;
+    char bytes[4096];
+    ssize_t count;
+    if (pipe(descriptors) < 0)
+        return diagnostic(strerror(errno), 1);
+    pid = fork();
+    if (pid < 0) {
+        close(descriptors[0]);
+        close(descriptors[1]);
+        return diagnostic("cannot launch report provider", 1);
+    }
+    if (pid == 0) {
+        close(descriptors[0]);
+        if (dup2(descriptors[1], STDOUT_FILENO) < 0)
+            _exit(1);
+        close(descriptors[1]);
+        execv(TERMINAL_PROVIDER, args);
+        perror(TERMINAL_PROVIDER);
+        _exit(1);
+    }
+    close(descriptors[1]);
+    for (;;) {
+        size_t offset = 0;
+        count = read(descriptors[0], bytes, sizeof(bytes));
+        if (count < 0 && errno == EINTR)
+            continue;
+        if (count <= 0) {
+            failed = count < 0;
+            break;
+        }
+        while (offset < (size_t)count) {
+            ssize_t written = write(STDOUT_FILENO, bytes + offset, (size_t)count - offset);
+            if (written < 0 && errno == EINTR)
+                continue;
+            if (written <= 0) {
+                failed = 1;
+                break;
+            }
+            offset += (size_t)written;
+        }
+        if (failed)
+            break;
+    }
+    close(descriptors[0]);
+    if (failed)
+        (void)kill(pid, SIGKILL);
+    while (waitpid(pid, &status, 0) < 0) {
+        if (errno != EINTR)
+            return diagnostic("report provider wait failed", 1);
+    }
+    if (failed)
+        return diagnostic("report output failed", 1);
+    return WIFEXITED(status) ? WEXITSTATUS(status) : 1;
+}
+
 int main(int argc, char **argv)
 {
     int i;
-    if (strcmp(TERMINAL_UTILITY, "tabs") == 0) {
-        /* POSIX list separators include blanks within a single argument.
-         * Normalize only a list; leave type names and other operands alone. */
-        for (i = 1; i < argc; ++i) {
-            if (strcmp(argv[i], "-T") == 0 && i + 1 < argc) {
-                ++i;
-            } else if (argv[i][0] >= '0' && argv[i][0] <= '9') {
-                char *src = argv[i], *dst = argv[i];
-                while (*src) {
-                    if (*src == ' ' || *src == '\t') {
-                        while (*src == ' ' || *src == '\t')
-                            ++src;
-                        if (*src && dst > argv[i] && dst[-1] != ',' && *src != ',')
-                            *dst++ = ',';
-                    } else {
-                        *dst++ = *src++;
-                    }
-                }
-                *dst = '\0';
+    (void)setlocale(LC_ALL, "");
+    if (strcmp(TERMINAL_UTILITY, "tty") == 0) {
+        const char *name;
+        int terminal;
+        if (argc > 1 && !(argc == 2 && !strcmp(argv[1], "--")))
+            return diagnostic("expected no operands", 2);
+        terminal = isatty(STDIN_FILENO);
+        if (!terminal && errno == EBADF)
+            return diagnostic("invalid standard input", 2);
+        name = terminal ? ttyname(STDIN_FILENO) : "not a tty";
+        if (!name)
+            return diagnostic(strerror(errno), 2);
+        if (puts(name) == EOF || fflush(stdout) == EOF)
+            return diagnostic("standard output failed", 2);
+        return terminal ? 0 : 1;
+    } else if (strcmp(TERMINAL_UTILITY, "stty") == 0) {
+        char **args;
+        int n = 0;
+        if (argc == 1 || (argc == 2 && (!strcmp(argv[1], "-a") || !strcmp(argv[1], "-g"))))
+            return report(argv);
+        args = calloc((size_t)argc * 3 + 1, sizeof(*args));
+        if (!args)
+            return diagnostic(strerror(errno), 1);
+        for (i = 0; i < argc; ++i) {
+            args[n++] = argv[i];
+            /* Darwin's -nl enables ICRNL but leaves these flags unchanged. */
+            if (i && !strcmp(argv[i], "-nl")) {
+                args[n++] = "-inlcr";
+                args[n++] = "-igncr";
             }
         }
+        execv(TERMINAL_PROVIDER, args);
+        free(args);
+        return diagnostic(strerror(errno), 1);
     } else if (strcmp(TERMINAL_UTILITY, "mesg") == 0) {
         if (argc > 2 || (argc == 2 && strcmp(argv[1], "y") && strcmp(argv[1], "n")))
             return diagnostic("expected y or n", 2);
@@ -97,6 +173,10 @@ int main(int argc, char **argv)
             return diagnostic("expected clear, init or reset", 2);
         if (argv[i][0] == '-')
             return diagnostic("invalid option", 2);
+        /* POSIX leaves the unset/null TERM default unspecified. Pin it to
+         * dumb, including init/reset, rather than treating it as usage error. */
+        if (!type && (!getenv("TERM") || !*getenv("TERM")))
+            type = "dumb";
         for (; i < argc; ++i) {
             char *args[5];
             int n = 0, status;
@@ -128,7 +208,13 @@ int main(int argc, char **argv)
                     del_curterm(cur_term);
                     continue;
                 }
+                status = tputs(capability, 1, putchar) == ERR || ferror(stdout);
+                if (fflush(stdout) == EOF)
+                    status = 1;
                 del_curterm(cur_term);
+                if (status)
+                    return diagnostic("terminal output failed", 5);
+                continue;
             }
 #endif
             status = invoke(args);

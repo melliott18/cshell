@@ -14,6 +14,10 @@ serial hardware was not supplied. Full contracts and the exact retained conditio
 `U-040/stty-physical-terminal` have the concrete open owner
 [CSH-081](tickets/CSH-081-host-terminal-residual-contracts.md).
 
+The section table below records the CSH-077 baseline. The
+[CSH-081 additions](#csh-081-residual-implementation) supersede its corresponding
+open labels and state the current remaining partitions explicitly.
+
 ## Normative section accounting
 
 Sources are the POSIX.1-2024 pages linked below and
@@ -147,3 +151,50 @@ their recorded platform boundaries.
 | Additional locales and credential/I/O fault cases | Reproducible locale packages and isolated identities/fault fixtures. These are software setup tasks; no physical equipment or routine manual testing is required. |
 
 The repaired subsets do not close every page/default requirement in CSH-081.
+
+## CSH-081 residual implementation
+
+`make test-host-terminal-residuals` adds **115 strict cases in five paths (575
+assertions)**. These are incremental contracts, not complete-page qualification.
+The original evidence remains immutable; [CSH-081 evidence](evidence/csh-081/README.md)
+records new attempts, repairs and platform results. CSH-081 remains the owner of
+all outstanding contracts. The user confirmed that neither disposable serial
+hardware nor a disposable privileged Darwin VM is available.
+
+| Utility | Added assertions and implementation | Still unqualified |
+| --- | --- | --- |
+| `stty` | All upper/lower-case circumflex table encodings and punctuation in EOF, independent termios checks for `nl`/`-nl`, explicit Darwin/Linux `ek` defaults, the selected `sane` policy and nine control names plus MIN/TIME in `-a`. A selected adapter expands `-nl` to also clear INLCR/IGNCR, and relays reports with checked writes. Real read-only-PTY output errors must diagnose and fail. | Physical serial control/baud/parity and delivery, complete `-a` token/value coverage, remaining combination, signal, resource and locale/error partitions. `sane` values are unspecified; the fixture does not promote its selected policy into a normative mandate. |
+| `tabs` | All intervals 0–9; comma/space/tab and relative lists; widths 1, 17 and 41; unsupported capabilities; attached/repeated `-T`, end of options, TERM override and unset/null defaults; malformed/overflow/out-of-width lists; real terminal output errors. A standalone ncurses provider emits checked clear/move/set sequences and never places a stop beyond the last column. | Real terminal/display effects and remaining locale, signal, resource and mid-stream I/O partitions. The selected provider limits widths to 65,535 and uses PTY width before terminfo width. Malformed lists are robustness checks, not requirements on undefined application input. |
+| `tput` | Usage/status 2 and operand/status 4 partitions, end of options, unset/null TERM with a documented `dumb` default, explicit type precedence, and read-only-PTY output/status 5. `clear` is emitted using checked `tputs`/flush; init/reset retain the vendor implementation. | Complete init/reset side effects and failures, other signals/resources and locale/error partitions. Missing-operation continuation remains covered by CSH-077. |
+| `tty` | Terminal and nonterminal output errors both require status >1 and a diagnostic. A private device-name symlink resolves to the independent `ttyname` oracle in every dispatch path. The selected provider checks actual writes/flushes instead of accepting Darwin's silent nonterminal-output failure. | Descriptor exhaustion, remaining aliases, signal and locale/error partitions. |
+| `mesg` | Linux root-owned PTY with group read/write access makes every shell redirection succeed, then the dropped user must receive a chmod denial (>1) without changing permissions. Existing priority witnesses remain. | Additional sender/recipient credential combinations and native Darwin privileged cases, other signal/resource/locale/I/O partitions. |
+| `who` | Authored private records at UTC, EST5 and JST-9 verify date rollover and time fields independently. Existing -m/-T, empty/missing records and isolated Linux am i/I are retained. | -u idle-time policy, LC_TIME matrices, other login combinations, concurrent/corrupt databases, read errors, signals and resources. XSI named files/am operands are selected vendor fixture facilities; other XSI options remain excluded. |
+| `write` | All five paths deliver SIGINT to the actual `write` process after both sender alerts and require status 0/EOT; SIGTERM requires default termination and no EOT. UTF-8 accented/CJK characters, LANG fallback and LC_CTYPE precedence, invalid UTF-8 failure, IEXTEN literal-next on/off, another recipient owner with group access, wrong-group denial, sender denial and mesg permission denial run only in registered owned Linux sessions. | Other default signal dispositions/inheritance, additional locale/login/credential combinations, read/output/resource faults, and positive Darwin sessions. |
+
+The complete session subset is now 21 cases × five paths = **105 strict
+assertions**, using the existing private mount namespace, private `/run` and
+verified dropped credentials. Signal targeting inspects only the invocation's
+owned process group, matches both kernel command name and argv[0], and requires
+exactly one target. It does not require `CAP_SYS_PTRACE` or signal the invoking
+shell in place of `write`. Root-owned mesg fixtures grant group read access so
+shell redirection cannot accidentally stand in for the required chmod failure.
+
+For all seven utilities, an LC_ALL=C matrix overrides conflicting LANG,
+LC_CTYPE and LC_MESSAGES values. These assertions cover precedence, not the
+availability of translated catalogs. Every unused regular-file input now shares
+an inherited open-file description with the observer in all five paths. A
+negative harness test deliberately consumes one byte and must detect the changed
+offset in every path. This strengthens U-040 evidence without treating independent
+file opens as proof of unchanged offsets.
+
+A newline is **not** a `<blank>` separator in the POSIX locale. CSH-081's original
+“tab/newline blank separators” wording is corrected: space and tab are required;
+newline-separated lists are outside valid operands and are rejected by the
+selected provider. XSI language/margin presets remain excluded. Unset/null TERM
+selects `dumb` for tabs and tput; the private default model supplies no operations,
+so tabs diagnoses unsupported hardware tabs while tput succeeds with no output.
+
+`U-040/stty-physical-terminal` remains individually open under CSH-081 with the
+same requirement: explicitly supplied disposable serial hardware, known supported
+settings, and a loopback or peer. No PTY result closes it. Remaining software
+partitions above also stay open; absence of hardware is not used to excuse them.

@@ -13,3 +13,10 @@ csh077empty|CSH-077 known terminal with no operations,
 
 csh077partial|CSH-077 terminal without clear,
     cols#41, lines#24, is2=INIT, rs2=RESET,
+
+csh081narrow|CSH-081 narrow terminal,
+    cols#17, lines#24, tbc=CLEAR_TABS, hts=SET_TAB, cr=^M,
+
+# Independently supplied default, so unset/null TERM tests avoid host fallback.
+dumb|CSH-081 default with no terminal operations,
+    cols#80, lines#24,

@@ -79,7 +79,7 @@ def main():
             private_bin = directory / 'bin'
             private_bin.mkdir(mode=0o755)
             private_bin.chmod(0o755)
-            for utility in ('who', 'write'):
+            for utility in ('who', 'write', 'mesg'):
                 selected = providers[utility]['path']
                 shutil.copyfile(selected, private_bin / utility)
                 (private_bin / utility).chmod(0o755)
@@ -91,8 +91,9 @@ def main():
                 names = ['payload', 'denial', 'am-i', 'am-I']
                 if args.write_policy == 'profile':
                     names += ['partial-eof', 'editing', 'controls', 'implicit', 'not-logged-in']
-                    if mode in ('direct', 'exec'):
-                        names += ['interrupt']
+                    names += ['interrupt', 'terminate', 'utf8', 'ctype-precedence',
+                              'lang-fallback', 'iexten-off', 'iexten-on', 'invalid-utf8', 'recipient-other-owner',
+                              'recipient-wrong-group', 'sender-denial', 'mesg-not-owner']
                 for name in names:
                     terminals = []
                     try:
@@ -115,6 +116,28 @@ def main():
                         os.chmod('/run/utmp', 0o644)
                         if name == 'denial':
                             os.fchmod(terminals[1][1], 0o600)
+                        if name == 'sender-denial':
+                            os.fchmod(terminals[0][1], 0o600)
+                        if name in ('recipient-other-owner', 'recipient-wrong-group'):
+                            os.fchown(terminals[1][1], pwd.getpwnam('daemon').pw_uid, tty_group)
+                        if name == 'mesg-not-owner':
+                            os.fchown(terminals[0][1], 0, tty_group)
+                            os.fchmod(terminals[0][1], 0o660)
+                        if name == 'iexten-off':
+                            attrs = termios.tcgetattr(terminals[0][1])
+                            attrs[3] &= ~termios.IEXTEN
+                            termios.tcsetattr(terminals[0][1], termios.TCSANOW, attrs)
+                        if name == 'iexten-on':
+                            attrs = termios.tcgetattr(terminals[0][1])
+                            attrs[3] |= termios.IEXTEN
+                            attrs[6][termios.VLNEXT] = b'\x16'
+                            termios.tcsetattr(terminals[0][1], termios.TCSANOW, attrs)
+                        case_env = dict(env)
+                        if name in ('utf8', 'ctype-precedence', 'lang-fallback', 'invalid-utf8'):
+                            case_env.update(LC_ALL='', LANG='en_US.UTF-8')
+                            if name != 'lang-fallback':
+                                case_env.update(LANG='C', LC_CTYPE='en_US.UTF-8')
+                            case_env['LC_MESSAGES'] = 'C'
                         payloads = {
                             'payload': (b'CSH077 message\t\a\n\x04', b'CSH077 message\t\a\n'),
                             'partial-eof': (b'partial\x04\x04', b'partial'),
@@ -122,22 +145,41 @@ def main():
                             'controls': (b'\x01\x00\v\f\t\a\n\x04', b'<0x1><0x0>\v\f\t\a\n'),
                             'implicit': (b'implicit\n\x04', b'implicit\n'),
                             'interrupt': (b'', b''),
+                            'terminate': (b'', b''),
+                            'utf8': ('café 日本\n\x04'.encode(), 'café 日本\n'.encode()),
+                            'ctype-precedence': ('é\n\x04'.encode(), 'é\n'.encode()),
+                            'lang-fallback': ('é\n\x04'.encode(), 'é\n'.encode()),
+                            'iexten-off': (b'\x16x\n\x04', b'<0x16>x\n'),
+                            'iexten-on': (b'\x16\x03\n\x04', b'<0x3>\n'),
+                            'invalid-utf8': (b'\xff\n\x04', b''),
+                            'recipient-other-owner': (b'other owner\n\x04', b'other owner\n'),
                         }
                         start = time.time()
-                        if name.startswith('am-'):
+                        if name == 'mesg-not-owner':
+                            actual = invoke(binary, providers, 'mesg', ['n'], mode, directory, case_env,
+                                            terminals, credentials=(account.pw_uid, tty_group))
+                        elif name.startswith('am-'):
                             actual = invoke(binary, providers, 'who', ['am', name[-1]], mode, directory, env,
                                             terminals, credentials=(account.pw_uid, tty_group))
                         else:
                             operands = [account.pw_name] if name == 'implicit' else [account.pw_name, recipient]
                             if name == 'not-logged-in':
                                 operands[0] = 'csh077-no-such-user'
-                            extra = {'signal_on_terminal': (b'\a\a', signal.SIGINT)} if name == 'interrupt' else {}
+                            extra = {}
+                            if name in ('interrupt', 'terminate'):
+                                extra = dict(signal_on_terminal=(b'\a\a', signal.SIGINT if name == 'interrupt' else signal.SIGTERM),
+                                             signal_executable=providers['write']['path'])
                             actual = invoke(binary, providers, 'write', operands, mode,
-                                            directory, env, terminals, credentials=(account.pw_uid, tty_group),
+                                            directory, case_env, terminals, credentials=(account.pw_uid, account.pw_gid if name == 'recipient-wrong-group' else tty_group),
                                             terminal_input=payloads.get(name, payloads['payload'])[0], **extra)
                         end = time.time()
                         failures = list(actual['failures'])
-                        if name in ('denial', 'not-logged-in'):
+                        if name == 'mesg-not-owner':
+                            if (actual['status'] <= 1 or not actual['stderr'] or actual['stdout'] or
+                                    actual['terminal1'] or actual['terminal'] or
+                                    os.fstat(terminals[0][1]).st_mode & 0o777 != 0o660):
+                                failures.append('mesg permission failure contract')
+                        elif name in ('denial', 'not-logged-in', 'recipient-wrong-group', 'sender-denial'):
                             if actual['status'] <= 0 or not actual['stderr'] or actual['stdout'] or actual['terminal1'] or actual['terminal']:
                                 failures.append('denied recipient accepted a message or lacked diagnostic')
                         elif name.startswith('am-'):
@@ -158,10 +200,19 @@ def main():
                                     for t in (start, end)]
                                 expected_bodies = [prefix + b'CSH077 message\t\a\r\nEOF\r\n' for prefix in prefixes]
                                 stdout = b''
-                            if actual['terminal1'] not in expected_bodies or actual['status'] or actual['stdout'] != stdout or actual['stderr']:
+                            status = 0
+                            if name == 'terminate':
+                                status = -signal.SIGTERM if mode in ('direct', 'exec') else 128 + signal.SIGTERM
+                                expected_bodies = prefixes
+                            error_output = bool(actual['stderr'])
+                            if name == 'invalid-utf8':
+                                expected_bodies = prefixes
+                                status = 1
+                                error_output = not actual['stderr']
+                            if actual['terminal1'] not in expected_bodies or actual['status'] != status or actual['stdout'] != stdout or error_output:
                                 failures.append('message bytes/status mismatch')
                             normative = []
-                            if not actual['terminal1'].endswith(b'EOT\n'):
+                            if name not in ('terminate', 'invalid-utf8') and not actual['terminal1'].endswith(b'EOT\n'):
                                 normative.append('write/POSIX-EOT')
                             if actual['terminal'] != b'\a\a':
                                 normative.append('write/two-sender-alerts')
@@ -172,6 +223,9 @@ def main():
                                          verdict='FAIL' if failures else 'PASS', failures=failures, actual=actual,
                                          sender=sender, recipient=recipient, uid=account.pw_uid, gid=tty_group,
                                          credentials_method='setgroups([]), setgid, setuid; verified real/effective/saved IDs and empty groups before exec',
+                                         environment=case_env,
+                                         termios_sender=termios.tcgetattr(terminals[0][1]),
+                                         recipient_owner=os.fstat(terminals[1][1]).st_uid,
                                          record_sha256=sha(records)))
                         if failures:
                             print('FAIL:', name, mode, failures, flush=True)

@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import re
 import selectors
 import shlex
 import shutil
@@ -44,7 +45,7 @@ def capture(*args, **kwargs):
 
 def _capture(argv, directory, env, master, slave, input_file, tty_fds=(), data=b'',
             timeout=TIMEOUT, limit=LIMIT, fd_map=None, extra_terminals=None,
-            terminal_input=b'', credentials=None, signal_on_terminal=None):
+            terminal_input=b'', credentials=None, signal_on_terminal=None, signal_executable=None):
     """One owned process group; bounded pipes and PTY, even after leader exit."""
     fd_map = fd_map or {}
     extra_terminals = extra_terminals or {}
@@ -63,12 +64,13 @@ def _capture(argv, directory, env, master, slave, input_file, tty_fds=(), data=b
     streams = dict(stdout=bytearray(), stderr=bytearray(), terminal=bytearray())
     streams.update({name: bytearray() for name in extra_terminals})
     failures = []
+    signal_delivery = None
     start = time.monotonic()
     process = subprocess.Popen(argv, cwd=directory, env=env,
         stdin=fd_map.get(0, slave if 0 in tty_fds else (subprocess.PIPE if data else input_file)),
         stdout=fd_map.get(1, slave if 1 in tty_fds else subprocess.PIPE),
         stderr=fd_map.get(2, slave if 2 in tty_fds else subprocess.PIPE),
-        pass_fds=(slave,), preexec_fn=child)
+        pass_fds=(slave, input_file.fileno()), preexec_fn=child)
     try:
         with selectors.DefaultSelector() as selector:
             selector.register(master, selectors.EVENT_READ, 'terminal')
@@ -114,7 +116,34 @@ def _capture(argv, directory, env, master, slave, input_file, tty_fds=(), data=b
                         streams[key.data].extend(chunk)
                         if (signal_on_terminal is not None and key.data == 'terminal'
                                 and signal_on_terminal[0] in streams['terminal']):
-                            os.kill(process.pid, signal_on_terminal[1])
+                            target = process.pid
+                            if signal_executable:
+                                # Linux registered-session fixture: identify only
+                                # the selected executable in this owned group.
+                                targets = []
+                                for entry in Path('/proc').iterdir():
+                                    if entry.name.isdigit():
+                                        try:
+                                            pid = int(entry.name)
+                                            if os.getpgid(pid) != process.pid:
+                                                continue
+                                            argv0 = (entry / 'cmdline').read_bytes().split(b'\0')[0]
+                                            expected = Path(signal_executable)
+                                            # Cross-uid /proc/exe needs CAP_SYS_PTRACE.
+                                            # These are only our fixture's descendants;
+                                            # check both argv[0] and kernel comm without
+                                            # granting the runner that capability.
+                                            if (os.fsdecode(argv0) in (str(expected), expected.name) and
+                                                    (entry / 'comm').read_text().strip() == expected.name):
+                                                targets.append(pid)
+                                        except (OSError, ProcessLookupError):
+                                            pass
+                                if len(targets) != 1:
+                                    raise RuntimeError('expected one owned signal target: ' + str(targets))
+                                target = targets[0]
+                            os.kill(target, signal_on_terminal[1])
+                            signal_delivery = dict(pid=target, signal=int(signal_on_terminal[1]),
+                                                   executable=signal_executable, ready=True)
                             signal_on_terminal = None
                     else:
                         selector.unregister(key.fileobj)
@@ -150,7 +179,7 @@ def _capture(argv, directory, env, master, slave, input_file, tty_fds=(), data=b
         except subprocess.TimeoutExpired:
             failures.append('leader reap timeout')
     return dict(status=process.returncode, **{k: bytes(v) for k, v in streams.items()},
-                failures=failures, elapsed_seconds=round(time.monotonic() - start, 4))
+                failures=failures, signal_delivery=signal_delivery, elapsed_seconds=round(time.monotonic() - start, 4))
 
 
 def inventory(search_path):
@@ -163,6 +192,7 @@ def inventory(search_path):
         result[name] = entry
     commands = ([['sw_vers']] if platform.system() == 'Darwin' else
                 [['dpkg-query', '-W', 'coreutils', 'ncurses-bin', 'libncurses6', 'util-linux', 'bsdextrautils', 'libc6']])
+    commands.append(['cc', '--version'])
     packages = []
     for argv in commands:
         try:
@@ -262,8 +292,12 @@ def tab_effect(output):
 
 def run_case(case, mode, binary, providers, directory, environment):
     master, slave = pty_harness.open_terminal()
+    input_file = None
+    output_fd = None
+    alias_fd = None
     try:
-        fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 24, 41, 0, 0))
+        input_file = open(directory / 'input', 'rb')
+        fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', *case.get('window', [24, 41]), 0, 0))
         before = termios.tcgetattr(slave)
         if 'flag' in case:
             index, name, enabled = case['flag']
@@ -284,7 +318,7 @@ def run_case(case, mode, binary, providers, directory, environment):
             raise OSError('missing provider: ' + case['utility'])
         tty_fds = case.get('tty_fds', [])
         input_name = os.ttyname(slave) if case.get('input_tty') else str(directory / 'input')
-        command = shlex.join([selected if mode == 'exec' else case['utility'], *args]) + ' < ' + shlex.quote(input_name)
+        command = shlex.join([selected if mode == 'exec' else case['utility'], *args]) + (' < ' + shlex.quote(input_name) if case.get('input_tty') else ' <& ' + str(input_file.fileno()))
         if mode == 'exec':
             command = 'exec ' + command
         data = b''
@@ -299,9 +333,34 @@ def run_case(case, mode, binary, providers, directory, environment):
         else:
             argv = [str(binary), '-c', command]
         env = dict(environment, TERM=case.get('term', 'csh077'))
-        with open(directory / 'input', 'rb') as input_file:
-            actual = capture(argv, directory, env, master, slave, input_file, tty_fds, data)
-            offset = input_file.tell()
+        for key, value in case.get('environment', {}).items():
+            if value is None:
+                env.pop(key, None)
+            else:
+                env[key] = value
+        fd_map = {}
+        if case.get('input_alias'):
+            alias = directory / 'terminal-alias'
+            alias.unlink(missing_ok=True)
+            alias.symlink_to(os.ttyname(slave))
+            alias_fd = os.open(alias, os.O_RDONLY | os.O_NOCTTY)
+            if mode == 'direct':
+                fd_map[0] = alias_fd
+            else:
+                # argv/script/data have already been built; substitute only the
+                # shell redirection path, never a utility argument or source.
+                alias_code = command.rsplit(' < ', 1)[0] + ' < ' + shlex.quote(str(alias))
+                if mode == 'file':
+                    (directory / 'script').write_text(alias_code + '\n')
+                elif mode == 'stdin':
+                    data = (alias_code + '\n').encode()
+                else:
+                    argv = [str(binary), '-c', alias_code]
+        if case.get('readonly_stdout'):
+            output_fd = os.open(os.ttyname(slave), os.O_RDONLY | os.O_NOCTTY)
+            fd_map[1] = output_fd
+        actual = capture(argv, directory, env, master, slave, input_file, tty_fds, data, fd_map=fd_map)
+        offset = input_file.tell()
         after = termios.tcgetattr(slave)
         failures = list(actual['failures'])
         if sanitizer_diagnostic({k: actual[k] for k in ('stdout', 'stderr', 'terminal')}):
@@ -358,7 +417,7 @@ def run_case(case, mode, binary, providers, directory, environment):
         if case.get('oracle') == 'who':
             lines = actual['stdout'].splitlines()
             expected_names = [b'csh077a', b'csh077b']
-            if len(lines) != 2 or any(line.split()[:2] != [name, os.ttyname(slave).removeprefix('/dev/').encode()] or b' '.join(line.split()[2:]) != b'Jan 1 00:00' for name, line in zip(expected_names, lines)):
+            if len(lines) != 2 or any(line.split()[:2] != [name, os.ttyname(slave).removeprefix('/dev/').encode()] or b' '.join(line.split()[2:]) != case.get('who_time', b'Jan 1 00:00') for name, line in zip(expected_names, lines)):
                 failures.append('private session rows mismatch')
         if case.get('oracle') == 'report':
             if not actual['stdout'] or before != after:
@@ -371,18 +430,39 @@ def run_case(case, mode, binary, providers, directory, environment):
             failures.append('tab stop effect mismatch')
         if 'permission' in case and bool(os.fstat(slave).st_mode & 0o022) != case['permission']:
             failures.append('terminal write permission mismatch')
-        if mode == 'direct' and not case.get('input_tty') and offset != 0:
+        if 'controls' in case:
+            for slot, expected in case['controls'].items():
+                value = after[6][getattr(termios, slot)]
+                if (value if isinstance(value, int) else value[0]) != expected:
+                    failures.append(slot + ' control mismatch')
+        for index, name, enabled in case.get('flags', []):
+            if bool(after[index] & getattr(termios, name)) != enabled:
+                failures.append(name + ' combination flag mismatch')
+        if 'report_tokens' in case:
+            tokens = set(re.findall(rb'[-a-zA-Z0-9]+', actual['stdout']))
+            for token in case['report_tokens']:
+                if token.encode() not in tokens:
+                    failures.append('missing report token: ' + token)
+            if before != after:
+                failures.append('report changed terminal state')
+        if not case.get('input_tty') and offset != 0:
             failures.append('unused stdin consumed')
         return dict(name=case['name'], mode=mode, utility=case['utility'], source=BASE + case['utility'] + '.html',
                     verdict='FAIL' if failures else 'PASS', expected=case, actual=actual,
                     failures=failures, argv=argv, termios_before=before, termios_after=after,
                     input_offset=offset, terminal_mode=oct(os.fstat(slave).st_mode & 0o777))
     finally:
+        if input_file is not None:
+            input_file.close()
+        if output_fd is not None:
+            os.close(output_fd)
+        if alias_fd is not None:
+            os.close(alias_fd)
         os.close(slave)
         os.close(master)
 
 
-def main():
+def main(cases_factory=cases):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('binary', type=Path)
     parser.add_argument('--path', default=os.environ.get('CSH_TEST_PATH', os.defpath))
@@ -408,7 +488,7 @@ def main():
         try:
             subprocess.run([providers['tic']['path'], '-x', '-o', env['TERMINFO'],
                 str(Path(__file__).with_suffix('.ti').resolve())], check=True, capture_output=True, timeout=5)
-            for case in cases():
+            for case in cases_factory():
                 if args.case and args.case not in case['name']:
                     continue
                 for mode in MODES:
@@ -421,14 +501,14 @@ def main():
                         print('FAIL:', case['name'], mode, row.get('failures', row.get('reason')))
         except (OSError, TypeError, subprocess.SubprocessError) as error:
             rows.append(dict(name='terminfo', verdict='FAIL', phase='setup', reason=str(error), actual=serial(dict(argv=getattr(error, 'cmd', None), status=getattr(error, 'returncode', None), stdout=getattr(error, 'stdout', None), stderr=getattr(error, 'stderr', None), errno=getattr(error, 'errno', None), timeout=getattr(error, 'timeout', None)))))
-        for name in ('tabs', 'tput', 'mesg', 'who'):
-            provider = Path('/usr/bin') / name
-            providers[name]['vendor'] = dict(path=str(provider), realpath=str(provider.resolve()), sha256=sha(provider)) if provider.exists() else None
+        for name in ('stty', 'tabs', 'tput', 'tty', 'mesg', 'who'):
+            provider = Path('/bin' if name == 'stty' else '/usr/bin') / name
+            providers[name]['vendor'] = dict(path=str(provider), realpath=str(provider.resolve()), sha256=sha(provider), comparison_only=name in ('tabs', 'tty')) if provider.exists() else None
         report = dict(schema_version=1, platform=platform.platform(), uid=os.getuid(), gid=os.getgid(),
             path=args.path, providers=providers, packages=packages, environment=env,
             binary=dict(path=str(args.binary.resolve()), sha256=sha(args.binary)),
             source_identity=inputs, command=os.sys.argv, cases=rows,
-            residual_owner='CSH-081', residuals=['U-040/stty-physical-terminal', 'terminal/full-page-contracts', 'write/owned-login-delivery', 'terminal/locales-signals-io-limits'],
+            residual_owner='CSH-081', residuals=['U-040/stty-physical-terminal', 'terminal/full-page-contracts', 'write/native-darwin-sessions', 'terminal/locales-signals-io-limits'],
             bounds=dict(timeout_seconds=TIMEOUT, output_bytes=LIMIT, group_cleanup_seconds=1, leader_reap_seconds=1, descendant_reap_seconds=1),
             qualification='selected cases only; full contracts remain open',
             totals=dict(passed=sum(r['verdict'] == 'PASS' for r in rows), failed=sum(r['verdict'] == 'FAIL' for r in rows)))

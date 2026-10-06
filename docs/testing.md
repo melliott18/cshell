@@ -1436,3 +1436,20 @@ cover 47 strict session assertions with dropped credentials, including EOT,
 sender alerts, canonical editing and synchronized SIGINT. The [repair evidence](evidence/csh-077-repairs/README.md)
 retains current normal and sanitizer results separately; earlier extension
 evidence remains unchanged. No physical hardware was supplied.
+
+### CSH-081 terminal residuals
+
+`make test-host-terminal-residuals` runs 115 strict residual cases through direct
+exec, command strings, files, stdin and explicit exec. It is also required by
+`make test-host-profile` and the terminal CI workflow, including ASan/UBSan.
+It checks independent PTY termios and tab-stop models, error statuses, timezone
+fields, locale precedence and inherited unused-input offsets. See the
+[section map](host-terminal-contracts.md#csh-081-residual-implementation) for the
+exact boundary; there are no gap allowances or hidden skips.
+
+The isolated Linux session runner now has 105 strict assertions, including
+synchronized SIGINT/SIGTERM through every path, UTF-8 conversion, IEXTEN and
+cross-user permission cases. It still requires root in a private mount namespace
+and uses only its own PTYs and private login records. The syscall/command/PTY
+captures and provider hashes are retained on failure. Physical serial devices
+and privileged Darwin sessions were not supplied and remain unqualified.
