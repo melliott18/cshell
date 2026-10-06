@@ -79,6 +79,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-077](CSH-077-host-terminal-utilities.md) | Qualify host terminal and session utilities | [CSH-052](CSH-052-host-utility-evidence.md), [CSH-056](CSH-056-host-contract-gaps.md) | [#149](https://github.com/melliott18/cshell/issues/149) |
 | [CSH-078](CSH-078-host-service-utilities.md) | Qualify host scheduling, mail and service utilities | [CSH-052](CSH-052-host-utility-evidence.md), [CSH-056](CSH-056-host-contract-gaps.md) | [#150](https://github.com/melliott18/cshell/issues/150) |
 | [CSH-080](CSH-080-filesystem-remaining-contracts.md) | Qualify remaining filesystem provider and fault contracts | [CSH-072](CSH-072-host-filesystem-paths.md) | [#158](https://github.com/melliott18/cshell/issues/158) |
+| [CSH-084](CSH-084-filesystem-residual-environments.md) | Supply residual filesystem environments and contract oracles | [CSH-080](CSH-080-filesystem-remaining-contracts.md) | [#178](https://github.com/melliott18/cshell/issues/178) |
 
 ## Child implementation tickets
 

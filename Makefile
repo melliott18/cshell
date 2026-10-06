@@ -500,7 +500,7 @@ build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/pr
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_printf_faults.c $(LDLIBS)
 
-test-host-profile: test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
+test-host-profile: test-host-filesystem-allocation test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 	$(PYTHON) tests/host_filesystem.py ./cshell --audit --provider-audit --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-profile.json $(HOST_FILESYSTEM_FLAGS) $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 
@@ -643,3 +643,12 @@ test-host-filesystem-audit: cshell
 .PHONY: test-host-filesystem-provider-audit
 test-host-filesystem-provider-audit: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --extended-only --provider-audit --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-provider-audit.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-080 call-site ENOMEM evidence for the local pathname providers.
+build/tests/host_paths_faults: tests/host_paths_faults.c tools/host-profile/paths.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_paths_faults.c $(LDLIBS)
+
+.PHONY: test-host-filesystem-allocation
+test-host-filesystem-allocation: cshell build/tests/host_paths_faults
+	$(PYTHON) tests/host_filesystem_allocation.py ./cshell build/tests/host_paths_faults --record build/tests/host-filesystem-allocation.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)

@@ -10,6 +10,7 @@ from unittest.mock import patch
 import pty_harness
 
 from host_filesystem_extended import cases as extended_cases
+from host_filesystem_remaining import cases as remaining_cases
 from host_contract_inventory import utility_owner
 from host_filesystem import run_case, stdout_matches, stderr_matches
 from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, terminal_cases, effect_errors
@@ -17,10 +18,58 @@ from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, ter
 
 class FilesystemHarnessTests(unittest.TestCase):
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux"))
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
+
+    def test_remaining_capability_setup_failure_is_cleaned(self):
+        with tempfile.TemporaryDirectory() as root:
+            row = next(r for r in remaining_cases() if r.get('utf8'))
+            record = run_case(Path('/bin/true'), {row['utility']: {'path': '/bin/true'}},
+                              os.defpath, row, 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            self.assertTrue(record['cleanup'])
+
+    def test_allocation_markers_reject_missing_unarmed_and_malformed_results(self):
+        from host_filesystem import allocation_marker_matches
+        expected = dict(requested=2, triggered=1, calls_min=2, calls_max=4)
+        self.assertTrue(allocation_marker_matches(expected, dict(requested=2, triggered=1, calls=3)))
+        for marker in ({}, [], dict(requested=2, triggered=0, calls=2),
+                       dict(requested=2, triggered=1, calls=1), dict(requested=2, triggered=1, calls=5),
+                       dict(requested=2, triggered=True, calls=2)):
+            self.assertFalse(allocation_marker_matches(expected, marker))
+        with tempfile.TemporaryDirectory() as root:
+            row = case('readlink', 'unarmed-allocation', ['link'], status='nonzero', err='nonempty',
+                       allocation_fault=expected)
+            with patch('host_filesystem.smoke.capture', return_value=(1, {'stdout': b'', 'stderr': b'failed'}, [])):
+                record = run_case(Path('/bin/true'), {'readlink': {'path': '/bin/true'}}, os.defpath,
+                                  row, 'direct', Path(root), None)
+            self.assertEqual(record['verdict'], 'FAIL')
+            self.assertTrue(any('allocation marker' in e for e in record['errors']))
+            self.assertTrue(record['cleanup'])
+
+    def test_dd_oracle_rejects_padded_input_as_whole_record(self):
+        row = next(r for r in remaining_cases() if r['id'] == 'dd/remaining-sync')
+        good = b'0+1 records in\n1+0 records out\n4 bytes copied, 1 s, 4 B/s\n'
+        self.assertTrue(stderr_matches(row, good))
+        self.assertFalse(stderr_matches(row, good.replace(b'0+1', b'1+0')))
+        self.assertFalse(stderr_matches(row, good.replace(b'4 bytes', b'5 bytes')))
+
+    def test_each_remaining_contract_has_environment_reason_and_owner(self):
+        root = Path(__file__).resolve().parent
+        ledger = json.loads((root / 'host_filesystem_residuals.json').read_text())
+        self.assertFalse(ledger['full_contracts_qualified'])
+        self.assertEqual({r['utility'] for r in ledger['utilities']}, set(UTILITIES))
+        self.assertEqual(len(ledger['utilities']), len(UTILITIES))
+        for row in ledger['utilities']:
+            self.assertEqual(row['next_owner'], utility_owner(row['utility']))
+            self.assertEqual(row['status'], 'open')
+            self.assertTrue(all(row[key] for key in ('reason', 'required_environment', 'remaining', 'implementation_owner')))
+        manifest = json.loads((root / 'host_contracts.json').read_text())
+        conditions = {c for owner in manifest['owners'] if 'basename' in owner['utilities'] for c in owner['conditions']}
+        self.assertEqual({r['id'] for r in ledger['conditions']}, conditions)
+        self.assertTrue(all(r['next_owner'] == utility_owner('basename') for r in ledger['conditions']))
 
     def test_missing_provider_is_setup_failure_and_cleaned(self):
         with tempfile.TemporaryDirectory() as root:
@@ -135,7 +184,7 @@ class FilesystemHarnessTests(unittest.TestCase):
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux"))}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

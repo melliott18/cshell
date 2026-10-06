@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "ticket": "CSH-072",
+  "ticket": "CSH-080",
   "qualification": "case-scoped only; selected profile requires both ordinary and provider-audit assertions; stock failures remain failures",
   "common_defaults": {
     "U-034": "Each of the 21 actual providers is inventoried and directly execed, alongside public cshell string/file/stdin dispatch; pwd builtin and external exec remain distinct.",
@@ -11,7 +11,7 @@
       "utility": "basename",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/basename.html",
       "source_sha256": "76c256427a758fc4388559e7a71fcc9351ed0cfb19afc5af07d38c4cf25c8ab2",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "basename/path-6-620a",
@@ -20,9 +20,13 @@
         "basename/path-4-620a",
         "basename/suffix",
         "basename/entire-suffix",
-        "basename/nonmatching-suffix"
+        "basename/nonmatching-suffix",
+        "basename/remaining-empty-policy",
+        "basename/remaining-double-slash-policy",
+        "basename/remaining-utf8-suffix",
+        "basename/remaining-utf8-entire-suffix"
       ],
-      "remaining": "Empty and double-slash policy, multibyte suffixes, argument/stdio exhaustion and diagnostic locales remain unqualified.",
+      "remaining": "Argument/stdio exhaustion and diagnostic locales remain unqualified. The selected empty-string and double-slash policy and UTF-8 suffix removal now have CSH-080 witnesses.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -48,13 +52,31 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Empty and double-slash policy, multibyte suffixes, argument/stdio exhaustion and diagnostic locales remain unqualified."
+          "disposition": "Argument/stdio exhaustion and diagnostic locales remain unqualified. The selected empty-string and double-slash policy and UTF-8 suffix removal now have CSH-080 witnesses.",
+          "csh080_assertions": [
+            "basename/remaining-empty-policy",
+            "basename/remaining-double-slash-policy",
+            "basename/remaining-utf8-suffix",
+            "basename/remaining-utf8-entire-suffix"
+          ]
         },
         "OPTIONS": {
-          "disposition": "Empty and double-slash policy, multibyte suffixes, argument/stdio exhaustion and diagnostic locales remain unqualified."
+          "disposition": "Argument/stdio exhaustion and diagnostic locales remain unqualified. The selected empty-string and double-slash policy and UTF-8 suffix removal now have CSH-080 witnesses.",
+          "csh080_assertions": [
+            "basename/remaining-empty-policy",
+            "basename/remaining-double-slash-policy",
+            "basename/remaining-utf8-suffix",
+            "basename/remaining-utf8-entire-suffix"
+          ]
         },
         "OPERANDS": {
-          "disposition": "Empty and double-slash policy, multibyte suffixes, argument/stdio exhaustion and diagnostic locales remain unqualified."
+          "disposition": "Argument/stdio exhaustion and diagnostic locales remain unqualified. The selected empty-string and double-slash policy and UTF-8 suffix removal now have CSH-080 witnesses.",
+          "csh080_assertions": [
+            "basename/remaining-empty-policy",
+            "basename/remaining-double-slash-policy",
+            "basename/remaining-utf8-suffix",
+            "basename/remaining-utf8-entire-suffix"
+          ]
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -69,38 +91,79 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "csh080_assertions": [
+            "basename/remaining-empty-policy",
+            "basename/remaining-double-slash-policy",
+            "basename/remaining-utf8-suffix",
+            "basename/remaining-utf8-entire-suffix"
+          ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "csh080_assertions": [
+            "basename/remaining-empty-policy",
+            "basename/remaining-double-slash-policy",
+            "basename/remaining-utf8-suffix",
+            "basename/remaining-utf8-entire-suffix"
+          ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Empty and double-slash policy, multibyte suffixes, argument/stdio exhaustion and diagnostic locales remain unqualified."
+          "disposition": "Argument/stdio exhaustion and diagnostic locales remain unqualified. The selected empty-string and double-slash policy and UTF-8 suffix removal now have CSH-080 witnesses."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "csh080_assertions": [
+            "basename/remaining-empty-policy",
+            "basename/remaining-double-slash-policy",
+            "basename/remaining-utf8-suffix",
+            "basename/remaining-utf8-entire-suffix"
+          ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "csh080_assertions": [
+            "basename/remaining-empty-policy",
+            "basename/remaining-double-slash-policy",
+            "basename/remaining-utf8-suffix",
+            "basename/remaining-utf8-entire-suffix"
+          ]
         }
+      },
+      "csh080_qualification": {
+        "passing_scope": [
+          "basename/remaining-empty-policy",
+          "basename/remaining-double-slash-policy",
+          "basename/remaining-utf8-suffix",
+          "basename/remaining-utf8-entire-suffix"
+        ],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "dirname",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html",
       "source_sha256": "f218ded1508843cdd90913db7cd56ee938d43f67050d6f0645d88cbf916ec6c4",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "dirname/0",
         "dirname/1",
         "dirname/2",
-        "dirname/3"
+        "dirname/3",
+        "dirname/remaining-slash-0",
+        "dirname/remaining-slash-1",
+        "dirname/remaining-slash-2",
+        "dirname/remaining-slash-3",
+        "dirname/remaining-slash-4",
+        "dirname/remaining-slash-5",
+        "dirname/remaining-utf8"
       ],
-      "remaining": "Empty/double-slash policy, redundant slash combinations, multibyte paths and write/resource errors remain unqualified.",
+      "remaining": "Write/resource errors, alternative double-slash policies and further locale repertoires remain unqualified. Empty/double/redundant slash cases and a UTF-8 path now have CSH-080 witnesses.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -126,13 +189,40 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Empty/double-slash policy, redundant slash combinations, multibyte paths and write/resource errors remain unqualified."
+          "disposition": "Write/resource errors, alternative double-slash policies and further locale repertoires remain unqualified. Empty/double/redundant slash cases and a UTF-8 path now have CSH-080 witnesses.",
+          "csh080_assertions": [
+            "dirname/remaining-slash-0",
+            "dirname/remaining-slash-1",
+            "dirname/remaining-slash-2",
+            "dirname/remaining-slash-3",
+            "dirname/remaining-slash-4",
+            "dirname/remaining-slash-5",
+            "dirname/remaining-utf8"
+          ]
         },
         "OPTIONS": {
-          "disposition": "Empty/double-slash policy, redundant slash combinations, multibyte paths and write/resource errors remain unqualified."
+          "disposition": "Write/resource errors, alternative double-slash policies and further locale repertoires remain unqualified. Empty/double/redundant slash cases and a UTF-8 path now have CSH-080 witnesses.",
+          "csh080_assertions": [
+            "dirname/remaining-slash-0",
+            "dirname/remaining-slash-1",
+            "dirname/remaining-slash-2",
+            "dirname/remaining-slash-3",
+            "dirname/remaining-slash-4",
+            "dirname/remaining-slash-5",
+            "dirname/remaining-utf8"
+          ]
         },
         "OPERANDS": {
-          "disposition": "Empty/double-slash policy, redundant slash combinations, multibyte paths and write/resource errors remain unqualified."
+          "disposition": "Write/resource errors, alternative double-slash policies and further locale repertoires remain unqualified. Empty/double/redundant slash cases and a UTF-8 path now have CSH-080 witnesses.",
+          "csh080_assertions": [
+            "dirname/remaining-slash-0",
+            "dirname/remaining-slash-1",
+            "dirname/remaining-slash-2",
+            "dirname/remaining-slash-3",
+            "dirname/remaining-slash-4",
+            "dirname/remaining-slash-5",
+            "dirname/remaining-utf8"
+          ]
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -147,30 +237,79 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "csh080_assertions": [
+            "dirname/remaining-slash-0",
+            "dirname/remaining-slash-1",
+            "dirname/remaining-slash-2",
+            "dirname/remaining-slash-3",
+            "dirname/remaining-slash-4",
+            "dirname/remaining-slash-5",
+            "dirname/remaining-utf8"
+          ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "csh080_assertions": [
+            "dirname/remaining-slash-0",
+            "dirname/remaining-slash-1",
+            "dirname/remaining-slash-2",
+            "dirname/remaining-slash-3",
+            "dirname/remaining-slash-4",
+            "dirname/remaining-slash-5",
+            "dirname/remaining-utf8"
+          ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Empty/double-slash policy, redundant slash combinations, multibyte paths and write/resource errors remain unqualified."
+          "disposition": "Write/resource errors, alternative double-slash policies and further locale repertoires remain unqualified. Empty/double/redundant slash cases and a UTF-8 path now have CSH-080 witnesses."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "csh080_assertions": [
+            "dirname/remaining-slash-0",
+            "dirname/remaining-slash-1",
+            "dirname/remaining-slash-2",
+            "dirname/remaining-slash-3",
+            "dirname/remaining-slash-4",
+            "dirname/remaining-slash-5",
+            "dirname/remaining-utf8"
+          ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "csh080_assertions": [
+            "dirname/remaining-slash-0",
+            "dirname/remaining-slash-1",
+            "dirname/remaining-slash-2",
+            "dirname/remaining-slash-3",
+            "dirname/remaining-slash-4",
+            "dirname/remaining-slash-5",
+            "dirname/remaining-utf8"
+          ]
         }
+      },
+      "csh080_qualification": {
+        "passing_scope": [
+          "dirname/remaining-slash-0",
+          "dirname/remaining-slash-1",
+          "dirname/remaining-slash-2",
+          "dirname/remaining-slash-3",
+          "dirname/remaining-slash-4",
+          "dirname/remaining-slash-5",
+          "dirname/remaining-utf8"
+        ],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "cp",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html",
       "source_sha256": "777d1c06255117e8ea9d8c5ede3996ef77b7c5ddecd1cbf9e584deef239a5836",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "cp/bytes",
@@ -185,7 +324,8 @@
         "cp/recursive-fifo",
         "cp/preserve-owner-times",
         "cp/bounded-write-error",
-        "cp/destination-not-directory"
+        "cp/destination-not-directory",
+        "cp/remaining-continue-missing"
       ],
       "remaining": "Interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses.",
       "normative_headings": [
@@ -213,13 +353,22 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses."
+          "disposition": "Interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses.",
+          "csh080_assertions": [
+            "cp/remaining-continue-missing"
+          ]
         },
         "OPTIONS": {
-          "disposition": "Interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses."
+          "disposition": "Interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses.",
+          "csh080_assertions": [
+            "cp/remaining-continue-missing"
+          ]
         },
         "OPERANDS": {
-          "disposition": "Interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses."
+          "disposition": "Interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses.",
+          "csh080_assertions": [
+            "cp/remaining-continue-missing"
+          ]
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -234,10 +383,16 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "csh080_assertions": [
+            "cp/remaining-continue-missing"
+          ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "csh080_assertions": [
+            "cp/remaining-continue-missing"
+          ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
@@ -246,10 +401,16 @@
           "disposition": "Interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "csh080_assertions": [
+            "cp/remaining-continue-missing"
+          ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "csh080_assertions": [
+            "cp/remaining-continue-missing"
+          ]
         }
       },
       "extended_qualification": {
@@ -268,13 +429,20 @@
           "passing_scope",
           "strict_provider_audit"
         ]
+      },
+      "csh080_qualification": {
+        "passing_scope": [
+          "cp/remaining-continue-missing"
+        ],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "dd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dd.html",
       "source_sha256": "876cebeba49456b8e22b53057bc861120f092c36522193823685cea8b821e249",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "dd/copy",
@@ -285,9 +453,19 @@
         "dd/broken-pipe",
         "dd/closed-input",
         "dd/directory-read-error",
-        "dd/virtual-device-enospc"
+        "dd/virtual-device-enospc",
+        "dd/remaining-block",
+        "dd/remaining-unblock",
+        "dd/remaining-ucase",
+        "dd/remaining-lcase",
+        "dd/remaining-sync",
+        "dd/remaining-block-sync",
+        "dd/remaining-swab-odd",
+        "dd/remaining-seek-notrunc",
+        "dd/remaining-seek-truncate",
+        "dd/remaining-skip-count"
       ],
-      "remaining": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified. EPIPE, EBADF and EFBIG have native witnesses; Linux virtual-device ENOSPC is a separate supplied capability, not filesystem capacity exhaustion.",
+      "remaining": "Additional block/unblock and noerror combinations, short/interrupted device I/O and signal statistics remain unqualified. CSH-080 adds ordinary block/unblock, C-locale case conversion, sync, block+sync, odd swab, seek/truncate/notrunc and skip/count. Darwin stock sync input counts fail; the selected GNU dd is required. EBCDIC/ascii/ibm are XSI-shaded, outside the selected base profile.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -313,13 +491,49 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified. EPIPE, EBADF and EFBIG have native witnesses; Linux virtual-device ENOSPC is a separate supplied capability, not filesystem capacity exhaustion."
+          "disposition": "Additional block/unblock and noerror combinations, short/interrupted device I/O and signal statistics remain unqualified. CSH-080 adds ordinary block/unblock, C-locale case conversion, sync, block+sync, odd swab, seek/truncate/notrunc and skip/count. Darwin stock sync input counts fail; the selected GNU dd is required. EBCDIC/ascii/ibm are XSI-shaded, outside the selected base profile.",
+          "csh080_assertions": [
+            "dd/remaining-block",
+            "dd/remaining-unblock",
+            "dd/remaining-ucase",
+            "dd/remaining-lcase",
+            "dd/remaining-sync",
+            "dd/remaining-block-sync",
+            "dd/remaining-swab-odd",
+            "dd/remaining-seek-notrunc",
+            "dd/remaining-seek-truncate",
+            "dd/remaining-skip-count"
+          ]
         },
         "OPTIONS": {
-          "disposition": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified. EPIPE, EBADF and EFBIG have native witnesses; Linux virtual-device ENOSPC is a separate supplied capability, not filesystem capacity exhaustion."
+          "disposition": "Additional block/unblock and noerror combinations, short/interrupted device I/O and signal statistics remain unqualified. CSH-080 adds ordinary block/unblock, C-locale case conversion, sync, block+sync, odd swab, seek/truncate/notrunc and skip/count. Darwin stock sync input counts fail; the selected GNU dd is required. EBCDIC/ascii/ibm are XSI-shaded, outside the selected base profile.",
+          "csh080_assertions": [
+            "dd/remaining-block",
+            "dd/remaining-unblock",
+            "dd/remaining-ucase",
+            "dd/remaining-lcase",
+            "dd/remaining-sync",
+            "dd/remaining-block-sync",
+            "dd/remaining-swab-odd",
+            "dd/remaining-seek-notrunc",
+            "dd/remaining-seek-truncate",
+            "dd/remaining-skip-count"
+          ]
         },
         "OPERANDS": {
-          "disposition": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified. EPIPE, EBADF and EFBIG have native witnesses; Linux virtual-device ENOSPC is a separate supplied capability, not filesystem capacity exhaustion."
+          "disposition": "Additional block/unblock and noerror combinations, short/interrupted device I/O and signal statistics remain unqualified. CSH-080 adds ordinary block/unblock, C-locale case conversion, sync, block+sync, odd swab, seek/truncate/notrunc and skip/count. Darwin stock sync input counts fail; the selected GNU dd is required. EBCDIC/ascii/ibm are XSI-shaded, outside the selected base profile.",
+          "csh080_assertions": [
+            "dd/remaining-block",
+            "dd/remaining-unblock",
+            "dd/remaining-ucase",
+            "dd/remaining-lcase",
+            "dd/remaining-sync",
+            "dd/remaining-block-sync",
+            "dd/remaining-swab-odd",
+            "dd/remaining-seek-notrunc",
+            "dd/remaining-seek-truncate",
+            "dd/remaining-skip-count"
+          ]
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -334,22 +548,70 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "csh080_assertions": [
+            "dd/remaining-block",
+            "dd/remaining-unblock",
+            "dd/remaining-ucase",
+            "dd/remaining-lcase",
+            "dd/remaining-sync",
+            "dd/remaining-block-sync",
+            "dd/remaining-swab-odd",
+            "dd/remaining-seek-notrunc",
+            "dd/remaining-seek-truncate",
+            "dd/remaining-skip-count"
+          ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "csh080_assertions": [
+            "dd/remaining-block",
+            "dd/remaining-unblock",
+            "dd/remaining-ucase",
+            "dd/remaining-lcase",
+            "dd/remaining-sync",
+            "dd/remaining-block-sync",
+            "dd/remaining-swab-odd",
+            "dd/remaining-seek-notrunc",
+            "dd/remaining-seek-truncate",
+            "dd/remaining-skip-count"
+          ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Remaining block/unblock, character-set/case conversions, seek/notrunc/sync/noerror combinations, short/interrupted I/O and signal statistics remain unqualified. EPIPE, EBADF and EFBIG have native witnesses; Linux virtual-device ENOSPC is a separate supplied capability, not filesystem capacity exhaustion."
+          "disposition": "Additional block/unblock and noerror combinations, short/interrupted device I/O and signal statistics remain unqualified. CSH-080 adds ordinary block/unblock, C-locale case conversion, sync, block+sync, odd swab, seek/truncate/notrunc and skip/count. Darwin stock sync input counts fail; the selected GNU dd is required. EBCDIC/ascii/ibm are XSI-shaded, outside the selected base profile."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "csh080_assertions": [
+            "dd/remaining-block",
+            "dd/remaining-unblock",
+            "dd/remaining-ucase",
+            "dd/remaining-lcase",
+            "dd/remaining-sync",
+            "dd/remaining-block-sync",
+            "dd/remaining-swab-odd",
+            "dd/remaining-seek-notrunc",
+            "dd/remaining-seek-truncate",
+            "dd/remaining-skip-count"
+          ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "csh080_assertions": [
+            "dd/remaining-block",
+            "dd/remaining-unblock",
+            "dd/remaining-ucase",
+            "dd/remaining-lcase",
+            "dd/remaining-sync",
+            "dd/remaining-block-sync",
+            "dd/remaining-swab-odd",
+            "dd/remaining-seek-notrunc",
+            "dd/remaining-seek-truncate",
+            "dd/remaining-skip-count"
+          ]
         }
       },
       "extended_qualification": {
@@ -367,13 +629,29 @@
           "passing_scope",
           "strict_provider_audit"
         ]
+      },
+      "csh080_qualification": {
+        "passing_scope": [
+          "dd/remaining-block",
+          "dd/remaining-unblock",
+          "dd/remaining-ucase",
+          "dd/remaining-lcase",
+          "dd/remaining-sync",
+          "dd/remaining-block-sync",
+          "dd/remaining-swab-odd",
+          "dd/remaining-seek-notrunc",
+          "dd/remaining-seek-truncate",
+          "dd/remaining-skip-count"
+        ],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "df",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html",
       "source_sha256": "afbeec1b5e25c2ebf0de45fcffdcff03cf9f3bf4aa6960fc09b426cfc1a45a11",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "df/portable-k",
@@ -443,13 +721,18 @@
         "CONSEQUENCES OF ERRORS": {
           "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
+      },
+      "csh080_qualification": {
+        "passing_scope": [],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "du",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html",
       "source_sha256": "659c1410d265ef1d4056a784611c6af0df45495f99ff9abfbdbc3c9eb516c100",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "du/file-k",
@@ -519,13 +802,18 @@
         "CONSEQUENCES OF ERRORS": {
           "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
+      },
+      "csh080_qualification": {
+        "passing_scope": [],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "file",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html",
       "source_sha256": "c2e7590cab2534dbf4a0b3fbd8cc77312990c495c6a448243ca63c14074067bb",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "file/empty",
@@ -595,13 +883,18 @@
         "CONSEQUENCES OF ERRORS": {
           "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
         }
+      },
+      "csh080_qualification": {
+        "passing_scope": [],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "find",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html",
       "source_sha256": "6293363b063c9de0bc4d190b62a09d3cd03906a1fa40d3ddc52ecd6a09a62502",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "find/regular",
@@ -615,9 +908,16 @@
         "find/physical-operand",
         "find/logical-cycle",
         "find/expression-precedence",
-        "find/depth-order"
+        "find/depth-order",
+        "find/remaining-size-bytes",
+        "find/remaining-size-rounded-blocks",
+        "find/remaining-perm-exact",
+        "find/remaining-perm-all",
+        "find/remaining-negation",
+        "find/remaining-grouping",
+        "find/remaining-exec-batch"
       ],
-      "remaining": "Remaining expressions/actions, batched exec, time/size/permissions, descriptor exhaustion and non-UTF-8 locale matching remain unqualified. Selected -H/-L traversal, physical operands, precedence and depth order have witnesses; logical-cycle diagnostic/status is required of the selected GNU find. Native Apple find still fails in the stock audit.",
+      "remaining": "Other expressions/actions, timestamp boundaries, descriptor exhaustion and non-UTF-8 matching remain unqualified. CSH-080 adds exact byte/rounded-block size, numeric permissions, negation/grouping and bounded batched exec.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -643,13 +943,40 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Remaining expressions/actions, batched exec, time/size/permissions, descriptor exhaustion and non-UTF-8 locale matching remain unqualified. Selected -H/-L traversal, physical operands, precedence and depth order have witnesses; logical-cycle diagnostic/status is required of the selected GNU find. Native Apple find still fails in the stock audit."
+          "disposition": "Other expressions/actions, timestamp boundaries, descriptor exhaustion and non-UTF-8 matching remain unqualified. CSH-080 adds exact byte/rounded-block size, numeric permissions, negation/grouping and bounded batched exec.",
+          "csh080_assertions": [
+            "find/remaining-size-bytes",
+            "find/remaining-size-rounded-blocks",
+            "find/remaining-perm-exact",
+            "find/remaining-perm-all",
+            "find/remaining-negation",
+            "find/remaining-grouping",
+            "find/remaining-exec-batch"
+          ]
         },
         "OPTIONS": {
-          "disposition": "Remaining expressions/actions, batched exec, time/size/permissions, descriptor exhaustion and non-UTF-8 locale matching remain unqualified. Selected -H/-L traversal, physical operands, precedence and depth order have witnesses; logical-cycle diagnostic/status is required of the selected GNU find. Native Apple find still fails in the stock audit."
+          "disposition": "Other expressions/actions, timestamp boundaries, descriptor exhaustion and non-UTF-8 matching remain unqualified. CSH-080 adds exact byte/rounded-block size, numeric permissions, negation/grouping and bounded batched exec.",
+          "csh080_assertions": [
+            "find/remaining-size-bytes",
+            "find/remaining-size-rounded-blocks",
+            "find/remaining-perm-exact",
+            "find/remaining-perm-all",
+            "find/remaining-negation",
+            "find/remaining-grouping",
+            "find/remaining-exec-batch"
+          ]
         },
         "OPERANDS": {
-          "disposition": "Remaining expressions/actions, batched exec, time/size/permissions, descriptor exhaustion and non-UTF-8 locale matching remain unqualified. Selected -H/-L traversal, physical operands, precedence and depth order have witnesses; logical-cycle diagnostic/status is required of the selected GNU find. Native Apple find still fails in the stock audit."
+          "disposition": "Other expressions/actions, timestamp boundaries, descriptor exhaustion and non-UTF-8 matching remain unqualified. CSH-080 adds exact byte/rounded-block size, numeric permissions, negation/grouping and bounded batched exec.",
+          "csh080_assertions": [
+            "find/remaining-size-bytes",
+            "find/remaining-size-rounded-blocks",
+            "find/remaining-perm-exact",
+            "find/remaining-perm-all",
+            "find/remaining-negation",
+            "find/remaining-grouping",
+            "find/remaining-exec-batch"
+          ]
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -664,22 +991,58 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "csh080_assertions": [
+            "find/remaining-size-bytes",
+            "find/remaining-size-rounded-blocks",
+            "find/remaining-perm-exact",
+            "find/remaining-perm-all",
+            "find/remaining-negation",
+            "find/remaining-grouping",
+            "find/remaining-exec-batch"
+          ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "csh080_assertions": [
+            "find/remaining-size-bytes",
+            "find/remaining-size-rounded-blocks",
+            "find/remaining-perm-exact",
+            "find/remaining-perm-all",
+            "find/remaining-negation",
+            "find/remaining-grouping",
+            "find/remaining-exec-batch"
+          ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Remaining expressions/actions, batched exec, time/size/permissions, descriptor exhaustion and non-UTF-8 locale matching remain unqualified. Selected -H/-L traversal, physical operands, precedence and depth order have witnesses; logical-cycle diagnostic/status is required of the selected GNU find. Native Apple find still fails in the stock audit."
+          "disposition": "Other expressions/actions, timestamp boundaries, descriptor exhaustion and non-UTF-8 matching remain unqualified. CSH-080 adds exact byte/rounded-block size, numeric permissions, negation/grouping and bounded batched exec."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "csh080_assertions": [
+            "find/remaining-size-bytes",
+            "find/remaining-size-rounded-blocks",
+            "find/remaining-perm-exact",
+            "find/remaining-perm-all",
+            "find/remaining-negation",
+            "find/remaining-grouping",
+            "find/remaining-exec-batch"
+          ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "csh080_assertions": [
+            "find/remaining-size-bytes",
+            "find/remaining-size-rounded-blocks",
+            "find/remaining-perm-exact",
+            "find/remaining-perm-all",
+            "find/remaining-negation",
+            "find/remaining-grouping",
+            "find/remaining-exec-batch"
+          ]
         }
       },
       "extended_qualification": {
@@ -698,13 +1061,26 @@
           "passing_scope",
           "strict_provider_audit"
         ]
+      },
+      "csh080_qualification": {
+        "passing_scope": [
+          "find/remaining-size-bytes",
+          "find/remaining-size-rounded-blocks",
+          "find/remaining-perm-exact",
+          "find/remaining-perm-all",
+          "find/remaining-negation",
+          "find/remaining-grouping",
+          "find/remaining-exec-batch"
+        ],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "ln",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html",
       "source_sha256": "c4e793bb510483faef398e4c16fb7adc2d60b99c712ea7e6b5f2751a4c6c453c",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "ln/hard",
@@ -716,7 +1092,8 @@
         "ln/hard-symlink-PL",
         "ln/hard-symlink-LP",
         "ln/symbolic-ignores-dereference",
-        "ln/existing-preserved"
+        "ln/existing-preserved",
+        "ln/remaining-continue-missing"
       ],
       "remaining": "Interactive replacement, remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses.",
       "normative_headings": [
@@ -744,13 +1121,22 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Interactive replacement, remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses."
+          "disposition": "Interactive replacement, remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses.",
+          "csh080_assertions": [
+            "ln/remaining-continue-missing"
+          ]
         },
         "OPTIONS": {
-          "disposition": "Interactive replacement, remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses."
+          "disposition": "Interactive replacement, remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses.",
+          "csh080_assertions": [
+            "ln/remaining-continue-missing"
+          ]
         },
         "OPERANDS": {
-          "disposition": "Interactive replacement, remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses."
+          "disposition": "Interactive replacement, remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses.",
+          "csh080_assertions": [
+            "ln/remaining-continue-missing"
+          ]
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -765,10 +1151,16 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "csh080_assertions": [
+            "ln/remaining-continue-missing"
+          ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "csh080_assertions": [
+            "ln/remaining-continue-missing"
+          ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
@@ -777,10 +1169,16 @@
           "disposition": "Interactive replacement, remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "csh080_assertions": [
+            "ln/remaining-continue-missing"
+          ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "csh080_assertions": [
+            "ln/remaining-continue-missing"
+          ]
         }
       },
       "extended_qualification": {
@@ -798,18 +1196,29 @@
           "passing_scope",
           "strict_provider_audit"
         ]
+      },
+      "csh080_qualification": {
+        "passing_scope": [
+          "ln/remaining-continue-missing"
+        ],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "ls",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
       "source_sha256": "cd4db85f09dbadf3d529b1bf6a8c157806759c5a22d3ca616aad0cc0363f07bc",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "ls/512-c-order",
         "ls/hidden",
-        "ls/missing"
+        "ls/missing",
+        "ls/remaining-reverse-c",
+        "ls/remaining-all-reverse-c",
+        "ls/remaining-size-sort",
+        "ls/remaining-time-sort"
       ],
       "remaining": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified.",
       "normative_headings": [
@@ -837,13 +1246,31 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified."
+          "disposition": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified.",
+          "csh080_assertions": [
+            "ls/remaining-reverse-c",
+            "ls/remaining-all-reverse-c",
+            "ls/remaining-size-sort",
+            "ls/remaining-time-sort"
+          ]
         },
         "OPTIONS": {
-          "disposition": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified."
+          "disposition": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified.",
+          "csh080_assertions": [
+            "ls/remaining-reverse-c",
+            "ls/remaining-all-reverse-c",
+            "ls/remaining-size-sort",
+            "ls/remaining-time-sort"
+          ]
         },
         "OPERANDS": {
-          "disposition": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified."
+          "disposition": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified.",
+          "csh080_assertions": [
+            "ls/remaining-reverse-c",
+            "ls/remaining-all-reverse-c",
+            "ls/remaining-size-sort",
+            "ls/remaining-time-sort"
+          ]
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -858,10 +1285,22 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "csh080_assertions": [
+            "ls/remaining-reverse-c",
+            "ls/remaining-all-reverse-c",
+            "ls/remaining-size-sort",
+            "ls/remaining-time-sort"
+          ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "csh080_assertions": [
+            "ls/remaining-reverse-c",
+            "ls/remaining-all-reverse-c",
+            "ls/remaining-size-sort",
+            "ls/remaining-time-sort"
+          ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
@@ -870,18 +1309,40 @@
           "disposition": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "csh080_assertions": [
+            "ls/remaining-reverse-c",
+            "ls/remaining-all-reverse-c",
+            "ls/remaining-size-sort",
+            "ls/remaining-time-sort"
+          ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "csh080_assertions": [
+            "ls/remaining-reverse-c",
+            "ls/remaining-all-reverse-c",
+            "ls/remaining-size-sort",
+            "ls/remaining-time-sort"
+          ]
         }
+      },
+      "csh080_qualification": {
+        "passing_scope": [
+          "ls/remaining-reverse-c",
+          "ls/remaining-all-reverse-c",
+          "ls/remaining-size-sort",
+          "ls/remaining-time-sort"
+        ],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "mkdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html",
       "source_sha256": "7d37d11b3829422919fbc928cf3e4e0e2c9ba3d0eaba2e2e36362e80f4086576",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "mkdir/parents",
@@ -889,9 +1350,12 @@
         "mkdir/existing-parents",
         "mkdir/existing-error",
         "mkdir/symbolic-mode",
-        "mkdir/parents-umask"
+        "mkdir/parents-umask",
+        "mkdir/remaining-parent-final-mode",
+        "mkdir/remaining-parent-file-continue",
+        "mkdir/remaining-existing-mode-preserved"
       ],
-      "remaining": "Remaining symbolic mode and intermediate-parent combinations, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified. Selected symbolic mode and parent umask 077 have witnesses.",
+      "remaining": "Further symbolic modes/parents, total path limits, ACL inheritance, access denial and capacity exhaustion remain unqualified. CSH-080 adds final -m versus parent umask, existing mode preservation and continuation after an ENOTDIR prefix.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -917,13 +1381,28 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Remaining symbolic mode and intermediate-parent combinations, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified. Selected symbolic mode and parent umask 077 have witnesses."
+          "disposition": "Further symbolic modes/parents, total path limits, ACL inheritance, access denial and capacity exhaustion remain unqualified. CSH-080 adds final -m versus parent umask, existing mode preservation and continuation after an ENOTDIR prefix.",
+          "csh080_assertions": [
+            "mkdir/remaining-parent-final-mode",
+            "mkdir/remaining-parent-file-continue",
+            "mkdir/remaining-existing-mode-preserved"
+          ]
         },
         "OPTIONS": {
-          "disposition": "Remaining symbolic mode and intermediate-parent combinations, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified. Selected symbolic mode and parent umask 077 have witnesses."
+          "disposition": "Further symbolic modes/parents, total path limits, ACL inheritance, access denial and capacity exhaustion remain unqualified. CSH-080 adds final -m versus parent umask, existing mode preservation and continuation after an ENOTDIR prefix.",
+          "csh080_assertions": [
+            "mkdir/remaining-parent-final-mode",
+            "mkdir/remaining-parent-file-continue",
+            "mkdir/remaining-existing-mode-preserved"
+          ]
         },
         "OPERANDS": {
-          "disposition": "Remaining symbolic mode and intermediate-parent combinations, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified. Selected symbolic mode and parent umask 077 have witnesses."
+          "disposition": "Further symbolic modes/parents, total path limits, ACL inheritance, access denial and capacity exhaustion remain unqualified. CSH-080 adds final -m versus parent umask, existing mode preservation and continuation after an ENOTDIR prefix.",
+          "csh080_assertions": [
+            "mkdir/remaining-parent-final-mode",
+            "mkdir/remaining-parent-file-continue",
+            "mkdir/remaining-existing-mode-preserved"
+          ]
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -938,22 +1417,42 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "csh080_assertions": [
+            "mkdir/remaining-parent-final-mode",
+            "mkdir/remaining-parent-file-continue",
+            "mkdir/remaining-existing-mode-preserved"
+          ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "csh080_assertions": [
+            "mkdir/remaining-parent-final-mode",
+            "mkdir/remaining-parent-file-continue",
+            "mkdir/remaining-existing-mode-preserved"
+          ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Remaining symbolic mode and intermediate-parent combinations, maximum path totals, ACL inheritance, access denial and filesystem exhaustion remain unqualified. Selected symbolic mode and parent umask 077 have witnesses."
+          "disposition": "Further symbolic modes/parents, total path limits, ACL inheritance, access denial and capacity exhaustion remain unqualified. CSH-080 adds final -m versus parent umask, existing mode preservation and continuation after an ENOTDIR prefix."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "csh080_assertions": [
+            "mkdir/remaining-parent-final-mode",
+            "mkdir/remaining-parent-file-continue",
+            "mkdir/remaining-existing-mode-preserved"
+          ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "csh080_assertions": [
+            "mkdir/remaining-parent-final-mode",
+            "mkdir/remaining-parent-file-continue",
+            "mkdir/remaining-existing-mode-preserved"
+          ]
         }
       },
       "extended_qualification": {
@@ -967,20 +1466,31 @@
           "passing_scope",
           "strict_provider_audit"
         ]
+      },
+      "csh080_qualification": {
+        "passing_scope": [
+          "mkdir/remaining-parent-final-mode",
+          "mkdir/remaining-parent-file-continue",
+          "mkdir/remaining-existing-mode-preserved"
+        ],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "mkfifo",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html",
       "source_sha256": "508f579e25f7ac32d94c2f57aef1a12448e4984fc60d467120cb2bb66157c3ed",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "mkfifo/mode",
         "mkfifo/default-umask",
-        "mkfifo/symbolic-mode"
+        "mkfifo/symbolic-mode",
+        "mkfifo/remaining-existing-continue",
+        "mkfifo/remaining-symbolic-sequence"
       ],
-      "remaining": "Remaining symbolic mode combinations, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified. Default umask 077 and one symbolic mode have witnesses; FIFO data transfer is outside the creation witness.",
+      "remaining": "Additional symbolic/ACL behavior and capacity exhaustion remain unqualified. CSH-080 adds sequential symbolic copy/removal and existing-node error continuation; FIFO transfer remains outside creation.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -1006,13 +1516,25 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Remaining symbolic mode combinations, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified. Default umask 077 and one symbolic mode have witnesses; FIFO data transfer is outside the creation witness."
+          "disposition": "Additional symbolic/ACL behavior and capacity exhaustion remain unqualified. CSH-080 adds sequential symbolic copy/removal and existing-node error continuation; FIFO transfer remains outside creation.",
+          "csh080_assertions": [
+            "mkfifo/remaining-existing-continue",
+            "mkfifo/remaining-symbolic-sequence"
+          ]
         },
         "OPTIONS": {
-          "disposition": "Remaining symbolic mode combinations, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified. Default umask 077 and one symbolic mode have witnesses; FIFO data transfer is outside the creation witness."
+          "disposition": "Additional symbolic/ACL behavior and capacity exhaustion remain unqualified. CSH-080 adds sequential symbolic copy/removal and existing-node error continuation; FIFO transfer remains outside creation.",
+          "csh080_assertions": [
+            "mkfifo/remaining-existing-continue",
+            "mkfifo/remaining-symbolic-sequence"
+          ]
         },
         "OPERANDS": {
-          "disposition": "Remaining symbolic mode combinations, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified. Default umask 077 and one symbolic mode have witnesses; FIFO data transfer is outside the creation witness."
+          "disposition": "Additional symbolic/ACL behavior and capacity exhaustion remain unqualified. CSH-080 adds sequential symbolic copy/removal and existing-node error continuation; FIFO transfer remains outside creation.",
+          "csh080_assertions": [
+            "mkfifo/remaining-existing-continue",
+            "mkfifo/remaining-symbolic-sequence"
+          ]
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -1027,22 +1549,38 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "csh080_assertions": [
+            "mkfifo/remaining-existing-continue",
+            "mkfifo/remaining-symbolic-sequence"
+          ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "csh080_assertions": [
+            "mkfifo/remaining-existing-continue",
+            "mkfifo/remaining-symbolic-sequence"
+          ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Remaining symbolic mode combinations, operand continuation, ACL inheritance, existing-node errors and filesystem exhaustion remain unqualified. Default umask 077 and one symbolic mode have witnesses; FIFO data transfer is outside the creation witness."
+          "disposition": "Additional symbolic/ACL behavior and capacity exhaustion remain unqualified. CSH-080 adds sequential symbolic copy/removal and existing-node error continuation; FIFO transfer remains outside creation."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "csh080_assertions": [
+            "mkfifo/remaining-existing-continue",
+            "mkfifo/remaining-symbolic-sequence"
+          ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "csh080_assertions": [
+            "mkfifo/remaining-existing-continue",
+            "mkfifo/remaining-symbolic-sequence"
+          ]
         }
       },
       "extended_qualification": {
@@ -1056,20 +1594,30 @@
           "passing_scope",
           "strict_provider_audit"
         ]
+      },
+      "csh080_qualification": {
+        "passing_scope": [
+          "mkfifo/remaining-existing-continue",
+          "mkfifo/remaining-symbolic-sequence"
+        ],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "mv",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mv.html",
       "source_sha256": "c17c6279d2fdf408e2aa82bd674d5eff5130f391361b2e175e4862d6c4a89662",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "mv/rename",
         "mv/replace",
         "mv/symlink",
         "mv/missing",
-        "mv/rename-inode"
+        "mv/rename-inode",
+        "mv/remaining-continue-missing",
+        "mv/remaining-empty-directory-replace"
       ],
       "remaining": "Interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified.",
       "normative_headings": [
@@ -1097,13 +1645,25 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified."
+          "disposition": "Interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified.",
+          "csh080_assertions": [
+            "mv/remaining-continue-missing",
+            "mv/remaining-empty-directory-replace"
+          ]
         },
         "OPTIONS": {
-          "disposition": "Interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified."
+          "disposition": "Interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified.",
+          "csh080_assertions": [
+            "mv/remaining-continue-missing",
+            "mv/remaining-empty-directory-replace"
+          ]
         },
         "OPERANDS": {
-          "disposition": "Interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified."
+          "disposition": "Interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified.",
+          "csh080_assertions": [
+            "mv/remaining-continue-missing",
+            "mv/remaining-empty-directory-replace"
+          ]
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -1118,10 +1678,18 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "csh080_assertions": [
+            "mv/remaining-continue-missing",
+            "mv/remaining-empty-directory-replace"
+          ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "csh080_assertions": [
+            "mv/remaining-continue-missing",
+            "mv/remaining-empty-directory-replace"
+          ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
@@ -1130,10 +1698,18 @@
           "disposition": "Interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "csh080_assertions": [
+            "mv/remaining-continue-missing",
+            "mv/remaining-empty-directory-replace"
+          ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "csh080_assertions": [
+            "mv/remaining-continue-missing",
+            "mv/remaining-empty-directory-replace"
+          ]
         }
       },
       "extended_qualification": {
@@ -1146,21 +1722,38 @@
           "passing_scope",
           "strict_provider_audit"
         ]
+      },
+      "csh080_qualification": {
+        "passing_scope": [
+          "mv/remaining-continue-missing",
+          "mv/remaining-empty-directory-replace"
+        ],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "pathchk",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html",
       "source_sha256": "ce446d31316645a78d6aa4df6ff45829afbdbd3d667c84ae2c6a3bdfe0ce825a",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "pathchk/portable",
         "pathchk/portable-too-long",
         "pathchk/nonportable-byte",
-        "pathchk/name-max"
+        "pathchk/name-max",
+        "pathchk/remaining-P-valid",
+        "pathchk/remaining-P-empty",
+        "pathchk/remaining-P-dash",
+        "pathchk/remaining-pP-valid",
+        "pathchk/remaining-pP-empty",
+        "pathchk/remaining-pP-dash",
+        "pathchk/remaining-Pp-valid",
+        "pathchk/remaining-Pp-empty",
+        "pathchk/remaining-Pp-dash"
       ],
-      "remaining": "-P and option combinations, inaccessible existing prefixes, empty operands, path total limits and alternate filesystems/character repertoires remain unqualified.",
+      "remaining": "Inaccessible prefixes, path total limits and alternate filesystems/repertoires remain unqualified. CSH-080 adds -P and -p/-P order combinations with empty and dash-prefixed components.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -1186,13 +1779,46 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "-P and option combinations, inaccessible existing prefixes, empty operands, path total limits and alternate filesystems/character repertoires remain unqualified."
+          "disposition": "Inaccessible prefixes, path total limits and alternate filesystems/repertoires remain unqualified. CSH-080 adds -P and -p/-P order combinations with empty and dash-prefixed components.",
+          "csh080_assertions": [
+            "pathchk/remaining-P-valid",
+            "pathchk/remaining-P-empty",
+            "pathchk/remaining-P-dash",
+            "pathchk/remaining-pP-valid",
+            "pathchk/remaining-pP-empty",
+            "pathchk/remaining-pP-dash",
+            "pathchk/remaining-Pp-valid",
+            "pathchk/remaining-Pp-empty",
+            "pathchk/remaining-Pp-dash"
+          ]
         },
         "OPTIONS": {
-          "disposition": "-P and option combinations, inaccessible existing prefixes, empty operands, path total limits and alternate filesystems/character repertoires remain unqualified."
+          "disposition": "Inaccessible prefixes, path total limits and alternate filesystems/repertoires remain unqualified. CSH-080 adds -P and -p/-P order combinations with empty and dash-prefixed components.",
+          "csh080_assertions": [
+            "pathchk/remaining-P-valid",
+            "pathchk/remaining-P-empty",
+            "pathchk/remaining-P-dash",
+            "pathchk/remaining-pP-valid",
+            "pathchk/remaining-pP-empty",
+            "pathchk/remaining-pP-dash",
+            "pathchk/remaining-Pp-valid",
+            "pathchk/remaining-Pp-empty",
+            "pathchk/remaining-Pp-dash"
+          ]
         },
         "OPERANDS": {
-          "disposition": "-P and option combinations, inaccessible existing prefixes, empty operands, path total limits and alternate filesystems/character repertoires remain unqualified."
+          "disposition": "Inaccessible prefixes, path total limits and alternate filesystems/repertoires remain unqualified. CSH-080 adds -P and -p/-P order combinations with empty and dash-prefixed components.",
+          "csh080_assertions": [
+            "pathchk/remaining-P-valid",
+            "pathchk/remaining-P-empty",
+            "pathchk/remaining-P-dash",
+            "pathchk/remaining-pP-valid",
+            "pathchk/remaining-pP-empty",
+            "pathchk/remaining-pP-dash",
+            "pathchk/remaining-Pp-valid",
+            "pathchk/remaining-Pp-empty",
+            "pathchk/remaining-Pp-dash"
+          ]
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -1207,30 +1833,89 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "csh080_assertions": [
+            "pathchk/remaining-P-valid",
+            "pathchk/remaining-P-empty",
+            "pathchk/remaining-P-dash",
+            "pathchk/remaining-pP-valid",
+            "pathchk/remaining-pP-empty",
+            "pathchk/remaining-pP-dash",
+            "pathchk/remaining-Pp-valid",
+            "pathchk/remaining-Pp-empty",
+            "pathchk/remaining-Pp-dash"
+          ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "csh080_assertions": [
+            "pathchk/remaining-P-valid",
+            "pathchk/remaining-P-empty",
+            "pathchk/remaining-P-dash",
+            "pathchk/remaining-pP-valid",
+            "pathchk/remaining-pP-empty",
+            "pathchk/remaining-pP-dash",
+            "pathchk/remaining-Pp-valid",
+            "pathchk/remaining-Pp-empty",
+            "pathchk/remaining-Pp-dash"
+          ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "-P and option combinations, inaccessible existing prefixes, empty operands, path total limits and alternate filesystems/character repertoires remain unqualified."
+          "disposition": "Inaccessible prefixes, path total limits and alternate filesystems/repertoires remain unqualified. CSH-080 adds -P and -p/-P order combinations with empty and dash-prefixed components."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "csh080_assertions": [
+            "pathchk/remaining-P-valid",
+            "pathchk/remaining-P-empty",
+            "pathchk/remaining-P-dash",
+            "pathchk/remaining-pP-valid",
+            "pathchk/remaining-pP-empty",
+            "pathchk/remaining-pP-dash",
+            "pathchk/remaining-Pp-valid",
+            "pathchk/remaining-Pp-empty",
+            "pathchk/remaining-Pp-dash"
+          ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "csh080_assertions": [
+            "pathchk/remaining-P-valid",
+            "pathchk/remaining-P-empty",
+            "pathchk/remaining-P-dash",
+            "pathchk/remaining-pP-valid",
+            "pathchk/remaining-pP-empty",
+            "pathchk/remaining-pP-dash",
+            "pathchk/remaining-Pp-valid",
+            "pathchk/remaining-Pp-empty",
+            "pathchk/remaining-Pp-dash"
+          ]
         }
+      },
+      "csh080_qualification": {
+        "passing_scope": [
+          "pathchk/remaining-P-valid",
+          "pathchk/remaining-P-empty",
+          "pathchk/remaining-P-dash",
+          "pathchk/remaining-pP-valid",
+          "pathchk/remaining-pP-empty",
+          "pathchk/remaining-pP-dash",
+          "pathchk/remaining-Pp-valid",
+          "pathchk/remaining-Pp-empty",
+          "pathchk/remaining-Pp-dash"
+        ],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "pax",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html",
       "source_sha256": "398b008eab3110cd482eee2e62797adaf915405e488b1f36bc73fc2a29591efb",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "pax/copy-tree",
@@ -1387,19 +2072,26 @@
           "passing_scope",
           "strict_provider_audit"
         ]
+      },
+      "csh080_qualification": {
+        "passing_scope": [],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "pwd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html",
       "source_sha256": "6c0724e219d469ac68640fc07c825a95e090931483b9cee2d089dec136efd7f6",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "pwd/physical",
-        "pwd/physical-name-boundary"
+        "pwd/physical-name-boundary",
+        "pwd/remaining-last-P",
+        "pwd/remaining-last-L"
       ],
-      "remaining": "Logical/physical option precedence, inaccessible ancestors, deleted directories, total PATH_MAX and allocation/stdio failures remain unqualified by this new subset; historical witnesses remain separate.",
+      "remaining": "Inaccessible ancestors, deleted directories, total PATH_MAX and allocation/stdio failures remain unqualified by this subset. CSH-080 adds -L/-P last-option precedence with an independently authored logical cwd.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -1425,13 +2117,25 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Logical/physical option precedence, inaccessible ancestors, deleted directories, total PATH_MAX and allocation/stdio failures remain unqualified by this new subset; historical witnesses remain separate."
+          "disposition": "Inaccessible ancestors, deleted directories, total PATH_MAX and allocation/stdio failures remain unqualified by this subset. CSH-080 adds -L/-P last-option precedence with an independently authored logical cwd.",
+          "csh080_assertions": [
+            "pwd/remaining-last-P",
+            "pwd/remaining-last-L"
+          ]
         },
         "OPTIONS": {
-          "disposition": "Logical/physical option precedence, inaccessible ancestors, deleted directories, total PATH_MAX and allocation/stdio failures remain unqualified by this new subset; historical witnesses remain separate."
+          "disposition": "Inaccessible ancestors, deleted directories, total PATH_MAX and allocation/stdio failures remain unqualified by this subset. CSH-080 adds -L/-P last-option precedence with an independently authored logical cwd.",
+          "csh080_assertions": [
+            "pwd/remaining-last-P",
+            "pwd/remaining-last-L"
+          ]
         },
         "OPERANDS": {
-          "disposition": "Logical/physical option precedence, inaccessible ancestors, deleted directories, total PATH_MAX and allocation/stdio failures remain unqualified by this new subset; historical witnesses remain separate."
+          "disposition": "Inaccessible ancestors, deleted directories, total PATH_MAX and allocation/stdio failures remain unqualified by this subset. CSH-080 adds -L/-P last-option precedence with an independently authored logical cwd.",
+          "csh080_assertions": [
+            "pwd/remaining-last-P",
+            "pwd/remaining-last-L"
+          ]
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -1446,30 +2150,54 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "csh080_assertions": [
+            "pwd/remaining-last-P",
+            "pwd/remaining-last-L"
+          ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "csh080_assertions": [
+            "pwd/remaining-last-P",
+            "pwd/remaining-last-L"
+          ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Logical/physical option precedence, inaccessible ancestors, deleted directories, total PATH_MAX and allocation/stdio failures remain unqualified by this new subset; historical witnesses remain separate."
+          "disposition": "Inaccessible ancestors, deleted directories, total PATH_MAX and allocation/stdio failures remain unqualified by this subset. CSH-080 adds -L/-P last-option precedence with an independently authored logical cwd."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "csh080_assertions": [
+            "pwd/remaining-last-P",
+            "pwd/remaining-last-L"
+          ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "csh080_assertions": [
+            "pwd/remaining-last-P",
+            "pwd/remaining-last-L"
+          ]
         }
+      },
+      "csh080_qualification": {
+        "passing_scope": [
+          "pwd/remaining-last-P",
+          "pwd/remaining-last-L"
+        ],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "readlink",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html",
       "source_sha256": "b8af59cd805ca79ad73dab35ad008a55b9f8bbef0fc84ce7334ffac7b8f0f4dc",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "readlink/link",
@@ -1480,9 +2208,10 @@
         "readlink/dash-operand",
         "readlink/stdout-error",
         "readlink/invalid-option",
-        "readlink/virtual-device-enospc"
+        "readlink/virtual-device-enospc",
+        "readlink/remaining-utf8-bytes"
       ],
-      "remaining": "The selected local provider repairs the stock nonlink diagnostic and checks dynamic 600-byte links, -n, --, invalid operands and closed stdout. Arbitrary byte/locale combinations, allocation failure and true filesystem limits remain unqualified.",
+      "remaining": "Other arbitrary byte/locale combinations, libc-internal allocation failures and true filesystem limits remain unqualified. CSH-080 adds UTF-8 link bytes and test-only provider call-site ENOMEM, distinct from production kernel evidence.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -1508,13 +2237,22 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "The selected local provider repairs the stock nonlink diagnostic and checks dynamic 600-byte links, -n, --, invalid operands and closed stdout. Arbitrary byte/locale combinations, allocation failure and true filesystem limits remain unqualified."
+          "disposition": "Other arbitrary byte/locale combinations, libc-internal allocation failures and true filesystem limits remain unqualified. CSH-080 adds UTF-8 link bytes and test-only provider call-site ENOMEM, distinct from production kernel evidence.",
+          "csh080_assertions": [
+            "readlink/remaining-utf8-bytes"
+          ]
         },
         "OPTIONS": {
-          "disposition": "The selected local provider repairs the stock nonlink diagnostic and checks dynamic 600-byte links, -n, --, invalid operands and closed stdout. Arbitrary byte/locale combinations, allocation failure and true filesystem limits remain unqualified."
+          "disposition": "Other arbitrary byte/locale combinations, libc-internal allocation failures and true filesystem limits remain unqualified. CSH-080 adds UTF-8 link bytes and test-only provider call-site ENOMEM, distinct from production kernel evidence.",
+          "csh080_assertions": [
+            "readlink/remaining-utf8-bytes"
+          ]
         },
         "OPERANDS": {
-          "disposition": "The selected local provider repairs the stock nonlink diagnostic and checks dynamic 600-byte links, -n, --, invalid operands and closed stdout. Arbitrary byte/locale combinations, allocation failure and true filesystem limits remain unqualified."
+          "disposition": "Other arbitrary byte/locale combinations, libc-internal allocation failures and true filesystem limits remain unqualified. CSH-080 adds UTF-8 link bytes and test-only provider call-site ENOMEM, distinct from production kernel evidence.",
+          "csh080_assertions": [
+            "readlink/remaining-utf8-bytes"
+          ]
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -1529,22 +2267,34 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "csh080_assertions": [
+            "readlink/remaining-utf8-bytes"
+          ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "csh080_assertions": [
+            "readlink/remaining-utf8-bytes"
+          ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "The selected local provider repairs the stock nonlink diagnostic and checks dynamic 600-byte links, -n, --, invalid operands and closed stdout. Arbitrary byte/locale combinations, allocation failure and true filesystem limits remain unqualified."
+          "disposition": "Other arbitrary byte/locale combinations, libc-internal allocation failures and true filesystem limits remain unqualified. CSH-080 adds UTF-8 link bytes and test-only provider call-site ENOMEM, distinct from production kernel evidence."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "csh080_assertions": [
+            "readlink/remaining-utf8-bytes"
+          ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "csh080_assertions": [
+            "readlink/remaining-utf8-bytes"
+          ]
         }
       },
       "extended_qualification": {
@@ -1559,13 +2309,20 @@
           "passing_scope",
           "strict_provider_audit"
         ]
+      },
+      "csh080_qualification": {
+        "passing_scope": [
+          "readlink/remaining-utf8-bytes"
+        ],
+        "fault_scope": "test-only call-site ENOMEM in host_filesystem_allocation.py",
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "realpath",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html",
       "source_sha256": "dfded63f96378a20c8952547dea666f07d0006e8868fa37a883b8553de684cc5",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "realpath/existing",
@@ -1589,7 +2346,7 @@
         "realpath/invalid-option",
         "realpath/virtual-device-enospc"
       ],
-      "remaining": "The selected local provider repairs -e/-E, validates directory components despite Darwin libc trailing-slash behavior, and checks dangling links, missing prefixes, dot-dot, loops, last-option precedence and closed stdout. Permission/namespace races, allocation faults, double-leading-slash policy and exact resource boundaries remain unqualified. Missing-final fallback permits at most 40 link expansions.",
+      "remaining": "Permission/namespace races, libc-internal allocation failures, double-leading-slash policy and exact resource boundaries remain unqualified. CSH-080 adds test-only provider call-site ENOMEM including dynamic links and relative/absolute missing-final fallback; it does not inject libc internals.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -1615,13 +2372,13 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "The selected local provider repairs -e/-E, validates directory components despite Darwin libc trailing-slash behavior, and checks dangling links, missing prefixes, dot-dot, loops, last-option precedence and closed stdout. Permission/namespace races, allocation faults, double-leading-slash policy and exact resource boundaries remain unqualified. Missing-final fallback permits at most 40 link expansions."
+          "disposition": "Permission/namespace races, libc-internal allocation failures, double-leading-slash policy and exact resource boundaries remain unqualified. CSH-080 adds test-only provider call-site ENOMEM including dynamic links and relative/absolute missing-final fallback; it does not inject libc internals."
         },
         "OPTIONS": {
-          "disposition": "The selected local provider repairs -e/-E, validates directory components despite Darwin libc trailing-slash behavior, and checks dangling links, missing prefixes, dot-dot, loops, last-option precedence and closed stdout. Permission/namespace races, allocation faults, double-leading-slash policy and exact resource boundaries remain unqualified. Missing-final fallback permits at most 40 link expansions."
+          "disposition": "Permission/namespace races, libc-internal allocation failures, double-leading-slash policy and exact resource boundaries remain unqualified. CSH-080 adds test-only provider call-site ENOMEM including dynamic links and relative/absolute missing-final fallback; it does not inject libc internals."
         },
         "OPERANDS": {
-          "disposition": "The selected local provider repairs -e/-E, validates directory components despite Darwin libc trailing-slash behavior, and checks dangling links, missing prefixes, dot-dot, loops, last-option precedence and closed stdout. Permission/namespace races, allocation faults, double-leading-slash policy and exact resource boundaries remain unqualified. Missing-final fallback permits at most 40 link expansions."
+          "disposition": "Permission/namespace races, libc-internal allocation failures, double-leading-slash policy and exact resource boundaries remain unqualified. CSH-080 adds test-only provider call-site ENOMEM including dynamic links and relative/absolute missing-final fallback; it does not inject libc internals."
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -1645,7 +2402,7 @@
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "The selected local provider repairs -e/-E, validates directory components despite Darwin libc trailing-slash behavior, and checks dangling links, missing prefixes, dot-dot, loops, last-option precedence and closed stdout. Permission/namespace races, allocation faults, double-leading-slash policy and exact resource boundaries remain unqualified. Missing-final fallback permits at most 40 link expansions."
+          "disposition": "Permission/namespace races, libc-internal allocation failures, double-leading-slash policy and exact resource boundaries remain unqualified. CSH-080 adds test-only provider call-site ENOMEM including dynamic links and relative/absolute missing-final fallback; it does not inject libc internals."
         },
         "EXIT STATUS": {
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
@@ -1666,13 +2423,18 @@
           "passing_scope",
           "strict_provider_audit"
         ]
+      },
+      "csh080_qualification": {
+        "passing_scope": [],
+        "fault_scope": "test-only call-site ENOMEM in host_filesystem_allocation.py",
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "rm",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html",
       "source_sha256": "7ea788ea4ed4cc0f309bfc9681b650da0cbcec9d535604cb12bfd57fbddb9839",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "rm/file",
@@ -1683,7 +2445,8 @@
         "rm/terminal-y",
         "rm/terminal-n",
         "rm/cycle-physical-removal",
-        "rm/unlink-one-name"
+        "rm/unlink-one-name",
+        "rm/remaining-missing-continue"
       ],
       "remaining": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses.",
       "normative_headings": [
@@ -1711,13 +2474,22 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses."
+          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses.",
+          "csh080_assertions": [
+            "rm/remaining-missing-continue"
+          ]
         },
         "OPTIONS": {
-          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses."
+          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses.",
+          "csh080_assertions": [
+            "rm/remaining-missing-continue"
+          ]
         },
         "OPERANDS": {
-          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses."
+          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses.",
+          "csh080_assertions": [
+            "rm/remaining-missing-continue"
+          ]
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -1732,10 +2504,16 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "csh080_assertions": [
+            "rm/remaining-missing-continue"
+          ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "csh080_assertions": [
+            "rm/remaining-missing-continue"
+          ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
@@ -1744,10 +2522,16 @@
           "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "csh080_assertions": [
+            "rm/remaining-missing-continue"
+          ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "csh080_assertions": [
+            "rm/remaining-missing-continue"
+          ]
         }
       },
       "extended_qualification": {
@@ -1761,21 +2545,30 @@
           "passing_scope",
           "strict_provider_audit"
         ]
+      },
+      "csh080_qualification": {
+        "passing_scope": [
+          "rm/remaining-missing-continue"
+        ],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "rmdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html",
       "source_sha256": "44451db47f43a6dfb058b6e8f71aee7db1fec99961573246380f7deb0c54bc9f",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "rmdir/empty",
         "rmdir/nonempty",
         "rmdir/parents",
-        "rmdir/missing"
+        "rmdir/missing",
+        "rmdir/remaining-nonempty-continue",
+        "rmdir/remaining-symlink-rejected"
       ],
-      "remaining": "Symbolic-link/ancestor permissions, operand continuation, total depth/path boundaries and filesystem errors remain unqualified.",
+      "remaining": "Ancestor permissions, total depth/path boundaries and other filesystem errors remain unqualified. CSH-080 adds symlink rejection and continuation after a nonempty operand.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -1801,13 +2594,25 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Symbolic-link/ancestor permissions, operand continuation, total depth/path boundaries and filesystem errors remain unqualified."
+          "disposition": "Ancestor permissions, total depth/path boundaries and other filesystem errors remain unqualified. CSH-080 adds symlink rejection and continuation after a nonempty operand.",
+          "csh080_assertions": [
+            "rmdir/remaining-nonempty-continue",
+            "rmdir/remaining-symlink-rejected"
+          ]
         },
         "OPTIONS": {
-          "disposition": "Symbolic-link/ancestor permissions, operand continuation, total depth/path boundaries and filesystem errors remain unqualified."
+          "disposition": "Ancestor permissions, total depth/path boundaries and other filesystem errors remain unqualified. CSH-080 adds symlink rejection and continuation after a nonempty operand.",
+          "csh080_assertions": [
+            "rmdir/remaining-nonempty-continue",
+            "rmdir/remaining-symlink-rejected"
+          ]
         },
         "OPERANDS": {
-          "disposition": "Symbolic-link/ancestor permissions, operand continuation, total depth/path boundaries and filesystem errors remain unqualified."
+          "disposition": "Ancestor permissions, total depth/path boundaries and other filesystem errors remain unqualified. CSH-080 adds symlink rejection and continuation after a nonempty operand.",
+          "csh080_assertions": [
+            "rmdir/remaining-nonempty-continue",
+            "rmdir/remaining-symlink-rejected"
+          ]
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -1822,37 +2627,65 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "csh080_assertions": [
+            "rmdir/remaining-nonempty-continue",
+            "rmdir/remaining-symlink-rejected"
+          ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "csh080_assertions": [
+            "rmdir/remaining-nonempty-continue",
+            "rmdir/remaining-symlink-rejected"
+          ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Symbolic-link/ancestor permissions, operand continuation, total depth/path boundaries and filesystem errors remain unqualified."
+          "disposition": "Ancestor permissions, total depth/path boundaries and other filesystem errors remain unqualified. CSH-080 adds symlink rejection and continuation after a nonempty operand."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "csh080_assertions": [
+            "rmdir/remaining-nonempty-continue",
+            "rmdir/remaining-symlink-rejected"
+          ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "csh080_assertions": [
+            "rmdir/remaining-nonempty-continue",
+            "rmdir/remaining-symlink-rejected"
+          ]
         }
+      },
+      "csh080_qualification": {
+        "passing_scope": [
+          "rmdir/remaining-nonempty-continue",
+          "rmdir/remaining-symlink-rejected"
+        ],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "touch",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html",
       "source_sha256": "ae8c1a8fc027372a6a50561b7c07bea8c30a471458ee72c00d7b35c039d756b7",
-      "owner": "CSH-080",
+      "owner": "CSH-084",
       "full_contract_qualified": false,
       "assertions": [
         "touch/reference",
         "touch/no-create",
         "touch/timestamp",
         "touch/isolated-a",
-        "touch/isolated-m"
+        "touch/isolated-m",
+        "touch/remaining-missing-prefix-continue",
+        "touch/remaining-follow-symlink",
+        "touch/remaining-date-utc",
+        "touch/remaining-date-local"
       ],
       "remaining": "Remaining -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified. Selected -a/-m timestamp isolation has witnesses.",
       "normative_headings": [
@@ -1880,13 +2713,31 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Remaining -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified. Selected -a/-m timestamp isolation has witnesses."
+          "disposition": "Remaining -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified. Selected -a/-m timestamp isolation has witnesses.",
+          "csh080_assertions": [
+            "touch/remaining-missing-prefix-continue",
+            "touch/remaining-follow-symlink",
+            "touch/remaining-date-utc",
+            "touch/remaining-date-local"
+          ]
         },
         "OPTIONS": {
-          "disposition": "Remaining -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified. Selected -a/-m timestamp isolation has witnesses."
+          "disposition": "Remaining -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified. Selected -a/-m timestamp isolation has witnesses.",
+          "csh080_assertions": [
+            "touch/remaining-missing-prefix-continue",
+            "touch/remaining-follow-symlink",
+            "touch/remaining-date-utc",
+            "touch/remaining-date-local"
+          ]
         },
         "OPERANDS": {
-          "disposition": "Remaining -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified. Selected -a/-m timestamp isolation has witnesses."
+          "disposition": "Remaining -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified. Selected -a/-m timestamp isolation has witnesses.",
+          "csh080_assertions": [
+            "touch/remaining-missing-prefix-continue",
+            "touch/remaining-follow-symlink",
+            "touch/remaining-date-utc",
+            "touch/remaining-date-local"
+          ]
         },
         "STDIN": {
           "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
@@ -1901,10 +2752,22 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "csh080_assertions": [
+            "touch/remaining-missing-prefix-continue",
+            "touch/remaining-follow-symlink",
+            "touch/remaining-date-utc",
+            "touch/remaining-date-local"
+          ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "csh080_assertions": [
+            "touch/remaining-missing-prefix-continue",
+            "touch/remaining-follow-symlink",
+            "touch/remaining-date-utc",
+            "touch/remaining-date-local"
+          ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
@@ -1913,10 +2776,22 @@
           "disposition": "Remaining -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified. Selected -a/-m timestamp isolation has witnesses."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "csh080_assertions": [
+            "touch/remaining-missing-prefix-continue",
+            "touch/remaining-follow-symlink",
+            "touch/remaining-date-utc",
+            "touch/remaining-date-local"
+          ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "csh080_assertions": [
+            "touch/remaining-missing-prefix-continue",
+            "touch/remaining-follow-symlink",
+            "touch/remaining-date-utc",
+            "touch/remaining-date-local"
+          ]
         }
       },
       "extended_qualification": {
@@ -1930,7 +2805,18 @@
           "passing_scope",
           "strict_provider_audit"
         ]
+      },
+      "csh080_qualification": {
+        "passing_scope": [
+          "touch/remaining-missing-prefix-continue",
+          "touch/remaining-follow-symlink",
+          "touch/remaining-date-utc",
+          "touch/remaining-date-local"
+        ],
+        "fault_scope": null,
+        "disposition": "Only listed assertions are qualified; individual remaining contracts retain an explicit owner in host_filesystem_residuals.json."
       }
     }
-  ]
+  ],
+  "predecessor": "CSH-072"
 }

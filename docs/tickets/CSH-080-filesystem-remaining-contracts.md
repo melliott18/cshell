@@ -1,11 +1,11 @@
 # CSH-080: Qualify remaining filesystem provider and fault contracts
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-072
-- Branch: Assigned when work starts
+- Branch: test/CSH-080-filesystem-contracts
 - Issue: [#158](https://github.com/melliott18/cshell/issues/158)
 
 ## Goal
@@ -15,7 +15,7 @@ and Linux qualification. This is not a whole-family passing claim. Preserve
 [CSH-072 evidence](../evidence/csh-072/README.md) and its stock-provider failures;
 selected utility/libc/platform vendors retain implementation ownership.
 
-## Individual remaining contracts
+## Original remaining contracts from CSH-072
 
 Every row includes U-034 exec accessibility and U-040 common defaults. The
 [section-by-section map](../../tests/host_filesystem_contracts.json) contains
@@ -61,14 +61,14 @@ passes. No privileged mounts or developer disk contents may be used as fixtures.
 
 ## Acceptance criteria
 
-- [ ] Supply each row's missing capability and clause-derived independent oracle,
+- [x] Supply each row's missing capability and clause-derived independent oracle,
   or retain an individual, justified open disposition with an explicit next owner.
-- [ ] Preserve zero allowances in the CSH-072 selected profile; repair any new
+- [x] Preserve zero allowances in the CSH-072 selected profile; repair any new
   required-contract failures with exact provider/build provenance.
-- [ ] Retain native and Linux identities, strict outputs/status/effects, setup
+- [x] Retain native and Linux identities, strict outputs/status/effects, setup
   failures and cleanup records separately. Do not qualify a full utility from
   selected passing examples.
-- [ ] Update the section map, current ownership manifest and U-034/U-040 maps.
+- [x] Update the section map, current ownership manifest and U-034/U-040 maps.
 
 ## Validation
 
@@ -105,3 +105,30 @@ sanitizer runtime tests. Its focused filesystem job passed. CSH-072 raises that 
 minutes while preserving per-case timeouts. This is a CI capacity
 limitation, not evidence that manual filesystem testing is needed. Keep the broad
 job incomplete until it actually finishes, separately from focused passes.
+
+## Implementation and validation
+
+CSH-080 adds 60 ordinary cases / 240 assertions, plus checked test-only
+call-site ENOMEM injection for six local pathname-provider scenarios. Every
+assertion runs by direct exec and through public cshell string/file/stdin modes.
+The selected macOS profile uses GNU gdd to repair reproduced Apple sync input
+record counts; no allowance or output/status adapter is added.
+
+[Final evidence](../evidence/csh-080/README.md) records native **810 filesystem,
+240 allocation, 1162 host integration** passes and Docker/Linux **826 filesystem,
+200 allocation, 1162 host integration** passes, with zero gaps/failures in the
+selected profile. Native ASan/UBSan allocation checks pass **240/240**. Inventory
+and 17 filesystem harness regressions pass on both platforms. All fixture cleanup
+records pass. Required stock audits remain nonzero and are retained separately.
+The dependency PR is implemented but unmerged; this branch is stacked on its
+exact reviewed head, not integrated into main.
+
+The original table above is the CSH-072 handoff scope. The updated per-utility
+[section map](../../tests/host_filesystem_contracts.json) and
+[residual ledger](../../tests/host_filesystem_residuals.json) record the new
+witnesses and explicit remaining environments, reasons and implementation owners.
+Each remaining contract and all four original conditions transfer to open
+[CSH-084](CSH-084-filesystem-residual-environments.md) ([#178](https://github.com/melliott18/cshell/issues/178)).
+This uses the acceptance criteria's individual-disposition alternative; it does
+not claim privileged filesystems, quotas, actual capacity exhaustion, EIO,
+libc-internal allocation behavior or full utility qualification.

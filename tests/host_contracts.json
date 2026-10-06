@@ -47,9 +47,9 @@
       "prerequisite": "Supply disposable controlled credentials, privileged Darwin ACLs, and measured filesystem/namespace implementations; require actual read/write/execute controls alongside predicates. Preserve false grants, rejected grants, socket stat EINVAL and non-owner chmod failures independently."
     },
     {
-      "ticket": "CSH-080",
-      "path": "docs/tickets/CSH-080-filesystem-remaining-contracts.md",
-      "title": "Qualify remaining filesystem provider and fault contracts",
+      "ticket": "CSH-084",
+      "path": "docs/tickets/CSH-084-filesystem-residual-environments.md",
+      "title": "Supply residual filesystem environments and contract oracles",
       "utilities": [
         "basename",
         "dirname",
@@ -79,7 +79,7 @@
         "U-040/ls-size-collation",
         "U-040/rm-depth-mount-prompt"
       ],
-      "prerequisite": "Supply the individually listed filesystem, credential, quota, I/O, locale and archive capabilities in the CSH-072 clause map; preserve its strict subset and repaired pathname-provider regression tests."
+      "prerequisite": "Supply each explicit remaining capability and oracle in tests/host_filesystem_residuals.json; preserve CSH-072/CSH-080 selected assertions, call-site fault boundaries and all immutable evidence."
     },
     {
       "ticket": "CSH-073",

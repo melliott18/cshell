@@ -131,6 +131,7 @@ def setup(directory, row):
     (directory / 'ascii').write_bytes(b'abcdefgh')
     (directory / 'empty').touch()
     (directory / 'tree').mkdir()
+    (directory / 'tree').chmod(0o700)
     (directory / 'tree/leaf').write_bytes(b'leaf\n')
     (directory / 'tree/link').symlink_to('../data')
     (directory / 'link').symlink_to('data')
@@ -175,7 +176,8 @@ def setup(directory, row):
             archive.addfile(info, io.BytesIO(data))
     from host_filesystem_extended import setup as extended_setup
     extended_setup(directory, row)
-    return cwd
+    from host_filesystem_remaining import setup as remaining_setup
+    return remaining_setup(directory, row) or cwd
 
 
 def effect_errors(directory, row):

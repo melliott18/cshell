@@ -2,7 +2,7 @@
 
 CSH-072 adds a **bounded selected profile** for 21 exec-accessible utilities.
 It does not qualify complete utility pages, U-034/U-040 as a whole, or a complete
-POSIX system. [CSH-080](tickets/CSH-080-filesystem-remaining-contracts.md) owns each
+POSIX system. [CSH-084](tickets/CSH-084-filesystem-residual-environments.md) owns each
 remaining contract and the four original retained conditions. Implementation
 ownership stays with the selected utility/libc/platform vendor.
 
@@ -93,7 +93,7 @@ The four retained condition IDs stay in the ownership ledger. CSH-072 supplies
 larger-directory, deep UTF-8 and terminal-prompt capabilities; inaccessible
 ancestors, total pathname limits, actual descriptor exhaustion, non-C collation,
 mount boundaries, quotas, filesystem-capacity exhaustion/EIO, further archive formats and other individual page
-contracts remain explicitly open in CSH-080. No protected mount or real disk
+contracts remain explicitly open in CSH-084. No protected mount or real disk
 contents are used. [Retained results and commands](evidence/csh-072/README.md)
 separate the stock audit, qualified subset and full-system limitations.
 
@@ -140,3 +140,30 @@ selected scope and its integration checks. The
 [remaining-environment table](tickets/CSH-080-filesystem-remaining-contracts.md#required-environments-and-manual-work)
 distinguishes automated local work, disposable privileged environments and any
 separate physical-terminal claim.
+
+## CSH-080 ordinary contracts and provider faults
+
+`host_filesystem_remaining.py` adds 60 cases (240 assertions in direct exec and
+cshell string/file/stdin modes): empty/slash/UTF-8 pathname policies, dd
+conversion and seek combinations, continuation after operand errors, symbolic
+creation modes, pathchk -P combinations, find expressions/batched exec, C-locale
+ls switches, pwd logical/physical precedence and touch date forms.
+
+Apple dd incorrectly reports padded short input as a whole record. The opt-in
+macOS profile selects GNU gdd from the existing coreutils prerequisite; the
+stock audit retains the failure. No output/status filtering is used.
+The exact counts remain required. `conv=ascii/ebcdic/ibm` is XSI-shaded and
+outside the selected base profile; numeric touch timezone offsets are extensions.
+
+`make test-host-filesystem-allocation` compiles the unchanged local pathname
+provider with test-only call-site ENOMEM controls. It checks every allocation
+reached by six successful scenarios in all four invocation modes, plus a
+non-triggering end control. A checked marker distinguishes an injected failure
+from loader/setup failure. Allocating libc calls can be made to return ENOMEM;
+libc-internal allocation paths are not instrumented. These results do not
+qualify kernel ENOMEM, quotas, filesystem ENOSPC or EIO.
+
+[CSH-080 evidence](evidence/csh-080/README.md) separates selected, stock and
+injected runs. The [residual ledger](../tests/host_filesystem_residuals.json)
+retains every utility and all four original condition IDs under CSH-084,
+including required environments and why current witnesses do not suffice.
