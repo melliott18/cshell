@@ -1,0 +1,402 @@
+{
+  "purpose": "Final cleanup ownership regression; earlier native/Linux archives are unchanged.",
+  "temporary_build_directory": "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek",
+  "source_sha256": {
+    "tests/crash_notification.c": "68ae5b9cedaa347e3d59b4ffbb487911019f447be2808f982bf92b856fc52c6e",
+    "tests/crash_notification.h": "bbaa2d9298a1a93a3aa301a3ce67b9afb7f92fa00dc5fd94797a497802a1c694",
+    "docs/evidence/csh-057-terminal-crash-notification/reproduce_fixture.c": "ef0028e893602d42823943b64ef9b9b81baa9d85ebfc08976fcb6e0ab5835a2d"
+  },
+  "binary_sha256": {
+    "crash_notification": "cabc86c26c5d2bdf9df03247631fc2ea0e688dd1dfc720274e1dd9a71dfdf2e6",
+    "crash_notification_asan": "114d3b1de0d10d378974135f264f44b497bdaf8e93507a54a042ac30c7d7a73c",
+    "crash_notification_ignored_asan": "a3a5c8273a49f4d8e0d83bf9a8a56164118ffc5eedcb01e294214de8477dd5ac",
+    "crash_notification_noop": "29cbb2cd8525e68c36aa6e29157683fd6111631fded79477cdf59aa1a251582c",
+    "crash_notification_observed": "b482c91ab5f8b6b1abfcf4d651a2457ce9c892bf474935cc4eddd0f0d37ba352",
+    "reproduce_fixture": "de072462c256b8091baf24bdc715a6dfabc55f4638a10bf8b27724ac50bbbe53",
+    "reproduce_fixture_observed": "28028fbff421f65275b1297996f32204cc14ed43d0d8f7f4847e2732b5d9fcdd",
+    "original-execute_faults": "d1f736eb2ac98c1a80bea7ea8f71904bf1e9b263470dc2b3f619bb14df50fb76",
+    "execute_faults": "8c8fffb39ebb80c3ea1a5b06a16427b4a97f19c5699f14af1a29bd0d25185ea6"
+  },
+  "results": [
+    {
+      "name": "build-normal",
+      "command": [
+        "cc",
+        "-Itests",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "/Users/mitchell/Projects/cshell/tests/crash_notification.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/crash_notification"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 0.582706,
+      "preexec_sigchld_ignored": false,
+      "log": "build-normal.log"
+    },
+    {
+      "name": "normal",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/crash_notification"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 0.278254,
+      "preexec_sigchld_ignored": false,
+      "log": "normal.log"
+    },
+    {
+      "name": "build-sanitizer",
+      "command": [
+        "cc",
+        "-Itests",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "-fsanitize=address,undefined",
+        "-fno-omit-frame-pointer",
+        "/Users/mitchell/Projects/cshell/tests/crash_notification.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/crash_notification_asan"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 0.169027,
+      "preexec_sigchld_ignored": false,
+      "log": "build-sanitizer.log"
+    },
+    {
+      "name": "sanitizer",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/crash_notification_asan"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 0.508741,
+      "preexec_sigchld_ignored": false,
+      "log": "sanitizer.log"
+    },
+    {
+      "name": "build-helper-noop",
+      "command": [
+        "cc",
+        "-Itests",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/crash_notification_noop.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/crash_notification_noop"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 0.118916,
+      "preexec_sigchld_ignored": false,
+      "log": "build-helper-noop.log"
+    },
+    {
+      "name": "helper-noop",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/crash_notification_noop"
+      ],
+      "returncode": 1,
+      "expected_returncode": 1,
+      "elapsed_seconds": 0.252299,
+      "preexec_sigchld_ignored": false,
+      "log": "helper-noop.log"
+    },
+    {
+      "name": "build-observed-object",
+      "command": [
+        "cc",
+        "-Itests",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "-Dkill=csh_regression_kill",
+        "-c",
+        "/Users/mitchell/Projects/cshell/tests/crash_notification.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/crash_notification_observed.o"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 0.074697,
+      "preexec_sigchld_ignored": false,
+      "log": "build-observed-object.log"
+    },
+    {
+      "name": "build-observed",
+      "command": [
+        "cc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/crash_notification_observed.o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/observe_kill.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/crash_notification_observed"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 0.086809,
+      "preexec_sigchld_ignored": false,
+      "log": "build-observed.log"
+    },
+    {
+      "name": "ignored-sigchld",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/crash_notification_observed"
+      ],
+      "returncode": 1,
+      "expected_returncode": 1,
+      "elapsed_seconds": 0.259156,
+      "preexec_sigchld_ignored": true,
+      "log": "ignored-sigchld.log",
+      "observed_signals": [
+        3,
+        9
+      ],
+      "cleanup_sent_no_additional_signal": true
+    },
+    {
+      "name": "build-sanitizer-ignored-object",
+      "command": [
+        "cc",
+        "-Itests",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "-fsanitize=address,undefined",
+        "-fno-omit-frame-pointer",
+        "-Dkill=csh_regression_kill",
+        "-c",
+        "/Users/mitchell/Projects/cshell/tests/crash_notification.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/crash_notification_ignored_asan.o"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 0.116956,
+      "preexec_sigchld_ignored": false,
+      "log": "build-sanitizer-ignored-object.log"
+    },
+    {
+      "name": "build-sanitizer-ignored",
+      "command": [
+        "cc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "-fsanitize=address,undefined",
+        "-fno-omit-frame-pointer",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/crash_notification_ignored_asan.o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/observe_kill.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/crash_notification_ignored_asan"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 0.081789,
+      "preexec_sigchld_ignored": false,
+      "log": "build-sanitizer-ignored.log"
+    },
+    {
+      "name": "sanitizer-ignored-sigchld",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/crash_notification_ignored_asan"
+      ],
+      "returncode": 1,
+      "expected_returncode": 1,
+      "elapsed_seconds": 0.34072,
+      "preexec_sigchld_ignored": false,
+      "log": "sanitizer-ignored-sigchld.log"
+    },
+    {
+      "name": "build-reproduction-wrapper",
+      "command": [
+        "cc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "/Users/mitchell/Projects/cshell/docs/evidence/csh-057-terminal-crash-notification/reproduce_fixture.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/reproduce_fixture"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 0.107666,
+      "preexec_sigchld_ignored": false,
+      "log": "build-reproduction-wrapper.log"
+    },
+    {
+      "name": "reproduction-wrapper",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/reproduce_fixture",
+        "0",
+        "/usr/bin/true"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 0.171403,
+      "preexec_sigchld_ignored": false,
+      "log": "reproduction-wrapper.log"
+    },
+    {
+      "name": "build-wrapper-observed-object",
+      "command": [
+        "cc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "-Dkill=csh_regression_kill",
+        "-c",
+        "/Users/mitchell/Projects/cshell/docs/evidence/csh-057-terminal-crash-notification/reproduce_fixture.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/reproduce_fixture_observed.o"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 0.144131,
+      "preexec_sigchld_ignored": false,
+      "log": "build-wrapper-observed-object.log"
+    },
+    {
+      "name": "build-wrapper-observed",
+      "command": [
+        "cc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/reproduce_fixture_observed.o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/observe_kill.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/reproduce_fixture_observed"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 0.100504,
+      "preexec_sigchld_ignored": false,
+      "log": "build-wrapper-observed.log"
+    },
+    {
+      "name": "wrapper-ignored-sigchld",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/reproduce_fixture_observed",
+        "0",
+        "/usr/bin/true"
+      ],
+      "returncode": 1,
+      "expected_returncode": 1,
+      "elapsed_seconds": 0.17309,
+      "preexec_sigchld_ignored": true,
+      "log": "wrapper-ignored-sigchld.log",
+      "cleanup_sent_no_signal": true
+    },
+    {
+      "name": "fixture-before",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/reproduce_fixture",
+        "1",
+        "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+        "/Users/mitchell/Projects/cshell/docs/evidence/csh-057-terminal-crash-notification/fixture_case.py",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-terminal-l14kfzp0/original-execute_faults",
+        "/Users/mitchell/Projects/cshell/docs/evidence/csh-057-terminal-crash-notification/final-regression/fixture-before.json"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 6.203865,
+      "preexec_sigchld_ignored": false,
+      "log": "fixture-before.log"
+    },
+    {
+      "name": "fixture-after",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-regression-defkusek/reproduce_fixture",
+        "0",
+        "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+        "/Users/mitchell/Projects/cshell/docs/evidence/csh-057-terminal-crash-notification/fixture_case.py",
+        "/Users/mitchell/Projects/cshell/build/tests/execute_faults",
+        "/Users/mitchell/Projects/cshell/docs/evidence/csh-057-terminal-crash-notification/final-regression/fixture-after.json"
+      ],
+      "returncode": 0,
+      "expected_returncode": 0,
+      "elapsed_seconds": 0.136813,
+      "preexec_sigchld_ignored": false,
+      "log": "fixture-after.log"
+    }
+  ],
+  "log_sha256": {
+    "build-helper-noop.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-normal.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-observed-object.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-observed.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-reproduction-wrapper.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-sanitizer-ignored-object.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-sanitizer-ignored.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-sanitizer.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-wrapper-observed-object.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-wrapper-observed.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fixture-after.log": "23ed7e2d801377ed752888a9dcaed8bf6b1c149615380a352db20949da48c5a8",
+    "fixture-before.log": "014a1c2bc4ccf0b11d8dfb383eab96a127ea39375e8c64f3a475cc6da2661c62",
+    "helper-noop.log": "7a1c71639918a25b0564ad184e057ae73c6fc8300498383995ae8d6fc0fbec1a",
+    "ignored-sigchld.log": "927c9cc74fbf7f6d783e16bfccaab811dc6ce27be2a96e6b44740d1b8564b2c9",
+    "normal.log": "de4b74251c559bd5af6797fec4d92158c5dc7229618c7b3a78058876d5277bc2",
+    "reproduction-wrapper.log": "d7f7d651899830c9bac2505d20b20cce3f7aaef9bf3f40530f2f720cf3159d96",
+    "sanitizer-ignored-sigchld.log": "b74b6994cc7ac9aea5596382bb149026d13afe8e2aca4865db968fcdfb594e8a",
+    "sanitizer.log": "de4b74251c559bd5af6797fec4d92158c5dc7229618c7b3a78058876d5277bc2",
+    "wrapper-ignored-sigchld.log": "e2820a9d5e1194ef4038d647357d128a5338c7c77b68241953c6313f5975cd3f"
+  }
+}

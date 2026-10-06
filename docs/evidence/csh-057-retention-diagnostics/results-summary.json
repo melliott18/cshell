@@ -1,0 +1,557 @@
+[
+  {
+    "archive": "normal-artifacts.tar.gz",
+    "path": "build/retention-diagnostics/retention-_67cj3xf/result.json",
+    "case": "CSH-057 bounded CHILD_MAX retention and eviction",
+    "duration_seconds": 0.8306120000779629,
+    "capture_duration_seconds": 0.683479624800384,
+    "failures": [],
+    "event_counts": {
+      "start": 1,
+      "alarm_armed": 1,
+      "round+": 4,
+      "run+": 609,
+      "fork+": 619,
+      "fork-parent": 619,
+      "run-": 609,
+      "fork-child": 618,
+      "reap+": 611,
+      "reap-": 611,
+      "fg+": 4,
+      "fg-": 4,
+      "wait+": 611,
+      "wait-": 611,
+      "wait_all+": 4,
+      "wait_all-": 4,
+      "round-": 4,
+      "overflow+": 2,
+      "overflow-": 2,
+      "cleanup+": 5,
+      "cleanup-": 5,
+      "live+": 1,
+      "live_stop+": 1,
+      "live_stop-": 1,
+      "cancel+": 3,
+      "cancel-": 3,
+      "live-": 1,
+      "formats+": 1,
+      "formats-": 1,
+      "finish": 1
+    },
+    "trace_summary": {
+      "bytes": 511511,
+      "truncated": false,
+      "partial_final_record": false,
+      "errors": [],
+      "events": 5571,
+      "root_pid": 77587,
+      "root_finished": true,
+      "first_time_us": 2129932209632,
+      "last_time_us": 2129932709320,
+      "alarm_states": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "alarm_query_failures": 0
+    },
+    "stack_attempts": []
+  },
+  {
+    "archive": "normal-artifacts.tar.gz",
+    "path": "build/retention-diagnostics/retention-dw2ui8kd/result.json",
+    "case": "CSH-057 bounded CHILD_MAX retention and eviction",
+    "duration_seconds": 0.7087330839131027,
+    "capture_duration_seconds": 0.5512573327869177,
+    "failures": [],
+    "event_counts": {
+      "start": 1,
+      "alarm_armed": 1,
+      "round+": 4,
+      "run+": 609,
+      "fork+": 619,
+      "fork-parent": 619,
+      "run-": 609,
+      "reap+": 611,
+      "fork-child": 619,
+      "reap-": 611,
+      "fg+": 4,
+      "fg-": 4,
+      "wait+": 611,
+      "wait-": 611,
+      "wait_all+": 4,
+      "wait_all-": 4,
+      "round-": 4,
+      "overflow+": 2,
+      "overflow-": 2,
+      "cleanup+": 5,
+      "cleanup-": 5,
+      "live+": 1,
+      "live_stop+": 1,
+      "live_stop-": 1,
+      "cancel+": 3,
+      "cancel-": 3,
+      "live-": 1,
+      "formats+": 1,
+      "formats-": 1,
+      "finish": 1
+    },
+    "trace_summary": {
+      "bytes": 511596,
+      "truncated": false,
+      "partial_final_record": false,
+      "errors": [],
+      "events": 5572,
+      "root_pid": 11856,
+      "root_finished": true,
+      "first_time_us": 2130345973963,
+      "last_time_us": 2130346501276,
+      "alarm_states": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "alarm_query_failures": 0
+    },
+    "stack_attempts": []
+  },
+  {
+    "archive": "normal-artifacts.tar.gz",
+    "path": "build/retention-diagnostics/retention-r4s1zdtd/result.json",
+    "case": "CSH-057 bounded CHILD_MAX retention and eviction",
+    "duration_seconds": 0.7760441659484059,
+    "capture_duration_seconds": 0.6177299588453025,
+    "failures": [],
+    "event_counts": {
+      "start": 1,
+      "alarm_armed": 1,
+      "round+": 4,
+      "run+": 609,
+      "fork+": 619,
+      "fork-parent": 619,
+      "run-": 609,
+      "fork-child": 618,
+      "reap+": 611,
+      "reap-": 611,
+      "fg+": 4,
+      "fg-": 4,
+      "wait+": 611,
+      "wait-": 611,
+      "wait_all+": 4,
+      "wait_all-": 4,
+      "round-": 4,
+      "overflow+": 2,
+      "overflow-": 2,
+      "cleanup+": 5,
+      "cleanup-": 5,
+      "live+": 1,
+      "live_stop+": 1,
+      "live_stop-": 1,
+      "cancel+": 3,
+      "cancel-": 3,
+      "live-": 1,
+      "formats+": 1,
+      "formats-": 1,
+      "finish": 1
+    },
+    "trace_summary": {
+      "bytes": 511511,
+      "truncated": false,
+      "partial_final_record": false,
+      "errors": [],
+      "events": 5571,
+      "root_pid": 92560,
+      "root_finished": true,
+      "first_time_us": 2130179492120,
+      "last_time_us": 2130180103224,
+      "alarm_states": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "alarm_query_failures": 0
+    },
+    "stack_attempts": []
+  },
+  {
+    "archive": "normal-artifacts.tar.gz",
+    "path": "build/retention-diagnostics-checks/retention-deamkyjv/result.json",
+    "case": "diagnostic stalled child: blocked alarm",
+    "duration_seconds": 6.213511707959697,
+    "capture_duration_seconds": 6.00397516717203,
+    "failures": [
+      "timeout after 6s (no output received; 0 bytes captured; process group killed)",
+      "status: expected 0, got -9"
+    ],
+    "event_counts": {
+      "start": 1,
+      "alarm_armed": 1,
+      "fork+": 1,
+      "fork-parent": 1,
+      "fork-child": 1,
+      "stall_ready": 1,
+      "stall_wait+": 1
+    },
+    "trace_summary": {
+      "bytes": 635,
+      "truncated": false,
+      "partial_final_record": false,
+      "errors": [],
+      "events": 7,
+      "root_pid": 78630,
+      "root_finished": false,
+      "first_time_us": 2129938176540,
+      "last_time_us": 2129938177053,
+      "alarm_states": [
+        [
+          1,
+          0,
+          0
+        ]
+      ],
+      "alarm_query_failures": 0
+    },
+    "stack_attempts": [
+      {
+        "role": "root",
+        "status": "timeout",
+        "seconds": 1.4787622499279678,
+        "output_bytes": 0
+      },
+      {
+        "role": "child",
+        "status": "timeout",
+        "seconds": 1.3933650830294937,
+        "output_bytes": 0
+      }
+    ]
+  },
+  {
+    "archive": "normal-artifacts.tar.gz",
+    "path": "build/retention-diagnostics-checks/retention-dxf9spm1/result.json",
+    "case": "diagnostic stalled child: default alarm",
+    "duration_seconds": 5.2237418750301,
+    "capture_duration_seconds": 5.024602374993265,
+    "failures": [
+      "status: expected 0, got -14"
+    ],
+    "event_counts": {
+      "start": 1,
+      "alarm_armed": 1,
+      "fork+": 1,
+      "fork-parent": 1,
+      "fork-child": 1,
+      "stall_ready": 1,
+      "stall_wait+": 1
+    },
+    "trace_summary": {
+      "bytes": 635,
+      "truncated": false,
+      "partial_final_record": false,
+      "errors": [],
+      "events": 7,
+      "root_pid": 88889,
+      "root_finished": false,
+      "first_time_us": 2130152805713,
+      "last_time_us": 2130152806096,
+      "alarm_states": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "alarm_query_failures": 0
+    },
+    "stack_attempts": [
+      {
+        "role": "root",
+        "status": "captured",
+        "seconds": 1.5890849169809371,
+        "output_bytes": 7909
+      },
+      {
+        "role": "child",
+        "status": "captured",
+        "seconds": 2.4512709169648588,
+        "output_bytes": 7924
+      }
+    ]
+  },
+  {
+    "archive": "normal-artifacts.tar.gz",
+    "path": "build/retention-diagnostics-checks/retention-nztq11p6/result.json",
+    "case": "diagnostic stalled child: blocked alarm",
+    "duration_seconds": 6.218946875073016,
+    "capture_duration_seconds": 6.0039004581049085,
+    "failures": [
+      "timeout after 6s (no output received; 0 bytes captured; process group killed)",
+      "status: expected 0, got -9"
+    ],
+    "event_counts": {
+      "start": 1,
+      "alarm_armed": 1,
+      "fork+": 1,
+      "fork-parent": 1,
+      "fork-child": 1,
+      "stall_ready": 1,
+      "stall_wait+": 1
+    },
+    "trace_summary": {
+      "bytes": 635,
+      "truncated": false,
+      "partial_final_record": false,
+      "errors": [],
+      "events": 7,
+      "root_pid": 89489,
+      "root_finished": false,
+      "first_time_us": 2130158085833,
+      "last_time_us": 2130158086246,
+      "alarm_states": [
+        [
+          1,
+          0,
+          0
+        ]
+      ],
+      "alarm_query_failures": 0
+    },
+    "stack_attempts": [
+      {
+        "role": "root",
+        "status": "captured",
+        "seconds": 1.0507397919427603,
+        "output_bytes": 7909
+      },
+      {
+        "role": "child",
+        "status": "captured",
+        "seconds": 1.0479372090194374,
+        "output_bytes": 7924
+      }
+    ]
+  },
+  {
+    "archive": "normal-artifacts.tar.gz",
+    "path": "build/retention-diagnostics-checks/retention-ufc0_1qh/result.json",
+    "case": "diagnostic stalled child: default alarm",
+    "duration_seconds": 5.236973416060209,
+    "capture_duration_seconds": 5.044642125023529,
+    "failures": [
+      "status: expected 0, got -14"
+    ],
+    "event_counts": {
+      "start": 1,
+      "alarm_armed": 1,
+      "fork+": 1,
+      "fork-parent": 1,
+      "fork-child": 1,
+      "stall_ready": 1,
+      "stall_wait+": 1
+    },
+    "trace_summary": {
+      "bytes": 635,
+      "truncated": false,
+      "partial_final_record": false,
+      "errors": [],
+      "events": 7,
+      "root_pid": 78247,
+      "root_finished": false,
+      "first_time_us": 2129932902466,
+      "last_time_us": 2129932902992,
+      "alarm_states": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "alarm_query_failures": 0
+    },
+    "stack_attempts": [
+      {
+        "role": "root",
+        "status": "timeout",
+        "seconds": 1.5003915829584002,
+        "output_bytes": 0
+      },
+      {
+        "role": "child",
+        "status": "timeout",
+        "seconds": 1.496871625073254,
+        "output_bytes": 0
+      }
+    ]
+  },
+  {
+    "archive": "sanitizer-artifacts.tar.gz",
+    "path": "build/retention-diagnostics/retention-7odlwenc/result.json",
+    "case": "CSH-057 bounded CHILD_MAX retention and eviction",
+    "duration_seconds": 23.388676000060514,
+    "capture_duration_seconds": 23.24272908293642,
+    "failures": [],
+    "event_counts": {
+      "start": 1,
+      "alarm_armed": 1,
+      "round+": 4,
+      "run+": 609,
+      "fork+": 619,
+      "fork-parent": 619,
+      "fork-child": 619,
+      "run-": 609,
+      "reap+": 611,
+      "reap-": 611,
+      "fg+": 4,
+      "fg-": 4,
+      "wait+": 611,
+      "wait-": 611,
+      "wait_all+": 4,
+      "wait_all-": 4,
+      "round-": 4,
+      "overflow+": 2,
+      "overflow-": 2,
+      "cleanup+": 5,
+      "cleanup-": 5,
+      "live+": 1,
+      "live_stop+": 1,
+      "live_stop-": 1,
+      "cancel+": 3,
+      "cancel-": 3,
+      "live-": 1,
+      "formats+": 1,
+      "formats-": 1,
+      "finish": 1
+    },
+    "trace_summary": {
+      "bytes": 511596,
+      "truncated": false,
+      "partial_final_record": false,
+      "errors": [],
+      "events": 5572,
+      "root_pid": 50318,
+      "root_finished": true,
+      "first_time_us": 2130697009052,
+      "last_time_us": 2130719902956,
+      "alarm_states": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "alarm_query_failures": 0
+    },
+    "stack_attempts": []
+  },
+  {
+    "archive": "sanitizer-artifacts.tar.gz",
+    "path": "build/retention-diagnostics-checks/retention-4cp31ukp/result.json",
+    "case": "diagnostic stalled child: blocked alarm",
+    "duration_seconds": 6.219142749905586,
+    "capture_duration_seconds": 6.021296749822795,
+    "failures": [
+      "timeout after 6s (no output received; 0 bytes captured; process group killed)",
+      "status: expected 0, got -9"
+    ],
+    "event_counts": {
+      "start": 1,
+      "alarm_armed": 1,
+      "fork+": 1,
+      "fork-parent": 1,
+      "fork-child": 1,
+      "stall_ready": 1,
+      "stall_wait+": 1
+    },
+    "trace_summary": {
+      "bytes": 635,
+      "truncated": false,
+      "partial_final_record": false,
+      "errors": [],
+      "events": 7,
+      "root_pid": 52554,
+      "root_finished": false,
+      "first_time_us": 2130725713332,
+      "last_time_us": 2130725741237,
+      "alarm_states": [
+        [
+          1,
+          0,
+          0
+        ]
+      ],
+      "alarm_query_failures": 0
+    },
+    "stack_attempts": [
+      {
+        "role": "root",
+        "status": "captured",
+        "seconds": 1.051285290857777,
+        "output_bytes": 8230
+      },
+      {
+        "role": "child",
+        "status": "captured",
+        "seconds": 1.0475139159243554,
+        "output_bytes": 8223
+      }
+    ]
+  },
+  {
+    "archive": "sanitizer-artifacts.tar.gz",
+    "path": "build/retention-diagnostics-checks/retention-unnoq_lo/result.json",
+    "case": "diagnostic stalled child: default alarm",
+    "duration_seconds": 5.469766083173454,
+    "capture_duration_seconds": 5.272854916984215,
+    "failures": [
+      "status: expected 0, got -14"
+    ],
+    "event_counts": {
+      "start": 1,
+      "alarm_armed": 1,
+      "fork+": 1,
+      "fork-parent": 1,
+      "fork-child": 1,
+      "stall_ready": 1,
+      "stall_wait+": 1
+    },
+    "trace_summary": {
+      "bytes": 635,
+      "truncated": false,
+      "partial_final_record": false,
+      "errors": [],
+      "events": 7,
+      "root_pid": 52078,
+      "root_finished": false,
+      "first_time_us": 2130720321374,
+      "last_time_us": 2130720365786,
+      "alarm_states": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "alarm_query_failures": 0
+    },
+    "stack_attempts": [
+      {
+        "role": "root",
+        "status": "timeout",
+        "seconds": 2.500600666971877,
+        "output_bytes": 0
+      },
+      {
+        "role": "child",
+        "status": "timeout",
+        "seconds": 2.498142708092928,
+        "output_bytes": 0
+      }
+    ]
+  }
+]

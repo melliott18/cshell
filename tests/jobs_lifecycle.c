@@ -3,6 +3,7 @@
  * sequential children, independent of host limits of millions of processes. */
 #include "cshell/jobs.h"
 #include "cshell/parser.h"
+#include "retention_trace.h"
 #ifdef NDEBUG
 #undef NDEBUG
 #endif
@@ -26,6 +27,12 @@ static int diagnostic_fd = STDERR_FILENO;
 
 static long capacity = 32;
 static int queries;
+static void trace(const char *event, pid_t child)
+{
+    int saved = errno;
+    csh_retention_trace_event(event, child);
+    assert(errno == saved);
+}
 long csh_lifecycle_sysconf(int name)
 {
     assert(name == _SC_CHILD_MAX);
@@ -46,12 +53,31 @@ static struct csh_execution run(struct csh_execution_context *ctx, const char *s
     csh_ast_destroy(tree); csh_parser_destroy(parser); csh_input_destroy(in);
     return result;
 }
+static struct csh_execution traced_run(struct csh_execution_context *ctx,
+    const char *source, const char *begin, const char *end, pid_t child)
+{
+    struct csh_execution result;
+    trace(begin, child);
+    result = run(ctx, source);
+    trace(end, child);
+    return result;
+}
+static int traced_reap(struct csh_jobs *jobs, pid_t child)
+{
+    int rc;
+    trace("reap+", child);
+    rc = csh_jobs_reap(jobs, 1);
+    trace("reap-", child);
+    return rc;
+}
 static void destroy(struct csh_execution_context *ctx)
 {
     /* Context destruction clears borrowed pointers; retain the state owner. */
     struct csh_state *state = ctx->state;
+    trace("cleanup+", 0);
     csh_execution_context_destroy(ctx);
     csh_state_destroy(state);
+    trace("cleanup-", 0);
 }
 static void retention(void)
 {
@@ -68,19 +94,22 @@ static void retention(void)
         assert(csh_jobs_create(&ctx.jobs, ctx.state, -1) == 0);
         assert(queries == fallback + 1);
         for (int round = 0; round < 2; ++round) {
+            csh_retention_trace_context(n, round + 1, 0);
+            trace("round+", 0);
             printf("retention capacity=%d round=%d completed=0\n", n, round + 1);
             assert(fflush(stdout) == 0);
             /* Alternate saved $! and IDs read by the observer only. cshell
              * creates optional unmonitored jobs, so unsaved IDs also stay
              * known until reporting, wait, or capacity permits eviction. */
             for (int i = 0; i < n; ++i) {
+                csh_retention_trace_context(n, round + 1, i + 1);
                 alarm(5);
                 snprintf(script, sizeof(script), "exit %d & %s\n", i % 100 + 1,
                     i % 2 ? ":" : "saved=$!");
-                assert(run(&ctx, script).status == 0);
+                assert(traced_run(&ctx, script, "run+", "run-", 0).status == 0);
                 csh_state_get_info(ctx.state, &info);
                 ids[i] = info.background_pid;
-                assert(csh_jobs_reap(ctx.jobs, 1) == 0);
+                assert(traced_reap(ctx.jobs, ids[i]) == 0);
                 /* Unbuffered checkpoints localize an outer-runner timeout;
                  * they do not reset or extend either deadline. */
                 if ((i + 1) % 64 == 0 || i + 1 == n) {
@@ -89,19 +118,23 @@ static void retention(void)
                 }
             }
             /* Foreground utility registration must not evict a known ID. */
-            assert(run(&ctx, "/usr/bin/true\n").status == 0);
+            csh_retention_trace_context(n, round + 1, 0);
+            assert(traced_run(&ctx, "/usr/bin/true\n", "fg+", "fg-", 0).status == 0);
             if (round) {
-                assert(run(&ctx, "exit 117 & saved=$!\n").status == 0);
+                csh_retention_trace_context(n, round + 1, n + 1);
+                assert(traced_run(&ctx, "exit 117 & saved=$!\n", "overflow+", "overflow-", 0).status == 0);
                 csh_state_get_info(ctx.state, &info); ids[n] = info.background_pid;
-                assert(csh_jobs_reap(ctx.jobs, 1) == 0);
+                assert(traced_reap(ctx.jobs, ids[n]) == 0);
                 snprintf(script, sizeof(script), "wait %ld 2>/dev/null\n", (long)ids[0]);
-                assert(run(&ctx, script).status == 127); /* selected oldest eviction */
+                assert(traced_run(&ctx, script, "wait+", "wait-", ids[0]).status == 127); /* selected oldest eviction */
             }
             for (int i = round; i < n + round; ++i) {
+                csh_retention_trace_context(n, round + 1, i + 1);
                 snprintf(script, sizeof(script), "wait %ld\n", (long)ids[i]);
-                assert(run(&ctx, script).status == (i == n ? 117 : i % 100 + 1));
+                assert(traced_run(&ctx, script, "wait+", "wait-", ids[i]).status == (i == n ? 117 : i % 100 + 1));
             }
-            assert(run(&ctx, "wait\n").status == 0);
+            assert(traced_run(&ctx, "wait\n", "wait_all+", "wait_all-", 0).status == 0);
+            trace("round-", 0);
         }
         destroy(&ctx);
     }
@@ -117,25 +150,32 @@ static void live_retention(void)
     char script[80];
     siginfo_t event;
     inv.arg0 = "live-retention"; capacity = 32;
+    csh_retention_trace_context(32, 0, 0);
+    trace("live+", 0);
     assert(csh_state_create(&ctx.state, &inv, NULL) == CSH_STATE_OK);
     assert(csh_jobs_create(&ctx.jobs, ctx.state, -1) == 0);
     for (int i = 0; i < 2; ++i) {
+        csh_retention_trace_context(32, 0, i + 1);
         live[i] = csh_jobs_add(ctx.jobs, 1, "live", 1, 0); assert(live[i]);
-        live[i]->processes[0].pid = fork(); assert(live[i]->processes[0].pid >= 0);
+        live[i]->processes[0].pid = csh_retention_fork(); assert(live[i]->processes[0].pid >= 0);
         if (!live[i]->processes[0].pid) {
             if (i) raise(SIGSTOP);
             for (;;) pause();
         }
         live[i]->pgid = live[i]->processes[0].pid;
     }
+    trace("live_stop+", live[1]->pgid);
     while (waitid(P_PID, (id_t)live[1]->pgid, &event, WSTOPPED | WNOWAIT) < 0)
         assert(errno == EINTR);
     assert(csh_jobs_poll(ctx.jobs) == 0 && live[1]->processes[0].stopped);
+    trace("live_stop-", live[1]->pgid);
     for (int i = 0; i < 33; ++i) {
+        csh_retention_trace_context(32, 0, i + 1);
         alarm(5);
-        assert(run(&ctx, "exit 23 & saved=$!\n").status == 0);
+        assert(traced_run(&ctx, "exit 23 & saved=$!\n", "run+", "run-", 0).status == 0);
         csh_state_get_info(ctx.state, &info); ids[i] = info.background_pid;
         int observed;
+        trace("reap+", ids[i]);
         do { observed = waitid(P_PID, (id_t)ids[i], &event, WEXITED | WNOWAIT); }
         while (observed < 0 && errno == EINTR);
         /* The executor polls between list entries: a fast child may already
@@ -143,18 +183,26 @@ static void live_retention(void)
          * result is still checked by the later numeric wait. */
         assert(observed == 0 || errno == ECHILD);
         assert(csh_jobs_poll(ctx.jobs) == 0);
+        trace("reap-", ids[i]);
     }
     for (int i = 1; i < 33; ++i) {
+        csh_retention_trace_context(32, 0, i + 1);
         snprintf(script, sizeof(script), "wait %ld\n", (long)ids[i]);
-        assert(run(&ctx, script).status == 23);
+        assert(traced_run(&ctx, script, "wait+", "wait-", ids[i]).status == 23);
     }
     snprintf(script, sizeof(script), "wait %ld 2>/dev/null\n", (long)ids[0]);
-    assert(run(&ctx, script).status == 127);
+    assert(traced_run(&ctx, script, "wait+", "wait-", ids[0]).status == 127);
     /* These borrowed records must survive eviction. Cancel reaps both. */
     assert(kill(live[0]->pgid, 0) == 0 && kill(live[1]->pgid, 0) == 0);
     assert(live[1]->processes[0].stopped);
-    csh_jobs_cancel(ctx.jobs, live[0]); csh_jobs_cancel(ctx.jobs, live[1]);
+    trace("cancel+", live[0]->pgid);
+    csh_jobs_cancel(ctx.jobs, live[0]);
+    trace("cancel-", 0);
+    trace("cancel+", live[1]->pgid);
+    csh_jobs_cancel(ctx.jobs, live[1]);
+    trace("cancel-", 0);
     destroy(&ctx);
+    trace("live-", 0);
 }
 static void formats(void)
 {
@@ -164,12 +212,14 @@ static void formats(void)
     int output[2], saved;
     char actual[512], expected[512], script[80];
     inv.arg0 = "formats";
+    csh_retention_trace_context(0, 0, 0);
+    trace("formats+", 0);
     assert(csh_state_create(&ctx.state, &inv, NULL) == CSH_STATE_OK);
     assert(csh_jobs_create(&ctx.jobs, ctx.state, -1) == 0);
     /* Real two-stage pipeline, held until all three formats are asserted. */
     job = csh_jobs_add(ctx.jobs, 2, "pipeline", 1, 0); assert(job);
     for (size_t i = 0; i < 2; ++i) {
-        job->processes[i].pid = fork(); assert(job->processes[i].pid >= 0);
+        job->processes[i].pid = csh_retention_fork(); assert(job->processes[i].pid >= 0);
         if (!job->processes[i].pid) for (;;) pause();
     }
     job->pgid = job->processes[0].pid;
@@ -193,8 +243,11 @@ static void formats(void)
       }
     }
     job->grouped = 0; /* The formatting fixture's children share our group. */
+    trace("cancel+", job->pgid);
     csh_jobs_cancel(ctx.jobs, job);
+    trace("cancel-", 0);
     destroy(&ctx);
+    trace("formats-", 0);
 }
 static void notification(int notify, int outcome)
 {
@@ -212,7 +265,7 @@ static void notification(int notify, int outcome)
     saved = dup(STDERR_FILENO); assert(saved >= 0);
     assert(dup2(messages[1], STDERR_FILENO) == STDERR_FILENO); close(messages[1]);
     bg = csh_jobs_add(ctx.jobs, 1, "background", 1, 0); assert(bg);
-    bg->processes[0].pid = fork(); assert(bg->processes[0].pid >= 0);
+    bg->processes[0].pid = csh_retention_fork(); assert(bg->processes[0].pid >= 0);
     if (!bg->processes[0].pid) {
         char byte;
         signal(SIGTERM, SIG_DFL);
@@ -238,7 +291,7 @@ static void notification(int notify, int outcome)
     } else snprintf(expected, sizeof(expected), "[1]   %s background\n",
         outcome < 0 ? "Terminated (SIGTERM)" : outcome ? "Done(17)" : "Done");
     fg = csh_jobs_add(ctx.jobs, 1, "foreground", 0, 0); assert(fg);
-    fg->processes[0].pid = fork(); assert(fg->processes[0].pid >= 0);
+    fg->processes[0].pid = csh_retention_fork(); assert(fg->processes[0].pid >= 0);
     if (!fg->processes[0].pid) {
         char output[128], ready;
         struct timespec tick = {0, 1000000};
@@ -287,12 +340,48 @@ static void notification(int notify, int outcome)
     close(launch[0]); close(launch[1]);
     destroy(&ctx);
 }
+static void diagnostic_stall(void)
+{
+    int ready[2], status;
+    pid_t child, observed;
+    char byte;
+    ssize_t count;
+    assert(csh_retention_trace_enabled());
+    assert(pipe(ready) == 0);
+    child = csh_retention_fork(); assert(child >= 0);
+    if (child == 0) {
+        close(ready[0]);
+        do { count = write(ready[1], "r", 1); } while (count < 0 && errno == EINTR);
+        assert(count == 1);
+        close(ready[1]);
+        for (;;) pause();
+    }
+    close(ready[1]);
+    do { count = read(ready[0], &byte, 1); } while (count < 0 && errno == EINTR);
+    assert(count == 1 && byte == 'r');
+    close(ready[0]);
+    trace("stall_ready", child);
+    /* Exercise the existing alarm's real disposition. Observation installs
+     * no handler and neither unblocks nor consumes an inherited SIGALRM. */
+    alarm(5);
+    trace("stall_wait+", child);
+    do { observed = waitpid(child, &status, 0); } while (observed < 0 && errno == EINTR);
+    trace("stall_wait-", child);
+    assert(!"diagnostic stalled child unexpectedly finished");
+}
 int main(int argc, char **argv)
 {
+    int trace_errno;
     diagnostic_fd = dup(STDERR_FILENO);
     assert(diagnostic_fd >= 0);
+    trace_errno = errno;
+    csh_retention_trace_init();
+    assert(errno == trace_errno);
+    trace("start", 0);
     alarm(20);
-    if (argc == 2 && !strcmp(argv[1], "notify")) {
+    trace("alarm_armed", 0);
+    if (argc == 2 && !strcmp(argv[1], "diagnostic-stall")) diagnostic_stall();
+    else if (argc == 2 && !strcmp(argv[1], "notify")) {
         const int outcomes[] = {-1, 0, 17, 128 + SIGSTOP, 128 + SIGTSTP,
             128 + SIGTTIN, 128 + SIGTTOU};
         for (int notify = 0; notify <= 1; ++notify)
@@ -311,8 +400,13 @@ int main(int argc, char **argv)
     }
     /* No forgotten direct children survive either phase. */
     int status;
+    csh_retention_trace_context(0, 0, 0);
+    trace("cleanup+", 0);
     assert(waitpid(-1, &status, WNOHANG) == -1 && errno == ECHILD);
+    trace("cleanup-", 0);
     alarm(0);
+    trace("finish", 0);
+    csh_retention_trace_close();
     close(diagnostic_fd);
     return 0;
 }

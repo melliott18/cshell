@@ -1,0 +1,275 @@
+{
+  "base": "bc74783bde46cd3b5783be03c778036f7132d460",
+  "branch": "fix/CSH-057-retention-budget",
+  "platform": "macOS-14.8.7-arm64-arm-64bit",
+  "clang": "Apple clang version 15.0.0 (clang-1500.3.9.4)\nTarget: arm64-apple-darwin23.6.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin\n",
+  "python": "3.12.2",
+  "flags": {
+    "normal": "-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2",
+    "sanitizer_cflags": "-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+    "sanitizer_ldflags": "-fsanitize=address,undefined",
+    "forwarded_environment": {
+      "MallocNanoZone": "0"
+    }
+  },
+  "normal_results": [
+    {
+      "duration_seconds": 0.7782642499078065,
+      "capture_duration_seconds": 0.6397348749451339,
+      "case_failures": [],
+      "diagnostic_failures": [],
+      "watcher_cleanup_failures": [],
+      "trace_summary": {
+        "bytes": 502956,
+        "truncated": false,
+        "partial_final_record": false,
+        "errors": [],
+        "events": 5572,
+        "root_pid": 6869,
+        "root_finished": true,
+        "first_time_us": 2244690853485,
+        "last_time_us": 2244691321333,
+        "alarm_states": [
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "alarm_query_failures": 0
+      }
+    },
+    {
+      "duration_seconds": 0.5300464590545744,
+      "capture_duration_seconds": 0.4203686669934541,
+      "case_failures": [],
+      "diagnostic_failures": [],
+      "watcher_cleanup_failures": [],
+      "trace_summary": {
+        "bytes": 511596,
+        "truncated": false,
+        "partial_final_record": false,
+        "errors": [],
+        "events": 5572,
+        "root_pid": 12448,
+        "root_finished": true,
+        "first_time_us": 2244783913084,
+        "last_time_us": 2244784327983,
+        "alarm_states": [
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "alarm_query_failures": 0
+      }
+    }
+  ],
+  "sanitizer_results": [
+    {
+      "duration_seconds": 21.67949016694911,
+      "capture_duration_seconds": 21.529788291081786,
+      "case_failures": [],
+      "diagnostic_failures": [],
+      "watcher_cleanup_failures": [],
+      "trace_summary": {
+        "bytes": 504189,
+        "truncated": false,
+        "partial_final_record": false,
+        "errors": [],
+        "events": 5572,
+        "root_pid": 9139,
+        "root_finished": true,
+        "first_time_us": 2244707149586,
+        "last_time_us": 2244728275308,
+        "alarm_states": [
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "alarm_query_failures": 0
+      }
+    }
+  ],
+  "controlled_results": {
+    "before": {
+      "duration_seconds": 60.19007262494415,
+      "capture_duration_seconds": 60.042859291192144,
+      "case_failures": [
+        "timeout after 60s (last output at 57.354s; no output for 2.647s; 479 bytes captured; process group killed)",
+        "status: expected 0, got -9",
+        "stdout: expected b'retention capacity=32 round=1 completed=0\\nretention capacity=32 round=1 completed=32\\nretention capacity=32 round=2 completed=0\\nretention capacity=32 round=2 completed=32\\nretention capacity=256 round=1 completed=0\\nretention capacity=256 round=1 completed=64\\nretention capacity=256 round=1 completed=128\\nretention capacity=256 round=1 completed=192\\nretention capacity=256 round=1 completed=256\\nretention capacity=256 round=2 completed=0\\nretention capacity=256 round=2 completed=64\\nretention capacity=256 round=2 completed=128\\nretention capacity=256 round=2 completed=192\\nretention capacity=256 round=2 completed=256\\nCHILD_MAX=32 and fallback=256: capacity, saved/unsaved IDs, foreground preservation, oldest eviction passed\\nretention live records\\nretention formatting\\nretention complete\\n' (785 bytes), got b'retention capacity=32 round=1 completed=0\\nretention capacity=32 round=1 completed=32\\nretention capacity=32 round=2 completed=0\\nretention capacity=32 round=2 completed=32\\nretention capacity=256 round=1 completed=0\\nretention capacity=256 round=1 completed=64\\nretention capacity=256 round=1 completed=128\\nretention capacity=256 round=1 completed=192\\nretention capacity=256 round=1 completed=256\\nretention capacity=256 round=2 completed=0\\nretention capacity=256 round=2 completed=64\\n' (479 captured bytes)"
+      ],
+      "diagnostic_failures": [],
+      "watcher_cleanup_failures": [],
+      "trace_summary": {
+        "bytes": 320391,
+        "truncated": false,
+        "partial_final_record": false,
+        "errors": [],
+        "events": 3497,
+        "root_pid": 16296,
+        "root_finished": false,
+        "first_time_us": 2244815863352,
+        "last_time_us": 2244875364082,
+        "alarm_states": [
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "alarm_query_failures": 0
+      }
+    },
+    "after": {
+      "duration_seconds": 90.70744191599078,
+      "capture_duration_seconds": 90.57757670804858,
+      "case_failures": [],
+      "diagnostic_failures": [],
+      "watcher_cleanup_failures": [],
+      "trace_summary": {
+        "bytes": 511596,
+        "truncated": false,
+        "partial_final_record": false,
+        "errors": [],
+        "events": 5572,
+        "root_pid": 18904,
+        "root_finished": true,
+        "first_time_us": 2244875788373,
+        "last_time_us": 2244966193515,
+        "alarm_states": [
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "alarm_query_failures": 0
+      }
+    }
+  },
+  "commands": [
+    "make -j4 test-job-retention test-retention-diagnostics test-harness",
+    "make -j4 test-jobs test-jobs-pty",
+    "make -j4 build/tests/jobs_lifecycle CC=clang CFLAGS=<sanitizer_cflags> LDFLAGS=<sanitizer_ldflags> (temporary exported checkout)",
+    "MallocNanoZone=0 python3 tests/retention_diagnostics.py ./build/tests/jobs_lifecycle (temporary checkout)",
+    "MallocNanoZone=0 python3 tests/retention_trace_checks.py ./build/tests/jobs_lifecycle (temporary checkout)",
+    "apply controlled-delay.patch in temporary checkout and rebuild with identical sanitizer flags",
+    "MallocNanoZone=0 python3 docs/evidence/csh-057-retention-budget/check_budget.py <delayed-binary> /tmp/csh057-budget-control"
+  ],
+  "source_sha256": {
+    "tests/jobs_lifecycle.c": "b42f92124672ba819a5d7536930df7f994c0e9d4320d98c1d8fdd0c9b16abcd8",
+    "tests/retention_trace.c": "5b88e2ff78bbcaf81f566989a54a544b586f68faed89a4cd145c6738d11d12fa",
+    "tests/retention_trace.h": "8d4fc3ba0add607f36024eebf7e1ec2db50bf8fdac6ffc675baa6542158e39e1",
+    "tests/retention_diagnostics.py": "d5bae1ae0222e5e75cc6902a7199102183eebdc5fe69eb4385519807aaced4db",
+    "tests/fixtures/job-retention.json": "927a4df773c087cbe19059582d87365eea7cc359a497c5865371e9208d0087dc",
+    "Makefile": "89935fda8af34225e4191ee13678fa06380b8267db64c1d41fd3c7e782e07333"
+  },
+  "archive_member_sha256": {
+    "baseline/sample.log": "80f8f5326726fb2add6645f584136173aecef84dffa400a0bcfbcaeb8e2bffb9",
+    "baseline/sample.txt": "371c0b89f155968b774bb8529bc8e2971081da857537cf445c63c85da2025291",
+    "controlled/after/retention-z7b_1eml/capture-start.json": "644283c68a80c7275644dc721f1d8bd7501f2973c7ce78f71084038066b9a078",
+    "controlled/after/retention-z7b_1eml/metadata.json": "8883c328642b9b43f04cc5d1b8b4e0a3ac7c92f80b672ef374bccc6c60396e48",
+    "controlled/after/retention-z7b_1eml/result.json": "9fe9d0a091837cafa2fa0e05a083964c983bbe822e6f114d16e74776f53fc225",
+    "controlled/after/retention-z7b_1eml/trace.jsonl": "f9eb56c6afc943544abdb95db7322db2863b13ca72e2d60bc0c8b3ba2e1904c0",
+    "controlled/after/retention-z7b_1eml/watcher-config.json": "4ff71dde61920f8d90271a7ab47fd0bafe0105fc1483b11df6f2deaf7943c325",
+    "controlled/after/retention-z7b_1eml/watcher-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "controlled/after/retention-z7b_1eml/watcher.json": "2057c070e3008831edb5d4efcb03a17da4f83f69d7e5c0f0fcb830f70a77775c",
+    "controlled/before/retention-5938mmi0/capture-start.json": "4c3b2d763e460a8bee2009b60e86b65fbd4c3bfa42f33e08e6314d08b88cf7b5",
+    "controlled/before/retention-5938mmi0/metadata.json": "438c05ad9af4b77981d85413641d6e595aea1460c71773c97c82464f77dc5af5",
+    "controlled/before/retention-5938mmi0/result.json": "6a5218b88bb7c2adac7993eb9ca06a6e11cfb1d17bfcda0a3c35c448772c2335",
+    "controlled/before/retention-5938mmi0/stack-root-16296.console.txt": "2a70f7ae3bf69f5ae77574e5a42ef4c6a3902fe74407d2b4a432cbfb0543eb65",
+    "controlled/before/retention-5938mmi0/stack-root-16296.txt": "e8ec23aa5337f2fcfd0ce05359541cdc7b2385099a64e792531d0578f2e5802f",
+    "controlled/before/retention-5938mmi0/trace.jsonl": "3ba929f364c869c9952a03b942d7850d964d716c711cbcf9f4cf6c5076ccbfb8",
+    "controlled/before/retention-5938mmi0/watcher-config.json": "f3e9a3245ec44ca4523e69f9bf772a032dbc190b87350fb22f3593a1e6c17a4e",
+    "controlled/before/retention-5938mmi0/watcher-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "controlled/before/retention-5938mmi0/watcher.json": "f1642f5888a269672eef5c68e696b5487cc4a79901e067c9a3bf04ad418f0727",
+    "controlled/build.log": "9d96f41d4e2e02296c159a07a85fd5de89b15ce92ac7729fb3cdc903522851a5",
+    "controlled/check.log": "9422e6237feb25c492eafd57c0650bb1e42ac5f66df5a576594bf9066173cd3c",
+    "controlled/summary.json": "570850ac062538ecd5c59f695b3d0bbb1413505b87a38a3441bc8bdf83ac03f3",
+    "normal/controls/checks.json": "64c3d0df6384b4ede18fa9220b4ac579691641874a9d7e5ee907b62037734b33",
+    "normal/controls/retention-4s60cyjb/capture-start.json": "4c07e7acf18f35f562c90706b36a31e0e14b595191196c920f4d53d1fe40a892",
+    "normal/controls/retention-4s60cyjb/metadata.json": "198122556449ca82599797800af9084fb3cdca0722413068ef9623b546689244",
+    "normal/controls/retention-4s60cyjb/result.json": "c5e82a771e5d0259334ce3dffbbf62568b37b72fb902964840fecdcca0caaab2",
+    "normal/controls/retention-4s60cyjb/stack-child-6875.console.txt": "accc09228252243b267dce5db2181109dec1a7405eb5b9098949df84f1166cbb",
+    "normal/controls/retention-4s60cyjb/stack-child-6875.txt": "955d6419f132095c436ec873270b3ab085ed79e21ef6ecdbaec49d70e643806c",
+    "normal/controls/retention-4s60cyjb/stack-root-6870.console.txt": "a9e6fa85135b8536a82515469f90b536549a7c92749954a0d99ed03929cf6944",
+    "normal/controls/retention-4s60cyjb/stack-root-6870.txt": "9797e3498c7717f9d0e437ddaab9a4b16a001ce70c307b87062ff8a13c860ff1",
+    "normal/controls/retention-4s60cyjb/trace.jsonl": "901b40c781a54d4795f002edda31b99714f99905a27b473ecf043a520da9c6cd",
+    "normal/controls/retention-4s60cyjb/watcher-config.json": "7b32a785819bade3d2c40b4aa161e0dc0d8ef8015a0c20044f915b5c6dcbe2b5",
+    "normal/controls/retention-4s60cyjb/watcher-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "normal/controls/retention-4s60cyjb/watcher.json": "41432bd815a4cd998053a6b2cdaf9b1511abbcb2c73cfec56a01727bce70a9e5",
+    "normal/controls/retention-afud7jii/capture-start.json": "8f38ca90df5b5529172ee7c28bb48c4a574ab511952ae18a0f709369c19f7f45",
+    "normal/controls/retention-afud7jii/metadata.json": "62dcc895b6a10c9b3cf5d3eafb13baed205169c2475e90ac33077aa2e91add48",
+    "normal/controls/retention-afud7jii/result.json": "b825877a7553fcc775553d6221b7ccd5b81766961414d6011198a64b9740b770",
+    "normal/controls/retention-afud7jii/stack-child-7680.console.txt": "9a6b4494c8a67d444f113d721f4cfdefe2e9c960b58d809796c51aa7a4d1df16",
+    "normal/controls/retention-afud7jii/stack-child-7680.txt": "6844739513c7d8f40112e9a49fbbc7cda875cd645a5de03d088fd1eb08db857e",
+    "normal/controls/retention-afud7jii/stack-root-7679.console.txt": "54eb87b946827294383a6bfe7413771a6f02387e4f2b00b0a24aede0dc5b2436",
+    "normal/controls/retention-afud7jii/stack-root-7679.txt": "970e30190dac1f9be9ba197d59df14814acc39ea3b1d03c3df1aa646a73db08c",
+    "normal/controls/retention-afud7jii/trace.jsonl": "34593a621171776abe1551925c1a5591b081370dfb31af5b44173d7cdda9bdf4",
+    "normal/controls/retention-afud7jii/watcher-config.json": "5e421ef31e140813617f453f3d451dff6a99db0cb953bd669bd6f195064d6249",
+    "normal/controls/retention-afud7jii/watcher-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "normal/controls/retention-afud7jii/watcher.json": "d1fbc0c695caf831f058c495590db6a260f44e5d55947bb54aa067c84514d9ef",
+    "normal/focused.log": "801f7f0cf35e93f58ba4c141fb5ef4672562f9bffd4617830c86374000cab28b",
+    "normal/jobs.log": "6e0c05996d24739c44e7bc6733fe008a86783b1004a00bf6b9056e752e446224",
+    "normal/retention/retention-5lhm9zhf/capture-start.json": "a31f0129fa3a9c900374f87d6e955fdc961a646f34c3a5509ecc9a0cf68b3138",
+    "normal/retention/retention-5lhm9zhf/metadata.json": "367943424eb1e3cf17db964d551f8f253146c12e8d71f310ecf72551144426b5",
+    "normal/retention/retention-5lhm9zhf/result.json": "13882bc4170771f9fea917f8a1d6c73b60f9d50dfcec84eb24884ebc8ff8f69f",
+    "normal/retention/retention-5lhm9zhf/trace.jsonl": "252e5b0b8113816177a271110e2a682fcc21fa39559cd99fb149860e9bba4460",
+    "normal/retention/retention-5lhm9zhf/watcher-config.json": "46bc88e69b1eb3ed3625d05803759ba6f41e4060b651fc595fae2d9adaac741d",
+    "normal/retention/retention-5lhm9zhf/watcher-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "normal/retention/retention-5lhm9zhf/watcher.json": "3af291ce126d9857a789746b9a4c39cc7fe8b08984233b341d87bbf488161825",
+    "normal/retention/retention-w1gfzdyu/capture-start.json": "6c574ce61f5339d0d5d8cefcd0f449f642817e0287f2ec5932d56411cfc897c8",
+    "normal/retention/retention-w1gfzdyu/metadata.json": "941ff75dd6f682aac13a8b016ef96f87c1cf5cbdbd6f353b56f4a8058453d80e",
+    "normal/retention/retention-w1gfzdyu/result.json": "ec70a8b5116ac578ad99b49460a7064ff13ad0aae8cff1fd0f652fb3b5b98381",
+    "normal/retention/retention-w1gfzdyu/trace.jsonl": "de5d2fed3ccb6178484a8b13201ba1bc9de3d97f7d8e70f1eadbd5ab194c64a7",
+    "normal/retention/retention-w1gfzdyu/watcher-config.json": "1f2c30606b025ae88ffee0564b497bf29d932ef87578e1265c7dc0a4270f4a21",
+    "normal/retention/retention-w1gfzdyu/watcher-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "normal/retention/retention-w1gfzdyu/watcher.json": "3429ce16c9921e345500312cd6b6a33dd655e23346f78f44f78c75289bba40e9",
+    "sanitizer/build.log": "d910e921884f55a97b3a110206d85a4ded38402d34fdc6303f2f063f739d8859",
+    "sanitizer/controls.log": "f6789f554aaced7f453b512fdee00db50befc28c7f574c1ab74aecfbee81ef61",
+    "sanitizer/controls/checks.json": "ff0b7e8fcc409e1987bd0c796766a69f0ca55f4071397b4df0fd3707ea164c3f",
+    "sanitizer/controls/retention-b3fh1tlr/capture-start.json": "57b3299e96947437471a4be69928c1a3103fab8c9ba22db009ebd400b42f2e02",
+    "sanitizer/controls/retention-b3fh1tlr/metadata.json": "7d92cfc885a6fa75595ebe9e8d0804a89526429f8d1d9534e8c03a2096f63215",
+    "sanitizer/controls/retention-b3fh1tlr/result.json": "39b26f4fb6c919418fd768fae15520c395bacae067adaff35f0799cc520ae6d8",
+    "sanitizer/controls/retention-b3fh1tlr/stack-child-10553.console.txt": "c80f5b10e91137ccc0f4860ec02b453e741acfd760b259b67f2727a90dc072c5",
+    "sanitizer/controls/retention-b3fh1tlr/stack-child-10553.txt": "997184ed4eeb44fe763f891701672264355d94d1f605e82b89ff64004bc64548",
+    "sanitizer/controls/retention-b3fh1tlr/stack-root-10552.console.txt": "a1fa45abdd89fba75e80a28970353982ec8a3e09c57ebe7d598db5516b9ec1ce",
+    "sanitizer/controls/retention-b3fh1tlr/stack-root-10552.txt": "1f79c67777b84da60f830cc0bb2ec4c9a921ba0a749adbfaae2c8b50112bb8ad",
+    "sanitizer/controls/retention-b3fh1tlr/trace.jsonl": "93d3099625a64a23fc6d301a01a75832408c800fba03a94ad3ae577b09569639",
+    "sanitizer/controls/retention-b3fh1tlr/watcher-config.json": "ae6a8672d1ec0e6f369ff0cabebcf3663115ba5764f151812c8781bcbeca655f",
+    "sanitizer/controls/retention-b3fh1tlr/watcher-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sanitizer/controls/retention-b3fh1tlr/watcher.json": "f2313ec9dc9c7764f0b9db2c7a02d30bed624a94932c64915612471fc9de7b79",
+    "sanitizer/controls/retention-nmjjapph/capture-start.json": "f7d6d41d60cc97faa02bfa3bff36d4241ae5e577906ca3a227ebc74724b56009",
+    "sanitizer/controls/retention-nmjjapph/metadata.json": "30db2566ec29ad4b76d98ad6641b38f221002d2ba7c1846168ad5540cadba67f",
+    "sanitizer/controls/retention-nmjjapph/result.json": "e8a8207ed324a99a5f0f1eedaa2de55730f40219cba1560bb49041f13e98c867",
+    "sanitizer/controls/retention-nmjjapph/stack-child-10722.console.txt": "5db1df377ba6def2b62893a174254b804e60fc24883012e2460fbbf7083c7881",
+    "sanitizer/controls/retention-nmjjapph/stack-child-10722.txt": "bd4fd60ec1fad0ffaa75a7926fb4761b15865a5f9f70c4fadd49335be1fee5ec",
+    "sanitizer/controls/retention-nmjjapph/stack-root-10721.console.txt": "81e43702dd3b56986fd86b440a5bc1a506cf9ca821674ecb9d1150744c291521",
+    "sanitizer/controls/retention-nmjjapph/stack-root-10721.txt": "f570604759e508e5e7a01d0e35c9edc0ba878c54f2b86d6f1a351f9f57bc701a",
+    "sanitizer/controls/retention-nmjjapph/trace.jsonl": "adc46610c73a3524cac135c323085cd6bebaef8e8547a377383ea924053b18e5",
+    "sanitizer/controls/retention-nmjjapph/watcher-config.json": "1fe26de4d78fdd7ff19ee944ef3fc3bfc0cc1b73e52a492a0a790c15e0c90e3a",
+    "sanitizer/controls/retention-nmjjapph/watcher-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sanitizer/controls/retention-nmjjapph/watcher.json": "f4a10d6c37a1cf76a1b1a9bdf075f992e18bdce74fa7c402eb778c1b6fa66e22",
+    "sanitizer/diagnostics-build.log": "f7a6521cf1e069e6f1361f01cf79590573e43db35b8ad83cfa10e5fdc73726ad",
+    "sanitizer/retention.log": "051c03ca57bbf1d43c2ce57f111849512fab6c07e10cf5f8c7913f7c477e2ef2",
+    "sanitizer/retention/retention-xgvzuxp5/capture-start.json": "45af4e6c842059f211e461bef8897b8c1dd0b23aa4ad20190ced482d85fbb53f",
+    "sanitizer/retention/retention-xgvzuxp5/metadata.json": "99deda18d12b756a9a51460053e7ed1b8afaa37be69e8b057a9dc0eeafa83542",
+    "sanitizer/retention/retention-xgvzuxp5/result.json": "7bc72c277ab07d1c8966d8e324c3964f49155190c41626d50327eb0aa63614db",
+    "sanitizer/retention/retention-xgvzuxp5/trace.jsonl": "c77b7e7c3c113dd568195e8c62df0d55ab491761fa0409c78ab982a16d22a034",
+    "sanitizer/retention/retention-xgvzuxp5/watcher-config.json": "38eb8fd6111bc580ab68f9a1706706caf3af563a2f54fcb730c407f3d4d9d928",
+    "sanitizer/retention/retention-xgvzuxp5/watcher-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "sanitizer/retention/retention-xgvzuxp5/watcher.json": "f78cf335054383e80e747ed598d47aa5226abf7d27c5121b61667940eec4579c"
+  },
+  "notes": [
+    "All focused normal and sanitizer validations passed. No new full make test suite claimed.",
+    "Controlled before intentionally fails at60s; after runs same delayed binary and original exact oracle under120s. Temporary delay is not applied to production or committed test sources.",
+    "Additional progress assertions added to check_budget.py during its initial run were checked afterward against both retained traces; no rerun was needed.",
+    "Baseline result was sampled before diagnostics export; sample perturbs measured baseline timing.",
+    "An initial build command incorrectly used /tmp rather than the exported directory and failed before compiling; subsequent build logs identify successful actual builds."
+  ]
+}
