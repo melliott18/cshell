@@ -29,7 +29,7 @@ jobs:
           python-version: '3.11'
       - name: Linux providers
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y busybox ncurses-bin libncurses-dev bsdextrautils
+        run: sudo apt-get update && sudo apt-get install -y busybox ncurses-bin libncurses-dev bsdextrautils locales && sudo localedef -i en_US -f UTF-8 en_US.UTF-8
       - name: macOS profile providers
         if: runner.os == 'macOS'
         run: brew list coreutils >/dev/null 2>&1 || brew install coreutils

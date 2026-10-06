@@ -1449,7 +1449,7 @@ exact boundary; there are no gap allowances or hidden skips.
 
 The isolated Linux session runner now has 105 strict assertions, including
 synchronized SIGINT/SIGTERM through every path, UTF-8 conversion, IEXTEN and
-cross-user permission cases. It still requires root in a private mount namespace
+cross-owner permission cases. It still requires root in a private mount namespace
 and uses only its own PTYs and private login records. The syscall/command/PTY
 captures and provider hashes are retained on failure. Physical serial devices
 and privileged Darwin sessions were not supplied and remain unqualified.

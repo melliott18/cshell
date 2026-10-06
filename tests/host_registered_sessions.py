@@ -23,7 +23,7 @@ import time
 
 from host_terminal import MODES, inventory
 from host_terminal_effects import environment, invoke
-from host_utilities import serial, sha, source_identity
+from host_utilities import serial, sha, source_identity, sanitizer_diagnostic
 from pty_harness import open_terminal
 
 
@@ -174,6 +174,8 @@ def main():
                                             terminal_input=payloads.get(name, payloads['payload'])[0], **extra)
                         end = time.time()
                         failures = list(actual['failures'])
+                        if sanitizer_diagnostic({key: value for key, value in actual.items() if isinstance(value, bytes)}):
+                            failures.append('sanitizer diagnostic')
                         if name == 'mesg-not-owner':
                             if (actual['status'] <= 1 or not actual['stderr'] or actual['stdout'] or
                                     actual['terminal1'] or actual['terminal'] or
@@ -221,7 +223,8 @@ def main():
                                 failures.extend(normative)
                         rows.append(dict(name='registered/' + name, mode=mode,
                                          verdict='FAIL' if failures else 'PASS', failures=failures, actual=actual,
-                                         sender=sender, recipient=recipient, uid=account.pw_uid, gid=tty_group,
+                                         sender=sender, recipient=recipient, uid=account.pw_uid,
+                                         gid=account.pw_gid if name == 'recipient-wrong-group' else tty_group,
                                          credentials_method='setgroups([]), setgid, setuid; verified real/effective/saved IDs and empty groups before exec',
                                          environment=case_env,
                                          termios_sender=termios.tcgetattr(terminals[0][1]),

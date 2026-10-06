@@ -35,12 +35,29 @@ use nobody's primary group instead. Only owned terminals and private login
 records are touched.
 
 `source-comparison.json` compares all passing records with the delivered source.
-All executable, test and build input bytes match. Only
-`tools/host-profile/README.md` differs in the ordinary and Linux records because
-provider documentation was written after those source snapshots. Native
-sanitized records include that documentation and match every file. No behavioral
-source difference is waived. The lossless gzip files are hashed in
+All executable and build inputs match. Earlier records differ in the session
+runner only by the final group-ID metadata correction and stricter sanitizer
+rejection; the fresh `csh081-sessions-metadata-{normal,sanitized}.json.gz` records
+match every current source file and each pass all 105 assertions. PTY/harness
+runner bytes are unchanged. Some earlier records also differ in
+`tools/host-profile/README.md`, written after their snapshots. Differences are
+listed per file rather than hidden. Lossless gzip artifacts are hashed in
 `artifacts.json`; earlier CSH-077/CSH-064 evidence was not changed.
+
+### Final session evidence audit
+
+The first session records incorrectly labeled wrong-group rows with tty's GID 5,
+although the verified credential-drop call actually used nobody's primary GID
+65534. This affected report metadata, not the exercised credentials. The final
+runner records the actual requested/verified GID. It also explicitly rejects
+sanitizer diagnostics in every case, including expected permission failures.
+Fresh ordinary and sanitized runs both pass 105 assertions; their raw rows have
+GID 65534 for all five wrong-group paths. `session-audit.json` additionally scans
+the earlier complete captures and confirms they contained no sanitizer
+diagnostics, while preserving their erroneous GID fields as historical data.
+The second owned container's removal is in `metadata-container-cleanup.json`.
+The `python` field in `environment.json` identifies the host evidence collector;
+container/provider identity is given separately by the exact image and packages.
 
 ## Reproduction
 

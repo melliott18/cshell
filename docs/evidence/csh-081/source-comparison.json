@@ -1,22 +1,18 @@
 {
-  "linux-normal-host-terminal-residuals.json.gz": {
+  "csh081-sessions-metadata-normal.json.gz": {
     "totals": {
-      "passed": 575,
+      "passed": 105,
       "failed": 0
     },
-    "differing_files": [
-      "tools/host-profile/README.md"
-    ],
+    "differing_files": [],
     "fixture_directory_removed": true
   },
-  "native-normal-host-terminal-effects.json.gz": {
+  "csh081-sessions-metadata-sanitized.json.gz": {
     "totals": {
-      "passed": 90,
+      "passed": 105,
       "failed": 0
     },
-    "differing_files": [
-      "tools/host-profile/README.md"
-    ],
+    "differing_files": [],
     "fixture_directory_removed": true
   },
   "linux-normal-host-profile-results.json.gz": {
@@ -26,38 +22,21 @@
       "gaps": 0
     },
     "differing_files": [
+      "tests/host_registered_sessions.py",
       "tools/host-profile/README.md"
     ],
     "fixture_directory_removed": null
   },
-  "linux-sanitized-host-terminal-residuals.json.gz": {
+  "linux-normal-host-registered-sessions.json.gz": {
     "totals": {
-      "passed": 575,
+      "passed": 105,
       "failed": 0
     },
     "differing_files": [
+      "tests/host_registered_sessions.py",
       "tools/host-profile/README.md"
     ],
     "fixture_directory_removed": true
-  },
-  "native-sanitized-host-terminal-residuals.json.gz": {
-    "totals": {
-      "passed": 575,
-      "failed": 0
-    },
-    "differing_files": [],
-    "fixture_directory_removed": true
-  },
-  "native-normal-host-profile-results.json.gz": {
-    "totals": {
-      "passed": 1162,
-      "failed": 0,
-      "gaps": 0
-    },
-    "differing_files": [
-      "tools/host-profile/README.md"
-    ],
-    "fixture_directory_removed": null
   },
   "linux-normal-host-terminal-effects.json.gz": {
     "totals": {
@@ -65,6 +44,7 @@
       "failed": 0
     },
     "differing_files": [
+      "tests/host_registered_sessions.py",
       "tools/host-profile/README.md"
     ],
     "fixture_directory_removed": true
@@ -75,6 +55,18 @@
       "failed": 0
     },
     "differing_files": [
+      "tests/host_registered_sessions.py",
+      "tools/host-profile/README.md"
+    ],
+    "fixture_directory_removed": true
+  },
+  "linux-normal-host-terminal-residuals.json.gz": {
+    "totals": {
+      "passed": 575,
+      "failed": 0
+    },
+    "differing_files": [
+      "tests/host_registered_sessions.py",
       "tools/host-profile/README.md"
     ],
     "fixture_directory_removed": true
@@ -85,16 +77,18 @@
       "failed": 0
     },
     "differing_files": [
+      "tests/host_registered_sessions.py",
       "tools/host-profile/README.md"
     ],
     "fixture_directory_removed": true
   },
-  "linux-normal-host-registered-sessions.json.gz": {
+  "linux-sanitized-host-terminal-effects.json.gz": {
     "totals": {
-      "passed": 105,
+      "passed": 90,
       "failed": 0
     },
     "differing_files": [
+      "tests/host_registered_sessions.py",
       "tools/host-profile/README.md"
     ],
     "fixture_directory_removed": true
@@ -105,6 +99,52 @@
       "failed": 0
     },
     "differing_files": [
+      "tests/host_registered_sessions.py",
+      "tools/host-profile/README.md"
+    ],
+    "fixture_directory_removed": true
+  },
+  "linux-sanitized-host-terminal-residuals.json.gz": {
+    "totals": {
+      "passed": 575,
+      "failed": 0
+    },
+    "differing_files": [
+      "tests/host_registered_sessions.py",
+      "tools/host-profile/README.md"
+    ],
+    "fixture_directory_removed": true
+  },
+  "native-normal-host-profile-results.json.gz": {
+    "totals": {
+      "passed": 1162,
+      "failed": 0,
+      "gaps": 0
+    },
+    "differing_files": [
+      "tests/host_registered_sessions.py",
+      "tools/host-profile/README.md"
+    ],
+    "fixture_directory_removed": null
+  },
+  "native-normal-host-terminal-effects.json.gz": {
+    "totals": {
+      "passed": 90,
+      "failed": 0
+    },
+    "differing_files": [
+      "tests/host_registered_sessions.py",
+      "tools/host-profile/README.md"
+    ],
+    "fixture_directory_removed": true
+  },
+  "native-normal-host-terminal-profile-results.json.gz": {
+    "totals": {
+      "passed": 665,
+      "failed": 0
+    },
+    "differing_files": [
+      "tests/host_registered_sessions.py",
       "tools/host-profile/README.md"
     ],
     "fixture_directory_removed": true
@@ -115,24 +155,7 @@
       "failed": 0
     },
     "differing_files": [
-      "tools/host-profile/README.md"
-    ],
-    "fixture_directory_removed": true
-  },
-  "native-sanitized-host-terminal-profile-results.json.gz": {
-    "totals": {
-      "passed": 665,
-      "failed": 0
-    },
-    "differing_files": [],
-    "fixture_directory_removed": true
-  },
-  "native-normal-host-terminal-profile-results.json.gz": {
-    "totals": {
-      "passed": 665,
-      "failed": 0
-    },
-    "differing_files": [
+      "tests/host_registered_sessions.py",
       "tools/host-profile/README.md"
     ],
     "fixture_directory_removed": true
@@ -142,16 +165,28 @@
       "passed": 90,
       "failed": 0
     },
-    "differing_files": [],
+    "differing_files": [
+      "tests/host_registered_sessions.py"
+    ],
     "fixture_directory_removed": true
   },
-  "linux-sanitized-host-terminal-effects.json.gz": {
+  "native-sanitized-host-terminal-profile-results.json.gz": {
     "totals": {
-      "passed": 90,
+      "passed": 665,
       "failed": 0
     },
     "differing_files": [
-      "tools/host-profile/README.md"
+      "tests/host_registered_sessions.py"
+    ],
+    "fixture_directory_removed": true
+  },
+  "native-sanitized-host-terminal-residuals.json.gz": {
+    "totals": {
+      "passed": 575,
+      "failed": 0
+    },
+    "differing_files": [
+      "tests/host_registered_sessions.py"
     ],
     "fixture_directory_removed": true
   }

@@ -147,7 +147,7 @@ their recorded platform boundaries.
 | --- | --- |
 | Physical baud/parity/flow control and serial delivery (`U-040/stty-physical-terminal`) | Supplied disposable serial devices, known supported settings, and a loopback or peer. A person must connect/identify hardware; subsequent byte checks can be automated. PTYs cannot establish these effects. |
 | Actual terminal initialization/tab/display effects beyond authored capability strings | A specified terminal/emulator with an observable state, or supplied physical terminal. Emulator state checks can be automated; visual/manual checks are needed only where no state API exists. |
-| Privileged Darwin login/session and cross-user permission combinations | A disposable macOS VM with administrative access and controlled accounts. Linux namespace results do not qualify Darwin; do not modify the developer's real login database. |
+| Privileged Darwin login/session and cross-owner permission combinations | A disposable macOS VM with administrative access and controlled accounts. Linux namespace results do not qualify Darwin; do not modify the developer's real login database. |
 | Additional locales and credential/I/O fault cases | Reproducible locale packages and isolated identities/fault fixtures. These are software setup tasks; no physical equipment or routine manual testing is required. |
 
 The repaired subsets do not close every page/default requirement in CSH-081.

@@ -1,7 +1,7 @@
 {
   "README.md": {
-    "bytes": 7461,
-    "sha256": "f50f531eb2b1620db9e9335b91ba7eccee33ec1ad35125c7347fa7f20a6c1d94"
+    "bytes": 8614,
+    "sha256": "56dd27b43f055cd19e21aa678db345009b98e028c2098ebc170bffdcc54d99c7"
   },
   "container-cleanup.json": {
     "bytes": 197,
@@ -26,6 +26,22 @@
   "csh081-linux-sessions-sanitized.log.gz": {
     "bytes": 81,
     "sha256": "fb6b58e873792c20e5aadadc12e86edb32420ec0dd53c5015fd9ae07beeb0348"
+  },
+  "csh081-metadata-normal-build.log.gz": {
+    "bytes": 741,
+    "sha256": "a5e1ace32aeec2ac1d18f845497f3a06d947ad3bbe30feb8109101484c0ce5f9"
+  },
+  "csh081-metadata-normal.log.gz": {
+    "bytes": 72,
+    "sha256": "8e94d92267306875a532446976f0cf42435533785f3061d43dc23d6ce57855a0"
+  },
+  "csh081-metadata-sanitized-build.log.gz": {
+    "bytes": 806,
+    "sha256": "271a7d4f766cc9ccd4f77ddd691dd459f73d2f03ad3f65203f156cbaae46ef80"
+  },
+  "csh081-metadata-sanitized.log.gz": {
+    "bytes": 75,
+    "sha256": "4e578b279cb98077dda33e83e46a53ebafb1bd1add73b07b8c1af2ff3532efdd"
   },
   "csh081-native-expanded.log.gz": {
     "bytes": 460,
@@ -62,6 +78,14 @@
   "csh081-native-sanitized.log.gz": {
     "bytes": 984,
     "sha256": "41cc12f668d766666c5ae7c2326fc532d759d71a4f46fdf7aa645851d118ba83"
+  },
+  "csh081-sessions-metadata-normal.json.gz": {
+    "bytes": 18949,
+    "sha256": "a6f952c89f61e4a408c9b3848f4c55a43bacf9d47da2e660fc4f45f266e5998d"
+  },
+  "csh081-sessions-metadata-sanitized.json.gz": {
+    "bytes": 19118,
+    "sha256": "c63e5b9f0dfb406aca3eb261c804cd3b0afe426034becca3054f5254b11d47c2"
   },
   "environment.json": {
     "bytes": 854,
@@ -119,6 +143,10 @@
     "bytes": 17927,
     "sha256": "767f647184535b4fe59e9ae65f7065fad02c129210a3f58e2968b7a6304a6adc"
   },
+  "metadata-container-cleanup.json": {
+    "bytes": 298,
+    "sha256": "19fb88c509a6e5b0a29aed465018cbfb9ca75b5aef527d885e326b342965aa95"
+  },
   "native-initial.json.gz": {
     "bytes": 29087,
     "sha256": "e6af430552578197a68e12765d06594979d884c8c57927309e5a759becc735fc"
@@ -175,8 +203,12 @@
     "bytes": 36928,
     "sha256": "6d7556b9380690c78050f746690fddda2136054123df9b853dbd9faf3356ce74"
   },
+  "session-audit.json": {
+    "bytes": 2460,
+    "sha256": "40913fc4e998e5abe43d57d8ea808c3d1379e9fc079896eda00d86afcec5482d"
+  },
   "source-comparison.json": {
-    "bytes": 3575,
-    "sha256": "1ec05a38a28584c9d00662e3498de39916dd7a963c5c091b61fd3789c8726ad3"
+    "bytes": 4636,
+    "sha256": "5762ff43472ba9ed890a0d30e6ce578b6ca1d21a28f544bb1347b1ab99aa0cbe"
   }
 }
