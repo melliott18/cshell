@@ -246,7 +246,7 @@ $(EXECUTE_FAULT_OBJECTS): build/tests/execute-fault-%.o: src/%.c $(EXECUTE_HEADE
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/execute_faults.h -c $< -o $@
 
-build/tests/execute_faults: tests/execute_faults.c tests/execute_faults.h $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/alias.o build/builtin.o $(EXECUTE_HEADERS) build/character.o build/stack.o
+build/tests/execute_faults: tests/execute_faults.c tests/execute_faults.h tests/crash_notification.h $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/alias.o build/builtin.o $(EXECUTE_HEADERS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/execute_faults.c $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/alias.o build/builtin.o build/character.o build/stack.o $(LDLIBS)
 
@@ -373,7 +373,7 @@ build/tests/jobs-pty.json: tests/jobs_cases.py build/tests/jobs_helper
 
 .PHONY: test-jobs-pty
 test-jobs-pty: cshell build/tests/jobs-pty.json build/tests/execute_faults
-	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/jobs-pty.json
+	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/jobs-pty.json --timeout 10
 	$(PYTHON) tests/smoke.py ./build/tests/execute_faults --suite tests/fixtures/jobs-fault-pty.json
 
 build/tests/jobs_fixture: tests/jobs_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o build/stack.o
@@ -519,13 +519,37 @@ build/tests/lifecycle-jobs.o: src/jobs.c $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -Dsysconf=csh_lifecycle_sysconf -c $< -o $@
 
-build/tests/jobs_lifecycle: tests/jobs_lifecycle.c build/tests/lifecycle-jobs.o $(EXECUTE_OBJECTS) build/character.o build/stack.o
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/tests/lifecycle-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o build/stack.o $(LDLIBS)
+# Observe fork boundaries only in the lifecycle fixture's executor copy.
+build/tests/lifecycle-execute.o: src/execute.c $(EXECUTE_HEADERS) tests/retention_trace.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -DCSH_RETENTION_INTERPOSE_FORK -include tests/retention_trace.h -c $< -o $@
+
+build/tests/retention-trace.o: tests/retention_trace.c tests/retention_trace.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+build/tests/jobs_lifecycle: tests/jobs_lifecycle.c tests/retention_trace.h build/tests/lifecycle-jobs.o build/tests/lifecycle-execute.o build/tests/retention-trace.o $(EXECUTE_OBJECTS) build/character.o build/stack.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/tests/lifecycle-jobs.o build/tests/lifecycle-execute.o build/tests/retention-trace.o $(filter-out build/jobs.o build/execute.o,$(EXECUTE_OBJECTS)) build/character.o build/stack.o $(LDLIBS)
 
 test-jobs: test-job-retention
+.PHONY: test-job-crash-notification
+test-jobs: test-job-crash-notification
+test-job-crash-notification: build/tests/crash_notification
+	./build/tests/crash_notification
+
+build/tests/crash_notification: tests/crash_notification.c tests/crash_notification.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
 .PHONY: test-job-retention
 test-job-retention: build/tests/jobs_lifecycle
-	$(PYTHON) tests/smoke.py ./build/tests/jobs_lifecycle --suite tests/fixtures/job-retention.json --timeout 60
+	$(PYTHON) tests/retention_diagnostics.py ./build/tests/jobs_lifecycle
+
+.PHONY: test-retention-diagnostics
+test-retention-diagnostics: build/tests/jobs_lifecycle
+	$(PYTHON) tests/retention_trace_checks.py ./build/tests/jobs_lifecycle
+
+test: test-retention-diagnostics
 
 test-jobs-pty: test-job-notifications
 .PHONY: test-job-notifications

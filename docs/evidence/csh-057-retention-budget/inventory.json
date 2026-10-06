@@ -1,0 +1,70 @@
+{
+  "README.md": {
+    "sha256": "a9eb3079315992b7aaf503a3628ce6fa4cc437d557b43ccca45d8aebde1dd718",
+    "bytes": 13588
+  },
+  "analysis.json": {
+    "sha256": "c8842fec1943a0ee1bab2504149c602a982a7c6db42f3ca3b598320e2f0f2574",
+    "bytes": 25541
+  },
+  "analyze.py": {
+    "sha256": "0872d699fe11112922aabfb4ef38a4075db815042bac15b81b0048b58c96ce39",
+    "bytes": 7952
+  },
+  "check_budget.py": {
+    "sha256": "deaa4c957b78d8172cc6542e98c3ce61b259b8f695a56f36058c86260dd049ed",
+    "bytes": 2694
+  },
+  "child-disposal-profile.tar.gz": {
+    "sha256": "1f254d26204f7b20e0d74cc393b2032a7e1588d8bc41cdff411752ab1a12190f",
+    "bytes": 5885
+  },
+  "controlled-delay.patch": {
+    "sha256": "46c04fdaa074067767819e84c5f53d2a7dfe696ff54e9e71b7ab52e323f5217f",
+    "bytes": 473
+  },
+  "hosted-comparison.json": {
+    "sha256": "6a458babab0cc2d555ee8bffb40b1dbde2d3376824f9d14a9478f46e087cc87b",
+    "bytes": 14498
+  },
+  "hosted-failed-job.json": {
+    "sha256": "18226d7f825832bafb3b34e0a594c8efeeb01b8b7ae342933afbf4c8b200c436",
+    "bytes": 4526
+  },
+  "hosted-failed.tar.gz": {
+    "sha256": "de0f4651e6636583131435617b24256a16caf9c83384811395b83feaa2e774ab",
+    "bytes": 69774
+  },
+  "hosted-peer-job.json": {
+    "sha256": "2928d34b30f3210fdf66ec4d1a7769d40e6cbef5229d5a22c3cedff69dd7a94f",
+    "bytes": 4526
+  },
+  "hosted-peer.tar.gz": {
+    "sha256": "613df74b124f5484934ce6d3b78e5be66f82b00cf21019fa7037ed3ff4885003",
+    "bytes": 74027
+  },
+  "linux-validation.json": {
+    "sha256": "212e03f7439c5cb1ccfc6b090b453ef916ba0068110df09d7e650146885b89ac",
+    "bytes": 5258
+  },
+  "linux-validation.tar.gz": {
+    "sha256": "b71c96f888fdd6333dc818891057096ba8bc0c142734ea2c463e5e6b53c7411c",
+    "bytes": 128173
+  },
+  "local-baseline.json": {
+    "sha256": "533867faad7124cbe3c1d895afc842db2507757adc7bf01da58b85051751fdd3",
+    "bytes": 3015
+  },
+  "native-validation.json": {
+    "sha256": "89ff680c2d373be22553db9ca8c0420feea9b0337a5f313a5adaf6e6242a3984",
+    "bytes": 19562
+  },
+  "native-validation.tar.gz": {
+    "sha256": "b328a3817fd3f92e7c8b27416fccf00f17e8e09a6c2a4b1966c7c07269ee8d38",
+    "bytes": 315861
+  },
+  "provenance.json": {
+    "sha256": "7e7992b4d8e0d01065863782a10f6266cda24de68451518b5a34a9e130b7dcdd",
+    "bytes": 1434
+  }
+}
