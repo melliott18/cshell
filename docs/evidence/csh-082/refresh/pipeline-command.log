@@ -1,0 +1,6 @@
+Running make test; log: /work/test-results/test.log
+PASS: make test (101.1s)
+Running make test-pty; log: /work/test-results/test-pty.log
+PASS: make test-pty (0.9s)
+Running make test-harness; log: /work/test-results/test-harness.log
+PASS: make test-harness (16.6s)

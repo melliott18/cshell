@@ -53,7 +53,13 @@ checks, unchanged development PTY behavior, Pipeline report acceptance and
 failure rejection, and identical tested/shipped cshell binary hashes.
 
 [Container operations and Pipeline handoff](../containers.md) documents exact
-commands and registration fields. Pipeline registration/approved-main execution,
-hosted CI, other architectures, sanitizer recurrence, and full host qualification
-are not claimed complete by this preparation. Keep this ticket at review until
-integration into main.
+commands and registration fields. The original PR's hosted application-container,
+Docker and native Linux jobs passed; its macOS sanitizer job hit the CSH-057
+retention timeout subsequently repaired on main. The
+[2026-10-06 integration refresh](../evidence/csh-082/refresh/README.md) records
+validation after merging main into a separate worktree on
+`fix/CSH-082-container-readiness-refresh`, continuing PR #170.
+Pipeline registration/approved-main execution, refreshed hosted CI, other
+architectures, sanitizer recurrence, and full host qualification are not claimed
+complete by this preparation. Keep this ticket at review until integration into
+main.
