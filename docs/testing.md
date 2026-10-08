@@ -589,12 +589,12 @@ exits.
 Equivalent default Docker commands, which do not require host Make:
 
 ```sh
-docker build --tag cshell-test:local .
+docker build --target development --tag cshell-test:local .
 docker run --rm --init cshell-test:local
 docker run --rm --init cshell-test:local make test-pty
 ```
 
-For a clean refresh of the toolchain, use `docker build --pull --no-cache --tag
+For a clean refresh of the toolchain, use `docker build --target development --pull --no-cache --tag
 cshell-test:local .`, then run the image. If Docker cannot connect to the daemon,
 start Docker Desktop or the configured engine and check `docker info`. Build and
 test failures propagate through `make docker-test` as a nonzero exit status.
@@ -1321,7 +1321,7 @@ groups, with read/write/execute, inheritance, precedence and mask controls.
 explicitly supplied disposable filesystem. Failed setup records are failures,
 including the actual command/status/diagnostic, and do not erase the run record.
 
-Use `docker build --build-arg BASE_IMAGE=debian:trixie-slim` for the updated
+Use `docker build --target development --build-arg BASE_IMAGE=debian:trixie-slim` for the updated
 vendor scope; the default base remains Debian 12. [CSH-062 evidence](evidence/csh-062/README.md)
 contains complete native, overlay, ext4-volume, unsupported-tmpfs, BusyBox and
 sanitizer commands/results. [CSH-063](tickets/CSH-063-host-platform-residual-qualification.md)
@@ -1416,3 +1416,8 @@ rows and unassigned conditional prerequisite reports. Regression checks exercise
 these failure cases and the runner's emitted ownership without invoking utilities.
 This is an accounting check, not a conformance suite. See the
 [current individual contracts](host-system-inventory.md#current-contract-ownership).
+
+## Application images
+
+See [Containers and Pipeline](containers.md) for the named test/runtime targets,
+JUnit stage reports, restricted test-container command, and runtime-image checks.

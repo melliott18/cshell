@@ -68,3 +68,5 @@ The [CSH-012 requirement, defect, platform and documentation review](conformance
 
 - [Shell locale and pathname qualification](locale-pathname-qualification.md):
   CSH-067 clauses, exact witnesses, supplied definitions and external prerequisites.
+
+- [Application containers and Pipeline](containers.md): image targets, reports, runtime checks, and registration handoff.
