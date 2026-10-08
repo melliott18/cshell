@@ -29,6 +29,14 @@ case bounds and assertions remain enforced.
   controlled evidence, and repair the demonstrated cause or document a scoped
   disposition before closing this follow-up.
 
+The [CSH-082 hosted audit](../evidence/csh-082/hosted/README.md) retains another
+occurrence at `bd15896`: push job `112444856222` times out after five seconds
+in the 48–63 batch's string and file modes, with output through operand 61.
+The sanitizer signal suite reports 359 passed and two failed; normal-build
+cases and the identical-tree PR workflow pass. CSH-057 retention passes in both
+builds and workflows. These observations remain owned here and do not establish
+a common root cause or close this follow-up.
+
 ## Goal
 
 Integrated in [PR #105](https://github.com/melliott18/cshell/pull/105).

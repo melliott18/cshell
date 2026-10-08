@@ -1,0 +1,999 @@
+{
+  "audited_on": "2026-10-08",
+  "head_commit": "bd158963d8dcf4211581c61a34d859283eada320",
+  "head_tree": "9e83175af9be34ab7c5edeac9e5b442a75537e53",
+  "pr_checkout": {
+    "parents": [
+      "e0166e021da2277b4f87da22c41ff96c704a4b82",
+      "bd158963d8dcf4211581c61a34d859283eada320"
+    ],
+    "sha": "8a44b7221368f76589e9a3f229a9ffef94790cfb",
+    "tree": "9e83175af9be34ab7c5edeac9e5b442a75537e53"
+  },
+  "runs": [
+    {
+      "id": 37514811316,
+      "html_url": "https://github.com/melliott18/cshell/actions/runs/37514811316",
+      "event": "pull_request",
+      "head_sha": "bd158963d8dcf4211581c61a34d859283eada320",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-06T18:53:45Z",
+      "updated_at": "2026-10-06T19:47:24Z",
+      "jobs": [
+        {
+          "id": 112444890582,
+          "name": "Application container",
+          "html_url": "https://github.com/melliott18/cshell/actions/runs/37514811316/job/112444890582",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-06T18:53:48Z",
+          "completed_at": "2026-10-06T18:57:41Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-06T18:53:49Z",
+              "completed_at": "2026-10-06T18:53:49Z"
+            },
+            {
+              "name": "Run actions/checkout@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-06T18:53:49Z",
+              "completed_at": "2026-10-06T18:53:51Z"
+            },
+            {
+              "name": "Build and check runtime under container restrictions",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-06T18:53:51Z",
+              "completed_at": "2026-10-06T18:54:13Z"
+            },
+            {
+              "name": "Build Pipeline test image",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-10-06T18:54:13Z",
+              "completed_at": "2026-10-06T18:54:47Z"
+            },
+            {
+              "name": "Run application-owned tests under Pipeline restrictions",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-10-06T18:54:47Z",
+              "completed_at": "2026-10-06T18:57:37Z"
+            },
+            {
+              "name": "Collect application test reports",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-06T18:57:37Z",
+              "completed_at": "2026-10-06T18:57:38Z"
+            },
+            {
+              "name": "Retain application test reports",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-10-06T18:57:38Z",
+              "completed_at": "2026-10-06T18:57:39Z"
+            },
+            {
+              "name": "Remove application test container",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-10-06T18:57:39Z",
+              "completed_at": "2026-10-06T18:57:39Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16,
+              "started_at": "2026-10-06T18:57:39Z",
+              "completed_at": "2026-10-06T18:57:39Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17,
+              "started_at": "2026-10-06T18:57:39Z",
+              "completed_at": "2026-10-06T18:57:39Z"
+            }
+          ]
+        },
+        {
+          "id": 112444890879,
+          "name": "Docker (Linux)",
+          "html_url": "https://github.com/melliott18/cshell/actions/runs/37514811316/job/112444890879",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-06T18:53:47Z",
+          "completed_at": "2026-10-06T19:04:57Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-06T18:53:48Z",
+              "completed_at": "2026-10-06T18:53:48Z"
+            },
+            {
+              "name": "Run actions/checkout@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-06T18:53:48Z",
+              "completed_at": "2026-10-06T18:53:50Z"
+            },
+            {
+              "name": "Build Linux image and test replacement APIs, cshell runtime, and selected behavior",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-06T18:53:50Z",
+              "completed_at": "2026-10-06T18:57:05Z"
+            },
+            {
+              "name": "Test cshell and selected terminal behavior in Linux image",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-10-06T18:57:05Z",
+              "completed_at": "2026-10-06T18:57:13Z"
+            },
+            {
+              "name": "Qualify host utilities in Linux image",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-10-06T18:57:13Z",
+              "completed_at": "2026-10-06T18:57:51Z"
+            },
+            {
+              "name": "Test harness failure handling in Linux image",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-06T18:57:51Z",
+              "completed_at": "2026-10-06T18:58:08Z"
+            },
+            {
+              "name": "Qualify controlled host identities and private devices",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-10-06T18:58:08Z",
+              "completed_at": "2026-10-06T18:59:26Z"
+            },
+            {
+              "name": "Test host probe timeout ownership",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-10-06T18:59:26Z",
+              "completed_at": "2026-10-06T18:59:36Z"
+            },
+            {
+              "name": "Test unequal invocation identities in Linux image",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-10-06T18:59:36Z",
+              "completed_at": "2026-10-06T18:59:37Z"
+            },
+            {
+              "name": "Check controlled host helpers with ASan and UBSan",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-10-06T18:59:37Z",
+              "completed_at": "2026-10-06T19:00:06Z"
+            },
+            {
+              "name": "Check Linux build with ASan and UBSan",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-10-06T19:00:06Z",
+              "completed_at": "2026-10-06T19:04:55Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 22,
+              "started_at": "2026-10-06T19:04:55Z",
+              "completed_at": "2026-10-06T19:04:55Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23,
+              "started_at": "2026-10-06T19:04:55Z",
+              "completed_at": "2026-10-06T19:04:55Z"
+            }
+          ]
+        },
+        {
+          "id": 112444890880,
+          "name": "Native (ubuntu-24.04, gcc)",
+          "html_url": "https://github.com/melliott18/cshell/actions/runs/37514811316/job/112444890880",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-06T18:53:49Z",
+          "completed_at": "2026-10-06T19:00:53Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-06T18:53:50Z",
+              "completed_at": "2026-10-06T18:53:51Z"
+            },
+            {
+              "name": "Run actions/checkout@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-06T18:53:51Z",
+              "completed_at": "2026-10-06T18:53:52Z"
+            },
+            {
+              "name": "Run actions/setup-python@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-06T18:53:52Z",
+              "completed_at": "2026-10-06T18:53:53Z"
+            },
+            {
+              "name": "Install Linux build dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-10-06T18:53:53Z",
+              "completed_at": "2026-10-06T18:54:15Z"
+            },
+            {
+              "name": "Install macOS profile dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 5,
+              "started_at": "2026-10-06T18:54:15Z",
+              "completed_at": "2026-10-06T18:54:15Z"
+            },
+            {
+              "name": "Build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-06T18:54:15Z",
+              "completed_at": "2026-10-06T18:54:20Z"
+            },
+            {
+              "name": "Test replacement APIs, cshell runtime, and selected behavior",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-10-06T18:54:20Z",
+              "completed_at": "2026-10-06T18:56:07Z"
+            },
+            {
+              "name": "Test cshell terminal behavior and selected terminal suite",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-10-06T18:56:07Z",
+              "completed_at": "2026-10-06T18:56:08Z"
+            },
+            {
+              "name": "Qualify host utilities and rerun runtime with selected PATH",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-10-06T18:56:08Z",
+              "completed_at": "2026-10-06T18:56:39Z"
+            },
+            {
+              "name": "Test harness failure handling",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-10-06T18:56:39Z",
+              "completed_at": "2026-10-06T18:56:57Z"
+            },
+            {
+              "name": "Check replacement modules and cshell runtime with ASan and UBSan",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-10-06T18:56:57Z",
+              "completed_at": "2026-10-06T19:00:49Z"
+            },
+            {
+              "name": "Preserve retention timing and stack diagnostics",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-10-06T19:00:49Z",
+              "completed_at": "2026-10-06T19:00:50Z"
+            },
+            {
+              "name": "Post Run actions/setup-python@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23,
+              "started_at": "2026-10-06T19:00:50Z",
+              "completed_at": "2026-10-06T19:00:50Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 24,
+              "started_at": "2026-10-06T19:00:50Z",
+              "completed_at": "2026-10-06T19:00:50Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 25,
+              "started_at": "2026-10-06T19:00:50Z",
+              "completed_at": "2026-10-06T19:00:51Z"
+            }
+          ]
+        },
+        {
+          "id": 112444890939,
+          "name": "Native (macos-15, clang)",
+          "html_url": "https://github.com/melliott18/cshell/actions/runs/37514811316/job/112444890939",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-06T18:53:52Z",
+          "completed_at": "2026-10-06T19:47:23Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-06T18:53:52Z",
+              "completed_at": "2026-10-06T18:53:53Z"
+            },
+            {
+              "name": "Run actions/checkout@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-06T18:53:53Z",
+              "completed_at": "2026-10-06T18:53:56Z"
+            },
+            {
+              "name": "Run actions/setup-python@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-06T18:53:56Z",
+              "completed_at": "2026-10-06T18:53:56Z"
+            },
+            {
+              "name": "Install Linux build dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 4,
+              "started_at": "2026-10-06T18:53:56Z",
+              "completed_at": "2026-10-06T18:53:56Z"
+            },
+            {
+              "name": "Install macOS profile dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-10-06T18:53:56Z",
+              "completed_at": "2026-10-06T18:54:01Z"
+            },
+            {
+              "name": "Build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-06T18:54:01Z",
+              "completed_at": "2026-10-06T18:54:04Z"
+            },
+            {
+              "name": "Test replacement APIs, cshell runtime, and selected behavior",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-10-06T18:54:04Z",
+              "completed_at": "2026-10-06T18:57:38Z"
+            },
+            {
+              "name": "Test cshell terminal behavior and selected terminal suite",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-10-06T18:57:38Z",
+              "completed_at": "2026-10-06T18:57:42Z"
+            },
+            {
+              "name": "Qualify host utilities and rerun runtime with selected PATH",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-10-06T18:57:42Z",
+              "completed_at": "2026-10-06T18:58:52Z"
+            },
+            {
+              "name": "Test harness failure handling",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-10-06T18:58:52Z",
+              "completed_at": "2026-10-06T18:59:21Z"
+            },
+            {
+              "name": "Check replacement modules and cshell runtime with ASan and UBSan",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-10-06T18:59:21Z",
+              "completed_at": "2026-10-06T19:47:17Z"
+            },
+            {
+              "name": "Preserve retention timing and stack diagnostics",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-10-06T19:47:17Z",
+              "completed_at": "2026-10-06T19:47:18Z"
+            },
+            {
+              "name": "Post Run actions/setup-python@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23,
+              "started_at": "2026-10-06T19:47:18Z",
+              "completed_at": "2026-10-06T19:47:18Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 24,
+              "started_at": "2026-10-06T19:47:18Z",
+              "completed_at": "2026-10-06T19:47:19Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 25,
+              "started_at": "2026-10-06T19:47:19Z",
+              "completed_at": "2026-10-06T19:47:21Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 37514800844,
+      "html_url": "https://github.com/melliott18/cshell/actions/runs/37514800844",
+      "event": "push",
+      "head_sha": "bd158963d8dcf4211581c61a34d859283eada320",
+      "run_attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-10-06T18:53:40Z",
+      "updated_at": "2026-10-06T19:38:12Z",
+      "jobs": [
+        {
+          "id": 112444856116,
+          "name": "Docker (Linux)",
+          "html_url": "https://github.com/melliott18/cshell/actions/runs/37514800844/job/112444856116",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-06T18:53:43Z",
+          "completed_at": "2026-10-06T19:03:02Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-06T18:53:44Z",
+              "completed_at": "2026-10-06T18:53:44Z"
+            },
+            {
+              "name": "Run actions/checkout@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-06T18:53:44Z",
+              "completed_at": "2026-10-06T18:53:46Z"
+            },
+            {
+              "name": "Build Linux image and test replacement APIs, cshell runtime, and selected behavior",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-06T18:53:46Z",
+              "completed_at": "2026-10-06T18:56:45Z"
+            },
+            {
+              "name": "Test cshell and selected terminal behavior in Linux image",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-10-06T18:56:45Z",
+              "completed_at": "2026-10-06T18:56:51Z"
+            },
+            {
+              "name": "Qualify host utilities in Linux image",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-10-06T18:56:51Z",
+              "completed_at": "2026-10-06T18:57:18Z"
+            },
+            {
+              "name": "Test harness failure handling in Linux image",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-06T18:57:18Z",
+              "completed_at": "2026-10-06T18:57:35Z"
+            },
+            {
+              "name": "Qualify controlled host identities and private devices",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-10-06T18:57:35Z",
+              "completed_at": "2026-10-06T18:58:28Z"
+            },
+            {
+              "name": "Test host probe timeout ownership",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-10-06T18:58:28Z",
+              "completed_at": "2026-10-06T18:58:38Z"
+            },
+            {
+              "name": "Test unequal invocation identities in Linux image",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-10-06T18:58:38Z",
+              "completed_at": "2026-10-06T18:58:39Z"
+            },
+            {
+              "name": "Check controlled host helpers with ASan and UBSan",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-10-06T18:58:39Z",
+              "completed_at": "2026-10-06T18:58:56Z"
+            },
+            {
+              "name": "Check Linux build with ASan and UBSan",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-10-06T18:58:56Z",
+              "completed_at": "2026-10-06T19:02:59Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 22,
+              "started_at": "2026-10-06T19:02:59Z",
+              "completed_at": "2026-10-06T19:02:59Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23,
+              "started_at": "2026-10-06T19:02:59Z",
+              "completed_at": "2026-10-06T19:02:59Z"
+            }
+          ]
+        },
+        {
+          "id": 112444856222,
+          "name": "Native (macos-15, clang)",
+          "html_url": "https://github.com/melliott18/cshell/actions/runs/37514800844/job/112444856222",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-06T18:53:51Z",
+          "completed_at": "2026-10-06T19:38:11Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-06T18:53:51Z",
+              "completed_at": "2026-10-06T18:53:53Z"
+            },
+            {
+              "name": "Run actions/checkout@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-06T18:53:53Z",
+              "completed_at": "2026-10-06T18:53:56Z"
+            },
+            {
+              "name": "Run actions/setup-python@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-06T18:53:56Z",
+              "completed_at": "2026-10-06T18:53:56Z"
+            },
+            {
+              "name": "Install Linux build dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 4,
+              "started_at": "2026-10-06T18:53:56Z",
+              "completed_at": "2026-10-06T18:53:56Z"
+            },
+            {
+              "name": "Install macOS profile dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-10-06T18:53:56Z",
+              "completed_at": "2026-10-06T18:54:02Z"
+            },
+            {
+              "name": "Build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-06T18:54:02Z",
+              "completed_at": "2026-10-06T18:54:05Z"
+            },
+            {
+              "name": "Test replacement APIs, cshell runtime, and selected behavior",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-10-06T18:54:05Z",
+              "completed_at": "2026-10-06T18:57:46Z"
+            },
+            {
+              "name": "Test cshell terminal behavior and selected terminal suite",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-10-06T18:57:46Z",
+              "completed_at": "2026-10-06T18:57:49Z"
+            },
+            {
+              "name": "Qualify host utilities and rerun runtime with selected PATH",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-10-06T18:57:49Z",
+              "completed_at": "2026-10-06T18:59:08Z"
+            },
+            {
+              "name": "Test harness failure handling",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-10-06T18:59:08Z",
+              "completed_at": "2026-10-06T18:59:38Z"
+            },
+            {
+              "name": "Check replacement modules and cshell runtime with ASan and UBSan",
+              "status": "completed",
+              "conclusion": "failure",
+              "number": 11,
+              "started_at": "2026-10-06T18:59:38Z",
+              "completed_at": "2026-10-06T19:38:05Z"
+            },
+            {
+              "name": "Preserve retention timing and stack diagnostics",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-10-06T19:38:05Z",
+              "completed_at": "2026-10-06T19:38:07Z"
+            },
+            {
+              "name": "Post Run actions/setup-python@v6",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 23,
+              "started_at": "2026-10-06T19:38:07Z",
+              "completed_at": "2026-10-06T19:38:07Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 24,
+              "started_at": "2026-10-06T19:38:07Z",
+              "completed_at": "2026-10-06T19:38:08Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 25,
+              "started_at": "2026-10-06T19:38:08Z",
+              "completed_at": "2026-10-06T19:38:10Z"
+            }
+          ]
+        },
+        {
+          "id": 112444856292,
+          "name": "Application container",
+          "html_url": "https://github.com/melliott18/cshell/actions/runs/37514800844/job/112444856292",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-06T18:53:44Z",
+          "completed_at": "2026-10-06T18:57:40Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-06T18:53:45Z",
+              "completed_at": "2026-10-06T18:53:45Z"
+            },
+            {
+              "name": "Run actions/checkout@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-06T18:53:45Z",
+              "completed_at": "2026-10-06T18:53:47Z"
+            },
+            {
+              "name": "Build and check runtime under container restrictions",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-06T18:53:47Z",
+              "completed_at": "2026-10-06T18:54:05Z"
+            },
+            {
+              "name": "Build Pipeline test image",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-10-06T18:54:05Z",
+              "completed_at": "2026-10-06T18:54:38Z"
+            },
+            {
+              "name": "Run application-owned tests under Pipeline restrictions",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-10-06T18:54:38Z",
+              "completed_at": "2026-10-06T18:57:36Z"
+            },
+            {
+              "name": "Collect application test reports",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-06T18:57:36Z",
+              "completed_at": "2026-10-06T18:57:36Z"
+            },
+            {
+              "name": "Retain application test reports",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-10-06T18:57:36Z",
+              "completed_at": "2026-10-06T18:57:38Z"
+            },
+            {
+              "name": "Remove application test container",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-10-06T18:57:38Z",
+              "completed_at": "2026-10-06T18:57:38Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16,
+              "started_at": "2026-10-06T18:57:38Z",
+              "completed_at": "2026-10-06T18:57:38Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17,
+              "started_at": "2026-10-06T18:57:38Z",
+              "completed_at": "2026-10-06T18:57:38Z"
+            }
+          ]
+        },
+        {
+          "id": 112444856430,
+          "name": "Native (ubuntu-24.04, gcc)",
+          "html_url": "https://github.com/melliott18/cshell/actions/runs/37514800844/job/112444856430",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-06T18:53:43Z",
+          "completed_at": "2026-10-06T18:59:44Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-10-06T18:53:43Z",
+              "completed_at": "2026-10-06T18:53:44Z"
+            },
+            {
+              "name": "Run actions/checkout@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-10-06T18:53:44Z",
+              "completed_at": "2026-10-06T18:53:46Z"
+            },
+            {
+              "name": "Run actions/setup-python@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-10-06T18:53:46Z",
+              "completed_at": "2026-10-06T18:53:46Z"
+            },
+            {
+              "name": "Install Linux build dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-10-06T18:53:46Z",
+              "completed_at": "2026-10-06T18:54:08Z"
+            },
+            {
+              "name": "Install macOS profile dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 5,
+              "started_at": "2026-10-06T18:54:08Z",
+              "completed_at": "2026-10-06T18:54:08Z"
+            },
+            {
+              "name": "Build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-10-06T18:54:08Z",
+              "completed_at": "2026-10-06T18:54:11Z"
+            },
+            {
+              "name": "Test replacement APIs, cshell runtime, and selected behavior",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-10-06T18:54:11Z",
+              "completed_at": "2026-10-06T18:55:44Z"
+            },
+            {
+              "name": "Test cshell terminal behavior and selected terminal suite",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-10-06T18:55:44Z",
+              "completed_at": "2026-10-06T18:55:45Z"
+            },
+            {
+              "name": "Qualify host utilities and rerun runtime with selected PATH",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-10-06T18:55:45Z",
+              "completed_at": "2026-10-06T18:56:11Z"
+            },
+            {
+              "name": "Test harness failure handling",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-10-06T18:56:11Z",
+              "completed_at": "2026-10-06T18:56:28Z"
+            },
+            {
+              "name": "Check replacement modules and cshell runtime with ASan and UBSan",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-10-06T18:56:28Z",
+              "completed_at": "2026-10-06T18:59:42Z"
+            },
+            {
+              "name": "Preserve retention timing and stack diagnostics",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-10-06T18:59:42Z",
+              "completed_at": "2026-10-06T18:59:43Z"
+            },
+            {
+              "name": "Post Run actions/setup-python@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23,
+              "started_at": "2026-10-06T18:59:43Z",
+              "completed_at": "2026-10-06T18:59:43Z"
+            },
+            {
+              "name": "Post Run actions/checkout@v6",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 24,
+              "started_at": "2026-10-06T18:59:43Z",
+              "completed_at": "2026-10-06T18:59:43Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 25,
+              "started_at": "2026-10-06T18:59:43Z",
+              "completed_at": "2026-10-06T18:59:43Z"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "junit": {
+    "name": "cshell container suites",
+    "tests": "3",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "170.104765"
+  },
+  "failure_lines": [
+    "2026-10-06T19:33:09.0721230Z FAIL: signal contracts: exit operands 48 through 63 (string)",
+    "2026-10-06T19:33:14.1510600Z FAIL: signal contracts: exit operands 48 through 63 (file)"
+  ],
+  "failure_owner": "CSH-054 / #90",
+  "files": {
+    "application-container.log.gz": "dbb2f921fab1c9a242067df03263e1b4856643bf7aaa96865ab1ba397f749722",
+    "junit.xml": "aa198e7e8d79a6138f0755bd8cae8b8538cb4695795ea90e16fe644d8ecd711e",
+    "macos-pr.log.gz": "5ef6633991f448e4b15de8a4463f7cd1ca6f08ebebb5b4fed50d0c441861317a",
+    "macos-push.log.gz": "7bbad971f07d51ba7979776a633b7e9bf01fdd7f002fa11074af8e61bf74de98",
+    "test-harness.log.gz": "220fbb340c91efa10e5b5a85223905547d951c9d8128533607c4246f9e6be122",
+    "test-pty.log.gz": "b15fbf2244f9ba0fe265d3fbd6c118a7d86e32d6d187178159699d19ebf924b8",
+    "test.log.gz": "8bbda2b7fdedb74472361b4d3639769332fa9098af84204d71dac263a36d2496"
+  }
+}

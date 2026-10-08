@@ -1,8 +1,10 @@
 # CSH-082 container preparation validation
 
 The [2026-10-06 integration refresh](refresh/README.md) retains validation
-against current main and reconciles the original hosted CI result. The results
-below remain the original 2026-09-30 snapshot.
+against current main. The [2026-10-08 hosted audit](hosted/README.md) records
+successful container acceptance on AMD64, a passing complete PR workflow, and
+the duplicate push workflow's separate CSH-054 failures. The results below
+remain the original 2026-09-30 snapshot.
 
 Validated on 2026-09-30 with a macOS ARM64 host and Linux ARM64 Docker engine.
 [validation.json](validation.json) records engine/image identities, exact test

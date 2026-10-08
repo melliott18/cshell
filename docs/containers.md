@@ -117,8 +117,9 @@ change is merged into the approved application branch:
 
 This is an application-side handoff example. Registration belongs in Pipeline's
 `config/applications/cshell.json`; this change does not register or deploy the
-application. The initial local integration profile uses Linux ARM64. GitHub's application-container job is configured to check native AMD64; emulation and other
-architectures are not qualified here.
+application. The initial local integration profile uses Linux ARM64. The
+[hosted application-container checks](evidence/csh-082/hosted/README.md) also
+pass on native AMD64; emulation and other architectures are not qualified here.
 
 Once registered, run from Pipeline with a full approved-main commit and a fresh
 output path (replace `FULL_COMMIT_SHA` with that 40-character SHA):

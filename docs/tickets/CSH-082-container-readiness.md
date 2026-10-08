@@ -59,7 +59,11 @@ retention timeout subsequently repaired on main. The
 [2026-10-06 integration refresh](../evidence/csh-082/refresh/README.md) records
 validation after merging main into a separate worktree on
 `fix/CSH-082-container-readiness-refresh`, continuing PR #170.
-Pipeline registration/approved-main execution, refreshed hosted CI, other
-architectures, sanitizer recurrence, and full host qualification are not claimed
-complete by this preparation. Keep this ticket at review until integration into
-main.
+The [2026-10-08 hosted audit](../evidence/csh-082/hosted/README.md) confirms
+container acceptance on AMD64 and a passing complete PR workflow, including
+normal and sanitizer suites. The identical-tree push workflow retains two
+macOS sanitizer exit-operand timeouts under the already-open CSH-054; that
+failure remains unresolved and is not hidden by the passing PR run.
+Pipeline registration/approved-main execution, other architectures, and full
+host qualification are not claimed complete by this preparation. Keep this
+ticket at review until integration into main.

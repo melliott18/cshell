@@ -53,6 +53,8 @@ The current main includes the subsequent
 and [integration verification](../../csh-057-final-verification/README.md).
 This refresh retains those repairs without weakening container assertions.
 
-Fresh hosted CI and sanitizer execution, other architectures, full host-profile
-qualification, and Pipeline registration/approved-main execution are not
-established by this local record. The ticket remains at review until merged.
+The subsequent [hosted audit](../hosted/README.md) records AMD64 container
+checks and native/Docker normal and sanitizer results, including the separate
+CSH-054 failures. Full host-profile qualification and Pipeline
+registration/approved-main execution are not established by this local record.
+The ticket remains at review until merged.
