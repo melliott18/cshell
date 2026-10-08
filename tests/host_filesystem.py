@@ -10,6 +10,7 @@ import platform
 import re
 import shlex
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -20,6 +21,7 @@ import pty_harness
 import smoke
 from host_filesystem_cases import UTILITIES, cases, audit_cases, terminal_cases, setup, effect_errors
 from host_filesystem_extended import cases as extended_cases
+from host_filesystem_remaining import cases as remaining_cases
 from host_platform import filesystem_identity
 from host_utilities import inventory, match, sanitizer_diagnostic, serial, sha, source_identity
 
@@ -27,6 +29,8 @@ from host_utilities import inventory, match, sanitizer_diagnostic, serial, sha, 
 def stdout_matches(expected, output, directory, cwd, row):
     if isinstance(expected, bytes):
         return output == expected
+    if expected == 'logical-cwd':
+        return output == os.fsencode(str(directory.resolve() / 'logical') + '\n')
     if expected == 'cwd':
         return output == os.fsencode(str(cwd.resolve()) + '\n')
     if expected.startswith('resolved-'):
@@ -56,13 +60,57 @@ def stdout_matches(expected, output, directory, cwd, row):
     raise ValueError('unknown stdout oracle: ' + expected)
 
 
-def stderr_matches(row, output):
+def stderr_matches(row, output, provider=None):
+    if row['stderr'] == 'dd-records':
+        a, b, c, d = row['dd_records']
+        prefix = f'{a}+{b} records in\n{c}+{d} records out\n'.encode()
+        suffix = output[len(prefix):]
+        # STDERR permits diagnostics. Apple emits this exact informational line
+        # for an odd swab record; it is not a count/content contract failure.
+        if (row['id'] == 'dd/remaining-swab-odd' and platform.system() == 'Darwin'
+                and provider == '/bin/dd' and suffix.startswith(b'1 odd length swab record\n')):
+            suffix = suffix[len(b'1 odd length swab record\n'):]
+        return output.startswith(prefix) and re.fullmatch(
+            str(row['dd_bytes']).encode() + rb' bytes[^\n]*\n', suffix) is not None
     if row['stderr'] != 'dd-statistics':
         return match(row['stderr'], output)
     count, size = {'dd/copy': (2, 512), 'dd/skip': (1, 128), 'dd/swab': (2, 8)}[row['id']]
     prefix = f'{count}+0 records in\n{count}+0 records out\n'.encode()
     # Transfer-rate text is an extension, not an exact deterministic byte oracle.
     return output.startswith(prefix) and re.fullmatch(str(size).encode() + rb' bytes[^\n]*\n', output[len(prefix):]) is not None
+
+
+def read_fault_marker(path):
+    """Read only a bounded regular marker through the checked descriptor.
+
+    Markers are child output: a FIFO must not bypass the capture watchdog,
+    and a symlink must not redirect the oracle to another file.
+    """
+    limit = 4096
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
+    try:
+        info = os.fstat(fd)
+        if not stat.S_ISREG(info.st_mode) or info.st_size > limit:
+            raise ValueError('fault marker is not a bounded regular file')
+        data = os.read(fd, limit + 1)
+        if len(data) > limit:
+            raise ValueError('fault marker exceeds byte limit')
+        marker = json.loads(data)
+        if not isinstance(marker, dict):
+            raise ValueError('fault marker must be a JSON object')
+        return marker
+    finally:
+        os.close(fd)
+
+
+def allocation_marker_matches(expected, marker):
+    if not isinstance(marker, dict) or set(marker) != {'requested', 'calls', 'triggered'}:
+        return False
+    if any(type(value) is not int for value in marker.values()):
+        return False
+    return (marker['requested'] == expected['requested']
+            and marker['triggered'] == expected['triggered']
+            and expected['calls_min'] <= marker['calls'] <= expected['calls_max'])
 
 
 def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, timeout=5, sanitizer=False):
@@ -78,6 +126,8 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
         cwd = setup(directory, row)
         env = {'PATH': search_path, 'TZ': 'UTC0', 'LC_ALL': utf8 if row.get('utf8') else 'C'}
         env.update(row.get('env', {}))
+        if row.get('logical_cwd'):
+            env['PWD'] = str(directory.resolve() / 'logical')
         if sanitizer:
             env.update(ASAN_OPTIONS='halt_on_error=1' + (':detect_leaks=0' if platform.system() == 'Linux' else ''),
                        UBSAN_OPTIONS='halt_on_error=1')
@@ -120,7 +170,7 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
             output = {'stdout': b'', 'stderr': b''}
         if action:
             try:
-                marker = json.loads((cwd / '.io-fault.json').read_text())
+                marker = read_fault_marker(cwd / '.io-fault.json')
                 expected_errno = {'file-size': errno.EFBIG, 'closed-output': errno.EBADF,
                                   'closed-input': errno.EBADF, 'broken-pipe': errno.EPIPE, 'enospc': errno.ENOSPC}[action]
                 if (marker.get('phase'), marker.get('action'), marker.get('provider'), marker.get('errno')) != ('armed', action, provider, expected_errno):
@@ -128,13 +178,22 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
                 record['kernel_fault'] = marker
             except (OSError, ValueError) as error:
                 errors.append('missing/invalid kernel fault marker: ' + str(error))
+        if 'allocation_fault' in row or row.get('allocation_probe'):
+            try:
+                marker = read_fault_marker(cwd / '.allocation-fault.json')
+                expected = row.get('allocation_fault', dict(requested=0, triggered=0, calls_min=1, calls_max=128))
+                if not allocation_marker_matches(expected, marker):
+                    errors.append('allocation fault coverage mismatch')
+                record['allocation_fault'] = marker
+            except (OSError, ValueError) as error:
+                errors.append('missing/invalid allocation marker: ' + str(error))
         effects, observed = effect_errors(directory, row)
         errors.extend(effects)
         if not match(row['status'], status):
             errors.append('status mismatch')
         if not stdout_matches(row['stdout'], output['stdout'], directory, cwd, row):
             errors.append('stdout mismatch')
-        if not stderr_matches(row, output['stderr']):
+        if not stderr_matches(row, output['stderr'], provider):
             errors.append('stderr mismatch')
         if sanitizer_diagnostic(output):
             errors.append('sanitizer diagnostic')
@@ -160,6 +219,7 @@ def main():
     parser.add_argument('--audit', action='store_true')
     parser.add_argument('--sanitizer', action='store_true')
     parser.add_argument('--provider-audit', action='store_true', help='Require cycle/archive/fault provider contracts; all are mandatory in the selected profile')
+    parser.add_argument('--remaining-only', action='store_true', help='Select CSH-080 ordinary filesystem contracts')
     parser.add_argument('--extended-only', action='store_true', help='Select only traversal/link/metadata/archive/I/O extensions')
     args = parser.parse_args()
     providers = inventory(args.path, UTILITIES)
@@ -175,8 +235,10 @@ def main():
             pass
     locale.setlocale(locale.LC_CTYPE, previous)
     rows = [row for row in extended_cases() if args.provider_audit or not row.get('provider_audit')]
-    if not args.extended_only:
-        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows
+    if args.remaining_only:
+        rows = list(remaining_cases())
+    elif not args.extended_only:
+        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows + list(remaining_cases())
     records = []
     for row in rows:
         for mode in row.get('modes', ('direct', 'string', 'file', 'stdin')):
@@ -186,8 +248,8 @@ def main():
             if record['verdict'] != 'PASS':
                 print(json.dumps(record), flush=True)
     totals = {key: sum(r['verdict'] == key for r in records) for key in ('PASS', 'FAIL')}
-    result = dict(ticket='CSH-072', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
-                  full_contracts_qualified=False, selection='extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
+    result = dict(ticket='CSH-080', predecessor='CSH-072', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
+                  full_contracts_qualified=False, selection='remaining' if args.remaining_only else 'extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
                   unavailable_capabilities=[] if platform.system() == 'Linux' else ['Linux virtual-device ENOSPC'],
                   path=args.path, providers=providers, platform=platform.platform(),
                   libc=platform.libc_ver(), utf8_locale=utf8, uid=os.getuid(), gid=os.getgid(), groups=os.getgroups(),

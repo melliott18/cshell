@@ -26,7 +26,7 @@ def provision(destination, gnu_bin=None):
         # Homebrew's prefixed names do not change the system PATH or echo policy.
         search = str(gnu_bin) if gnu_bin else os.environ.get('PATH', os.defpath)
         overrides.update({name: shutil.which('g' + name, path=search)
-                         for name in ('test', '[', 'find')})
+                         for name in ('test', '[', 'find', 'dd')})
     elif system == 'Linux':
         overrides['kill'] = shutil.which('busybox', path=os.defpath)
     else:

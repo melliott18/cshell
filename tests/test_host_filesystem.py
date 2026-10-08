@@ -1,8 +1,10 @@
 """CSH-072 harness failure and oracle regressions, not provider conformance."""
 import json
+import errno
 import os
 from pathlib import Path
 import sys
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -10,6 +12,7 @@ from unittest.mock import patch
 import pty_harness
 
 from host_filesystem_extended import cases as extended_cases
+from host_filesystem_remaining import cases as remaining_cases
 from host_contract_inventory import utility_owner
 from host_filesystem import run_case, stdout_matches, stderr_matches
 from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, terminal_cases, effect_errors
@@ -17,10 +20,111 @@ from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, ter
 
 class FilesystemHarnessTests(unittest.TestCase):
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux"))
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
+
+    def test_remaining_capability_setup_failure_is_cleaned(self):
+        with tempfile.TemporaryDirectory() as root:
+            row = next(r for r in remaining_cases() if r.get('utf8'))
+            record = run_case(Path('/bin/true'), {row['utility']: {'path': '/bin/true'}},
+                              os.defpath, row, 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            self.assertTrue(record['cleanup'])
+
+    def test_allocation_markers_reject_missing_unarmed_and_malformed_results(self):
+        from host_filesystem import allocation_marker_matches
+        expected = dict(requested=2, triggered=1, calls_min=2, calls_max=4)
+        self.assertTrue(allocation_marker_matches(expected, dict(requested=2, triggered=1, calls=3)))
+        for marker in ({}, [], dict(requested=2, triggered=0, calls=2),
+                       dict(requested=2, triggered=1, calls=1), dict(requested=2, triggered=1, calls=5),
+                       dict(requested=2, triggered=True, calls=2)):
+            self.assertFalse(allocation_marker_matches(expected, marker))
+        with tempfile.TemporaryDirectory() as root:
+            row = case('readlink', 'unarmed-allocation', ['link'], status='nonzero', err='nonempty',
+                       allocation_fault=expected)
+            with patch('host_filesystem.smoke.capture', return_value=(1, {'stdout': b'', 'stderr': b'failed'}, [])):
+                record = run_case(Path('/bin/true'), {'readlink': {'path': '/bin/true'}}, os.defpath,
+                                  row, 'direct', Path(root), None)
+            self.assertEqual(record['verdict'], 'FAIL')
+            self.assertTrue(any('allocation marker' in e for e in record['errors']))
+            self.assertTrue(record['cleanup'])
+
+    def test_child_markers_cannot_hang_or_redirect_the_oracle(self):
+        # The outer watchdog catches a regression that blocks in the parent
+        # after smoke.capture has already reaped the provider.
+        tests = Path(__file__).resolve().parent
+        for action in ('allocation', 'kernel'):
+            for kind in ('fifo', 'symlink', 'directory', 'oversized', 'nonobject'):
+                with self.subTest(action=action, kind=kind), tempfile.TemporaryDirectory() as root:
+                    root = Path(root)
+                    marker = '.allocation-fault.json' if action == 'allocation' else '.io-fault.json'
+                    row = case('readlink', 'invalid-marker', ['link'], status='nonzero', err='nonempty')
+                    if action == 'allocation':
+                        row['allocation_fault'] = dict(requested=1, triggered=1, calls_min=1, calls_max=1)
+                    else:
+                        row['io_action'] = 'broken-pipe'
+                    provider = root / 'provider'
+                    payload = (dict(requested=1, triggered=1, calls=1) if action == 'allocation'
+                               else dict(phase='armed', action='broken-pipe',
+                                         provider=str(provider), errno=errno.EPIPE))
+                    encoded = json.dumps(payload)
+                    program = (
+                        '#!' + sys.executable + '\n'
+                        'import os,sys\nfrom pathlib import Path\n'
+                        f'p=Path({marker!r})\np.unlink(missing_ok=True)\n'
+                    )
+                    if kind == 'fifo':
+                        program += 'os.mkfifo(p)\n'
+                    elif kind == 'symlink':
+                        program += f"Path('payload').write_text({encoded!r})\np.symlink_to('payload')\n"
+                    elif kind == 'directory':
+                        program += 'p.mkdir()\n'
+                    elif kind == 'oversized':
+                        program += f"p.write_text({encoded!r} + ' ' * 4096)\n"
+                    else:
+                        program += "p.write_text('[]')\n"
+                    provider.write_text(program + "print('injected error',file=sys.stderr)\nsys.exit(1)\n")
+                    provider.chmod(0o700)
+                    script = (
+                        'import json,os,sys\nfrom pathlib import Path\n'
+                        f'sys.path.insert(0,{str(tests)!r})\n'
+                        'from host_filesystem import run_case\n'
+                        f'record=run_case(Path({str(provider)!r}),'
+                        f'{{"readlink":{{"path":{str(provider)!r}}}}},os.defpath,'
+                        f'{row!r},"direct",Path({str(root)!r}),None)\n'
+                        'print(json.dumps(record))\n'
+                    )
+                    result = subprocess.run([sys.executable, '-c', script],
+                                            capture_output=True, text=True, timeout=5, check=True)
+                    record = json.loads(result.stdout)
+                    self.assertEqual(record['verdict'], 'FAIL')
+                    self.assertTrue(any('marker' in e for e in record['errors']))
+                    self.assertTrue(record['cleanup'])
+                    self.assertFalse(list(root.glob('csh-filesystem-*')))
+
+    def test_dd_oracle_rejects_padded_input_as_whole_record(self):
+        row = next(r for r in remaining_cases() if r['id'] == 'dd/remaining-sync')
+        good = b'0+1 records in\n1+0 records out\n4 bytes copied, 1 s, 4 B/s\n'
+        self.assertTrue(stderr_matches(row, good))
+        self.assertFalse(stderr_matches(row, good.replace(b'0+1', b'1+0')))
+        self.assertFalse(stderr_matches(row, good.replace(b'4 bytes', b'5 bytes')))
+
+    def test_each_remaining_contract_has_environment_reason_and_owner(self):
+        root = Path(__file__).resolve().parent
+        ledger = json.loads((root / 'host_filesystem_residuals.json').read_text())
+        self.assertFalse(ledger['full_contracts_qualified'])
+        self.assertEqual({r['utility'] for r in ledger['utilities']}, set(UTILITIES))
+        self.assertEqual(len(ledger['utilities']), len(UTILITIES))
+        for row in ledger['utilities']:
+            self.assertEqual(row['next_owner'], utility_owner(row['utility']))
+            self.assertEqual(row['status'], 'open')
+            self.assertTrue(all(row[key] for key in ('reason', 'required_environment', 'remaining', 'implementation_owner')))
+        manifest = json.loads((root / 'host_contracts.json').read_text())
+        conditions = {c for owner in manifest['owners'] if 'basename' in owner['utilities'] for c in owner['conditions']}
+        self.assertEqual({r['id'] for r in ledger['conditions']}, conditions)
+        self.assertTrue(all(r['next_owner'] == utility_owner('basename') for r in ledger['conditions']))
 
     def test_missing_provider_is_setup_failure_and_cleaned(self):
         with tempfile.TemporaryDirectory() as root:
@@ -135,7 +239,7 @@ class FilesystemHarnessTests(unittest.TestCase):
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux"))}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

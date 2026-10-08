@@ -1352,3 +1352,17 @@ and retains stock-provider failures. `make test-host-profile` includes the stric
 audit using its repaired selected providers. See the [assertion and boundary
 map](host-filesystem-evidence.md) and [retained evidence](evidence/csh-072/README.md).
 Linux setup additionally requires `file` and `pax`; Docker and CI provision both.
+
+## CSH-080 filesystem contracts
+
+`make test-host-profile` includes CSH-080 ordinary filesystem witnesses and
+`make test-host-filesystem-allocation`. The latter injects checked call-site
+ENOMEM into a test-only build of the local pathname providers. Use
+`python3 tests/host_filesystem.py ./cshell --remaining-only --path "$PWD/build/host-profile/bin:$(getconf PATH)" --record build/tests/remaining.json`
+for the 60 new ordinary cases. Selected profiles allow no gaps.
+`make test-host-filesystem-audit` uses stock providers and must preserve its
+nonzero result; `make test-host-filesystem-provider-audit` verifies the selected
+traversal/archive/kernel-I/O subset. For the corresponding strict stock subset,
+run `tests/host_filesystem.py` with `--extended-only --provider-audit` and no PATH
+override. These are distinct from test-only allocation controls and unavailable
+privileged filesystem environments. See [evidence](evidence/csh-080/README.md).

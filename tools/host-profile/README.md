@@ -7,7 +7,7 @@ cshell's builtin allocation. All tools are real exec-accessible programs;
 
 | Host | Selected replacements | Provisioning |
 | --- | --- | --- |
-| macOS | Standalone printf and local readlink/realpath; Homebrew `gtest`, `g[` and `gfind`; pinned local pax | `brew install coreutils findutils`; prefixed binaries must be on the provisioning process's PATH |
+| macOS | Standalone printf and local readlink/realpath; Homebrew `gtest`, `g[` and `gfind`; GNU `gdd`; pinned local pax | `brew install coreutils findutils`; prefixed binaries must be on the provisioning process's PATH |
 | Debian/Ubuntu | Standalone printf, local readlink/realpath and pinned pax; BusyBox kill | `apt-get install build-essential python3 ed busybox locales acl file pax`; generate `fr_FR.UTF-8` |
 
 Other scoped commands use `os.defpath` without additional symlinks, preserving
@@ -277,3 +277,11 @@ with the same explicit provisioning error as missing gtest. The new provider
 is never linked into cshell or installed over system pax. Record provider hashes
 and repeat filesystem, host integration and selected-PATH runtime checks after
 changing the profile.
+
+CSH-080 also selects GNU `gdd` on macOS from the existing coreutils dependency.
+Apple dd miscounts a short input block padded by `conv=sync` as a whole input
+block. The selected provider must pass the unchanged whole/partial counts and
+file-content assertions. Native provider paths/hashes, package version and the
+stock failures are retained in [CSH-080 evidence](../../docs/evidence/csh-080/README.md).
+`make test-host-filesystem-allocation` builds a separate test-only local pathname
+provider with call-site ENOMEM controls; production PATH never selects it.
