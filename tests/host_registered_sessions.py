@@ -93,7 +93,9 @@ def main():
                     names += ['partial-eof', 'editing', 'controls', 'implicit', 'not-logged-in']
                     names += ['interrupt', 'terminate', 'utf8', 'ctype-precedence',
                               'lang-fallback', 'iexten-off', 'iexten-on', 'invalid-utf8', 'recipient-other-owner',
-                              'recipient-wrong-group', 'sender-denial', 'mesg-not-owner']
+                              'recipient-wrong-group', 'sender-denial', 'mesg-not-owner',
+                              'hangup', 'quit-signal', 'pipe-signal', 'different-user', 'different-user-denied',
+                              'recipient-hangup-data', 'recipient-hangup-eot']
                 for name in names:
                     terminals = []
                     try:
@@ -110,15 +112,16 @@ def main():
                             termios.tcsetattr(fd, termios.TCSANOW, attrs)
                         records = directory / 'sessionsx'
                         records.write_bytes(b'')
+                        recipient_user = 'daemon' if name.startswith('different-user') else account.pw_name
                         subprocess.run([str(Path('build/tests/host_session_records').resolve()), str(records),
-                                        sender, recipient, account.pw_name], check=True, capture_output=True, timeout=5)
+                                        sender, recipient, account.pw_name, recipient_user], check=True, capture_output=True, timeout=5)
                         shutil.copyfile(records, '/run/utmp')
                         os.chmod('/run/utmp', 0o644)
-                        if name == 'denial':
+                        if name in ('denial', 'different-user-denied'):
                             os.fchmod(terminals[1][1], 0o600)
                         if name == 'sender-denial':
                             os.fchmod(terminals[0][1], 0o600)
-                        if name in ('recipient-other-owner', 'recipient-wrong-group'):
+                        if name in ('recipient-other-owner', 'recipient-wrong-group', 'different-user', 'different-user-denied'):
                             os.fchown(terminals[1][1], pwd.getpwnam('daemon').pw_uid, tty_group)
                         if name == 'mesg-not-owner':
                             os.fchown(terminals[0][1], 0, tty_group)
@@ -146,6 +149,12 @@ def main():
                             'implicit': (b'implicit\n\x04', b'implicit\n'),
                             'interrupt': (b'', b''),
                             'terminate': (b'', b''),
+                            'hangup': (b'', b''),
+                            'quit-signal': (b'', b''),
+                            'pipe-signal': (b'', b''),
+                            'recipient-hangup-data': (b'', b''),
+                            'recipient-hangup-eot': (b'', b''),
+                            'different-user': (b'different user\n\x04', b'different user\n'),
                             'utf8': ('café 日本\n\x04'.encode(), 'café 日本\n'.encode()),
                             'ctype-precedence': ('é\n\x04'.encode(), 'é\n'.encode()),
                             'lang-fallback': ('é\n\x04'.encode(), 'é\n'.encode()),
@@ -162,13 +171,17 @@ def main():
                             actual = invoke(binary, providers, 'who', ['am', name[-1]], mode, directory, env,
                                             terminals, credentials=(account.pw_uid, tty_group))
                         else:
-                            operands = [account.pw_name] if name == 'implicit' else [account.pw_name, recipient]
+                            operands = [account.pw_name] if name == 'implicit' else [recipient_user, recipient]
                             if name == 'not-logged-in':
                                 operands[0] = 'csh077-no-such-user'
                             extra = {}
-                            if name in ('interrupt', 'terminate'):
-                                extra = dict(signal_on_terminal=(b'\a\a', signal.SIGINT if name == 'interrupt' else signal.SIGTERM),
+                            signals = {'interrupt': signal.SIGINT, 'terminate': signal.SIGTERM,
+                                       'hangup': signal.SIGHUP, 'quit-signal': signal.SIGQUIT, 'pipe-signal': signal.SIGPIPE}
+                            if name in signals:
+                                extra = dict(signal_on_terminal=(b'\a\a', signals[name]),
                                              signal_executable=providers['write']['path'])
+                            if name.startswith('recipient-hangup'):
+                                extra['recipient_hangup'] = b'x\n\x04' if name.endswith('data') else b'\x04'
                             actual = invoke(binary, providers, 'write', operands, mode,
                                             directory, case_env, terminals, credentials=(account.pw_uid, account.pw_gid if name == 'recipient-wrong-group' else tty_group),
                                             terminal_input=payloads.get(name, payloads['payload'])[0], **extra)
@@ -181,7 +194,7 @@ def main():
                                     actual['terminal1'] or actual['terminal'] or
                                     os.fstat(terminals[0][1]).st_mode & 0o777 != 0o660):
                                 failures.append('mesg permission failure contract')
-                        elif name in ('denial', 'not-logged-in', 'recipient-wrong-group', 'sender-denial'):
+                        elif name in ('denial', 'not-logged-in', 'recipient-wrong-group', 'sender-denial', 'different-user-denied'):
                             if actual['status'] <= 0 or not actual['stderr'] or actual['stdout'] or actual['terminal1'] or actual['terminal']:
                                 failures.append('denied recipient accepted a message or lacked diagnostic')
                         elif name.startswith('am-'):
@@ -203,18 +216,20 @@ def main():
                                 expected_bodies = [prefix + b'CSH077 message\t\a\r\nEOF\r\n' for prefix in prefixes]
                                 stdout = b''
                             status = 0
-                            if name == 'terminate':
-                                status = -signal.SIGTERM if mode in ('direct', 'exec') else 128 + signal.SIGTERM
+                            if name in ('terminate', 'hangup', 'quit-signal', 'pipe-signal'):
+                                status = -signals[name] if mode in ('direct', 'exec') else 128 + signals[name]
                                 expected_bodies = prefixes
                             error_output = bool(actual['stderr'])
-                            if name == 'invalid-utf8':
+                            if name == 'invalid-utf8' or name.startswith('recipient-hangup'):
                                 expected_bodies = prefixes
                                 status = 1
                                 error_output = not actual['stderr']
                             if actual['terminal1'] not in expected_bodies or actual['status'] != status or actual['stdout'] != stdout or error_output:
                                 failures.append('message bytes/status mismatch')
+                            if name.startswith('recipient-hangup') and not actual['hangup_delivery']:
+                                failures.append('recipient hangup was not delivered after greeting')
                             normative = []
-                            if name not in ('terminate', 'invalid-utf8') and not actual['terminal1'].endswith(b'EOT\n'):
+                            if not name.startswith('recipient-hangup') and name not in ('terminate', 'hangup', 'quit-signal', 'pipe-signal', 'invalid-utf8') and not actual['terminal1'].endswith(b'EOT\n'):
                                 normative.append('write/POSIX-EOT')
                             if actual['terminal'] != b'\a\a':
                                 normative.append('write/two-sender-alerts')
@@ -223,7 +238,7 @@ def main():
                                 failures.extend(normative)
                         rows.append(dict(name='registered/' + name, mode=mode,
                                          verdict='FAIL' if failures else 'PASS', failures=failures, actual=actual,
-                                         sender=sender, recipient=recipient, uid=account.pw_uid,
+                                         sender=sender, recipient=recipient, recipient_user=recipient_user, uid=account.pw_uid,
                                          gid=account.pw_gid if name == 'recipient-wrong-group' else tty_group,
                                          credentials_method='setgroups([]), setgid, setuid; verified real/effective/saved IDs and empty groups before exec',
                                          environment=case_env,

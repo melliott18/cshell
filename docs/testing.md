@@ -1439,17 +1439,20 @@ evidence remains unchanged. No physical hardware was supplied.
 
 ### CSH-081 terminal residuals
 
-`make test-host-terminal-residuals` runs 115 strict residual cases through direct
+`make test-host-terminal-residuals` runs 137 strict residual cases through direct
 exec, command strings, files, stdin and explicit exec. It is also required by
 `make test-host-profile` and the terminal CI workflow, including ASan/UBSan.
 It checks independent PTY termios and tab-stop models, error statuses, timezone
-fields, locale precedence and inherited unused-input offsets. See the
+fields, locale precedence and inherited unused-input offsets. The continuation
+adds three-phase tput initialization/reset policy, base stty report values checked
+against the kernel, and private who idle-time records. See the
 [section map](host-terminal-contracts.md#csh-081-residual-implementation) for the
 exact boundary; there are no gap allowances or hidden skips.
 
-The isolated Linux session runner now has 105 strict assertions, including
-synchronized SIGINT/SIGTERM through every path, UTF-8 conversion, IEXTEN and
-cross-owner permission cases. It still requires root in a private mount namespace
+The isolated Linux session runner now has 140 strict assertions, including
+synchronized SIGINT/SIGTERM/SIGHUP/SIGQUIT/SIGPIPE through every path, UTF-8
+conversion, IEXTEN, distinct registered users, cross-owner permission cases and
+recipient closure during data/EOT output. It still requires root in a private mount namespace
 and uses only its own PTYs and private login records. The syscall/command/PTY
 captures and provider hashes are retained on failure. Physical serial devices
 and privileged Darwin sessions were not supplied and remain unqualified.

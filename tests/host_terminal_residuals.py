@@ -28,6 +28,9 @@ def cases():
             input_tty=True, flags=[(3, 'ICANON', True), (3, 'ECHO', True), (3, 'ISIG', True)])
     yield c('stty/report-content', 'stty', ['-a'], input_tty=True, stdout=None,
             report_tokens=['eof', 'eol', 'erase', 'intr', 'kill', 'quit', 'susp', 'start', 'stop', 'min', 'time'])
+    for variant in (False, True):
+        yield c('stty/full-report-' + str(variant).lower(), 'stty', ['-a'],
+                input_tty=True, stdout=None, oracle='full-report', report_variant=variant)
     for interval in range(1, 10):
         yield c('tabs/interval-' + str(interval), 'tabs', ['-' + str(interval)],
                 tty_fds=[1], oracle='tabs', terminal=None, stops=list(range(0, 41, interval)))
@@ -65,12 +68,34 @@ def cases():
         yield c('tput/type-overrides-' + label, 'tput', ['-Tcsh077plain', 'clear'],
                 environment={'TERM': term}, tty_fds=[1], terminal=b'CLEAR')
     yield c('tput/end-options', 'tput', ['--', 'clear'], term='csh077plain', tty_fds=[1], terminal=b'CLEAR')
+    for label, term, args, expected in [
+            ('three-init-phases', 'csh081phases', ['init'], b'INIT1INIT2INIT3'),
+            ('three-reset-phases', 'csh081phases', ['reset'], b'RESET1RESET2RESET3'),
+            ('phase-fallback', 'csh081fallback', ['reset'], b'INIT1RESET2INIT3'),
+            ('ordered-operands', 'csh081phases', ['reset', 'clear', 'init', 'clear'],
+             b'RESET1RESET2RESET3CLEARINIT1INIT2INIT3CLEAR'),
+            ('missing-between', 'csh081fallback', ['init', 'clear', 'reset'],
+             b'INIT1INIT2INIT3INIT1RESET2INIT3'),
+            ('literal-bytes', 'csh081bytes', ['init', 'clear'], b'\x01\x7f\x80END\x1b[H\x1b[2J')]:
+        yield c('tput/' + label, 'tput', args, term=term, tty_fds=[1],
+                terminal=expected, unchanged_termios=True)
+    for operation in ('init', 'reset'):
+        yield c('tput/' + operation + '-unknown', 'tput', [operation], term='absent-csh077',
+                tty_fds=[1], status=3, stderr='diagnostic')
+        yield c('tput/' + operation + '-absent-readonly', 'tput', [operation],
+                term='csh077empty', readonly_stdout=True, unchanged_termios=True)
+        for label, value in [('unset', None), ('empty', '')]:
+            yield c('tput/' + operation + '-default-' + label, 'tput', [operation],
+                    environment={'TERM': value}, tty_fds=[1], unchanged_termios=True)
     # stdout remains an actual PTY, opened read-only. This is a real EBADF,
     # not the undefined tabs/tput behavior with non-terminal output.
     for utility, args, status in [('tty', [], 'gt1'), ('stty', ['-a'], 'positive'),
                                   ('tabs', ['-8'], 'positive'), ('tput', ['clear'], 5)]:
         yield c(utility + '/output-ebadf', utility, args, input_tty=True,
                 readonly_stdout=True, status=status, stderr='diagnostic')
+    for operation in ('init', 'reset'):
+        yield c('tput/' + operation + '-output-ebadf', 'tput', [operation],
+                input_tty=True, readonly_stdout=True, status=5, stderr='diagnostic')
     yield c('tty/nonterminal-output-ebadf', 'tty', readonly_stdout=True,
             status='gt1', stderr='diagnostic')
     yield c('tty/device-alias', 'tty', input_tty=True, input_alias=True, oracle='ttyname')
@@ -78,6 +103,11 @@ def cases():
                                 ('east', 'JST-9', b'Jan 1 09:00')]:
         yield c('who/timezone-' + label, 'who', ['{records}'], oracle='who', stdout=None,
                 environment={'TZ': tz}, who_time=expected)
+    for label, seconds, expected in [('active', 0, '.'), ('idle', 7230, '02:00'), ('old', 90000, 'old')]:
+        yield c('who/idle-' + label, 'who', ['-u', '{records}'], oracle='who', stdout=None,
+                idle_seconds=seconds, who_idle=expected)
+    yield c('who/output-ebadf', 'who', ['{records}'], private_records=True,
+            readonly_stdout=True, status='positive', stderr='diagnostic')
     # Lower-priority locale settings conflict deliberately. C output is required
     # by LC_ALL precedence; non-C catalog completeness is a separate contract.
     for utility, args, tty, status, stdout in [

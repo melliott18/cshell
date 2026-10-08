@@ -20,3 +20,16 @@ csh081narrow|CSH-081 narrow terminal,
 # Independently supplied default, so unset/null TERM tests avoid host fallback.
 dumb|CSH-081 default with no terminal operations,
     cols#80, lines#24,
+
+csh081phases|CSH-081 three ordered initialization and reset phases,
+    cols#41, lines#24, clear=CLEAR,
+    is1=INIT1, is2=INIT2, is3=INIT3,
+    rs1=RESET1, rs2=RESET2, rs3=RESET3,
+
+csh081fallback|CSH-081 per-phase reset fallback,
+    cols#41, lines#24,
+    is1=INIT1, is2=INIT2, is3=INIT3, rs2=RESET2,
+
+csh081bytes|CSH-081 literal control and eight-bit bytes,
+    cols#41, lines#24, clear=\E[H\E[2J,
+    is1=\001\177\200, is3=END,

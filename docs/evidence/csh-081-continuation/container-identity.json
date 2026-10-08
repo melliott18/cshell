@@ -1,0 +1,28 @@
+{
+  "container_id": "973ac82a72645d010fc82a3407d5062989503461017f11a9855e1f92da8c14ad",
+  "image_id": "sha256:717bead1a866bc7d9c3bf959d6bd14d4d1e33e83ff5670105f82fa7e85c99bfb",
+  "image_architecture": "arm64",
+  "image_os": "linux",
+  "user": "root",
+  "command": [
+    "sleep",
+    "7200"
+  ],
+  "mounts": [
+    {
+      "Type": "bind",
+      "Source": "/Users/mitchell/.codex/worktrees/csh-081-terminal-residuals/cshell",
+      "Destination": "/source",
+      "Mode": "ro",
+      "RW": false,
+      "Propagation": "rprivate"
+    }
+  ],
+  "cap_add": [
+    "SYS_ADMIN"
+  ],
+  "security_options": [
+    "seccomp=unconfined"
+  ],
+  "privileged": false
+}

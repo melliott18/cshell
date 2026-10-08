@@ -6,16 +6,38 @@ import subprocess
 import sys
 import tempfile
 import time
+import termios
 import unittest
 from unittest.mock import patch
 import selectors
 
-from host_terminal import capture, cases, tab_effect, run_case, MODES
+from host_terminal import capture, cases, tab_effect, run_case, MODES, report_errors
 from host_terminal_residuals import cases as residual_cases
 from pty_harness import open_terminal
 
 
 class TerminalHarnessTests(unittest.TestCase):
+    def test_report_oracle_rejects_wrong_values_and_contradictory_flags(self):
+        attrs = [termios.ICRNL, termios.OPOST, termios.CS8 | termios.CREAD,
+                 termios.ICANON | termios.ISIG, termios.B9600, termios.B9600, [b'\0'] * termios.NCCS]
+        for name, value in {'EOF': 4, 'ERASE': 127, 'INTR': 3, 'KILL': 21,
+                            'QUIT': 28, 'SUSP': 26, 'START': 17, 'STOP': 19, 'MIN': 1}.items():
+            attrs[6][getattr(termios, 'V' + name)] = bytes([value])
+        output = (b'speed 9600 baud; 24 rows; 41 columns; '
+                  b'-ignbrk -brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr icrnl -ixon -ixoff -ixany '
+                  b'opost -parenb -parodd -hupcl -cstopb cread -clocal cs8 '
+                  b'isig icanon -iexten -echo -echoe -echok -echonl -noflsh -tostop '
+                  b'eof = ^D; eol = <undef>; erase = ^?; intr = ^C; kill = ^U; quit = ^\\; '
+                  b'susp = ^Z; start = ^Q; stop = ^S; min = 1; time = 0;')
+        self.assertEqual(report_errors(output, attrs, 0, [24, 41]), [])
+        for old, new, failure in [(b'icrnl', b'-icrnl', 'report flag mismatch: ICRNL'),
+                                  (b'^D', b'^A', 'report control mismatch: eof'),
+                                  (b'9600', b'19200', 'report speed mismatch'),
+                                  (b'41 columns', b'40 columns', 'report window mismatch: columns')]:
+            with self.subTest(failure=failure):
+                self.assertIn(failure, report_errors(output.replace(old, new), attrs, 0, [24, 41]))
+        self.assertIn('report flag mismatch: ECHO', report_errors(output + b' echo', attrs, 0, [24, 41]))
+
     def test_tab_oracle_requires_clear_and_rejects_unknown_output(self):
         self.assertEqual(tab_effect(b'\rCLEAR_TABSSET_TAB   SET_TAB\r'), [0, 3])
         self.assertIsNone(tab_effect(b'SET_TAB'))

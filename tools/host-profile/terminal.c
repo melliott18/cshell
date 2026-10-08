@@ -23,24 +23,6 @@ static int diagnostic(const char *message, int status)
     return status;
 }
 
-static int invoke(char **args)
-{
-    pid_t pid = fork();
-    int status;
-    if (pid < 0)
-        return diagnostic(strerror(errno), 5);
-    if (pid == 0) {
-        execv(TERMINAL_PROVIDER, args);
-        perror(TERMINAL_PROVIDER);
-        _exit(5);
-    }
-    while (waitpid(pid, &status, 0) < 0) {
-        if (errno != EINTR)
-            return diagnostic(strerror(errno), 5);
-    }
-    return WIFEXITED(status) ? WEXITSTATUS(status) : 5;
-}
-
 /* stty reports depend on stdin, so relay stdout through a bounded buffer.
  * Catch real write/flush failures even when a vendor ignores its stdio error. */
 static int report(char **args)
@@ -156,7 +138,6 @@ int main(int argc, char **argv)
         }
     } else if (strcmp(TERMINAL_UTILITY, "tput") == 0) {
         char *type = NULL;
-        int result = 0;
         i = 1;
         while (i < argc && !strncmp(argv[i], "-T", 2)) {
             if (argv[i][2]) {
@@ -178,51 +159,47 @@ int main(int argc, char **argv)
         if (!type && (!getenv("TERM") || !*getenv("TERM")))
             type = "dumb";
         for (; i < argc; ++i) {
-            char *args[5];
-            int n = 0, status;
             /* This profile exposes the POSIX operands; terminfo capability
              * query extensions are deliberately outside its interface. */
             if (strcmp(argv[i], "clear") && strcmp(argv[i], "init") && strcmp(argv[i], "reset"))
                 return diagnostic("invalid operand", 4);
-            args[n++] = argv[0];
-            if (type) {
-                args[n++] = "-T";
-                args[n++] = type;
-            }
-            args[n++] = argv[i];
-            args[n] = NULL;
 #ifdef TERMINAL_TPUT
-            if (!strcmp(argv[i], "clear")) {
-                int error;
-                char *capability;
-                /* A vendor status can mean either missing capability or I/O
-                 * failure. Inspect the capability, never waive an exit code. */
+            {
+                static char *const initialize[] = {"is1", "is2", "is3"};
+                static char *const reset[] = {"rs1", "rs2", "rs3"};
+                int error, phase, failed = 0;
+                int count = !strcmp(argv[i], "clear") ? 1 : 3;
+                /* The profile's init/reset policy emits the three strings in
+                 * order. Each absent reset phase falls back to its init phase.
+                 * No terminal modes, files or programs are changed/executed. */
                 if (setupterm(type, STDOUT_FILENO, &error) != OK)
-                    return diagnostic("terminal type is unavailable", 3);
-                capability = tigetstr("clear");
-                if (capability == (char *)-1) {
-                    del_curterm(cur_term);
-                    return diagnostic("clear capability lookup failed", 5);
+                    return diagnostic("terminal type is unavailable", error < 0 ? 5 : 3);
+                for (phase = 0; phase < count; ++phase) {
+                    char *name = count == 1 ? "clear" :
+                        (!strcmp(argv[i], "init") ? initialize[phase] : reset[phase]);
+                    char *capability = tigetstr(name);
+                    if (!capability && !strcmp(argv[i], "reset"))
+                        capability = tigetstr(initialize[phase]);
+                    if (capability == (char *)-1) {
+                        failed = 1;
+                        break;
+                    }
+                    if (capability && (tputs(capability, 1, putchar) == ERR || ferror(stdout))) {
+                        failed = 1;
+                        break;
+                    }
                 }
-                if (capability == NULL) {
-                    del_curterm(cur_term);
-                    continue;
-                }
-                status = tputs(capability, 1, putchar) == ERR || ferror(stdout);
                 if (fflush(stdout) == EOF)
-                    status = 1;
+                    failed = 1;
                 del_curterm(cur_term);
-                if (status)
+                if (failed)
                     return diagnostic("terminal output failed", 5);
-                continue;
             }
+#else
+            return diagnostic("terminal capability support unavailable", 5);
 #endif
-            status = invoke(args);
-            if (status != 0)
-                result = status;
-
         }
-        return result;
+        return 0;
     }
     execv(TERMINAL_PROVIDER, argv);
     return diagnostic(strerror(errno), 5);

@@ -246,7 +246,7 @@
       },
       {
         "runner": "tests/host_registered_sessions.py",
-        "scope": "21 strict registered-session cases in five dispatch modes; 105 assertions in a private Linux mount namespace",
+        "scope": "28 strict registered-session cases in five dispatch modes; 140 assertions in a private Linux mount namespace",
         "unqualified_conditions": [],
         "closed_selected_conditions": [
           "write/POSIX-EOT",
@@ -255,7 +255,7 @@
       },
       {
         "runner": "tests/host_terminal_residuals.py",
-        "scope": "115 strict cases in five dispatch modes; 575 assertions; remaining full-page contracts stay open"
+        "scope": "137 strict cases in five dispatch modes; 685 assertions; remaining full-page contracts stay open"
       }
     ]
   }

@@ -317,11 +317,32 @@ Darwin's extra stop beyond the boundary for `tabs -1`. XSI presets and margins
 are not part of this provider interface; newline is not a valid blank separator.
 
 `tput clear` likewise checks its own capability output and flush, distinguishing
-an absent operation (successful no-op) from an output error (status 5). Vendor
-init/reset behavior is retained. Both tabs and tput choose `dumb` when TERM is
+an absent operation (successful no-op) from an output error (status 5). `init` emits is1, is2 and is3 in order; `reset` emits rs1, rs2 and rs3,
+with each absent reset phase falling back to the corresponding init phase.
+Missing strings are successful no-ops and processing continues in operand order.
+This is the profile's implementation-defined initialization/reset policy: it
+emits terminfo strings through `tputs`, without changing termios modes, reading
+initialization/reset files, executing initialization programs, or adding vendor
+margin/tab sequences. These vendor extensions are outside the selected policy.
+All operations check output and flush errors (status 5). Unknown terminal types
+return 3; failure to locate a terminal database returns 5. Both tabs and tput choose `dumb` when TERM is
 unset/null and no explicit type is supplied; the standard permits an unspecified
 default. This policy does not promise every host has a database entry for it.
 
 The [terminal section map](../../docs/host-terminal-contracts.md#csh-081-residual-implementation)
 records strict new witnesses and outstanding partitions. The profile remains
 opt-in, and selected repairs do not qualify every contract of these utilities.
+
+The CSH-081 continuation adds strict three-phase initialization/reset ordering,
+per-phase fallback, control/eight-bit capability bytes, unchanged terminal modes,
+and missing-operation behavior even on read-only terminal output. The stock
+`tput` identity is retained only for comparison. Full base `stty -a` fields are
+compared with independent termios and window state (including changed controls
+and flags); this does not qualify physical serial effects. Private `who -u`
+records check current, two-hour and over-24-hour idle policy and process IDs.
+The Linux session subset now has 28 cases in five paths (140 assertions), adding
+default SIGHUP/SIGQUIT/SIGPIPE and actual distinct registered sender/recipient
+users, with successful group access and denied recipient permissions. Recipient
+peer closure after the verified greeting tests actual data and EOT output errors;
+both require failure and diagnostics. The
+original counts above describe the earlier CSH-077 increment.

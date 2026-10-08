@@ -109,3 +109,29 @@ sessions pass 105 assertions in each ordinary/sanitized build. Raw captures,
 failed attempts, environment/source identities and cleanup are retained in the
 [evidence directory](../evidence/csh-081/README.md). The issue remains in-progress
 because complete-page and unavailable-environment criteria are still open.
+
+### Continuation: initialization, reports and session failures
+
+The selected residual subset is now 137 cases × five paths (685 assertions),
+plus the original 665 terminal and 90 data-effect assertions. `tput init/reset`
+no longer silently succeed after terminal output failures: all operands use
+checked capability output with a documented three-phase/fallback policy. The
+stronger `stty -a` oracle compares base report fields with independent kernel
+state, and private `who -u` records check active/two-hour/old idle values and PIDs.
+
+The private Linux session subset is now 28 cases × five paths (140 assertions).
+Added checks cover default HUP/QUIT/PIPE termination, actual distinct registered
+users with allowed/denied group access, and real recipient peer closure after
+its observed greeting, separately during message-data and EOT output. See the
+[continuation evidence](../evidence/csh-081-continuation/README.md) for failures,
+repairs, validation and exact scope. The complete-page criterion remains open;
+remaining software partitions and both unavailable environments stay explicitly
+owned here.
+
+Ordinary macOS and Docker Debian each pass 1,440 terminal/data assertions,
+10 harness regressions, 10 ownership regressions, 1,162 host assertions,
+3,950 runtime assertions and 33 runtime PTY cases, with no gaps/skips. Linux
+ordinary and ASan/UBSan registered sessions each pass all 140 assertions.
+Native macOS and Docker Debian also pass all 1,440 terminal/data assertions and
+10 harness tests with ASan/UBSan and -Werror. All final raw records match the same
+source digest; previous evidence remains unchanged.
