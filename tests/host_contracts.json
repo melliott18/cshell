@@ -47,8 +47,8 @@
       "prerequisite": "Supply disposable controlled credentials, privileged Darwin ACLs, and measured filesystem/namespace implementations; require actual read/write/execute controls alongside predicates. Preserve false grants, rejected grants, socket stat EINVAL and non-owner chmod failures independently."
     },
     {
-      "ticket": "CSH-084",
-      "path": "docs/tickets/CSH-084-filesystem-residual-environments.md",
+      "ticket": "CSH-085",
+      "path": "docs/tickets/CSH-085-filesystem-isolated-contracts.md",
       "title": "Supply residual filesystem environments and contract oracles",
       "utilities": [
         "basename",

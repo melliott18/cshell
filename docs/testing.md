@@ -1366,3 +1366,12 @@ traversal/archive/kernel-I/O subset. For the corresponding strict stock subset,
 run `tests/host_filesystem.py` with `--extended-only --provider-audit` and no PATH
 override. These are distinct from test-only allocation controls and unavailable
 privileged filesystem environments. See [evidence](evidence/csh-080/README.md).
+
+### CSH-084 private filesystem residual environments
+
+`make test-host-filesystem-residual` requires the selected host profile and an
+unprivileged fixture identity. It runs private search-denial, authored magic,
+opaque symlink-byte and stdout-fault cases in direct/string/file/stdin modes.
+`make test-host-profile` includes them; `make test-host-inventory` runs their
+setup/error/timeout regressions. Root or ineffective permission bits fail setup.
+See [the exact scope and cleanup contract](host-filesystem-evidence.md#csh-084-residual-environments).

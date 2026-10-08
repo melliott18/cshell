@@ -272,3 +272,11 @@ The category tables in builtin.c and execute.c contain no additional intrinsics;
 this source inspection complements the finite name tests. U-041/selected-set
 lookup is verified for this revision; it is not a claim about every string or
 prefix-PATH selection (the known pwd prefix defect remains CSH-055).
+
+CSH-084 extends U-034/U-040 with 104 selected assertions for private search
+denials, authored magic, opaque link bytes and stdout faults; see the
+[case scope](host-filesystem-evidence.md#csh-084-residual-environments) and
+[native/Linux evidence](evidence/csh-084/README.md). Individual unresolved
+contracts and their required environments now belong to
+[CSH-085](tickets/CSH-085-filesystem-isolated-contracts.md). No complete utility
+or common-default requirement is qualified by these bounded witnesses.
