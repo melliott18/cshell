@@ -13,14 +13,104 @@ import pty_harness
 
 from host_filesystem_extended import cases as extended_cases
 from host_filesystem_remaining import cases as remaining_cases
+from host_filesystem_residual_cases import cases as residual_cases
 from host_contract_inventory import utility_owner
 from host_filesystem import run_case, stdout_matches, stderr_matches
 from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, terminal_cases, effect_errors
 
 
 class FilesystemHarnessTests(unittest.TestCase):
+    def test_permission_setup_rejects_root_and_cleans_private_tree(self):
+        row = next(r for r in residual_cases() if r.get('permission_denied'))
+        with tempfile.TemporaryDirectory() as root, patch('host_filesystem_residual_cases.os.geteuid', return_value=0):
+            record = run_case(Path('/bin/true'), {'cp': {'path': '/bin/true'}}, os.defpath,
+                              row, 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_permission_denial_must_be_independently_proved(self):
+        import host_filesystem_residual_cases as residual
+        with tempfile.TemporaryDirectory() as root:
+            root = Path(root)
+            row = next(r for r in residual_cases() if r.get('permission_denied'))
+            with patch.object(residual.os, 'geteuid', return_value=10001):
+                residual.setup(root, row)
+            # Simulate a filesystem that ignores mode bits. It cannot qualify.
+            with patch.object(Path, 'chmod'):
+                with self.assertRaisesRegex(OSError, 'unexpectedly succeeded'):
+                    residual.arm(root, row)
+            residual.restore(root, row)
+
+    def test_residual_timeout_cleanup_for_each_environment(self):
+        for capability in ('permission_denied', 'files', 'byte_link'):
+            with self.subTest(capability=capability), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                provider = root / 'slow'
+                provider.write_text('#!' + sys.executable + ' -S\nimport os,time\nprint(os.getpid(),flush=True)\ntime.sleep(60)\n')
+                provider.chmod(0o700)
+                row = next(r for r in residual_cases() if r.get(capability))
+                record = run_case(provider, {row['utility']: {'path': str(provider)}}, os.defpath,
+                                  row, 'direct', root, None, timeout=2)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertTrue(record['cleanup'])
+                self.assertTrue(any('timeout' in e for e in record['errors']))
+                pid = int(bytes.fromhex(record['actual']['stdout']['hex']))
+                with self.assertRaises(ProcessLookupError):
+                    os.kill(pid, 0)
+                self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_residual_effect_failure_is_not_hidden_by_permission_restore(self):
+        row = next(r for r in residual_cases() if r['utility'] == 'rm')
+        def corrupt(*args, **kwargs):
+            directory = args[2]
+            (directory / 'denied').chmod(0o700)
+            (directory / 'denied/leaf').unlink()
+            return 1, {'stdout': b'', 'stderr': b'denied'}, []
+        with tempfile.TemporaryDirectory() as root, patch('host_filesystem.smoke.capture', side_effect=corrupt):
+            record = run_case(Path('/bin/true'), {'rm': {'path': '/bin/true'}}, os.defpath,
+                              row, 'direct', Path(root), None)
+            self.assertEqual(record['verdict'], 'FAIL')
+            self.assertIn('effect mismatch: denied/leaf', record['errors'])
+            self.assertTrue(record['cleanup'])
+
+    def test_magic_setup_write_failure_is_not_a_provider_result(self):
+        original = Path.write_bytes
+        def fail_sample(path, data):
+            if path.name == 'sample':
+                raise OSError('injected fixture write failure')
+            return original(path, data)
+        row = next(r for r in residual_cases() if r.get('files'))
+        with tempfile.TemporaryDirectory() as root, patch.object(Path, 'write_bytes', fail_sample):
+            record = run_case(Path('/bin/true'), {'file': {'path': '/bin/true'}}, os.defpath,
+                              row, 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_byte_link_setup_failure_is_not_a_provider_result(self):
+        original = os.symlink
+        def fail_bytes(target, link, *args, **kwargs):
+            if isinstance(target, bytes):
+                raise OSError('injected fixture symlink failure')
+            return original(target, link, *args, **kwargs)
+        row = next(r for r in residual_cases() if r.get('byte_link'))
+        with tempfile.TemporaryDirectory() as root, patch('os.symlink', side_effect=fail_bytes):
+            record = run_case(Path('/bin/true'), {'readlink': {'path': '/bin/true'}}, os.defpath,
+                              row, 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_magic_and_byte_oracles_reject_changed_output(self):
+        for row in residual_cases():
+            if row.get('files') or row.get('byte_link'):
+                output = row['stdout']
+                self.assertTrue(stdout_matches(output, output, Path('.'), Path('.'), row))
+                self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
+
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -139,7 +229,7 @@ class FilesystemHarnessTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             root = Path(root)
             provider = root / 'slow'
-            provider.write_text('#!' + sys.executable + '\nimport os,time\nprint(os.getpid(),flush=True)\ntime.sleep(60)\n')
+            provider.write_text('#!' + sys.executable + ' -S\nimport os,time\nprint(os.getpid(),flush=True)\ntime.sleep(60)\n')
             provider.chmod(0o700)
             record = run_case(provider, {'basename': {'path': str(provider)}}, os.defpath,
                               case('basename', 'timeout', ['a']), 'direct', root, None, timeout=1)
@@ -239,7 +329,7 @@ class FilesystemHarnessTests(unittest.TestCase):
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

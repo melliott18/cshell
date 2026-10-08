@@ -192,3 +192,11 @@ and `pipefail`. Reference-shell disagreement is recorded through the
 and pathname residuals, including case, read and alias utilities. Its condition
 map assigns external prerequisites P1–P6 without promoting whole families or
 counting unavailable capabilities as passes.
+
+CSH-084 extends U-034/U-040 with 104 selected assertions for private search
+denials, authored magic, opaque link bytes and stdout faults; see the
+[case scope](host-filesystem-evidence.md#csh-084-residual-environments) and
+[native/Linux evidence](evidence/csh-084/README.md). Individual unresolved
+contracts and their required environments now belong to
+[CSH-085](tickets/CSH-085-filesystem-isolated-contracts.md). No complete utility
+or common-default requirement is qualified by these bounded witnesses.

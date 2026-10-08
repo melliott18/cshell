@@ -652,3 +652,8 @@ build/tests/host_paths_faults: tests/host_paths_faults.c tools/host-profile/path
 .PHONY: test-host-filesystem-allocation
 test-host-filesystem-allocation: cshell build/tests/host_paths_faults
 	$(PYTHON) tests/host_filesystem_allocation.py ./cshell build/tests/host_paths_faults --record build/tests/host-filesystem-allocation.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+# CSH-084: independently armed private permission and residual oracles.
+.PHONY: test-host-filesystem-residual
+test-host-filesystem-residual: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --residual-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-residual.json $(HOST_FILESYSTEM_FLAGS)

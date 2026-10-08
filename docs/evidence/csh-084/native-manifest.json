@@ -1,0 +1,234 @@
+{
+  "system": "Darwin",
+  "path": "/Users/mitchell/.codex/worktrees/csh-084/cshell/build/host-profile/bin",
+  "executables": {
+    "printf": {
+      "override": true,
+      "target": "/Users/mitchell/.codex/worktrees/csh-084/cshell/build/host-printf",
+      "realpath": "/Users/mitchell/.codex/worktrees/csh-084/cshell/build/host-printf",
+      "sha256": "2cdb4cbfb9f554184fdd5cfc010bc03f9db13743a22a4920d7ecd015ddec5295"
+    },
+    "echo": {
+      "override": false,
+      "target": "/bin/echo",
+      "realpath": "/bin/echo",
+      "sha256": "58b8586cef5f0ca5fab36ef9a2ccea04d0fad1fc63b60351283d96a1fc6d91c4"
+    },
+    "test": {
+      "override": true,
+      "target": "/usr/local/bin/gtest",
+      "realpath": "/usr/local/Cellar/coreutils/9.3/bin/gtest",
+      "sha256": "20da32995b18808ddbfefa1a1e7d63b04d0207fbf5cc460361f9e0ca4f2a6819"
+    },
+    "[": {
+      "override": true,
+      "target": "/usr/local/bin/g[",
+      "realpath": "/usr/local/Cellar/coreutils/9.3/bin/g[",
+      "sha256": "ae9434583049affae9d11bb634bf4af6b719f937330c6d8aeb2397528227f3df"
+    },
+    "true": {
+      "override": false,
+      "target": "/usr/bin/true",
+      "realpath": "/usr/bin/true",
+      "sha256": "5e2d80e01d8053b8b0fbcd46b0bb4d31b45b4aa63a4f7b7bfab14a05b25f03de"
+    },
+    "false": {
+      "override": false,
+      "target": "/usr/bin/false",
+      "realpath": "/usr/bin/false",
+      "sha256": "ee975fead4a84a15293e7b024e53a5f7db65c17e344313893ab3ebf4f2e60bf5"
+    },
+    "pwd": {
+      "override": false,
+      "target": "/bin/pwd",
+      "realpath": "/bin/pwd",
+      "sha256": "23ad10f79008c53d35aef47dfcc5dcc340706f66d1e3d8a06d05bd35b96c9cbd"
+    },
+    "kill": {
+      "override": false,
+      "target": "/bin/kill",
+      "realpath": "/bin/kill",
+      "sha256": "2cb72601038b0d001f6a584a86edcbd98489cedc64ce61f27c3cf75c499c6d31"
+    },
+    "cat": {
+      "override": false,
+      "target": "/bin/cat",
+      "realpath": "/bin/cat",
+      "sha256": "38c19fef3e9b4e6ffeee7fef5ff90119f913720b48f55ae0406b77d2beee1dab"
+    },
+    "env": {
+      "override": false,
+      "target": "/usr/bin/env",
+      "realpath": "/usr/bin/env",
+      "sha256": "148a4776d572617e023c1f4588b53d06eec8666c27530e7e4dbaf1b58b2387a4"
+    },
+    "find": {
+      "override": true,
+      "target": "/Users/mitchell/.codex/worktrees/csh-084/cshell/build/native-findutils/bin/gfind",
+      "realpath": "/Users/mitchell/.codex/worktrees/csh-084/cshell/build/native-findutils/bin/gfind",
+      "sha256": "cc04c2a28dce26e175e85a84d51ec897d0b4d77cb2de0a897602781282338776"
+    },
+    "ls": {
+      "override": false,
+      "target": "/bin/ls",
+      "realpath": "/bin/ls",
+      "sha256": "5a83882945a6d212134c6f417b2af54e90dfdb53e589e99c5bc2deae5c68673b"
+    },
+    "stty": {
+      "override": false,
+      "target": "/bin/stty",
+      "realpath": "/bin/stty",
+      "sha256": "470e0fc5a064d1f43b98ad9bff5e119d0430d2addf6dba59179317b86c7d0c08"
+    },
+    "ed": {
+      "override": false,
+      "target": "/bin/ed",
+      "realpath": "/bin/ed",
+      "sha256": "be799d70cda13ff74f13d571de9b41c72578dcbb620d807a998d38ab9a10f86f"
+    },
+    "sed": {
+      "override": false,
+      "target": "/usr/bin/sed",
+      "realpath": "/usr/bin/sed",
+      "sha256": "25982752241791e1c57074400473aecda16aea1d7174fc4cdb0dd7382365ff81"
+    },
+    "head": {
+      "override": false,
+      "target": "/usr/bin/head",
+      "realpath": "/usr/bin/head",
+      "sha256": "49a1de825dbaefcf4e8fbbe18029fba298f2bc6ad0a61f08f3ee38784ded216f"
+    },
+    "cmp": {
+      "override": false,
+      "target": "/usr/bin/cmp",
+      "realpath": "/usr/bin/cmp",
+      "sha256": "9a4e2eaeccc87d4fe8f9d436f8d4ac0bb5a3b74b763807328daa729722a1fe03"
+    },
+    "chmod": {
+      "override": false,
+      "target": "/bin/chmod",
+      "realpath": "/bin/chmod",
+      "sha256": "cd5a3d30a2df30eac5ca8e06bb96a2d97bcd4cf5ac8052a23cd0d6cb0230418b"
+    },
+    "rm": {
+      "override": false,
+      "target": "/bin/rm",
+      "realpath": "/bin/rm",
+      "sha256": "8c37738cd44bf013022c39026faff5a450c8497e8469fb5b3979cd9bc1fd28e9"
+    },
+    "sleep": {
+      "override": false,
+      "target": "/bin/sleep",
+      "realpath": "/bin/sleep",
+      "sha256": "69de8c94641382b9460db7d365554471aea2eb772660b7134a8b724e5f6ec180"
+    },
+    "sh": {
+      "override": false,
+      "target": "/bin/sh",
+      "realpath": "/bin/sh",
+      "sha256": "10b15cf96b455baa0a2ea5ead25fc4f25b42dbbb45fed8113d8a7bbb790ddeb2"
+    },
+    "basename": {
+      "override": false,
+      "target": "/usr/bin/basename",
+      "realpath": "/usr/bin/basename",
+      "sha256": "8dceba49a7490d4f070365a5527634d180e64d22196967598deb8655a6802983"
+    },
+    "dirname": {
+      "override": false,
+      "target": "/usr/bin/dirname",
+      "realpath": "/usr/bin/dirname",
+      "sha256": "3679bcd2e5be8e2d576ca293d93807e40ba082e66921fa0e9cb4b7ca4ef4a82c"
+    },
+    "cp": {
+      "override": false,
+      "target": "/bin/cp",
+      "realpath": "/bin/cp",
+      "sha256": "f49651f68a61e0d2c640246b51d620687ee803640a1e91a13e82ddfabc02a7c6"
+    },
+    "dd": {
+      "override": true,
+      "target": "/usr/local/bin/gdd",
+      "realpath": "/usr/local/Cellar/coreutils/9.3/bin/gdd",
+      "sha256": "372af227768a893416e81c569baf890062a8db1ad851b1828296e29a8bed6bcc"
+    },
+    "df": {
+      "override": false,
+      "target": "/bin/df",
+      "realpath": "/bin/df",
+      "sha256": "d9525d5bbc9faf5cc36fa0d4be4581e86907e2d0bb0eefd77fbd28814c9a9990"
+    },
+    "du": {
+      "override": false,
+      "target": "/usr/bin/du",
+      "realpath": "/usr/bin/du",
+      "sha256": "5e7217c12d6fa6b0950452a7753aef4921ea73dade1c253258af4c6ca503675d"
+    },
+    "file": {
+      "override": false,
+      "target": "/usr/bin/file",
+      "realpath": "/usr/bin/file",
+      "sha256": "0a206b730535e0e66feebe19f5a8d0d4b5842cca11c6997202bbbd4bdb706cc9"
+    },
+    "ln": {
+      "override": false,
+      "target": "/bin/ln",
+      "realpath": "/bin/ln",
+      "sha256": "754b8fad2abd7c615a8f315306fe0e0f2154b4a15dba7f61a4b98efa993fea95"
+    },
+    "mkdir": {
+      "override": false,
+      "target": "/bin/mkdir",
+      "realpath": "/bin/mkdir",
+      "sha256": "ff5f5e8482d4b6edbb2fb853b6a80fcf40caaa41385081fc951f36178c391e9e"
+    },
+    "mkfifo": {
+      "override": false,
+      "target": "/usr/bin/mkfifo",
+      "realpath": "/usr/bin/mkfifo",
+      "sha256": "6057b0415c5e37019f2ff2e99ca0cea929cfa2c5a44fe431564924b526abd2b0"
+    },
+    "mv": {
+      "override": false,
+      "target": "/bin/mv",
+      "realpath": "/bin/mv",
+      "sha256": "618d90795a99cc12b9cf0c77ca6bf2546f70cb07ab1bb78c7cb2d4437259fcfa"
+    },
+    "pathchk": {
+      "override": false,
+      "target": "/usr/bin/pathchk",
+      "realpath": "/usr/bin/pathchk",
+      "sha256": "928722f71388c619c73ee7473ee8ec72633939b81997981d6ebc77e99f60a8e6"
+    },
+    "pax": {
+      "override": true,
+      "target": "/Users/mitchell/.codex/worktrees/csh-084/cshell/build/host-pax",
+      "realpath": "/Users/mitchell/.codex/worktrees/csh-084/cshell/build/host-pax",
+      "sha256": "5ccdbd47f0a3978881c22e1b48910895a95d498e473c5c183c92c23042f375ee"
+    },
+    "readlink": {
+      "override": true,
+      "target": "/Users/mitchell/.codex/worktrees/csh-084/cshell/build/host-paths",
+      "realpath": "/Users/mitchell/.codex/worktrees/csh-084/cshell/build/host-paths",
+      "sha256": "2c5fd0e24520c61cd66e842f4c15c8ee935047bfd5b58f89c9670e10b6d700be"
+    },
+    "realpath": {
+      "override": true,
+      "target": "/Users/mitchell/.codex/worktrees/csh-084/cshell/build/host-paths",
+      "realpath": "/Users/mitchell/.codex/worktrees/csh-084/cshell/build/host-paths",
+      "sha256": "2c5fd0e24520c61cd66e842f4c15c8ee935047bfd5b58f89c9670e10b6d700be"
+    },
+    "rmdir": {
+      "override": false,
+      "target": "/bin/rmdir",
+      "realpath": "/bin/rmdir",
+      "sha256": "ffdbd05db23e7367289af5e8a146124f59aa0b09d2e8f3a9d9de08002cebcceb"
+    },
+    "touch": {
+      "override": false,
+      "target": "/usr/bin/touch",
+      "realpath": "/usr/bin/touch",
+      "sha256": "1c3c4ad9bb495173870a075d51183206b1ada12799999a39dc5315a79af2b944"
+    }
+  }
+}

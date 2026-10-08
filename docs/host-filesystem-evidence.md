@@ -2,7 +2,7 @@
 
 CSH-072 adds a **bounded selected profile** for 21 exec-accessible utilities.
 It does not qualify complete utility pages, U-034/U-040 as a whole, or a complete
-POSIX system. [CSH-084](tickets/CSH-084-filesystem-residual-environments.md) owns each
+POSIX system. [CSH-085](tickets/CSH-085-filesystem-isolated-contracts.md) owns each
 remaining contract and the four original retained conditions. Implementation
 ownership stays with the selected utility/libc/platform vendor.
 
@@ -93,7 +93,7 @@ The four retained condition IDs stay in the ownership ledger. CSH-072 supplies
 larger-directory, deep UTF-8 and terminal-prompt capabilities; inaccessible
 ancestors, total pathname limits, actual descriptor exhaustion, non-C collation,
 mount boundaries, quotas, filesystem-capacity exhaustion/EIO, further archive formats and other individual page
-contracts remain explicitly open in CSH-084. No protected mount or real disk
+contracts remain explicitly open in CSH-085. No protected mount or real disk
 contents are used. [Retained results and commands](evidence/csh-072/README.md)
 separate the stock audit, qualified subset and full-system limitations.
 
@@ -167,3 +167,37 @@ qualify kernel ENOMEM, quotas, filesystem ENOSPC or EIO.
 injected runs. The [residual ledger](../tests/host_filesystem_residuals.json)
 retains every utility and all four original condition IDs under CSH-084,
 including required environments and why current witnesses do not suffice.
+
+## CSH-084 residual environments
+
+`make test-host-filesystem-residual` runs 26 cases / 104 assertions on the
+selected PATH. The same cases are mandatory in `make test-host-profile` and
+remain strict in the separate stock audit. They add:
+
+- Fourteen ordinary permission denials across thirteen utilities. A private
+  directory loses all search bits, and Python independently requires EACCES
+  from stat before dispatch. The record retains real/effective IDs, groups,
+  mode and probe errno. Root or a filesystem ignoring these bits fails setup.
+  Access is restored before independent file effects and in unconditional cleanup.
+- Four `file -m` databases with authored string, continuation, hexadecimal
+  offset and escaped-space rules and independent binary samples. Exact messages
+  follow the normative magic rules; no installed database generates the oracle.
+- Four readlink cases preserving `ff fe 80` bytes under C and UTF-8, with and
+  without the final newline. These are selected bytes, not every repertoire.
+- Four basename/dirname stdout EBADF/EPIPE cases using the existing independently
+  probed kernel-fault wrapper; signal death cannot satisfy positive error status.
+
+The selected providers require no additional repairs. The 24 harness regressions
+include root/ineffective-denial rejection, altered effects/output, failed fixture
+writes/symlinks, and deadline cleanup for permission, magic and byte-link fixtures.
+Timeout helpers disable Python site initialization and allow two seconds to
+start and report their PID; every owned PID must disappear after the deadline.
+These synthetic setup failures test the harness, not real capacity exhaustion.
+
+[CSH-084 evidence](evidence/csh-084/README.md) separates native, Linux and stock
+results. [CSH-085](tickets/CSH-085-filesystem-isolated-contracts.md) retains every
+remaining per-utility contract, environment and reason in the
+[residual ledger](../tests/host_filesystem_residuals.json), including the five
+utilities with no new CSH-084 witnesses. Existing four condition IDs and original
+CSH-064 reasons remain unchanged. ACLs, privileged credentials, mount boundaries,
+quotas, actual filesystem ENOSPC/EIO and libc-internal failures are not supplied.

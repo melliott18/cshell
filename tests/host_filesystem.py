@@ -22,6 +22,7 @@ import smoke
 from host_filesystem_cases import UTILITIES, cases, audit_cases, terminal_cases, setup, effect_errors
 from host_filesystem_extended import cases as extended_cases
 from host_filesystem_remaining import cases as remaining_cases
+import host_filesystem_residual_cases as residual
 from host_platform import filesystem_identity
 from host_utilities import inventory, match, sanitizer_diagnostic, serial, sha, source_identity
 
@@ -124,6 +125,7 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
         if row.get('utf8') and not utf8:
             raise OSError('UTF-8 locale required for deep character oracle')
         cwd = setup(directory, row)
+        residual.setup(directory, row)
         env = {'PATH': search_path, 'TZ': 'UTC0', 'LC_ALL': utf8 if row.get('utf8') else 'C'}
         env.update(row.get('env', {}))
         if row.get('logical_cwd'):
@@ -155,6 +157,9 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
         if mode.startswith('pty-'):
             invocation.update(transport='pty', steps=[{'expect': 'data'}, {'send': row['response'] + '\n'}])
             invocation.pop('stdin')
+        permission = residual.arm(directory, row)
+        if permission is not None:
+            record['permission_environment'] = permission
         record.update(phase='assertion', invocation=invocation, executable=str(executable), fixture=str(directory))
         status, output, errors = smoke.capture(executable, invocation, cwd, timeout, 65536,
                                                file_size_limit=512 if row.get('fault') else None)
@@ -187,6 +192,7 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
                 record['allocation_fault'] = marker
             except (OSError, ValueError) as error:
                 errors.append('missing/invalid allocation marker: ' + str(error))
+        residual.restore(directory, row)
         effects, observed = effect_errors(directory, row)
         errors.extend(effects)
         if not match(row['status'], status):
@@ -203,6 +209,7 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
         record.update(error=str(error), errno=getattr(error, 'errno', None))
     finally:
         try:
+            residual.restore(directory, row)
             shutil.rmtree(directory)
             record['cleanup'] = not directory.exists()
         except OSError as error:
@@ -219,6 +226,7 @@ def main():
     parser.add_argument('--audit', action='store_true')
     parser.add_argument('--sanitizer', action='store_true')
     parser.add_argument('--provider-audit', action='store_true', help='Require cycle/archive/fault provider contracts; all are mandatory in the selected profile')
+    parser.add_argument('--residual-only', action='store_true', help='Select CSH-084 private residual environments')
     parser.add_argument('--remaining-only', action='store_true', help='Select CSH-080 ordinary filesystem contracts')
     parser.add_argument('--extended-only', action='store_true', help='Select only traversal/link/metadata/archive/I/O extensions')
     args = parser.parse_args()
@@ -235,10 +243,12 @@ def main():
             pass
     locale.setlocale(locale.LC_CTYPE, previous)
     rows = [row for row in extended_cases() if args.provider_audit or not row.get('provider_audit')]
-    if args.remaining_only:
+    if args.residual_only:
+        rows = list(residual.cases())
+    elif args.remaining_only:
         rows = list(remaining_cases())
     elif not args.extended_only:
-        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows + list(remaining_cases())
+        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows + list(remaining_cases()) + list(residual.cases())
     records = []
     for row in rows:
         for mode in row.get('modes', ('direct', 'string', 'file', 'stdin')):
@@ -248,8 +258,8 @@ def main():
             if record['verdict'] != 'PASS':
                 print(json.dumps(record), flush=True)
     totals = {key: sum(r['verdict'] == key for r in records) for key in ('PASS', 'FAIL')}
-    result = dict(ticket='CSH-080', predecessor='CSH-072', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
-                  full_contracts_qualified=False, selection='remaining' if args.remaining_only else 'extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
+    result = dict(ticket='CSH-084', predecessor='CSH-080', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
+                  full_contracts_qualified=False, selection='residual' if args.residual_only else 'remaining' if args.remaining_only else 'extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
                   unavailable_capabilities=[] if platform.system() == 'Linux' else ['Linux virtual-device ENOSPC'],
                   path=args.path, providers=providers, platform=platform.platform(),
                   libc=platform.libc_ver(), utf8_locale=utf8, uid=os.getuid(), gid=os.getgid(), groups=os.getgroups(),
