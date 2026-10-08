@@ -34,8 +34,8 @@ It is a documented convention, not an installed Git hook or server-side rule.
 ## Ticket lifecycle
 
 1. Choose an implementation ticket whose own dependencies are complete. For new work, copy the
-   [template](docs/tickets/TEMPLATE.md), allocate the next unused ID, and add it to
-   the index. Define observable acceptance criteria before implementation.
+   [template](docs/tickets/TEMPLATE.md), [reserve its ID](#reserve-a-ticket-number)
+   in the shared ledger, and add it to the index. Define observable acceptance criteria before implementation.
 2. Create the ticket branch from the agreed integration branch (`main` initially).
    Record its name in the ticket and set the status to `in-progress`.
 3. Implement the ticket's scope. Update affected documentation with the code.
@@ -216,3 +216,72 @@ works.
 Use fenced Mermaid blocks for small engineering diagrams. GitHub renders them
 visually; nearby prose or tables must preserve the essential meaning for readers
 without Mermaid support. Render and inspect changed diagrams before review.
+
+## Reserve a ticket number
+
+CSH numbers remain sequential and are distinct from GitHub issue numbers.
+**Never choose the next number by scanning a worktree, the ticket index, or
+GitHub titles.** Concurrent branches can see different snapshots. The shared
+reservation ledger is `allocations.json` on the data branch
+[`chore/CSH-001-ticket-registry`](https://github.com/melliott18/cshell/tree/chore/CSH-001-ticket-registry).
+It maps each CSH ID to exactly one GitHub issue, including closed issues.
+`docs/tickets/allocations.json` is an offline snapshot, not the allocator.
+
+For a new ticket:
+
+1. Prepare its scope, acceptance criteria and validation using the ticket
+   template, leaving `CSH-NNN` and the Issue placeholder intact.
+2. Create **one unnumbered GitHub issue**, with the intended descriptive title
+   and that body. Record its issue number immediately.
+3. Run `python3 tools/tickets.py reserve --issue ISSUE_NUMBER`. This atomically
+   reserves a CSH ID in the shared ledger, updates the issue title/body
+   placeholder, and refreshes the local allocation snapshot. Use the returned
+   ID for the ticket filename, heading, index, dependencies and branch.
+4. Run `make test-tickets` and `python3 tools/tickets.py check --live` before
+   publishing the implementation PR. Commit the refreshed snapshot with the
+   ticket document. Existing allocated tickets must reuse their reservation.
+
+Two allocators may propose the same next ID, but only one fast-forward push
+can advance the shared ref from the same parent. The loser fetches the new tip
+and retries. No force push is used. A retry for the **same issue number** returns
+its existing reservation. If GitHub publication, the network, or the local file
+write fails after reservation, rerun the same command for the same issue.
+Do not create a second issue or reuse the reserved ID. If the registry cannot
+be read or written, stop allocation; there is no local fallback.
+
+The registry branch contains only allocation data and has separate history;
+it is not an implementation branch or a branch to merge into `main`. Never
+force-push, reset, delete, or repurpose it. Reservations are append-only.
+The live branch requires linear history and blocks force pushes and deletion,
+including for administrators. These protections preserve history; the allocator
+and review enforce append-only contents.
+Renumbering an already reserved ticket is an exceptional coordinated migration
+of GitHub identity, registry binding, Markdown filename/heading/index and current
+references. Preserve historical evidence as historical evidence. Do not recycle
+an allocated ID through ordinary tooling.
+
+`tools/tickets.py check --live` checks the shared bindings against GitHub and
+local documents. It rejects duplicate issue IDs, conflicting reservations,
+filename/heading/title/link mismatches and incorrect index links. Its `--ref`
+option audits additional fetched branches, including their allocation snapshots,
+without checking them out. An empty live issue response fails when documents
+reference missing issues; only offline mode skips GitHub issue checks. A local
+or branch snapshot may omit reservations made after it was copied, but cannot
+contradict a shared binding. Branches that predate the registry may omit the
+snapshot entirely. Offline ref checks compare against the worktree's allocation
+snapshot; use `--live` when it may be stale. Unnumbered drafts do not constitute allocations. Explicitly
+closed duplicate issues with non-CSH titles do not allocate an additional ID.
+
+The **Ticket integrity** CI workflow runs these checks on pushes and PRs, with
+read-only credentials. It does not allocate tickets from CI and does not execute
+code from issue bodies. Once this workflow is merged, maintainers can make its
+`Ticket integrity` check required in the existing branch rules. It is not yet a
+required merge check merely because the workflow exists in a PR.
+
+When a ticket is integrated, update its Markdown and GitHub body `Status` fields
+alongside closing the issue. Closed issue bodies with an old status are reported
+as lifecycle warnings, separately from naming errors. Completed historical
+tickets may share a branch named for another ticket; the checker reports these
+as warnings, while an active ticket with the wrong branch ID fails. An active PR may correctly
+say `review` while its older `main` snapshot still says `ready`; do not downgrade
+active work to match an older snapshot.

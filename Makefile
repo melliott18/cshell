@@ -640,3 +640,8 @@ test-locale-pathname: cshell build/tests/locale_probe build/tests/pathname_runti
 test-host-inventory:
 	$(PYTHON) tests/host_contract_inventory.py
 	$(PYTHON) tests/test_host_contract_inventory.py
+
+.PHONY: test-tickets
+test-tickets:
+	$(PYTHON) tests/test_ticket_registry.py
+	$(PYTHON) tools/tickets.py check

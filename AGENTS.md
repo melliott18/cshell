@@ -17,3 +17,9 @@ Read [README.md](README.md) for build commands and current limitations, then
 Project branches use `<type>/CSH-<number>-<description>`; the current foundation
 ticket uses `chore/CSH-001-project-foundation`. See CONTRIBUTING.md for the
 canonical convention. The executable is `cshell`.
+
+Before creating any new ticket or ticket branch, follow the shared reservation
+procedure in [CONTRIBUTING.md](CONTRIBUTING.md#reserve-a-ticket-number).
+Never infer the next CSH ID from a local checkout. Reuse the same GitHub issue
+number when retrying a reservation. Run `make test-tickets` and the live identity
+check before publishing ticket changes.

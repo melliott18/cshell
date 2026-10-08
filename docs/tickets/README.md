@@ -182,3 +182,12 @@ splitting or reallocating work.
 
 Tests and conformance evidence grow with each implementation ticket.
 CSH-037 is the final audit, not the first testing milestone.
+
+### Ticket identity governance
+
+| Ticket | Deliverable | Depends on | GitHub |
+| --- | --- | --- | --- |
+| [CSH-083](CSH-083-ticket-allocation.md) | Prevent ticket identity collisions | None | [#176](https://github.com/melliott18/cshell/issues/176) |
+
+New IDs must first be reserved in the [shared allocation ledger](../../CONTRIBUTING.md#reserve-a-ticket-number).
+Do not calculate the next ID from this index or a worktree snapshot.
