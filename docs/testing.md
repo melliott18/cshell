@@ -1121,7 +1121,9 @@ Only that fixture's jobs object substitutes `_SC_CHILD_MAX` (32 and unknown,
 falling back to 256); the public runtime keeps the host limit. It uses real
 sequential children and retains one running and one stopped record while
 checking eviction. Each progress phase has a five-second alarm and retention
-has a 60-second outer bound. Flushed capacity/round/completion checkpoints
+has a 120-second outer bound. The [budget repair](evidence/csh-057-retention-budget/README.md)
+retains a hosted failure where short run/reap operations accumulated to 60
+seconds. Flushed capacity/round/completion checkpoints
 localize a timeout without changing those limits. Pipe timeouts report when
 output last arrived; PTY timeouts report the last completed step and elapsed
 time without advancement. Long output mismatches retain a bounded prefix and
@@ -1148,7 +1150,52 @@ The [2026-09-29 recurrence investigation](evidence/csh-057-retention-recurrence/
 retains a new macOS sanitizer timeout with 448 completed fill iterations and
 last output received at 58.721 seconds. It distinguishes aggregate deadline
 exhaustion from the still-unconfirmed reason for that elapsed time. CSH-057 is
-reopened; the retention case and both deadline levels remain unchanged.
+reopened at that stage; neither deadline changed in that investigation. The
+[new failure-time trace](evidence/csh-057-retention-budget/README.md) now supports
+a 120-second aggregate budget while retaining five-second phase alarms.
+
+`make test-job-retention` now runs the original fixture and exact oracle through
+`tests/retention_diagnostics.py`. It retains each attempt under
+`build/retention-diagnostics/retention-*`: binary/platform/CI identity, the
+actual result, a bounded file-backed JSONL trace, and a watcher report with any
+stack samples. `CSH_RETENTION_TRACE` enables the test-only C observer. Its
+`CLOCK_MONOTONIC` records identify capacity, round, item and PID at fork,
+run/reap, wait, foreground, overflow and cleanup boundaries. Only the lifecycle
+fixture links the fork wrapper; production executor objects are unchanged.
+Children emit one entry record and close the trace descriptor before proceeding.
+
+Each trace record queries the actual SIGALRM mask, pending state, disposition
+and remaining `ITIMER_REAL`. The observer preserves errno and never changes a
+mask, disposition or alarm. These are observations at recorded boundaries;
+an alarm state reported for a later stall is explicitly last-known state.
+Trace writes are unbuffered and capped below the runner's existing file limit,
+with truncation reported as a diagnostic failure. Timing includes observer cost.
+
+An independent watcher samples the fixture root and at most one recorded child
+whose session ownership is verified. It triggers after two seconds in an
+individual operation, at 117 seconds of case time, or when the last observed
+timer projects expiry within the 2.5-second sampling budget plus 0.2 seconds.
+The two samplers run concurrently within that bounded budget; the
+120-second case deadline and five-second phase alarms continue independently.
+Sampling failures and unsupported sampling remain explicit evidence. No signal
+handler is installed to collect alarm state, and sampling cannot turn a failed
+case into a pass. `make test-retention-diagnostics` checks observer invariants;
+its real stalled-child and inherited blocked-alarm controls retain their
+expected failures. Harness regressions separately check sampler cleanup,
+output bounds and ownership.
+
+The [diagnostic capture review](evidence/csh-057-retention-diagnostics/README.md)
+records this capability and its validation before the later budget repair.
+The normal review retained 94 passing harness checks, 148 passing jobs
+cases and 30 passing public jobs PTY cases, followed by a five-second timeout
+in the unchanged terminal fault fixture. A separate full normal run stopped
+in the CSH-058 QUIT probe. The later
+[terminal investigation](evidence/csh-057-terminal-crash-notification/README.md)
+reproduces an inherited Mach crash-receiver dependency and isolates the
+fixture's deliberate SIGQUIT child from it. The exact historical receiver
+remains unknown under CSH-057 / #99; the signal probe belongs to CSH-058 / #100.
+Consult the original evidence for its sanitizer results and process observations;
+neither historical failure is erased by a later pass.
 
 The [foreground-resume follow-up](evidence/csh-057-pty-fix/README.md) extends the
 existing terminal fault fixture with a synchronized exit-before-SIGCONT case,
@@ -1157,6 +1204,33 @@ readiness pipe retries EINTR; WNOWAIT confirms exit/stop without consuming the
 job manager's status. The existing five-second PTY limit and ten-second fault
 alarm remain unchanged. The unchanged public 32-cycle case can be repeated
 with `python3 docs/evidence/csh-057-pty-fix/repeat_pty.py`.
+
+The [PTY teardown and timing follow-up](evidence/csh-057-pty-teardown/README.md)
+reproduces Darwin exit waiting for unread terminal output after SIGKILL.
+Cleanup now consumes and closes the master after owned-group teardown and
+before the unchanged one-second leader reap. It preserves captured output and
+all earlier failures. A pipe-synchronized queued-output regression retains an
+extra slave reference to expose the old drain/reap dependency deterministically.
+
+The 32-cycle repeated-resume fixture has a ten-second aggregate budget; its
+419 steps, exact output, status 130 and foreground checks are unchanged. The
+other 29 public jobs PTY cases explicitly retain five seconds. `test-jobs-pty`
+passes a ten-second runner ceiling; custom smoke invocations still impose the
+minimum of their CLI ceiling and each case budget. Whole-case timeouts remain
+failures, including deliberate slow controls. The native CI job has a separate
+60-minute aggregate limit because both previous 45-minute jobs were cancelled
+while still passing cases; no other case deadline changes.
+
+`make test-job-crash-notification` is included in `test-jobs` and hence `make
+test`. On macOS it holds a controlled inherited task `EXC_CRASH` request,
+verifies that SIGKILL cannot complete the already-started exit until the reply,
+then checks that the test helper removes that dependency while preserving
+SIGQUIT termination. All owned requests, Mach rights and children have bounded
+cleanup. Other platforms explicitly report this Mac-specific control as
+unavailable; their existing jobs/terminal fixtures still run. The helper is
+called only in the fault fixture's deliberate SIGQUIT child. It clears no
+production process's port and changes no POSIX disposition, mask, oracle or
+timeout. Host/thread fallback and corpse reporting remain possible.
 
 ## Signal edge evidence (CSH-058)
 
@@ -1185,7 +1259,7 @@ For this fork-heavy matrix, run address/undefined-behavior instrumentation with
 The signal driver forwards these options (and MallocNanoZone) into its controlled
 environment. This is ASan/UBSan evidence, not LeakSanitizer evidence; leak scanning
 at every helper/shell exit can dominate the per-case deadline in Linux containers.
-CI uses the same explicit setting and budgets 45 minutes for native jobs and
+CI uses the same explicit setting and budgets 60 minutes for native jobs and
 30 for Docker, retaining the five-second signal-case bounds. The launch helper
 cancels its own watchdog before exec; it does not add a pending ALRM to cshell.
 
@@ -1362,3 +1436,23 @@ cover 47 strict session assertions with dropped credentials, including EOT,
 sender alerts, canonical editing and synchronized SIGINT. The [repair evidence](evidence/csh-077-repairs/README.md)
 retains current normal and sanitizer results separately; earlier extension
 evidence remains unchanged. No physical hardware was supplied.
+
+### CSH-081 terminal residuals
+
+`make test-host-terminal-residuals` runs 137 strict residual cases through direct
+exec, command strings, files, stdin and explicit exec. It is also required by
+`make test-host-profile` and the terminal CI workflow, including ASan/UBSan.
+It checks independent PTY termios and tab-stop models, error statuses, timezone
+fields, locale precedence and inherited unused-input offsets. The continuation
+adds three-phase tput initialization/reset policy, base stty report values checked
+against the kernel, and private who idle-time records. See the
+[section map](host-terminal-contracts.md#csh-081-residual-implementation) for the
+exact boundary; there are no gap allowances or hidden skips.
+
+The isolated Linux session runner now has 140 strict assertions, including
+synchronized SIGINT/SIGTERM/SIGHUP/SIGQUIT/SIGPIPE through every path, UTF-8
+conversion, IEXTEN, distinct registered users, cross-owner permission cases and
+recipient closure during data/EOT output. It still requires root in a private mount namespace
+and uses only its own PTYs and private login records. The syscall/command/PTY
+captures and provider hashes are retained on failure. Physical serial devices
+and privileged Darwin sessions were not supplied and remain unqualified.

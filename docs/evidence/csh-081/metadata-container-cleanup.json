@@ -1,0 +1,13 @@
+{
+  "command": [
+    "docker",
+    "rm",
+    "-f",
+    "csh081-session-metadata"
+  ],
+  "status": 0,
+  "stdout": "csh081-session-metadata\n",
+  "stderr": "",
+  "time_utc": "2026-10-06T19:20:49.872281+00:00",
+  "image_id": "sha256:717bead1a866bc7d9c3bf959d6bd14d4d1e33e83ff5670105f82fa7e85c99bfb"
+}

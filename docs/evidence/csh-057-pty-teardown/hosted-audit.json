@@ -1,0 +1,720 @@
+{
+  "head_sha": "0f80030053cfb4648e403da9b2ef1ec9cd236036",
+  "earlier_head_sha": "4d689e87b289d8ddb3cffe2142cee8e7f06133fe",
+  "earlier_head_change": {
+    "changed_files": [
+      "docs/evidence/csh-057-terminal-crash-notification/README.md",
+      "docs/evidence/csh-057-terminal-crash-notification/hosted-verification/README.md",
+      "docs/evidence/csh-057-terminal-crash-notification/hosted-verification/artifacts.tar.gz",
+      "docs/evidence/csh-057-terminal-crash-notification/hosted-verification/results.json",
+      "docs/evidence/csh-057-terminal-crash-notification/inventory.json",
+      "docs/tickets/CSH-057-job-lifecycle-boundaries.md"
+    ],
+    "description": "Only docs/evidence and ticket documentation changed. All other tracked contents match."
+  },
+  "source_identity": {
+    "src": {
+      "earlier": "2f75900f9fae05052bc2c51ecba62193881b1a5d",
+      "current": "2f75900f9fae05052bc2c51ecba62193881b1a5d"
+    },
+    "include": {
+      "earlier": "4889363c21918affd19c74ef4eb1bc268e1e24a1",
+      "current": "4889363c21918affd19c74ef4eb1bc268e1e24a1"
+    },
+    "tests": {
+      "earlier": "5a81fc8c49cc53a4a2c7d4c4ccd3b26cbaf404a6",
+      "current": "5a81fc8c49cc53a4a2c7d4c4ccd3b26cbaf404a6"
+    },
+    ".github": {
+      "earlier": "720917ecb78236bcc2d25cbc06c6663a23966e87",
+      "current": "720917ecb78236bcc2d25cbc06c6663a23966e87"
+    },
+    "Makefile": {
+      "earlier": "f53c5c32b1326bde138903b60dc7e4923180154c",
+      "current": "f53c5c32b1326bde138903b60dc7e4923180154c"
+    },
+    "Dockerfile": {
+      "earlier": "fee87e6b5d9fd5898cd34f63340e8317b961d926",
+      "current": "fee87e6b5d9fd5898cd34f63340e8317b961d926"
+    }
+  },
+  "jobs": [
+    {
+      "job_id": 110490557080,
+      "run_id": 36898234219,
+      "event": "pull_request",
+      "url": "https://github.com/melliott18/cshell/actions/runs/36898234219/job/110490557080",
+      "checkout_sha": "c6f0df8b6e18cf7c246e685d2ec61b1b43b6bc66",
+      "conclusion": "cancelled",
+      "started_at": "2026-10-01T17:17:12Z",
+      "completed_at": "2026-10-01T18:02:34Z",
+      "budget_minutes": 45,
+      "timeout_annotation": [
+        "The job has exceeded the maximum execution time of 45m0s"
+      ],
+      "cancellation": {
+        "line": 25389,
+        "timestamp": "2026-10-01T18:02:27.7920370Z",
+        "message": "##[error]The operation was canceled."
+      },
+      "last_passing_case": {
+        "line": 25388,
+        "timestamp": "2026-10-01T18:02:27.7188390Z",
+        "message": "PASS: large nested capture (file)"
+      },
+      "last_pass_to_cancel_seconds": 0.073198,
+      "elapsed_to_cancel_seconds": 2715.792037,
+      "checks": {
+        "mach": [
+          {
+            "line": 1404,
+            "timestamp": "2026-10-01T17:17:47.9911970Z",
+            "phase": "Test replacement APIs, cshell runtime, and selected behavior",
+            "message": "crash notification isolation checks passed"
+          },
+          {
+            "line": 15606,
+            "timestamp": "2026-10-01T17:22:14.2883900Z",
+            "phase": "Check replacement modules and cshell runtime with ASan and UBSan",
+            "message": "crash notification isolation checks passed"
+          }
+        ],
+        "retention": [
+          {
+            "line": 1398,
+            "timestamp": "2026-10-01T17:17:47.7362310Z",
+            "phase": "Test replacement APIs, cshell runtime, and selected behavior",
+            "message": "PASS: CSH-057 bounded CHILD_MAX retention and eviction"
+          },
+          {
+            "line": 17983,
+            "timestamp": "2026-10-01T17:30:05.4535000Z",
+            "phase": "Check replacement modules and cshell runtime with ASan and UBSan",
+            "message": "PASS: CSH-057 bounded CHILD_MAX retention and eviction"
+          }
+        ],
+        "repeated_resume": [
+          {
+            "line": 9938,
+            "timestamp": "2026-10-01T17:20:33.2054950Z",
+            "phase": "Test cshell terminal behavior and selected terminal suite",
+            "message": "PASS: repeated background resumes preserve prompt and terminal"
+          },
+          {
+            "line": 15192,
+            "timestamp": "2026-10-01T17:21:25.4520050Z",
+            "phase": "Qualify host utilities and rerun runtime with selected PATH",
+            "message": "PASS: repeated background resumes preserve prompt and terminal"
+          },
+          {
+            "line": 19355,
+            "timestamp": "2026-10-01T17:35:06.1304860Z",
+            "phase": "Check replacement modules and cshell runtime with ASan and UBSan",
+            "message": "PASS: repeated background resumes preserve prompt and terminal"
+          }
+        ],
+        "terminal_fault": [
+          {
+            "line": 9964,
+            "timestamp": "2026-10-01T17:20:33.9925590Z",
+            "phase": "Test cshell terminal behavior and selected terminal suite",
+            "message": "PASS: process group and terminal handoff restoration failures"
+          },
+          {
+            "line": 15218,
+            "timestamp": "2026-10-01T17:21:26.5861410Z",
+            "phase": "Qualify host utilities and rerun runtime with selected PATH",
+            "message": "PASS: process group and terminal handoff restoration failures"
+          },
+          {
+            "line": 19400,
+            "timestamp": "2026-10-01T17:35:17.6388450Z",
+            "phase": "Check replacement modules and cshell runtime with ASan and UBSan",
+            "message": "PASS: process group and terminal handoff restoration failures"
+          }
+        ],
+        "csh054": [
+          {
+            "line": 4630,
+            "timestamp": "2026-10-01T17:18:53.1675570Z",
+            "phase": "Test replacement APIs, cshell runtime, and selected behavior",
+            "message": "Result: 361 passed, 0 failed, 0 skipped"
+          },
+          {
+            "line": 22261,
+            "timestamp": "2026-10-01T17:49:36.6851310Z",
+            "phase": "Check replacement modules and cshell runtime with ASan and UBSan",
+            "message": "Result: 361 passed, 0 failed, 0 skipped"
+          }
+        ]
+      },
+      "unexpected_failure_lines": [],
+      "retention_artifact_results": [
+        {
+          "member": "retention-diagnostics/retention-rv2j74_6/result.json",
+          "case": "CSH-057 bounded CHILD_MAX retention and eviction",
+          "duration_seconds": 75.11340858300002,
+          "capture_duration_seconds": 74.92264729099998,
+          "case_failures": [],
+          "diagnostic_failures": [],
+          "watcher_cleanup_failures": [],
+          "trace_summary": {
+            "bytes": 489227,
+            "truncated": false,
+            "partial_final_record": false,
+            "errors": [],
+            "events": 5571,
+            "root_pid": 82587,
+            "root_finished": true,
+            "first_time_us": 763504459,
+            "last_time_us": 838289774,
+            "alarm_states": [
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "alarm_query_failures": 0
+          },
+          "expectation": "Positive retention fixture passed."
+        },
+        {
+          "member": "retention-diagnostics-checks/retention-olrwbm6x/result.json",
+          "case": "diagnostic stalled child: blocked alarm",
+          "duration_seconds": 6.228087500000015,
+          "capture_duration_seconds": 6.036398582999993,
+          "case_failures": [
+            "timeout after 6s (no output received; 0 bytes captured; process group killed)",
+            "status: expected 0, got -9"
+          ],
+          "diagnostic_failures": [],
+          "watcher_cleanup_failures": [],
+          "trace_summary": {
+            "bytes": 607,
+            "truncated": false,
+            "partial_final_record": false,
+            "errors": [],
+            "events": 7,
+            "root_pid": 71291,
+            "root_finished": false,
+            "first_time_us": 484367094,
+            "last_time_us": 484409837,
+            "alarm_states": [
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "alarm_query_failures": 0
+          },
+          "expectation": "Intentional stalled-child control; failure strings are expected and checked."
+        },
+        {
+          "member": "retention-diagnostics-checks/retention-xarfl3r2/result.json",
+          "case": "diagnostic stalled child: default alarm",
+          "duration_seconds": 5.659690332999958,
+          "capture_duration_seconds": 5.4130431250000015,
+          "case_failures": [
+            "status: expected 0, got -14"
+          ],
+          "diagnostic_failures": [],
+          "watcher_cleanup_failures": [],
+          "trace_summary": {
+            "bytes": 607,
+            "truncated": false,
+            "partial_final_record": false,
+            "errors": [],
+            "events": 7,
+            "root_pid": 71208,
+            "root_finished": false,
+            "first_time_us": 478712039,
+            "last_time_us": 478752682,
+            "alarm_states": [
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "alarm_query_failures": 0
+          },
+          "expectation": "Intentional stalled-child control; failure strings are expected and checked."
+        }
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-01T17:17:12Z",
+          "completed_at": "2026-10-01T17:17:13Z"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-01T17:17:13Z",
+          "completed_at": "2026-10-01T17:17:16Z"
+        },
+        {
+          "name": "Run actions/setup-python@v6",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-01T17:17:16Z",
+          "completed_at": "2026-10-01T17:17:16Z"
+        },
+        {
+          "name": "Install Linux build dependencies",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-10-01T17:17:16Z",
+          "completed_at": "2026-10-01T17:17:16Z"
+        },
+        {
+          "name": "Install macOS profile dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-01T17:17:16Z",
+          "completed_at": "2026-10-01T17:17:20Z"
+        },
+        {
+          "name": "Build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-01T17:17:20Z",
+          "completed_at": "2026-10-01T17:17:23Z"
+        },
+        {
+          "name": "Test replacement APIs, cshell runtime, and selected behavior",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-01T17:17:23Z",
+          "completed_at": "2026-10-01T17:20:32Z"
+        },
+        {
+          "name": "Test cshell terminal behavior and selected terminal suite",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-01T17:20:32Z",
+          "completed_at": "2026-10-01T17:20:35Z"
+        },
+        {
+          "name": "Qualify host utilities and rerun runtime with selected PATH",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-01T17:20:35Z",
+          "completed_at": "2026-10-01T17:21:27Z"
+        },
+        {
+          "name": "Test harness failure handling",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-01T17:21:27Z",
+          "completed_at": "2026-10-01T17:21:55Z"
+        },
+        {
+          "name": "Check replacement modules and cshell runtime with ASan and UBSan",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 11,
+          "started_at": "2026-10-01T17:21:55Z",
+          "completed_at": "2026-10-01T18:02:27Z"
+        },
+        {
+          "name": "Preserve retention timing and stack diagnostics",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-01T18:02:27Z",
+          "completed_at": "2026-10-01T18:02:29Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v6",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 23,
+          "started_at": "2026-10-01T18:02:29Z",
+          "completed_at": "2026-10-01T18:02:29Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-10-01T18:02:29Z",
+          "completed_at": "2026-10-01T18:02:30Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-10-01T18:02:30Z",
+          "completed_at": "2026-10-01T18:02:33Z"
+        }
+      ]
+    },
+    {
+      "job_id": 110490529268,
+      "run_id": 36898227146,
+      "event": "push",
+      "url": "https://github.com/melliott18/cshell/actions/runs/36898227146/job/110490529268",
+      "checkout_sha": "0f80030053cfb4648e403da9b2ef1ec9cd236036",
+      "conclusion": "cancelled",
+      "started_at": "2026-10-01T17:17:10Z",
+      "completed_at": "2026-10-01T18:02:36Z",
+      "budget_minutes": 45,
+      "timeout_annotation": [
+        "The job has exceeded the maximum execution time of 45m0s"
+      ],
+      "cancellation": {
+        "line": 22908,
+        "timestamp": "2026-10-01T18:02:26.6081460Z",
+        "message": "##[error]The operation was canceled."
+      },
+      "last_passing_case": {
+        "line": 22907,
+        "timestamp": "2026-10-01T18:02:26.5628230Z",
+        "message": "PASS: syntax: alias reserved spelling policy (string)"
+      },
+      "last_pass_to_cancel_seconds": 0.045323,
+      "elapsed_to_cancel_seconds": 2716.608146,
+      "checks": {
+        "mach": [
+          {
+            "line": 1409,
+            "timestamp": "2026-10-01T17:17:56.8197520Z",
+            "phase": "Test replacement APIs, cshell runtime, and selected behavior",
+            "message": "crash notification isolation checks passed"
+          },
+          {
+            "line": 15611,
+            "timestamp": "2026-10-01T17:23:04.2389060Z",
+            "phase": "Check replacement modules and cshell runtime with ASan and UBSan",
+            "message": "crash notification isolation checks passed"
+          }
+        ],
+        "retention": [
+          {
+            "line": 1403,
+            "timestamp": "2026-10-01T17:17:56.5031060Z",
+            "phase": "Test replacement APIs, cshell runtime, and selected behavior",
+            "message": "PASS: CSH-057 bounded CHILD_MAX retention and eviction"
+          },
+          {
+            "line": 17980,
+            "timestamp": "2026-10-01T17:31:32.0396940Z",
+            "phase": "Check replacement modules and cshell runtime with ASan and UBSan",
+            "message": "PASS: CSH-057 bounded CHILD_MAX retention and eviction"
+          }
+        ],
+        "repeated_resume": [
+          {
+            "line": 9943,
+            "timestamp": "2026-10-01T17:21:07.5467380Z",
+            "phase": "Test cshell terminal behavior and selected terminal suite",
+            "message": "PASS: repeated background resumes preserve prompt and terminal"
+          },
+          {
+            "line": 15197,
+            "timestamp": "2026-10-01T17:22:10.2379110Z",
+            "phase": "Qualify host utilities and rerun runtime with selected PATH",
+            "message": "PASS: repeated background resumes preserve prompt and terminal"
+          },
+          {
+            "line": 19356,
+            "timestamp": "2026-10-01T17:38:36.6543660Z",
+            "phase": "Check replacement modules and cshell runtime with ASan and UBSan",
+            "message": "PASS: repeated background resumes preserve prompt and terminal"
+          }
+        ],
+        "terminal_fault": [
+          {
+            "line": 9969,
+            "timestamp": "2026-10-01T17:21:08.5469360Z",
+            "phase": "Test cshell terminal behavior and selected terminal suite",
+            "message": "PASS: process group and terminal handoff restoration failures"
+          },
+          {
+            "line": 15223,
+            "timestamp": "2026-10-01T17:22:11.1072390Z",
+            "phase": "Qualify host utilities and rerun runtime with selected PATH",
+            "message": "PASS: process group and terminal handoff restoration failures"
+          },
+          {
+            "line": 19401,
+            "timestamp": "2026-10-01T17:38:49.0283170Z",
+            "phase": "Check replacement modules and cshell runtime with ASan and UBSan",
+            "message": "PASS: process group and terminal handoff restoration failures"
+          }
+        ],
+        "csh054": [
+          {
+            "line": 4635,
+            "timestamp": "2026-10-01T17:19:16.9039200Z",
+            "phase": "Test replacement APIs, cshell runtime, and selected behavior",
+            "message": "Result: 361 passed, 0 failed, 0 skipped"
+          },
+          {
+            "line": 22266,
+            "timestamp": "2026-10-01T17:56:57.2678290Z",
+            "phase": "Check replacement modules and cshell runtime with ASan and UBSan",
+            "message": "Result: 361 passed, 0 failed, 0 skipped"
+          }
+        ]
+      },
+      "unexpected_failure_lines": [],
+      "retention_artifact_results": [
+        {
+          "member": "retention-diagnostics/retention-7bsid2rs/result.json",
+          "case": "CSH-057 bounded CHILD_MAX retention and eviction",
+          "duration_seconds": 66.069791291,
+          "capture_duration_seconds": 65.925954542,
+          "case_failures": [],
+          "diagnostic_failures": [],
+          "watcher_cleanup_failures": [],
+          "trace_summary": {
+            "bytes": 489308,
+            "truncated": false,
+            "partial_final_record": false,
+            "errors": [],
+            "events": 5572,
+            "root_pid": 83902,
+            "root_finished": true,
+            "first_time_us": 879074038,
+            "last_time_us": 944877088,
+            "alarm_states": [
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "alarm_query_failures": 0
+          },
+          "expectation": "Positive retention fixture passed."
+        },
+        {
+          "member": "retention-diagnostics-checks/retention-9ufi8ca0/result.json",
+          "case": "diagnostic stalled child: blocked alarm",
+          "duration_seconds": 6.183271291999972,
+          "capture_duration_seconds": 6.060155624999993,
+          "case_failures": [
+            "timeout after 6s (no output received; 0 bytes captured; process group killed)",
+            "status: expected 0, got -9"
+          ],
+          "diagnostic_failures": [],
+          "watcher_cleanup_failures": [],
+          "trace_summary": {
+            "bytes": 607,
+            "truncated": false,
+            "partial_final_record": false,
+            "errors": [],
+            "events": 7,
+            "root_pid": 72285,
+            "root_finished": false,
+            "first_time_us": 573062768,
+            "last_time_us": 573104757,
+            "alarm_states": [
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "alarm_query_failures": 0
+          },
+          "expectation": "Intentional stalled-child control; failure strings are expected and checked."
+        },
+        {
+          "member": "retention-diagnostics-checks/retention-n5slgo99/result.json",
+          "case": "diagnostic stalled child: default alarm",
+          "duration_seconds": 5.550184542000011,
+          "capture_duration_seconds": 5.321427249999942,
+          "case_failures": [
+            "status: expected 0, got -14"
+          ],
+          "diagnostic_failures": [],
+          "watcher_cleanup_failures": [],
+          "trace_summary": {
+            "bytes": 607,
+            "truncated": false,
+            "partial_final_record": false,
+            "errors": [],
+            "events": 7,
+            "root_pid": 72206,
+            "root_finished": false,
+            "first_time_us": 567458634,
+            "last_time_us": 567507270,
+            "alarm_states": [
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "alarm_query_failures": 0
+          },
+          "expectation": "Intentional stalled-child control; failure strings are expected and checked."
+        }
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-01T17:17:10Z",
+          "completed_at": "2026-10-01T17:17:11Z"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-01T17:17:11Z",
+          "completed_at": "2026-10-01T17:17:14Z"
+        },
+        {
+          "name": "Run actions/setup-python@v6",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-01T17:17:14Z",
+          "completed_at": "2026-10-01T17:17:14Z"
+        },
+        {
+          "name": "Install Linux build dependencies",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-10-01T17:17:14Z",
+          "completed_at": "2026-10-01T17:17:14Z"
+        },
+        {
+          "name": "Install macOS profile dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-01T17:17:14Z",
+          "completed_at": "2026-10-01T17:17:20Z"
+        },
+        {
+          "name": "Build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-01T17:17:20Z",
+          "completed_at": "2026-10-01T17:17:24Z"
+        },
+        {
+          "name": "Test replacement APIs, cshell runtime, and selected behavior",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-01T17:17:24Z",
+          "completed_at": "2026-10-01T17:21:06Z"
+        },
+        {
+          "name": "Test cshell terminal behavior and selected terminal suite",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-01T17:21:06Z",
+          "completed_at": "2026-10-01T17:21:09Z"
+        },
+        {
+          "name": "Qualify host utilities and rerun runtime with selected PATH",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-01T17:21:09Z",
+          "completed_at": "2026-10-01T17:22:12Z"
+        },
+        {
+          "name": "Test harness failure handling",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-01T17:22:12Z",
+          "completed_at": "2026-10-01T17:22:42Z"
+        },
+        {
+          "name": "Check replacement modules and cshell runtime with ASan and UBSan",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 11,
+          "started_at": "2026-10-01T17:22:42Z",
+          "completed_at": "2026-10-01T18:02:26Z"
+        },
+        {
+          "name": "Preserve retention timing and stack diagnostics",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-01T18:02:26Z",
+          "completed_at": "2026-10-01T18:02:28Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v6",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 23,
+          "started_at": "2026-10-01T18:02:28Z",
+          "completed_at": "2026-10-01T18:02:28Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-10-01T18:02:28Z",
+          "completed_at": "2026-10-01T18:02:29Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-10-01T18:02:29Z",
+          "completed_at": "2026-10-01T18:02:33Z"
+        }
+      ]
+    }
+  ],
+  "pr_merge_compare": {
+    "comparison": "0f800300...c6f0df8",
+    "changed_files": [],
+    "conclusion": "Synthetic PR merge and push head have identical tracked contents."
+  },
+  "interpretation": "Both jobs explicitly exceeded the 45-minute aggregate job limit while tests continued passing until cancellation. Targeted CSH-057 Mach, retention, repeated-resume, and terminal-fault checks passed in normal and sanitizer phases. This does not negate the earlier repeated-resume failure or establish the cause of its cleanup failure, and does not constitute a complete sanitizer-suite pass.",
+  "members_sha256": {
+    "annotations110490529268.json": "b5d3b2683adce18f55700ed3912a504daa4d539f2ccbbf3e7768d1615a8f5f60",
+    "annotations110490557080.json": "13cb46565d6b69922ccec666b7759ab3b7a25fc082eb82485579cb8342c6ce75",
+    "check110490529268.json": "2ce7ac0506ef59e8c70678123f6241d172221ae0098d07c323e23c7434ffd83b",
+    "check110490557080.json": "fd1b92c1a2ab2e0fe31e494829ff53356e44a4e0a875540ea5e2aecb99e8e142",
+    "compare-earlier-head.json": "aa1aa393d245469663777406521362dfd819a65e1c4fee1e7579346190e61464",
+    "compare-head-merge.json": "39afab74046078447e78c336e220c6c18b32bf93e9a17d58b0a57973ee3f10d9",
+    "job110490529268.json": "ebd707a0fee57b04d9c299d0f153a6c5e135b0c481a114124dec4bccd68f073f",
+    "job110490529268.log": "1d40843f95024c789f871a65e26a21323b94eb3403c5a4c1dc2f4ffff34d1451",
+    "job110490557080.json": "87ffc1cdc23f7b2a77922fba2a392568c1e83904e603f4ee6c8b1700de18a617",
+    "job110490557080.log": "7b1275458b56161b8066d08e0860ce43e338dba24b44cb557dc012b6c8cff124",
+    "retention-pr.zip": "ddfb6c24987872b0668285814787edadd1adac36f99a511559a3a30b91ce9eb0",
+    "retention-push.zip": "d986905e6d4516ed6f74c9ba58eb43dc35d6daedfedc0f7bfbf70e4ced5d4d84",
+    "run36898227146.json": "157b8fe700537a5924a497ea536c977867390f534c35f743bce6bca1e6b9fea2",
+    "run36898234219.json": "d9c36827cf1379f877b8a6cca9ae63d4d12ecbbf2f6aea3e2ee4b1f7b89f3cc2",
+    "tested-tests.yml": "35a1e6659afc47c30b33f1ad2759fde1e221eec6200a4302e508eb7342b8f1c9"
+  }
+}
