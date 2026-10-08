@@ -132,3 +132,20 @@ Each remaining contract and all four original conditions transfer to open
 This uses the acceptance criteria's individual-disposition alternative; it does
 not claim privileged filesystems, quotas, actual capacity exhaustion, EIO,
 libc-internal allocation behavior or full utility qualification.
+
+## Review hardening and hosted evidence — 2026-10-08
+
+All eight hosted checks passed on implementation 1ecae53: focused filesystem
+qualification on macOS 15 and Ubuntu, plus native macOS/Ubuntu and Docker checks
+on both push and PR workflows. [Hosted records](../evidence/csh-080/hosted-1ecae53/README.md)
+retain the exact head and separate stock failures.
+
+Review also found fault-marker reads could block on a FIFO outside the child
+watchdog. The shared reader now requires a non-symlink regular file, caps both
+file size and read length, and rejects non-object JSON. Ten invalid-marker
+subcases under an independent watchdog verify failure recording and cleanup.
+The 18-test harness suite and complete selected native/Linux profiles pass;
+[hardening evidence](../evidence/csh-080/marker-validation/README.md) distinguishes
+these results from the prior head's hosted checks. No provider expectations or
+CSH-084 residual dispositions changed. The ticket remains in review until
+integrated into main.

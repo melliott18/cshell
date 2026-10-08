@@ -10,6 +10,7 @@ import platform
 import re
 import shlex
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -79,6 +80,29 @@ def stderr_matches(row, output, provider=None):
     return output.startswith(prefix) and re.fullmatch(str(size).encode() + rb' bytes[^\n]*\n', output[len(prefix):]) is not None
 
 
+def read_fault_marker(path):
+    """Read only a bounded regular marker through the checked descriptor.
+
+    Markers are child output: a FIFO must not bypass the capture watchdog,
+    and a symlink must not redirect the oracle to another file.
+    """
+    limit = 4096
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
+    try:
+        info = os.fstat(fd)
+        if not stat.S_ISREG(info.st_mode) or info.st_size > limit:
+            raise ValueError('fault marker is not a bounded regular file')
+        data = os.read(fd, limit + 1)
+        if len(data) > limit:
+            raise ValueError('fault marker exceeds byte limit')
+        marker = json.loads(data)
+        if not isinstance(marker, dict):
+            raise ValueError('fault marker must be a JSON object')
+        return marker
+    finally:
+        os.close(fd)
+
+
 def allocation_marker_matches(expected, marker):
     if not isinstance(marker, dict) or set(marker) != {'requested', 'calls', 'triggered'}:
         return False
@@ -146,7 +170,7 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
             output = {'stdout': b'', 'stderr': b''}
         if action:
             try:
-                marker = json.loads((cwd / '.io-fault.json').read_text())
+                marker = read_fault_marker(cwd / '.io-fault.json')
                 expected_errno = {'file-size': errno.EFBIG, 'closed-output': errno.EBADF,
                                   'closed-input': errno.EBADF, 'broken-pipe': errno.EPIPE, 'enospc': errno.ENOSPC}[action]
                 if (marker.get('phase'), marker.get('action'), marker.get('provider'), marker.get('errno')) != ('armed', action, provider, expected_errno):
@@ -156,7 +180,7 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
                 errors.append('missing/invalid kernel fault marker: ' + str(error))
         if 'allocation_fault' in row or row.get('allocation_probe'):
             try:
-                marker = json.loads((cwd / '.allocation-fault.json').read_text())
+                marker = read_fault_marker(cwd / '.allocation-fault.json')
                 expected = row.get('allocation_fault', dict(requested=0, triggered=0, calls_min=1, calls_max=128))
                 if not allocation_marker_matches(expected, marker):
                     errors.append('allocation fault coverage mismatch')

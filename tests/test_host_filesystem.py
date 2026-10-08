@@ -1,8 +1,10 @@
 """CSH-072 harness failure and oracle regressions, not provider conformance."""
 import json
+import errno
 import os
 from pathlib import Path
 import sys
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -48,6 +50,59 @@ class FilesystemHarnessTests(unittest.TestCase):
             self.assertEqual(record['verdict'], 'FAIL')
             self.assertTrue(any('allocation marker' in e for e in record['errors']))
             self.assertTrue(record['cleanup'])
+
+    def test_child_markers_cannot_hang_or_redirect_the_oracle(self):
+        # The outer watchdog catches a regression that blocks in the parent
+        # after smoke.capture has already reaped the provider.
+        tests = Path(__file__).resolve().parent
+        for action in ('allocation', 'kernel'):
+            for kind in ('fifo', 'symlink', 'directory', 'oversized', 'nonobject'):
+                with self.subTest(action=action, kind=kind), tempfile.TemporaryDirectory() as root:
+                    root = Path(root)
+                    marker = '.allocation-fault.json' if action == 'allocation' else '.io-fault.json'
+                    row = case('readlink', 'invalid-marker', ['link'], status='nonzero', err='nonempty')
+                    if action == 'allocation':
+                        row['allocation_fault'] = dict(requested=1, triggered=1, calls_min=1, calls_max=1)
+                    else:
+                        row['io_action'] = 'broken-pipe'
+                    provider = root / 'provider'
+                    payload = (dict(requested=1, triggered=1, calls=1) if action == 'allocation'
+                               else dict(phase='armed', action='broken-pipe',
+                                         provider=str(provider), errno=errno.EPIPE))
+                    encoded = json.dumps(payload)
+                    program = (
+                        '#!' + sys.executable + '\n'
+                        'import os,sys\nfrom pathlib import Path\n'
+                        f'p=Path({marker!r})\np.unlink(missing_ok=True)\n'
+                    )
+                    if kind == 'fifo':
+                        program += 'os.mkfifo(p)\n'
+                    elif kind == 'symlink':
+                        program += f"Path('payload').write_text({encoded!r})\np.symlink_to('payload')\n"
+                    elif kind == 'directory':
+                        program += 'p.mkdir()\n'
+                    elif kind == 'oversized':
+                        program += f"p.write_text({encoded!r} + ' ' * 4096)\n"
+                    else:
+                        program += "p.write_text('[]')\n"
+                    provider.write_text(program + "print('injected error',file=sys.stderr)\nsys.exit(1)\n")
+                    provider.chmod(0o700)
+                    script = (
+                        'import json,os,sys\nfrom pathlib import Path\n'
+                        f'sys.path.insert(0,{str(tests)!r})\n'
+                        'from host_filesystem import run_case\n'
+                        f'record=run_case(Path({str(provider)!r}),'
+                        f'{{"readlink":{{"path":{str(provider)!r}}}}},os.defpath,'
+                        f'{row!r},"direct",Path({str(root)!r}),None)\n'
+                        'print(json.dumps(record))\n'
+                    )
+                    result = subprocess.run([sys.executable, '-c', script],
+                                            capture_output=True, text=True, timeout=5, check=True)
+                    record = json.loads(result.stdout)
+                    self.assertEqual(record['verdict'], 'FAIL')
+                    self.assertTrue(any('marker' in e for e in record['errors']))
+                    self.assertTrue(record['cleanup'])
+                    self.assertFalse(list(root.glob('csh-filesystem-*')))
 
     def test_dd_oracle_rejects_padded_input_as_whole_record(self):
         row = next(r for r in remaining_cases() if r['id'] == 'dd/remaining-sync')

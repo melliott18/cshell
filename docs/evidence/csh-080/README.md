@@ -122,3 +122,12 @@ bounded control flow. No provider behavior was changed to satisfy those tests.
 
 Ticket identities were checked against the atomically reserved CSH-084 / issue
 #178 mapping. The two pre-existing historical shared-branch warnings remain.
+
+## 2026-10-08 follow-up
+
+[Hosted verification](hosted-1ecae53/README.md) now retains all eight successful
+checks for implementation 1ecae53, including both broad native and Docker runs.
+[Marker-reader hardening](marker-validation/README.md) records the subsequent
+bounded-reader correction, ten invalid-marker subcases, and passing native/Linux
+profiles. Each record is tied to its actual source version; stock failures and
+CSH-084 dispositions remain unchanged.
