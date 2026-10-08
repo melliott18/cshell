@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Real Git races and strict identity checks, without GitHub writes."""
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import redirect_stdout
 import copy
+import io
 import json
 from pathlib import Path
 import subprocess
@@ -9,9 +11,10 @@ import sys
 import tempfile
 import threading
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
-from tickets import Registry, REGISTRY_REF, command, registry_errors, validate
+from tickets import Registry, REGISTRY_REF, command, main, registry_errors, validate
 
 
 def git(cwd, *args, data=None):
@@ -105,6 +108,13 @@ class IdentityTests(unittest.TestCase):
     def test_aligned_identity(self):
         self.assertEqual(self.errors(), [])
 
+    def test_empty_live_issue_list_rejects_missing_linked_issue(self):
+        self.issues = []
+        self.assertIn(f'{self.path}: linked GitHub issue is missing', self.errors())
+
+    def test_offline_validation_does_not_require_github_issues(self):
+        self.assertEqual(validate(self.documents, None, self.registry)[0], [])
+
     def test_duplicate_issue_titles_are_rejected(self):
         extra = copy.deepcopy(self.issues[0]); extra['number'] = 159
         self.issues.append(extra)
@@ -163,6 +173,87 @@ class IdentityTests(unittest.TestCase):
     def test_malformed_numbered_title_cannot_hide_as_a_draft(self):
         self.issues[0]['title'] = 'CSH-080 Filesystem'
         self.assertIn('issue #158: malformed CSH title', self.errors())
+
+
+class CheckCommandTests(unittest.TestCase):
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name)
+        git(self.root, 'init')
+        git(self.root, 'config', 'user.name', 'Ticket test')
+        git(self.root, 'config', 'user.email', 'ticket-test@example.invalid')
+        git(self.root, 'remote', 'add', 'origin', 'https://github.com/owner/repo.git')
+        self.directory = self.root / 'docs/tickets'
+        self.directory.mkdir(parents=True)
+        self.snapshot = self.directory / 'allocations.json'
+        self.registry = dict(schema_version=1, reservations={'CSH-080': 158, 'CSH-081': 159})
+        self.snapshot.write_text(json.dumps(self.registry))
+        self.body = '# CSH-080: Filesystem\n\n- Status: ready\n- Issue: [#158](https://github.com/owner/repo/issues/158)\n'
+        (self.directory / 'CSH-080-filesystem.md').write_text(self.body)
+        (self.directory / 'README.md').write_text('[CSH-080](CSH-080-filesystem.md)')
+        self.issues = [dict(number=158, title='CSH-080: Filesystem', body=self.body, state='open')]
+        self.commit()
+
+    def commit(self):
+        git(self.root, 'add', '.')
+        git(self.root, 'commit', '-m', 'Test snapshot')
+        return git(self.root, 'rev-parse', 'HEAD')
+
+    def check(self, *args):
+        output = io.StringIO()
+
+        def local_command(*command_args, **kwargs):
+            kwargs.setdefault('cwd', self.root)
+            return command(*command_args, **kwargs)
+
+        with patch('tickets.command', side_effect=local_command), \
+                patch('tickets.Registry.read', return_value=('test-tip', self.registry)), \
+                patch('tickets.all_issues', return_value=self.issues), redirect_stdout(output):
+            status = main(['check', *args])
+        return status, output.getvalue()
+
+    def test_live_check_rejects_empty_issue_response(self):
+        self.issues = []
+        status, output = self.check('--live')
+        self.assertEqual(status, 1)
+        self.assertIn('linked GitHub issue is missing', output)
+
+    def test_ref_snapshot_conflicts_are_reported_even_without_a_ticket_file(self):
+        conflicting = copy.deepcopy(self.registry)
+        conflicting['reservations']['CSH-081'] = 999
+        self.snapshot.write_text(json.dumps(conflicting))
+        revision = self.commit()
+        self.snapshot.write_text(json.dumps(self.registry))
+        for mode in ([], ['--live']):
+            with self.subTest(mode=mode):
+                status, output = self.check(*mode, '--ref', revision)
+                self.assertEqual(status, 1)
+                self.assertIn(f'FAIL {revision}: snapshot conflicts', output)
+                self.assertIn('CSH-081', output)
+                self.assertNotIn('FAIL worktree:', output)
+
+    def test_ref_snapshot_malformed_json_and_schema_fail(self):
+        for value in ('{', '[]', '{"schema_version": 1, "reservations": []}'):
+            with self.subTest(value=value):
+                self.snapshot.write_text(value)
+                revision = self.commit()
+                self.snapshot.write_text(json.dumps(self.registry))
+                status, output = self.check('--live', '--ref', revision)
+                self.assertEqual(status, 1)
+                self.assertIn(f'FAIL {revision}: invalid allocation snapshot', output)
+
+    def test_stale_ref_snapshot_can_omit_newer_reservations(self):
+        self.snapshot.write_text(json.dumps(dict(schema_version=1, reservations={'CSH-080': 158})))
+        revision = self.commit()
+        self.snapshot.write_text(json.dumps(self.registry))
+        self.assertEqual(self.check('--live', '--ref', revision)[0], 0)
+
+    def test_ref_predating_registry_can_omit_snapshot(self):
+        self.snapshot.unlink()
+        revision = self.commit()
+        self.snapshot.write_text(json.dumps(self.registry))
+        self.assertEqual(self.check('--live', '--ref', revision)[0], 0)
 
 
 if __name__ == '__main__':

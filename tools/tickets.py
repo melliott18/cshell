@@ -99,13 +99,14 @@ def all_issues(repo):
 
 
 def validate(documents, issues, registry):
+    """Use None for offline validation; an empty live response is still checked."""
     errors = registry_errors(registry)
     if errors:
         return errors, []
     reservations = registry['reservations']
-    issues_by_number = {issue['number']: issue for issue in issues}
+    issues_by_number = {issue['number']: issue for issue in issues or []}
     issue_ids, file_ids, warnings = {}, {}, []
-    for issue in issues:
+    for issue in issues or []:
         match = re.match(r'^(CSH-\d+): (.+)$', issue['title'])
         if not match:
             if re.match(r'^CSH-\d', issue['title']):
@@ -144,7 +145,7 @@ def validate(documents, issues, registry):
         number = int(link['number'])
         if reservations.get(ticket) != number:
             errors.append(f'{path}: issue #{number} does not own {ticket}')
-        if issues:
+        if issues is not None:
             issue = issues_by_number.get(number)
             if not issue:
                 errors.append(f'{path}: linked GitHub issue is missing')
@@ -179,7 +180,31 @@ def documents_at(root, revision=None):
             for path in paths if path.endswith('.md')}
 
 
-def main():
+def snapshot_errors(root, revision, registry):
+    """Check each audited snapshot against the authoritative reservation map."""
+    path = 'docs/tickets/allocations.json'
+    if revision is None:
+        source = (root / path).read_text()
+    else:
+        # Older branches predate the registry. Only a missing path is allowed;
+        # an invalid ref or unreadable blob must still fail the command.
+        if not command('git', 'ls-tree', '--name-only', revision, '--', path, cwd=root).stdout.strip():
+            return []
+        source = command('git', 'show', revision + ':' + path, cwd=root).stdout
+    try:
+        snapshot = json.loads(source)
+    except ValueError as error:
+        return [f'invalid allocation snapshot: {error}']
+    errors = registry_errors(snapshot)
+    if errors:
+        return ['invalid allocation snapshot: ' + '; '.join(errors)]
+    # A stale snapshot may omit newer reservations, but cannot contradict one.
+    return [f'snapshot conflicts with authoritative reservation: {ticket}'
+            for ticket, number in snapshot['reservations'].items()
+            if registry['reservations'].get(ticket) != number]
+
+
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--repo', help='GitHub owner/repository; defaults to this checkout')
     sub = parser.add_subparsers(dest='command', required=True)
@@ -189,7 +214,7 @@ def main():
     check.add_argument('--live', action='store_true', help='check current GitHub issues and the shared registry')
     check.add_argument('--ref', action='append', default=[], help='also audit a fetched branch/ref without checking it out')
     check.add_argument('--record', type=Path)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     root = Path(command('git', 'rev-parse', '--show-toplevel').stdout.strip())
     snapshot = root / 'docs/tickets/allocations.json'
     repo = args.repo
@@ -228,20 +253,15 @@ def main():
         print(ticket)
         return 0
     registry = Registry(root).read()[1] if args.live else json.loads(snapshot.read_text())
-    issues = all_issues(repo) if args.live else []
+    errors = registry_errors(registry)
+    if errors:
+        raise ValueError('invalid registry: ' + '; '.join(errors))
+    issues = all_issues(repo) if args.live else None
     findings = {}
     for ref in [None, *args.ref]:
         errors, warnings = validate(documents_at(root, ref), issues, registry)
+        errors.extend(snapshot_errors(root, ref, registry))
         findings[ref or 'worktree'] = dict(errors=errors, warnings=warnings)
-    # A stale snapshot may omit newer reservations, but cannot contradict one.
-    if args.live:
-        local = json.loads(snapshot.read_text())
-        errors = registry_errors(local)
-        if errors:
-            raise ValueError('invalid local snapshot: ' + '; '.join(errors))
-        for ticket, number in local['reservations'].items():
-            if registry['reservations'].get(ticket) != number:
-                findings['worktree']['errors'].append(f'snapshot conflicts with shared reservation: {ticket}')
     if args.record:
         args.record.parent.mkdir(parents=True, exist_ok=True)
         args.record.write_text(json.dumps(dict(registry=registry, findings=findings), indent=2) + '\n')

@@ -48,3 +48,20 @@ for issue #176 after the filesystem follow-up moved to CSH-080 (#158).
 
 The Ticket integrity workflow is proposed with this implementation; it becomes
 available repository-wide after merge and is not yet a required main check.
+
+## Continued verification (2026-10-08)
+
+Closed two checker gaps found after the initial review: empty live GitHub issue
+responses now fail for missing linked issues, and every `--ref` allocation
+snapshot is checked for malformed data or conflicting reservations. Older refs
+without a snapshot and stale snapshots that omit newer reservations remain valid.
+Offline ref checks use the worktree snapshot as their authority.
+
+- `make test-tickets`: all 24 tests and offline identity checks pass. Regression
+  cases reproduced both false passes before the fixes.
+- Live checks pass for the worktree, current `origin/main`, and all 13 open PR
+  heads (15 snapshots), with only the two documented historical branch warnings.
+- Strict Python compilation and `git diff --check` pass.
+- [Retained logs, revision scope and source hashes](../evidence/csh-083/README.md#continued-verification-2026-10-08).
+
+The ticket remains in review pending integration of PR #177.

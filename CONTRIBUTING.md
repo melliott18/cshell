@@ -263,9 +263,13 @@ an allocated ID through ordinary tooling.
 `tools/tickets.py check --live` checks the shared bindings against GitHub and
 local documents. It rejects duplicate issue IDs, conflicting reservations,
 filename/heading/title/link mismatches and incorrect index links. Its `--ref`
-option audits additional fetched branches without checking them out. A local
-snapshot may omit reservations made after it was copied, but cannot contradict
-a shared binding. Unnumbered drafts do not constitute allocations. Explicitly
+option audits additional fetched branches, including their allocation snapshots,
+without checking them out. An empty live issue response fails when documents
+reference missing issues; only offline mode skips GitHub issue checks. A local
+or branch snapshot may omit reservations made after it was copied, but cannot
+contradict a shared binding. Branches that predate the registry may omit the
+snapshot entirely. Offline ref checks compare against the worktree's allocation
+snapshot; use `--live` when it may be stale. Unnumbered drafts do not constitute allocations. Explicitly
 closed duplicate issues with non-CSH titles do not allocate an additional ID.
 
 The **Ticket integrity** CI workflow runs these checks on pushes and PRs, with

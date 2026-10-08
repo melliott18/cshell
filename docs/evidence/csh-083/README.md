@@ -54,3 +54,31 @@ the allocator tests, offline checks and live identity checks on pushes and PRs.
 Its workflow and contributor/agent instructions need to merge before they apply
 repository-wide. It is not yet configured as a required main-branch check.
 No runtime code changed; shell behavior suites are not evidence for this task.
+
+## Continued verification (2026-10-08)
+
+The follow-up fixes two false passes in the identity checker. An empty live
+GitHub issue list previously disabled linked-issue checks, and `--ref` audits
+ignored allocation snapshot contents. Live checks now distinguish an empty
+response from offline mode, and each audited ref's snapshot is checked against
+the authoritative registry (the worktree snapshot in offline mode). Refs that
+predate the registry may omit the snapshot; stale snapshots may omit newer
+reservations. Malformed or conflicting snapshots fail with the offending ref.
+
+The empty-response regression failed against the original validator. The
+conflicting-ref regression failed in both offline and live modes before the
+fix. Tests use real local Git commits for ref loading and mocked GitHub reads;
+they make no GitHub writes.
+
+- [Scope, exact commands, main/PR revisions and source SHA-256 hashes](continued-verification/scope.json).
+- [24 passing tests and offline check](continued-verification/check-1.log).
+- [Strict Python compilation](continued-verification/check-2.log): exit status 0.
+- [Live audit output](continued-verification/check-3.log) and
+  [structured findings](continued-verification/live-audit.json): all 15 snapshots
+  pass (worktree, main and 13 open PR heads). Only the two historical shared-branch
+  warnings described above remain.
+- `git diff --check`: PASS.
+
+The source hashes identify the edited checker and tests atop the base commit in
+the scope record; the worktree includes these fixes while the listed PR #177
+revision is the pre-update head. The original October 3 evidence is preserved.
