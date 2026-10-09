@@ -1,0 +1,22 @@
+[
+  {
+    "utility": "du",
+    "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html",
+    "source_sha256": "659c1410d265ef1d4056a784611c6af0df45495f99ff9abfbdbc3c9eb516c100"
+  },
+  {
+    "utility": "file",
+    "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html",
+    "source_sha256": "c2e7590cab2534dbf4a0b3fbd8cc77312990c495c6a448243ca63c14074067bb"
+  },
+  {
+    "utility": "touch",
+    "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html",
+    "source_sha256": "ae8c1a8fc027372a6a50561b7c07bea8c30a471458ee72c00d7b35c039d756b7"
+  },
+  {
+    "source": "https://github.com/coreutils/coreutils/blob/v9.1/doc/coreutils.texi",
+    "source_sha256": "762b8b9f71b3c9d5fadce571399feba2c45d8603ff89f0ca860c12a4f06eef38",
+    "scope": "GNU documented POSIXLY_CORRECT block-size selection"
+  }
+]

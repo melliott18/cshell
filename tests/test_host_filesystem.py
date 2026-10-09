@@ -12,12 +12,98 @@ import pty_harness
 from host_filesystem_extended import cases as extended_cases
 from host_filesystem_remaining import cases as remaining_cases
 from host_filesystem_residual_cases import cases as residual_cases
+import host_filesystem_isolated as isolated
 from host_contract_inventory import utility_owner
 from host_filesystem import run_case, stdout_matches, stderr_matches
 from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, terminal_cases, effect_errors
 
 
 class FilesystemHarnessTests(unittest.TestCase):
+    def test_accounting_rejects_wrong_totals_duplicates_and_missing_paths(self):
+        row = next(r for r in isolated.cases() if r.get('accounting'))
+        with tempfile.TemporaryDirectory() as root:
+            environment = isolated.setup(Path(root), row)
+            expected = environment['expected']
+            good = b''.join(f'{count}\t{name}\n'.encode() for name, count in expected.items())
+            self.assertTrue(isolated.accounting_matches(environment, good))
+            for bad in (good + good, good.splitlines(keepends=True)[0],
+                        good.replace(b'account/sub', b'wrong/sub'),
+                        b''.join(f'{count + 1}\t{name}\n'.encode() for name, count in expected.items())):
+                self.assertFalse(isolated.accounting_matches(environment, bad))
+            (Path(root) / 'account/top').write_bytes(b'changed')
+            self.assertEqual(isolated.verify(Path(root), environment),
+                             ['accounting fixture changed during execution'])
+
+    def test_hardlink_accounting_counts_inode_once(self):
+        row = next(r for r in isolated.cases() if r.get('accounting', {}).get('hardlink'))
+        with tempfile.TemporaryDirectory() as root:
+            environment = isolated.setup(Path(root), row)
+            count = environment['expected']['account']
+            duplicate = environment['measurements']['account/sub/twin']['blocks']
+            self.assertGreater(duplicate, 0)
+            self.assertTrue(isolated.accounting_matches(environment, f'{count}\taccount\n'.encode()))
+            self.assertFalse(isolated.accounting_matches(environment, f'{count + (duplicate + 1) // 2}\taccount\n'.encode()))
+
+    def test_isolated_partial_setup_failure_is_cleaned(self):
+        row = next(r for r in isolated.cases() if r.get('accounting', {}).get('hardlink'))
+        with tempfile.TemporaryDirectory() as root, patch.object(isolated.os, 'link', side_effect=OSError('fixture link failure')):
+            record = run_case(Path('/bin/true'), {'du': {'path': '/bin/true'}}, os.defpath,
+                              row, 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_unrepresentable_timestamp_is_setup_failure(self):
+        row = next(r for r in isolated.cases() if r.get('timestamp_environment'))
+        original = os.utime
+        def ignore_subseconds(path, *args, **kwargs):
+            if 'ns' not in kwargs:
+                return original(path, *args, **kwargs)
+        with tempfile.TemporaryDirectory() as root, patch.object(isolated.os, 'utime', side_effect=ignore_subseconds):
+            record = run_case(Path('/bin/true'), {'touch': {'path': '/bin/true'}}, os.defpath,
+                              row, 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            self.assertIn('cannot represent', record['error'])
+            self.assertTrue(record['cleanup'])
+
+    def test_nanosecond_effect_oracle_rejects_truncated_timestamp(self):
+        row = next(r for r in isolated.cases() if r.get('timestamp_environment'))
+        with tempfile.TemporaryDirectory() as root:
+            root = Path(root)
+            (root / 'empty').touch()
+            os.utime(root / 'empty', ns=(isolated.STAMP_NS, isolated.STAMP_NS))
+            self.assertEqual(effect_errors(root, row)[0], [])
+            truncated = isolated.STAMP_NS // 1000000000 * 1000000000
+            os.utime(root / 'empty', ns=(truncated, truncated))
+            self.assertEqual(effect_errors(root, row)[0], ['effect mismatch: empty'])
+
+    def test_isolated_timeout_cleanup_for_each_environment(self):
+        for capability in ('accounting', 'timestamp_environment', 'files'):
+            with self.subTest(capability=capability), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                provider = root / 'slow'
+                provider.write_text('#!' + sys.executable + ' -S\nimport os,time\nprint(os.getpid(),flush=True)\ntime.sleep(60)\n')
+                provider.chmod(0o700)
+                row = next(r for r in isolated.cases() if r.get(capability))
+                record = run_case(provider, {row['utility']: {'path': str(provider)}}, os.defpath,
+                                  row, 'direct', root, None, timeout=2)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertTrue(record['cleanup'])
+                self.assertTrue(any('timeout' in e for e in record['errors']))
+                pid = int(bytes.fromhex(record['actual']['stdout']['hex']))
+                with self.assertRaises(ProcessLookupError):
+                    os.kill(pid, 0)
+                self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_numeric_magic_negative_samples_have_distinct_oracles(self):
+        rows = {r['id']: r for r in isolated.cases() if r['utility'] == 'file'}
+        for key, positive in rows.items():
+            if key.endswith('-yes'):
+                negative = rows[key[:-4] + '-no']
+                self.assertEqual(positive['files']['magic'], negative['files']['magic'])
+                self.assertNotEqual(positive['files']['sample'], negative['files']['sample'])
+                self.assertFalse(stdout_matches(positive['stdout'], negative['stdout'], None, None, positive))
+
     def test_permission_setup_rejects_root_and_cleans_private_tree(self):
         row = next(r for r in residual_cases() if r.get('permission_denied'))
         with tempfile.TemporaryDirectory() as root, patch('host_filesystem_residual_cases.os.geteuid', return_value=0):
@@ -108,7 +194,7 @@ class FilesystemHarnessTests(unittest.TestCase):
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -274,7 +360,7 @@ class FilesystemHarnessTests(unittest.TestCase):
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

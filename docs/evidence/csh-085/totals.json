@@ -1,0 +1,72 @@
+{
+  "native": {
+    "host-filesystem-allocation": {
+      "PASS": 240,
+      "FAIL": 0
+    },
+    "host-filesystem-audit": {
+      "PASS": 954,
+      "FAIL": 52
+    },
+    "host-filesystem-isolated": {
+      "PASS": 112,
+      "FAIL": 0
+    },
+    "host-filesystem-profile": {
+      "PASS": 1026,
+      "FAIL": 0
+    },
+    "host-filesystem-provider-audit": {
+      "PASS": 168,
+      "FAIL": 0
+    },
+    "host-filesystem-residual": {
+      "PASS": 104,
+      "FAIL": 0
+    },
+    "host-filesystem-stock-provider-audit": {
+      "PASS": 152,
+      "FAIL": 16
+    },
+    "host-profile-results": {
+      "passed": 1162,
+      "failed": 0,
+      "gaps": 0
+    }
+  },
+  "linux": {
+    "host-filesystem-allocation": {
+      "PASS": 200,
+      "FAIL": 0
+    },
+    "host-filesystem-audit": {
+      "PASS": 982,
+      "FAIL": 36
+    },
+    "host-filesystem-isolated": {
+      "PASS": 112,
+      "FAIL": 0
+    },
+    "host-filesystem-profile": {
+      "PASS": 1042,
+      "FAIL": 0
+    },
+    "host-filesystem-provider-audit": {
+      "PASS": 184,
+      "FAIL": 0
+    },
+    "host-filesystem-residual": {
+      "PASS": 104,
+      "FAIL": 0
+    },
+    "host-filesystem-stock-provider-audit": {
+      "PASS": 176,
+      "FAIL": 8
+    },
+    "host-profile-results": {
+      "passed": 1162,
+      "failed": 0,
+      "gaps": 0
+    }
+  }
+}

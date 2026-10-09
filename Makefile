@@ -493,7 +493,11 @@ build/host-pax: $(HOST_PAX_SOURCES)
 	cd build/host-pax-build && CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(filter-out -Werror -Wpedantic -Wshadow,$(CFLAGS))" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" sh ../../tools/host-profile/vendor/pax/Build.sh > build.log 2>&1 || { cat build/host-pax-build/build.log; exit 1; }
 	cp build/host-pax-build/pax $@
 
-host-profile: build/host-printf build/host-paths build/host-pax
+build/host-du: tools/host-profile/du.c
+	@mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+host-profile: build/host-printf build/host-paths build/host-pax build/host-du
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
@@ -657,3 +661,8 @@ test-host-filesystem-allocation: cshell build/tests/host_paths_faults
 .PHONY: test-host-filesystem-residual
 test-host-filesystem-residual: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --residual-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-residual.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-085: independently measured private graphs and timestamp capabilities.
+.PHONY: test-host-filesystem-isolated
+test-host-filesystem-isolated: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --isolated-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-isolated.json $(HOST_FILESYSTEM_FLAGS)

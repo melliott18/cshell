@@ -1375,3 +1375,14 @@ opaque symlink-byte and stdout-fault cases in direct/string/file/stdin modes.
 `make test-host-profile` includes them; `make test-host-inventory` runs their
 setup/error/timeout regressions. Root or ineffective permission bits fail setup.
 See [the exact scope and cleanup contract](host-filesystem-evidence.md#csh-084-residual-environments).
+
+### Private filesystem graphs and subsecond timestamps (CSH-085)
+
+`make test-host-filesystem-isolated` selects the 28 private graph, numeric magic
+and timestamp cases also required by `make test-host-profile`. It records
+`build/tests/host-filesystem-isolated.json`, including pre-exec allocation/inode
+measurements or timestamp capability probes, exact results and cleanup. Run as
+an unprivileged identity on native macOS and Linux. No mounts or elevated
+provisioning are needed. Setup failures and timeouts fail the run; the test does
+not fill any filesystem. `make test-host-inventory` includes malformed-output,
+partial-setup, timestamp precision and timeout cleanup harness regressions.
