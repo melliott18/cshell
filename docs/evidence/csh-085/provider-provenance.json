@@ -1,0 +1,9 @@
+{
+  "base_commit": "5f30e232b5cb35b289939784e32350413811fa1b",
+  "compiler": "Apple clang version 15.0.0 (clang-1500.3.9.4)\nTarget: arm64-apple-darwin23.6.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin\n",
+  "docker_image": "sha256:95fc9aa6e9de3db4aa998daf51d88236d7cce5990d9a22573c31cf6befa9e2f8",
+  "native_find": "Unchanged executable copied from CSH-084 build/native-findutils/bin/gfind. Original GNU find 4.10.0 provenance is docs/evidence/csh-080/provider-provenance.json; this run manifest records the hash.",
+  "linux_du": "tools/host-profile/du.c execs /usr/bin/du with POSIXLY_CORRECT=1 and unchanged argv. Linux manifest records both executable hashes; package versions are in the reports. All utility logic remains GNU coreutils 9.1.",
+  "flags": "Default Makefile CFLAGS/CPPFLAGS/LDFLAGS, with build commands retained in logs.",
+  "source_input_sha256": "85c71862563ebdc6e0845363c7f832118eb8e8a491630006b0d86ffc360aa402"
+}

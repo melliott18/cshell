@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "ticket": "CSH-084",
+  "ticket": "CSH-085",
   "qualification": "case-scoped only; selected profile requires both ordinary and provider-audit assertions; stock failures remain failures",
   "common_defaults": {
     "U-034": "Each of the 21 actual providers is inventoried and directly execed, alongside public cshell string/file/stdin dispatch; pwd builtin and external exec remain distinct.",
@@ -11,7 +11,7 @@
       "utility": "basename",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/basename.html",
       "source_sha256": "76c256427a758fc4388559e7a71fcc9351ed0cfb19afc5af07d38c4cf25c8ab2",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "basename/path-6-620a",
@@ -171,13 +171,17 @@
           "basename/residual-broken-pipe"
         ],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "dirname",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html",
       "source_sha256": "f218ded1508843cdd90913db7cd56ee938d43f67050d6f0645d88cbf916ec6c4",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "dirname/0",
@@ -361,13 +365,17 @@
           "dirname/residual-broken-pipe"
         ],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "cp",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html",
       "source_sha256": "777d1c06255117e8ea9d8c5ede3996ef77b7c5ddecd1cbf9e584deef239a5836",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "cp/bytes",
@@ -523,13 +531,17 @@
           "cp/residual-write-denied"
         ],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "dd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dd.html",
       "source_sha256": "876cebeba49456b8e22b53057bc861120f092c36522193823685cea8b821e249",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "dd/copy",
@@ -736,13 +748,17 @@
       "csh084_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "df",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html",
       "source_sha256": "afbeec1b5e25c2ebf0de45fcffdcff03cf9f3bf4aa6960fc09b426cfc1a45a11",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "df/portable-k",
@@ -821,19 +837,30 @@
       "csh084_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "du",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html",
       "source_sha256": "659c1410d265ef1d4056a784611c6af0df45495f99ff9abfbdbc3c9eb516c100",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "du/file-k",
-        "du/missing"
+        "du/missing",
+        "du/isolated-recursive-512",
+        "du/isolated-all-k",
+        "du/isolated-summary-hardlinks",
+        "du/isolated-operand-H",
+        "du/isolated-nested-L",
+        "du/isolated-last-H",
+        "du/isolated-last-L"
       ],
-      "remaining": "Recursive allocation totals, hard-link deduplication, -a/-s/-x/-H/-L, unreadable subtrees, shared extents and overflow need independent filesystem-specific accounting.",
+      "remaining": "Recursive allocation totals, -a/-s, operand -H, nested -L, last-option precedence and a same-directory hard-link pair now have bounded private-graph witnesses. Cross-device -x, unreadable subtrees, shared extents, arbitrary graphs and overflow remain unqualified.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -859,10 +886,28 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Recursive allocation totals, hard-link deduplication, -a/-s/-x/-H/-L, unreadable subtrees, shared extents and overflow need independent filesystem-specific accounting."
+          "disposition": "Recursive allocation totals, hard-link deduplication, -a/-s/-x/-H/-L, unreadable subtrees, shared extents and overflow need independent filesystem-specific accounting.",
+          "csh085_assertions": [
+            "du/isolated-recursive-512",
+            "du/isolated-all-k",
+            "du/isolated-summary-hardlinks",
+            "du/isolated-operand-H",
+            "du/isolated-nested-L",
+            "du/isolated-last-H",
+            "du/isolated-last-L"
+          ]
         },
         "OPTIONS": {
-          "disposition": "Recursive allocation totals, hard-link deduplication, -a/-s/-x/-H/-L, unreadable subtrees, shared extents and overflow need independent filesystem-specific accounting."
+          "disposition": "Recursive allocation totals, hard-link deduplication, -a/-s/-x/-H/-L, unreadable subtrees, shared extents and overflow need independent filesystem-specific accounting.",
+          "csh085_assertions": [
+            "du/isolated-recursive-512",
+            "du/isolated-all-k",
+            "du/isolated-summary-hardlinks",
+            "du/isolated-operand-H",
+            "du/isolated-nested-L",
+            "du/isolated-last-H",
+            "du/isolated-last-L"
+          ]
         },
         "OPERANDS": {
           "disposition": "Recursive allocation totals, hard-link deduplication, -a/-s/-x/-H/-L, unreadable subtrees, shared extents and overflow need independent filesystem-specific accounting."
@@ -880,10 +925,28 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open."
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "csh085_assertions": [
+            "du/isolated-recursive-512",
+            "du/isolated-all-k",
+            "du/isolated-summary-hardlinks",
+            "du/isolated-operand-H",
+            "du/isolated-nested-L",
+            "du/isolated-last-H",
+            "du/isolated-last-L"
+          ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open."
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "csh085_assertions": [
+            "du/isolated-recursive-512",
+            "du/isolated-all-k",
+            "du/isolated-summary-hardlinks",
+            "du/isolated-operand-H",
+            "du/isolated-nested-L",
+            "du/isolated-last-H",
+            "du/isolated-last-L"
+          ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
@@ -892,7 +955,16 @@
           "disposition": "Recursive allocation totals, hard-link deduplication, -a/-s/-x/-H/-L, unreadable subtrees, shared extents and overflow need independent filesystem-specific accounting."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open."
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "csh085_assertions": [
+            "du/isolated-recursive-512",
+            "du/isolated-all-k",
+            "du/isolated-summary-hardlinks",
+            "du/isolated-operand-H",
+            "du/isolated-nested-L",
+            "du/isolated-last-H",
+            "du/isolated-last-L"
+          ]
         },
         "CONSEQUENCES OF ERRORS": {
           "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open."
@@ -906,13 +978,25 @@
       "csh084_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [
+          "du/isolated-recursive-512",
+          "du/isolated-all-k",
+          "du/isolated-summary-hardlinks",
+          "du/isolated-operand-H",
+          "du/isolated-nested-L",
+          "du/isolated-last-H",
+          "du/isolated-last-L"
+        ],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "file",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html",
       "source_sha256": "c2e7590cab2534dbf4a0b3fbd8cc77312990c495c6a448243ca63c14074067bb",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "file/empty",
@@ -920,9 +1004,25 @@
         "file/residual-magic-string",
         "file/residual-magic-continuation",
         "file/residual-magic-offset",
-        "file/residual-magic-escaped"
+        "file/residual-magic-escaped",
+        "file/isolated-numeric-equal-yes",
+        "file/isolated-numeric-equal-no",
+        "file/isolated-numeric-less-yes",
+        "file/isolated-numeric-less-no",
+        "file/isolated-numeric-greater-yes",
+        "file/isolated-numeric-greater-no",
+        "file/isolated-numeric-mask-hex-yes",
+        "file/isolated-numeric-mask-hex-no",
+        "file/isolated-numeric-mask-octal-yes",
+        "file/isolated-numeric-mask-octal-no",
+        "file/isolated-numeric-bits-set-yes",
+        "file/isolated-numeric-bits-set-no",
+        "file/isolated-numeric-bits-missing-yes",
+        "file/isolated-numeric-bits-missing-no",
+        "file/isolated-numeric-native-short-yes",
+        "file/isolated-numeric-native-short-no"
       ],
-      "remaining": "Other magic types, numeric comparisons/masks, database precedence and -d/-M/-i, default nonempty/encoding classification, symlink errors and locale-dependent descriptions remain unqualified.",
+      "remaining": "Numeric byte equality/comparisons/bit tests, hexadecimal/octal masks and native short equality have matching and nonmatching samples. Other numeric types/ranges, database precedence and -d/-M/-i, default nonempty/encoding classification, symlink errors and localized descriptions remain unqualified.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -954,6 +1054,24 @@
             "file/residual-magic-continuation",
             "file/residual-magic-offset",
             "file/residual-magic-escaped"
+          ],
+          "csh085_assertions": [
+            "file/isolated-numeric-equal-yes",
+            "file/isolated-numeric-equal-no",
+            "file/isolated-numeric-less-yes",
+            "file/isolated-numeric-less-no",
+            "file/isolated-numeric-greater-yes",
+            "file/isolated-numeric-greater-no",
+            "file/isolated-numeric-mask-hex-yes",
+            "file/isolated-numeric-mask-hex-no",
+            "file/isolated-numeric-mask-octal-yes",
+            "file/isolated-numeric-mask-octal-no",
+            "file/isolated-numeric-bits-set-yes",
+            "file/isolated-numeric-bits-set-no",
+            "file/isolated-numeric-bits-missing-yes",
+            "file/isolated-numeric-bits-missing-no",
+            "file/isolated-numeric-native-short-yes",
+            "file/isolated-numeric-native-short-no"
           ]
         },
         "OPTIONS": {
@@ -963,6 +1081,24 @@
             "file/residual-magic-continuation",
             "file/residual-magic-offset",
             "file/residual-magic-escaped"
+          ],
+          "csh085_assertions": [
+            "file/isolated-numeric-equal-yes",
+            "file/isolated-numeric-equal-no",
+            "file/isolated-numeric-less-yes",
+            "file/isolated-numeric-less-no",
+            "file/isolated-numeric-greater-yes",
+            "file/isolated-numeric-greater-no",
+            "file/isolated-numeric-mask-hex-yes",
+            "file/isolated-numeric-mask-hex-no",
+            "file/isolated-numeric-mask-octal-yes",
+            "file/isolated-numeric-mask-octal-no",
+            "file/isolated-numeric-bits-set-yes",
+            "file/isolated-numeric-bits-set-no",
+            "file/isolated-numeric-bits-missing-yes",
+            "file/isolated-numeric-bits-missing-no",
+            "file/isolated-numeric-native-short-yes",
+            "file/isolated-numeric-native-short-no"
           ]
         },
         "OPERANDS": {
@@ -993,6 +1129,24 @@
             "file/residual-magic-continuation",
             "file/residual-magic-offset",
             "file/residual-magic-escaped"
+          ],
+          "csh085_assertions": [
+            "file/isolated-numeric-equal-yes",
+            "file/isolated-numeric-equal-no",
+            "file/isolated-numeric-less-yes",
+            "file/isolated-numeric-less-no",
+            "file/isolated-numeric-greater-yes",
+            "file/isolated-numeric-greater-no",
+            "file/isolated-numeric-mask-hex-yes",
+            "file/isolated-numeric-mask-hex-no",
+            "file/isolated-numeric-mask-octal-yes",
+            "file/isolated-numeric-mask-octal-no",
+            "file/isolated-numeric-bits-set-yes",
+            "file/isolated-numeric-bits-set-no",
+            "file/isolated-numeric-bits-missing-yes",
+            "file/isolated-numeric-bits-missing-no",
+            "file/isolated-numeric-native-short-yes",
+            "file/isolated-numeric-native-short-no"
           ]
         },
         "STDERR": {
@@ -1002,6 +1156,24 @@
             "file/residual-magic-continuation",
             "file/residual-magic-offset",
             "file/residual-magic-escaped"
+          ],
+          "csh085_assertions": [
+            "file/isolated-numeric-equal-yes",
+            "file/isolated-numeric-equal-no",
+            "file/isolated-numeric-less-yes",
+            "file/isolated-numeric-less-no",
+            "file/isolated-numeric-greater-yes",
+            "file/isolated-numeric-greater-no",
+            "file/isolated-numeric-mask-hex-yes",
+            "file/isolated-numeric-mask-hex-no",
+            "file/isolated-numeric-mask-octal-yes",
+            "file/isolated-numeric-mask-octal-no",
+            "file/isolated-numeric-bits-set-yes",
+            "file/isolated-numeric-bits-set-no",
+            "file/isolated-numeric-bits-missing-yes",
+            "file/isolated-numeric-bits-missing-no",
+            "file/isolated-numeric-native-short-yes",
+            "file/isolated-numeric-native-short-no"
           ]
         },
         "OUTPUT FILES": {
@@ -1014,6 +1186,24 @@
             "file/residual-magic-continuation",
             "file/residual-magic-offset",
             "file/residual-magic-escaped"
+          ],
+          "csh085_assertions": [
+            "file/isolated-numeric-equal-yes",
+            "file/isolated-numeric-equal-no",
+            "file/isolated-numeric-less-yes",
+            "file/isolated-numeric-less-no",
+            "file/isolated-numeric-greater-yes",
+            "file/isolated-numeric-greater-no",
+            "file/isolated-numeric-mask-hex-yes",
+            "file/isolated-numeric-mask-hex-no",
+            "file/isolated-numeric-mask-octal-yes",
+            "file/isolated-numeric-mask-octal-no",
+            "file/isolated-numeric-bits-set-yes",
+            "file/isolated-numeric-bits-set-no",
+            "file/isolated-numeric-bits-missing-yes",
+            "file/isolated-numeric-bits-missing-no",
+            "file/isolated-numeric-native-short-yes",
+            "file/isolated-numeric-native-short-no"
           ]
         },
         "EXIT STATUS": {
@@ -1023,6 +1213,24 @@
             "file/residual-magic-continuation",
             "file/residual-magic-offset",
             "file/residual-magic-escaped"
+          ],
+          "csh085_assertions": [
+            "file/isolated-numeric-equal-yes",
+            "file/isolated-numeric-equal-no",
+            "file/isolated-numeric-less-yes",
+            "file/isolated-numeric-less-no",
+            "file/isolated-numeric-greater-yes",
+            "file/isolated-numeric-greater-no",
+            "file/isolated-numeric-mask-hex-yes",
+            "file/isolated-numeric-mask-hex-no",
+            "file/isolated-numeric-mask-octal-yes",
+            "file/isolated-numeric-mask-octal-no",
+            "file/isolated-numeric-bits-set-yes",
+            "file/isolated-numeric-bits-set-no",
+            "file/isolated-numeric-bits-missing-yes",
+            "file/isolated-numeric-bits-missing-no",
+            "file/isolated-numeric-native-short-yes",
+            "file/isolated-numeric-native-short-no"
           ]
         },
         "CONSEQUENCES OF ERRORS": {
@@ -1048,13 +1256,34 @@
           "file/residual-magic-escaped"
         ],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [
+          "file/isolated-numeric-equal-yes",
+          "file/isolated-numeric-equal-no",
+          "file/isolated-numeric-less-yes",
+          "file/isolated-numeric-less-no",
+          "file/isolated-numeric-greater-yes",
+          "file/isolated-numeric-greater-no",
+          "file/isolated-numeric-mask-hex-yes",
+          "file/isolated-numeric-mask-hex-no",
+          "file/isolated-numeric-mask-octal-yes",
+          "file/isolated-numeric-mask-octal-no",
+          "file/isolated-numeric-bits-set-yes",
+          "file/isolated-numeric-bits-set-no",
+          "file/isolated-numeric-bits-missing-yes",
+          "file/isolated-numeric-bits-missing-no",
+          "file/isolated-numeric-native-short-yes",
+          "file/isolated-numeric-native-short-no"
+        ],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "find",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html",
       "source_sha256": "6293363b063c9de0bc4d190b62a09d3cd03906a1fa40d3ddc52ecd6a09a62502",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "find/regular",
@@ -1256,13 +1485,17 @@
           "find/residual-operand-denied"
         ],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "ln",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html",
       "source_sha256": "c4e793bb510483faef398e4c16fb7adc2d60b99c712ea7e6b5f2751a4c6c453c",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "ln/hard",
@@ -1407,13 +1640,17 @@
           "ln/residual-create-denied"
         ],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "ls",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
       "source_sha256": "cd4db85f09dbadf3d529b1bf6a8c157806759c5a22d3ca616aad0cc0363f07bc",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "ls/512-c-order",
@@ -1562,13 +1799,17 @@
           "ls/residual-operand-denied"
         ],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "mkdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html",
       "source_sha256": "7d37d11b3829422919fbc928cf3e4e0e2c9ba3d0eaba2e2e36362e80f4086576",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "mkdir/parents",
@@ -1723,13 +1964,17 @@
           "mkdir/residual-parent-denied"
         ],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "mkfifo",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html",
       "source_sha256": "508f579e25f7ac32d94c2f57aef1a12448e4984fc60d467120cb2bb66157c3ed",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "mkfifo/mode",
@@ -1872,13 +2117,17 @@
           "mkfifo/residual-parent-denied"
         ],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "mv",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mv.html",
       "source_sha256": "c17c6279d2fdf408e2aa82bd674d5eff5130f391361b2e175e4862d6c4a89662",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "mv/rename",
@@ -2022,13 +2271,17 @@
           "mv/residual-destination-denied"
         ],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "pathchk",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html",
       "source_sha256": "ce446d31316645a78d6aa4df6ff45829afbdbd3d667c84ae2c6a3bdfe0ce825a",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "pathchk/portable",
@@ -2223,13 +2476,17 @@
           "pathchk/residual-prefix-denied"
         ],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "pax",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html",
       "source_sha256": "398b008eab3110cd482eee2e62797adaf915405e488b1f36bc73fc2a29591efb",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "pax/copy-tree",
@@ -2395,13 +2652,17 @@
       "csh084_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "pwd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html",
       "source_sha256": "6c0724e219d469ac68640fc07c825a95e090931483b9cee2d089dec136efd7f6",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "pwd/physical",
@@ -2513,13 +2774,17 @@
       "csh084_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "readlink",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html",
       "source_sha256": "b8af59cd805ca79ad73dab35ad008a55b9f8bbef0fc84ce7334ffac7b8f0f4dc",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "readlink/link",
@@ -2700,13 +2965,17 @@
           "readlink/residual-opaque-utf8-n"
         ],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "realpath",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html",
       "source_sha256": "dfded63f96378a20c8952547dea666f07d0006e8868fa37a883b8553de684cc5",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "realpath/existing",
@@ -2834,13 +3103,17 @@
           "realpath/residual-prefix-denied"
         ],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "rm",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html",
       "source_sha256": "7ea788ea4ed4cc0f309bfc9681b650da0cbcec9d535604cb12bfd57fbddb9839",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "rm/file",
@@ -2980,13 +3253,17 @@
           "rm/residual-force-denied"
         ],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "rmdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html",
       "source_sha256": "44451db47f43a6dfb058b6e8f71aee7db1fec99961573246380f7deb0c54bc9f",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "rmdir/empty",
@@ -3118,13 +3395,17 @@
           "rmdir/residual-parent-denied"
         ],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     },
     {
       "utility": "touch",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html",
       "source_sha256": "ae8c1a8fc027372a6a50561b7c07bea8c30a471458ee72c00d7b35c039d756b7",
-      "owner": "CSH-085",
+      "owner": "CSH-086",
       "full_contract_qualified": false,
       "assertions": [
         "touch/reference",
@@ -3136,9 +3417,14 @@
         "touch/remaining-follow-symlink",
         "touch/remaining-date-utc",
         "touch/remaining-date-local",
-        "touch/residual-prefix-denied"
+        "touch/residual-prefix-denied",
+        "touch/isolated-fraction-period-utc",
+        "touch/isolated-fraction-comma-utc",
+        "touch/isolated-fraction-space-local",
+        "touch/isolated-fraction-access-only",
+        "touch/isolated-fraction-modify-only"
       ],
-      "remaining": "Remaining -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified. Selected -a/-m timestamp isolation has witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+      "remaining": "Period/comma subsecond dates, T/space separators, UTC/local fixed-offset TZ and -a/-m nanosecond isolation now have bounded witnesses. Remaining date/range forms, arbitrary symlink graphs, current-time tolerances, permission/ACL errors and timestamp range failures remain unqualified.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -3173,6 +3459,13 @@
           ],
           "csh084_assertions": [
             "touch/residual-prefix-denied"
+          ],
+          "csh085_assertions": [
+            "touch/isolated-fraction-period-utc",
+            "touch/isolated-fraction-comma-utc",
+            "touch/isolated-fraction-space-local",
+            "touch/isolated-fraction-access-only",
+            "touch/isolated-fraction-modify-only"
           ]
         },
         "OPTIONS": {
@@ -3182,6 +3475,13 @@
             "touch/remaining-follow-symlink",
             "touch/remaining-date-utc",
             "touch/remaining-date-local"
+          ],
+          "csh085_assertions": [
+            "touch/isolated-fraction-period-utc",
+            "touch/isolated-fraction-comma-utc",
+            "touch/isolated-fraction-space-local",
+            "touch/isolated-fraction-access-only",
+            "touch/isolated-fraction-modify-only"
           ]
         },
         "OPERANDS": {
@@ -3215,6 +3515,13 @@
           ],
           "csh084_assertions": [
             "touch/residual-prefix-denied"
+          ],
+          "csh085_assertions": [
+            "touch/isolated-fraction-period-utc",
+            "touch/isolated-fraction-comma-utc",
+            "touch/isolated-fraction-space-local",
+            "touch/isolated-fraction-access-only",
+            "touch/isolated-fraction-modify-only"
           ]
         },
         "STDERR": {
@@ -3227,10 +3534,24 @@
           ],
           "csh084_assertions": [
             "touch/residual-prefix-denied"
+          ],
+          "csh085_assertions": [
+            "touch/isolated-fraction-period-utc",
+            "touch/isolated-fraction-comma-utc",
+            "touch/isolated-fraction-space-local",
+            "touch/isolated-fraction-access-only",
+            "touch/isolated-fraction-modify-only"
           ]
         },
         "OUTPUT FILES": {
-          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness.",
+          "csh085_assertions": [
+            "touch/isolated-fraction-period-utc",
+            "touch/isolated-fraction-comma-utc",
+            "touch/isolated-fraction-space-local",
+            "touch/isolated-fraction-access-only",
+            "touch/isolated-fraction-modify-only"
+          ]
         },
         "EXTENDED DESCRIPTION": {
           "disposition": "Remaining -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified. Selected -a/-m timestamp isolation has witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open."
@@ -3245,6 +3566,13 @@
           ],
           "csh084_assertions": [
             "touch/residual-prefix-denied"
+          ],
+          "csh085_assertions": [
+            "touch/isolated-fraction-period-utc",
+            "touch/isolated-fraction-comma-utc",
+            "touch/isolated-fraction-space-local",
+            "touch/isolated-fraction-access-only",
+            "touch/isolated-fraction-modify-only"
           ]
         },
         "CONSEQUENCES OF ERRORS": {
@@ -3287,6 +3615,16 @@
           "touch/residual-prefix-denied"
         ],
         "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-085."
+      },
+      "csh085_qualification": {
+        "passing_scope": [
+          "touch/isolated-fraction-period-utc",
+          "touch/isolated-fraction-comma-utc",
+          "touch/isolated-fraction-space-local",
+          "touch/isolated-fraction-access-only",
+          "touch/isolated-fraction-modify-only"
+        ],
+        "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       }
     }
   ],

@@ -191,7 +191,8 @@ def effect_errors(directory, row):
                       else 'link' if stat.S_ISLNK(info.st_mode) else 'fifo' if stat.S_ISFIFO(info.st_mode) else 'other',
                       'mode': stat.S_IMODE(info.st_mode), 'size': info.st_size, 'nlink': info.st_nlink,
                       'uid': info.st_uid, 'gid': info.st_gid,
-                      'atime': int(info.st_atime), 'mtime': int(info.st_mtime)}
+                      'atime': int(info.st_atime), 'mtime': int(info.st_mtime),
+                      'atime_ns': info.st_atime_ns, 'mtime_ns': info.st_mtime_ns}
             if 'owner_of' in expected:
                 other = (directory / expected['owner_of']).lstat()
                 actual['owner_of'] = expected['owner_of'] if (info.st_uid, info.st_gid) == (other.st_uid, other.st_gid) else None

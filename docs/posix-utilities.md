@@ -200,3 +200,11 @@ denials, authored magic, opaque link bytes and stdout faults; see the
 contracts and their required environments now belong to
 [CSH-085](tickets/CSH-085-filesystem-isolated-contracts.md). No complete utility
 or common-default requirement is qualified by these bounded witnesses.
+
+CSH-085 adds 112 U-034/U-040 assertions for private recursive `du` accounting,
+numeric `file` magic and subsecond `touch` behavior, with direct exec and all
+three public input modes. [Evidence](evidence/csh-085/README.md) records separate
+platform results and retained stock failures. Every unsupplied contract and
+original condition remains explicitly open under
+[CSH-086](tickets/CSH-086-filesystem-unsupplied-contracts.md); no full utility
+page or profile is qualified.

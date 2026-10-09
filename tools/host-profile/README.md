@@ -8,7 +8,7 @@ cshell's builtin allocation. All tools are real exec-accessible programs;
 | Host | Selected replacements | Provisioning |
 | --- | --- | --- |
 | macOS | Standalone printf and local readlink/realpath; Homebrew `gtest`, `g[` and `gfind`; GNU `gdd`; pinned local pax | `brew install coreutils findutils`; prefixed binaries must be on the provisioning process's PATH |
-| Debian/Ubuntu | Standalone printf, local readlink/realpath and pinned pax; BusyBox kill | `apt-get install build-essential python3 ed busybox locales acl file pax`; generate `fr_FR.UTF-8` |
+| Debian/Ubuntu | Standalone printf, local readlink/realpath and pinned pax; BusyBox kill; GNU du in POSIX mode | `apt-get install build-essential python3 ed busybox locales acl file pax`; generate `fr_FR.UTF-8` |
 
 Other scoped commands use `os.defpath` without additional symlinks, preserving
 cshell's PATH-associated pwd builtin selection. In particular, echo remains the system
@@ -285,3 +285,20 @@ file-content assertions. Native provider paths/hashes, package version and the
 stock failures are retained in [CSH-080 evidence](../../docs/evidence/csh-080/README.md).
 `make test-host-filesystem-allocation` builds a separate test-only local pathname
 provider with call-site ENOMEM controls; production PATH never selects it.
+
+## CSH-085 Linux du configuration
+
+Linux selects `build/host-du`, a standalone exec launcher for `/usr/bin/du`
+that sets `POSIXLY_CORRECT=1` in the utility process. GNU documents this mode
+as selecting the required 512-byte default when block-size overrides are absent:
+[Block size](https://www.gnu.org/software/coreutils/manual/html_node/Block-size.html).
+Explicit `-k` and user block-size settings remain GNU behavior. The launcher
+passes the argument vector directly to `execv`; it neither reads nor changes
+utility output or status. It cannot change the invoking shell's environment.
+GNU retains all traversal, accounting and option handling. The manifest records
+both launcher and backend hashes plus the exact environment configuration.
+
+The stock Linux default reports 1024-byte units and fails the unchanged default
+512-byte assertion in all four execution modes. Stock audit results retain this
+failure. Native macOS uses its unchanged system du. No system executable is
+replaced. See [CSH-085 evidence](../../docs/evidence/csh-085/README.md).

@@ -2,7 +2,7 @@
 
 CSH-072 adds a **bounded selected profile** for 21 exec-accessible utilities.
 It does not qualify complete utility pages, U-034/U-040 as a whole, or a complete
-POSIX system. [CSH-085](tickets/CSH-085-filesystem-isolated-contracts.md) owns each
+POSIX system. [CSH-086](tickets/CSH-086-filesystem-unsupplied-contracts.md) owns each
 remaining contract and the four original retained conditions. Implementation
 ownership stays with the selected utility/libc/platform vendor.
 
@@ -201,3 +201,28 @@ remaining per-utility contract, environment and reason in the
 utilities with no new CSH-084 witnesses. Existing four condition IDs and original
 CSH-064 reasons remain unchanged. ACLs, privileged credentials, mount boundaries,
 quotas, actual filesystem ENOSPC/EIO and libc-internal failures are not supplied.
+
+## CSH-085 private graph, magic and subsecond environments
+
+`make test-host-filesystem-isolated` runs 28 cases / 112 assertions through
+direct exec and public string/file/stdin modes. The selected full profile also
+requires them. Seven `du` cases cover recursive 512-byte totals, `-a -k`, `-s`
+with a hard-link pair, operand `-H`, nested `-L`, and last-option precedence.
+Pre-exec lstat measurements and a fixed authored graph supply the expected
+records; a post-exec identity/allocation comparison rejects changed fixtures.
+Output ordering is unspecified; duplicate, missing and extra records fail.
+
+Sixteen `file -m` cases pair matching and nonmatching samples for byte equality,
+less/greater comparisons, hexadecimal/octal masks, set/missing bits and native
+short equality. Five `touch` cases check period/comma fractions, T/space date
+separators, UTC/fixed-offset local time and separate access/modification changes
+using exact nanosecond metadata. Setup independently proves both timestamps
+representable; an unavailable capability is a setup failure, never a pass.
+
+These are private directories under the runner's unprivileged identity, not
+isolated mounted volumes. The [evidence](evidence/csh-085/README.md) separates
+native/Linux selected runs, stock failures, provenance and cleanup. The
+[current ledger](../tests/host_filesystem_residuals.json) and
+[CSH-086](tickets/CSH-086-filesystem-unsupplied-contracts.md) retain every open
+contract, required environment, reason and vendor owner. No privilege, actual
+capacity, cross-device, shared-extent or full utility claim is added.

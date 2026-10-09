@@ -29,6 +29,9 @@ def provision(destination, gnu_bin=None):
                          for name in ('test', '[', 'find', 'dd')})
     elif system == 'Linux':
         overrides['kill'] = shutil.which('busybox', path=os.defpath)
+        overrides['du'] = str(ROOT / 'build/host-du')
+        if not os.access('/usr/bin/du', os.X_OK):
+            raise ValueError('Missing GNU du backend /usr/bin/du')
     else:
         raise ValueError('Only Darwin and Linux profiles are defined')
     selected.update(overrides)
@@ -51,6 +54,11 @@ def provision(destination, gnu_bin=None):
         manifest['executables'][name] = {
             'override': name in overrides, 'target': path, 'realpath': os.path.realpath(path),
             'sha256': hashlib.sha256(Path(path).read_bytes()).hexdigest()}
+    if system == 'Linux':
+        manifest['executables']['du']['backend'] = dict(
+            path='/usr/bin/du', realpath=os.path.realpath('/usr/bin/du'),
+            sha256=hashlib.sha256(Path('/usr/bin/du').read_bytes()).hexdigest(),
+            environment={'POSIXLY_CORRECT': '1'})
     (destination.parent / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
     print(destination)
 

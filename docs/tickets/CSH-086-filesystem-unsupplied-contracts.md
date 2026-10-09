@@ -1,35 +1,34 @@
-# CSH-085: Supply remaining filesystem contracts and isolated environments
+# CSH-086: Qualify unsupplied filesystem environments and utility contracts
 
-- Status: review
+- Status: backlog
 - Type: test
 - Kind: implementation
 - Parent: None
-- Depends on: CSH-084
-- Branch: test/CSH-085-filesystem-isolated-contracts
-- Issue: [#181](https://github.com/melliott18/cshell/issues/181)
+- Depends on: CSH-085
+- Branch: Assigned when work starts
+- Issue: [#183](https://github.com/melliott18/cshell/issues/183)
 
 ## Goal
 
-Supply the individual environments and independent oracles still absent after
-CSH-084. Selected utility/libc/platform vendors retain implementation ownership.
-Neither bounded passing examples nor unavailable environments qualify a whole
-utility page. Preserve CSH-072, CSH-080 and CSH-084 evidence and stock failures.
+Own the individually open contracts after CSH-085. Preserve the existing
+CSH-072/080/084/085 assertions, exact selected-provider provenance and stock
+failures. Utility/libc/platform vendors retain implementation ownership.
 
-## Original CSH-084 handoff contracts
+## Individual open dispositions
 
-Each row includes U-034 direct exec accessibility and U-040 common defaults.
-The machine-readable ledger is `tests/host_filesystem_residuals.json`; the
-normative section map is `tests/host_filesystem_contracts.json`.
+Every utility includes U-034 direct exec and U-040 common defaults. The current
+machine-readable ledger is `tests/host_filesystem_residuals.json`; the normative
+section map is `tests/host_filesystem_contracts.json`.
 
-| Utility | Remaining contract | Required environment / reason |
+| Utility | Remaining contract | Required environment and reason |
 | --- | --- | --- |
 | [`basename`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/basename.html) | Argument/allocator exhaustion, diagnostic locales and output failures beyond independently armed EBADF/EPIPE remain unqualified. | per-child limits and installed diagnostic locales. Argument/allocator failure and diagnostic locale oracles are not supplied; CSH-084 covers only two stdout errors. |
 | [`dirname`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html) | Allocator/resource errors beyond stdout EBADF/EPIPE, alternative double-slash policies and further locale repertoires remain unqualified. | per-child resource controls and alternate locale definitions. Two stdout faults do not exercise allocation, argument limits or alternate locale/slash policies. |
 | [`cp`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html) | Interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. | disposable credentials, two private filesystems, ACL/quota/capacity and fault profiles. Ordinary continuation does not supply privileged ownership, devices or filesystem faults. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. |
 | [`dd`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dd.html) | Additional block/unblock and noerror combinations, short/interrupted device I/O and signal statistics remain unqualified. CSH-080 adds ordinary block/unblock, C-locale case conversion, sync, block+sync, odd swab, seek/truncate/notrunc and skip/count. Darwin stock sync input counts fail; the selected GNU dd is required. EBCDIC/ascii/ibm are XSI-shaded, outside the selected base profile. | scoped short-read/EINTR/EIO controls and active-operation signal delivery. Regular-file conversions do not exercise interrupted or failing input recovery. |
 | [`df`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html) | Unspecified/default and 512-byte formats, all-filesystem enumeration, quotas, privilege-dependent availability and live capacity boundaries need a disposable filesystem oracle. | private bounded filesystem with independently measured allocation/quota and credentials. The host volume changes concurrently and must not be filled for an oracle. |
-| [`du`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html) | Recursive allocation totals, hard-link deduplication, -a/-s/-x/-H/-L, unreadable subtrees, shared extents and overflow need independent filesystem-specific accounting. | private filesystem accounting oracle for directories/hard links/shared extents. st_blocks for one regular file does not establish recursive allocation accounting. |
-| [`file`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html) | Other magic types, numeric comparisons/masks, database precedence and -d/-M/-i, default nonempty/encoding classification, symlink errors and locale-dependent descriptions remain unqualified. | authored magic databases, independent nonempty/encoding samples and locale profiles. Four authored -m tests cover string, continuation, hexadecimal offset and escaped space only; no complete magic database or encoding/precedence oracle is supplied. |
+| [`du`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html) | Recursive allocation totals, -a/-s, operand -H, nested -L, last-option precedence and a same-directory hard-link pair now have bounded private-graph witnesses. Cross-device -x, unreadable subtrees, shared extents, arbitrary graphs and overflow remain unqualified. | disposable cross-device/denied/shared-extent filesystems and bounded overflow controls. Pre-exec lstat block/inode measurements supply only the authored graph. They do not measure shared physical extents, mount boundaries, inaccessible traversal or overflow. |
+| [`file`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html) | Numeric byte equality/comparisons/bit tests, hexadecimal/octal masks and native short equality have matching and nonmatching samples. Other numeric types/ranges, database precedence and -d/-M/-i, default nonempty/encoding classification, symlink errors and localized descriptions remain unqualified. | additional authored type/range/precedence databases, independent encoding samples and locale profiles. The authored byte/short continuation rules do not establish every type, signed boundary, default database, classification or locale. |
 | [`find`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html) | Other expressions/actions, timestamp boundaries, descriptor exhaustion and non-UTF-8 matching remain unqualified. CSH-080 adds exact byte/rounded-block size, numeric permissions, negation/grouping and bounded batched exec. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. | per-child descriptor limits, deeper trees, timestamps and non-UTF-8 matching oracles. Bounded expression cases do not establish exhaustion or arbitrary locale matching. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. |
 | [`ln`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html) | Interactive replacement, remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. | automated prompt fixtures plus disposable cross-device/credential/link-limit profiles. Hard-link and continuation witnesses do not supply these environments. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. |
 | [`ls`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html) | Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. | authored metadata/time/block graphs, owned PTYs, non-C collation and I/O limits. The bounded C ordering switches do not qualify metadata formats or non-C ordering. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. |
@@ -43,71 +42,33 @@ normative section map is `tests/host_filesystem_contracts.json`.
 | [`realpath`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html) | Permission/namespace races, libc-internal allocation failures, double-leading-slash policy and exact resource boundaries remain unqualified. CSH-080 adds test-only provider call-site ENOMEM including dynamic links and relative/absolute missing-final fallback; it does not inject libc internals. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. | controlled namespace races/credentials, exact link/path limits and libc-internal faults. Call-site injection does not qualify libc internal recovery or races. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. |
 | [`rm`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html) | Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. | private mount/depth/credential profiles and automated recursive prompt/race controls. One-level continuation and yes/no PTY witnesses do not supply mount boundaries. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. |
 | [`rmdir`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html) | Ancestor permissions, total depth/path boundaries and other filesystem errors remain unqualified. CSH-080 adds symlink rejection and continuation after a nonempty operand. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. | private credentials, bounded path/depth and filesystem failure profiles. Symlink/continuation cases do not establish permission or capacity behavior. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. |
-| [`touch`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html) | Remaining -d date/time/zone forms, symlink handling, current-time tolerances, permission errors, unsupported timestamps and operand continuation remain unqualified. Selected -a/-m timestamp isolation has witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. | independent subsecond/current-clock/symlink/permission and timestamp-range fixtures. Two integral-second -d forms do not qualify full timestamp precision/range. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. |
+| [`touch`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html) | Period/comma subsecond dates, T/space separators, UTC/local fixed-offset TZ and -a/-m nanosecond isolation now have bounded witnesses. Remaining date/range forms, arbitrary symlink graphs, current-time tolerances, permission/ACL errors and timestamp range failures remain unqualified. | independent clock/range/symlink and permission/ACL environments. The exact .002-second target and .125-second baseline are independently proved representable before execution. They do not qualify unsupported ranges, current-clock behavior, ACLs or arbitrary date precision. |
 
 ## Retained conditions
 
-These IDs and the original CSH-064 reasons remain immutable. CSH-072's
-NAME_MAX cwd, 64-level UTF-8 find, 512-entry C ls and owned-PTY rm witnesses
-remain retained. CSH-080's ordinary cases do not complete the residuals.
+Keep the original CSH-064 evidence and reasons immutable, and preserve the
+CSH-072 bounded witnesses. All four conditions remain open:
 
-- `U-040/pwd-access-path-limits`: inaccessible ancestors, total PATH_MAX and independent permission checks.
-- `U-040/find-depth-locale-limits`: descriptor/depth exhaustion and additional locale matching oracles.
+- `U-040/pwd-access-path-limits`: inaccessible ancestors, total PATH_MAX and independent permissions.
+- `U-040/find-depth-locale-limits`: descriptor/depth exhaustion and additional locale matching.
 - `U-040/ls-size-collation`: non-C collation and filesystem/size exhaustion.
 - `U-040/rm-depth-mount-prompt`: disposable mount/depth exhaustion and recursive prompt decisions.
 
-
 ## Acceptance criteria
 
-- [x] Supply every individual environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [x] Preserve zero selected-profile allowances and exact provider/build provenance.
-- [x] Record native/Linux output, status, effects, setup errors and timeout cleanup separately; distinguish libc injection, kernel faults and actual filesystem exhaustion.
-- [x] Update the section map, current ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [ ] Require zero selected-profile allowances and exact provider/build provenance.
+- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
 Run `make test-host-inventory test-host-profile test-host-filesystem-allocation
-test-host-filesystem-provider-audit test-host-filesystem-residual` on native
-macOS and Linux under an unprivileged fixture identity. Retain separate nonzero
-stock `make test-host-filesystem-audit` and stock
-`tests/host_filesystem.py --extended-only --provider-audit` records.
-Add bounded setup/failure/timeout cleanup regressions for new capabilities.
+test-host-filesystem-provider-audit test-host-filesystem-residual
+test-host-filesystem-isolated` on native macOS and Linux as an unprivileged
+fixture identity. Retain separate nonzero stock `make test-host-filesystem-audit`
+and stock `tests/host_filesystem.py --extended-only --provider-audit` records.
+Add bounded setup/failure/timeout cleanup regressions for new environments.
 Use only private disposable filesystems and credentials. Never fill the host
 volume or use protected mounts; `/dev/full` is not filesystem exhaustion.
-Privileged provisioning needs a separate isolated runner; prompt assertions
-must use automated owned PTYs.
-
-## Implementation and disposition
-
-CSH-085 adds 28 cases / 112 assertions for three independently supplied private
-environments: recursive `du` allocation graphs, matching/nonmatching numeric
-`file` magic samples, and representable subsecond `touch` timestamps. The full
-selected profile requires them, with no allowances. Linux selects a standalone exec launcher configuring GNU
-`du` in its documented POSIX mode, retaining the unchanged stock default-unit
-failure and both launcher/backend identities.
-Seven new harness regressions cover wrong/duplicate/missing accounting records,
-hard-link double counting, partial setup, timestamp precision, positive/negative
-magic oracles and timeouts with owned-process and fixture cleanup.
-
-The table above preserves the original handoff scope. The current
-[section map](../../tests/host_filesystem_contracts.json) and
-[residual ledger](../../tests/host_filesystem_residuals.json) identify exact
-assertions and narrowed remaining contracts. Every unsupplied contract and the
-four original conditions have explicit environment/reason/vendor ownership in
-[CSH-086](CSH-086-filesystem-unsupplied-contracts.md) ([#183](https://github.com/melliott18/cshell/issues/183)).
-This uses the acceptance criteria's individual-disposition alternative. No
-entire utility page, privileged filesystem, real ENOSPC/EIO, ACL, shared-extent,
-libc-internal fault or full locale repertoire is qualified.
-
-CSH-084 is implemented but unmerged. This branch is stacked on its exact head
-`5f30e232b5cb35b289939784e32350413811fa1b` and remains in review until integration.
-Native/Linux commands, provenance, stock failures and cleanup are retained in
-[CSH-085 evidence](../evidence/csh-085/README.md).
-
-Final native/macOS validation passes 1026 filesystem, 240 allocation and 1162
-host integration assertions, plus 112 focused CSH-085 assertions. Docker/Linux
-passes 1042 filesystem, 200 allocation and 1162 host integration assertions,
-plus the same 112 focused assertions and selected-PATH runtime/PTY checks.
-Both pass inventory and 31 filesystem harness tests. All fixture cleanup passes.
-Stock audits remain nonzero: native 52 failures, Linux 36 (including the four
-new du default-unit failures); stock extended audits retain 16/8 failures.
+Privileged provisioning requires an isolated runner; prompts require owned PTYs.
