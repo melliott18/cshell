@@ -13,12 +13,95 @@ from host_filesystem_extended import cases as extended_cases
 from host_filesystem_remaining import cases as remaining_cases
 from host_filesystem_residual_cases import cases as residual_cases
 import host_filesystem_isolated as isolated
+import host_filesystem_interactive as interactive
 from host_contract_inventory import utility_owner
 from host_filesystem import run_case, stdout_matches, stderr_matches
 from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, terminal_cases, effect_errors
 
 
 class FilesystemHarnessTests(unittest.TestCase):
+    def test_overwrite_oracles_reject_wrong_decisions_status_and_channel(self):
+        row = next(r for r in interactive.cases() if r['id'] == 'cp/prompt-interactive-n')
+        def capture(binary, invocation, cwd, *args, **kwargs):
+            (cwd / '.prompt-environment.json').write_text(json.dumps(dict(
+                phase='armed', provider='/bin/cp', stdin_tty=True, stderr_tty=True,
+                stdout_tty=False, foreground=True)))
+            (cwd / '.prompt-stdout').write_bytes(b'')
+            return 0, {'output': interactive.prompt_outputs(row, '/bin/cp')[0]}, []
+        for fault in ('effect', 'status', 'stdout', 'prompt', 'marker'):
+            def corrupt(*args, **kwargs):
+                status, output, errors = capture(*args, **kwargs)
+                cwd = args[2]
+                if fault == 'effect':
+                    (cwd / 'target').write_bytes(interactive.SOURCE)
+                elif fault == 'status':
+                    status = 1
+                elif fault == 'stdout':
+                    (cwd / '.prompt-stdout').write_bytes(output['output'])
+                    output['output'] = b''
+                elif fault == 'prompt':
+                    output['output'] += b'unexpected diagnostic'
+                else:
+                    (cwd / '.prompt-environment.json').unlink()
+                return status, output, errors
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=corrupt):
+                record = run_case(Path('/bin/true'), {'cp': {'path': '/bin/cp'}}, os.defpath,
+                                  row, 'pty-direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertIn('captured', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_overwrite_diagnostic_requires_missing_operand_after_prompt(self):
+        row = next(r for r in interactive.cases() if r.get('terminal_diagnostic'))
+        prompt = interactive.prompt_outputs(row, '/bin/cp')[0]
+        self.assertTrue(interactive.output_matches(row, '/bin/cp', prompt + b'cp: missing: no such file\n'))
+        for bad in (prompt, b'cp: missing: no such file\n', prompt + b'unrelated error\n'):
+            self.assertFalse(interactive.output_matches(row, '/bin/cp', bad))
+
+    def test_overwrite_terminal_setup_failure_retains_cleanup(self):
+        row = next(interactive.cases())
+        with tempfile.TemporaryDirectory() as root, patch(
+                'host_filesystem.smoke.capture', side_effect=pty_harness.PtyUnavailable('no owned PTY')):
+            record = run_case(Path('/bin/true'), {'cp': {'path': '/bin/cp'}}, os.defpath,
+                              row, 'pty-direct', Path(root), None)
+            self.assertEqual(record['verdict'], 'FAIL')
+            self.assertIn('no owned PTY', record['error'])
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_overwrite_partial_fixture_setup_failure_is_cleaned(self):
+        original = Path.write_bytes
+        def fail_target(path, data):
+            if path.name == 'target':
+                raise OSError('injected target setup failure')
+            return original(path, data)
+        with tempfile.TemporaryDirectory() as root, patch.object(Path, 'write_bytes', fail_target):
+            record = run_case(Path('/bin/true'), {'cp': {'path': '/bin/cp'}}, os.defpath,
+                              next(interactive.cases()), 'pty-direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_overwrite_timeout_kills_owned_provider_and_cleans_fixture(self):
+        for mode in ('pty-direct', 'pty-string', 'pty-file'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                provider = root / 'slow'
+                provider.write_text('#!' + sys.executable + ' -S\nimport os,time\n'
+                                    'print(os.getpid(),flush=True)\ntime.sleep(60)\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'cp': {'path': str(provider)}}, os.defpath,
+                                  next(interactive.cases()), mode, root, None, timeout=1)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertTrue(any('timeout' in e for e in record['errors']))
+                pid = int(bytes.fromhex(record['actual']['stdout']['hex']))
+                with self.assertRaises(ProcessLookupError):
+                    os.kill(pid, 0)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(root.iterdir()), [provider])
+
     def test_accounting_rejects_wrong_totals_duplicates_and_missing_paths(self):
         row = next(r for r in isolated.cases() if r.get('accounting'))
         with tempfile.TemporaryDirectory() as root:
@@ -194,7 +277,7 @@ class FilesystemHarnessTests(unittest.TestCase):
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -360,7 +443,7 @@ class FilesystemHarnessTests(unittest.TestCase):
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

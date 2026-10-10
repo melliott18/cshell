@@ -497,7 +497,12 @@ build/host-du: tools/host-profile/du.c
 	@mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
 
-host-profile: build/host-printf build/host-paths build/host-pax build/host-du
+# GNU cp's decline result is repaired in source, never translated by a wrapper.
+HOST_CP_SOURCES = tools/host-profile/build-cp.sh $(wildcard tools/host-profile/vendor/coreutils/*)
+build/host-cp: $(HOST_CP_SOURCES)
+	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(filter-out -Werror -Wpedantic -Wshadow,$(CFLAGS))" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" sh tools/host-profile/build-cp.sh
+
+host-profile: build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
@@ -666,3 +671,8 @@ test-host-filesystem-residual: cshell host-profile
 .PHONY: test-host-filesystem-isolated
 test-host-filesystem-isolated: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --isolated-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-isolated.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-086: owned terminals and independent overwrite decision effects.
+.PHONY: test-host-filesystem-interactive
+test-host-filesystem-interactive: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --interactive-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-interactive.json $(HOST_FILESYSTEM_FLAGS)

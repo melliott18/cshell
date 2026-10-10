@@ -82,6 +82,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-084](CSH-084-filesystem-residual-environments.md) | Supply residual filesystem environments and contract oracles | [CSH-080](CSH-080-filesystem-remaining-contracts.md) | [#178](https://github.com/melliott18/cshell/issues/178) |
 | [CSH-085](CSH-085-filesystem-isolated-contracts.md) | Supply remaining filesystem contracts and isolated environments | [CSH-084](CSH-084-filesystem-residual-environments.md) | [#181](https://github.com/melliott18/cshell/issues/181) |
 | [CSH-086](CSH-086-filesystem-unsupplied-contracts.md) | Qualify unsupplied filesystem environments and utility contracts | [CSH-085](CSH-085-filesystem-isolated-contracts.md) | [#183](https://github.com/melliott18/cshell/issues/183) |
+| [CSH-087](CSH-087-filesystem-environment-followup.md) | Supply remaining filesystem environments after terminal qualification | [CSH-086](CSH-086-filesystem-unsupplied-contracts.md) | [#185](https://github.com/melliott18/cshell/issues/185) |
 
 ## Child implementation tickets
 

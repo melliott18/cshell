@@ -1,0 +1,2 @@
+# Unified patches encode blank context lines with one leading space.
+tools/host-profile/vendor/coreutils/cp-decline-status.patch whitespace=-blank-at-eol,-blank-at-eof

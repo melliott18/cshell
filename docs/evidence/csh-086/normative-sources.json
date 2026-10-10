@@ -1,0 +1,14 @@
+{
+  "cp": {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html",
+    "sha256": "777d1c06255117e8ea9d8c5ede3996ef77b7c5ddecd1cbf9e584deef239a5836"
+  },
+  "mv": {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mv.html",
+    "sha256": "c17c6279d2fdf408e2aa82bd674d5eff5130f391361b2e175e4862d6c4a89662"
+  },
+  "ln": {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html",
+    "sha256": "c4e793bb510483faef398e4c16fb7adc2d60b99c712ea7e6b5f2751a4c6c453c"
+  }
+}

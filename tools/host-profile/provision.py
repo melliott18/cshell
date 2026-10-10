@@ -19,6 +19,7 @@ def provision(destination, gnu_bin=None):
     selected = {name: shutil.which(name, path=os.defpath) for name in dict.fromkeys(HOSTS + UTILITIES)}
     overrides = {'printf': str(ROOT / 'build/host-printf'),
                  'pax': str(ROOT / 'build/host-pax'),
+                 'cp': str(ROOT / 'build/host-cp'),
                  'readlink': str(ROOT / 'build/host-paths'),
                  'realpath': str(ROOT / 'build/host-paths')}
     system = platform.system()
@@ -59,6 +60,11 @@ def provision(destination, gnu_bin=None):
             path='/usr/bin/du', realpath=os.path.realpath('/usr/bin/du'),
             sha256=hashlib.sha256(Path('/usr/bin/du').read_bytes()).hexdigest(),
             environment={'POSIXLY_CORRECT': '1'})
+    manifest['executables']['cp']['source'] = dict(
+        version='GNU coreutils 9.7', archive='tools/host-profile/vendor/coreutils/coreutils-9.7.tar.xz',
+        archive_sha256=hashlib.sha256((ROOT / 'tools/host-profile/vendor/coreutils/coreutils-9.7.tar.xz').read_bytes()).hexdigest(),
+        patch_sha256=hashlib.sha256((ROOT / 'tools/host-profile/vendor/coreutils/cp-decline-status.patch').read_bytes()).hexdigest(),
+        configure=['--disable-nls', '--disable-acl', '--without-selinux', '--without-libgmp'])
     (destination.parent / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
     print(destination)
 
