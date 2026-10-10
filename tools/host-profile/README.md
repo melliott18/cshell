@@ -302,3 +302,13 @@ The stock Linux default reports 1024-byte units and fails the unchanged default
 512-byte assertion in all four execution modes. Stock audit results retain this
 failure. Native macOS uses its unchanged system du. No system executable is
 replaced. See [CSH-085 evidence](../../docs/evidence/csh-085/README.md).
+
+## CSH-086 owned-terminal overwrite decisions
+
+Both platforms select `build/host-cp`, built offline from pinned GNU coreutils
+9.7 with a local declined-copy status repair. The [vendored source notes](vendor/coreutils/README.md)
+record its archive hash, patch, license and build configuration. Provisioning
+records archive/patch/executable hashes. The C-locale build disables NLS, ACLs
+and SELinux; those contracts remain open. Stock audits continue using the
+system cp and retain decline-status failures. Run
+`make test-host-filesystem-interactive` for the 39 new PTY assertions.

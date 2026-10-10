@@ -1386,3 +1386,11 @@ an unprivileged identity on native macOS and Linux. No mounts or elevated
 provisioning are needed. Setup failures and timeouts fail the run; the test does
 not fill any filesystem. `make test-host-inventory` includes malformed-output,
 partial-setup, timestamp precision and timeout cleanup harness regressions.
+
+## CSH-086 owned-terminal overwrite decisions
+
+`make test-host-filesystem-interactive` runs 39 CSH-086 owned-PTY assertions
+for cp/mv decisions and option precedence, also required by `test-host-profile`.
+The profile now builds a pinned, locally repaired GNU cp offline from a vendored
+archive; initial profile builds take longer. [CSH-086 evidence](evidence/csh-086/README.md)
+records native/Linux commands, stock failures and terminal cleanup regressions.

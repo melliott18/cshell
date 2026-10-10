@@ -181,3 +181,10 @@ signals, stopping/resuming, terminal modes, idle reaping, and failure cleanup.
 CSH-035 adds [trap and signal evidence](traps-and-signals.md) for inheritance,
 parser interruption, and exit/hangup policy. The combined tests do not by
 themselves establish full conformance for the CSH-011 milestone.
+
+## CSH-086 owned-terminal overwrite decisions
+
+CSH-086 adds bounded C-locale owned-PTY cp/mv decisions to U-034/U-040.
+The selected cp source repair and separate stock failures are recorded in
+[evidence](evidence/csh-086/README.md). [CSH-087](tickets/CSH-087-filesystem-environment-followup.md)
+retains every unsupplied environment; no whole utility contract is qualified.

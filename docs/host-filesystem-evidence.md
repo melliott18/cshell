@@ -2,7 +2,7 @@
 
 CSH-072 adds a **bounded selected profile** for 21 exec-accessible utilities.
 It does not qualify complete utility pages, U-034/U-040 as a whole, or a complete
-POSIX system. [CSH-086](tickets/CSH-086-filesystem-unsupplied-contracts.md) owns each
+POSIX system. [CSH-087](tickets/CSH-087-filesystem-environment-followup.md) owns each
 remaining contract and the four original retained conditions. Implementation
 ownership stays with the selected utility/libc/platform vendor.
 
@@ -226,3 +226,30 @@ native/Linux selected runs, stock failures, provenance and cleanup. The
 [CSH-086](tickets/CSH-086-filesystem-unsupplied-contracts.md) retain every open
 contract, required environment, reason and vendor owner. No privilege, actual
 capacity, cross-device, shared-extent or full utility claim is added.
+
+## CSH-086 owned-terminal overwrite decisions
+
+CSH-086 adds 39 required assertions for C-locale `cp`/`mv` yes/no overwrite
+responses, independent `cp -f/-i` behavior and last-option `mv -f/-i` precedence.
+Each runs in an owned foreground PTY through direct provider exec and cshell
+command-string/script dispatch. A test-only exec helper separates stdout from
+terminal stderr and records the armed descriptor environment before exec.
+Authored bytes prove source/destination preservation or replacement. Exact
+vendor prompt text is checked separately from normative zero/nonzero status.
+There is no shell-stdin-mode claim for these terminal interactions.
+
+The selected profile builds pinned GNU coreutils 9.7 `cp` with a source repair
+for declined-copy status; stock Apple cp and native GNU cp 9.3 declines remain failures.
+The profile records the source archive, patch and executable SHA-256 identities.
+Builds are offline from the vendored release and take longer than the shell
+build. C-locale builds disable NLS, ACL and SELinux; those contracts stay open.
+Run `make test-host-filesystem-interactive` for the focused subset; the full
+`make test-host-profile` requires it automatically with zero allowances.
+
+CSH-087 owns every unsupplied environment and the four immutable original
+conditions. These bounded terminal decisions do not qualify a whole utility,
+recursive/multiple-operand interaction, other locales, ACL/privileged ownership,
+cross-device behavior, real filesystem exhaustion or libc-internal faults.
+`ln -i` is a vendor extension absent from the selected base specification; it
+is no longer mislabeled as an unqualified POSIX interactive requirement.
+See `docs/evidence/csh-086/README.md` for native/Linux results and provenance.

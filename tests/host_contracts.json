@@ -47,9 +47,9 @@
       "prerequisite": "Supply disposable controlled credentials, privileged Darwin ACLs, and measured filesystem/namespace implementations; require actual read/write/execute controls alongside predicates. Preserve false grants, rejected grants, socket stat EINVAL and non-owner chmod failures independently."
     },
     {
-      "ticket": "CSH-086",
-      "path": "docs/tickets/CSH-086-filesystem-unsupplied-contracts.md",
-      "title": "Qualify unsupplied filesystem environments and utility contracts",
+      "ticket": "CSH-087",
+      "path": "docs/tickets/CSH-087-filesystem-environment-followup.md",
+      "title": "Supply remaining filesystem environments after terminal qualification",
       "utilities": [
         "basename",
         "dirname",

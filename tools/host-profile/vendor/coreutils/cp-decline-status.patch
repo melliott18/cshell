@@ -1,0 +1,13 @@
+--- a/src/copy.c
++++ b/src/copy.c
+@@ -2437,7 +2437,9 @@
+                                              dst_relname, &dst_sb))))
+                 {
+                   skipped = true;
+-                  return_val = x->update == UPDATE_NONE;
++                  /* POSIX.1-2024 cp EXIT STATUS excludes declined files.
++                     Preserve the explicit GNU --update=none-fail error.  */
++                  return_val = x->update != UPDATE_NONE_FAIL;
+                 }
+             }
+ 
