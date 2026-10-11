@@ -14,12 +14,97 @@ from host_filesystem_remaining import cases as remaining_cases
 from host_filesystem_residual_cases import cases as residual_cases
 import host_filesystem_isolated as isolated
 import host_filesystem_interactive as interactive
+import host_filesystem_decisions as decisions
 from host_contract_inventory import utility_owner
 from host_filesystem import run_case, stdout_matches, stderr_matches
 from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, terminal_cases, effect_errors
 
 
 class FilesystemHarnessTests(unittest.TestCase):
+    def test_sequence_oracle_requires_order_complete_prompts_and_diagnostic(self):
+        row = next(r for r in decisions.cases() if r['id'] == 'cp/decisions-missing-between-n')
+        first = b"/bin/cp: overwrite 'destination/first'? "
+        second = b"/bin/cp: overwrite 'destination/second'? "
+        diagnostic = b"/bin/cp: cannot stat 'missing': No such file or directory\n"
+        good = first + diagnostic + second
+        self.assertTrue(decisions.output_matches(row, '/bin/cp', good))
+        self.assertTrue(decisions.output_matches(row, '/bin/cp',
+                        first + diagnostic.replace(b'/bin/cp:', b'cp:') + second))
+        for bad in (first + second, second + diagnostic + first,
+                    first + diagnostic * 2 + second, first + first + diagnostic + second, good + b'junk',
+                    good.replace(b'missing', b'unrelated'),
+                    good.replace(b'destination/second', b'destination/first')):
+            self.assertFalse(decisions.output_matches(row, '/bin/cp', bad))
+        # Identical directory targets at descent and deletion must have distinct
+        # prompt actions; a transcript cannot reuse the first question twice.
+        row = next(r for r in decisions.cases() if r['id'] == 'rm/decisions-recursive-final-n')
+        good = (b"/bin/rm: descend into directory 'branch'? "
+                b"/bin/rm: remove regular file 'branch/leaf'? "
+                b"/bin/rm: remove directory 'branch'? ")
+        self.assertTrue(decisions.output_matches(row, '/bin/rm', good))
+        self.assertFalse(decisions.output_matches(row, '/bin/rm',
+                         good.replace(b'remove directory', b'descend into directory')))
+        self.assertEqual(decisions.steps(row), [
+            {'expect': 'branch'}, {'expect': '?'}, {'send': 'y\n'},
+            {'expect': 'branch/leaf'}, {'expect': '?'}, {'send': 'y\n'},
+            {'expect': 'branch'}, {'expect': '?'}, {'send': 'n\n'}])
+
+    def test_sequence_effect_oracle_rejects_stopped_or_reversed_continuation(self):
+        from host_filesystem_cases import setup
+        row = next(r for r in decisions.cases() if r['id'] == 'mv/decisions-multiple-ny')
+        for fault in ('stopped', 'reversed', 'source-retained', 'good'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                setup(root, row)
+                if fault == 'reversed':
+                    (root / 'first').replace(root / 'destination/first')
+                elif fault == 'source-retained':
+                    (root / 'destination/second').write_bytes(decisions.SECOND)
+                elif fault == 'good':
+                    (root / 'second').replace(root / 'destination/second')
+                errors, _ = effect_errors(root, row)
+                self.assertEqual(bool(errors), fault != 'good')
+
+    def test_recursive_decision_partial_setup_failure_is_cleaned(self):
+        row = next(r for r in decisions.cases() if r['id'] == 'rm/decisions-recursive-symlink')
+        original = Path.symlink_to
+        def fail_branch(path, *args, **kwargs):
+            if path.parent.name == 'branch':
+                raise OSError('fixture symlink setup failed')
+            return original(path, *args, **kwargs)
+        with tempfile.TemporaryDirectory() as root, patch.object(Path, 'symlink_to', fail_branch):
+            record = run_case(Path('/bin/sh'), {'rm': {'path': '/bin/rm'}}, os.defpath,
+                              row, 'pty-direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_sequence_timeout_after_first_response_cleans_owned_process(self):
+        # Reach the second prompt wait: early fixture timeout alone does not
+        # prove cleanup after a partially completed interaction.
+        row = next(r for r in decisions.cases() if r['id'] == 'cp/decisions-multiple-yy')
+        for mode in decisions.MODES:
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                provider = root / 'slow'
+                provider.write_text('#!' + sys.executable + ' -S\nimport os,sys,time\n'
+                                    'print(os.getpid(),flush=True)\n'
+                                    'sys.stderr.write("destination/first? "); sys.stderr.flush()\n'
+                                    'sys.stdin.readline()\n'
+                                    'sys.stderr.write("response-received\\n"); sys.stderr.flush()\n'
+                                    'time.sleep(60)\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'cp': {'path': str(provider)}}, os.defpath,
+                                  row, mode, root, None, timeout=1)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertIn(b'response-received', bytes.fromhex(record['terminal_output']['hex']))
+                self.assertTrue(any('timeout' in e and 'destination/second' in e for e in record['errors']))
+                pid = int(bytes.fromhex(record['actual']['stdout']['hex']))
+                with self.assertRaises(ProcessLookupError):
+                    os.kill(pid, 0)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(root.iterdir()), [provider])
+
     def test_overwrite_oracles_reject_wrong_decisions_status_and_channel(self):
         row = next(r for r in interactive.cases() if r['id'] == 'cp/prompt-interactive-n')
         def capture(binary, invocation, cwd, *args, **kwargs):
@@ -277,7 +362,7 @@ class FilesystemHarnessTests(unittest.TestCase):
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -443,7 +528,7 @@ class FilesystemHarnessTests(unittest.TestCase):
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

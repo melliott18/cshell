@@ -312,3 +312,9 @@ records archive/patch/executable hashes. The C-locale build disables NLS, ACLs
 and SELinux; those contracts remain open. Stock audits continue using the
 system cp and retain decline-status failures. Run
 `make test-host-filesystem-interactive` for the 39 new PTY assertions.
+
+CSH-087 retains these exact provider builds and adds
+`make test-host-filesystem-decisions`: 68 strict multi-operand, recursive prompt
+and same-device directory assertions. The full host profile includes them.
+No extra allowance or provider adapter is added; stock decline-status failures
+remain in the separate audit. See [CSH-087 evidence](../../docs/evidence/csh-087/README.md).

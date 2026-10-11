@@ -47,9 +47,9 @@
       "prerequisite": "Supply disposable controlled credentials, privileged Darwin ACLs, and measured filesystem/namespace implementations; require actual read/write/execute controls alongside predicates. Preserve false grants, rejected grants, socket stat EINVAL and non-owner chmod failures independently."
     },
     {
-      "ticket": "CSH-087",
-      "path": "docs/tickets/CSH-087-filesystem-environment-followup.md",
-      "title": "Supply remaining filesystem environments after terminal qualification",
+      "ticket": "CSH-088",
+      "path": "docs/tickets/CSH-088-filesystem-remaining-environments.md",
+      "title": "Supply filesystem environments beyond bounded decision graphs",
       "utilities": [
         "basename",
         "dirname",
@@ -79,7 +79,7 @@
         "U-040/ls-size-collation",
         "U-040/rm-depth-mount-prompt"
       ],
-      "prerequisite": "Supply each explicit remaining capability and oracle in tests/host_filesystem_residuals.json; preserve CSH-072/CSH-080/CSH-084/CSH-085 selected assertions, call-site fault boundaries and immutable evidence. Private graphs, numeric magic rules and subsecond timestamps do not supply privileged mounts, capacity, ACLs or whole utility contracts."
+      "prerequisite": "Supply each explicit remaining capability and oracle in tests/host_filesystem_residuals.json; preserve CSH-072/CSH-080/CSH-084/CSH-085/CSH-086/CSH-087 selected assertions, call-site fault boundaries and immutable evidence. Private graphs, numeric magic rules and subsecond timestamps do not supply privileged mounts, capacity, ACLs or whole utility contracts."
     },
     {
       "ticket": "CSH-073",

@@ -2,7 +2,7 @@
 
 CSH-072 adds a **bounded selected profile** for 21 exec-accessible utilities.
 It does not qualify complete utility pages, U-034/U-040 as a whole, or a complete
-POSIX system. [CSH-087](tickets/CSH-087-filesystem-environment-followup.md) owns each
+POSIX system. [CSH-088](tickets/CSH-088-filesystem-remaining-environments.md) owns each
 remaining contract and the four original retained conditions. Implementation
 ownership stays with the selected utility/libc/platform vendor.
 
@@ -246,10 +246,33 @@ build. C-locale builds disable NLS, ACL and SELinux; those contracts stay open.
 Run `make test-host-filesystem-interactive` for the focused subset; the full
 `make test-host-profile` requires it automatically with zero allowances.
 
-CSH-087 owns every unsupplied environment and the four immutable original
+CSH-088 owns every unsupplied environment and the four immutable original
 conditions. These bounded terminal decisions do not qualify a whole utility,
 recursive/multiple-operand interaction, other locales, ACL/privileged ownership,
 cross-device behavior, real filesystem exhaustion or libc-internal faults.
 `ln -i` is a vendor extension absent from the selected base specification; it
 is no longer mislabeled as an unqualified POSIX interactive requirement.
 See `docs/evidence/csh-086/README.md` for native/Linux results and provenance.
+
+## CSH-087 operand and recursive decisions
+
+CSH-087 adds 68 strict assertions: all two-operand yes/no combinations for cp/mv,
+continuation past a missing middle operand with a retained nonzero error,
+one-child recursive cp overwrite acceptance/decline, rm descent rejection with
+continuation, leaf removal followed by final directory acceptance/decline,
+recursive symlink non-traversal, and last -f/-i precedence. Empty/nonempty
+same-device mv destination directories have separate replacement/rejection cases.
+
+Twenty terminal cases use direct exec and cshell string/file modes with the
+existing descriptor/foreground marker; the two ordinary directory cases also
+use shell stdin mode. Prompt sequence and filesystem effects are independent
+oracles. Full stderr, stdout, status, setup, capture failures and cleanup remain
+separate in each record. Provider selection/builds are unchanged; stock Apple
+cp adds twelve decline-status failures while the selected repaired cp passes.
+
+[CSH-088](tickets/CSH-088-filesystem-remaining-environments.md) retains every
+unsupplied environment and all four original conditions. These witnesses do
+not qualify arbitrary recursive graphs, negative recursive-child responses,
+non-C prompts, cross-device fallback, mounts, depth exhaustion, ACLs, quotas,
+actual filesystem exhaustion or libc-internal faults. Original CSH-064 evidence
+and earlier test assertions are unchanged. See [native/Linux evidence](evidence/csh-087/README.md).

@@ -1394,3 +1394,20 @@ for cp/mv decisions and option precedence, also required by `test-host-profile`.
 The profile now builds a pinned, locally repaired GNU cp offline from a vendored
 archive; initial profile builds take longer. [CSH-086 evidence](evidence/csh-086/README.md)
 records native/Linux commands, stock failures and terminal cleanup regressions.
+
+## CSH-087 operand and recursive decisions
+
+`make test-host-filesystem-decisions` runs 22 cases / 68 assertions, also included
+in `make test-host-profile`. Twenty cases use owned PTYs with separately
+captured stdout: cp/mv two-operand yes/no combinations and continuation past a
+missing middle operand, cp recursive overwrites, rm descent/final-removal
+choices, symlink non-traversal and last -f/-i precedence. Two same-device mv
+directory replacement cases run in direct/string/file/stdin modes.
+
+Every terminal response waits for its target and question mark. The complete
+stderr transcript must match the authored order, and source/destination bytes
+and removals must match independent effects. Single-child trees avoid assuming
+filesystem enumeration order. `make test-host-inventory` includes transcript,
+continuation-effect, partial-setup and mid-interaction timeout regressions.
+See [CSH-087 evidence](evidence/csh-087/README.md); other environments remain
+individually assigned to [CSH-088](tickets/CSH-088-filesystem-remaining-environments.md).
