@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "ticket": "CSH-086",
+  "ticket": "CSH-087",
   "qualification": "case-scoped only; selected profile requires both ordinary and provider-audit assertions; stock failures remain failures",
   "common_defaults": {
-    "U-034": "Each of the 21 actual providers is inventoried and directly execed, alongside public cshell string/file/stdin dispatch; pwd builtin and external exec remain distinct.",
+    "U-034": "Each of the 21 actual providers is inventoried and directly execed, alongside public cshell string/file/stdin dispatch; pwd builtin and external exec remain distinct. CSH-087 terminal sequences use direct exec and cshell string/file modes; two directory replacement cases also use stdin mode.",
     "U-040": "Controlled PATH, LC_ALL, TZ, umask and resource limits; independent effects and positive-error predicates. Common signal, locale, utility-syntax and environmental defaults outside the listed assertions remain individually open under each utility owner."
   },
   "utilities": [
@@ -11,7 +11,7 @@
       "utility": "basename",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/basename.html",
       "source_sha256": "76c256427a758fc4388559e7a71fcc9351ed0cfb19afc5af07d38c4cf25c8ab2",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "basename/path-6-620a",
@@ -170,19 +170,20 @@
           "basename/residual-closed-output",
           "basename/residual-broken-pipe"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     },
     {
       "utility": "dirname",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html",
       "source_sha256": "f218ded1508843cdd90913db7cd56ee938d43f67050d6f0645d88cbf916ec6c4",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "dirname/0",
@@ -365,19 +366,20 @@
           "dirname/residual-closed-output",
           "dirname/residual-broken-pipe"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     },
     {
       "utility": "cp",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html",
       "source_sha256": "777d1c06255117e8ea9d8c5ede3996ef77b7c5ddecd1cbf9e584deef239a5836",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "cp/bytes",
@@ -403,9 +405,17 @@
         "cp/prompt-interactive-then-force-y",
         "cp/prompt-interactive-then-force-n",
         "cp/prompt-then-missing-y",
-        "cp/prompt-then-missing-n"
+        "cp/prompt-then-missing-n",
+        "cp/decisions-multiple-yy",
+        "cp/decisions-multiple-yn",
+        "cp/decisions-multiple-ny",
+        "cp/decisions-multiple-nn",
+        "cp/decisions-missing-between-y",
+        "cp/decisions-missing-between-n",
+        "cp/decisions-recursive-y",
+        "cp/decisions-recursive-n"
       ],
-      "remaining": "Recursive/multiple-operand and non-C interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and both -f/-i orders on an owned PTY; stock Darwin declines incorrectly return 1.",
+      "remaining": "Further recursive/multiple-operand graphs and non-C interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and both -f/-i orders on an owned PTY; stock Darwin declines incorrectly return 1. CSH-087 adds all four yes/no combinations for two operands, missing-middle continuation, and one-child recursive overwrite yes/no; arbitrary graphs remain open.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -431,7 +441,7 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Recursive/multiple-operand and non-C interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and both -f/-i orders on an owned PTY; stock Darwin declines incorrectly return 1.",
+          "disposition": "Further recursive/multiple-operand graphs and non-C interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and both -f/-i orders on an owned PTY; stock Darwin declines incorrectly return 1. CSH-087 adds all four yes/no combinations for two operands, missing-middle continuation, and one-child recursive overwrite yes/no; arbitrary graphs remain open.",
           "csh080_assertions": [
             "cp/remaining-continue-missing"
           ],
@@ -448,10 +458,20 @@
             "cp/prompt-interactive-then-force-n",
             "cp/prompt-then-missing-y",
             "cp/prompt-then-missing-n"
+          ],
+          "csh087_assertions": [
+            "cp/decisions-multiple-yy",
+            "cp/decisions-multiple-yn",
+            "cp/decisions-multiple-ny",
+            "cp/decisions-multiple-nn",
+            "cp/decisions-missing-between-y",
+            "cp/decisions-missing-between-n",
+            "cp/decisions-recursive-y",
+            "cp/decisions-recursive-n"
           ]
         },
         "OPTIONS": {
-          "disposition": "Recursive/multiple-operand and non-C interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and both -f/-i orders on an owned PTY; stock Darwin declines incorrectly return 1.",
+          "disposition": "Further recursive/multiple-operand graphs and non-C interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and both -f/-i orders on an owned PTY; stock Darwin declines incorrectly return 1. CSH-087 adds all four yes/no combinations for two operands, missing-middle continuation, and one-child recursive overwrite yes/no; arbitrary graphs remain open.",
           "csh080_assertions": [
             "cp/remaining-continue-missing"
           ],
@@ -464,16 +484,36 @@
             "cp/prompt-interactive-then-force-n",
             "cp/prompt-then-missing-y",
             "cp/prompt-then-missing-n"
+          ],
+          "csh087_assertions": [
+            "cp/decisions-multiple-yy",
+            "cp/decisions-multiple-yn",
+            "cp/decisions-multiple-ny",
+            "cp/decisions-multiple-nn",
+            "cp/decisions-missing-between-y",
+            "cp/decisions-missing-between-n",
+            "cp/decisions-recursive-y",
+            "cp/decisions-recursive-n"
           ]
         },
         "OPERANDS": {
-          "disposition": "Recursive/multiple-operand and non-C interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and both -f/-i orders on an owned PTY; stock Darwin declines incorrectly return 1.",
+          "disposition": "Further recursive/multiple-operand graphs and non-C interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and both -f/-i orders on an owned PTY; stock Darwin declines incorrectly return 1. CSH-087 adds all four yes/no combinations for two operands, missing-middle continuation, and one-child recursive overwrite yes/no; arbitrary graphs remain open.",
           "csh080_assertions": [
             "cp/remaining-continue-missing"
+          ],
+          "csh087_assertions": [
+            "cp/decisions-multiple-yy",
+            "cp/decisions-multiple-yn",
+            "cp/decisions-multiple-ny",
+            "cp/decisions-multiple-nn",
+            "cp/decisions-missing-between-y",
+            "cp/decisions-missing-between-n",
+            "cp/decisions-recursive-y",
+            "cp/decisions-recursive-n"
           ]
         },
         "STDIN": {
-          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open.",
+          "disposition": "Owned PTY sequences send one authored line after each target question; stdout is captured separately and terminal stderr is checked in full. Ordinary directory cases run in all input modes. Other stdin uses and locales remain open.",
           "csh086_assertions": [
             "cp/prompt-interactive-y",
             "cp/prompt-interactive-n",
@@ -483,6 +523,16 @@
             "cp/prompt-interactive-then-force-n",
             "cp/prompt-then-missing-y",
             "cp/prompt-then-missing-n"
+          ],
+          "csh087_assertions": [
+            "cp/decisions-multiple-yy",
+            "cp/decisions-multiple-yn",
+            "cp/decisions-multiple-ny",
+            "cp/decisions-multiple-nn",
+            "cp/decisions-missing-between-y",
+            "cp/decisions-missing-between-n",
+            "cp/decisions-recursive-y",
+            "cp/decisions-recursive-n"
           ]
         },
         "INPUT FILES": {
@@ -522,10 +572,20 @@
             "cp/prompt-interactive-then-force-n",
             "cp/prompt-then-missing-y",
             "cp/prompt-then-missing-n"
+          ],
+          "csh087_assertions": [
+            "cp/decisions-multiple-yy",
+            "cp/decisions-multiple-yn",
+            "cp/decisions-multiple-ny",
+            "cp/decisions-multiple-nn",
+            "cp/decisions-missing-between-y",
+            "cp/decisions-missing-between-n",
+            "cp/decisions-recursive-y",
+            "cp/decisions-recursive-n"
           ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "disposition": "CSH-086/087 owned-terminal fixtures require complete known C-locale prompt spellings and diagnostic order, with empty ordinary stdout. Missing-middle diagnostics must name the missing operand at the authored position. Other diagnostics use the recorded case oracle; untested spellings/locales remain open.",
           "csh080_assertions": [
             "cp/remaining-continue-missing"
           ],
@@ -542,6 +602,16 @@
             "cp/prompt-interactive-then-force-n",
             "cp/prompt-then-missing-y",
             "cp/prompt-then-missing-n"
+          ],
+          "csh087_assertions": [
+            "cp/decisions-multiple-yy",
+            "cp/decisions-multiple-yn",
+            "cp/decisions-multiple-ny",
+            "cp/decisions-multiple-nn",
+            "cp/decisions-missing-between-y",
+            "cp/decisions-missing-between-n",
+            "cp/decisions-recursive-y",
+            "cp/decisions-recursive-n"
           ]
         },
         "OUTPUT FILES": {
@@ -555,10 +625,20 @@
             "cp/prompt-interactive-then-force-n",
             "cp/prompt-then-missing-y",
             "cp/prompt-then-missing-n"
+          ],
+          "csh087_assertions": [
+            "cp/decisions-multiple-yy",
+            "cp/decisions-multiple-yn",
+            "cp/decisions-multiple-ny",
+            "cp/decisions-multiple-nn",
+            "cp/decisions-missing-between-y",
+            "cp/decisions-missing-between-n",
+            "cp/decisions-recursive-y",
+            "cp/decisions-recursive-n"
           ]
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Recursive/multiple-operand and non-C interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and both -f/-i orders on an owned PTY; stock Darwin declines incorrectly return 1."
+          "disposition": "Further recursive/multiple-operand graphs and non-C interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and both -f/-i orders on an owned PTY; stock Darwin declines incorrectly return 1. CSH-087 adds all four yes/no combinations for two operands, missing-middle continuation, and one-child recursive overwrite yes/no; arbitrary graphs remain open."
         },
         "EXIT STATUS": {
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
@@ -578,6 +658,16 @@
             "cp/prompt-interactive-then-force-n",
             "cp/prompt-then-missing-y",
             "cp/prompt-then-missing-n"
+          ],
+          "csh087_assertions": [
+            "cp/decisions-multiple-yy",
+            "cp/decisions-multiple-yn",
+            "cp/decisions-multiple-ny",
+            "cp/decisions-multiple-nn",
+            "cp/decisions-missing-between-y",
+            "cp/decisions-missing-between-n",
+            "cp/decisions-recursive-y",
+            "cp/decisions-recursive-n"
           ]
         },
         "CONSEQUENCES OF ERRORS": {
@@ -588,6 +678,16 @@
           "csh084_assertions": [
             "cp/residual-read-denied",
             "cp/residual-write-denied"
+          ],
+          "csh087_assertions": [
+            "cp/decisions-multiple-yy",
+            "cp/decisions-multiple-yn",
+            "cp/decisions-multiple-ny",
+            "cp/decisions-multiple-nn",
+            "cp/decisions-missing-between-y",
+            "cp/decisions-missing-between-n",
+            "cp/decisions-recursive-y",
+            "cp/decisions-recursive-n"
           ]
         }
       },
@@ -620,7 +720,7 @@
           "cp/residual-read-denied",
           "cp/residual-write-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -635,13 +735,23 @@
         "cp/prompt-interactive-then-force-n",
         "cp/prompt-then-missing-y",
         "cp/prompt-then-missing-n"
+      ],
+      "csh087_assertions": [
+        "cp/decisions-multiple-yy",
+        "cp/decisions-multiple-yn",
+        "cp/decisions-multiple-ny",
+        "cp/decisions-multiple-nn",
+        "cp/decisions-missing-between-y",
+        "cp/decisions-missing-between-n",
+        "cp/decisions-recursive-y",
+        "cp/decisions-recursive-n"
       ]
     },
     {
       "utility": "dd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dd.html",
       "source_sha256": "876cebeba49456b8e22b53057bc861120f092c36522193823685cea8b821e249",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "dd/copy",
@@ -847,19 +957,20 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     },
     {
       "utility": "df",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html",
       "source_sha256": "afbeec1b5e25c2ebf0de45fcffdcff03cf9f3bf4aa6960fc09b426cfc1a45a11",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "df/portable-k",
@@ -937,19 +1048,20 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     },
     {
       "utility": "du",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html",
       "source_sha256": "659c1410d265ef1d4056a784611c6af0df45495f99ff9abfbdbc3c9eb516c100",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "du/file-k",
@@ -1079,7 +1191,7 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [
@@ -1093,13 +1205,14 @@
         ],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     },
     {
       "utility": "file",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html",
       "source_sha256": "c2e7590cab2534dbf4a0b3fbd8cc77312990c495c6a448243ca63c14074067bb",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "file/empty",
@@ -1358,7 +1471,7 @@
           "file/residual-magic-offset",
           "file/residual-magic-escaped"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [
@@ -1381,13 +1494,14 @@
         ],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     },
     {
       "utility": "find",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html",
       "source_sha256": "6293363b063c9de0bc4d190b62a09d3cd03906a1fa40d3ddc52ecd6a09a62502",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "find/regular",
@@ -1588,19 +1702,20 @@
         "passing_scope": [
           "find/residual-operand-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     },
     {
       "utility": "ln",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html",
       "source_sha256": "c4e793bb510483faef398e4c16fb7adc2d60b99c712ea7e6b5f2751a4c6c453c",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "ln/hard",
@@ -1744,19 +1859,20 @@
         "passing_scope": [
           "ln/residual-create-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     },
     {
       "utility": "ls",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
       "source_sha256": "cd4db85f09dbadf3d529b1bf6a8c157806759c5a22d3ca616aad0cc0363f07bc",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "ls/512-c-order",
@@ -1904,19 +2020,20 @@
         "passing_scope": [
           "ls/residual-operand-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     },
     {
       "utility": "mkdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html",
       "source_sha256": "7d37d11b3829422919fbc928cf3e4e0e2c9ba3d0eaba2e2e36362e80f4086576",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "mkdir/parents",
@@ -2070,19 +2187,20 @@
         "passing_scope": [
           "mkdir/residual-parent-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     },
     {
       "utility": "mkfifo",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html",
       "source_sha256": "508f579e25f7ac32d94c2f57aef1a12448e4984fc60d467120cb2bb66157c3ed",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "mkfifo/mode",
@@ -2224,19 +2342,20 @@
         "passing_scope": [
           "mkfifo/residual-parent-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     },
     {
       "utility": "mv",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mv.html",
       "source_sha256": "c17c6279d2fdf408e2aa82bd674d5eff5130f391361b2e175e4862d6c4a89662",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "mv/rename",
@@ -2251,9 +2370,17 @@
         "mv/prompt-interactive-n",
         "mv/prompt-force-then-interactive-y",
         "mv/prompt-force-then-interactive-n",
-        "mv/prompt-last-force"
+        "mv/prompt-last-force",
+        "mv/decisions-multiple-yy",
+        "mv/decisions-multiple-yn",
+        "mv/decisions-multiple-ny",
+        "mv/decisions-multiple-nn",
+        "mv/decisions-missing-between-y",
+        "mv/decisions-missing-between-n",
+        "mv/decisions-directory-empty",
+        "mv/decisions-directory-nonempty"
       ],
-      "remaining": "Multiple-operand and non-C interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and last -f/-i precedence on an owned PTY.",
+      "remaining": "Further multiple-operand and non-C interactive decisions, directory replacement beyond the authored empty/nonempty targets, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and last -f/-i precedence on an owned PTY. CSH-087 adds two-operand yes/no combinations, missing-middle continuation and same-device empty/nonempty directory replacement.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -2279,7 +2406,7 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Multiple-operand and non-C interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and last -f/-i precedence on an owned PTY.",
+          "disposition": "Further multiple-operand and non-C interactive decisions, directory replacement beyond the authored empty/nonempty targets, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and last -f/-i precedence on an owned PTY. CSH-087 adds two-operand yes/no combinations, missing-middle continuation and same-device empty/nonempty directory replacement.",
           "csh080_assertions": [
             "mv/remaining-continue-missing",
             "mv/remaining-empty-directory-replace"
@@ -2293,10 +2420,20 @@
             "mv/prompt-force-then-interactive-y",
             "mv/prompt-force-then-interactive-n",
             "mv/prompt-last-force"
+          ],
+          "csh087_assertions": [
+            "mv/decisions-multiple-yy",
+            "mv/decisions-multiple-yn",
+            "mv/decisions-multiple-ny",
+            "mv/decisions-multiple-nn",
+            "mv/decisions-missing-between-y",
+            "mv/decisions-missing-between-n",
+            "mv/decisions-directory-empty",
+            "mv/decisions-directory-nonempty"
           ]
         },
         "OPTIONS": {
-          "disposition": "Multiple-operand and non-C interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and last -f/-i precedence on an owned PTY.",
+          "disposition": "Further multiple-operand and non-C interactive decisions, directory replacement beyond the authored empty/nonempty targets, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and last -f/-i precedence on an owned PTY. CSH-087 adds two-operand yes/no combinations, missing-middle continuation and same-device empty/nonempty directory replacement.",
           "csh080_assertions": [
             "mv/remaining-continue-missing",
             "mv/remaining-empty-directory-replace"
@@ -2307,23 +2444,51 @@
             "mv/prompt-force-then-interactive-y",
             "mv/prompt-force-then-interactive-n",
             "mv/prompt-last-force"
+          ],
+          "csh087_assertions": [
+            "mv/decisions-multiple-yy",
+            "mv/decisions-multiple-yn",
+            "mv/decisions-multiple-ny",
+            "mv/decisions-multiple-nn",
+            "mv/decisions-missing-between-y",
+            "mv/decisions-missing-between-n",
+            "mv/decisions-directory-empty",
+            "mv/decisions-directory-nonempty"
           ]
         },
         "OPERANDS": {
-          "disposition": "Multiple-operand and non-C interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and last -f/-i precedence on an owned PTY.",
+          "disposition": "Further multiple-operand and non-C interactive decisions, directory replacement beyond the authored empty/nonempty targets, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and last -f/-i precedence on an owned PTY. CSH-087 adds two-operand yes/no combinations, missing-middle continuation and same-device empty/nonempty directory replacement.",
           "csh080_assertions": [
             "mv/remaining-continue-missing",
             "mv/remaining-empty-directory-replace"
+          ],
+          "csh087_assertions": [
+            "mv/decisions-multiple-yy",
+            "mv/decisions-multiple-yn",
+            "mv/decisions-multiple-ny",
+            "mv/decisions-multiple-nn",
+            "mv/decisions-missing-between-y",
+            "mv/decisions-missing-between-n",
+            "mv/decisions-directory-empty",
+            "mv/decisions-directory-nonempty"
           ]
         },
         "STDIN": {
-          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open.",
+          "disposition": "Owned PTY sequences send one authored line after each target question; stdout is captured separately and terminal stderr is checked in full. Ordinary directory cases run in all input modes. Other stdin uses and locales remain open.",
           "csh086_assertions": [
             "mv/prompt-interactive-y",
             "mv/prompt-interactive-n",
             "mv/prompt-force-then-interactive-y",
             "mv/prompt-force-then-interactive-n",
             "mv/prompt-last-force"
+          ],
+          "csh087_assertions": [
+            "mv/decisions-multiple-yy",
+            "mv/decisions-multiple-yn",
+            "mv/decisions-multiple-ny",
+            "mv/decisions-multiple-nn",
+            "mv/decisions-missing-between-y",
+            "mv/decisions-missing-between-n"
           ]
         },
         "INPUT FILES": {
@@ -2357,10 +2522,20 @@
             "mv/prompt-force-then-interactive-y",
             "mv/prompt-force-then-interactive-n",
             "mv/prompt-last-force"
+          ],
+          "csh087_assertions": [
+            "mv/decisions-multiple-yy",
+            "mv/decisions-multiple-yn",
+            "mv/decisions-multiple-ny",
+            "mv/decisions-multiple-nn",
+            "mv/decisions-missing-between-y",
+            "mv/decisions-missing-between-n",
+            "mv/decisions-directory-empty",
+            "mv/decisions-directory-nonempty"
           ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "disposition": "CSH-086/087 owned-terminal fixtures require complete known C-locale prompt spellings and diagnostic order, with empty ordinary stdout. Missing-middle diagnostics must name the missing operand at the authored position. Other diagnostics use the recorded case oracle; untested spellings/locales remain open.",
           "csh080_assertions": [
             "mv/remaining-continue-missing",
             "mv/remaining-empty-directory-replace"
@@ -2374,6 +2549,16 @@
             "mv/prompt-force-then-interactive-y",
             "mv/prompt-force-then-interactive-n",
             "mv/prompt-last-force"
+          ],
+          "csh087_assertions": [
+            "mv/decisions-multiple-yy",
+            "mv/decisions-multiple-yn",
+            "mv/decisions-multiple-ny",
+            "mv/decisions-multiple-nn",
+            "mv/decisions-missing-between-y",
+            "mv/decisions-missing-between-n",
+            "mv/decisions-directory-empty",
+            "mv/decisions-directory-nonempty"
           ]
         },
         "OUTPUT FILES": {
@@ -2384,10 +2569,20 @@
             "mv/prompt-force-then-interactive-y",
             "mv/prompt-force-then-interactive-n",
             "mv/prompt-last-force"
+          ],
+          "csh087_assertions": [
+            "mv/decisions-multiple-yy",
+            "mv/decisions-multiple-yn",
+            "mv/decisions-multiple-ny",
+            "mv/decisions-multiple-nn",
+            "mv/decisions-missing-between-y",
+            "mv/decisions-missing-between-n",
+            "mv/decisions-directory-empty",
+            "mv/decisions-directory-nonempty"
           ]
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Multiple-operand and non-C interactive decisions, directory replacement, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and last -f/-i precedence on an owned PTY."
+          "disposition": "Further multiple-operand and non-C interactive decisions, directory replacement beyond the authored empty/nonempty targets, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and last -f/-i precedence on an owned PTY. CSH-087 adds two-operand yes/no combinations, missing-middle continuation and same-device empty/nonempty directory replacement."
         },
         "EXIT STATUS": {
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
@@ -2404,6 +2599,16 @@
             "mv/prompt-force-then-interactive-y",
             "mv/prompt-force-then-interactive-n",
             "mv/prompt-last-force"
+          ],
+          "csh087_assertions": [
+            "mv/decisions-multiple-yy",
+            "mv/decisions-multiple-yn",
+            "mv/decisions-multiple-ny",
+            "mv/decisions-multiple-nn",
+            "mv/decisions-missing-between-y",
+            "mv/decisions-missing-between-n",
+            "mv/decisions-directory-empty",
+            "mv/decisions-directory-nonempty"
           ]
         },
         "CONSEQUENCES OF ERRORS": {
@@ -2414,6 +2619,16 @@
           ],
           "csh084_assertions": [
             "mv/residual-destination-denied"
+          ],
+          "csh087_assertions": [
+            "mv/decisions-multiple-yy",
+            "mv/decisions-multiple-yn",
+            "mv/decisions-multiple-ny",
+            "mv/decisions-multiple-nn",
+            "mv/decisions-missing-between-y",
+            "mv/decisions-missing-between-n",
+            "mv/decisions-directory-empty",
+            "mv/decisions-directory-nonempty"
           ]
         }
       },
@@ -2440,7 +2655,7 @@
         "passing_scope": [
           "mv/residual-destination-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -2452,13 +2667,23 @@
         "mv/prompt-force-then-interactive-y",
         "mv/prompt-force-then-interactive-n",
         "mv/prompt-last-force"
+      ],
+      "csh087_assertions": [
+        "mv/decisions-multiple-yy",
+        "mv/decisions-multiple-yn",
+        "mv/decisions-multiple-ny",
+        "mv/decisions-multiple-nn",
+        "mv/decisions-missing-between-y",
+        "mv/decisions-missing-between-n",
+        "mv/decisions-directory-empty",
+        "mv/decisions-directory-nonempty"
       ]
     },
     {
       "utility": "pathchk",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html",
       "source_sha256": "ce446d31316645a78d6aa4df6ff45829afbdbd3d667c84ae2c6a3bdfe0ce825a",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "pathchk/portable",
@@ -2652,19 +2877,20 @@
         "passing_scope": [
           "pathchk/residual-prefix-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     },
     {
       "utility": "pax",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html",
       "source_sha256": "398b008eab3110cd482eee2e62797adaf915405e488b1f36bc73fc2a29591efb",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "pax/copy-tree",
@@ -2829,19 +3055,20 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     },
     {
       "utility": "pwd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html",
       "source_sha256": "6c0724e219d469ac68640fc07c825a95e090931483b9cee2d089dec136efd7f6",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "pwd/physical",
@@ -2952,19 +3179,20 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     },
     {
       "utility": "readlink",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html",
       "source_sha256": "b8af59cd805ca79ad73dab35ad008a55b9f8bbef0fc84ce7334ffac7b8f0f4dc",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "readlink/link",
@@ -3144,19 +3372,20 @@
           "readlink/residual-opaque-utf8",
           "readlink/residual-opaque-utf8-n"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     },
     {
       "utility": "realpath",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html",
       "source_sha256": "dfded63f96378a20c8952547dea666f07d0006e8868fa37a883b8553de684cc5",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "realpath/existing",
@@ -3283,19 +3512,20 @@
         "passing_scope": [
           "realpath/residual-prefix-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     },
     {
       "utility": "rm",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html",
       "source_sha256": "7ea788ea4ed4cc0f309bfc9681b650da0cbcec9d535604cb12bfd57fbddb9839",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "rm/file",
@@ -3308,9 +3538,15 @@
         "rm/cycle-physical-removal",
         "rm/unlink-one-name",
         "rm/remaining-missing-continue",
-        "rm/residual-force-denied"
+        "rm/residual-force-denied",
+        "rm/decisions-decline-descent-continue",
+        "rm/decisions-recursive-final-y",
+        "rm/decisions-recursive-final-n",
+        "rm/decisions-recursive-symlink",
+        "rm/decisions-last-i",
+        "rm/decisions-last-f"
       ],
-      "remaining": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+      "remaining": "Recursive descriptor/depth exhaustion, disposable mount boundaries, further operand continuation, permissions, races and prompt locales/recursive graphs remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-087 adds negative descent with operand continuation, affirmative leaf removal followed by yes/no final directory removal, recursive symlink non-traversal, and last -f/-i precedence. Negative child responses, nested branching and other prompt graphs remain open.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -3336,28 +3572,60 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, further operand continuation, permissions, races and prompt locales/recursive graphs remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-087 adds negative descent with operand continuation, affirmative leaf removal followed by yes/no final directory removal, recursive symlink non-traversal, and last -f/-i precedence. Negative child responses, nested branching and other prompt graphs remain open.",
           "csh080_assertions": [
             "rm/remaining-missing-continue"
           ],
           "csh084_assertions": [
             "rm/residual-force-denied"
+          ],
+          "csh087_assertions": [
+            "rm/decisions-decline-descent-continue",
+            "rm/decisions-recursive-final-y",
+            "rm/decisions-recursive-final-n",
+            "rm/decisions-recursive-symlink",
+            "rm/decisions-last-i",
+            "rm/decisions-last-f"
           ]
         },
         "OPTIONS": {
-          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, further operand continuation, permissions, races and prompt locales/recursive graphs remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-087 adds negative descent with operand continuation, affirmative leaf removal followed by yes/no final directory removal, recursive symlink non-traversal, and last -f/-i precedence. Negative child responses, nested branching and other prompt graphs remain open.",
           "csh080_assertions": [
             "rm/remaining-missing-continue"
+          ],
+          "csh087_assertions": [
+            "rm/decisions-decline-descent-continue",
+            "rm/decisions-recursive-final-y",
+            "rm/decisions-recursive-final-n",
+            "rm/decisions-recursive-symlink",
+            "rm/decisions-last-i",
+            "rm/decisions-last-f"
           ]
         },
         "OPERANDS": {
-          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, further operand continuation, permissions, races and prompt locales/recursive graphs remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-087 adds negative descent with operand continuation, affirmative leaf removal followed by yes/no final directory removal, recursive symlink non-traversal, and last -f/-i precedence. Negative child responses, nested branching and other prompt graphs remain open.",
           "csh080_assertions": [
             "rm/remaining-missing-continue"
+          ],
+          "csh087_assertions": [
+            "rm/decisions-decline-descent-continue",
+            "rm/decisions-recursive-final-y",
+            "rm/decisions-recursive-final-n",
+            "rm/decisions-recursive-symlink",
+            "rm/decisions-last-i",
+            "rm/decisions-last-f"
           ]
         },
         "STDIN": {
-          "disposition": "Direct/string/file inputs receive EOF unless terminal rm reads its authored response; stdin shell mode shares the command source. Arbitrary ignored stdin and utility data-stream combinations remain open."
+          "disposition": "Owned PTY sequences send one authored line after each target question; stdout is captured separately and terminal stderr is checked in full. Ordinary directory cases run in all input modes. Other stdin uses and locales remain open.",
+          "csh087_assertions": [
+            "rm/decisions-decline-descent-continue",
+            "rm/decisions-recursive-final-y",
+            "rm/decisions-recursive-final-n",
+            "rm/decisions-recursive-symlink",
+            "rm/decisions-last-i",
+            "rm/decisions-last-f"
+          ]
         },
         "INPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
@@ -3375,22 +3643,46 @@
           ],
           "csh084_assertions": [
             "rm/residual-force-denied"
+          ],
+          "csh087_assertions": [
+            "rm/decisions-decline-descent-continue",
+            "rm/decisions-recursive-final-y",
+            "rm/decisions-recursive-final-n",
+            "rm/decisions-recursive-symlink",
+            "rm/decisions-last-i",
+            "rm/decisions-last-f"
           ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "disposition": "CSH-086/087 owned-terminal fixtures require complete known C-locale prompt spellings and diagnostic order, with empty ordinary stdout. Missing-middle diagnostics must name the missing operand at the authored position. Other diagnostics use the recorded case oracle; untested spellings/locales remain open.",
           "csh080_assertions": [
             "rm/remaining-missing-continue"
           ],
           "csh084_assertions": [
             "rm/residual-force-denied"
+          ],
+          "csh087_assertions": [
+            "rm/decisions-decline-descent-continue",
+            "rm/decisions-recursive-final-y",
+            "rm/decisions-recursive-final-n",
+            "rm/decisions-recursive-symlink",
+            "rm/decisions-last-i",
+            "rm/decisions-last-f"
           ]
         },
         "OUTPUT FILES": {
-          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness.",
+          "csh087_assertions": [
+            "rm/decisions-decline-descent-continue",
+            "rm/decisions-recursive-final-y",
+            "rm/decisions-recursive-final-n",
+            "rm/decisions-recursive-symlink",
+            "rm/decisions-last-i",
+            "rm/decisions-last-f"
+          ]
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, operand continuation, permissions, races and prompt locale/recursive decisions remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open."
+          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, further operand continuation, permissions, races and prompt locales/recursive graphs remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-087 adds negative descent with operand continuation, affirmative leaf removal followed by yes/no final directory removal, recursive symlink non-traversal, and last -f/-i precedence. Negative child responses, nested branching and other prompt graphs remain open."
         },
         "EXIT STATUS": {
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
@@ -3399,6 +3691,14 @@
           ],
           "csh084_assertions": [
             "rm/residual-force-denied"
+          ],
+          "csh087_assertions": [
+            "rm/decisions-decline-descent-continue",
+            "rm/decisions-recursive-final-y",
+            "rm/decisions-recursive-final-n",
+            "rm/decisions-recursive-symlink",
+            "rm/decisions-last-i",
+            "rm/decisions-last-f"
           ]
         },
         "CONSEQUENCES OF ERRORS": {
@@ -3408,6 +3708,14 @@
           ],
           "csh084_assertions": [
             "rm/residual-force-denied"
+          ],
+          "csh087_assertions": [
+            "rm/decisions-decline-descent-continue",
+            "rm/decisions-recursive-final-y",
+            "rm/decisions-recursive-final-n",
+            "rm/decisions-recursive-symlink",
+            "rm/decisions-last-i",
+            "rm/decisions-last-f"
           ]
         }
       },
@@ -3434,19 +3742,27 @@
         "passing_scope": [
           "rm/residual-force-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": [
+        "rm/decisions-decline-descent-continue",
+        "rm/decisions-recursive-final-y",
+        "rm/decisions-recursive-final-n",
+        "rm/decisions-recursive-symlink",
+        "rm/decisions-last-i",
+        "rm/decisions-last-f"
+      ]
     },
     {
       "utility": "rmdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html",
       "source_sha256": "44451db47f43a6dfb058b6e8f71aee7db1fec99961573246380f7deb0c54bc9f",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "rmdir/empty",
@@ -3577,19 +3893,20 @@
         "passing_scope": [
           "rmdir/residual-parent-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     },
     {
       "utility": "touch",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html",
       "source_sha256": "ae8c1a8fc027372a6a50561b7c07bea8c30a471458ee72c00d7b35c039d756b7",
-      "owner": "CSH-087",
+      "owner": "CSH-088",
       "full_contract_qualified": false,
       "assertions": [
         "touch/reference",
@@ -3798,7 +4115,7 @@
         "passing_scope": [
           "touch/residual-prefix-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-087."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
       },
       "csh085_qualification": {
         "passing_scope": [
@@ -3810,7 +4127,8 @@
         ],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
-      "csh086_assertions": []
+      "csh086_assertions": [],
+      "csh087_assertions": []
     }
   ],
   "predecessor": "CSH-072"

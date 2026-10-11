@@ -186,5 +186,13 @@ themselves establish full conformance for the CSH-011 milestone.
 
 CSH-086 adds bounded C-locale owned-PTY cp/mv decisions to U-034/U-040.
 The selected cp source repair and separate stock failures are recorded in
-[evidence](evidence/csh-086/README.md). [CSH-087](tickets/CSH-087-filesystem-environment-followup.md)
+[evidence](evidence/csh-086/README.md). [CSH-088](tickets/CSH-088-filesystem-remaining-environments.md)
 retains every unsupplied environment; no whole utility contract is qualified.
+
+## CSH-087 operand and recursive decisions
+
+CSH-087 extends U-034/U-040 with 68 bounded multi-operand, recursive terminal,
+and same-device directory assertions. Exact provider provenance and the separate
+stock failures remain required. [Evidence](evidence/csh-087/README.md) records
+both platforms. [CSH-088](tickets/CSH-088-filesystem-remaining-environments.md)
+retains every unsupplied contract, including all four original conditions.

@@ -288,3 +288,9 @@ platform results and retained stock failures. Every unsupplied contract and
 original condition remains explicitly open under
 [CSH-086](tickets/CSH-086-filesystem-unsupplied-contracts.md); no full utility
 page or profile is qualified.
+
+CSH-087 adds 68 U-034/U-040 filesystem assertions for multi-operand and recursive
+terminal decisions plus same-device directory replacement, with unchanged
+selected providers. [Native/Linux records](evidence/csh-087/README.md) preserve
+stock failures separately. [CSH-088](tickets/CSH-088-filesystem-remaining-environments.md)
+retains all unsupplied environments and four original conditions.

@@ -676,3 +676,8 @@ test-host-filesystem-isolated: cshell host-profile
 .PHONY: test-host-filesystem-interactive
 test-host-filesystem-interactive: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --interactive-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-interactive.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-087: independent operand and recursive decision effects.
+.PHONY: test-host-filesystem-decisions
+test-host-filesystem-decisions: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --decisions-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-decisions.json $(HOST_FILESYSTEM_FLAGS)
