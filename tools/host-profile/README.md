@@ -318,3 +318,9 @@ CSH-087 retains these exact provider builds and adds
 and same-device directory assertions. The full host profile includes them.
 No extra allowance or provider adapter is added; stock decline-status failures
 remain in the separate audit. See [CSH-087 evidence](../../docs/evidence/csh-087/README.md).
+
+CSH-088 adds `make test-host-filesystem-metadata`: 64 strict ls numeric metadata,
+size/time ordering and find -newer assertions, including adjacent nanoseconds
+and reference symlinks. No selected provider or build flags change. Every
+private timestamp is read back exactly before exec; unsupported resolution is
+a setup failure. See [CSH-088 evidence](../../docs/evidence/csh-088/README.md).

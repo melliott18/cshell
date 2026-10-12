@@ -1,0 +1,11 @@
+{
+  "reason": "The shared registry omitted pre-existing CSH-087 (#185) and CSH-088 (#187). The allocator assigned CSH-087 to the new follow-up (#189); a subsequent ordinary fast-forward commit corrected these bindings without rewriting history.",
+  "erroneous_commit": "e9d65f4",
+  "repair_commit": "d20766967a34cd7d0a75aa75d7ec7b26b4a187d2",
+  "bindings": {
+    "CSH-087": 185,
+    "CSH-088": 187,
+    "CSH-089": 189
+  },
+  "validation": "python3 /tmp/csh088-tickets.py check --live; implementation read from origin/chore/CSH-083-ticket-allocation"
+}

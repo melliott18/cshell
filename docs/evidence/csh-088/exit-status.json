@@ -1,0 +1,12 @@
+{
+  "native": {
+    "selected": 0,
+    "stock": 2,
+    "stock_provider": 1
+  },
+  "linux": {
+    "selected": 0,
+    "stock": 2,
+    "stock_provider": 1
+  }
+}

@@ -681,3 +681,8 @@ test-host-filesystem-interactive: cshell host-profile
 .PHONY: test-host-filesystem-decisions
 test-host-filesystem-decisions: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --decisions-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-decisions.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-088: pre-exec metadata and exact timestamp oracles.
+.PHONY: test-host-filesystem-metadata
+test-host-filesystem-metadata: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --metadata-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-metadata.json $(HOST_FILESYSTEM_FLAGS)
