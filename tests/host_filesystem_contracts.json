@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "ticket": "CSH-087",
+  "ticket": "CSH-088",
   "qualification": "case-scoped only; selected profile requires both ordinary and provider-audit assertions; stock failures remain failures",
   "common_defaults": {
-    "U-034": "Each of the 21 actual providers is inventoried and directly execed, alongside public cshell string/file/stdin dispatch; pwd builtin and external exec remain distinct. CSH-087 terminal sequences use direct exec and cshell string/file modes; two directory replacement cases also use stdin mode.",
+    "U-034": "Each of the 21 actual providers is inventoried and directly execed, alongside public cshell string/file/stdin dispatch; pwd builtin and external exec remain distinct. CSH-087 terminal sequences use direct exec and cshell string/file modes; two directory replacement cases also use stdin mode. CSH-088 metadata cases use direct exec and all three shell input modes.",
     "U-040": "Controlled PATH, LC_ALL, TZ, umask and resource limits; independent effects and positive-error predicates. Common signal, locale, utility-syntax and environmental defaults outside the listed assertions remain individually open under each utility owner."
   },
   "utilities": [
@@ -11,7 +11,7 @@
       "utility": "basename",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/basename.html",
       "source_sha256": "76c256427a758fc4388559e7a71fcc9351ed0cfb19afc5af07d38c4cf25c8ab2",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "basename/path-6-620a",
@@ -170,20 +170,21 @@
           "basename/residual-closed-output",
           "basename/residual-broken-pipe"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": []
     },
     {
       "utility": "dirname",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html",
       "source_sha256": "f218ded1508843cdd90913db7cd56ee938d43f67050d6f0645d88cbf916ec6c4",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "dirname/0",
@@ -366,20 +367,21 @@
           "dirname/residual-closed-output",
           "dirname/residual-broken-pipe"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": []
     },
     {
       "utility": "cp",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html",
       "source_sha256": "777d1c06255117e8ea9d8c5ede3996ef77b7c5ddecd1cbf9e584deef239a5836",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "cp/bytes",
@@ -720,7 +722,7 @@
           "cp/residual-read-denied",
           "cp/residual-write-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -745,13 +747,14 @@
         "cp/decisions-missing-between-n",
         "cp/decisions-recursive-y",
         "cp/decisions-recursive-n"
-      ]
+      ],
+      "csh088_assertions": []
     },
     {
       "utility": "dd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dd.html",
       "source_sha256": "876cebeba49456b8e22b53057bc861120f092c36522193823685cea8b821e249",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "dd/copy",
@@ -957,20 +960,21 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": []
     },
     {
       "utility": "df",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html",
       "source_sha256": "afbeec1b5e25c2ebf0de45fcffdcff03cf9f3bf4aa6960fc09b426cfc1a45a11",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "df/portable-k",
@@ -1048,20 +1052,21 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": []
     },
     {
       "utility": "du",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html",
       "source_sha256": "659c1410d265ef1d4056a784611c6af0df45495f99ff9abfbdbc3c9eb516c100",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "du/file-k",
@@ -1191,7 +1196,7 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [
@@ -1206,13 +1211,14 @@
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": []
     },
     {
       "utility": "file",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html",
       "source_sha256": "c2e7590cab2534dbf4a0b3fbd8cc77312990c495c6a448243ca63c14074067bb",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "file/empty",
@@ -1471,7 +1477,7 @@
           "file/residual-magic-offset",
           "file/residual-magic-escaped"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [
@@ -1495,13 +1501,14 @@
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": []
     },
     {
       "utility": "find",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html",
       "source_sha256": "6293363b063c9de0bc4d190b62a09d3cd03906a1fa40d3ddc52ecd6a09a62502",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "find/regular",
@@ -1523,9 +1530,14 @@
         "find/remaining-negation",
         "find/remaining-grouping",
         "find/remaining-exec-batch",
-        "find/residual-operand-denied"
+        "find/residual-operand-denied",
+        "find/metadata-newer-before",
+        "find/metadata-newer-equal",
+        "find/metadata-newer-after",
+        "find/metadata-newer-reference-H",
+        "find/metadata-newer-reference-L"
       ],
-      "remaining": "Other expressions/actions, timestamp boundaries, descriptor exhaustion and non-UTF-8 matching remain unqualified. CSH-080 adds exact byte/rounded-block size, numeric permissions, negation/grouping and bounded batched exec. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+      "remaining": "Strict -newer comparisons at equal and adjacent representable nanoseconds and -H/-L reference-symlink following now have measured private witnesses. Other expressions/actions, wall-clock age boundaries, descriptor/depth exhaustion and non-UTF-8 matching remain unqualified. CSH-080 expression and batched-exec witnesses and CSH-084 ordinary owner-mode EACCES remain bounded.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -1551,7 +1563,7 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Other expressions/actions, timestamp boundaries, descriptor exhaustion and non-UTF-8 matching remain unqualified. CSH-080 adds exact byte/rounded-block size, numeric permissions, negation/grouping and bounded batched exec. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+          "disposition": "Strict -newer comparisons at equal and adjacent representable nanoseconds and -H/-L reference-symlink following now have measured private witnesses. Other expressions/actions, wall-clock age boundaries, descriptor/depth exhaustion and non-UTF-8 matching remain unqualified. CSH-080 expression and batched-exec witnesses and CSH-084 ordinary owner-mode EACCES remain bounded.",
           "csh080_assertions": [
             "find/remaining-size-bytes",
             "find/remaining-size-rounded-blocks",
@@ -1563,10 +1575,17 @@
           ],
           "csh084_assertions": [
             "find/residual-operand-denied"
+          ],
+          "csh088_assertions": [
+            "find/metadata-newer-before",
+            "find/metadata-newer-equal",
+            "find/metadata-newer-after",
+            "find/metadata-newer-reference-H",
+            "find/metadata-newer-reference-L"
           ]
         },
         "OPTIONS": {
-          "disposition": "Other expressions/actions, timestamp boundaries, descriptor exhaustion and non-UTF-8 matching remain unqualified. CSH-080 adds exact byte/rounded-block size, numeric permissions, negation/grouping and bounded batched exec. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+          "disposition": "Strict -newer comparisons at equal and adjacent representable nanoseconds and -H/-L reference-symlink following now have measured private witnesses. Other expressions/actions, wall-clock age boundaries, descriptor/depth exhaustion and non-UTF-8 matching remain unqualified. CSH-080 expression and batched-exec witnesses and CSH-084 ordinary owner-mode EACCES remain bounded.",
           "csh080_assertions": [
             "find/remaining-size-bytes",
             "find/remaining-size-rounded-blocks",
@@ -1575,10 +1594,17 @@
             "find/remaining-negation",
             "find/remaining-grouping",
             "find/remaining-exec-batch"
+          ],
+          "csh088_assertions": [
+            "find/metadata-newer-before",
+            "find/metadata-newer-equal",
+            "find/metadata-newer-after",
+            "find/metadata-newer-reference-H",
+            "find/metadata-newer-reference-L"
           ]
         },
         "OPERANDS": {
-          "disposition": "Other expressions/actions, timestamp boundaries, descriptor exhaustion and non-UTF-8 matching remain unqualified. CSH-080 adds exact byte/rounded-block size, numeric permissions, negation/grouping and bounded batched exec. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+          "disposition": "Strict -newer comparisons at equal and adjacent representable nanoseconds and -H/-L reference-symlink following now have measured private witnesses. Other expressions/actions, wall-clock age boundaries, descriptor/depth exhaustion and non-UTF-8 matching remain unqualified. CSH-080 expression and batched-exec witnesses and CSH-084 ordinary owner-mode EACCES remain bounded.",
           "csh080_assertions": [
             "find/remaining-size-bytes",
             "find/remaining-size-rounded-blocks",
@@ -1587,6 +1613,13 @@
             "find/remaining-negation",
             "find/remaining-grouping",
             "find/remaining-exec-batch"
+          ],
+          "csh088_assertions": [
+            "find/metadata-newer-before",
+            "find/metadata-newer-equal",
+            "find/metadata-newer-after",
+            "find/metadata-newer-reference-H",
+            "find/metadata-newer-reference-L"
           ]
         },
         "STDIN": {
@@ -1596,7 +1629,14 @@
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "ENVIRONMENT VARIABLES": {
-          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile.",
+          "csh088_assertions": [
+            "find/metadata-newer-before",
+            "find/metadata-newer-equal",
+            "find/metadata-newer-after",
+            "find/metadata-newer-reference-H",
+            "find/metadata-newer-reference-L"
+          ]
         },
         "ASYNCHRONOUS EVENTS": {
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
@@ -1614,6 +1654,13 @@
           ],
           "csh084_assertions": [
             "find/residual-operand-denied"
+          ],
+          "csh088_assertions": [
+            "find/metadata-newer-before",
+            "find/metadata-newer-equal",
+            "find/metadata-newer-after",
+            "find/metadata-newer-reference-H",
+            "find/metadata-newer-reference-L"
           ]
         },
         "STDERR": {
@@ -1629,13 +1676,20 @@
           ],
           "csh084_assertions": [
             "find/residual-operand-denied"
+          ],
+          "csh088_assertions": [
+            "find/metadata-newer-before",
+            "find/metadata-newer-equal",
+            "find/metadata-newer-after",
+            "find/metadata-newer-reference-H",
+            "find/metadata-newer-reference-L"
           ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Other expressions/actions, timestamp boundaries, descriptor exhaustion and non-UTF-8 matching remain unqualified. CSH-080 adds exact byte/rounded-block size, numeric permissions, negation/grouping and bounded batched exec. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open."
+          "disposition": "Strict -newer comparisons at equal and adjacent representable nanoseconds and -H/-L reference-symlink following now have measured private witnesses. Other expressions/actions, wall-clock age boundaries, descriptor/depth exhaustion and non-UTF-8 matching remain unqualified. CSH-080 expression and batched-exec witnesses and CSH-084 ordinary owner-mode EACCES remain bounded."
         },
         "EXIT STATUS": {
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
@@ -1650,6 +1704,13 @@
           ],
           "csh084_assertions": [
             "find/residual-operand-denied"
+          ],
+          "csh088_assertions": [
+            "find/metadata-newer-before",
+            "find/metadata-newer-equal",
+            "find/metadata-newer-after",
+            "find/metadata-newer-reference-H",
+            "find/metadata-newer-reference-L"
           ]
         },
         "CONSEQUENCES OF ERRORS": {
@@ -1702,20 +1763,27 @@
         "passing_scope": [
           "find/residual-operand-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": [
+        "find/metadata-newer-before",
+        "find/metadata-newer-equal",
+        "find/metadata-newer-after",
+        "find/metadata-newer-reference-H",
+        "find/metadata-newer-reference-L"
+      ]
     },
     {
       "utility": "ln",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html",
       "source_sha256": "c4e793bb510483faef398e4c16fb7adc2d60b99c712ea7e6b5f2751a4c6c453c",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "ln/hard",
@@ -1859,20 +1927,21 @@
         "passing_scope": [
           "ln/residual-create-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": []
     },
     {
       "utility": "ls",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
       "source_sha256": "cd4db85f09dbadf3d529b1bf6a8c157806759c5a22d3ca616aad0cc0363f07bc",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "ls/512-c-order",
@@ -1882,9 +1951,20 @@
         "ls/remaining-all-reverse-c",
         "ls/remaining-size-sort",
         "ls/remaining-time-sort",
-        "ls/residual-operand-denied"
+        "ls/residual-operand-denied",
+        "ls/metadata-numeric-regular",
+        "ls/metadata-numeric-hardlink",
+        "ls/metadata-numeric-directory",
+        "ls/metadata-numeric-fifo",
+        "ls/metadata-numeric-symlink",
+        "ls/metadata-sort-size",
+        "ls/metadata-sort-size-reverse",
+        "ls/metadata-sort-mtime",
+        "ls/metadata-sort-mtime-reverse",
+        "ls/metadata-sort-atime",
+        "ls/metadata-sort-atime-reverse"
       ],
-      "remaining": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+      "remaining": "Long numeric listings for regular files, hard links, directories, FIFOs and symlinks, plus C-locale size/mtime/atime sorting with ties and reversal now have measured private witnesses. Name-based owner/group rendering, recent timestamps, block units, remaining sorting switches, recursive graphs, terminal formatting, non-C collation and I/O exhaustion remain unqualified. CSH-084 ordinary owner-mode EACCES remains bounded.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -1910,7 +1990,7 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+          "disposition": "Long numeric listings for regular files, hard links, directories, FIFOs and symlinks, plus C-locale size/mtime/atime sorting with ties and reversal now have measured private witnesses. Name-based owner/group rendering, recent timestamps, block units, remaining sorting switches, recursive graphs, terminal formatting, non-C collation and I/O exhaustion remain unqualified. CSH-084 ordinary owner-mode EACCES remains bounded.",
           "csh080_assertions": [
             "ls/remaining-reverse-c",
             "ls/remaining-all-reverse-c",
@@ -1919,24 +1999,63 @@
           ],
           "csh084_assertions": [
             "ls/residual-operand-denied"
+          ],
+          "csh088_assertions": [
+            "ls/metadata-numeric-regular",
+            "ls/metadata-numeric-hardlink",
+            "ls/metadata-numeric-directory",
+            "ls/metadata-numeric-fifo",
+            "ls/metadata-numeric-symlink",
+            "ls/metadata-sort-size",
+            "ls/metadata-sort-size-reverse",
+            "ls/metadata-sort-mtime",
+            "ls/metadata-sort-mtime-reverse",
+            "ls/metadata-sort-atime",
+            "ls/metadata-sort-atime-reverse"
           ]
         },
         "OPTIONS": {
-          "disposition": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+          "disposition": "Long numeric listings for regular files, hard links, directories, FIFOs and symlinks, plus C-locale size/mtime/atime sorting with ties and reversal now have measured private witnesses. Name-based owner/group rendering, recent timestamps, block units, remaining sorting switches, recursive graphs, terminal formatting, non-C collation and I/O exhaustion remain unqualified. CSH-084 ordinary owner-mode EACCES remains bounded.",
           "csh080_assertions": [
             "ls/remaining-reverse-c",
             "ls/remaining-all-reverse-c",
             "ls/remaining-size-sort",
             "ls/remaining-time-sort"
+          ],
+          "csh088_assertions": [
+            "ls/metadata-numeric-regular",
+            "ls/metadata-numeric-hardlink",
+            "ls/metadata-numeric-directory",
+            "ls/metadata-numeric-fifo",
+            "ls/metadata-numeric-symlink",
+            "ls/metadata-sort-size",
+            "ls/metadata-sort-size-reverse",
+            "ls/metadata-sort-mtime",
+            "ls/metadata-sort-mtime-reverse",
+            "ls/metadata-sort-atime",
+            "ls/metadata-sort-atime-reverse"
           ]
         },
         "OPERANDS": {
-          "disposition": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+          "disposition": "Long numeric listings for regular files, hard links, directories, FIFOs and symlinks, plus C-locale size/mtime/atime sorting with ties and reversal now have measured private witnesses. Name-based owner/group rendering, recent timestamps, block units, remaining sorting switches, recursive graphs, terminal formatting, non-C collation and I/O exhaustion remain unqualified. CSH-084 ordinary owner-mode EACCES remains bounded.",
           "csh080_assertions": [
             "ls/remaining-reverse-c",
             "ls/remaining-all-reverse-c",
             "ls/remaining-size-sort",
             "ls/remaining-time-sort"
+          ],
+          "csh088_assertions": [
+            "ls/metadata-numeric-regular",
+            "ls/metadata-numeric-hardlink",
+            "ls/metadata-numeric-directory",
+            "ls/metadata-numeric-fifo",
+            "ls/metadata-numeric-symlink",
+            "ls/metadata-sort-size",
+            "ls/metadata-sort-size-reverse",
+            "ls/metadata-sort-mtime",
+            "ls/metadata-sort-mtime-reverse",
+            "ls/metadata-sort-atime",
+            "ls/metadata-sort-atime-reverse"
           ]
         },
         "STDIN": {
@@ -1946,7 +2065,20 @@
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "ENVIRONMENT VARIABLES": {
-          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile.",
+          "csh088_assertions": [
+            "ls/metadata-numeric-regular",
+            "ls/metadata-numeric-hardlink",
+            "ls/metadata-numeric-directory",
+            "ls/metadata-numeric-fifo",
+            "ls/metadata-numeric-symlink",
+            "ls/metadata-sort-size",
+            "ls/metadata-sort-size-reverse",
+            "ls/metadata-sort-mtime",
+            "ls/metadata-sort-mtime-reverse",
+            "ls/metadata-sort-atime",
+            "ls/metadata-sort-atime-reverse"
+          ]
         },
         "ASYNCHRONOUS EVENTS": {
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
@@ -1961,6 +2093,19 @@
           ],
           "csh084_assertions": [
             "ls/residual-operand-denied"
+          ],
+          "csh088_assertions": [
+            "ls/metadata-numeric-regular",
+            "ls/metadata-numeric-hardlink",
+            "ls/metadata-numeric-directory",
+            "ls/metadata-numeric-fifo",
+            "ls/metadata-numeric-symlink",
+            "ls/metadata-sort-size",
+            "ls/metadata-sort-size-reverse",
+            "ls/metadata-sort-mtime",
+            "ls/metadata-sort-mtime-reverse",
+            "ls/metadata-sort-atime",
+            "ls/metadata-sort-atime-reverse"
           ]
         },
         "STDERR": {
@@ -1973,13 +2118,26 @@
           ],
           "csh084_assertions": [
             "ls/residual-operand-denied"
+          ],
+          "csh088_assertions": [
+            "ls/metadata-numeric-regular",
+            "ls/metadata-numeric-hardlink",
+            "ls/metadata-numeric-directory",
+            "ls/metadata-numeric-fifo",
+            "ls/metadata-numeric-symlink",
+            "ls/metadata-sort-size",
+            "ls/metadata-sort-size-reverse",
+            "ls/metadata-sort-mtime",
+            "ls/metadata-sort-mtime-reverse",
+            "ls/metadata-sort-atime",
+            "ls/metadata-sort-atime-reverse"
           ]
         },
         "OUTPUT FILES": {
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Long and numeric metadata, timestamps, size/block units, sorting switches, recursive graphs, terminal formatting, locale collation beyond C and I/O exhaustion remain unqualified. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open."
+          "disposition": "Long numeric listings for regular files, hard links, directories, FIFOs and symlinks, plus C-locale size/mtime/atime sorting with ties and reversal now have measured private witnesses. Name-based owner/group rendering, recent timestamps, block units, remaining sorting switches, recursive graphs, terminal formatting, non-C collation and I/O exhaustion remain unqualified. CSH-084 ordinary owner-mode EACCES remains bounded."
         },
         "EXIT STATUS": {
           "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
@@ -1991,6 +2149,19 @@
           ],
           "csh084_assertions": [
             "ls/residual-operand-denied"
+          ],
+          "csh088_assertions": [
+            "ls/metadata-numeric-regular",
+            "ls/metadata-numeric-hardlink",
+            "ls/metadata-numeric-directory",
+            "ls/metadata-numeric-fifo",
+            "ls/metadata-numeric-symlink",
+            "ls/metadata-sort-size",
+            "ls/metadata-sort-size-reverse",
+            "ls/metadata-sort-mtime",
+            "ls/metadata-sort-mtime-reverse",
+            "ls/metadata-sort-atime",
+            "ls/metadata-sort-atime-reverse"
           ]
         },
         "CONSEQUENCES OF ERRORS": {
@@ -2020,20 +2191,33 @@
         "passing_scope": [
           "ls/residual-operand-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": [
+        "ls/metadata-numeric-regular",
+        "ls/metadata-numeric-hardlink",
+        "ls/metadata-numeric-directory",
+        "ls/metadata-numeric-fifo",
+        "ls/metadata-numeric-symlink",
+        "ls/metadata-sort-size",
+        "ls/metadata-sort-size-reverse",
+        "ls/metadata-sort-mtime",
+        "ls/metadata-sort-mtime-reverse",
+        "ls/metadata-sort-atime",
+        "ls/metadata-sort-atime-reverse"
+      ]
     },
     {
       "utility": "mkdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html",
       "source_sha256": "7d37d11b3829422919fbc928cf3e4e0e2c9ba3d0eaba2e2e36362e80f4086576",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "mkdir/parents",
@@ -2187,20 +2371,21 @@
         "passing_scope": [
           "mkdir/residual-parent-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": []
     },
     {
       "utility": "mkfifo",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html",
       "source_sha256": "508f579e25f7ac32d94c2f57aef1a12448e4984fc60d467120cb2bb66157c3ed",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "mkfifo/mode",
@@ -2342,20 +2527,21 @@
         "passing_scope": [
           "mkfifo/residual-parent-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": []
     },
     {
       "utility": "mv",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mv.html",
       "source_sha256": "c17c6279d2fdf408e2aa82bd674d5eff5130f391361b2e175e4862d6c4a89662",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "mv/rename",
@@ -2655,7 +2841,7 @@
         "passing_scope": [
           "mv/residual-destination-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -2677,13 +2863,14 @@
         "mv/decisions-missing-between-n",
         "mv/decisions-directory-empty",
         "mv/decisions-directory-nonempty"
-      ]
+      ],
+      "csh088_assertions": []
     },
     {
       "utility": "pathchk",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html",
       "source_sha256": "ce446d31316645a78d6aa4df6ff45829afbdbd3d667c84ae2c6a3bdfe0ce825a",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "pathchk/portable",
@@ -2877,20 +3064,21 @@
         "passing_scope": [
           "pathchk/residual-prefix-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": []
     },
     {
       "utility": "pax",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html",
       "source_sha256": "398b008eab3110cd482eee2e62797adaf915405e488b1f36bc73fc2a29591efb",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "pax/copy-tree",
@@ -3055,20 +3243,21 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": []
     },
     {
       "utility": "pwd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html",
       "source_sha256": "6c0724e219d469ac68640fc07c825a95e090931483b9cee2d089dec136efd7f6",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "pwd/physical",
@@ -3179,20 +3368,21 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": []
     },
     {
       "utility": "readlink",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html",
       "source_sha256": "b8af59cd805ca79ad73dab35ad008a55b9f8bbef0fc84ce7334ffac7b8f0f4dc",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "readlink/link",
@@ -3372,20 +3562,21 @@
           "readlink/residual-opaque-utf8",
           "readlink/residual-opaque-utf8-n"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": []
     },
     {
       "utility": "realpath",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html",
       "source_sha256": "dfded63f96378a20c8952547dea666f07d0006e8868fa37a883b8553de684cc5",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "realpath/existing",
@@ -3512,20 +3703,21 @@
         "passing_scope": [
           "realpath/residual-prefix-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": []
     },
     {
       "utility": "rm",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html",
       "source_sha256": "7ea788ea4ed4cc0f309bfc9681b650da0cbcec9d535604cb12bfd57fbddb9839",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "rm/file",
@@ -3742,7 +3934,7 @@
         "passing_scope": [
           "rm/residual-force-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -3756,13 +3948,14 @@
         "rm/decisions-recursive-symlink",
         "rm/decisions-last-i",
         "rm/decisions-last-f"
-      ]
+      ],
+      "csh088_assertions": []
     },
     {
       "utility": "rmdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html",
       "source_sha256": "44451db47f43a6dfb058b6e8f71aee7db1fec99961573246380f7deb0c54bc9f",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "rmdir/empty",
@@ -3893,20 +4086,21 @@
         "passing_scope": [
           "rmdir/residual-parent-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [],
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": []
     },
     {
       "utility": "touch",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html",
       "source_sha256": "ae8c1a8fc027372a6a50561b7c07bea8c30a471458ee72c00d7b35c039d756b7",
-      "owner": "CSH-088",
+      "owner": "CSH-089",
       "full_contract_qualified": false,
       "assertions": [
         "touch/reference",
@@ -4115,7 +4309,7 @@
         "passing_scope": [
           "touch/residual-prefix-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-088."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
       },
       "csh085_qualification": {
         "passing_scope": [
@@ -4128,7 +4322,8 @@
         "disposition": "Only listed assertions are qualified. Every remaining contract retains an explicit environment, reason and next owner in host_filesystem_residuals.json."
       },
       "csh086_assertions": [],
-      "csh087_assertions": []
+      "csh087_assertions": [],
+      "csh088_assertions": []
     }
   ],
   "predecessor": "CSH-072"

@@ -1411,3 +1411,12 @@ filesystem enumeration order. `make test-host-inventory` includes transcript,
 continuation-effect, partial-setup and mid-interaction timeout regressions.
 See [CSH-087 evidence](evidence/csh-087/README.md); other environments remain
 individually assigned to [CSH-088](tickets/CSH-088-filesystem-remaining-environments.md).
+
+## CSH-088 measured filesystem metadata
+
+Run `make test-host-filesystem-metadata` for 16 cases / 64 assertions using
+private metadata and exact timestamp environments. The full selected host
+profile and stock filesystem audit include these cases automatically.
+`make test-host-inventory` also checks the oracles, timestamp readback failures,
+partial setup and process/fixture cleanup after timeouts in all four modes.
+See [CSH-088 evidence](evidence/csh-088/README.md) for commands and limits.

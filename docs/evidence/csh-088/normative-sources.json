@@ -1,0 +1,28 @@
+[
+  {
+    "utility": "ls",
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
+    "sha256": "cd4db85f09dbadf3d529b1bf6a8c157806759c5a22d3ca616aad0cc0363f07bc",
+    "retrieved": "2026-10-12",
+    "sections": [
+      "DESCRIPTION",
+      "OPTIONS",
+      "STDOUT",
+      "STDERR",
+      "EXIT STATUS"
+    ]
+  },
+  {
+    "utility": "find",
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html",
+    "sha256": "6293363b063c9de0bc4d190b62a09d3cd03906a1fa40d3ddc52ecd6a09a62502",
+    "retrieved": "2026-10-12",
+    "sections": [
+      "DESCRIPTION",
+      "OPTIONS",
+      "STDOUT",
+      "STDERR",
+      "EXIT STATUS"
+    ]
+  }
+]

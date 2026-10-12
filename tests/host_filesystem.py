@@ -25,6 +25,7 @@ import host_filesystem_residual_cases as residual
 import host_filesystem_isolated as isolated
 import host_filesystem_interactive as interactive
 import host_filesystem_decisions as decisions
+import host_filesystem_metadata as metadata
 from host_platform import filesystem_identity
 from host_utilities import inventory, match, sanitizer_diagnostic, serial, sha, source_identity
 
@@ -108,6 +109,9 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
         environment = isolated.setup(directory, row)
         if environment is not None:
             record["isolated_environment"] = environment
+        metadata_environment = metadata.setup(directory, row)
+        if metadata_environment is not None:
+            record['metadata_environment'] = metadata_environment
         env = {'PATH': search_path, 'TZ': 'UTC0', 'LC_ALL': utf8 if row.get('utf8') else 'C'}
         env.update(row.get('env', {}))
         if row.get('logical_cwd'):
@@ -195,11 +199,17 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
                 errors.append('missing/invalid allocation marker: ' + str(error))
         residual.restore(directory, row)
         errors.extend(isolated.verify(directory, environment))
+        metadata_errors, metadata_observed = metadata.verify(directory, metadata_environment)
+        errors.extend(metadata_errors)
+        if metadata_environment is not None:
+            record['metadata_observed'] = metadata_observed
         effects, observed = effect_errors(directory, row)
         errors.extend(effects)
         if not match(row['status'], status):
             errors.append('status mismatch')
-        stdout_ok = (isolated.accounting_matches(environment, output['stdout'])
+        stdout_ok = (metadata.listing_matches(metadata_environment, output['stdout'])
+                     if row['stdout'] == 'metadata-listing' else
+                     isolated.accounting_matches(environment, output['stdout'])
                      if row['stdout'] == 'isolated-du' else
                      stdout_matches(row['stdout'], output['stdout'], directory, cwd, row))
         if not stdout_ok:
@@ -231,6 +241,7 @@ def main():
     parser.add_argument('--audit', action='store_true')
     parser.add_argument('--sanitizer', action='store_true')
     parser.add_argument('--provider-audit', action='store_true', help='Require cycle/archive/fault provider contracts; all are mandatory in the selected profile')
+    parser.add_argument('--metadata-only', action='store_true', help='Select CSH-088 measured metadata and timestamp environments')
     parser.add_argument('--decisions-only', action='store_true', help='Select CSH-087 operand and recursive decisions')
     parser.add_argument('--interactive-only', action='store_true', help='Select CSH-086 owned-PTY overwrite decisions')
     parser.add_argument('--isolated-only', action='store_true', help='Select CSH-085 private accounting, magic and timestamp environments')
@@ -251,7 +262,9 @@ def main():
             pass
     locale.setlocale(locale.LC_CTYPE, previous)
     rows = [row for row in extended_cases() if args.provider_audit or not row.get('provider_audit')]
-    if args.decisions_only:
+    if args.metadata_only:
+        rows = list(metadata.cases())
+    elif args.decisions_only:
         rows = list(decisions.cases())
     elif args.interactive_only:
         rows = list(interactive.cases())
@@ -262,7 +275,7 @@ def main():
     elif args.remaining_only:
         rows = list(remaining_cases())
     elif not args.extended_only:
-        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows + list(remaining_cases()) + list(residual.cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases())
+        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows + list(remaining_cases()) + list(residual.cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases())
     records = []
     for row in rows:
         for mode in row.get('modes', ('direct', 'string', 'file', 'stdin')):
@@ -272,8 +285,8 @@ def main():
             if record['verdict'] != 'PASS':
                 print(json.dumps(record), flush=True)
     totals = {key: sum(r['verdict'] == key for r in records) for key in ('PASS', 'FAIL')}
-    result = dict(ticket='CSH-087', predecessor='CSH-086', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
-                  full_contracts_qualified=False, selection='decisions' if args.decisions_only else 'interactive' if args.interactive_only else 'isolated' if args.isolated_only else 'residual' if args.residual_only else 'remaining' if args.remaining_only else 'extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
+    result = dict(ticket='CSH-088', predecessor='CSH-087', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
+                  full_contracts_qualified=False, selection='metadata' if args.metadata_only else 'decisions' if args.decisions_only else 'interactive' if args.interactive_only else 'isolated' if args.isolated_only else 'residual' if args.residual_only else 'remaining' if args.remaining_only else 'extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
                   unavailable_capabilities=[] if platform.system() == 'Linux' else ['Linux virtual-device ENOSPC'],
                   path=args.path, providers=providers, platform=platform.platform(),
                   libc=platform.libc_ver(), utf8_locale=utf8, uid=os.getuid(), gid=os.getgid(), groups=os.getgroups(),

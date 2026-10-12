@@ -15,12 +15,85 @@ from host_filesystem_residual_cases import cases as residual_cases
 import host_filesystem_isolated as isolated
 import host_filesystem_interactive as interactive
 import host_filesystem_decisions as decisions
+import host_filesystem_metadata as metadata
 from host_contract_inventory import utility_owner
 from host_filesystem import run_case, stdout_matches, stderr_matches
 from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, terminal_cases, effect_errors
 
 
 class FilesystemHarnessTests(unittest.TestCase):
+    def test_metadata_listing_rejects_corrupt_fields_and_extra_lines(self):
+        row = next(r for r in metadata.cases() if r['id'] == 'ls/metadata-numeric-regular')
+        with tempfile.TemporaryDirectory() as root:
+            environment = metadata.setup(Path(root), row)
+            info = environment['measurements']['meta/regular']
+            fields = ['-rw-r-----', '1', str(info['uid']), str(info['gid']),
+                      '18', 'Jan', '2', '2000', 'meta/regular']
+            good = (' '.join(fields) + '\n').encode()
+            self.assertTrue(metadata.listing_matches(environment, good))
+            for index in range(len(fields)):
+                bad = fields.copy()
+                bad[index] = 'WRONG'
+                self.assertFalse(metadata.listing_matches(environment, (' '.join(bad) + '\n').encode()))
+            for bad in (good * 2, good.rstrip(), good + b'diagnostic\n'):
+                self.assertFalse(metadata.listing_matches(environment, bad))
+
+    def test_metadata_unrepresentable_timestamps_and_partial_setup_are_cleaned(self):
+        row = next(r for r in metadata.cases() if r['id'] == 'find/metadata-newer-after')
+        original = os.utime
+        for fault in ('rounding', 'setup-error'):
+            def faulty_stamp(path, *args, **kw):
+                if Path(path).name == 'candidate':
+                    if fault == 'setup-error':
+                        raise OSError('timestamp fixture setup failed')
+                    kw['ns'] = tuple(n // 1000000000 * 1000000000 for n in kw['ns'])
+                return original(path, *args, **kw)
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('os.utime', side_effect=faulty_stamp), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'find': {'path': '/usr/bin/find'}}, os.defpath,
+                                  row, 'direct', Path(root), None)
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+                capture.assert_not_called()
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_metadata_wrong_order_status_and_mutation_fail(self):
+        row = next(r for r in metadata.cases() if r['id'] == 'ls/metadata-sort-size')
+        for fault in ('order', 'status', 'mutation', 'stderr'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                if fault == 'mutation':
+                    (cwd / 'meta/first').write_bytes(b'changed')
+                output = b'\n'.join(reversed(row['stdout'].splitlines())) + b'\n' if fault == 'order' else row['stdout']
+                return (1 if fault == 'status' else 0), dict(stdout=output,
+                        stderr=b'error\n' if fault == 'stderr' else b''), []
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}}, os.defpath,
+                                  row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertTrue(record['cleanup'])
+                self.assertIn('metadata_observed', record)
+
+    def test_metadata_timeout_cleans_process_and_fixture_in_every_mode(self):
+        row = next(metadata.cases())
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                provider = root / 'ls'
+                provider.write_text('#!' + sys.executable + ' -S\nimport os,time\n'
+                                    'print(os.getpid(),flush=True)\ntime.sleep(60)\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'ls': {'path': str(provider)}}, str(root) + ':' + os.defpath,
+                                  row, mode, root, None, timeout=1)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertTrue(any('timeout' in e for e in record['errors']))
+                pid = int(bytes.fromhex(record['actual']['stdout']['hex']))
+                with self.assertRaises(ProcessLookupError):
+                    os.kill(pid, 0)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(root.iterdir()), [provider])
+
     def test_sequence_oracle_requires_order_complete_prompts_and_diagnostic(self):
         row = next(r for r in decisions.cases() if r['id'] == 'cp/decisions-missing-between-n')
         first = b"/bin/cp: overwrite 'destination/first'? "
@@ -362,7 +435,7 @@ class FilesystemHarnessTests(unittest.TestCase):
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -528,7 +601,7 @@ class FilesystemHarnessTests(unittest.TestCase):
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

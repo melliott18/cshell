@@ -1,11 +1,11 @@
 # CSH-088: Supply filesystem environments beyond bounded decision graphs
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-087
-- Branch: Assigned when work starts
+- Branch: `test/CSH-088-filesystem-remaining-environments`
 - Issue: [#187](https://github.com/melliott18/cshell/issues/187)
 
 ## Goal
@@ -56,10 +56,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -78,3 +78,39 @@ CSH-087 supplies bounded C-locale recursive and multi-operand decisions and
 same-device empty/nonempty directory replacement. These do not supply arbitrary
 graphs, declined recursive children, non-C prompts, mount boundaries or depth
 exhaustion. All four retained conditions remain open under this ticket.
+
+## Implementation and current dispositions
+
+This implementation adds 16 cases / 64 assertions: measured numeric ls listings
+for regular files, hard links, directories, FIFOs and symlinks; size/mtime/atime
+sorting with ties and reversal; and find -newer at equal and adjacent
+nanoseconds, including -H/-L reference-symlink following. Private fixtures
+prove their timestamps and metadata before execution and check preserved
+metadata afterward. All four direct/string/file/stdin modes are required.
+Four harness regressions cover malformed results, mutation, unrepresentable
+timestamps, partial setup and timeout cleanup in every mode.
+
+The incoming table above is preserved as the starting scope. The current
+section map, residual ledger and ownership manifest record the new witnesses
+and assign every unsupplied environment and all four original conditions to
+[CSH-089](CSH-089-filesystem-environment-residuals.md) ([#189](https://github.com/melliott18/cshell/issues/189)).
+This uses the explicit-disposition acceptance alternative. No full utility,
+privileged identity, mount/quota/capacity environment, non-C collation or
+libc-internal fault contract is newly qualified. Previous evidence and provider
+builds remain unchanged.
+
+Validation passed on native macOS (UID 501) and Debian Linux in Docker (UID
+10001): the complete requested command set plus
+`make test-host-filesystem-metadata`. Selected filesystem totals are 1197 and
+1213 passes respectively; the new target has 64 passes on each. Inventory,
+10 inventory tests and 44 filesystem harness tests pass on both. Separate
+stock audits retain exactly the prior failing IDs and modes: 73/36 full-audit
+failures and 16/8 provider-audit failures. Native selected-PATH runtime and PTY
+tests also pass. See [CSH-088 evidence](../evidence/csh-088/README.md) for commands,
+raw results, source hashes, setup/cleanup checks and provider provenance.
+
+The branch is stacked on CSH-087 published commit
+`dd133268f075d0610873ae030e700719a96180d5`; that dependency is implemented but
+unmerged. Integration remains gated on CSH-087. The follow-up allocation also
+reconciles the shared registry's missing pre-existing CSH-087/088 entries;
+live ticket identity validation passes without renumbering those tickets.
