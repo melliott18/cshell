@@ -2,7 +2,7 @@
 
 CSH-072 adds a **bounded selected profile** for 21 exec-accessible utilities.
 It does not qualify complete utility pages, U-034/U-040 as a whole, or a complete
-POSIX system. [CSH-089](tickets/CSH-089-filesystem-environment-residuals.md) owns each
+POSIX system. [CSH-090](tickets/CSH-090-filesystem-environment-residuals.md) owns each
 remaining contract and the four original retained conditions. Implementation
 ownership stays with the selected utility/libc/platform vendor.
 
@@ -246,7 +246,7 @@ build. C-locale builds disable NLS, ACL and SELinux; those contracts stay open.
 Run `make test-host-filesystem-interactive` for the focused subset; the full
 `make test-host-profile` requires it automatically with zero allowances.
 
-CSH-089 owns every unsupplied environment and the four immutable original
+CSH-090 owns every unsupplied environment and the four immutable original
 conditions. These bounded terminal decisions do not qualify a whole utility,
 recursive/multiple-operand interaction, other locales, ACL/privileged ownership,
 cross-device behavior, real filesystem exhaustion or libc-internal faults.
@@ -270,7 +270,7 @@ oracles. Full stderr, stdout, status, setup, capture failures and cleanup remain
 separate in each record. Provider selection/builds are unchanged; stock Apple
 cp adds twelve decline-status failures while the selected repaired cp passes.
 
-[CSH-089](tickets/CSH-089-filesystem-environment-residuals.md) retains every
+[CSH-090](tickets/CSH-090-filesystem-environment-residuals.md) retains every
 unsupplied environment and all four original conditions. These witnesses do
 not qualify arbitrary recursive graphs, negative recursive-child responses,
 non-C prompts, cross-device fallback, mounts, depth exhaustion, ACLs, quotas,
@@ -288,7 +288,31 @@ comparisons before, equal to and after the reference, including -H/-L reference
 symlinks. Setup and cleanup failures are failures, never profile allowances.
 
 [CSH-088 evidence](evidence/csh-088/README.md) records both platforms and
-separate stock failures. [CSH-089](tickets/CSH-089-filesystem-environment-residuals.md)
+separate stock failures. [CSH-090](tickets/CSH-090-filesystem-environment-residuals.md)
 owns each remaining environment and all four original conditions. Whole
 utility contracts, non-C collation, live-clock age boundaries, mount/depth
 limits, ACLs, capacity exhaustion and libc-internal faults remain unqualified.
+
+## CSH-089 declined children and nested recursive decisions
+
+`make test-host-filesystem-recursive` adds ten cases / 30 U-034/U-040
+assertions using direct provider exec and cshell command-string/script-file
+modes on owned C-locale PTYs. Authored one-child chains cover declined regular
+files and symlinks, declined nested descent, separate final parent decisions,
+a nonempty-parent error after accepting removal of a still nonempty parent, and continuation
+to a later operand. Exact transcripts, empty stdout, exit status, retained bytes,
+link text and removed entries are checked independently. Five harness regressions
+check bad transcripts/effects/status/channels, partial setup, timeout cleanup and provider-specific simple-prompt spelling.
+
+The selected profile builds GNU rm 9.7 with a local source patch retaining the
+mandatory final `-i` prompt after a declined nested descent (rm DESCRIPTION
+2b-2e). Unpatched GNU skips the parent decision in that case. The patch changes
+only the marked-ancestor shortcut under explicit `-i`; ordinary non-interactive
+behavior remains unchanged. Original stock failures remain separate failures;
+no output or status is translated and no selected allowance is added.
+
+[CSH-089 evidence](evidence/csh-089/README.md) records native and Linux results.
+[CSH-090](tickets/CSH-090-filesystem-environment-residuals.md) owns every remaining
+utility environment and all four retained conditions. These cases do not
+qualify arbitrary branching, depth/path exhaustion, mounts, races, non-C prompts,
+ACLs, quotas, real filesystem exhaustion, libc-internal faults or whole utilities.

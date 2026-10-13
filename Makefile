@@ -502,7 +502,11 @@ HOST_CP_SOURCES = tools/host-profile/build-cp.sh $(wildcard tools/host-profile/v
 build/host-cp: $(HOST_CP_SOURCES)
 	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(filter-out -Werror -Wpedantic -Wshadow,$(CFLAGS))" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" sh tools/host-profile/build-cp.sh
 
-host-profile: build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
+# The shared source build produces both programs before either is provisioned.
+build/host-rm: build/host-cp
+	cp build/host-coreutils-build/src/rm $@
+
+host-profile: build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
@@ -686,3 +690,8 @@ test-host-filesystem-decisions: cshell host-profile
 .PHONY: test-host-filesystem-metadata
 test-host-filesystem-metadata: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --metadata-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-metadata.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-089: declined children and bounded nested recursive decisions.
+.PHONY: test-host-filesystem-recursive
+test-host-filesystem-recursive: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --recursive-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-recursive.json $(HOST_FILESYSTEM_FLAGS)

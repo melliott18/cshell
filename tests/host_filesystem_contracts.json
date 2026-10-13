@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "ticket": "CSH-088",
+  "ticket": "CSH-089",
   "qualification": "case-scoped only; selected profile requires both ordinary and provider-audit assertions; stock failures remain failures",
   "common_defaults": {
-    "U-034": "Each of the 21 actual providers is inventoried and directly execed, alongside public cshell string/file/stdin dispatch; pwd builtin and external exec remain distinct. CSH-087 terminal sequences use direct exec and cshell string/file modes; two directory replacement cases also use stdin mode. CSH-088 metadata cases use direct exec and all three shell input modes.",
+    "U-034": "Each of the 21 actual providers is inventoried and directly execed, alongside public cshell string/file/stdin dispatch; pwd builtin and external exec remain distinct. CSH-087 terminal sequences use direct exec and cshell string/file modes; two directory replacement cases also use stdin mode. CSH-088 metadata cases use direct exec and all three shell input modes. CSH-089 recursive decisions use direct exec and cshell string/file modes on owned PTYs.",
     "U-040": "Controlled PATH, LC_ALL, TZ, umask and resource limits; independent effects and positive-error predicates. Common signal, locale, utility-syntax and environmental defaults outside the listed assertions remain individually open under each utility owner."
   },
   "utilities": [
@@ -11,7 +11,7 @@
       "utility": "basename",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/basename.html",
       "source_sha256": "76c256427a758fc4388559e7a71fcc9351ed0cfb19afc5af07d38c4cf25c8ab2",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "basename/path-6-620a",
@@ -170,7 +170,7 @@
           "basename/residual-closed-output",
           "basename/residual-broken-pipe"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -178,13 +178,17 @@
       },
       "csh086_assertions": [],
       "csh087_assertions": [],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "dirname",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html",
       "source_sha256": "f218ded1508843cdd90913db7cd56ee938d43f67050d6f0645d88cbf916ec6c4",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "dirname/0",
@@ -367,7 +371,7 @@
           "dirname/residual-closed-output",
           "dirname/residual-broken-pipe"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -375,13 +379,17 @@
       },
       "csh086_assertions": [],
       "csh087_assertions": [],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "cp",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html",
       "source_sha256": "777d1c06255117e8ea9d8c5ede3996ef77b7c5ddecd1cbf9e584deef239a5836",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "cp/bytes",
@@ -722,7 +730,7 @@
           "cp/residual-read-denied",
           "cp/residual-write-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -748,13 +756,17 @@
         "cp/decisions-recursive-y",
         "cp/decisions-recursive-n"
       ],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "dd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dd.html",
       "source_sha256": "876cebeba49456b8e22b53057bc861120f092c36522193823685cea8b821e249",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "dd/copy",
@@ -960,7 +972,7 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -968,13 +980,17 @@
       },
       "csh086_assertions": [],
       "csh087_assertions": [],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "df",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html",
       "source_sha256": "afbeec1b5e25c2ebf0de45fcffdcff03cf9f3bf4aa6960fc09b426cfc1a45a11",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "df/portable-k",
@@ -1052,7 +1068,7 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -1060,13 +1076,17 @@
       },
       "csh086_assertions": [],
       "csh087_assertions": [],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "du",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html",
       "source_sha256": "659c1410d265ef1d4056a784611c6af0df45495f99ff9abfbdbc3c9eb516c100",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "du/file-k",
@@ -1196,7 +1216,7 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [
@@ -1212,13 +1232,17 @@
       },
       "csh086_assertions": [],
       "csh087_assertions": [],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "file",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html",
       "source_sha256": "c2e7590cab2534dbf4a0b3fbd8cc77312990c495c6a448243ca63c14074067bb",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "file/empty",
@@ -1477,7 +1501,7 @@
           "file/residual-magic-offset",
           "file/residual-magic-escaped"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [
@@ -1502,13 +1526,17 @@
       },
       "csh086_assertions": [],
       "csh087_assertions": [],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "find",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html",
       "source_sha256": "6293363b063c9de0bc4d190b62a09d3cd03906a1fa40d3ddc52ecd6a09a62502",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "find/regular",
@@ -1763,7 +1791,7 @@
         "passing_scope": [
           "find/residual-operand-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -1777,13 +1805,17 @@
         "find/metadata-newer-after",
         "find/metadata-newer-reference-H",
         "find/metadata-newer-reference-L"
-      ]
+      ],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "ln",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html",
       "source_sha256": "c4e793bb510483faef398e4c16fb7adc2d60b99c712ea7e6b5f2751a4c6c453c",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "ln/hard",
@@ -1927,7 +1959,7 @@
         "passing_scope": [
           "ln/residual-create-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -1935,13 +1967,17 @@
       },
       "csh086_assertions": [],
       "csh087_assertions": [],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "ls",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
       "source_sha256": "cd4db85f09dbadf3d529b1bf6a8c157806759c5a22d3ca616aad0cc0363f07bc",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "ls/512-c-order",
@@ -2191,7 +2227,7 @@
         "passing_scope": [
           "ls/residual-operand-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -2211,13 +2247,17 @@
         "ls/metadata-sort-mtime-reverse",
         "ls/metadata-sort-atime",
         "ls/metadata-sort-atime-reverse"
-      ]
+      ],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "mkdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html",
       "source_sha256": "7d37d11b3829422919fbc928cf3e4e0e2c9ba3d0eaba2e2e36362e80f4086576",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "mkdir/parents",
@@ -2371,7 +2411,7 @@
         "passing_scope": [
           "mkdir/residual-parent-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -2379,13 +2419,17 @@
       },
       "csh086_assertions": [],
       "csh087_assertions": [],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "mkfifo",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html",
       "source_sha256": "508f579e25f7ac32d94c2f57aef1a12448e4984fc60d467120cb2bb66157c3ed",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "mkfifo/mode",
@@ -2527,7 +2571,7 @@
         "passing_scope": [
           "mkfifo/residual-parent-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -2535,13 +2579,17 @@
       },
       "csh086_assertions": [],
       "csh087_assertions": [],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "mv",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mv.html",
       "source_sha256": "c17c6279d2fdf408e2aa82bd674d5eff5130f391361b2e175e4862d6c4a89662",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "mv/rename",
@@ -2841,7 +2889,7 @@
         "passing_scope": [
           "mv/residual-destination-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -2864,13 +2912,17 @@
         "mv/decisions-directory-empty",
         "mv/decisions-directory-nonempty"
       ],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "pathchk",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html",
       "source_sha256": "ce446d31316645a78d6aa4df6ff45829afbdbd3d667c84ae2c6a3bdfe0ce825a",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "pathchk/portable",
@@ -3064,7 +3116,7 @@
         "passing_scope": [
           "pathchk/residual-prefix-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -3072,13 +3124,17 @@
       },
       "csh086_assertions": [],
       "csh087_assertions": [],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "pax",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html",
       "source_sha256": "398b008eab3110cd482eee2e62797adaf915405e488b1f36bc73fc2a29591efb",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "pax/copy-tree",
@@ -3243,7 +3299,7 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -3251,13 +3307,17 @@
       },
       "csh086_assertions": [],
       "csh087_assertions": [],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "pwd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html",
       "source_sha256": "6c0724e219d469ac68640fc07c825a95e090931483b9cee2d089dec136efd7f6",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "pwd/physical",
@@ -3368,7 +3428,7 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -3376,13 +3436,17 @@
       },
       "csh086_assertions": [],
       "csh087_assertions": [],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "readlink",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html",
       "source_sha256": "b8af59cd805ca79ad73dab35ad008a55b9f8bbef0fc84ce7334ffac7b8f0f4dc",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "readlink/link",
@@ -3562,7 +3626,7 @@
           "readlink/residual-opaque-utf8",
           "readlink/residual-opaque-utf8-n"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -3570,13 +3634,17 @@
       },
       "csh086_assertions": [],
       "csh087_assertions": [],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "realpath",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html",
       "source_sha256": "dfded63f96378a20c8952547dea666f07d0006e8868fa37a883b8553de684cc5",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "realpath/existing",
@@ -3703,7 +3771,7 @@
         "passing_scope": [
           "realpath/residual-prefix-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -3711,13 +3779,17 @@
       },
       "csh086_assertions": [],
       "csh087_assertions": [],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "rm",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html",
       "source_sha256": "7ea788ea4ed4cc0f309bfc9681b650da0cbcec9d535604cb12bfd57fbddb9839",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "rm/file",
@@ -3736,9 +3808,19 @@
         "rm/decisions-recursive-final-n",
         "rm/decisions-recursive-symlink",
         "rm/decisions-last-i",
-        "rm/decisions-last-f"
+        "rm/decisions-last-f",
+        "rm/recursive-declined-leaf-parent-n",
+        "rm/recursive-declined-leaf-parent-y",
+        "rm/recursive-declined-descent-parent-n",
+        "rm/recursive-declined-descent-parent-y",
+        "rm/recursive-nested-leaf-n-keep-directories",
+        "rm/recursive-nested-leaf-y-keep-directories",
+        "rm/recursive-nested-remove-parent-n",
+        "rm/recursive-nested-remove-parent-y",
+        "rm/recursive-nested-link-n",
+        "rm/recursive-nested-link-y"
       ],
-      "remaining": "Recursive descriptor/depth exhaustion, disposable mount boundaries, further operand continuation, permissions, races and prompt locales/recursive graphs remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-087 adds negative descent with operand continuation, affirmative leaf removal followed by yes/no final directory removal, recursive symlink non-traversal, and last -f/-i precedence. Negative child responses, nested branching and other prompt graphs remain open.",
+      "remaining": "Recursive descriptor/depth exhaustion, disposable mount boundaries, further operand continuation, permissions, races and prompt locales/recursive graphs remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-087 adds negative descent with operand continuation, affirmative leaf removal followed by yes/no final directory removal, recursive symlink non-traversal, and last -f/-i precedence. CSH-089 supplies declined regular/link children, nested descent refusals, final parent decisions including nonempty-parent errors and later-operand continuation on one-child chains. Branching and arbitrary prompt graphs remain open.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -3764,7 +3846,7 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, further operand continuation, permissions, races and prompt locales/recursive graphs remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-087 adds negative descent with operand continuation, affirmative leaf removal followed by yes/no final directory removal, recursive symlink non-traversal, and last -f/-i precedence. Negative child responses, nested branching and other prompt graphs remain open.",
+          "disposition": "Recursive descriptor/depth exhaustion, disposable mount boundaries, further operand continuation, permissions, races and prompt locales/recursive graphs remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-087 adds negative descent with operand continuation, affirmative leaf removal followed by yes/no final directory removal, recursive symlink non-traversal, and last -f/-i precedence. CSH-089 supplies declined regular/link children, nested descent refusals, final parent decisions including nonempty-parent errors and later-operand continuation on one-child chains. Branching and arbitrary prompt graphs remain open.",
           "csh080_assertions": [
             "rm/remaining-missing-continue"
           ],
@@ -3778,6 +3860,18 @@
             "rm/decisions-recursive-symlink",
             "rm/decisions-last-i",
             "rm/decisions-last-f"
+          ],
+          "csh089_assertions": [
+            "rm/recursive-declined-leaf-parent-n",
+            "rm/recursive-declined-leaf-parent-y",
+            "rm/recursive-declined-descent-parent-n",
+            "rm/recursive-declined-descent-parent-y",
+            "rm/recursive-nested-leaf-n-keep-directories",
+            "rm/recursive-nested-leaf-y-keep-directories",
+            "rm/recursive-nested-remove-parent-n",
+            "rm/recursive-nested-remove-parent-y",
+            "rm/recursive-nested-link-n",
+            "rm/recursive-nested-link-y"
           ]
         },
         "OPTIONS": {
@@ -3792,6 +3886,18 @@
             "rm/decisions-recursive-symlink",
             "rm/decisions-last-i",
             "rm/decisions-last-f"
+          ],
+          "csh089_assertions": [
+            "rm/recursive-declined-leaf-parent-n",
+            "rm/recursive-declined-leaf-parent-y",
+            "rm/recursive-declined-descent-parent-n",
+            "rm/recursive-declined-descent-parent-y",
+            "rm/recursive-nested-leaf-n-keep-directories",
+            "rm/recursive-nested-leaf-y-keep-directories",
+            "rm/recursive-nested-remove-parent-n",
+            "rm/recursive-nested-remove-parent-y",
+            "rm/recursive-nested-link-n",
+            "rm/recursive-nested-link-y"
           ]
         },
         "OPERANDS": {
@@ -3806,6 +3912,18 @@
             "rm/decisions-recursive-symlink",
             "rm/decisions-last-i",
             "rm/decisions-last-f"
+          ],
+          "csh089_assertions": [
+            "rm/recursive-declined-leaf-parent-n",
+            "rm/recursive-declined-leaf-parent-y",
+            "rm/recursive-declined-descent-parent-n",
+            "rm/recursive-declined-descent-parent-y",
+            "rm/recursive-nested-leaf-n-keep-directories",
+            "rm/recursive-nested-leaf-y-keep-directories",
+            "rm/recursive-nested-remove-parent-n",
+            "rm/recursive-nested-remove-parent-y",
+            "rm/recursive-nested-link-n",
+            "rm/recursive-nested-link-y"
           ]
         },
         "STDIN": {
@@ -3817,6 +3935,18 @@
             "rm/decisions-recursive-symlink",
             "rm/decisions-last-i",
             "rm/decisions-last-f"
+          ],
+          "csh089_assertions": [
+            "rm/recursive-declined-leaf-parent-n",
+            "rm/recursive-declined-leaf-parent-y",
+            "rm/recursive-declined-descent-parent-n",
+            "rm/recursive-declined-descent-parent-y",
+            "rm/recursive-nested-leaf-n-keep-directories",
+            "rm/recursive-nested-leaf-y-keep-directories",
+            "rm/recursive-nested-remove-parent-n",
+            "rm/recursive-nested-remove-parent-y",
+            "rm/recursive-nested-link-n",
+            "rm/recursive-nested-link-y"
           ]
         },
         "INPUT FILES": {
@@ -3860,6 +3990,18 @@
             "rm/decisions-recursive-symlink",
             "rm/decisions-last-i",
             "rm/decisions-last-f"
+          ],
+          "csh089_assertions": [
+            "rm/recursive-declined-leaf-parent-n",
+            "rm/recursive-declined-leaf-parent-y",
+            "rm/recursive-declined-descent-parent-n",
+            "rm/recursive-declined-descent-parent-y",
+            "rm/recursive-nested-leaf-n-keep-directories",
+            "rm/recursive-nested-leaf-y-keep-directories",
+            "rm/recursive-nested-remove-parent-n",
+            "rm/recursive-nested-remove-parent-y",
+            "rm/recursive-nested-link-n",
+            "rm/recursive-nested-link-y"
           ]
         },
         "OUTPUT FILES": {
@@ -3891,6 +4033,18 @@
             "rm/decisions-recursive-symlink",
             "rm/decisions-last-i",
             "rm/decisions-last-f"
+          ],
+          "csh089_assertions": [
+            "rm/recursive-declined-leaf-parent-n",
+            "rm/recursive-declined-leaf-parent-y",
+            "rm/recursive-declined-descent-parent-n",
+            "rm/recursive-declined-descent-parent-y",
+            "rm/recursive-nested-leaf-n-keep-directories",
+            "rm/recursive-nested-leaf-y-keep-directories",
+            "rm/recursive-nested-remove-parent-n",
+            "rm/recursive-nested-remove-parent-y",
+            "rm/recursive-nested-link-n",
+            "rm/recursive-nested-link-y"
           ]
         },
         "CONSEQUENCES OF ERRORS": {
@@ -3908,6 +4062,18 @@
             "rm/decisions-recursive-symlink",
             "rm/decisions-last-i",
             "rm/decisions-last-f"
+          ],
+          "csh089_assertions": [
+            "rm/recursive-declined-leaf-parent-n",
+            "rm/recursive-declined-leaf-parent-y",
+            "rm/recursive-declined-descent-parent-n",
+            "rm/recursive-declined-descent-parent-y",
+            "rm/recursive-nested-leaf-n-keep-directories",
+            "rm/recursive-nested-leaf-y-keep-directories",
+            "rm/recursive-nested-remove-parent-n",
+            "rm/recursive-nested-remove-parent-y",
+            "rm/recursive-nested-link-n",
+            "rm/recursive-nested-link-y"
           ]
         }
       },
@@ -3934,7 +4100,7 @@
         "passing_scope": [
           "rm/residual-force-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -3949,13 +4115,28 @@
         "rm/decisions-last-i",
         "rm/decisions-last-f"
       ],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [
+          "rm/recursive-declined-leaf-parent-n",
+          "rm/recursive-declined-leaf-parent-y",
+          "rm/recursive-declined-descent-parent-n",
+          "rm/recursive-declined-descent-parent-y",
+          "rm/recursive-nested-leaf-n-keep-directories",
+          "rm/recursive-nested-leaf-y-keep-directories",
+          "rm/recursive-nested-remove-parent-n",
+          "rm/recursive-nested-remove-parent-y",
+          "rm/recursive-nested-link-n",
+          "rm/recursive-nested-link-y"
+        ],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "rmdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html",
       "source_sha256": "44451db47f43a6dfb058b6e8f71aee7db1fec99961573246380f7deb0c54bc9f",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "rmdir/empty",
@@ -4086,7 +4267,7 @@
         "passing_scope": [
           "rmdir/residual-parent-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -4094,13 +4275,17 @@
       },
       "csh086_assertions": [],
       "csh087_assertions": [],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     },
     {
       "utility": "touch",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html",
       "source_sha256": "ae8c1a8fc027372a6a50561b7c07bea8c30a471458ee72c00d7b35c039d756b7",
-      "owner": "CSH-089",
+      "owner": "CSH-090",
       "full_contract_qualified": false,
       "assertions": [
         "touch/reference",
@@ -4309,7 +4494,7 @@
         "passing_scope": [
           "touch/residual-prefix-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-089."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-090."
       },
       "csh085_qualification": {
         "passing_scope": [
@@ -4323,7 +4508,11 @@
       },
       "csh086_assertions": [],
       "csh087_assertions": [],
-      "csh088_assertions": []
+      "csh088_assertions": [],
+      "csh089_qualification": {
+        "passing_scope": [],
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-090. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+      }
     }
   ],
   "predecessor": "CSH-072"

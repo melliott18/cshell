@@ -1420,3 +1420,27 @@ profile and stock filesystem audit include these cases automatically.
 `make test-host-inventory` also checks the oracles, timestamp readback failures,
 partial setup and process/fixture cleanup after timeouts in all four modes.
 See [CSH-088 evidence](evidence/csh-088/README.md) for commands and limits.
+
+## CSH-089 declined children and nested recursive decisions
+
+`make test-host-filesystem-recursive` adds ten cases / 30 U-034/U-040
+assertions using direct provider exec and cshell command-string/script-file
+modes on owned C-locale PTYs. Authored one-child chains cover declined regular
+files and symlinks, declined nested descent, separate final parent decisions,
+a nonempty-parent error after accepting removal of a still nonempty parent, and continuation
+to a later operand. Exact transcripts, empty stdout, exit status, retained bytes,
+link text and removed entries are checked independently. Five harness regressions
+check bad transcripts/effects/status/channels, partial setup, timeout cleanup and provider-specific simple-prompt spelling.
+
+The selected profile builds GNU rm 9.7 with a local source patch retaining the
+mandatory final `-i` prompt after a declined nested descent (rm DESCRIPTION
+2b-2e). Unpatched GNU skips the parent decision in that case. The patch changes
+only the marked-ancestor shortcut under explicit `-i`; ordinary non-interactive
+behavior remains unchanged. Original stock failures remain separate failures;
+no output or status is translated and no selected allowance is added.
+
+[CSH-089 evidence](evidence/csh-089/README.md) records native and Linux results.
+[CSH-090](tickets/CSH-090-filesystem-environment-residuals.md) owns every remaining
+utility environment and all four retained conditions. These cases do not
+qualify arbitrary branching, depth/path exhaustion, mounts, races, non-C prompts,
+ACLs, quotas, real filesystem exhaustion, libc-internal faults or whole utilities.

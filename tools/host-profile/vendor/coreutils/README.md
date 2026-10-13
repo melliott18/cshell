@@ -1,4 +1,4 @@
-# Selected cp provider (CSH-086)
+# Selected cp and rm providers (CSH-086 / CSH-089)
 
 The unmodified release archive is GNU coreutils 9.7 from
 <https://ftp.gnu.org/gnu/coreutils/coreutils-9.7.tar.xz>, SHA-256
@@ -8,7 +8,8 @@ COPYING is also reproduced beside it. No network access is needed to build.
 
 `../../build-cp.sh` verifies and extracts this archive into
 ignored build directories, applies `cp-decline-status.patch`, configures and
-builds only `src/cp`, then installs the binary as `build/host-cp`. Make passes
+builds `src/cp` and `src/rm`, then installs cp as `build/host-cp`.
+The dependent Make target installs rm as `build/host-rm`. Make passes
 CC, CPPFLAGS, CFLAGS, LDFLAGS and LIBS; configure/build logs remain under
 `build/host-coreutils-build`. The profile manifest records the archive, patch
 and selected executable hashes. All platforms select this same patched source.
@@ -24,3 +25,15 @@ The C-locale profile disables message catalogs, ACL support, SELinux and GMP.
 Those environments remain unqualified in CSH-087. Existing ordinary ownership,
 mode, timestamp, graph, EACCES and EFBIG assertions remain mandatory. Original
 Apple and GNU stock-provider failures remain in separate evidence records.
+
+## Recursive rm parent prompts
+
+`rm-parent-prompt.patch` changes the ancestor-retained shortcut only when
+explicit `-i` is active. POSIX rm DESCRIPTION 2d requires a separate final
+parent decision even after a child was retained. The GNU shortcut can suppress
+this decision after declining nested descent. Accepting removal of that still
+nonempty parent must attempt removal, diagnose the error, and continue to later
+operands. Existing root protection, traversal, non-interactive shortcuts and
+normal error handling remain in place. This is a local provider repair, not an
+upstream acceptance claim. Both platforms select the same pinned patched source;
+stock Apple/GNU results are retained separately without allowances.

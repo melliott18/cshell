@@ -129,7 +129,14 @@ def transcript_pattern(row, provider, dialect):
             # libc error() and vendor helpers differ in whether argv[0] is
             # shortened; both identify the same inventoried executable.
             diagnostic_prefix = b'(?:' + re.escape(os.fsencode(os.path.basename(provider))) + b'|' + re.escape(prefix) + b')'
-            pattern += diagnostic_prefix + rb': [^?\n]*\b' + re.escape(target) + rb'\b[^?\n]*\n'
+            if prompt.get('exact_target'):
+                # rm diagnostics must name this directory, not a descendant
+                # whose path happens to share its prefix. Wording is unspecified.
+                pattern += (diagnostic_prefix + rb': (?:cannot remove )?(?:'
+                            + re.escape(target) + b"|'" + re.escape(target)
+                            + rb"'): [^?\n]+\n")
+            else:
+                pattern += diagnostic_prefix + rb': [^?\n]*\b' + re.escape(target) + rb'\b[^?\n]*\n'
             continue
         if dialect == 'apple':
             if action == 'overwrite':

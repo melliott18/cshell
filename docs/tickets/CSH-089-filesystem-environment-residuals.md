@@ -1,11 +1,11 @@
 # CSH-089: Supply remaining filesystem environments after metadata qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-088
-- Branch: Assigned when work starts
+- Branch: `test/CSH-089-filesystem-environments`
 - Issue: [#189](https://github.com/melliott18/cshell/issues/189)
 
 ## Goal
@@ -56,10 +56,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -82,3 +82,40 @@ exhaustion. All four retained conditions remain open under this ticket.
 CSH-088 adds measured ls numeric metadata and size/time ordering, plus exact
 find -newer and reference-symlink comparisons. These cases do not qualify whole
 utilities or close any of the four retained conditions.
+
+## Implementation and current dispositions
+
+CSH-089 adds ten cases / 30 assertions for declined children, nested traversal
+and final parent decisions on owned C-locale PTYs, including errors after
+accepting a still nonempty parent and continuation to a later operand. Private
+one-child chains avoid traversal-order assumptions. Exact transcripts, output
+channels, status, bytes/link text and directory effects are independently checked.
+Five new harness regressions cover bad transcripts/effects/status/channels,
+partial setup, timeout cleanup in every terminal mode and provider prompt dialects.
+
+The pinned selected GNU rm provider restores the final explicit `-i` parent
+prompt that GNU suppresses after declining nested traversal. Both platforms
+select this patched source, with exact archive/patch/build/executable provenance.
+All older assertions remain mandatory and all original stock failures are
+preserved. The original table above records incoming scope; the current section
+map and residual ledger record the new bounded witnesses and assign every
+unsupplied environment and all four retained conditions to
+[CSH-090](CSH-090-filesystem-environment-residuals.md) ([#191](https://github.com/melliott18/cshell/issues/191)).
+This uses the explicit-disposition acceptance alternative. Arbitrary graphs,
+mount/depth/locale environments and whole utility contracts remain open.
+
+The complete requested command set plus `make test-host-filesystem-recursive`
+passes on macOS UID 501 and Debian Linux Docker UID 10001: 1227/1243 selected
+filesystem assertions, 1162 integration assertions, 10 inventory tests and
+49 filesystem harness tests. The focused recursive target has 30 passes on
+each. Separate stock audits retain 73 native and 42 Linux failures (the latter
+includes six new missing-parent-prompt failures); stock provider audits retain
+16/8 failures. Every filesystem case records successful cleanup. Native
+selected-PATH runtime and PTY suites also pass. See
+[CSH-089 evidence](../evidence/csh-089/README.md) for raw results, source identity,
+provider provenance, setup corrections and exact command/exit records.
+
+The branch is stacked on CSH-088 published commit
+`3bb23df15fd49456f2bfc38606fc8813ec111ec4`. That dependency is implemented but
+unmerged; integration remains gated on CSH-088. The shared allocator reserved
+CSH-090/#191, and live ticket identity validation passes.
