@@ -324,3 +324,14 @@ size/time ordering and find -newer assertions, including adjacent nanoseconds
 and reference symlinks. No selected provider or build flags change. Every
 private timestamp is read back exactly before exec; unsupported resolution is
 a setup failure. See [CSH-088 evidence](../../docs/evidence/csh-088/README.md).
+
+## CSH-089 recursive rm provider
+
+The profile now selects `build/host-rm` on both platforms. The shared offline
+GNU coreutils 9.7 build produces cp and rm; `rm-parent-prompt.patch` preserves
+explicit final `-i` parent decisions after retained children. The manifest
+records rm's archive, patch and executable SHA-256. The C-locale build disables
+NLS, ACL, SELinux and GMP support, so it does not qualify those environments.
+No system executable is replaced. `make test-host-filesystem-recursive` requires
+all 30 new assertions; full stock audits preserve unpatched GNU prompt failures.
+See [CSH-089 evidence](../../docs/evidence/csh-089/README.md).

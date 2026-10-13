@@ -47,9 +47,9 @@
       "prerequisite": "Supply disposable controlled credentials, privileged Darwin ACLs, and measured filesystem/namespace implementations; require actual read/write/execute controls alongside predicates. Preserve false grants, rejected grants, socket stat EINVAL and non-owner chmod failures independently."
     },
     {
-      "ticket": "CSH-089",
-      "path": "docs/tickets/CSH-089-filesystem-environment-residuals.md",
-      "title": "Supply remaining filesystem environments after metadata qualification",
+      "ticket": "CSH-090",
+      "path": "docs/tickets/CSH-090-filesystem-environment-residuals.md",
+      "title": "Supply remaining filesystem environments after recursive decision qualification",
       "utilities": [
         "basename",
         "dirname",
@@ -79,7 +79,7 @@
         "U-040/ls-size-collation",
         "U-040/rm-depth-mount-prompt"
       ],
-      "prerequisite": "Supply each explicit remaining capability and oracle in tests/host_filesystem_residuals.json; preserve CSH-072/CSH-080/CSH-084/CSH-085/CSH-086/CSH-087/CSH-088 selected assertions, call-site fault boundaries and immutable evidence. Private graphs, numeric magic rules and subsecond timestamps do not supply privileged mounts, capacity, ACLs or whole utility contracts. CSH-088 measured ls metadata and exact find timestamps qualify only their authored inputs."
+      "prerequisite": "Supply each explicit remaining capability and oracle in tests/host_filesystem_residuals.json; preserve CSH-072/CSH-080/CSH-084/CSH-085/CSH-086/CSH-087/CSH-088/CSH-089 selected assertions, call-site fault boundaries and immutable evidence. Private graphs, numeric magic rules and subsecond timestamps do not supply privileged mounts, capacity, ACLs or whole utility contracts. CSH-088 measured ls metadata and exact find timestamps qualify only their authored inputs. CSH-089 adds bounded recursive negative and nested decisions with a pinned rm parent-prompt repair; arbitrary graphs and depth/mount/locale environments remain open."
     },
     {
       "ticket": "CSH-073",

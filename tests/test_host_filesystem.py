@@ -16,12 +16,106 @@ import host_filesystem_isolated as isolated
 import host_filesystem_interactive as interactive
 import host_filesystem_decisions as decisions
 import host_filesystem_metadata as metadata
+import host_filesystem_recursive as recursive
 from host_contract_inventory import utility_owner
 from host_filesystem import run_case, stdout_matches, stderr_matches
 from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, terminal_cases, effect_errors
 
 
 class FilesystemHarnessTests(unittest.TestCase):
+    def test_simple_terminal_prompt_accepts_provider_spelling_on_either_host(self):
+        row = next(r for r in terminal_cases() if r['response'] == 'n')
+        for mode in row['modes']:
+            prefix = b'/selected/rm' if mode == 'pty-direct' else b'rm'
+            apple = b'remove data? '
+            gnu = prefix + b": remove regular file 'data'? "
+            for output in (apple, gnu, gnu + b'junk', gnu.replace(b'data', b'other'), b''):
+                with self.subTest(mode=mode, output=output), tempfile.TemporaryDirectory() as root, \
+                        patch('host_filesystem.smoke.capture', return_value=(0, dict(output=output), [])):
+                    record = run_case(Path('/bin/sh'), {'rm': {'path': '/selected/rm'}}, os.defpath,
+                                      row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS' if output in (apple, gnu) else 'FAIL')
+                    self.assertTrue(record['cleanup'])
+
+    def test_nested_decline_requires_parent_prompt_and_diagnostic(self):
+        row = next(r for r in recursive.cases() if r['id'] == 'rm/recursive-declined-descent-parent-y')
+        descend = b"/bin/rm: descend into directory 'branch'? "
+        child = b"/bin/rm: descend into directory 'branch/sub'? "
+        parent = b"/bin/rm: remove directory 'branch'? "
+        diagnostic = b"/bin/rm: cannot remove 'branch': Directory not empty\n"
+        later = b"/bin/rm: remove regular file 'second'? "
+        good = descend + child + parent + diagnostic + later
+        self.assertTrue(decisions.output_matches(row, '/bin/rm', good))
+        for bad in (good.replace(parent, b''), good.replace(diagnostic, b''),
+                    good.replace(parent, child), good.replace(later, b''),
+                    good.replace(diagnostic, diagnostic.replace(b'branch', b'elsewhere')),
+                    good.replace(diagnostic, diagnostic.replace(b'branch', b'branch/sub')),
+                    good + parent, descend + child + diagnostic + parent + later):
+            self.assertFalse(decisions.output_matches(row, '/bin/rm', bad))
+
+    def test_nested_decline_rejects_wrong_effect_status_and_output_channel(self):
+        row = next(r for r in recursive.cases() if r['id'] == 'rm/recursive-nested-link-n')
+        transcript = (b'examine files in directory branch? '
+                      b'examine files in directory branch/sub? '
+                      b'remove branch/sub/link? remove branch/sub? remove branch? remove second? ')
+        for fault in ('none', 'retained-child', 'outside', 'continuation', 'status', 'stdout'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                (cwd / '.prompt-environment.json').write_text(json.dumps(dict(
+                    phase='armed', provider='/bin/rm', stdin_tty=True, stderr_tty=True,
+                    stdout_tty=False, foreground=True)))
+                (cwd / '.prompt-stdout').write_bytes(b'wrong channel' if fault == 'stdout' else b'')
+                if fault != 'continuation':
+                    (cwd / 'second').unlink()
+                if fault == 'retained-child':
+                    (cwd / 'branch/sub/link').unlink()
+                if fault == 'outside':
+                    (cwd / 'outside/leaf').unlink()
+                return (1 if fault == 'status' else 0), dict(output=transcript), []
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'rm': {'path': '/bin/rm'}}, os.defpath,
+                                  row, 'pty-direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'PASS' if fault == 'none' else 'FAIL')
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_nested_partial_setup_failure_cleans_fixture(self):
+        row = next(r for r in recursive.cases() if r['id'] == 'rm/recursive-nested-link-n')
+        with tempfile.TemporaryDirectory() as root, \
+                patch.object(Path, 'symlink_to', side_effect=OSError('injected setup failure')), \
+                patch('host_filesystem.smoke.capture') as capture:
+            record = run_case(Path('/bin/sh'), {'rm': {'path': '/bin/rm'}}, os.defpath,
+                              row, 'pty-direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            capture.assert_not_called()
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_nested_timeout_after_decline_cleans_every_terminal_mode(self):
+        row = next(r for r in recursive.cases() if r['id'] == 'rm/recursive-declined-descent-parent-n')
+        for mode in decisions.MODES:
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                provider = root / 'slow-rm'
+                provider.write_text('#!' + sys.executable + ' -S\nimport os,sys,time\n'
+                                    'print(os.getpid(),flush=True)\n'
+                                    'for target in ("branch", "branch/sub"):\n'
+                                    ' sys.stderr.write(target+"? "); sys.stderr.flush()\n'
+                                    ' response=sys.stdin.readline()\n'
+                                    'sys.stderr.write("declined="+response); sys.stderr.flush()\n'
+                                    'time.sleep(60)\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'rm': {'path': str(provider)}}, os.defpath,
+                                  row, mode, root, None, timeout=1)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertIn(b'declined=n', bytes.fromhex(record['terminal_output']['hex']))
+                self.assertTrue(any('timeout' in e for e in record['errors']))
+                pid = int(bytes.fromhex(record['actual']['stdout']['hex']))
+                with self.assertRaises(ProcessLookupError):
+                    os.kill(pid, 0)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(root.iterdir()), [provider])
+
     def test_metadata_listing_rejects_corrupt_fields_and_extra_lines(self):
         row = next(r for r in metadata.cases() if r['id'] == 'ls/metadata-numeric-regular')
         with tempfile.TemporaryDirectory() as root:
@@ -435,7 +529,7 @@ class FilesystemHarnessTests(unittest.TestCase):
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -601,7 +695,7 @@ class FilesystemHarnessTests(unittest.TestCase):
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

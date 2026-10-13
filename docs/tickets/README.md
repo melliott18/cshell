@@ -85,6 +85,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-087](CSH-087-filesystem-environment-followup.md) | Supply remaining filesystem environments after terminal qualification | [CSH-086](CSH-086-filesystem-unsupplied-contracts.md) | [#185](https://github.com/melliott18/cshell/issues/185) |
 | [CSH-088](CSH-088-filesystem-remaining-environments.md) | Supply filesystem environments beyond bounded decision graphs | [CSH-087](CSH-087-filesystem-environment-followup.md) | [#187](https://github.com/melliott18/cshell/issues/187) |
 | [CSH-089](CSH-089-filesystem-environment-residuals.md) | Supply remaining filesystem environments after metadata qualification | [CSH-088](CSH-088-filesystem-remaining-environments.md) | [#189](https://github.com/melliott18/cshell/issues/189) |
+| [CSH-090](CSH-090-filesystem-environment-residuals.md) | Supply remaining filesystem environments after recursive decision qualification | [CSH-089](CSH-089-filesystem-environment-residuals.md) | [#191](https://github.com/melliott18/cshell/issues/191) |
 
 ## Child implementation tickets
 

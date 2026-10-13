@@ -1,0 +1,14 @@
+--- a/src/remove.c
++++ b/src/remove.c
+@@ -203,7 +203,10 @@
+   /* When nonzero, this indicates that we failed to remove a child entry,
+      either because the user declined an interactive prompt, or due to
+      some other failure, like permissions.  */
+-  if (ent->fts_number)
++  /* POSIX rm DESCRIPTION 2d requires the final -i decision even when a
++     child was retained.  A negative child answer does not answer the parent
++     question; an affirmative parent answer may then fail with ENOTEMPTY.  */
++  if (ent->fts_number && x->interactive != RMI_ALWAYS)
+     return RM_USER_DECLINED;
+ 
+   if (x->interactive == RMI_NEVER)

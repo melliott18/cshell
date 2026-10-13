@@ -26,6 +26,7 @@ import host_filesystem_isolated as isolated
 import host_filesystem_interactive as interactive
 import host_filesystem_decisions as decisions
 import host_filesystem_metadata as metadata
+import host_filesystem_recursive as recursive
 from host_platform import filesystem_identity
 from host_utilities import inventory, match, sanitizer_diagnostic, serial, sha, source_identity
 
@@ -173,8 +174,10 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
                 output = {'stdout': (cwd / '.prompt-stdout').read_bytes(), 'stderr': b''}
             else:
                 prefix = os.fsencode(provider if mode == 'pty-direct' else 'rm')
-                prompt = b'remove data? ' if platform.system() == 'Darwin' else prefix + b": remove regular file 'data'? "
-                if output['output'] != prompt:
+                # The selected GNU provider can run on Darwin too. Wording is
+                # unspecified; accept only the two complete known transcripts.
+                prompts = (b'remove data? ', prefix + b": remove regular file 'data'? ")
+                if output['output'] not in prompts:
                     errors.append('terminal prompt mismatch')
                 record['terminal_output'] = serial(output['output'])
                 output = {'stdout': b'', 'stderr': b''}
@@ -241,6 +244,7 @@ def main():
     parser.add_argument('--audit', action='store_true')
     parser.add_argument('--sanitizer', action='store_true')
     parser.add_argument('--provider-audit', action='store_true', help='Require cycle/archive/fault provider contracts; all are mandatory in the selected profile')
+    parser.add_argument('--recursive-only', action='store_true', help='Select CSH-089 declined-child and nested recursive decisions')
     parser.add_argument('--metadata-only', action='store_true', help='Select CSH-088 measured metadata and timestamp environments')
     parser.add_argument('--decisions-only', action='store_true', help='Select CSH-087 operand and recursive decisions')
     parser.add_argument('--interactive-only', action='store_true', help='Select CSH-086 owned-PTY overwrite decisions')
@@ -262,7 +266,9 @@ def main():
             pass
     locale.setlocale(locale.LC_CTYPE, previous)
     rows = [row for row in extended_cases() if args.provider_audit or not row.get('provider_audit')]
-    if args.metadata_only:
+    if args.recursive_only:
+        rows = list(recursive.cases())
+    elif args.metadata_only:
         rows = list(metadata.cases())
     elif args.decisions_only:
         rows = list(decisions.cases())
@@ -275,7 +281,7 @@ def main():
     elif args.remaining_only:
         rows = list(remaining_cases())
     elif not args.extended_only:
-        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows + list(remaining_cases()) + list(residual.cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases())
+        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows + list(remaining_cases()) + list(residual.cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases())
     records = []
     for row in rows:
         for mode in row.get('modes', ('direct', 'string', 'file', 'stdin')):
@@ -285,8 +291,8 @@ def main():
             if record['verdict'] != 'PASS':
                 print(json.dumps(record), flush=True)
     totals = {key: sum(r['verdict'] == key for r in records) for key in ('PASS', 'FAIL')}
-    result = dict(ticket='CSH-088', predecessor='CSH-087', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
-                  full_contracts_qualified=False, selection='metadata' if args.metadata_only else 'decisions' if args.decisions_only else 'interactive' if args.interactive_only else 'isolated' if args.isolated_only else 'residual' if args.residual_only else 'remaining' if args.remaining_only else 'extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
+    result = dict(ticket='CSH-089', predecessor='CSH-088', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
+                  full_contracts_qualified=False, selection='recursive' if args.recursive_only else 'metadata' if args.metadata_only else 'decisions' if args.decisions_only else 'interactive' if args.interactive_only else 'isolated' if args.isolated_only else 'residual' if args.residual_only else 'remaining' if args.remaining_only else 'extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
                   unavailable_capabilities=[] if platform.system() == 'Linux' else ['Linux virtual-device ENOSPC'],
                   path=args.path, providers=providers, platform=platform.platform(),
                   libc=platform.libc_ver(), utf8_locale=utf8, uid=os.getuid(), gid=os.getgid(), groups=os.getgroups(),

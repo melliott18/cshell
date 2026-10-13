@@ -1,0 +1,8 @@
+{
+  "files": {
+    "tests/host_filesystem.py": "824d772d961f0ec63457272d0a690ff8863232a7d2c390fb83df3e30b918b3a3",
+    "tests/test_host_filesystem.py": "3a6acc3aa4d33fbfd5b7459e37b20bfee91b46e4f799210d0036e4b8386ec359"
+  },
+  "method": "docker cp to /work before final validation; all reports retain actual source_identity",
+  "init": true
+}
