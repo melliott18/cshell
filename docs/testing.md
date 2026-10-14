@@ -1444,3 +1444,15 @@ no output or status is translated and no selected allowance is added.
 utility environment and all four retained conditions. These cases do not
 qualify arbitrary branching, depth/path exhaustion, mounts, races, non-C prompts,
 ACLs, quotas, real filesystem exhaustion, libc-internal faults or whole utilities.
+
+## CSH-090 total pathname byte boundaries
+
+`make test-host-filesystem-path-limits` runs 32 assertions through direct exec and
+all three cshell input modes. The full selected host profile also requires them.
+Private `./` spellings separate total bytes from component lengths. Setup checks
+`pathconf` and passes the original string to `stat` relative to a directory fd,
+without pathlib normalization. Indeterminate or excessive limits (outside
+256..8192), unexpected errno and incomplete setup are failures. The portable
+256-byte bound includes the terminating NUL, independently of the host limit.
+No tree-depth, quota, capacity or allocator qualification is claimed. Harness
+regressions require bounded setup/error/timeout cleanup.

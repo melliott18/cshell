@@ -695,3 +695,8 @@ test-host-filesystem-metadata: cshell host-profile
 .PHONY: test-host-filesystem-recursive
 test-host-filesystem-recursive: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --recursive-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-recursive.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-090: independently measured total pathname byte boundaries.
+.PHONY: test-host-filesystem-path-limits
+test-host-filesystem-path-limits: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --path-limits-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-path-limits.json $(HOST_FILESYSTEM_FLAGS)

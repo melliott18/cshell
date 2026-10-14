@@ -1,9 +1,12 @@
 """CSH-072 harness failure and oracle regressions, not provider conformance."""
+import copy
+import errno
 import json
 import os
 from pathlib import Path
 import sys
 import tempfile
+import time
 import unittest
 from unittest.mock import patch
 
@@ -17,12 +20,116 @@ import host_filesystem_interactive as interactive
 import host_filesystem_decisions as decisions
 import host_filesystem_metadata as metadata
 import host_filesystem_recursive as recursive
+import host_filesystem_path_limits as path_limits
 from host_contract_inventory import utility_owner
 from host_filesystem import run_case, stdout_matches, stderr_matches
 from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, terminal_cases, effect_errors
 
 
 class FilesystemHarnessTests(unittest.TestCase):
+    def test_path_limit_probe_keeps_spelling_and_counts_nul(self):
+        for row in path_limits.cases():
+            with self.subTest(case=row['id']), tempfile.TemporaryDirectory() as root:
+                environment = path_limits.setup(Path(root), row)
+                limit = environment['selected_limit']
+                self.assertEqual(limit, 256 if row['portable'] else os.pathconf(root, 'PC_PATH_MAX'))
+                for delta, measured in zip(row['deltas'], environment['measurements']):
+                    self.assertEqual(measured['bytes'], limit + delta)
+                    self.assertEqual(measured['bytes_with_nul'], limit + delta + 1)
+                    self.assertLessEqual(max(map(len, measured['operand'].split('/'))), 2)
+                    if measured['bytes'] >= environment['path_max']:
+                        self.assertEqual(measured['errno'], errno.ENAMETOOLONG)
+                    else:
+                        self.assertEqual(measured['errno'], errno.ENOENT if measured['missing'] else 0)
+
+    def test_path_limit_diagnostics_require_each_complete_operand(self):
+        row = next(r for r in path_limits.cases() if r.get('missing_middle'))
+        with tempfile.TemporaryDirectory() as root:
+            path_limits.setup(Path(root), row)
+            names = [name.encode() for name in row['diagnostic_operands']]
+            good = b''.join(b'pathchk: ' + name + b': pathname too long\n' for name in names)
+            self.assertTrue(stderr_matches(row, good))
+            for bad in (b'', good.splitlines(keepends=True)[0], good * 2,
+                        good.replace(names[1], b'other'), good + b'extra diagnostic\n',
+                        good.replace(b'pathname too long', b'permission denied'), good.rstrip(b'\n'),
+                        b'\n'.join(names) + b'\n'):
+                self.assertFalse(stderr_matches(row, bad))
+
+    def test_path_limit_setup_errors_clean_fixture_without_dispatch(self):
+        row = next(path_limits.cases())
+        real_stat = os.stat
+        def wrong_probe(path, *args, **kw):
+            if isinstance(path, str) and path.startswith('./'):
+                raise OSError(errno.EACCES, 'injected wrong boundary')
+            return real_stat(path, *args, **kw)
+        real_mkdir = Path.mkdir
+        def partial_setup(path, *args, **kw):
+            if path.name == 'aa':
+                raise OSError('injected mkdir failure')
+            return real_mkdir(path, *args, **kw)
+        for fault in ('indeterminate', 'too-large', 'probe', 'partial-setup'):
+            target, value = {
+                'indeterminate': ('host_filesystem_path_limits.os.pathconf', dict(return_value=-1)),
+                'too-large': ('host_filesystem_path_limits.os.pathconf', dict(return_value=999999)),
+                'probe': ('host_filesystem_path_limits.os.stat', dict(side_effect=wrong_probe)),
+                'partial-setup': ('pathlib.Path.mkdir', dict(autospec=True, side_effect=partial_setup)),
+            }[fault]
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch(target, **value), patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'pathchk': {'path': '/usr/bin/pathchk'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+                capture.assert_not_called()
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_path_limit_output_status_effect_failures_and_immutable_spec(self):
+        row = next(r for r in path_limits.cases() if r['deltas'] == [0])
+        original = copy.deepcopy(row)
+        for fault in ('none', 'stdout', 'status', 'diagnostic', 'effect'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                name = invocation['args'][-1].encode()
+                if fault == 'effect':
+                    (cwd / 'a').rmdir()
+                return (0 if fault == 'status' else 1), dict(
+                    stdout=b'wrong' if fault == 'stdout' else b'',
+                    stderr=b'' if fault == 'diagnostic' else b'pathchk: ' + name + b': too long\n'), []
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'pathchk': {'path': '/usr/bin/pathchk'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'PASS' if fault == 'none' else 'FAIL')
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(row, original)
+
+    def test_path_limit_timeout_reaps_child_and_cleans_every_mode(self):
+        row = next(path_limits.cases())
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                provider = root / 'pathchk'
+                provider.write_text('#!' + sys.executable + ' -S\nimport os,time\n'
+                                    'print(os.getpid(),flush=True)\ntime.sleep(60)\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'pathchk': {'path': str(provider)}},
+                                  str(root) + ':' + os.defpath, row, mode, root, None, timeout=1)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertTrue(any('timeout' in error for error in record['errors']))
+                pid = int(bytes.fromhex(record['actual']['stdout']['hex']))
+                # A non-optimizing /bin/sh may leave its killed child to the
+                # container init. Require disappearance within a separate bound,
+                # including zombies, rather than depending on scheduler order.
+                deadline = time.monotonic() + 2
+                while True:
+                    try:
+                        os.kill(pid, 0)
+                    except ProcessLookupError:
+                        break
+                    self.assertLess(time.monotonic(), deadline, 'timed-out child was not reaped')
+                    time.sleep(0.01)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(root.iterdir()), [provider])
+
     def test_simple_terminal_prompt_accepts_provider_spelling_on_either_host(self):
         row = next(r for r in terminal_cases() if r['response'] == 'n')
         for mode in row['modes']:
@@ -529,7 +636,7 @@ class FilesystemHarnessTests(unittest.TestCase):
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -695,7 +802,7 @@ class FilesystemHarnessTests(unittest.TestCase):
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

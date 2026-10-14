@@ -1,0 +1,10 @@
+[
+  {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html",
+    "sha256": "ce446d31316645a78d6aa4df6ff45829afbdbd3d667c84ae2c6a3bdfe0ce825a"
+  },
+  {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/limits.h.html",
+    "sha256": "0c5569e5b8ac08a07e6c57b375c588cb6dd3d70deef116dbffd86fb78036cfec"
+  }
+]

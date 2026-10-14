@@ -1,0 +1,41 @@
+[
+  {
+    "command": [
+      "make",
+      "test-host-inventory",
+      "test-host-profile",
+      "test-host-filesystem-allocation",
+      "test-host-filesystem-provider-audit",
+      "test-host-filesystem-residual",
+      "test-host-filesystem-isolated",
+      "test-host-filesystem-interactive",
+      "test-host-filesystem-decisions",
+      "test-host-filesystem-metadata",
+      "test-host-filesystem-recursive",
+      "test-host-filesystem-path-limits"
+    ],
+    "exit_status": 0,
+    "log": "selected.log"
+  },
+  {
+    "command": [
+      "make",
+      "test-host-filesystem-audit"
+    ],
+    "exit_status": 2,
+    "log": "stock.log"
+  },
+  {
+    "command": [
+      "python3",
+      "tests/host_filesystem.py",
+      "./cshell",
+      "--extended-only",
+      "--provider-audit",
+      "--record",
+      "build/tests/host-filesystem-stock-provider-audit.json"
+    ],
+    "exit_status": 1,
+    "log": "stock-provider.log"
+  }
+]

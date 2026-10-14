@@ -335,3 +335,8 @@ NLS, ACL, SELinux and GMP support, so it does not qualify those environments.
 No system executable is replaced. `make test-host-filesystem-recursive` requires
 all 30 new assertions; full stock audits preserve unpatched GNU prompt failures.
 See [CSH-089 evidence](../../docs/evidence/csh-089/README.md).
+
+CSH-090 adds `make test-host-filesystem-path-limits`: 32 assertions for measured
+total pathname bytes and portable limits, including per-operand diagnostics.
+The full profile includes them; selected provider sources and flags are unchanged.
+See [CSH-090 evidence](../../docs/evidence/csh-090/README.md).
