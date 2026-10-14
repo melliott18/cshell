@@ -186,7 +186,7 @@ themselves establish full conformance for the CSH-011 milestone.
 
 CSH-086 adds bounded C-locale owned-PTY cp/mv decisions to U-034/U-040.
 The selected cp source repair and separate stock failures are recorded in
-[evidence](evidence/csh-086/README.md). [CSH-090](tickets/CSH-090-filesystem-environment-residuals.md)
+[evidence](evidence/csh-086/README.md). [CSH-091](tickets/CSH-091-filesystem-environment-residuals.md)
 retains every unsupplied environment; no whole utility contract is qualified.
 
 ## CSH-087 operand and recursive decisions
@@ -194,7 +194,7 @@ retains every unsupplied environment; no whole utility contract is qualified.
 CSH-087 extends U-034/U-040 with 68 bounded multi-operand, recursive terminal,
 and same-device directory assertions. Exact provider provenance and the separate
 stock failures remain required. [Evidence](evidence/csh-087/README.md) records
-both platforms. [CSH-090](tickets/CSH-090-filesystem-environment-residuals.md)
+both platforms. [CSH-091](tickets/CSH-091-filesystem-environment-residuals.md)
 retains every unsupplied contract, including all four original conditions.
 
 ## CSH-088 measured metadata and timestamp environments
@@ -208,7 +208,7 @@ comparisons before, equal to and after the reference, including -H/-L reference
 symlinks. Setup and cleanup failures are failures, never profile allowances.
 
 [CSH-088 evidence](evidence/csh-088/README.md) records both platforms and
-separate stock failures. [CSH-090](tickets/CSH-090-filesystem-environment-residuals.md)
+separate stock failures. [CSH-091](tickets/CSH-091-filesystem-environment-residuals.md)
 owns each remaining environment and all four original conditions. Whole
 utility contracts, non-C collation, live-clock age boundaries, mount/depth
 limits, ACLs, capacity exhaustion and libc-internal faults remain unqualified.
@@ -232,7 +232,24 @@ behavior remains unchanged. Original stock failures remain separate failures;
 no output or status is translated and no selected allowance is added.
 
 [CSH-089 evidence](evidence/csh-089/README.md) records native and Linux results.
-[CSH-090](tickets/CSH-090-filesystem-environment-residuals.md) owns every remaining
+[CSH-091](tickets/CSH-091-filesystem-environment-residuals.md) owns every remaining
 utility environment and all four retained conditions. These cases do not
 qualify arbitrary branching, depth/path exhaustion, mounts, races, non-C prompts,
 ACLs, quotas, real filesystem exhaustion, libc-internal faults or whole utilities.
+
+## CSH-090 total pathname boundaries
+
+`make test-host-filesystem-path-limits` adds eight cases / 32 strict U-034/U-040
+assertions in direct, string, file and stdin modes. CSH-090 supplies 32 total pathname
+byte assertions: the selected filesystem PATH_MAX and portable 256-byte limit, operand
+lengths limit-1, limit and limit+1 (the limit includes NUL), plus diagnostic
+continuation across two invalid operands and a valid missing operand. Independent
+pathconf and unnormalized stat probes distinguish kernel ENAMETOOLONG from the portable
+policy. Components are at most two bytes; no deep tree or filesystem exhaustion is
+exercised.
+
+The full selected profile requires these assertions without allowances. No selected
+provider or build configuration changes. All other individual environments and the four
+original retained conditions remain open under
+[CSH-091](tickets/CSH-091-filesystem-environment-residuals.md). See [CSH-090
+evidence](evidence/csh-090/README.md) for native/Linux results.

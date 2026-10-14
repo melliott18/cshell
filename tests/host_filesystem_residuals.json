@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
-  "ticket": "CSH-089",
+  "ticket": "CSH-090",
   "full_contracts_qualified": false,
   "utilities": [
     {
       "utility": "basename",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/basename.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Argument/allocator exhaustion, diagnostic locales and output failures beyond independently armed EBADF/EPIPE remain unqualified.",
       "required_environment": "per-child limits and installed diagnostic locales",
@@ -28,13 +28,14 @@
       "csh086_assertions": [],
       "csh087_assertions": [],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "dirname",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Allocator/resource errors beyond stdout EBADF/EPIPE, alternative double-slash policies and further locale repertoires remain unqualified.",
       "required_environment": "per-child resource controls and alternate locale definitions",
@@ -58,13 +59,14 @@
       "csh086_assertions": [],
       "csh087_assertions": [],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "cp",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Further recursive/multiple-operand graphs and non-C interactive overwrite, traversal cycles and remaining graph combinations, special files beyond FIFOs, cross-filesystem attributes, ACL/privileged ownership preservation, quota/ENOSPC/EIO and interrupted partial copies remain unqualified. Operand/nested-link -H/-L/-P, ordinary owner/mode/timestamps and bounded EFBIG have selected witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and both -f/-i orders on an owned PTY; stock Darwin declines incorrectly return 1. CSH-087 adds all four yes/no combinations for two operands, missing-middle continuation, and one-child recursive overwrite yes/no; arbitrary graphs remain open.",
       "required_environment": "disposable credentials, two private filesystems, ACL/quota/capacity and fault profiles",
@@ -116,13 +118,14 @@
         "cp/decisions-recursive-n"
       ],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "dd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dd.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Additional block/unblock and noerror combinations, short/interrupted device I/O and signal statistics remain unqualified. CSH-080 adds ordinary block/unblock, C-locale case conversion, sync, block+sync, odd swab, seek/truncate/notrunc and skip/count. Darwin stock sync input counts fail; the selected GNU dd is required. EBCDIC/ascii/ibm are XSI-shaded, outside the selected base profile.",
       "required_environment": "scoped short-read/EINTR/EIO controls and active-operation signal delivery",
@@ -144,13 +147,14 @@
       "csh086_assertions": [],
       "csh087_assertions": [],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "df",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Unspecified/default and 512-byte formats, all-filesystem enumeration, quotas, privilege-dependent availability and live capacity boundaries need a disposable filesystem oracle.",
       "required_environment": "private bounded filesystem with independently measured allocation/quota and credentials",
@@ -161,13 +165,14 @@
       "csh086_assertions": [],
       "csh087_assertions": [],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "du",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Recursive allocation totals, -a/-s, operand -H, nested -L, last-option precedence and a same-directory hard-link pair now have bounded private-graph witnesses. Cross-device -x, unreadable subtrees, shared extents, arbitrary graphs and overflow remain unqualified.",
       "required_environment": "disposable cross-device/denied/shared-extent filesystems and bounded overflow controls",
@@ -194,13 +199,14 @@
       "csh086_assertions": [],
       "csh087_assertions": [],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "file",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Numeric byte equality/comparisons/bit tests, hexadecimal/octal masks and native short equality have matching and nonmatching samples. Other numeric types/ranges, database precedence and -d/-M/-i, default nonempty/encoding classification, symlink errors and localized descriptions remain unqualified.",
       "required_environment": "additional authored type/range/precedence databases, independent encoding samples and locale profiles",
@@ -254,13 +260,14 @@
       "csh086_assertions": [],
       "csh087_assertions": [],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "find",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Strict -newer comparisons at equal and adjacent representable nanoseconds and -H/-L reference-symlink following now have measured private witnesses. Other expressions/actions, wall-clock age boundaries, descriptor/depth exhaustion and non-UTF-8 matching remain unqualified. CSH-080 expression and batched-exec witnesses and CSH-084 ordinary owner-mode EACCES remain bounded.",
       "required_environment": "per-child descriptor limits, deeper trees, timestamps and non-UTF-8 matching oracles",
@@ -293,13 +300,14 @@
         "find/metadata-newer-reference-H",
         "find/metadata-newer-reference-L"
       ],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "ln",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. ln -i is a vendor extension absent from the selected POSIX base synopsis/options, not an open base requirement.",
       "required_environment": "disposable cross-device/credential/link-limit profiles",
@@ -315,13 +323,14 @@
       "csh086_assertions": [],
       "csh087_assertions": [],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "ls",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Long numeric listings for regular files, hard links, directories, FIFOs and symlinks, plus C-locale size/mtime/atime sorting with ties and reversal now have measured private witnesses. Name-based owner/group rendering, recent timestamps, block units, remaining sorting switches, recursive graphs, terminal formatting, non-C collation and I/O exhaustion remain unqualified. CSH-084 ordinary owner-mode EACCES remains bounded.",
       "required_environment": "authored metadata/time/block graphs, owned PTYs, non-C collation and I/O limits",
@@ -363,13 +372,14 @@
         "ls/metadata-sort-atime",
         "ls/metadata-sort-atime-reverse"
       ],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "mkdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Further symbolic modes/parents, total path limits, ACL inheritance, access denial and capacity exhaustion remain unqualified. CSH-080 adds final -m versus parent umask, existing mode preservation and continuation after an ENOTDIR prefix. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
       "required_environment": "private ACL/credential and bounded capacity/path-limit profiles",
@@ -387,13 +397,14 @@
       "csh086_assertions": [],
       "csh087_assertions": [],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "mkfifo",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Additional symbolic/ACL behavior and capacity exhaustion remain unqualified. CSH-080 adds sequential symbolic copy/removal and existing-node error continuation; FIFO transfer remains outside creation. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
       "required_environment": "private ACL/capacity profile and remaining symbolic-mode tables",
@@ -410,13 +421,14 @@
       "csh086_assertions": [],
       "csh087_assertions": [],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "mv",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mv.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Further multiple-operand and non-C interactive decisions, directory replacement beyond the authored empty/nonempty targets, cross-filesystem copy/remove fallback, metadata/ACL preservation and interrupted or exhausted destination remain unqualified. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-086 supplies C-locale single-file yes/no and last -f/-i precedence on an owned PTY. CSH-087 adds two-operand yes/no combinations, missing-middle continuation and same-device empty/nonempty directory replacement.",
       "required_environment": "private source/destination filesystems, ACL/credential profiles and interruption controls",
@@ -461,17 +473,18 @@
         "mv/decisions-directory-nonempty"
       ],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "pathchk",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
-      "remaining": "Inaccessible prefixes, path total limits and alternate filesystems/repertoires remain unqualified. CSH-080 adds -P and -p/-P order combinations with empty and dash-prefixed components. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
-      "required_environment": "controlled inaccessible prefixes and measured alternate filesystem limits",
-      "reason": "Portable spelling cases do not establish real path or credential boundaries. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors.",
+      "remaining": "Alternate filesystem limits, credential/ACL combinations and non-C repertoires remain unqualified. CSH-080 supplies -P and -p/-P order combinations; CSH-084 supplies ordinary owner-mode search denial. CSH-090 supplies 32 total pathname byte assertions: the selected filesystem PATH_MAX and portable 256-byte limit, operand lengths limit-1, limit and limit+1 (the limit includes NUL), plus diagnostic continuation across two invalid operands and a valid missing operand. Independent pathconf and unnormalized stat probes distinguish kernel ENAMETOOLONG from the portable policy. Components are at most two bytes; no deep tree or filesystem exhaustion is exercised. Arbitrary tree-depth/resource limits and namespace races remain open.",
+      "required_environment": "measured alternate filesystem limits, controlled credentials/ACLs and non-C repertoire oracles",
+      "reason": "The authored ./ spellings measure total bytes on the supplied filesystem only; they do not exercise deep trees, alternate filesystems, ACLs, races or non-C repertoires.",
       "assertions": [
         "pathchk/remaining-P-valid",
         "pathchk/remaining-P-empty",
@@ -482,7 +495,15 @@
         "pathchk/remaining-Pp-valid",
         "pathchk/remaining-Pp-empty",
         "pathchk/remaining-Pp-dash",
-        "pathchk/residual-prefix-denied"
+        "pathchk/residual-prefix-denied",
+        "pathchk/path-limit-filesystem-below",
+        "pathchk/path-limit-filesystem-at",
+        "pathchk/path-limit-filesystem-above",
+        "pathchk/path-limit-filesystem-continuation",
+        "pathchk/path-limit-portable-below",
+        "pathchk/path-limit-portable-at",
+        "pathchk/path-limit-portable-above",
+        "pathchk/path-limit-portable-continuation"
       ],
       "csh084_assertions": [
         "pathchk/residual-prefix-denied"
@@ -491,13 +512,23 @@
       "csh086_assertions": [],
       "csh087_assertions": [],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": [
+        "pathchk/path-limit-filesystem-below",
+        "pathchk/path-limit-filesystem-at",
+        "pathchk/path-limit-filesystem-above",
+        "pathchk/path-limit-filesystem-continuation",
+        "pathchk/path-limit-portable-below",
+        "pathchk/path-limit-portable-at",
+        "pathchk/path-limit-portable-above",
+        "pathchk/path-limit-portable-continuation"
+      ]
     },
     {
       "utility": "pax",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. The selected pinned pax repairs ustar mode encoding and final partial writes and requires the complete existing type-graph, truncation, EPIPE, EFBIG and Linux virtual-device ENOSPC assertions. Original Apple/Linux stock-provider failures remain separately retained.",
       "required_environment": "independent pax/cpio/extended-header fixtures, credentials, encoding and multi-volume oracle",
@@ -508,13 +539,14 @@
       "csh086_assertions": [],
       "csh087_assertions": [],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "pwd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Inaccessible ancestors, deleted directories, total PATH_MAX and allocation/stdio failures remain unqualified by this subset. CSH-080 adds -L/-P last-option precedence with an independently authored logical cwd.",
       "required_environment": "disposable denied/deleted ancestors, path and libc fault controls",
@@ -528,13 +560,14 @@
       "csh086_assertions": [],
       "csh087_assertions": [],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "readlink",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Byte/repertoire combinations beyond the selected three invalid UTF-8 bytes, libc-internal allocation failures and true filesystem limits remain unqualified.",
       "required_environment": "arbitrary byte/repertoire fixtures, real filesystem limits and libc-internal fault controls",
@@ -558,13 +591,14 @@
       "csh086_assertions": [],
       "csh087_assertions": [],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "realpath",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Permission/namespace races, libc-internal allocation failures, double-leading-slash policy and exact resource boundaries remain unqualified. CSH-080 adds test-only provider call-site ENOMEM including dynamic links and relative/absolute missing-final fallback; it does not inject libc internals. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
       "required_environment": "controlled namespace races/credentials, exact link/path limits and libc-internal faults",
@@ -579,13 +613,14 @@
       "csh086_assertions": [],
       "csh087_assertions": [],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "rm",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Recursive descriptor/depth exhaustion, disposable mount boundaries, further operand continuation, permissions, races and prompt locales/recursive graphs remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-087 adds negative descent with operand continuation, affirmative leaf removal followed by yes/no final directory removal, recursive symlink non-traversal, and last -f/-i precedence. CSH-089 supplies declined regular/link children, nested descent refusals, final parent decisions including nonempty-parent errors and later-operand continuation on one-child chains. Branching and arbitrary prompt graphs remain open.",
       "required_environment": "private mount/depth/credential profiles and automated recursive prompt/race controls",
@@ -635,13 +670,14 @@
         "rm/recursive-nested-remove-parent-y",
         "rm/recursive-nested-link-n",
         "rm/recursive-nested-link-y"
-      ]
+      ],
+      "csh090_assertions": []
     },
     {
       "utility": "rmdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Ancestor permissions, total depth/path boundaries and other filesystem errors remain unqualified. CSH-080 adds symlink rejection and continuation after a nonempty operand. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
       "required_environment": "private credentials, bounded path/depth and filesystem failure profiles",
@@ -658,13 +694,14 @@
       "csh086_assertions": [],
       "csh087_assertions": [],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     },
     {
       "utility": "touch",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "implementation_owner": "selected utility/libc/platform vendor",
       "remaining": "Period/comma subsecond dates, T/space separators, UTC/local fixed-offset TZ and -a/-m nanosecond isolation now have bounded witnesses. Remaining date/range forms, arbitrary symlink graphs, current-time tolerances, permission/ACL errors and timestamp range failures remain unqualified.",
       "required_environment": "independent clock/range/symlink and permission/ACL environments",
@@ -694,35 +731,36 @@
       "csh086_assertions": [],
       "csh087_assertions": [],
       "csh088_assertions": [],
-      "csh089_assertions": []
+      "csh089_assertions": [],
+      "csh090_assertions": []
     }
   ],
   "conditions": [
     {
       "id": "U-040/pwd-access-path-limits",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "original_evidence": "docs/evidence/csh-064/prerequisites.json",
       "reason": "CSH-072 bounded witness retained; the remaining capability in the CSH-080 ticket is not supplied by ordinary option/error tests."
     },
     {
       "id": "U-040/find-depth-locale-limits",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "original_evidence": "docs/evidence/csh-064/prerequisites.json",
       "reason": "CSH-072 bounded witness retained; the remaining capability in the CSH-080 ticket is not supplied by ordinary option/error tests."
     },
     {
       "id": "U-040/ls-size-collation",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "original_evidence": "docs/evidence/csh-064/prerequisites.json",
       "reason": "CSH-072 bounded witness retained; the remaining capability in the CSH-080 ticket is not supplied by ordinary option/error tests."
     },
     {
       "id": "U-040/rm-depth-mount-prompt",
       "status": "open",
-      "next_owner": "CSH-090",
+      "next_owner": "CSH-091",
       "original_evidence": "docs/evidence/csh-064/prerequisites.json",
       "reason": "CSH-072 bounded witness retained; the remaining capability in the CSH-080 ticket is not supplied by ordinary option/error tests. CSH-087 adds bounded recursive prompt decisions; arbitrary graphs, declined children, mount boundaries and depth exhaustion remain open. CSH-089 adds bounded declined-child and nested final decisions; branching, non-C prompts, mounts and exhaustion remain open."
     }

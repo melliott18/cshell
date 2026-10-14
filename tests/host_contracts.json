@@ -47,9 +47,9 @@
       "prerequisite": "Supply disposable controlled credentials, privileged Darwin ACLs, and measured filesystem/namespace implementations; require actual read/write/execute controls alongside predicates. Preserve false grants, rejected grants, socket stat EINVAL and non-owner chmod failures independently."
     },
     {
-      "ticket": "CSH-090",
-      "path": "docs/tickets/CSH-090-filesystem-environment-residuals.md",
-      "title": "Supply remaining filesystem environments after recursive decision qualification",
+      "ticket": "CSH-091",
+      "path": "docs/tickets/CSH-091-filesystem-environment-residuals.md",
+      "title": "Supply remaining filesystem environments after pathname boundary qualification",
       "utilities": [
         "basename",
         "dirname",
@@ -79,7 +79,7 @@
         "U-040/ls-size-collation",
         "U-040/rm-depth-mount-prompt"
       ],
-      "prerequisite": "Supply each explicit remaining capability and oracle in tests/host_filesystem_residuals.json; preserve CSH-072/CSH-080/CSH-084/CSH-085/CSH-086/CSH-087/CSH-088/CSH-089 selected assertions, call-site fault boundaries and immutable evidence. Private graphs, numeric magic rules and subsecond timestamps do not supply privileged mounts, capacity, ACLs or whole utility contracts. CSH-088 measured ls metadata and exact find timestamps qualify only their authored inputs. CSH-089 adds bounded recursive negative and nested decisions with a pinned rm parent-prompt repair; arbitrary graphs and depth/mount/locale environments remain open."
+      "prerequisite": "Supply each explicit remaining capability and oracle in tests/host_filesystem_residuals.json; preserve CSH-072/CSH-080/CSH-084/CSH-085/CSH-086/CSH-087/CSH-088/CSH-089 selected assertions, call-site fault boundaries and immutable evidence. Private graphs, numeric magic rules and subsecond timestamps do not supply privileged mounts, capacity, ACLs or whole utility contracts. CSH-088 measured ls metadata and exact find timestamps qualify only their authored inputs. CSH-089 adds bounded recursive negative and nested decisions with a pinned rm parent-prompt repair; arbitrary graphs and depth/mount/locale environments remain open. CSH-090 supplies 32 total pathname byte assertions: the selected filesystem PATH_MAX and portable 256-byte limit, operand lengths limit-1, limit and limit+1 (the limit includes NUL), plus diagnostic continuation across two invalid operands and a valid missing operand. Independent pathconf and unnormalized stat probes distinguish kernel ENAMETOOLONG from the portable policy. Components are at most two bytes; no deep tree or filesystem exhaustion is exercised."
     },
     {
       "ticket": "CSH-073",
