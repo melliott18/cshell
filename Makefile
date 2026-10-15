@@ -700,3 +700,8 @@ test-host-filesystem-recursive: cshell host-profile
 .PHONY: test-host-filesystem-path-limits
 test-host-filesystem-path-limits: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --path-limits-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-path-limits.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-091: physical cwd resolution after private rename/removal.
+.PHONY: test-host-filesystem-cwd
+test-host-filesystem-cwd: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --cwd-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-cwd.json $(HOST_FILESYSTEM_FLAGS)

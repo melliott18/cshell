@@ -1,0 +1,54 @@
+[
+  {
+    "argv": [
+      "make",
+      "test-host-inventory",
+      "test-host-profile",
+      "test-host-filesystem-allocation",
+      "test-host-filesystem-provider-audit",
+      "test-host-filesystem-residual",
+      "test-host-filesystem-isolated",
+      "test-host-filesystem-interactive",
+      "test-host-filesystem-decisions",
+      "test-host-filesystem-metadata",
+      "test-host-filesystem-recursive",
+      "test-host-filesystem-path-limits",
+      "test-host-filesystem-cwd"
+    ],
+    "exit_status": 0,
+    "elapsed_seconds": 114.60060906410217,
+    "log": "linux-0.log"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-audit"
+    ],
+    "exit_status": 2,
+    "elapsed_seconds": 40.45876145362854,
+    "log": "linux-1.log"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "tests/host_filesystem.py",
+      "./cshell",
+      "--extended-only",
+      "--provider-audit",
+      "--record",
+      "build/tests/host-filesystem-stock-provider-audit.json"
+    ],
+    "exit_status": 1,
+    "elapsed_seconds": 1.2079565525054932,
+    "log": "linux-2.log"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-allocation"
+    ],
+    "exit_status": 0,
+    "log": "linux-allocation-final.log",
+    "reason": "Refresh allocation report after current owner title metadata synchronization; prior run also passed."
+  }
+]

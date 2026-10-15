@@ -21,12 +21,153 @@ import host_filesystem_decisions as decisions
 import host_filesystem_metadata as metadata
 import host_filesystem_recursive as recursive
 import host_filesystem_path_limits as path_limits
+import host_filesystem_cwd as cwd_cases
 from host_contract_inventory import utility_owner
 from host_filesystem import run_case, stdout_matches, stderr_matches
 from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, terminal_cases, effect_errors
 
 
 class FilesystemHarnessTests(unittest.TestCase):
+    def test_cwd_namespace_cases_and_immutable_spec(self):
+        for row in cwd_cases.cases():
+            original = copy.deepcopy(row)
+            with self.subTest(case=row['id']), tempfile.TemporaryDirectory() as root:
+                record = run_case(Path('/bin/sh'), {'pwd': {'path': '/bin/pwd'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'PASS', record)
+                self.assertTrue(record['cleanup'])
+                marker = record['cwd_environment']
+                self.assertEqual(marker['before'], marker['after'])
+                self.assertEqual(marker['old_path_errno'], errno.ENOENT)
+                self.assertEqual(row, original)
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_cwd_marker_and_output_status_effect_corruption(self):
+        from smoke import capture as real_capture
+        row = next(cwd_cases.cases())
+        for fault in ('missing', 'malformed', 'list', 'phase', 'provider', 'action',
+                      'before', 'after', 'old_path_errno', 'getcwd_errno', 'getcwd',
+                      'stdout', 'stderr', 'status', 'effect'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                marker = cwd / cwd_cases.MARKER
+                if fault == 'missing':
+                    marker.unlink()
+                elif fault == 'malformed':
+                    marker.write_text('{')
+                elif fault == 'list':
+                    marker.write_text('[]')
+                elif fault == 'effect':
+                    (cwd / 'cwd-renamed').rmdir()
+                elif fault in ('stdout', 'stderr'):
+                    output[fault] = b'corrupt\n'
+                elif fault == 'status':
+                    status = 1
+                else:
+                    data = json.loads(marker.read_text())
+                    data[fault] = 'corrupt'
+                    marker.write_text(json.dumps(data))
+                return status, output, errors
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'pwd': {'path': '/bin/pwd'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_cwd_setup_failure_does_not_dispatch(self):
+        real_mkdir = Path.mkdir
+        def partial_setup(path, *args, **kw):
+            if path.name == 'cwd-leaf':
+                path.parent.mkdir(exist_ok=True)
+                raise OSError('injected cwd setup failure')
+            return real_mkdir(path, *args, **kw)
+        with tempfile.TemporaryDirectory() as root, \
+                patch('pathlib.Path.mkdir', autospec=True, side_effect=partial_setup), \
+                patch('host_filesystem.smoke.capture') as capture:
+            record = run_case(Path('/bin/sh'), {'pwd': {'path': '/bin/pwd'}}, os.defpath,
+                              next(cwd_cases.cases()), 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            capture.assert_not_called()
+            self.assertTrue(record['cleanup'])
+
+    def test_cwd_exec_failure_cannot_satisfy_deleted_directory_error(self):
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            row = next(r for r in cwd_cases.cases() if r['cwd_action'] == 'delete-parent')
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                provider = Path(root) / 'pwd'
+                provider.write_text('#!/nonexistent-csh091-interpreter\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'pwd': {'path': str(provider)}},
+                                  os.defpath, row, mode, Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertEqual(record['cwd_environment']['phase'], 'exec-failure')
+                self.assertTrue(record['cleanup'])
+
+    def test_cwd_wrapper_wrong_probe_and_partial_mutation(self):
+        import subprocess
+        wrapper = str(Path(__file__).with_name('host_filesystem_cwd_exec.py'))
+        # Fault injection is confined to this helper regression subprocess. It
+        # never contributes provider evidence or changes the parent process cwd.
+        for fault in ('wrong-getcwd', 'getcwd-error', 'wrong-stat', 'remove-parent'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root:
+                (Path(root) / 'cwd-parent/cwd-leaf').mkdir(parents=True)
+                code = '''import os,runpy,sys
+from unittest.mock import patch
+wrapper,fault=sys.argv[1:]
+root=os.getcwd()
+real_stat=os.stat
+real_rmdir=os.rmdir
+real_getcwd=os.getcwd
+def stat(path,*a,**kw):
+ if path.endswith('/cwd-parent/cwd-leaf'): raise PermissionError(13,'injected')
+ return real_stat(path,*a,**kw)
+def rmdir(path,*a,**kw):
+ if path.endswith('/cwd-parent'): raise PermissionError(13,'injected')
+ return real_rmdir(path,*a,**kw)
+calls=0
+def getcwd():
+ global calls
+ calls+=1
+ if calls==1: return root
+ if fault=='wrong-getcwd': return root
+ raise PermissionError(13,'injected')
+sys.argv=[wrapper,'delete-parent','/bin/pwd','-P']
+target,value=('os.stat',stat) if fault=='wrong-stat' else ('os.rmdir',rmdir) if fault=='remove-parent' else ('os.getcwd',getcwd)
+with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__')
+'''
+                completed = subprocess.run([sys.executable, '-S', '-c', code, wrapper, fault],
+                                           cwd=root, capture_output=True, timeout=5)
+                self.assertEqual(completed.returncode, 125, completed.stderr)
+                marker = json.loads((Path(root) / cwd_cases.MARKER).read_text())
+                self.assertEqual(marker['phase'], 'setup-failure')
+
+    def test_cwd_timeout_reaps_provider_and_cleans_every_mode(self):
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            row = next(r for r in cwd_cases.cases() if r['cwd_action'] == 'delete-parent')
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                provider = root / 'pwd'
+                # /bin/sh can start in a deleted cwd on both supported hosts.
+                provider.write_text('#!/bin/sh\nprintf "%s\\n" "$$"\nexec /bin/sleep 60\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'pwd': {'path': str(provider)}},
+                                  os.defpath, row, mode, root, None, timeout=1)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                self.assertTrue(record['cleanup'])
+                pid = int(bytes.fromhex(record['actual']['stdout']['hex']))
+                deadline = time.monotonic() + 2
+                while True:
+                    try:
+                        os.kill(pid, 0)
+                    except ProcessLookupError:
+                        break
+                    self.assertLess(time.monotonic(), deadline, 'timed-out provider was not reaped')
+                    time.sleep(.02)
+                self.assertEqual(list(root.iterdir()), [provider])
+
     def test_path_limit_probe_keeps_spelling_and_counts_nul(self):
         for row in path_limits.cases():
             with self.subTest(case=row['id']), tempfile.TemporaryDirectory() as root:
@@ -636,7 +777,7 @@ class FilesystemHarnessTests(unittest.TestCase):
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -802,7 +943,7 @@ class FilesystemHarnessTests(unittest.TestCase):
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])
