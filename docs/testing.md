@@ -1456,3 +1456,16 @@ without pathlib normalization. Indeterminate or excessive limits (outside
 256-byte bound includes the terminating NUL, independently of the host limit.
 No tree-depth, quota, capacity or allocator qualification is claimed. Harness
 regressions require bounded setup/error/timeout cleanup.
+
+### Physical cwd namespace witnesses (CSH-091)
+
+`make test-host-filesystem-cwd` qualifies external `pwd -P` and `pwd -L -P`
+after private leaf/parent renames and removals, using direct exec and all three
+cshell input modes. A child-only helper checks cwd inode identity and getcwd
+resolution/ENOENT before exec; setup and exec failures cannot satisfy utility
+error assertions. Exact stdout, diagnostics, status, effects and cleanup are
+required. Six harness regressions cover corrupted markers/output/effects,
+partial setup, wrong probes, exec failures and bounded timeout cleanup.
+No mounts, host volume exhaustion, PWD edits or provider patches are involved.
+Permission, total path limits, logical-mode namespace changes and libc/stdio
+failures remain open under CSH-092.

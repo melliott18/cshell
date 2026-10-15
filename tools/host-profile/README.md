@@ -340,3 +340,16 @@ CSH-090 adds `make test-host-filesystem-path-limits`: 32 assertions for measured
 total pathname bytes and portable limits, including per-operand diagnostics.
 The full profile includes them; selected provider sources and flags are unchanged.
 See [CSH-090 evidence](../../docs/evidence/csh-090/README.md).
+
+### Physical cwd namespace witnesses (CSH-091)
+
+`make test-host-filesystem-cwd` qualifies external `pwd -P` and `pwd -L -P`
+after private leaf/parent renames and removals, using direct exec and all three
+cshell input modes. A child-only helper checks cwd inode identity and getcwd
+resolution/ENOENT before exec; setup and exec failures cannot satisfy utility
+error assertions. Exact stdout, diagnostics, status, effects and cleanup are
+required. Six harness regressions cover corrupted markers/output/effects,
+partial setup, wrong probes, exec failures and bounded timeout cleanup.
+No mounts, host volume exhaustion, PWD edits or provider patches are involved.
+Permission, total path limits, logical-mode namespace changes and libc/stdio
+failures remain open under CSH-092.

@@ -87,6 +87,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-089](CSH-089-filesystem-environment-residuals.md) | Supply remaining filesystem environments after metadata qualification | [CSH-088](CSH-088-filesystem-remaining-environments.md) | [#189](https://github.com/melliott18/cshell/issues/189) |
 | [CSH-090](CSH-090-filesystem-environment-residuals.md) | Supply remaining filesystem environments after recursive decision qualification | [CSH-089](CSH-089-filesystem-environment-residuals.md) | [#191](https://github.com/melliott18/cshell/issues/191) |
 | [CSH-091](CSH-091-filesystem-environment-residuals.md) | Supply remaining filesystem environments after pathname boundary qualification | [CSH-090](CSH-090-filesystem-environment-residuals.md) | [#193](https://github.com/melliott18/cshell/issues/193) |
+| [CSH-092](CSH-092-filesystem-environment-residuals.md) | Supply remaining filesystem environments after physical cwd qualification | [CSH-091](CSH-091-filesystem-environment-residuals.md) | [#195](https://github.com/melliott18/cshell/issues/195) |
 
 ## Child implementation tickets
 

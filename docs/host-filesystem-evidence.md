@@ -2,7 +2,7 @@
 
 CSH-072 adds a **bounded selected profile** for 21 exec-accessible utilities.
 It does not qualify complete utility pages, U-034/U-040 as a whole, or a complete
-POSIX system. [CSH-091](tickets/CSH-091-filesystem-environment-residuals.md) owns each
+POSIX system. [CSH-092](tickets/CSH-092-filesystem-environment-residuals.md) owns each
 remaining contract and the four original retained conditions. Implementation
 ownership stays with the selected utility/libc/platform vendor.
 
@@ -246,7 +246,7 @@ build. C-locale builds disable NLS, ACL and SELinux; those contracts stay open.
 Run `make test-host-filesystem-interactive` for the focused subset; the full
 `make test-host-profile` requires it automatically with zero allowances.
 
-CSH-091 owns every unsupplied environment and the four immutable original
+CSH-092 owns every unsupplied environment and the four immutable original
 conditions. These bounded terminal decisions do not qualify a whole utility,
 recursive/multiple-operand interaction, other locales, ACL/privileged ownership,
 cross-device behavior, real filesystem exhaustion or libc-internal faults.
@@ -270,7 +270,7 @@ oracles. Full stderr, stdout, status, setup, capture failures and cleanup remain
 separate in each record. Provider selection/builds are unchanged; stock Apple
 cp adds twelve decline-status failures while the selected repaired cp passes.
 
-[CSH-091](tickets/CSH-091-filesystem-environment-residuals.md) retains every
+[CSH-092](tickets/CSH-092-filesystem-environment-residuals.md) retains every
 unsupplied environment and all four original conditions. These witnesses do
 not qualify arbitrary recursive graphs, negative recursive-child responses,
 non-C prompts, cross-device fallback, mounts, depth exhaustion, ACLs, quotas,
@@ -288,7 +288,7 @@ comparisons before, equal to and after the reference, including -H/-L reference
 symlinks. Setup and cleanup failures are failures, never profile allowances.
 
 [CSH-088 evidence](evidence/csh-088/README.md) records both platforms and
-separate stock failures. [CSH-091](tickets/CSH-091-filesystem-environment-residuals.md)
+separate stock failures. [CSH-092](tickets/CSH-092-filesystem-environment-residuals.md)
 owns each remaining environment and all four original conditions. Whole
 utility contracts, non-C collation, live-clock age boundaries, mount/depth
 limits, ACLs, capacity exhaustion and libc-internal faults remain unqualified.
@@ -312,7 +312,7 @@ behavior remains unchanged. Original stock failures remain separate failures;
 no output or status is translated and no selected allowance is added.
 
 [CSH-089 evidence](evidence/csh-089/README.md) records native and Linux results.
-[CSH-091](tickets/CSH-091-filesystem-environment-residuals.md) owns every remaining
+[CSH-092](tickets/CSH-092-filesystem-environment-residuals.md) owns every remaining
 utility environment and all four retained conditions. These cases do not
 qualify arbitrary branching, depth/path exhaustion, mounts, races, non-C prompts,
 ACLs, quotas, real filesystem exhaustion, libc-internal faults or whole utilities.
@@ -331,5 +331,22 @@ exercised.
 The full selected profile requires these assertions without allowances. No selected
 provider or build configuration changes. All other individual environments and the four
 original retained conditions remain open under
-[CSH-091](tickets/CSH-091-filesystem-environment-residuals.md). See [CSH-090
+[CSH-092](tickets/CSH-092-filesystem-environment-residuals.md). See [CSH-090
 evidence](evidence/csh-090/README.md) for native/Linux results.
+
+## CSH-091 physical working-directory changes
+
+`make test-host-filesystem-cwd` adds eight cases / 32 strict U-034/U-040
+assertions. A child-only helper enters an owned directory and renames it or its
+parent, or removes it alone or together with its parent. Pre-exec device/inode,
+old-path ENOENT, and getcwd probes establish the environment independently of pwd.
+Exact renamed paths, empty error stdout, diagnostics, status, effects and cleanup
+are mandatory in direct exec and all three cshell input modes. These exercise the
+external provider; they do not qualify the pwd builtin. Both option forms end in
+-P; no PWD assignment or logical-mode namespace behavior is claimed.
+
+The section map and residual ledger retain each other environment and all four
+original conditions under [CSH-092](tickets/CSH-092-filesystem-environment-residuals.md).
+No provider source or selected-profile allowance changes. See
+[CSH-091 evidence](evidence/csh-091/README.md) for native/Linux results, provenance,
+harness failure checks and separate stock audits.
