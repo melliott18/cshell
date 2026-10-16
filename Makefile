@@ -705,3 +705,8 @@ test-host-filesystem-path-limits: cshell host-profile
 .PHONY: test-host-filesystem-cwd
 test-host-filesystem-cwd: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --cwd-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-cwd.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-092: child-only umask and final symbolic creation-mode witnesses.
+.PHONY: test-host-filesystem-creation
+test-host-filesystem-creation: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --creation-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-creation.json $(HOST_FILESYSTEM_FLAGS)

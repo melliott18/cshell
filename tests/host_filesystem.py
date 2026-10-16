@@ -30,6 +30,7 @@ import host_filesystem_metadata as metadata
 import host_filesystem_recursive as recursive
 import host_filesystem_path_limits as path_limits
 import host_filesystem_cwd as cwd_cases
+import host_filesystem_creation as creation
 from host_platform import filesystem_identity
 from host_utilities import inventory, match, sanitizer_diagnostic, serial, sha, source_identity
 
@@ -115,8 +116,9 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
             raise OSError('UTF-8 locale required for deep character oracle')
         cwd = setup(directory, row)
         residual.setup(directory, row)
+        creation.setup(directory, row)
         cwd_cases.setup(directory, row)
-        if row.get('cwd_action'):
+        if row.get('cwd_action') or 'creation_mask' in row:
             record['expected'] = serial(row)
         environment = isolated.setup(directory, row)
         if environment is not None:
@@ -145,6 +147,10 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
         if row.get('cwd_action'):
             argv = [sys.executable, '-S', str(Path(__file__).with_name('host_filesystem_cwd_exec.py')),
                     row['cwd_action'], *direct]
+            direct = argv
+        if 'creation_mask' in row:
+            argv = [sys.executable, '-S', str(Path(__file__).with_name('host_filesystem_creation_exec.py')),
+                    format(row['creation_mask'], '03o'), *direct]
             direct = argv
         if row.get('overwrite_prompt'):
             argv = [sys.executable, '-S', str(Path(__file__).with_name('host_filesystem_prompt_exec.py')), *direct]
@@ -226,6 +232,13 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
                 errors.extend(cwd_errors)
             except (OSError, ValueError, TypeError) as error:
                 errors.append('missing/invalid cwd marker: ' + str(error))
+        if 'creation_mask' in row:
+            try:
+                marker, creation_errors = creation.verify(directory, row, provider)
+                record['creation_environment'] = marker
+                errors.extend(creation_errors)
+            except (OSError, ValueError, TypeError) as error:
+                errors.append('missing/invalid creation marker: ' + str(error))
         residual.restore(directory, row)
         errors.extend(isolated.verify(directory, environment))
         metadata_errors, metadata_observed = metadata.verify(directory, metadata_environment)
@@ -254,6 +267,7 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
     finally:
         try:
             residual.restore(directory, row)
+            creation.restore(directory, row)
             shutil.rmtree(directory)
             record['cleanup'] = not directory.exists()
         except OSError as error:
@@ -270,6 +284,7 @@ def main():
     parser.add_argument('--audit', action='store_true')
     parser.add_argument('--sanitizer', action='store_true')
     parser.add_argument('--provider-audit', action='store_true', help='Require cycle/archive/fault provider contracts; all are mandatory in the selected profile')
+    parser.add_argument('--creation-only', action='store_true', help='Select CSH-092 creation masks and symbolic modes')
     parser.add_argument('--cwd-only', action='store_true', help='Select CSH-091 renamed/deleted physical working directories')
     parser.add_argument('--path-limits-only', action='store_true', help='Select CSH-090 measured total pathname byte boundaries')
     parser.add_argument('--recursive-only', action='store_true', help='Select CSH-089 declined-child and nested recursive decisions')
@@ -294,7 +309,9 @@ def main():
             pass
     locale.setlocale(locale.LC_CTYPE, previous)
     rows = [row for row in extended_cases() if args.provider_audit or not row.get('provider_audit')]
-    if args.cwd_only:
+    if args.creation_only:
+        rows = list(creation.cases())
+    elif args.cwd_only:
         rows = list(cwd_cases.cases())
     elif args.path_limits_only:
         rows = list(path_limits.cases())
@@ -313,7 +330,7 @@ def main():
     elif args.remaining_only:
         rows = list(remaining_cases())
     elif not args.extended_only:
-        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows + list(remaining_cases()) + list(residual.cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases())
+        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows + list(remaining_cases()) + list(residual.cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases())
     records = []
     for row in rows:
         for mode in row.get('modes', ('direct', 'string', 'file', 'stdin')):
@@ -323,8 +340,8 @@ def main():
             if record['verdict'] != 'PASS':
                 print(json.dumps(record), flush=True)
     totals = {key: sum(r['verdict'] == key for r in records) for key in ('PASS', 'FAIL')}
-    result = dict(ticket='CSH-091', predecessor='CSH-090', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
-                  full_contracts_qualified=False, selection='cwd' if args.cwd_only else 'path-limits' if args.path_limits_only else 'recursive' if args.recursive_only else 'metadata' if args.metadata_only else 'decisions' if args.decisions_only else 'interactive' if args.interactive_only else 'isolated' if args.isolated_only else 'residual' if args.residual_only else 'remaining' if args.remaining_only else 'extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
+    result = dict(ticket='CSH-092', predecessor='CSH-091', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
+                  full_contracts_qualified=False, selection='creation' if args.creation_only else 'cwd' if args.cwd_only else 'path-limits' if args.path_limits_only else 'recursive' if args.recursive_only else 'metadata' if args.metadata_only else 'decisions' if args.decisions_only else 'interactive' if args.interactive_only else 'isolated' if args.isolated_only else 'residual' if args.residual_only else 'remaining' if args.remaining_only else 'extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
                   unavailable_capabilities=[] if platform.system() == 'Linux' else ['Linux virtual-device ENOSPC'],
                   path=args.path, providers=providers, platform=platform.platform(),
                   libc=platform.libc_ver(), utf8_locale=utf8, uid=os.getuid(), gid=os.getgid(), groups=os.getgroups(),

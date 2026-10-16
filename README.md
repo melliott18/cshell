@@ -66,6 +66,7 @@ make test-host-filesystem-isolated # Private allocation graphs, numeric magic an
 make test-host-filesystem-recursive # Declined children and nested rm decisions
 make test-host-filesystem-metadata # Measured metadata and exact timestamp checks
 make test-host-filesystem-path-limits # Measured total pathname byte boundaries
+make test-host-filesystem-creation # Child masks and final directory/FIFO modes
 make test-host-profile   # Opt-in qualified utilities, strict gaps and boundaries
 make test-evaluation # Evaluation, lookup, aliases, and remaining utilities
 make test-builtins # Replacement state builtins and executor integration
