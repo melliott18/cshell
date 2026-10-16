@@ -253,3 +253,21 @@ provider or build configuration changes. All other individual environments and t
 original retained conditions remain open under
 [CSH-091](tickets/CSH-091-filesystem-environment-residuals.md). See [CSH-090
 evidence](evidence/csh-090/README.md) for native/Linux results.
+
+## CSH-092 creation masks and final permissions
+
+`make test-host-filesystem-creation` adds 26 cases / 104 strict U-034/U-040
+assertions through direct exec and cshell string, file and stdin modes. A child
+helper sets masks 027, 077 or 777, reads back the mask, and independently creates
+a directory and FIFO to prove its effect before execing the inventoried provider.
+The oracle checks final object types and modes, preserved existing data and parent
+identity, output channels, status, and cleanup. Symbolic removal, sequential copies,
+conditional execute, existing-middle continuation and two-level mkdir parents
+are bounded witnesses. Six harness regressions check corrupted evidence, partial
+setup, failed exec, wrong probes and timeout cleanup.
+
+See [CSH-092 evidence](evidence/csh-092/README.md) for native/Linux results and
+provider provenance. [CSH-093](tickets/CSH-093-filesystem-environment-residuals.md)
+retains each unsupplied contract and all four original conditions. Final-state
+checks do not observe transient permissions, qualify every symbolic mode, ACL
+inheritance, privilege, arbitrary graphs, capacity or whole utilities.

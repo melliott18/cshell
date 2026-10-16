@@ -1,0 +1,9 @@
+{
+  "Id": "sha256:31fffd295f95c02478c1909389847cd309469f09efdf360258bf37794b49281b",
+  "RepoTags": [
+    "cshell-test:csh-091"
+  ],
+  "Created": "2026-10-15T19:27:49.340035129Z",
+  "Architecture": "arm64",
+  "Os": "linux"
+}

@@ -1469,3 +1469,13 @@ partial setup, wrong probes, exec failures and bounded timeout cleanup.
 No mounts, host volume exhaustion, PWD edits or provider patches are involved.
 Permission, total path limits, logical-mode namespace changes and libc/stdio
 failures remain open under CSH-092.
+
+## Creation mask and final mode evidence (CSH-092)
+
+Run `make test-host-filesystem-creation` as an unprivileged identity. The 26
+cases / 104 assertions use private directory/FIFO probes to establish child masks
+027, 077 and 777, then exec the actual mkdir/mkfifo provider. All four input modes
+check final modes, types, channels, statuses and effects. Restrictive directories
+are restored top-down after assertions and on failure/timeout before cleanup.
+`make test-host-inventory` also checks helper, marker and cleanup regressions.
+See [the evidence record](evidence/csh-092/README.md) for limits and provenance.

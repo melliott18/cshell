@@ -1,17 +1,17 @@
 {
   "schema_version": 1,
-  "ticket": "CSH-091",
+  "ticket": "CSH-092",
   "qualification": "case-scoped only; selected profile requires both ordinary and provider-audit assertions; stock failures remain failures",
   "common_defaults": {
-    "U-034": "Each of the 21 actual providers is inventoried and directly execed, alongside public cshell string/file/stdin dispatch; pwd builtin and external exec remain distinct. CSH-087 terminal sequences use direct exec and cshell string/file modes; two directory replacement cases also use stdin mode. CSH-088 metadata cases use direct exec and all three shell input modes. CSH-089 recursive decisions use direct exec and cshell string/file modes on owned PTYs. CSH-090 path-limit witnesses use direct exec and all three shell input modes. CSH-091 uses a child-only setup helper to exec the external pwd in direct and cshell string/file/stdin modes; these do not test the pwd builtin.",
-    "U-040": "Controlled PATH, LC_ALL, TZ, umask and resource limits; independent effects and positive-error predicates. Common signal, locale, utility-syntax and environmental defaults outside the listed assertions remain individually open under each utility owner. CSH-090 supplies 32 total pathname byte assertions: the selected filesystem PATH_MAX and portable 256-byte limit, operand lengths limit-1, limit and limit+1 (the limit includes NUL), plus diagnostic continuation across two invalid operands and a valid missing operand. Independent pathconf and unnormalized stat probes distinguish kernel ENAMETOOLONG from the portable policy. Components are at most two bytes; no deep tree or filesystem exhaustion is exercised. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed."
+    "U-034": "Each of the 21 actual providers is inventoried and directly execed, alongside public cshell string/file/stdin dispatch; pwd builtin and external exec remain distinct. CSH-087 terminal sequences use direct exec and cshell string/file modes; two directory replacement cases also use stdin mode. CSH-088 metadata cases use direct exec and all three shell input modes. CSH-089 recursive decisions use direct exec and cshell string/file modes on owned PTYs. CSH-090 path-limit witnesses use direct exec and all three shell input modes. CSH-091 uses a child-only setup helper to exec the external pwd in direct and cshell string/file/stdin modes; these do not test the pwd builtin. CSH-092 execs the exact inventoried mkdir/mkfifo provider after a child-only umask helper, in direct and all three cshell modes.",
+    "U-040": "Controlled PATH, LC_ALL, TZ, umask and resource limits; independent effects and positive-error predicates. Common signal, locale, utility-syntax and environmental defaults outside the listed assertions remain individually open under each utility owner. CSH-090 supplies 32 total pathname byte assertions: the selected filesystem PATH_MAX and portable 256-byte limit, operand lengths limit-1, limit and limit+1 (the limit includes NUL), plus diagnostic continuation across two invalid operands and a valid missing operand. Independent pathconf and unnormalized stat probes distinguish kernel ENAMETOOLONG from the portable policy. Components are at most two bytes; no deep tree or filesystem exhaustion is exercised. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified."
   },
   "utilities": [
     {
       "utility": "basename",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/basename.html",
       "source_sha256": "76c256427a758fc4388559e7a71fcc9351ed0cfb19afc5af07d38c4cf25c8ab2",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "basename/path-6-620a",
@@ -170,7 +170,7 @@
           "basename/residual-closed-output",
           "basename/residual-broken-pipe"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -181,7 +181,7 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": []
     },
@@ -189,7 +189,7 @@
       "utility": "dirname",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html",
       "source_sha256": "f218ded1508843cdd90913db7cd56ee938d43f67050d6f0645d88cbf916ec6c4",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "dirname/0",
@@ -372,7 +372,7 @@
           "dirname/residual-closed-output",
           "dirname/residual-broken-pipe"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -383,7 +383,7 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": []
     },
@@ -391,7 +391,7 @@
       "utility": "cp",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html",
       "source_sha256": "777d1c06255117e8ea9d8c5ede3996ef77b7c5ddecd1cbf9e584deef239a5836",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "cp/bytes",
@@ -732,7 +732,7 @@
           "cp/residual-read-denied",
           "cp/residual-write-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -761,7 +761,7 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": []
     },
@@ -769,7 +769,7 @@
       "utility": "dd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dd.html",
       "source_sha256": "876cebeba49456b8e22b53057bc861120f092c36522193823685cea8b821e249",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "dd/copy",
@@ -975,7 +975,7 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -986,7 +986,7 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": []
     },
@@ -994,7 +994,7 @@
       "utility": "df",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html",
       "source_sha256": "afbeec1b5e25c2ebf0de45fcffdcff03cf9f3bf4aa6960fc09b426cfc1a45a11",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "df/portable-k",
@@ -1072,7 +1072,7 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -1083,7 +1083,7 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": []
     },
@@ -1091,7 +1091,7 @@
       "utility": "du",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html",
       "source_sha256": "659c1410d265ef1d4056a784611c6af0df45495f99ff9abfbdbc3c9eb516c100",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "du/file-k",
@@ -1221,7 +1221,7 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [
@@ -1240,7 +1240,7 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": []
     },
@@ -1248,7 +1248,7 @@
       "utility": "file",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html",
       "source_sha256": "c2e7590cab2534dbf4a0b3fbd8cc77312990c495c6a448243ca63c14074067bb",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "file/empty",
@@ -1507,7 +1507,7 @@
           "file/residual-magic-offset",
           "file/residual-magic-escaped"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [
@@ -1535,7 +1535,7 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": []
     },
@@ -1543,7 +1543,7 @@
       "utility": "find",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html",
       "source_sha256": "6293363b063c9de0bc4d190b62a09d3cd03906a1fa40d3ddc52ecd6a09a62502",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "find/regular",
@@ -1798,7 +1798,7 @@
         "passing_scope": [
           "find/residual-operand-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -1815,7 +1815,7 @@
       ],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": []
     },
@@ -1823,7 +1823,7 @@
       "utility": "ln",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html",
       "source_sha256": "c4e793bb510483faef398e4c16fb7adc2d60b99c712ea7e6b5f2751a4c6c453c",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "ln/hard",
@@ -1967,7 +1967,7 @@
         "passing_scope": [
           "ln/residual-create-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -1978,7 +1978,7 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": []
     },
@@ -1986,7 +1986,7 @@
       "utility": "ls",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
       "source_sha256": "cd4db85f09dbadf3d529b1bf6a8c157806759c5a22d3ca616aad0cc0363f07bc",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "ls/512-c-order",
@@ -2236,7 +2236,7 @@
         "passing_scope": [
           "ls/residual-operand-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -2259,7 +2259,7 @@
       ],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": []
     },
@@ -2267,7 +2267,7 @@
       "utility": "mkdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html",
       "source_sha256": "7d37d11b3829422919fbc928cf3e4e0e2c9ba3d0eaba2e2e36362e80f4086576",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "mkdir/parents",
@@ -2279,9 +2279,24 @@
         "mkdir/remaining-parent-final-mode",
         "mkdir/remaining-parent-file-continue",
         "mkdir/remaining-existing-mode-preserved",
-        "mkdir/residual-parent-denied"
+        "mkdir/residual-parent-denied",
+        "mkdir/creation-027-default",
+        "mkdir/creation-027-remove-write",
+        "mkdir/creation-027-copy-sequence",
+        "mkdir/creation-027-conditional-execute",
+        "mkdir/creation-027-copy-execute-clear",
+        "mkdir/creation-077-default",
+        "mkdir/creation-077-remove-write",
+        "mkdir/creation-077-copy-sequence",
+        "mkdir/creation-077-conditional-execute",
+        "mkdir/creation-077-copy-execute-clear",
+        "mkdir/creation-existing-middle-continue",
+        "mkdir/creation-parents-027-default",
+        "mkdir/creation-parents-027-explicit",
+        "mkdir/creation-parents-777-default",
+        "mkdir/creation-parents-777-explicit"
       ],
-      "remaining": "Further symbolic modes/parents, total path limits, ACL inheritance, access denial and capacity exhaustion remain unqualified. CSH-080 adds final -m versus parent umask, existing mode preservation and continuation after an ENOTDIR prefix. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+      "remaining": "Further symbolic-mode and parent graphs, omitted-who and special-bit modes, transient creation permissions, total path limits, ACL inheritance, other permission/credential errors and capacity exhaustion remain unqualified. CSH-080/084 witnesses remain bounded. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -2307,7 +2322,7 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Further symbolic modes/parents, total path limits, ACL inheritance, access denial and capacity exhaustion remain unqualified. CSH-080 adds final -m versus parent umask, existing mode preservation and continuation after an ENOTDIR prefix. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+          "disposition": "Further symbolic-mode and parent graphs, omitted-who and special-bit modes, transient creation permissions, total path limits, ACL inheritance, other permission/credential errors and capacity exhaustion remain unqualified. CSH-080/084 witnesses remain bounded. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
           "csh080_assertions": [
             "mkdir/remaining-parent-final-mode",
             "mkdir/remaining-parent-file-continue",
@@ -2315,22 +2330,73 @@
           ],
           "csh084_assertions": [
             "mkdir/residual-parent-denied"
+          ],
+          "csh092_assertions": [
+            "mkdir/creation-027-default",
+            "mkdir/creation-027-remove-write",
+            "mkdir/creation-027-copy-sequence",
+            "mkdir/creation-027-conditional-execute",
+            "mkdir/creation-027-copy-execute-clear",
+            "mkdir/creation-077-default",
+            "mkdir/creation-077-remove-write",
+            "mkdir/creation-077-copy-sequence",
+            "mkdir/creation-077-conditional-execute",
+            "mkdir/creation-077-copy-execute-clear",
+            "mkdir/creation-existing-middle-continue",
+            "mkdir/creation-parents-027-default",
+            "mkdir/creation-parents-027-explicit",
+            "mkdir/creation-parents-777-default",
+            "mkdir/creation-parents-777-explicit"
           ]
         },
         "OPTIONS": {
-          "disposition": "Further symbolic modes/parents, total path limits, ACL inheritance, access denial and capacity exhaustion remain unqualified. CSH-080 adds final -m versus parent umask, existing mode preservation and continuation after an ENOTDIR prefix. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+          "disposition": "Further symbolic-mode and parent graphs, omitted-who and special-bit modes, transient creation permissions, total path limits, ACL inheritance, other permission/credential errors and capacity exhaustion remain unqualified. CSH-080/084 witnesses remain bounded. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
           "csh080_assertions": [
             "mkdir/remaining-parent-final-mode",
             "mkdir/remaining-parent-file-continue",
             "mkdir/remaining-existing-mode-preserved"
+          ],
+          "csh092_assertions": [
+            "mkdir/creation-027-default",
+            "mkdir/creation-027-remove-write",
+            "mkdir/creation-027-copy-sequence",
+            "mkdir/creation-027-conditional-execute",
+            "mkdir/creation-027-copy-execute-clear",
+            "mkdir/creation-077-default",
+            "mkdir/creation-077-remove-write",
+            "mkdir/creation-077-copy-sequence",
+            "mkdir/creation-077-conditional-execute",
+            "mkdir/creation-077-copy-execute-clear",
+            "mkdir/creation-existing-middle-continue",
+            "mkdir/creation-parents-027-default",
+            "mkdir/creation-parents-027-explicit",
+            "mkdir/creation-parents-777-default",
+            "mkdir/creation-parents-777-explicit"
           ]
         },
         "OPERANDS": {
-          "disposition": "Further symbolic modes/parents, total path limits, ACL inheritance, access denial and capacity exhaustion remain unqualified. CSH-080 adds final -m versus parent umask, existing mode preservation and continuation after an ENOTDIR prefix. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+          "disposition": "Further symbolic-mode and parent graphs, omitted-who and special-bit modes, transient creation permissions, total path limits, ACL inheritance, other permission/credential errors and capacity exhaustion remain unqualified. CSH-080/084 witnesses remain bounded. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
           "csh080_assertions": [
             "mkdir/remaining-parent-final-mode",
             "mkdir/remaining-parent-file-continue",
             "mkdir/remaining-existing-mode-preserved"
+          ],
+          "csh092_assertions": [
+            "mkdir/creation-027-default",
+            "mkdir/creation-027-remove-write",
+            "mkdir/creation-027-copy-sequence",
+            "mkdir/creation-027-conditional-execute",
+            "mkdir/creation-027-copy-execute-clear",
+            "mkdir/creation-077-default",
+            "mkdir/creation-077-remove-write",
+            "mkdir/creation-077-copy-sequence",
+            "mkdir/creation-077-conditional-execute",
+            "mkdir/creation-077-copy-execute-clear",
+            "mkdir/creation-existing-middle-continue",
+            "mkdir/creation-parents-027-default",
+            "mkdir/creation-parents-027-explicit",
+            "mkdir/creation-parents-777-default",
+            "mkdir/creation-parents-777-explicit"
           ]
         },
         "STDIN": {
@@ -2346,7 +2412,7 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
           "csh080_assertions": [
             "mkdir/remaining-parent-final-mode",
             "mkdir/remaining-parent-file-continue",
@@ -2354,10 +2420,27 @@
           ],
           "csh084_assertions": [
             "mkdir/residual-parent-denied"
+          ],
+          "csh092_assertions": [
+            "mkdir/creation-027-default",
+            "mkdir/creation-027-remove-write",
+            "mkdir/creation-027-copy-sequence",
+            "mkdir/creation-027-conditional-execute",
+            "mkdir/creation-027-copy-execute-clear",
+            "mkdir/creation-077-default",
+            "mkdir/creation-077-remove-write",
+            "mkdir/creation-077-copy-sequence",
+            "mkdir/creation-077-conditional-execute",
+            "mkdir/creation-077-copy-execute-clear",
+            "mkdir/creation-existing-middle-continue",
+            "mkdir/creation-parents-027-default",
+            "mkdir/creation-parents-027-explicit",
+            "mkdir/creation-parents-777-default",
+            "mkdir/creation-parents-777-explicit"
           ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
           "csh080_assertions": [
             "mkdir/remaining-parent-final-mode",
             "mkdir/remaining-parent-file-continue",
@@ -2365,16 +2448,50 @@
           ],
           "csh084_assertions": [
             "mkdir/residual-parent-denied"
+          ],
+          "csh092_assertions": [
+            "mkdir/creation-027-default",
+            "mkdir/creation-027-remove-write",
+            "mkdir/creation-027-copy-sequence",
+            "mkdir/creation-027-conditional-execute",
+            "mkdir/creation-027-copy-execute-clear",
+            "mkdir/creation-077-default",
+            "mkdir/creation-077-remove-write",
+            "mkdir/creation-077-copy-sequence",
+            "mkdir/creation-077-conditional-execute",
+            "mkdir/creation-077-copy-execute-clear",
+            "mkdir/creation-existing-middle-continue",
+            "mkdir/creation-parents-027-default",
+            "mkdir/creation-parents-027-explicit",
+            "mkdir/creation-parents-777-default",
+            "mkdir/creation-parents-777-explicit"
           ]
         },
         "OUTPUT FILES": {
-          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
+          "csh092_assertions": [
+            "mkdir/creation-027-default",
+            "mkdir/creation-027-remove-write",
+            "mkdir/creation-027-copy-sequence",
+            "mkdir/creation-027-conditional-execute",
+            "mkdir/creation-027-copy-execute-clear",
+            "mkdir/creation-077-default",
+            "mkdir/creation-077-remove-write",
+            "mkdir/creation-077-copy-sequence",
+            "mkdir/creation-077-conditional-execute",
+            "mkdir/creation-077-copy-execute-clear",
+            "mkdir/creation-existing-middle-continue",
+            "mkdir/creation-parents-027-default",
+            "mkdir/creation-parents-027-explicit",
+            "mkdir/creation-parents-777-default",
+            "mkdir/creation-parents-777-explicit"
+          ]
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Further symbolic modes/parents, total path limits, ACL inheritance, access denial and capacity exhaustion remain unqualified. CSH-080 adds final -m versus parent umask, existing mode preservation and continuation after an ENOTDIR prefix. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open."
+          "disposition": "Further symbolic-mode and parent graphs, omitted-who and special-bit modes, transient creation permissions, total path limits, ACL inheritance, other permission/credential errors and capacity exhaustion remain unqualified. CSH-080/084 witnesses remain bounded. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
           "csh080_assertions": [
             "mkdir/remaining-parent-final-mode",
             "mkdir/remaining-parent-file-continue",
@@ -2382,10 +2499,27 @@
           ],
           "csh084_assertions": [
             "mkdir/residual-parent-denied"
+          ],
+          "csh092_assertions": [
+            "mkdir/creation-027-default",
+            "mkdir/creation-027-remove-write",
+            "mkdir/creation-027-copy-sequence",
+            "mkdir/creation-027-conditional-execute",
+            "mkdir/creation-027-copy-execute-clear",
+            "mkdir/creation-077-default",
+            "mkdir/creation-077-remove-write",
+            "mkdir/creation-077-copy-sequence",
+            "mkdir/creation-077-conditional-execute",
+            "mkdir/creation-077-copy-execute-clear",
+            "mkdir/creation-existing-middle-continue",
+            "mkdir/creation-parents-027-default",
+            "mkdir/creation-parents-027-explicit",
+            "mkdir/creation-parents-777-default",
+            "mkdir/creation-parents-777-explicit"
           ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
           "csh080_assertions": [
             "mkdir/remaining-parent-final-mode",
             "mkdir/remaining-parent-file-continue",
@@ -2393,6 +2527,23 @@
           ],
           "csh084_assertions": [
             "mkdir/residual-parent-denied"
+          ],
+          "csh092_assertions": [
+            "mkdir/creation-027-default",
+            "mkdir/creation-027-remove-write",
+            "mkdir/creation-027-copy-sequence",
+            "mkdir/creation-027-conditional-execute",
+            "mkdir/creation-027-copy-execute-clear",
+            "mkdir/creation-077-default",
+            "mkdir/creation-077-remove-write",
+            "mkdir/creation-077-copy-sequence",
+            "mkdir/creation-077-conditional-execute",
+            "mkdir/creation-077-copy-execute-clear",
+            "mkdir/creation-existing-middle-continue",
+            "mkdir/creation-parents-027-default",
+            "mkdir/creation-parents-027-explicit",
+            "mkdir/creation-parents-777-default",
+            "mkdir/creation-parents-777-explicit"
           ]
         }
       },
@@ -2421,7 +2572,7 @@
         "passing_scope": [
           "mkdir/residual-parent-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -2432,15 +2583,32 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
-      "csh090_assertions": []
+      "csh090_assertions": [],
+      "csh092_assertions": [
+        "mkdir/creation-027-default",
+        "mkdir/creation-027-remove-write",
+        "mkdir/creation-027-copy-sequence",
+        "mkdir/creation-027-conditional-execute",
+        "mkdir/creation-027-copy-execute-clear",
+        "mkdir/creation-077-default",
+        "mkdir/creation-077-remove-write",
+        "mkdir/creation-077-copy-sequence",
+        "mkdir/creation-077-conditional-execute",
+        "mkdir/creation-077-copy-execute-clear",
+        "mkdir/creation-existing-middle-continue",
+        "mkdir/creation-parents-027-default",
+        "mkdir/creation-parents-027-explicit",
+        "mkdir/creation-parents-777-default",
+        "mkdir/creation-parents-777-explicit"
+      ]
     },
     {
       "utility": "mkfifo",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html",
       "source_sha256": "508f579e25f7ac32d94c2f57aef1a12448e4984fc60d467120cb2bb66157c3ed",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "mkfifo/mode",
@@ -2448,9 +2616,20 @@
         "mkfifo/symbolic-mode",
         "mkfifo/remaining-existing-continue",
         "mkfifo/remaining-symbolic-sequence",
-        "mkfifo/residual-parent-denied"
+        "mkfifo/residual-parent-denied",
+        "mkfifo/creation-027-default",
+        "mkfifo/creation-027-remove-write",
+        "mkfifo/creation-027-copy-sequence",
+        "mkfifo/creation-027-conditional-execute",
+        "mkfifo/creation-027-copy-execute-clear",
+        "mkfifo/creation-077-default",
+        "mkfifo/creation-077-remove-write",
+        "mkfifo/creation-077-copy-sequence",
+        "mkfifo/creation-077-conditional-execute",
+        "mkfifo/creation-077-copy-execute-clear",
+        "mkfifo/creation-existing-middle-continue"
       ],
-      "remaining": "Additional symbolic/ACL behavior and capacity exhaustion remain unqualified. CSH-080 adds sequential symbolic copy/removal and existing-node error continuation; FIFO transfer remains outside creation. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+      "remaining": "Further symbolic-mode combinations, omitted-who and special-bit modes, transient creation permissions, ACL inheritance, other permission/credential errors and capacity exhaustion remain unqualified. FIFO data transfer remains outside creation. CSH-080/084 witnesses remain bounded. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -2476,27 +2655,66 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Additional symbolic/ACL behavior and capacity exhaustion remain unqualified. CSH-080 adds sequential symbolic copy/removal and existing-node error continuation; FIFO transfer remains outside creation. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+          "disposition": "Further symbolic-mode combinations, omitted-who and special-bit modes, transient creation permissions, ACL inheritance, other permission/credential errors and capacity exhaustion remain unqualified. FIFO data transfer remains outside creation. CSH-080/084 witnesses remain bounded. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
           "csh080_assertions": [
             "mkfifo/remaining-existing-continue",
             "mkfifo/remaining-symbolic-sequence"
           ],
           "csh084_assertions": [
             "mkfifo/residual-parent-denied"
+          ],
+          "csh092_assertions": [
+            "mkfifo/creation-027-default",
+            "mkfifo/creation-027-remove-write",
+            "mkfifo/creation-027-copy-sequence",
+            "mkfifo/creation-027-conditional-execute",
+            "mkfifo/creation-027-copy-execute-clear",
+            "mkfifo/creation-077-default",
+            "mkfifo/creation-077-remove-write",
+            "mkfifo/creation-077-copy-sequence",
+            "mkfifo/creation-077-conditional-execute",
+            "mkfifo/creation-077-copy-execute-clear",
+            "mkfifo/creation-existing-middle-continue"
           ]
         },
         "OPTIONS": {
-          "disposition": "Additional symbolic/ACL behavior and capacity exhaustion remain unqualified. CSH-080 adds sequential symbolic copy/removal and existing-node error continuation; FIFO transfer remains outside creation. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+          "disposition": "Further symbolic-mode combinations, omitted-who and special-bit modes, transient creation permissions, ACL inheritance, other permission/credential errors and capacity exhaustion remain unqualified. FIFO data transfer remains outside creation. CSH-080/084 witnesses remain bounded. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
           "csh080_assertions": [
             "mkfifo/remaining-existing-continue",
             "mkfifo/remaining-symbolic-sequence"
+          ],
+          "csh092_assertions": [
+            "mkfifo/creation-027-default",
+            "mkfifo/creation-027-remove-write",
+            "mkfifo/creation-027-copy-sequence",
+            "mkfifo/creation-027-conditional-execute",
+            "mkfifo/creation-027-copy-execute-clear",
+            "mkfifo/creation-077-default",
+            "mkfifo/creation-077-remove-write",
+            "mkfifo/creation-077-copy-sequence",
+            "mkfifo/creation-077-conditional-execute",
+            "mkfifo/creation-077-copy-execute-clear",
+            "mkfifo/creation-existing-middle-continue"
           ]
         },
         "OPERANDS": {
-          "disposition": "Additional symbolic/ACL behavior and capacity exhaustion remain unqualified. CSH-080 adds sequential symbolic copy/removal and existing-node error continuation; FIFO transfer remains outside creation. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open.",
+          "disposition": "Further symbolic-mode combinations, omitted-who and special-bit modes, transient creation permissions, ACL inheritance, other permission/credential errors and capacity exhaustion remain unqualified. FIFO data transfer remains outside creation. CSH-080/084 witnesses remain bounded. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
           "csh080_assertions": [
             "mkfifo/remaining-existing-continue",
             "mkfifo/remaining-symbolic-sequence"
+          ],
+          "csh092_assertions": [
+            "mkfifo/creation-027-default",
+            "mkfifo/creation-027-remove-write",
+            "mkfifo/creation-027-copy-sequence",
+            "mkfifo/creation-027-conditional-execute",
+            "mkfifo/creation-027-copy-execute-clear",
+            "mkfifo/creation-077-default",
+            "mkfifo/creation-077-remove-write",
+            "mkfifo/creation-077-copy-sequence",
+            "mkfifo/creation-077-conditional-execute",
+            "mkfifo/creation-077-copy-execute-clear",
+            "mkfifo/creation-existing-middle-continue"
           ]
         },
         "STDIN": {
@@ -2512,49 +2730,114 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open.",
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
           "csh080_assertions": [
             "mkfifo/remaining-existing-continue",
             "mkfifo/remaining-symbolic-sequence"
           ],
           "csh084_assertions": [
             "mkfifo/residual-parent-denied"
+          ],
+          "csh092_assertions": [
+            "mkfifo/creation-027-default",
+            "mkfifo/creation-027-remove-write",
+            "mkfifo/creation-027-copy-sequence",
+            "mkfifo/creation-027-conditional-execute",
+            "mkfifo/creation-027-copy-execute-clear",
+            "mkfifo/creation-077-default",
+            "mkfifo/creation-077-remove-write",
+            "mkfifo/creation-077-copy-sequence",
+            "mkfifo/creation-077-conditional-execute",
+            "mkfifo/creation-077-copy-execute-clear",
+            "mkfifo/creation-existing-middle-continue"
           ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open.",
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
           "csh080_assertions": [
             "mkfifo/remaining-existing-continue",
             "mkfifo/remaining-symbolic-sequence"
           ],
           "csh084_assertions": [
             "mkfifo/residual-parent-denied"
+          ],
+          "csh092_assertions": [
+            "mkfifo/creation-027-default",
+            "mkfifo/creation-027-remove-write",
+            "mkfifo/creation-027-copy-sequence",
+            "mkfifo/creation-027-conditional-execute",
+            "mkfifo/creation-027-copy-execute-clear",
+            "mkfifo/creation-077-default",
+            "mkfifo/creation-077-remove-write",
+            "mkfifo/creation-077-copy-sequence",
+            "mkfifo/creation-077-conditional-execute",
+            "mkfifo/creation-077-copy-execute-clear",
+            "mkfifo/creation-existing-middle-continue"
           ]
         },
         "OUTPUT FILES": {
-          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
+          "csh092_assertions": [
+            "mkfifo/creation-027-default",
+            "mkfifo/creation-027-remove-write",
+            "mkfifo/creation-027-copy-sequence",
+            "mkfifo/creation-027-conditional-execute",
+            "mkfifo/creation-027-copy-execute-clear",
+            "mkfifo/creation-077-default",
+            "mkfifo/creation-077-remove-write",
+            "mkfifo/creation-077-copy-sequence",
+            "mkfifo/creation-077-conditional-execute",
+            "mkfifo/creation-077-copy-execute-clear",
+            "mkfifo/creation-existing-middle-continue"
+          ]
         },
         "EXTENDED DESCRIPTION": {
-          "disposition": "Additional symbolic/ACL behavior and capacity exhaustion remain unqualified. CSH-080 adds sequential symbolic copy/removal and existing-node error continuation; FIFO transfer remains outside creation. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open."
+          "disposition": "Further symbolic-mode combinations, omitted-who and special-bit modes, transient creation permissions, ACL inheritance, other permission/credential errors and capacity exhaustion remain unqualified. FIFO data transfer remains outside creation. CSH-080/084 witnesses remain bounded. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open.",
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
           "csh080_assertions": [
             "mkfifo/remaining-existing-continue",
             "mkfifo/remaining-symbolic-sequence"
           ],
           "csh084_assertions": [
             "mkfifo/residual-parent-denied"
+          ],
+          "csh092_assertions": [
+            "mkfifo/creation-027-default",
+            "mkfifo/creation-027-remove-write",
+            "mkfifo/creation-027-copy-sequence",
+            "mkfifo/creation-027-conditional-execute",
+            "mkfifo/creation-027-copy-execute-clear",
+            "mkfifo/creation-077-default",
+            "mkfifo/creation-077-remove-write",
+            "mkfifo/creation-077-copy-sequence",
+            "mkfifo/creation-077-conditional-execute",
+            "mkfifo/creation-077-copy-execute-clear",
+            "mkfifo/creation-existing-middle-continue"
           ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open.",
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified.",
           "csh080_assertions": [
             "mkfifo/remaining-existing-continue",
             "mkfifo/remaining-symbolic-sequence"
           ],
           "csh084_assertions": [
             "mkfifo/residual-parent-denied"
+          ],
+          "csh092_assertions": [
+            "mkfifo/creation-027-default",
+            "mkfifo/creation-027-remove-write",
+            "mkfifo/creation-027-copy-sequence",
+            "mkfifo/creation-027-conditional-execute",
+            "mkfifo/creation-027-copy-execute-clear",
+            "mkfifo/creation-077-default",
+            "mkfifo/creation-077-remove-write",
+            "mkfifo/creation-077-copy-sequence",
+            "mkfifo/creation-077-conditional-execute",
+            "mkfifo/creation-077-copy-execute-clear",
+            "mkfifo/creation-existing-middle-continue"
           ]
         }
       },
@@ -2582,7 +2865,7 @@
         "passing_scope": [
           "mkfifo/residual-parent-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -2593,15 +2876,28 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
-      "csh090_assertions": []
+      "csh090_assertions": [],
+      "csh092_assertions": [
+        "mkfifo/creation-027-default",
+        "mkfifo/creation-027-remove-write",
+        "mkfifo/creation-027-copy-sequence",
+        "mkfifo/creation-027-conditional-execute",
+        "mkfifo/creation-027-copy-execute-clear",
+        "mkfifo/creation-077-default",
+        "mkfifo/creation-077-remove-write",
+        "mkfifo/creation-077-copy-sequence",
+        "mkfifo/creation-077-conditional-execute",
+        "mkfifo/creation-077-copy-execute-clear",
+        "mkfifo/creation-existing-middle-continue"
+      ]
     },
     {
       "utility": "mv",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mv.html",
       "source_sha256": "c17c6279d2fdf408e2aa82bd674d5eff5130f391361b2e175e4862d6c4a89662",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "mv/rename",
@@ -2901,7 +3197,7 @@
         "passing_scope": [
           "mv/residual-destination-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -2927,7 +3223,7 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": []
     },
@@ -2935,7 +3231,7 @@
       "utility": "pathchk",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html",
       "source_sha256": "ce446d31316645a78d6aa4df6ff45829afbdbd3d667c84ae2c6a3bdfe0ce825a",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "pathchk/portable",
@@ -3207,7 +3503,7 @@
         "passing_scope": [
           "pathchk/residual-prefix-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -3218,7 +3514,7 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": [
         "pathchk/path-limit-filesystem-below",
@@ -3235,7 +3531,7 @@
       "utility": "pax",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html",
       "source_sha256": "398b008eab3110cd482eee2e62797adaf915405e488b1f36bc73fc2a29591efb",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "pax/copy-tree",
@@ -3400,7 +3696,7 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -3411,7 +3707,7 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": []
     },
@@ -3419,7 +3715,7 @@
       "utility": "pwd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html",
       "source_sha256": "6c0724e219d469ac68640fc07c825a95e090931483b9cee2d089dec136efd7f6",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "pwd/physical",
@@ -3598,7 +3894,7 @@
       },
       "csh084_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -3609,7 +3905,7 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": [],
       "csh091_assertions": [
@@ -3627,7 +3923,7 @@
       "utility": "readlink",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html",
       "source_sha256": "b8af59cd805ca79ad73dab35ad008a55b9f8bbef0fc84ce7334ffac7b8f0f4dc",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "readlink/link",
@@ -3807,7 +4103,7 @@
           "readlink/residual-opaque-utf8",
           "readlink/residual-opaque-utf8-n"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -3818,7 +4114,7 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": []
     },
@@ -3826,7 +4122,7 @@
       "utility": "realpath",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html",
       "source_sha256": "dfded63f96378a20c8952547dea666f07d0006e8868fa37a883b8553de684cc5",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "realpath/existing",
@@ -3953,7 +4249,7 @@
         "passing_scope": [
           "realpath/residual-prefix-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -3964,7 +4260,7 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": []
     },
@@ -3972,7 +4268,7 @@
       "utility": "rm",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html",
       "source_sha256": "7ea788ea4ed4cc0f309bfc9681b650da0cbcec9d535604cb12bfd57fbddb9839",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "rm/file",
@@ -4283,7 +4579,7 @@
         "passing_scope": [
           "rm/residual-force-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -4312,7 +4608,7 @@
           "rm/recursive-nested-link-n",
           "rm/recursive-nested-link-y"
         ],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": []
     },
@@ -4320,7 +4616,7 @@
       "utility": "rmdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html",
       "source_sha256": "44451db47f43a6dfb058b6e8f71aee7db1fec99961573246380f7deb0c54bc9f",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "rmdir/empty",
@@ -4451,7 +4747,7 @@
         "passing_scope": [
           "rmdir/residual-parent-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [],
@@ -4462,7 +4758,7 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": []
     },
@@ -4470,7 +4766,7 @@
       "utility": "touch",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html",
       "source_sha256": "ae8c1a8fc027372a6a50561b7c07bea8c30a471458ee72c00d7b35c039d756b7",
-      "owner": "CSH-092",
+      "owner": "CSH-093",
       "full_contract_qualified": false,
       "assertions": [
         "touch/reference",
@@ -4679,7 +4975,7 @@
         "passing_scope": [
           "touch/residual-prefix-denied"
         ],
-        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-092."
+        "disposition": "Only listed assertions are qualified; remaining environments and individual contracts belong to CSH-093."
       },
       "csh085_qualification": {
         "passing_scope": [
@@ -4696,10 +4992,10 @@
       "csh088_assertions": [],
       "csh089_qualification": {
         "passing_scope": [],
-        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-092. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
+        "disposition": "Only listed assertions are qualified; unsupplied environments remain individually open under CSH-093. The selected rm is pinned GNU source with mandatory parent prompts; stock failures remain failures."
       },
       "csh090_assertions": []
     }
   ],
-  "predecessor": "CSH-089"
+  "predecessor": "CSH-091"
 }

@@ -352,4 +352,13 @@ required. Six harness regressions cover corrupted markers/output/effects,
 partial setup, wrong probes, exec failures and bounded timeout cleanup.
 No mounts, host volume exhaustion, PWD edits or provider patches are involved.
 Permission, total path limits, logical-mode namespace changes and libc/stdio
-failures remain open under CSH-092.
+failures remain open under CSH-093.
+
+### Creation masks and modes (CSH-092)
+
+`make test-host-filesystem-creation` requires 104 final mkdir/mkfifo mode
+assertions with child-only masks and independently measured directory/FIFO probes.
+All four execution modes require exact effects, status and channels; setup and
+cleanup errors fail. See [evidence](../../docs/evidence/csh-092/README.md).
+Transient permissions, ACL inheritance, arbitrary mode/parent graphs and capacity
+remain open under [CSH-093](../../docs/tickets/CSH-093-filesystem-environment-residuals.md).
