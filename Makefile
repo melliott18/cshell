@@ -710,3 +710,8 @@ test-host-filesystem-cwd: cshell host-profile
 .PHONY: test-host-filesystem-creation
 test-host-filesystem-creation: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --creation-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-creation.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-093: independently armed external pathname utility output errors.
+.PHONY: test-host-filesystem-output
+test-host-filesystem-output: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --output-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-output.json $(HOST_FILESYSTEM_FLAGS)

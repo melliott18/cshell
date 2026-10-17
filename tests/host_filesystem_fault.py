@@ -19,6 +19,21 @@ def save(record):
         json.dump(record, output)
 
 
+def marker_matches(marker, action, provider, expected_errno):
+    """Malformed/setup/exec-failure records cannot satisfy an error oracle."""
+    if not isinstance(marker, dict):
+        return False
+    if (marker.get('phase'), marker.get('action'), marker.get('provider')) != ('armed', action, provider):
+        return False
+    if type(marker.get('errno')) is not int or marker['errno'] != expected_errno:
+        return False
+    if type(marker.get('pid')) is not int or marker['pid'] <= 0:
+        return False
+    if action == 'enospc' and marker.get('device') != dict(path='/dev/full', major=1, minor=7):
+        return False
+    return True
+
+
 def main():
     action, provider, *arguments = sys.argv[1:]
     record = dict(action=action, provider=provider, phase='setup', pid=os.getpid())
