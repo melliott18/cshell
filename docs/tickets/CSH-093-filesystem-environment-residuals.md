@@ -1,11 +1,11 @@
 # CSH-093: Supply remaining filesystem environments after creation-mode qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-092
-- Branch: Assigned when work starts
+- Branch: `test/CSH-093-filesystem-environments`
 - Issue: [#197](https://github.com/melliott18/cshell/issues/197)
 
 ## Goal
@@ -56,10 +56,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -68,7 +68,7 @@ test-host-filesystem-provider-audit test-host-filesystem-residual
 test-host-filesystem-isolated test-host-filesystem-interactive
 test-host-filesystem-decisions test-host-filesystem-metadata
 test-host-filesystem-recursive test-host-filesystem-path-limits test-host-filesystem-cwd
-test-host-filesystem-creation` on native macOS and Linux as an unprivileged
+test-host-filesystem-creation test-host-filesystem-output` on native macOS and Linux as an unprivileged
 fixture identity. Retain separate nonzero stock `make test-host-filesystem-audit`
 and stock `tests/host_filesystem.py --extended-only --provider-audit` records.
 Add bounded setup/failure/timeout cleanup regressions for new environments.
@@ -99,3 +99,43 @@ open here. Utility/libc/platform vendors retain implementation ownership.
 CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. All four retained conditions remain open.
 
 CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified. All four retained conditions remain open.
+
+## Implementation and current dispositions
+
+CSH-093 adds eight output-error cases for external pwd: -P, -L, -L -P and
+-P -L under independently armed closed stdout (EBADF) and readerless-pipe
+(EPIPE) errors. Linux adds four pwd forms and basename/dirname with the
+independently identified virtual full device (ENOSPC). PWD is unset and logical
+forms fall back to the unchanged physical cwd. All four execution modes require
+positive status, empty captured stdout, a diagnostic and unchanged fixture effects,
+for 32 macOS / 56 Linux assertions. Nonempty diagnostics are a strict provider
+observation; pwd's CONSEQUENCES OF ERRORS excludes stdout write errors from its
+no-output/diagnostic requirement. No physical filesystem is exhausted.
+
+The fault marker verifier now rejects non-object JSON, invalid PID/errno types,
+and inconsistent device identity instead of accepting incomplete evidence or
+crashing. Five new harness regressions cover authored cases and immutable specs,
+corrupted markers/channels/status/effects, missing setup and exec failure in all
+input modes, an incorrectly successful kernel probe, and timeout/reaping/cleanup
+in all input modes. Existing assertions and provider sources/build flags remain
+unchanged; the selected profile requires the new assertions with zero allowances.
+
+The incoming table remains historical scope. The current section map, ownership
+manifest and residual ledger assign every unsupplied environment and all four
+original conditions to [CSH-094](CSH-094-filesystem-environment-residuals.md)
+([#199](https://github.com/melliott18/cshell/issues/199)). Utility/libc/platform
+vendors retain implementation ownership. This follows the explicit-disposition
+acceptance alternative; no whole utility or U-034/U-040 completion is claimed.
+
+The branch is stacked on published CSH-092 commit
+`00a789336f9c3124941a38281868c90d38a79073`. Integration is gated on that unmerged
+dependency. See [CSH-093 evidence](../evidence/csh-093/README.md) for independent
+oracles, native/Linux results, provenance, stock failures and reproduction.
+
+The complete required target set and focused output target pass on native macOS
+UID 501 and Debian Linux Docker UID 10001: 1427/1467 selected filesystem
+assertions, 1162 host integration assertions, 10 ownership tests and 71 harness
+tests. Stock audits retain exactly the CSH-092 failure IDs/modes: 73/42 full
+audit failures and 16/8 provider-audit failures. Every filesystem case reports
+successful cleanup, and final native/Linux source maps match byte-for-byte.
+No sanitizer or hosted-CI qualification is claimed.

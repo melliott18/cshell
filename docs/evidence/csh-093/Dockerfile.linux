@@ -1,0 +1,6 @@
+FROM cshell-test:csh-091
+USER root
+COPY --chown=cshell:cshell . /work
+RUN find /work -name '._*' -delete
+USER cshell
+RUN make -j4 cshell host-profile

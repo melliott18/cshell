@@ -1479,3 +1479,12 @@ check final modes, types, channels, statuses and effects. Restrictive directorie
 are restored top-down after assertions and on failure/timeout before cleanup.
 `make test-host-inventory` also checks helper, marker and cleanup regressions.
 See [the evidence record](evidence/csh-092/README.md) for limits and provenance.
+
+### Pathname utility output errors (CSH-093)
+
+Run `make test-host-filesystem-output` for 32 macOS / 56 Linux assertions.
+The child helper independently proves EBADF, EPIPE or Linux virtual-device
+ENOSPC before exec. This is not disk exhaustion or libc fault injection.
+PWD is unset; external pwd is tested in direct/string/file/stdin modes.
+The full host profile includes these cases and fails on setup or cleanup errors.
+See [evidence](evidence/csh-093/README.md) for scope and retained gaps.

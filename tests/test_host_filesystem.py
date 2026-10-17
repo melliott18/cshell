@@ -23,12 +23,122 @@ import host_filesystem_recursive as recursive
 import host_filesystem_path_limits as path_limits
 import host_filesystem_cwd as cwd_cases
 import host_filesystem_creation as creation
+import host_filesystem_output as output_cases
 from host_contract_inventory import utility_owner
 from host_filesystem import run_case, stdout_matches, stderr_matches
 from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, terminal_cases, effect_errors
 
 
 class FilesystemHarnessTests(unittest.TestCase):
+    def test_output_cases_and_immutable_spec(self):
+        import shutil
+        self.assertEqual(len(list(output_cases.cases('Darwin'))), 8)
+        self.assertEqual(len(list(output_cases.cases('Linux'))), 14)
+        for row in output_cases.cases():
+            original = copy.deepcopy(row)
+            provider = shutil.which(row['utility'], path=os.defpath)
+            with self.subTest(case=row['id']), tempfile.TemporaryDirectory() as root:
+                record = run_case(Path('/bin/sh'), {row['utility']: {'path': provider}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'PASS', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(row, original)
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_output_marker_channels_status_and_effect_corruption(self):
+        from smoke import capture as real_capture
+        row = next(output_cases.cases())
+        for fault in ('missing', 'malformed', 'list', 'phase', 'provider', 'action',
+                      'errno', 'pid', 'stdout', 'stderr', 'status', 'effect'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                marker = cwd / '.io-fault.json'
+                if fault == 'missing':
+                    marker.unlink()
+                elif fault in ('malformed', 'list'):
+                    marker.write_text('{' if fault == 'malformed' else '[]')
+                elif fault == 'effect':
+                    (cwd / 'data').write_bytes(b'changed')
+                elif fault in ('stdout', 'stderr'):
+                    output[fault] = b'corrupt' if fault == 'stdout' else b''
+                elif fault == 'status':
+                    status = 0
+                else:
+                    data = json.loads(marker.read_text())
+                    data[fault] = 'corrupt'
+                    marker.write_text(json.dumps(data))
+                return status, output, errors
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'pwd': {'path': '/bin/pwd'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'], record)
+
+    def test_output_exec_failure_and_missing_setup_do_not_pass(self):
+        row = next(output_cases.cases())
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                provider = Path(root) / 'pwd'
+                provider.write_text('#!/nonexistent-csh093-interpreter\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'pwd': {'path': str(provider)}},
+                                  os.defpath, row, mode, Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertEqual(record['kernel_fault']['phase'], 'exec-failure')
+                self.assertTrue(record['cleanup'])
+            with tempfile.TemporaryDirectory() as root, patch('host_filesystem.smoke.capture',
+                    return_value=(125, {'stdout': b'', 'stderr': b'setup failed'}, [])):
+                record = run_case(Path('/bin/sh'), {'pwd': {'path': '/bin/pwd'}},
+                                  os.defpath, row, mode, Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+
+    def test_output_wrong_kernel_probe_and_device_marker(self):
+        import subprocess
+        from host_filesystem_fault import marker_matches
+        helper = str(Path(__file__).with_name('host_filesystem_fault.py').resolve())
+        # A successful write probe must abort before exec, even with the right action.
+        script = ('import os,runpy,sys; os.write=lambda *args: 1; '
+                  'sys.argv=[sys.argv[1],"broken-pipe","/bin/pwd","-P"]; '
+                  'runpy.run_path(sys.argv[0],run_name="__main__")')
+        with tempfile.TemporaryDirectory() as root:
+            result = subprocess.run([sys.executable, '-c', script, helper], cwd=root,
+                                    capture_output=True, timeout=5)
+            self.assertEqual(result.returncode, 125)
+            marker = json.loads((Path(root) / '.io-fault.json').read_text())
+            self.assertEqual(marker['phase'], 'setup-failure')
+            self.assertFalse(marker_matches(marker, 'broken-pipe', '/bin/pwd', errno.EPIPE))
+        marker = dict(phase='armed', action='enospc', provider='/bin/pwd',
+                      errno=errno.ENOSPC, pid=123, device=dict(path='/dev/full', major=1, minor=7))
+        self.assertTrue(marker_matches(marker, 'enospc', '/bin/pwd', errno.ENOSPC))
+        for key, value in [('device', {}), ('pid', True), ('pid', 0), ('errno', str(errno.ENOSPC))]:
+            corrupted = dict(marker, **{key: value})
+            self.assertFalse(marker_matches(corrupted, 'enospc', '/bin/pwd', errno.ENOSPC))
+
+    def test_output_timeout_reaps_provider_and_cleans_fixture(self):
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                provider = root / 'pwd'
+                provider.write_text('#!/bin/sh\nexec /bin/sleep 60\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'pwd': {'path': str(provider)}},
+                                  os.defpath, next(output_cases.cases()), mode, root, None, timeout=1)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                self.assertTrue(record['cleanup'])
+                pid = record['kernel_fault']['pid']
+                deadline = time.monotonic() + 2
+                while True:
+                    try:
+                        os.kill(pid, 0)
+                    except ProcessLookupError:
+                        break
+                    self.assertLess(time.monotonic(), deadline, 'timed-out provider was not reaped')
+                    time.sleep(.02)
+                self.assertEqual(list(root.iterdir()), [provider])
+
     def test_creation_cases_and_immutable_spec(self):
         import shutil
         rows = list(creation.cases())
@@ -912,7 +1022,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux"))
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -1078,7 +1188,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux"))}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

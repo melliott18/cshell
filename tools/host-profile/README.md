@@ -352,7 +352,7 @@ required. Six harness regressions cover corrupted markers/output/effects,
 partial setup, wrong probes, exec failures and bounded timeout cleanup.
 No mounts, host volume exhaustion, PWD edits or provider patches are involved.
 Permission, total path limits, logical-mode namespace changes and libc/stdio
-failures remain open under CSH-093.
+failures remain open under CSH-094.
 
 ### Creation masks and modes (CSH-092)
 
@@ -361,4 +361,11 @@ assertions with child-only masks and independently measured directory/FIFO probe
 All four execution modes require exact effects, status and channels; setup and
 cleanup errors fail. See [evidence](../../docs/evidence/csh-092/README.md).
 Transient permissions, ACL inheritance, arbitrary mode/parent graphs and capacity
-remain open under [CSH-093](../../docs/tickets/CSH-093-filesystem-environment-residuals.md).
+remain open under [CSH-094](../../docs/tickets/CSH-094-filesystem-environment-residuals.md).
+
+### Output errors (CSH-093)
+
+CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures.
+
+`make test-host-filesystem-output` requires zero allowances. See
+[CSH-093 evidence](../../docs/evidence/csh-093/README.md). All four original conditions remain open under CSH-094.

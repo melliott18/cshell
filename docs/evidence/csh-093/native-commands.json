@@ -1,0 +1,47 @@
+[
+  {
+    "argv": [
+      "make",
+      "test-host-inventory",
+      "test-host-profile",
+      "test-host-filesystem-allocation",
+      "test-host-filesystem-provider-audit",
+      "test-host-filesystem-residual",
+      "test-host-filesystem-isolated",
+      "test-host-filesystem-interactive",
+      "test-host-filesystem-decisions",
+      "test-host-filesystem-metadata",
+      "test-host-filesystem-recursive",
+      "test-host-filesystem-path-limits",
+      "test-host-filesystem-cwd",
+      "test-host-filesystem-creation",
+      "test-host-filesystem-output"
+    ],
+    "status": 0,
+    "seconds": 129.2973998329835,
+    "log": "native-command-0.log"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-audit"
+    ],
+    "status": 2,
+    "seconds": 20.214779957954306,
+    "log": "native-command-1.log"
+  },
+  {
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+      "tests/host_filesystem.py",
+      "./cshell",
+      "--extended-only",
+      "--provider-audit",
+      "--record",
+      "build/tests/host-filesystem-stock-provider-audit.json"
+    ],
+    "status": 1,
+    "seconds": 1.9893409170326777,
+    "log": "native-command-2.log"
+  }
+]

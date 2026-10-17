@@ -267,7 +267,20 @@ are bounded witnesses. Six harness regressions check corrupted evidence, partial
 setup, failed exec, wrong probes and timeout cleanup.
 
 See [CSH-092 evidence](evidence/csh-092/README.md) for native/Linux results and
-provider provenance. [CSH-093](tickets/CSH-093-filesystem-environment-residuals.md)
+provider provenance. [CSH-094](tickets/CSH-094-filesystem-environment-residuals.md)
 retains each unsupplied contract and all four original conditions. Final-state
 checks do not observe transient permissions, qualify every symbolic mode, ACL
 inheritance, privilege, arbitrary graphs, capacity or whole utilities.
+
+### Output errors (CSH-093)
+
+CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname
+utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P,
+-L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and
+basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-
+only kernel probes precede exact provider exec. These cases do not supply libc-internal
+faults, actual filesystem exhaustion, logical namespace changes or arbitrary output
+failures.
+
+`make test-host-filesystem-output` requires zero allowances. See
+[CSH-093 evidence](evidence/csh-093/README.md). All four original conditions remain open under CSH-094.
