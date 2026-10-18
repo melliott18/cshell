@@ -1,17 +1,17 @@
 {
   "schema_version": 1,
-  "ticket": "CSH-093",
+  "ticket": "CSH-094",
   "qualification": "case-scoped only; selected profile requires both ordinary and provider-audit assertions; stock failures remain failures",
   "common_defaults": {
-    "U-034": "Each of the 21 actual providers is inventoried and directly execed, alongside public cshell string/file/stdin dispatch; pwd builtin and external exec remain distinct. CSH-087 terminal sequences use direct exec and cshell string/file modes; two directory replacement cases also use stdin mode. CSH-088 metadata cases use direct exec and all three shell input modes. CSH-089 recursive decisions use direct exec and cshell string/file modes on owned PTYs. CSH-090 path-limit witnesses use direct exec and all three shell input modes. CSH-091 uses a child-only setup helper to exec the external pwd in direct and cshell string/file/stdin modes; these do not test the pwd builtin. CSH-092 execs the exact inventoried mkdir/mkfifo provider after a child-only umask helper, in direct and all three cshell modes. CSH-093 always execs the inventoried external provider after a child-only I/O probe; the pwd builtin is not tested.",
-    "U-040": "Controlled PATH, LC_ALL, TZ, umask and resource limits; independent effects and positive-error predicates. Common signal, locale, utility-syntax and environmental defaults outside the listed assertions remain individually open under each utility owner. CSH-090 supplies 32 total pathname byte assertions: the selected filesystem PATH_MAX and portable 256-byte limit, operand lengths limit-1, limit and limit+1 (the limit includes NUL), plus diagnostic continuation across two invalid operands and a valid missing operand. Independent pathconf and unnormalized stat probes distinguish kernel ENAMETOOLONG from the portable policy. Components are at most two bytes; no deep tree or filesystem exhaustion is exercised. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified. CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures."
+    "U-034": "Each of the 21 actual providers is inventoried and directly execed, alongside public cshell string/file/stdin dispatch; pwd builtin and external exec remain distinct. CSH-087 terminal sequences use direct exec and cshell string/file modes; two directory replacement cases also use stdin mode. CSH-088 metadata cases use direct exec and all three shell input modes. CSH-089 recursive decisions use direct exec and cshell string/file modes on owned PTYs. CSH-090 path-limit witnesses use direct exec and all three shell input modes. CSH-091 uses a child-only setup helper to exec the external pwd in direct and cshell string/file/stdin modes; these do not test the pwd builtin. CSH-092 execs the exact inventoried mkdir/mkfifo provider after a child-only umask helper, in direct and all three cshell modes. CSH-093 always execs the inventoried external provider after a child-only I/O probe; the pwd builtin is not tested. CSH-094 execs external pwd after the child-only namespace/PWD probe in all four modes.",
+    "U-040": "Controlled PATH, LC_ALL, TZ, umask and resource limits; independent effects and positive-error predicates. Common signal, locale, utility-syntax and environmental defaults outside the listed assertions remain individually open under each utility owner. CSH-090 supplies 32 total pathname byte assertions: the selected filesystem PATH_MAX and portable 256-byte limit, operand lengths limit-1, limit and limit+1 (the limit includes NUL), plus diagnostic continuation across two invalid operands and a valid missing operand. Independent pathconf and unnormalized stat probes distinguish kernel ENAMETOOLONG from the portable policy. Components are at most two bytes; no deep tree or filesystem exhaustion is exercised. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified. CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures. CSH-094 supplies 48 external pwd assertions after leaf/parent rename/removal, with default options, -L and -P -L. The helper observes unchanged inherited PWD: absent for direct exec or naming the fixture root for shell modes, independently distinct from the cwd inode. It never sets or unsets PWD. Physical resolution or ENOENT is measured before exact provider exec. Valid logical symlink paths, arbitrary namespace races, inaccessible ancestors, path limits and allocation failures remain unqualified."
   },
   "utilities": [
     {
       "utility": "basename",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/basename.html",
       "source_sha256": "76c256427a758fc4388559e7a71fcc9351ed0cfb19afc5af07d38c4cf25c8ab2",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "basename/path-6-620a",
@@ -202,7 +202,7 @@
       "utility": "dirname",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html",
       "source_sha256": "f218ded1508843cdd90913db7cd56ee938d43f67050d6f0645d88cbf916ec6c4",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "dirname/0",
@@ -417,7 +417,7 @@
       "utility": "cp",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html",
       "source_sha256": "777d1c06255117e8ea9d8c5ede3996ef77b7c5ddecd1cbf9e584deef239a5836",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "cp/bytes",
@@ -795,7 +795,7 @@
       "utility": "dd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dd.html",
       "source_sha256": "876cebeba49456b8e22b53057bc861120f092c36522193823685cea8b821e249",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "dd/copy",
@@ -1020,7 +1020,7 @@
       "utility": "df",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html",
       "source_sha256": "afbeec1b5e25c2ebf0de45fcffdcff03cf9f3bf4aa6960fc09b426cfc1a45a11",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "df/portable-k",
@@ -1117,7 +1117,7 @@
       "utility": "du",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html",
       "source_sha256": "659c1410d265ef1d4056a784611c6af0df45495f99ff9abfbdbc3c9eb516c100",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "du/file-k",
@@ -1274,7 +1274,7 @@
       "utility": "file",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html",
       "source_sha256": "c2e7590cab2534dbf4a0b3fbd8cc77312990c495c6a448243ca63c14074067bb",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "file/empty",
@@ -1569,7 +1569,7 @@
       "utility": "find",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html",
       "source_sha256": "6293363b063c9de0bc4d190b62a09d3cd03906a1fa40d3ddc52ecd6a09a62502",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "find/regular",
@@ -1849,7 +1849,7 @@
       "utility": "ln",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html",
       "source_sha256": "c4e793bb510483faef398e4c16fb7adc2d60b99c712ea7e6b5f2751a4c6c453c",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "ln/hard",
@@ -2012,7 +2012,7 @@
       "utility": "ls",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
       "source_sha256": "cd4db85f09dbadf3d529b1bf6a8c157806759c5a22d3ca616aad0cc0363f07bc",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "ls/512-c-order",
@@ -2293,7 +2293,7 @@
       "utility": "mkdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html",
       "source_sha256": "7d37d11b3829422919fbc928cf3e4e0e2c9ba3d0eaba2e2e36362e80f4086576",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "mkdir/parents",
@@ -2634,7 +2634,7 @@
       "utility": "mkfifo",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html",
       "source_sha256": "508f579e25f7ac32d94c2f57aef1a12448e4984fc60d467120cb2bb66157c3ed",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "mkfifo/mode",
@@ -2923,7 +2923,7 @@
       "utility": "mv",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mv.html",
       "source_sha256": "c17c6279d2fdf408e2aa82bd674d5eff5130f391361b2e175e4862d6c4a89662",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "mv/rename",
@@ -3257,7 +3257,7 @@
       "utility": "pathchk",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html",
       "source_sha256": "ce446d31316645a78d6aa4df6ff45829afbdbd3d667c84ae2c6a3bdfe0ce825a",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "pathchk/portable",
@@ -3557,7 +3557,7 @@
       "utility": "pax",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html",
       "source_sha256": "398b008eab3110cd482eee2e62797adaf915405e488b1f36bc73fc2a29591efb",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "pax/copy-tree",
@@ -3741,7 +3741,7 @@
       "utility": "pwd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html",
       "source_sha256": "6c0724e219d469ac68640fc07c825a95e090931483b9cee2d089dec136efd7f6",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "pwd/physical",
@@ -3767,9 +3767,21 @@
         "pwd/output-last-physical-enospc",
         "pwd/output-last-logical-closed-output",
         "pwd/output-last-logical-broken-pipe",
-        "pwd/output-last-logical-enospc"
+        "pwd/output-last-logical-enospc",
+        "pwd/cwd-logical-rename-leaf-default",
+        "pwd/cwd-logical-rename-leaf-L",
+        "pwd/cwd-logical-rename-leaf-last-L",
+        "pwd/cwd-logical-rename-parent-default",
+        "pwd/cwd-logical-rename-parent-L",
+        "pwd/cwd-logical-rename-parent-last-L",
+        "pwd/cwd-logical-delete-leaf-default",
+        "pwd/cwd-logical-delete-leaf-L",
+        "pwd/cwd-logical-delete-leaf-last-L",
+        "pwd/cwd-logical-delete-parent-default",
+        "pwd/cwd-logical-delete-parent-L",
+        "pwd/cwd-logical-delete-parent-last-L"
       ],
-      "remaining": "Inaccessible ancestors, total PATH_MAX, allocation and other stdio failures, logical-mode namespace changes and arbitrary namespace races remain unqualified. CSH-080 supplies ordinary -L/-P precedence. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures.",
+      "remaining": "Inaccessible ancestors, total PATH_MAX, allocation and other stdio failures, logical-mode namespace changes and arbitrary namespace races remain unqualified. CSH-080 supplies ordinary -L/-P precedence. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures. CSH-094 supplies 48 external pwd assertions after leaf/parent rename/removal, with default options, -L and -P -L. The helper observes unchanged inherited PWD: absent for direct exec or naming the fixture root for shell modes, independently distinct from the cwd inode. It never sets or unsets PWD. Physical resolution or ENOENT is measured before exact provider exec. Valid logical symlink paths, arbitrary namespace races, inaccessible ancestors, path limits and allocation failures remain unqualified.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -3795,7 +3807,7 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Inaccessible ancestors, total PATH_MAX, allocation and other stdio failures, logical-mode namespace changes and arbitrary namespace races remain unqualified. CSH-080 supplies ordinary -L/-P precedence. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures.",
+          "disposition": "Inaccessible ancestors, total PATH_MAX, allocation and other stdio failures, logical-mode namespace changes and arbitrary namespace races remain unqualified. CSH-080 supplies ordinary -L/-P precedence. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures. CSH-094 supplies 48 external pwd assertions after leaf/parent rename/removal, with default options, -L and -P -L. The helper observes unchanged inherited PWD: absent for direct exec or naming the fixture root for shell modes, independently distinct from the cwd inode. It never sets or unsets PWD. Physical resolution or ENOENT is measured before exact provider exec. Valid logical symlink paths, arbitrary namespace races, inaccessible ancestors, path limits and allocation failures remain unqualified.",
           "csh080_assertions": [
             "pwd/remaining-last-P",
             "pwd/remaining-last-L"
@@ -3809,10 +3821,24 @@
             "pwd/cwd-delete-leaf-last-P",
             "pwd/cwd-delete-parent-P",
             "pwd/cwd-delete-parent-last-P"
+          ],
+          "csh094_assertions": [
+            "pwd/cwd-logical-rename-leaf-default",
+            "pwd/cwd-logical-rename-leaf-L",
+            "pwd/cwd-logical-rename-leaf-last-L",
+            "pwd/cwd-logical-rename-parent-default",
+            "pwd/cwd-logical-rename-parent-L",
+            "pwd/cwd-logical-rename-parent-last-L",
+            "pwd/cwd-logical-delete-leaf-default",
+            "pwd/cwd-logical-delete-leaf-L",
+            "pwd/cwd-logical-delete-leaf-last-L",
+            "pwd/cwd-logical-delete-parent-default",
+            "pwd/cwd-logical-delete-parent-L",
+            "pwd/cwd-logical-delete-parent-last-L"
           ]
         },
         "OPTIONS": {
-          "disposition": "Inaccessible ancestors, total PATH_MAX, allocation and other stdio failures, logical-mode namespace changes and arbitrary namespace races remain unqualified. CSH-080 supplies ordinary -L/-P precedence. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures.",
+          "disposition": "Inaccessible ancestors, total PATH_MAX, allocation and other stdio failures, logical-mode namespace changes and arbitrary namespace races remain unqualified. CSH-080 supplies ordinary -L/-P precedence. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures. CSH-094 supplies 48 external pwd assertions after leaf/parent rename/removal, with default options, -L and -P -L. The helper observes unchanged inherited PWD: absent for direct exec or naming the fixture root for shell modes, independently distinct from the cwd inode. It never sets or unsets PWD. Physical resolution or ENOENT is measured before exact provider exec. Valid logical symlink paths, arbitrary namespace races, inaccessible ancestors, path limits and allocation failures remain unqualified.",
           "csh080_assertions": [
             "pwd/remaining-last-P",
             "pwd/remaining-last-L"
@@ -3826,6 +3852,20 @@
             "pwd/cwd-delete-leaf-last-P",
             "pwd/cwd-delete-parent-P",
             "pwd/cwd-delete-parent-last-P"
+          ],
+          "csh094_assertions": [
+            "pwd/cwd-logical-rename-leaf-default",
+            "pwd/cwd-logical-rename-leaf-L",
+            "pwd/cwd-logical-rename-leaf-last-L",
+            "pwd/cwd-logical-rename-parent-default",
+            "pwd/cwd-logical-rename-parent-L",
+            "pwd/cwd-logical-rename-parent-last-L",
+            "pwd/cwd-logical-delete-leaf-default",
+            "pwd/cwd-logical-delete-leaf-L",
+            "pwd/cwd-logical-delete-leaf-last-L",
+            "pwd/cwd-logical-delete-parent-default",
+            "pwd/cwd-logical-delete-parent-L",
+            "pwd/cwd-logical-delete-parent-last-L"
           ]
         },
         "OPERANDS": {
@@ -3842,13 +3882,27 @@
           "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness."
         },
         "ENVIRONMENT VARIABLES": {
-          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile."
+          "disposition": "C locale and UTC0 are pinned; find/deep-utf8 adds an installed UTF-8 locale. Other applicable locale, catalog and utility-specific environment behavior remains open; XSI-only NLSPATH is outside the selected base profile. CSH-094 supplies 48 external pwd assertions after leaf/parent rename/removal, with default options, -L and -P -L. The helper observes unchanged inherited PWD: absent for direct exec or naming the fixture root for shell modes, independently distinct from the cwd inode. It never sets or unsets PWD. Physical resolution or ENOENT is measured before exact provider exec. Valid logical symlink paths, arbitrary namespace races, inaccessible ancestors, path limits and allocation failures remain unqualified.",
+          "csh094_assertions": [
+            "pwd/cwd-logical-rename-leaf-default",
+            "pwd/cwd-logical-rename-leaf-L",
+            "pwd/cwd-logical-rename-leaf-last-L",
+            "pwd/cwd-logical-rename-parent-default",
+            "pwd/cwd-logical-rename-parent-L",
+            "pwd/cwd-logical-rename-parent-last-L",
+            "pwd/cwd-logical-delete-leaf-default",
+            "pwd/cwd-logical-delete-leaf-L",
+            "pwd/cwd-logical-delete-leaf-last-L",
+            "pwd/cwd-logical-delete-parent-default",
+            "pwd/cwd-logical-delete-parent-L",
+            "pwd/cwd-logical-delete-parent-last-L"
+          ]
         },
         "ASYNCHRONOUS EVENTS": {
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures.",
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures. CSH-094 supplies 48 external pwd assertions after leaf/parent rename/removal, with default options, -L and -P -L. The helper observes unchanged inherited PWD: absent for direct exec or naming the fixture root for shell modes, independently distinct from the cwd inode. It never sets or unsets PWD. Physical resolution or ENOENT is measured before exact provider exec. Valid logical symlink paths, arbitrary namespace races, inaccessible ancestors, path limits and allocation failures remain unqualified.",
           "csh080_assertions": [
             "pwd/remaining-last-P",
             "pwd/remaining-last-L"
@@ -3876,10 +3930,24 @@
             "pwd/output-last-logical-closed-output",
             "pwd/output-last-logical-broken-pipe",
             "pwd/output-last-logical-enospc"
+          ],
+          "csh094_assertions": [
+            "pwd/cwd-logical-rename-leaf-default",
+            "pwd/cwd-logical-rename-leaf-L",
+            "pwd/cwd-logical-rename-leaf-last-L",
+            "pwd/cwd-logical-rename-parent-default",
+            "pwd/cwd-logical-rename-parent-L",
+            "pwd/cwd-logical-rename-parent-last-L",
+            "pwd/cwd-logical-delete-leaf-default",
+            "pwd/cwd-logical-delete-leaf-L",
+            "pwd/cwd-logical-delete-leaf-last-L",
+            "pwd/cwd-logical-delete-parent-default",
+            "pwd/cwd-logical-delete-parent-L",
+            "pwd/cwd-logical-delete-parent-last-L"
           ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures. Nonempty diagnostics are a strict selected-provider observation; pwd CONSEQUENCES OF ERRORS explicitly excludes stdout write errors from its no-output/diagnostic rule.",
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures. Nonempty diagnostics are a strict selected-provider observation; pwd CONSEQUENCES OF ERRORS explicitly excludes stdout write errors from its no-output/diagnostic rule. CSH-094 supplies 48 external pwd assertions after leaf/parent rename/removal, with default options, -L and -P -L. The helper observes unchanged inherited PWD: absent for direct exec or naming the fixture root for shell modes, independently distinct from the cwd inode. It never sets or unsets PWD. Physical resolution or ENOENT is measured before exact provider exec. Valid logical symlink paths, arbitrary namespace races, inaccessible ancestors, path limits and allocation failures remain unqualified.",
           "csh080_assertions": [
             "pwd/remaining-last-P",
             "pwd/remaining-last-L"
@@ -3907,6 +3975,20 @@
             "pwd/output-last-logical-closed-output",
             "pwd/output-last-logical-broken-pipe",
             "pwd/output-last-logical-enospc"
+          ],
+          "csh094_assertions": [
+            "pwd/cwd-logical-rename-leaf-default",
+            "pwd/cwd-logical-rename-leaf-L",
+            "pwd/cwd-logical-rename-leaf-last-L",
+            "pwd/cwd-logical-rename-parent-default",
+            "pwd/cwd-logical-rename-parent-L",
+            "pwd/cwd-logical-rename-parent-last-L",
+            "pwd/cwd-logical-delete-leaf-default",
+            "pwd/cwd-logical-delete-leaf-L",
+            "pwd/cwd-logical-delete-leaf-last-L",
+            "pwd/cwd-logical-delete-parent-default",
+            "pwd/cwd-logical-delete-parent-L",
+            "pwd/cwd-logical-delete-parent-last-L"
           ]
         },
         "OUTPUT FILES": {
@@ -3916,7 +3998,7 @@
           "disposition": "Inaccessible ancestors, total PATH_MAX, allocation and other stdio failures, logical-mode namespace changes and arbitrary namespace races remain unqualified. CSH-080 supplies ordinary -L/-P precedence. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures.",
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures. CSH-094 supplies 48 external pwd assertions after leaf/parent rename/removal, with default options, -L and -P -L. The helper observes unchanged inherited PWD: absent for direct exec or naming the fixture root for shell modes, independently distinct from the cwd inode. It never sets or unsets PWD. Physical resolution or ENOENT is measured before exact provider exec. Valid logical symlink paths, arbitrary namespace races, inaccessible ancestors, path limits and allocation failures remain unqualified.",
           "csh080_assertions": [
             "pwd/remaining-last-P",
             "pwd/remaining-last-L"
@@ -3944,10 +4026,24 @@
             "pwd/output-last-logical-closed-output",
             "pwd/output-last-logical-broken-pipe",
             "pwd/output-last-logical-enospc"
+          ],
+          "csh094_assertions": [
+            "pwd/cwd-logical-rename-leaf-default",
+            "pwd/cwd-logical-rename-leaf-L",
+            "pwd/cwd-logical-rename-leaf-last-L",
+            "pwd/cwd-logical-rename-parent-default",
+            "pwd/cwd-logical-rename-parent-L",
+            "pwd/cwd-logical-rename-parent-last-L",
+            "pwd/cwd-logical-delete-leaf-default",
+            "pwd/cwd-logical-delete-leaf-L",
+            "pwd/cwd-logical-delete-leaf-last-L",
+            "pwd/cwd-logical-delete-parent-default",
+            "pwd/cwd-logical-delete-parent-L",
+            "pwd/cwd-logical-delete-parent-last-L"
           ]
         },
         "CONSEQUENCES OF ERRORS": {
-          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed.",
+          "disposition": "Selected assertions check status, diagnostics, effects and cleanup. EBADF/EPIPE/EFBIG wrappers independently probe the real kernel errno before exec; Linux /dev/full ENOSPC is separate from filesystem/quota exhaustion. Strict provider-audit failures remain unqualified. Unlisted EIO, continuation, recovery and resource scenarios remain open. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-094 supplies 48 external pwd assertions after leaf/parent rename/removal, with default options, -L and -P -L. The helper observes unchanged inherited PWD: absent for direct exec or naming the fixture root for shell modes, independently distinct from the cwd inode. It never sets or unsets PWD. Physical resolution or ENOENT is measured before exact provider exec. Valid logical symlink paths, arbitrary namespace races, inaccessible ancestors, path limits and allocation failures remain unqualified.",
           "csh080_assertions": [
             "pwd/remaining-last-P",
             "pwd/remaining-last-L"
@@ -3961,6 +4057,20 @@
             "pwd/cwd-delete-leaf-last-P",
             "pwd/cwd-delete-parent-P",
             "pwd/cwd-delete-parent-last-P"
+          ],
+          "csh094_assertions": [
+            "pwd/cwd-logical-rename-leaf-default",
+            "pwd/cwd-logical-rename-leaf-L",
+            "pwd/cwd-logical-rename-leaf-last-L",
+            "pwd/cwd-logical-rename-parent-default",
+            "pwd/cwd-logical-rename-parent-L",
+            "pwd/cwd-logical-rename-parent-last-L",
+            "pwd/cwd-logical-delete-leaf-default",
+            "pwd/cwd-logical-delete-leaf-L",
+            "pwd/cwd-logical-delete-leaf-last-L",
+            "pwd/cwd-logical-delete-parent-default",
+            "pwd/cwd-logical-delete-parent-L",
+            "pwd/cwd-logical-delete-parent-last-L"
           ]
         }
       },
@@ -4011,13 +4121,27 @@
         "pwd/output-last-logical-closed-output",
         "pwd/output-last-logical-broken-pipe",
         "pwd/output-last-logical-enospc"
+      ],
+      "csh094_assertions": [
+        "pwd/cwd-logical-rename-leaf-default",
+        "pwd/cwd-logical-rename-leaf-L",
+        "pwd/cwd-logical-rename-leaf-last-L",
+        "pwd/cwd-logical-rename-parent-default",
+        "pwd/cwd-logical-rename-parent-L",
+        "pwd/cwd-logical-rename-parent-last-L",
+        "pwd/cwd-logical-delete-leaf-default",
+        "pwd/cwd-logical-delete-leaf-L",
+        "pwd/cwd-logical-delete-leaf-last-L",
+        "pwd/cwd-logical-delete-parent-default",
+        "pwd/cwd-logical-delete-parent-L",
+        "pwd/cwd-logical-delete-parent-last-L"
       ]
     },
     {
       "utility": "readlink",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html",
       "source_sha256": "b8af59cd805ca79ad73dab35ad008a55b9f8bbef0fc84ce7334ffac7b8f0f4dc",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "readlink/link",
@@ -4216,7 +4340,7 @@
       "utility": "realpath",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html",
       "source_sha256": "dfded63f96378a20c8952547dea666f07d0006e8868fa37a883b8553de684cc5",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "realpath/existing",
@@ -4362,7 +4486,7 @@
       "utility": "rm",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html",
       "source_sha256": "7ea788ea4ed4cc0f309bfc9681b650da0cbcec9d535604cb12bfd57fbddb9839",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "rm/file",
@@ -4710,7 +4834,7 @@
       "utility": "rmdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html",
       "source_sha256": "44451db47f43a6dfb058b6e8f71aee7db1fec99961573246380f7deb0c54bc9f",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "rmdir/empty",
@@ -4860,7 +4984,7 @@
       "utility": "touch",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html",
       "source_sha256": "ae8c1a8fc027372a6a50561b7c07bea8c30a471458ee72c00d7b35c039d756b7",
-      "owner": "CSH-094",
+      "owner": "CSH-095",
       "full_contract_qualified": false,
       "assertions": [
         "touch/reference",
@@ -5091,5 +5215,5 @@
       "csh090_assertions": []
     }
   ],
-  "predecessor": "CSH-092"
+  "predecessor": "CSH-093"
 }

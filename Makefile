@@ -715,3 +715,8 @@ test-host-filesystem-creation: cshell host-profile
 .PHONY: test-host-filesystem-output
 test-host-filesystem-output: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --output-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-output.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-094: inherited-PWD logical fallback after private rename/removal.
+.PHONY: test-host-filesystem-cwd-logical
+test-host-filesystem-cwd-logical: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --cwd-logical-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-cwd-logical.json $(HOST_FILESYSTEM_FLAGS)

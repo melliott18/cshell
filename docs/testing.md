@@ -1488,3 +1488,17 @@ ENOSPC before exec. This is not disk exhaustion or libc fault injection.
 PWD is unset; external pwd is tested in direct/string/file/stdin modes.
 The full host profile includes these cases and fails on setup or cleanup errors.
 See [evidence](evidence/csh-093/README.md) for scope and retained gaps.
+
+### Logical pwd fallback after namespace changes (CSH-094)
+
+`make test-host-filesystem-cwd-logical` runs 12 cases / 48 assertions with
+no options, `-L`, and `-P -L`, after leaf/parent rename/removal. The child-only
+helper observes inherited PWD without assigning or unsetting it. Direct exec
+inherits no PWD; cshell modes inherit the fixture root established at startup.
+The helper requires that root to be distinct from the cwd inode, proves unchanged
+cwd identity, old-path ENOENT and exact getcwd/ENOENT, then execs the inventoried
+external pwd. It records PWD before and after mutation. Missing/corrupt probes,
+setup/exec failure, wrong channels/status/effects and timeouts fail independently.
+The complete selected profile and CI require these cases with zero allowances.
+See [CSH-094 evidence](evidence/csh-094/README.md); valid logical symlink paths,
+permission/path/resource boundaries and arbitrary races remain open.
