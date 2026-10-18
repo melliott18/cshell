@@ -267,7 +267,7 @@ are bounded witnesses. Six harness regressions check corrupted evidence, partial
 setup, failed exec, wrong probes and timeout cleanup.
 
 See [CSH-092 evidence](evidence/csh-092/README.md) for native/Linux results and
-provider provenance. [CSH-094](tickets/CSH-094-filesystem-environment-residuals.md)
+provider provenance. [CSH-095](tickets/CSH-095-filesystem-environment-residuals.md)
 retains each unsupplied contract and all four original conditions. Final-state
 checks do not observe transient permissions, qualify every symbolic mode, ACL
 inheritance, privilege, arbitrary graphs, capacity or whole utilities.
@@ -283,4 +283,17 @@ faults, actual filesystem exhaustion, logical namespace changes or arbitrary out
 failures.
 
 `make test-host-filesystem-output` requires zero allowances. See
-[CSH-093 evidence](evidence/csh-093/README.md). All four original conditions remain open under CSH-094.
+[CSH-093 evidence](evidence/csh-093/README.md). All four original conditions remain open under CSH-095.
+
+### Logical cwd fallback (CSH-094)
+
+CSH-094 supplies 48 external pwd assertions after leaf/parent rename/removal, with default options, -L and -P -L. The helper observes unchanged inherited PWD: absent for direct exec or naming the fixture root for shell modes, independently distinct from the cwd inode. It never sets or unsets PWD. Physical resolution or ENOENT is measured before exact provider exec. Valid logical symlink paths, arbitrary namespace races, inaccessible ancestors, path limits and allocation failures remain unqualified.
+
+`make test-host-filesystem-cwd-logical` runs the focused cases. The full selected
+profile requires them with zero allowances; all earlier assertions and provider
+sources/build flags remain unchanged. Five harness regressions exercise immutable
+specifications, corrupted markers and result channels, setup/exec failures,
+inappropriate inherited PWD and timeout/reaping/cleanup. See
+[CSH-094 evidence](evidence/csh-094/README.md). All unsupplied environments and
+four original conditions remain open under
+[CSH-095](tickets/CSH-095-filesystem-environment-residuals.md).

@@ -90,6 +90,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-092](CSH-092-filesystem-environment-residuals.md) | Supply remaining filesystem environments after physical cwd qualification | [CSH-091](CSH-091-filesystem-environment-residuals.md) | [#195](https://github.com/melliott18/cshell/issues/195) |
 | [CSH-093](CSH-093-filesystem-environment-residuals.md) | Supply remaining filesystem environments after creation-mode qualification | [CSH-092](CSH-092-filesystem-environment-residuals.md) | [#197](https://github.com/melliott18/cshell/issues/197) |
 | [CSH-094](CSH-094-filesystem-environment-residuals.md) | Supply remaining filesystem environments after output-error qualification | [CSH-093](CSH-093-filesystem-environment-residuals.md) | [#199](https://github.com/melliott18/cshell/issues/199) |
+| [CSH-095](CSH-095-filesystem-environment-residuals.md) | Supply remaining filesystem environments after logical cwd fallback qualification | [CSH-094](CSH-094-filesystem-environment-residuals.md) | [#201](https://github.com/melliott18/cshell/issues/201) |
 
 ## Child implementation tickets
 
