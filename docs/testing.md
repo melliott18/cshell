@@ -1502,3 +1502,17 @@ setup/exec failure, wrong channels/status/effects and timeouts fail independentl
 The complete selected profile and CI require these cases with zero allowances.
 See [CSH-094 evidence](evidence/csh-094/README.md); valid logical symlink paths,
 permission/path/resource boundaries and arbitrary races remain open.
+
+### Authored numeric magic boundaries (CSH-095)
+
+`make test-host-filesystem-magic` runs 46 cases / 184 assertions, also mandatory
+in `make test-host-profile`. Native signed byte/short samples exercise minima,
+maxima, comparisons across zero, negative-value masks/bit tests, hexadecimal and
+octal constants, exact/truncated fields, and first-match continuation order.
+Python packs native C values; ctypes independently checks widths. The record
+retains byte order, widths, exact bytes, literal message oracles and unchanged
+input effects. Failed setup, exec, channels/status/effects and bounded timeout
+cleanup have harness regressions. No provider/source/build flags change.
+See [CSH-095 evidence](evidence/csh-095/README.md) for native/Linux results and
+retained stock failures. Other types/ranges, multiple-database precedence and
+all four original U-040 conditions remain open under CSH-096.

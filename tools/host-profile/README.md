@@ -369,3 +369,12 @@ CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathnam
 
 `make test-host-filesystem-output` requires zero allowances. See
 [CSH-093 evidence](../../docs/evidence/csh-093/README.md). All four original conditions remain open under CSH-094.
+
+### Numeric magic boundary qualification (CSH-095)
+
+`make test-host-filesystem-magic` requires 184 assertions against the inventoried
+external `file` in direct and three cshell modes. The profile retains the stock
+file provider: no replacement or allowance is introduced. Authored byte/short
+boundaries and one-database first-match ordering do not qualify every magic
+type or default database. See [CSH-095 evidence](../../docs/evidence/csh-095/README.md)
+and [CSH-096 residuals](../../docs/tickets/CSH-096-filesystem-environment-residuals.md).

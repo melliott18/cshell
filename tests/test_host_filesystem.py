@@ -25,12 +25,98 @@ import host_filesystem_path_limits as path_limits
 import host_filesystem_cwd as cwd_cases
 import host_filesystem_creation as creation
 import host_filesystem_output as output_cases
+import host_filesystem_magic as magic_cases
 from host_contract_inventory import utility_owner
 from host_filesystem import run_case, stdout_matches, stderr_matches
 from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, terminal_cases, effect_errors
 
 
 class FilesystemHarnessTests(unittest.TestCase):
+    def test_magic_numeric_samples_use_native_signed_values(self):
+        rows = list(magic_cases.cases())
+        self.assertEqual(len(rows), 46)
+        for row in rows:
+            facts = row['magic_environment']
+            sample = row['files']['sample'][5:]
+            if 'value' in facts:
+                self.assertEqual(int.from_bytes(sample, sys.byteorder, signed=True), facts['value'])
+                self.assertEqual(len(sample), facts['bytes'])
+            if 'complete' in facts:
+                self.assertEqual(len(sample), facts['bytes'] - (not facts['complete']))
+        # Distinct boundary witnesses must not collapse to the same bytes.
+        for kind in ('byte', 'short'):
+            minimum = next(r for r in rows if r['id'] == 'file/magic-' + kind + '-minimum-yes')
+            maximum = next(r for r in rows if r['id'] == 'file/magic-' + kind + '-maximum-yes')
+            self.assertNotEqual(minimum['files']['sample'], maximum['files']['sample'])
+
+    def test_magic_channels_status_and_immutable_inputs_are_required(self):
+        row = next(magic_cases.cases())
+        original = copy.deepcopy(row)
+        for fault in (None, 'stdout', 'stderr', 'status', 'sample', 'magic'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                if fault in ('sample', 'magic'):
+                    (cwd / fault).write_bytes(b'changed')
+                return (1 if fault == 'status' else 0,
+                        dict(stdout=b'wrong' if fault == 'stdout' else row['stdout'],
+                             stderr=b'diagnostic' if fault == 'stderr' else b''), [])
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'file': {'path': '/usr/bin/file'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'PASS' if fault is None else 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+        self.assertEqual(row, original)
+
+    def test_magic_setup_failure_prevents_execution_and_cleans(self):
+        row = next(magic_cases.cases())
+        from host_filesystem_cases import setup
+        def corrupt(directory, spec):
+            cwd = setup(directory, spec)
+            (directory / 'sample').write_bytes(b'wrong')
+            return cwd
+        with tempfile.TemporaryDirectory() as root, \
+                patch('host_filesystem.setup', side_effect=corrupt), \
+                patch('host_filesystem.smoke.capture') as capture:
+            record = run_case(Path('/bin/sh'), {'file': {'path': '/usr/bin/file'}},
+                              os.defpath, row, 'direct', Path(root), None)
+            capture.assert_not_called()
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            self.assertIn('readback mismatch', record['error'])
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_magic_exec_failure_and_timeout_clean_all_modes(self):
+        row = next(magic_cases.cases())
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            for fault in ('exec', 'timeout'):
+                with self.subTest(mode=mode, fault=fault), tempfile.TemporaryDirectory() as root:
+                    root = Path(root)
+                    provider = root / 'file'
+                    pidfile = root / 'pid'
+                    provider.write_text('#!/nonexistent-csh095-interpreter\n' if fault == 'exec' else
+                                        '#!/bin/sh\necho $$ > "' + str(pidfile) + '"\nexec /bin/sleep 60\n')
+                    provider.chmod(0o700)
+                    # A missing interpreter can make shells continue PATH search.
+                    # Exclude the real file utility from this failure fixture.
+                    record = run_case(Path('/bin/sh'), {'file': {'path': str(provider)}},
+                                      str(root), row, mode, root, None, timeout=1)
+                    self.assertEqual(record['verdict'], 'FAIL', record)
+                    self.assertTrue(record['cleanup'])
+                    if fault == 'timeout':
+                        self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                        pid = int(pidfile.read_text())
+                        deadline = time.monotonic() + 2
+                        while True:
+                            try:
+                                os.kill(pid, 0)
+                            except ProcessLookupError:
+                                break
+                            self.assertLess(time.monotonic(), deadline, 'provider was not reaped')
+                            time.sleep(.02)
+                        pidfile.unlink()
+                    self.assertEqual(list(root.iterdir()), [provider])
+
     def test_logical_cwd_cases_preserve_spec_and_inherited_environment(self):
         rows = list(cwd_cases.logical_cases())
         self.assertEqual(len(rows), 12)
@@ -1135,7 +1221,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -1301,7 +1387,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

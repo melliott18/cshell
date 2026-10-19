@@ -720,3 +720,8 @@ test-host-filesystem-output: cshell host-profile
 .PHONY: test-host-filesystem-cwd-logical
 test-host-filesystem-cwd-logical: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --cwd-logical-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-cwd-logical.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-095: authored numeric magic boundaries and first-match precedence.
+.PHONY: test-host-filesystem-magic
+test-host-filesystem-magic: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --magic-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-magic.json $(HOST_FILESYSTEM_FLAGS)
