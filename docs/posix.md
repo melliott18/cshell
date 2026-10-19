@@ -267,7 +267,7 @@ are bounded witnesses. Six harness regressions check corrupted evidence, partial
 setup, failed exec, wrong probes and timeout cleanup.
 
 See [CSH-092 evidence](evidence/csh-092/README.md) for native/Linux results and
-provider provenance. [CSH-095](tickets/CSH-095-filesystem-environment-residuals.md)
+provider provenance. [CSH-096](tickets/CSH-096-filesystem-environment-residuals.md)
 retains each unsupplied contract and all four original conditions. Final-state
 checks do not observe transient permissions, qualify every symbolic mode, ACL
 inheritance, privilege, arbitrary graphs, capacity or whole utilities.
@@ -283,7 +283,7 @@ faults, actual filesystem exhaustion, logical namespace changes or arbitrary out
 failures.
 
 `make test-host-filesystem-output` requires zero allowances. See
-[CSH-093 evidence](evidence/csh-093/README.md). All four original conditions remain open under CSH-095.
+[CSH-093 evidence](evidence/csh-093/README.md). All four original conditions remain open under CSH-096.
 
 ### Logical cwd fallback (CSH-094)
 
@@ -296,4 +296,14 @@ specifications, corrupted markers and result channels, setup/exec failures,
 inappropriate inherited PWD and timeout/reaping/cleanup. See
 [CSH-094 evidence](evidence/csh-094/README.md). All unsupplied environments and
 four original conditions remain open under
-[CSH-095](tickets/CSH-095-filesystem-environment-residuals.md).
+[CSH-096](tickets/CSH-096-filesystem-environment-residuals.md).
+
+### Authored numeric magic boundaries (CSH-095)
+
+CSH-095 supplies 46 authored file magic cases / 184 assertions for native signed byte/short minima and maxima, comparisons across zero, masks and bit tests on negative values, hexadecimal/octal short constants, complete/truncated numeric fields and first-match/continuation order within one database. Exact sample bytes, native ABI widths, channels, status and unchanged input effects are retained. Other types/widths, unsigned ranges, cross-database -m/-M/-d precedence, default classification, encodings and locales remain unqualified.
+
+`make test-host-filesystem-magic` runs the focused cases. They are also mandatory
+in the full selected profile with zero allowances. See [CSH-095 evidence](evidence/csh-095/README.md).
+All four original U-040 conditions and every unsupplied environment remain open
+under [CSH-096](tickets/CSH-096-filesystem-environment-residuals.md); utility/libc/platform
+vendors retain implementation ownership. Historical evidence is unchanged.
