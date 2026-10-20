@@ -1,11 +1,11 @@
 # CSH-096: Supply remaining filesystem environments after numeric magic qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-095
-- Branch: Assigned when work starts
+- Branch: `test/CSH-096-filesystem-environments`
 - Issue: [#203](https://github.com/melliott18/cshell/issues/203)
 
 ## Goal
@@ -56,10 +56,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -105,3 +105,38 @@ CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathnam
 CSH-094 supplies 48 external pwd assertions after leaf/parent rename/removal, with default options, -L and -P -L. The helper observes unchanged inherited PWD: absent for direct exec or naming the fixture root for shell modes, independently distinct from the cwd inode. It never sets or unsets PWD. Physical resolution or ENOENT is measured before exact provider exec. Valid logical symlink paths, arbitrary namespace races, inaccessible ancestors, path limits and allocation failures remain unqualified. All four original U-040 conditions remain open.
 
 CSH-095 supplies 46 authored file magic cases / 184 assertions for native signed byte/short minima and maxima, comparisons across zero, masks and bit tests on negative values, hexadecimal/octal short constants, complete/truncated numeric fields and first-match/continuation order within one database. Exact sample bytes, native ABI widths, channels, status and unchanged input effects are retained. Other types/widths, unsigned ranges, cross-database -m/-M/-d precedence, default classification, encodings and locales remain unqualified. All four original U-040 conditions remain open.
+
+## Implementation
+
+CSH-096 supplies 40 touch calendar cases / 160 assertions for the Epoch, two-digit years 70/99/00/68, omitted seconds, leap day, second-60 year rollover, the required January 2038 date and the signed-32-bit timestamp boundary. Integer UTC calendar arithmetic supplies expected timestamps; exact target and unequal fractional baselines are independently read back on the target inode before execution. Default, -a, -m and explicit -a -m selections require exact timestamps, empty channels, zero status and unchanged content. Other date/timezone forms, current-time tolerances, unsupported timestamp errors, arbitrary symlink graphs and permission/ACL boundaries remain unqualified.
+
+`tests/host_filesystem_calendar.py` and `make test-host-filesystem-calendar` add
+the bounded timestamp environment to the full selected profile. Four harness
+regressions enforce independent expectations, strict channels and effects,
+setup failures, and failed-exec/timeout cleanup. No provider source or selected
+allowance changes. The dependency CSH-095 remains in review; this branch is
+stacked on its published commit `4f8cd29`.
+
+Every unsupplied environment in the table above remains explicitly open under
+[CSH-097](CSH-097-filesystem-environment-residuals.md) ([#205](https://github.com/melliott18/cshell/issues/205));
+its table and the current machine-readable ledgers record the updated touch
+disposition. Utility/libc/platform vendors retain implementation ownership.
+
+See [retained CSH-096 evidence](../evidence/csh-096/README.md) for commands,
+independent oracles, setup/cleanup results, platform and provider provenance,
+and the selected/stock distinction.
+
+### Validation results
+
+All required targets and `make test-host-filesystem-calendar` passed on native
+macOS 14.8.7 arm64 UID 501 and Debian 12 arm64 Docker UID 10001. Each platform
+passed 10 ownership tests, 84 harness tests and 160 new calendar assertions.
+Full selected filesystem profiles: macOS 1819/0 and Linux 1859/0 pass/fail;
+host integration: 1162/0 on both. Selected provider audits: macOS 168/0 and
+Linux 184/0. Stock full audits remain nonzero (73 macOS and 42 Linux failures),
+as do stock provider audits (16 macOS and 8 Linux failures). All stock failure
+IDs/modes are unchanged from CSH-095. Evidence verification confirms all earlier
+selected assertions, every cleanup result, the exact new fields/channels, and
+one final source digest across both platforms. The initial harness inventory
+failure before updating the clause map is retained separately. No sanitizer or
+hosted-CI qualification is claimed.

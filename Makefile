@@ -725,3 +725,8 @@ test-host-filesystem-cwd-logical: cshell host-profile
 .PHONY: test-host-filesystem-magic
 test-host-filesystem-magic: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --magic-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-magic.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-096: independently measured calendar timestamps and field selection.
+.PHONY: test-host-filesystem-calendar
+test-host-filesystem-calendar: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --calendar-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-calendar.json $(HOST_FILESYSTEM_FLAGS)
