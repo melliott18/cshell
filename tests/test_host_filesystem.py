@@ -26,12 +26,99 @@ import host_filesystem_cwd as cwd_cases
 import host_filesystem_creation as creation
 import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
+import host_filesystem_calendar as calendar_cases
 from host_contract_inventory import utility_owner
 from host_filesystem import run_case, stdout_matches, stderr_matches
 from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, terminal_cases, effect_errors
 
 
 class FilesystemHarnessTests(unittest.TestCase):
+    def test_calendar_oracle_has_independent_epoch_and_century_boundaries(self):
+        rows = {r['id']: r for r in calendar_cases.cases()}
+        self.assertEqual(len(rows), 40)
+        for name, seconds in [('epoch', 0), ('year-70', 1), ('year-99', 946684799),
+                              ('year-00-default-seconds', 946684800),
+                              ('second-60-rollover', 946684800),
+                              ('leap-day', 951868799), ('after-signed32', 2147483648),
+                              ('year-68', 3124223999)]:
+            row = rows['touch/calendar-' + name + '-both']
+            self.assertEqual(row['calendar_environment']['target_ns'], seconds * 10**9)
+        for row in rows.values():
+            self.assertEqual(row['env'], {'TZ': 'UTC0'})
+            self.assertNotEqual(row['calendar_environment']['target_ns'], calendar_cases.BASELINE[0])
+            self.assertNotEqual(row['calendar_environment']['target_ns'], calendar_cases.BASELINE[1])
+
+    def test_calendar_channels_fields_and_contents_are_required(self):
+        rows = list(calendar_cases.cases())[:4]
+        for row in rows:
+            original = copy.deepcopy(row)
+            for fault in (None, 'atime', 'mtime', 'content', 'stdout', 'stderr', 'status'):
+                def capture(binary, invocation, cwd, *args, **kw):
+                    expected = row['effects']['target']
+                    if fault == 'content':
+                        (cwd / 'target').write_bytes(b'changed')
+                    stamps = (expected['atime_ns'] + (fault == 'atime'),
+                              expected['mtime_ns'] + (fault == 'mtime'))
+                    os.utime(cwd / 'target', ns=stamps)
+                    return (1 if fault == 'status' else 0,
+                            dict(stdout=b'wrong' if fault == 'stdout' else b'',
+                                 stderr=b'wrong' if fault == 'stderr' else b''), [])
+                with self.subTest(case=row['id'], fault=fault), tempfile.TemporaryDirectory() as root, \
+                        patch('host_filesystem.smoke.capture', side_effect=capture):
+                    record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                      os.defpath, row, 'direct', Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS' if fault is None else 'FAIL', record)
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+            self.assertEqual(row, original)
+
+    def test_calendar_unrepresentable_or_failed_setup_never_executes(self):
+        row = next(calendar_cases.cases())
+        real_utime = os.utime
+        for failure in ('error', 'rounded', 'baseline'):
+            def utime(path, *, ns):
+                if failure == 'error' or (failure == 'baseline' and ns == calendar_cases.BASELINE):
+                    raise OSError(errno.EIO, 'synthetic timestamp setup error')
+                actual = (ns[0] + 1000000000, ns[1]) if failure == 'rounded' else ns
+                real_utime(path, ns=actual)
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem_calendar.utime', side_effect=utime), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                capture.assert_not_called()
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_calendar_exec_failure_and_timeout_clean_all_modes(self):
+        row = next(calendar_cases.cases())
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            for fault in ('exec', 'timeout'):
+                with self.subTest(mode=mode, fault=fault), tempfile.TemporaryDirectory() as root:
+                    root = Path(root)
+                    provider, pidfile = root / 'touch', root / 'pid'
+                    provider.write_text('#!/nonexistent-csh096-interpreter\n' if fault == 'exec' else
+                                        '#!/bin/sh\necho $$ > "' + str(pidfile) + '"\nexec /bin/sleep 60\n')
+                    provider.chmod(0o700)
+                    record = run_case(Path('/bin/sh'), {'touch': {'path': str(provider)}},
+                                      str(root), row, mode, root, None, timeout=1)
+                    self.assertEqual(record['verdict'], 'FAIL', record)
+                    self.assertTrue(record['cleanup'])
+                    self.assertFalse(list(root.glob('csh-filesystem-*')))
+                    if fault == 'timeout':
+                        self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                        pid = int(pidfile.read_text())
+                        deadline = time.monotonic() + 2
+                        while True:
+                            try:
+                                os.kill(pid, 0)
+                            except ProcessLookupError:
+                                break
+                            if time.monotonic() >= deadline:
+                                self.fail('calendar timeout child survived cleanup')
+                            time.sleep(0.01)
+
     def test_magic_numeric_samples_use_native_signed_values(self):
         rows = list(magic_cases.cases())
         self.assertEqual(len(rows), 46)
@@ -1221,7 +1308,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -1387,7 +1474,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

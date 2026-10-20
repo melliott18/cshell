@@ -378,3 +378,18 @@ file provider: no replacement or allowance is introduced. Authored byte/short
 boundaries and one-database first-match ordering do not qualify every magic
 type or default database. See [CSH-095 evidence](../../docs/evidence/csh-095/README.md)
 and [CSH-096 residuals](../../docs/tickets/CSH-096-filesystem-environment-residuals.md).
+
+### Calendar timestamp qualification (CSH-096)
+
+`make test-host-filesystem-calendar` runs 40 cases / 160 strict assertions against
+the inventoried external touch provider directly and via cshell string/file/stdin.
+The full selected profile includes these cases. Integer UTC calendar arithmetic
+supplies exact expectations; target and unequal fractional baseline timestamps
+must survive independent utime/stat probes before exec. The cases require empty
+channels, status zero, exact selected and preserved timestamps, and unchanged
+file content. Setup failure is a failure, never a skip.
+
+This covers authored representable dates, not complete timestamp ranges,
+unsupported-range errors, current clocks, DST or privileged filesystem behavior.
+See [CSH-096 evidence](../../docs/evidence/csh-096/README.md) and
+[CSH-097 residual ownership](../../docs/tickets/CSH-097-filesystem-environment-residuals.md).
