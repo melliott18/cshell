@@ -1530,4 +1530,19 @@ file content. Setup failure is a failure, never a skip.
 This covers authored representable dates, not complete timestamp ranges,
 unsupported-range errors, current clocks, DST or privileged filesystem behavior.
 See [CSH-096 evidence](evidence/csh-096/README.md) and
-[CSH-097 residual ownership](tickets/CSH-097-filesystem-environment-residuals.md).
+[CSH-098 residual ownership](tickets/CSH-098-filesystem-environment-residuals.md).
+
+### Reference timestamps and alias graphs (CSH-097)
+
+`make test-host-filesystem-reference` runs 28 cases / 112 assertions through
+direct exec and cshell string/file/stdin dispatch. The full selected profile
+includes every case. Independent timestamp probes and stat/lstat measurements
+prove the private graph before execution. All metadata is captured before
+content reads can alter a hard-linked inode’s atime. Exact field selection,
+unchanged reference files and links, and no-create continuation are required.
+Four harness regressions cover corrupt effects/channels, setup failures and
+failed-exec/timeout cleanup in all modes. Arbitrary graphs, live clocks,
+unsupported timestamps, races and permission/ACL errors remain open.
+
+See [CSH-097 evidence](evidence/csh-097/README.md) and
+[CSH-098 residual ownership](tickets/CSH-098-filesystem-environment-residuals.md).

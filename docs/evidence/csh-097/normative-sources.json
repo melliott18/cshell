@@ -1,0 +1,16 @@
+[
+  {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html",
+    "sha256": "ae8c1a8fc027372a6a50561b7c07bea8c30a471458ee72c00d7b35c039d756b7",
+    "retrieved": "2026-10-21",
+    "sections": [
+      "DESCRIPTION",
+      "OPTIONS",
+      "OPERANDS",
+      "STDOUT",
+      "STDERR",
+      "EXIT STATUS"
+    ],
+    "method": "direct HTTPS after web reader returned 403"
+  }
+]
