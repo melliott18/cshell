@@ -730,3 +730,8 @@ test-host-filesystem-magic: cshell host-profile
 .PHONY: test-host-filesystem-calendar
 test-host-filesystem-calendar: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --calendar-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-calendar.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-097: reference timestamps, alias graphs and no-create continuation.
+.PHONY: test-host-filesystem-reference
+test-host-filesystem-reference: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --reference-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-reference.json $(HOST_FILESYSTEM_FLAGS)
