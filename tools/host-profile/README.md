@@ -408,3 +408,14 @@ unsupported timestamps, races and permission/ACL errors remain open.
 
 See [CSH-097 evidence](../../docs/evidence/csh-097/README.md) and
 [CSH-098 residual ownership](../../docs/tickets/CSH-098-filesystem-environment-residuals.md).
+
+## Date syntax, fractional seconds and fixed TZ (CSH-098)
+
+`make test-host-filesystem-datetime` adds 64 cases / 256 strict assertions to
+the full selected profile. The existing touch provider must accept period/comma
+fractions, T/space separators, local fixed TZ offsets and explicit Z, preserving
+unselected fields and target identity/mode/content. Integer authored UTC fields
+and fractions supply expectations; exact inode readback precedes execution.
+No provider or allowance changes are made. DST, zoneinfo, arbitrary timestamp
+precision/ranges, live clocks and other unsupplied environments remain under
+[CSH-099](../../docs/tickets/CSH-099-filesystem-environment-residuals.md).

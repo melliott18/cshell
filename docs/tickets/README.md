@@ -94,6 +94,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-096](CSH-096-filesystem-environment-residuals.md) | Supply remaining filesystem environments after numeric magic qualification | [CSH-095](CSH-095-filesystem-environment-residuals.md) | [#203](https://github.com/melliott18/cshell/issues/203) |
 | [CSH-097](CSH-097-filesystem-environment-residuals.md) | Supply remaining filesystem environments after calendar timestamp qualification | [CSH-096](CSH-096-filesystem-environment-residuals.md) | [#205](https://github.com/melliott18/cshell/issues/205) |
 | [CSH-098](CSH-098-filesystem-environment-residuals.md) | Supply remaining filesystem environments after reference timestamp qualification | [CSH-097](CSH-097-filesystem-environment-residuals.md) | [#207](https://github.com/melliott18/cshell/issues/207) |
+| [CSH-099](CSH-099-filesystem-environment-residuals.md) | Supply remaining filesystem environments after date-form and timezone qualification | [CSH-098](CSH-098-filesystem-environment-residuals.md) | [#209](https://github.com/melliott18/cshell/issues/209) |
 
 ## Child implementation tickets
 
