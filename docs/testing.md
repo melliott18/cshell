@@ -1530,7 +1530,7 @@ file content. Setup failure is a failure, never a skip.
 This covers authored representable dates, not complete timestamp ranges,
 unsupported-range errors, current clocks, DST or privileged filesystem behavior.
 See [CSH-096 evidence](evidence/csh-096/README.md) and
-[CSH-098 residual ownership](tickets/CSH-098-filesystem-environment-residuals.md).
+[CSH-099 residual ownership](tickets/CSH-099-filesystem-environment-residuals.md).
 
 ### Reference timestamps and alias graphs (CSH-097)
 
@@ -1545,4 +1545,16 @@ failed-exec/timeout cleanup in all modes. Arbitrary graphs, live clocks,
 unsupported timestamps, races and permission/ACL errors remain open.
 
 See [CSH-097 evidence](evidence/csh-097/README.md) and
-[CSH-098 residual ownership](tickets/CSH-098-filesystem-environment-residuals.md).
+[CSH-099 residual ownership](tickets/CSH-099-filesystem-environment-residuals.md).
+
+### Date forms and fixed timezones (CSH-098)
+
+`make test-host-filesystem-datetime` runs 64 cases / 256 assertions for touch
+fractional seconds, date separators, fixed POSIX TZ offsets and explicit UTC.
+All are also mandatory in the full selected host profile. Python authors UTC
+fields and integer fractions independently of provider parsing; setup probes
+exact target timestamps then restores distinct fractional baselines. No DST
+or timezone database is needed. Harness regressions reject changed fields,
+content, identity/mode, channels/status, failed/rounded setup and failed-exec
+or timeout cleanup. Native and Linux commands and records are retained in
+[CSH-098 evidence](evidence/csh-098/README.md). Remaining ownership is [CSH-099](tickets/CSH-099-filesystem-environment-residuals.md).

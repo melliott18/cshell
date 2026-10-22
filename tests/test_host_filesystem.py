@@ -28,6 +28,7 @@ import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
 import host_filesystem_calendar as calendar_cases
 import host_filesystem_reference as reference_cases
+import host_filesystem_datetime as datetime_cases
 from host_contract_inventory import utility_owner
 from host_filesystem import run_case, stdout_matches, stderr_matches
 from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, terminal_cases, effect_errors
@@ -145,6 +146,101 @@ class FilesystemHarnessTests(unittest.TestCase):
             self.assertEqual(row['env'], {'TZ': 'UTC0'})
             self.assertNotEqual(row['calendar_environment']['target_ns'], calendar_cases.BASELINE[0])
             self.assertNotEqual(row['calendar_environment']['target_ns'], calendar_cases.BASELINE[1])
+
+    def test_datetime_expected_values_do_not_parse_provider_inputs(self):
+        rows = list(datetime_cases.cases())
+        self.assertEqual(len(rows), 64)
+        # Independent epoch constants catch sign, rollover and fraction scaling errors.
+        expected = [946684800100000000, 946684800100000000, 946684800000000001,
+                    946684800999999999, 946684800123456789, 946684800000001000,
+                    946684800000000000, 946684800250000000, 946701000500000000,
+                    951849900125000000, 946697400000000000, 946664100000000000,
+                    946684800125000000, 946684800500000000, 946701000000000000,
+                    951849900000000000]
+        self.assertEqual([r['datetime_environment']['target_ns'] for r in rows[::4]], expected)
+        for group, value in zip((rows[n:n+4] for n in range(0, 64, 4)), expected):
+            for row, stamps in zip(group, [(value, value), (value, 1000000000250000000),
+                                          (900000000125000000, value), (value, value)]):
+                effect = row['effects']['target']
+                self.assertEqual((effect['atime_ns'], effect['mtime_ns']), stamps)
+        self.assertEqual({r['env']['TZ'] for r in rows},
+                         {'UTC0', 'FST5', 'FST-5:30', 'FST3:30', 'FST-5:45'})
+
+    def test_datetime_channels_fields_and_contents_are_required(self):
+        rows = list(datetime_cases.cases())[:4]
+        for row in rows:
+            original = copy.deepcopy(row)
+            for fault in (None, 'atime', 'mtime', 'content', 'mode', 'inode', 'stdout', 'stderr', 'status'):
+                def capture(binary, invocation, cwd, *args, **kw):
+                    expected = row['effects']['target']
+                    if fault == 'content':
+                        (cwd / 'target').write_bytes(b'changed')
+                    if fault == 'mode':
+                        (cwd / 'target').chmod(0o700)
+                    if fault == 'inode':
+                        (cwd / 'target').rename(cwd / 'original')
+                        (cwd / 'target').write_bytes(datetime_cases.CONTENT)
+                    stamps = (expected['atime_ns'] + (fault == 'atime'),
+                              expected['mtime_ns'] + (fault == 'mtime'))
+                    os.utime(cwd / 'target', ns=stamps)
+                    return (1 if fault == 'status' else 0,
+                            dict(stdout=b'wrong' if fault == 'stdout' else b'',
+                                 stderr=b'wrong' if fault == 'stderr' else b''), [])
+                with self.subTest(case=row['id'], fault=fault), tempfile.TemporaryDirectory() as root, \
+                        patch('host_filesystem.smoke.capture', side_effect=capture):
+                    record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                      os.defpath, row, 'direct', Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS' if fault is None else 'FAIL', record)
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+            self.assertEqual(row, original)
+
+    def test_datetime_unrepresentable_or_failed_setup_never_executes(self):
+        row = next(datetime_cases.cases())
+        real_utime = os.utime
+        for failure in ('error', 'rounded', 'baseline'):
+            def utime(path, *, ns):
+                if failure == 'error' or (failure == 'baseline' and ns == datetime_cases.BASELINE):
+                    raise OSError(errno.EIO, 'synthetic timestamp setup error')
+                actual = (ns[0] + 1000000000, ns[1]) if failure == 'rounded' else ns
+                real_utime(path, ns=actual)
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem_datetime.utime', side_effect=utime), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                capture.assert_not_called()
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_datetime_exec_failure_and_timeout_clean_all_modes(self):
+        row = next(datetime_cases.cases())
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            for fault in ('exec', 'timeout'):
+                with self.subTest(mode=mode, fault=fault), tempfile.TemporaryDirectory() as root:
+                    root = Path(root)
+                    provider, pidfile = root / 'touch', root / 'pid'
+                    provider.write_text('#!/nonexistent-csh098-interpreter\n' if fault == 'exec' else
+                                        '#!/bin/sh\necho $$ > "' + str(pidfile) + '"\nexec /bin/sleep 60\n')
+                    provider.chmod(0o700)
+                    record = run_case(Path('/bin/sh'), {'touch': {'path': str(provider)}},
+                                      str(root), row, mode, root, None, timeout=1)
+                    self.assertEqual(record['verdict'], 'FAIL', record)
+                    self.assertTrue(record['cleanup'])
+                    self.assertFalse(list(root.glob('csh-filesystem-*')))
+                    if fault == 'timeout':
+                        self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                        pid = int(pidfile.read_text())
+                        deadline = time.monotonic() + 2
+                        while True:
+                            try:
+                                os.kill(pid, 0)
+                            except ProcessLookupError:
+                                break
+                            if time.monotonic() >= deadline:
+                                self.fail('datetime timeout child survived cleanup')
+                            time.sleep(0.01)
 
     def test_calendar_channels_fields_and_contents_are_required(self):
         rows = list(calendar_cases.cases())[:4]
@@ -1406,7 +1502,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -1572,7 +1668,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

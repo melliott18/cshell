@@ -35,6 +35,7 @@ import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
 import host_filesystem_calendar as calendar_cases
 import host_filesystem_reference as reference_cases
+import host_filesystem_datetime as datetime_cases
 from host_filesystem_fault import marker_matches
 from host_platform import filesystem_identity
 from host_utilities import inventory, match, sanitizer_diagnostic, serial, sha, source_identity
@@ -131,6 +132,9 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
         reference_environment = reference_cases.setup(directory, row)
         if reference_environment is not None:
             record["reference_environment"] = reference_environment
+        datetime_environment = datetime_cases.setup(directory, row)
+        if datetime_environment is not None:
+            record["datetime_environment"] = datetime_environment
         calendar_environment = calendar_cases.setup(directory, row)
         if calendar_environment is not None:
             record['calendar_environment'] = calendar_environment
@@ -264,6 +268,10 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
         errors.extend(reference_errors)
         if reference_observed is not None:
             record["reference_observed"] = reference_observed
+        datetime_errors, datetime_observed = datetime_cases.verify(directory, datetime_environment)
+        errors.extend(datetime_errors)
+        if datetime_observed is not None:
+            record["datetime_observed"] = datetime_observed
         effects, observed = effect_errors(directory, row)
         errors.extend(effects)
         if not match(row['status'], status):
@@ -303,6 +311,7 @@ def main():
     parser.add_argument('--audit', action='store_true')
     parser.add_argument('--sanitizer', action='store_true')
     parser.add_argument('--provider-audit', action='store_true', help='Require cycle/archive/fault provider contracts; all are mandatory in the selected profile')
+    parser.add_argument('--datetime-only', action='store_true', help='Select CSH-098 date syntax, fractions and fixed timezones')
     parser.add_argument('--reference-only', action='store_true', help='Select CSH-097 reference timestamps and alias graphs')
     parser.add_argument('--calendar-only', action='store_true', help='Select CSH-096 touch calendar boundaries and timestamp selection')
     parser.add_argument('--magic-only', action='store_true', help='Select CSH-095 authored numeric magic boundaries and precedence')
@@ -333,7 +342,9 @@ def main():
             pass
     locale.setlocale(locale.LC_CTYPE, previous)
     rows = [row for row in extended_cases() if args.provider_audit or not row.get('provider_audit')]
-    if args.reference_only:
+    if args.datetime_only:
+        rows = list(datetime_cases.cases())
+    elif args.reference_only:
         rows = list(reference_cases.cases())
     elif args.calendar_only:
         rows = list(calendar_cases.cases())
@@ -364,7 +375,7 @@ def main():
     elif args.remaining_only:
         rows = list(remaining_cases())
     elif not args.extended_only:
-        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows + list(remaining_cases()) + list(residual.cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases()) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases())
+        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows + list(remaining_cases()) + list(residual.cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases()) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases())
     records = []
     for row in rows:
         for mode in row.get('modes', ('direct', 'string', 'file', 'stdin')):
@@ -374,8 +385,8 @@ def main():
             if record['verdict'] != 'PASS':
                 print(json.dumps(record), flush=True)
     totals = {key: sum(r['verdict'] == key for r in records) for key in ('PASS', 'FAIL')}
-    result = dict(ticket='CSH-097', predecessor='CSH-096', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
-                  full_contracts_qualified=False, selection='reference' if args.reference_only else 'calendar' if args.calendar_only else 'magic' if args.magic_only else 'cwd-logical' if args.cwd_logical_only else 'output' if args.output_only else 'creation' if args.creation_only else 'cwd' if args.cwd_only else 'path-limits' if args.path_limits_only else 'recursive' if args.recursive_only else 'metadata' if args.metadata_only else 'decisions' if args.decisions_only else 'interactive' if args.interactive_only else 'isolated' if args.isolated_only else 'residual' if args.residual_only else 'remaining' if args.remaining_only else 'extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
+    result = dict(ticket='CSH-098', predecessor='CSH-097', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
+                  full_contracts_qualified=False, selection='datetime' if args.datetime_only else 'reference' if args.reference_only else 'calendar' if args.calendar_only else 'magic' if args.magic_only else 'cwd-logical' if args.cwd_logical_only else 'output' if args.output_only else 'creation' if args.creation_only else 'cwd' if args.cwd_only else 'path-limits' if args.path_limits_only else 'recursive' if args.recursive_only else 'metadata' if args.metadata_only else 'decisions' if args.decisions_only else 'interactive' if args.interactive_only else 'isolated' if args.isolated_only else 'residual' if args.residual_only else 'remaining' if args.remaining_only else 'extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
                   unavailable_capabilities=[] if platform.system() == 'Linux' else ['Linux virtual-device ENOSPC'],
                   path=args.path, providers=providers, platform=platform.platform(),
                   libc=platform.libc_ver(), utf8_locale=utf8, uid=os.getuid(), gid=os.getgid(), groups=os.getgroups(),

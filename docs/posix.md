@@ -267,7 +267,7 @@ are bounded witnesses. Six harness regressions check corrupted evidence, partial
 setup, failed exec, wrong probes and timeout cleanup.
 
 See [CSH-092 evidence](evidence/csh-092/README.md) for native/Linux results and
-provider provenance. [CSH-098](tickets/CSH-098-filesystem-environment-residuals.md)
+provider provenance. [CSH-099](tickets/CSH-099-filesystem-environment-residuals.md)
 retains each unsupplied contract and all four original conditions. Final-state
 checks do not observe transient permissions, qualify every symbolic mode, ACL
 inheritance, privilege, arbitrary graphs, capacity or whole utilities.
@@ -283,7 +283,7 @@ faults, actual filesystem exhaustion, logical namespace changes or arbitrary out
 failures.
 
 `make test-host-filesystem-output` requires zero allowances. See
-[CSH-093 evidence](evidence/csh-093/README.md). All four original conditions remain open under CSH-098.
+[CSH-093 evidence](evidence/csh-093/README.md). All four original conditions remain open under CSH-099.
 
 ### Logical cwd fallback (CSH-094)
 
@@ -296,7 +296,7 @@ specifications, corrupted markers and result channels, setup/exec failures,
 inappropriate inherited PWD and timeout/reaping/cleanup. See
 [CSH-094 evidence](evidence/csh-094/README.md). All unsupplied environments and
 four original conditions remain open under
-[CSH-098](tickets/CSH-098-filesystem-environment-residuals.md).
+[CSH-099](tickets/CSH-099-filesystem-environment-residuals.md).
 
 ### Authored numeric magic boundaries (CSH-095)
 
@@ -305,7 +305,7 @@ CSH-095 supplies 46 authored file magic cases / 184 assertions for native signed
 `make test-host-filesystem-magic` runs the focused cases. They are also mandatory
 in the full selected profile with zero allowances. See [CSH-095 evidence](evidence/csh-095/README.md).
 All four original U-040 conditions and every unsupplied environment remain open
-under [CSH-098](tickets/CSH-098-filesystem-environment-residuals.md); utility/libc/platform
+under [CSH-099](tickets/CSH-099-filesystem-environment-residuals.md); utility/libc/platform
 vendors retain implementation ownership. Historical evidence is unchanged.
 
 ## Calendar timestamps (CSH-096)
@@ -313,7 +313,7 @@ vendors retain implementation ownership. Historical evidence is unchanged.
 CSH-096 supplies 40 touch calendar cases / 160 assertions for the Epoch, two-digit years 70/99/00/68, omitted seconds, leap day, second-60 year rollover, the required January 2038 date and the signed-32-bit timestamp boundary. Integer UTC calendar arithmetic supplies expected timestamps; exact target and unequal fractional baselines are independently read back on the target inode before execution. Default, -a, -m and explicit -a -m selections require exact timestamps, empty channels, zero status and unchanged content. Other date/timezone forms, current-time tolerances, unsupported timestamp errors, arbitrary symlink graphs and permission/ACL boundaries remain unqualified.
 
 See [CSH-096 evidence](evidence/csh-096/README.md). Every remaining contract and
-all four retained U-040 conditions belong to [CSH-098](tickets/CSH-098-filesystem-environment-residuals.md).
+all four retained U-040 conditions belong to [CSH-099](tickets/CSH-099-filesystem-environment-residuals.md).
 
 ## Reference timestamps and alias graphs (CSH-097)
 
@@ -321,4 +321,12 @@ CSH-097 supplies 28 touch reference cases / 112 assertions for distinct access/m
 
 See [CSH-097 evidence](evidence/csh-097/README.md). All 21 full utility contracts
 and four original U-040 conditions remain open under
-[CSH-098](tickets/CSH-098-filesystem-environment-residuals.md).
+[CSH-099](tickets/CSH-099-filesystem-environment-residuals.md).
+
+## CSH-098 date forms and fixed timezones
+
+CSH-098 supplies 64 touch date-form cases / 256 assertions for period/comma fractional seconds down to one nanosecond, T/space separators, absent-zone fixed TZ interpretation, Z overriding nonzero TZ, and -t fixed-zone rollover. Independently authored UTC fields and integer fractions are exactly read back on the target inode before execution; all four field selections require exact timestamps, unchanged identity/mode/content and empty channels. DST transitions, timezone databases, arbitrary fractions/ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified.
+
+The U-034 direct-exec and U-040 default contracts retain their existing evidence.
+[CSH-099](tickets/CSH-099-filesystem-environment-residuals.md) owns all unsupplied
+environments and the four original U-040 conditions. See [CSH-098 evidence](evidence/csh-098/README.md).
