@@ -1530,7 +1530,7 @@ file content. Setup failure is a failure, never a skip.
 This covers authored representable dates, not complete timestamp ranges,
 unsupported-range errors, current clocks, DST or privileged filesystem behavior.
 See [CSH-096 evidence](evidence/csh-096/README.md) and
-[CSH-099 residual ownership](tickets/CSH-099-filesystem-environment-residuals.md).
+[CSH-100 residual ownership](tickets/CSH-100-filesystem-environment-residuals.md).
 
 ### Reference timestamps and alias graphs (CSH-097)
 
@@ -1545,7 +1545,7 @@ failed-exec/timeout cleanup in all modes. Arbitrary graphs, live clocks,
 unsupported timestamps, races and permission/ACL errors remain open.
 
 See [CSH-097 evidence](evidence/csh-097/README.md) and
-[CSH-099 residual ownership](tickets/CSH-099-filesystem-environment-residuals.md).
+[CSH-100 residual ownership](tickets/CSH-100-filesystem-environment-residuals.md).
 
 ### Date forms and fixed timezones (CSH-098)
 
@@ -1557,4 +1557,16 @@ exact target timestamps then restores distinct fractional baselines. No DST
 or timezone database is needed. Harness regressions reject changed fields,
 content, identity/mode, channels/status, failed/rounded setup and failed-exec
 or timeout cleanup. Native and Linux commands and records are retained in
-[CSH-098 evidence](evidence/csh-098/README.md). Remaining ownership is [CSH-099](tickets/CSH-099-filesystem-environment-residuals.md).
+[CSH-098 evidence](evidence/csh-098/README.md). Remaining ownership is [CSH-100](tickets/CSH-100-filesystem-environment-residuals.md).
+
+### Explicit daylight-saving rules (CSH-099)
+
+`make test-host-filesystem-timezone` runs 104 cases / 416 assertions through
+direct exec and cshell string/file/stdin modes. Independently authored UTC
+fields cover seasonal offsets, unique local times around northern/southern
+M-rule transitions, both -d/-t forms and Z overriding daylight time.
+The shared exact-inode timestamp setup rejects rounding and failed setup before
+exec; channels, status, selected/unselected timestamps, content and identity
+are mandatory. Setup, mutation, failed-exec and timeout cleanup regressions
+run in `test-host-inventory`. No timezone database or mktime supplies an oracle.
+See [CSH-099 evidence](evidence/csh-099/README.md) and [CSH-100 remaining ownership](tickets/CSH-100-filesystem-environment-residuals.md).

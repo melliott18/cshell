@@ -1,0 +1,14 @@
+[
+  {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap08.html",
+    "sha256": "89294048dbc032eacc75804005e256eaa7eb6b5c9a2a9cf75b44d8c573d25ad7",
+    "retrieved": "2026-10-23",
+    "method": "direct HTTPS; web reader returned 403"
+  },
+  {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html",
+    "sha256": "ae8c1a8fc027372a6a50561b7c07bea8c30a471458ee72c00d7b35c039d756b7",
+    "retrieved": "2026-10-23",
+    "method": "direct HTTPS; web reader returned 403"
+  }
+]

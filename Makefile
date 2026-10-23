@@ -740,3 +740,8 @@ test-host-filesystem-reference: cshell host-profile
 .PHONY: test-host-filesystem-datetime
 test-host-filesystem-datetime: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --datetime-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-datetime.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-099: explicit daylight-saving rules with independently authored UTC fields.
+.PHONY: test-host-filesystem-timezone
+test-host-filesystem-timezone: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --timezone-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-timezone.json $(HOST_FILESYSTEM_FLAGS)
