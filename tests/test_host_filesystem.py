@@ -29,12 +29,33 @@ import host_filesystem_magic as magic_cases
 import host_filesystem_calendar as calendar_cases
 import host_filesystem_reference as reference_cases
 import host_filesystem_datetime as datetime_cases
+import host_filesystem_timezone as timezone_cases
 from host_contract_inventory import utility_owner
 from host_filesystem import run_case, stdout_matches, stderr_matches
 from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, terminal_cases, effect_errors
 
 
 class FilesystemHarnessTests(unittest.TestCase):
+    def test_timezone_expected_values_are_independent_of_local_conversion(self):
+        rows = list(timezone_cases.cases())
+        # Literal Epoch seconds, independently checked against UTC dates. This
+        # catches daylight offset signs, southern year wrap and transition dates.
+        seconds = [1705338000, 1721059200, 1710053999, 1710054000,
+                   1730609999, 1730617200, 1705280400, 1721008800,
+                   1728143999, 1728144000, 1712415599, 1712422800]
+        expected = [s * 1000000000 for s in seconds for _ in range(2)]
+        expected += [1721044800000000000, 1705320000000000000]
+        self.assertEqual(len(rows), 104)
+        self.assertEqual([r['datetime_environment']['target_ns'] for r in rows[::4]], expected)
+        for offset, value in enumerate(expected):
+            for row, stamps in zip(rows[offset*4:offset*4+4],
+                                   [(value, value), (value, 1000000000250000000),
+                                    (900000000125000000, value), (value, value)]):
+                effect = row['effects']['target']
+                self.assertEqual((effect['atime_ns'], effect['mtime_ns']), stamps)
+        self.assertEqual({r['env']['TZ'] for r in rows}, {timezone_cases.NORTH, timezone_cases.SOUTH})
+        self.assertEqual(sum('-t' in r['args'] for r in rows), 48)
+
     def test_reference_oracle_distinguishes_fields_and_aliases(self):
         rows = list(reference_cases.cases())
         self.assertEqual(len(rows), 28)
@@ -167,7 +188,12 @@ class FilesystemHarnessTests(unittest.TestCase):
                          {'UTC0', 'FST5', 'FST-5:30', 'FST3:30', 'FST-5:45'})
 
     def test_datetime_channels_fields_and_contents_are_required(self):
-        rows = list(datetime_cases.cases())[:4]
+        self.check_datetime_channels(list(datetime_cases.cases())[:4])
+
+    def test_timezone_channels_fields_and_contents_are_required(self):
+        self.check_datetime_channels(list(timezone_cases.cases())[24:28])
+
+    def check_datetime_channels(self, rows):
         for row in rows:
             original = copy.deepcopy(row)
             for fault in (None, 'atime', 'mtime', 'content', 'mode', 'inode', 'stdout', 'stderr', 'status'):
@@ -196,7 +222,12 @@ class FilesystemHarnessTests(unittest.TestCase):
             self.assertEqual(row, original)
 
     def test_datetime_unrepresentable_or_failed_setup_never_executes(self):
-        row = next(datetime_cases.cases())
+        self.check_datetime_setup(next(datetime_cases.cases()))
+
+    def test_timezone_unrepresentable_or_failed_setup_never_executes(self):
+        self.check_datetime_setup(next(timezone_cases.cases()))
+
+    def check_datetime_setup(self, row):
         real_utime = os.utime
         for failure in ('error', 'rounded', 'baseline'):
             def utime(path, *, ns):
@@ -215,7 +246,12 @@ class FilesystemHarnessTests(unittest.TestCase):
                 self.assertEqual(list(Path(root).iterdir()), [])
 
     def test_datetime_exec_failure_and_timeout_clean_all_modes(self):
-        row = next(datetime_cases.cases())
+        self.check_datetime_cleanup(next(datetime_cases.cases()))
+
+    def test_timezone_exec_failure_and_timeout_clean_all_modes(self):
+        self.check_datetime_cleanup(next(timezone_cases.cases()))
+
+    def check_datetime_cleanup(self, row):
         for mode in ('direct', 'string', 'file', 'stdin'):
             for fault in ('exec', 'timeout'):
                 with self.subTest(mode=mode, fault=fault), tempfile.TemporaryDirectory() as root:
@@ -1502,7 +1538,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -1668,7 +1704,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

@@ -418,4 +418,9 @@ unselected fields and target identity/mode/content. Integer authored UTC fields
 and fractions supply expectations; exact inode readback precedes execution.
 No provider or allowance changes are made. DST, zoneinfo, arbitrary timestamp
 precision/ranges, live clocks and other unsupplied environments remain under
-[CSH-099](../../docs/tickets/CSH-099-filesystem-environment-residuals.md).
+[CSH-100](../../docs/tickets/CSH-100-filesystem-environment-residuals.md).
+
+CSH-099 adds `make test-host-filesystem-timezone`: 104 cases / 416 assertions
+for explicit POSIX daylight rules around unique local transition times.
+It requires the unchanged selected touch provider and zero allowances.
+Skipped/repeated times, other rules and timezone databases remain under CSH-100.

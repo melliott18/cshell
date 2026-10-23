@@ -1,0 +1,7 @@
+{
+  "platform": "macOS-14.8.7-arm64-arm-64bit",
+  "uid": 501,
+  "gid": 20,
+  "base_commit": "00b1ac1",
+  "gfind_source": "/Users/mitchell/.codex/worktrees/csh-098-filesystem-environments/cshell/build/local-bin/gfind"
+}

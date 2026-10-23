@@ -1,11 +1,11 @@
 # CSH-099: Supply remaining filesystem environments after date-form and timezone qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-098
-- Branch: Assigned when work starts
+- Branch: `test/CSH-099-filesystem-environments`
 - Issue: [#209](https://github.com/melliott18/cshell/issues/209)
 
 ## Goal
@@ -42,7 +42,7 @@ section map is `tests/host_filesystem_contracts.json`.
 | [`realpath`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html) | Permission/namespace races, libc-internal allocation failures, double-leading-slash policy and exact resource boundaries remain unqualified. CSH-080 adds test-only provider call-site ENOMEM including dynamic links and relative/absolute missing-final fallback; it does not inject libc internals. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. | controlled namespace races/credentials, exact link/path limits and libc-internal faults. Call-site injection does not qualify libc internal recovery or races. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. |
 | [`rm`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html) | Recursive descriptor/depth exhaustion, disposable mount boundaries, further operand continuation, permissions, races and prompt locales/recursive graphs remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-087 adds negative descent with operand continuation, affirmative leaf removal followed by yes/no final directory removal, recursive symlink non-traversal, and last -f/-i precedence. CSH-089 supplies declined regular/link children, nested descent refusals, final parent decisions including nonempty-parent errors and later-operand continuation on one-child chains. Branching and arbitrary prompt graphs remain open. | private mount/depth/credential profiles and automated recursive prompt/race controls. One-level continuation and yes/no PTY witnesses do not supply mount boundaries. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. CSH-089 extends one-child chains with declined children and nested decisions; arbitrary branching, non-C locales, mount and depth limits remain open. |
 | [`rmdir`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html) | Ancestor permissions, total depth/path boundaries and other filesystem errors remain unqualified. CSH-080 adds symlink rejection and continuation after a nonempty operand. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. | private credentials, bounded path/depth and filesystem failure profiles. Symlink/continuation cases do not establish permission or capacity behavior. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. |
-| [`touch`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html) | CSH-098 supplies 64 touch date-form cases / 256 assertions for period/comma fractional seconds down to one nanosecond, T/space separators, absent-zone fixed TZ interpretation, Z overriding nonzero TZ, and -t fixed-zone rollover. Independently authored UTC fields and integer fractions are exactly read back on the target inode before execution; all four field selections require exact timestamps, unchanged identity/mode/content and empty channels. DST transitions, timezone databases, arbitrary fractions/ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified. CSH-097 supplies 28 touch reference cases / 112 assertions for distinct access/modification timestamps, regular and symlink-chain references, hard-linked and symlink-chain operands, all four field selections, and silent -c continuation past missing/dangling paths. Exact nanoseconds and inode relationships are independently probed before execution; post-exec metadata is captured before content reads. Reference files, link texts, inode identities and unselected fields must remain unchanged. Arbitrary graphs, creation/current-time tolerances, unsupported timestamps, races and permission/ACL errors remain unqualified. CSH-096 supplies 40 touch calendar cases / 160 assertions for the Epoch, two-digit years 70/99/00/68, omitted seconds, leap day, second-60 year rollover, the required January 2038 date and the signed-32-bit timestamp boundary. Integer UTC calendar arithmetic supplies expected timestamps; exact target and unequal fractional baselines are independently read back on the target inode before execution. Default, -a, -m and explicit -a -m selections require exact timestamps, empty channels, zero status and unchanged content. Other date/timezone forms, current-time tolerances, unsupported timestamp errors, arbitrary symlink graphs and permission/ACL boundaries remain unqualified. | DST and timezone-database, unsupported-range, current-clock, arbitrary symlink/namespace and permission/ACL environments. Exact timestamps and fixed offsets on the authored private inode do not supply DST transitions, timezone databases, arbitrary precision/ranges, creation, live clocks, races, ACLs or other identities. |
+| [`touch`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html) | CSH-099 supplies 104 touch cases / 416 assertions for unique local times around explicit northern and southern POSIX M-rule daylight-saving transitions, seasonal offsets, -d/-t forms and Z overriding daylight time. Independently authored UTC fields and exact inode timestamp probes supply the oracle; all four field selections require unchanged identity/mode/content and empty channels. Skipped/repeated times, other rule forms, timezone databases, arbitrary ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified. CSH-098 supplies 64 touch date-form cases / 256 assertions for period/comma fractional seconds down to one nanosecond, T/space separators, absent-zone fixed TZ interpretation, Z overriding nonzero TZ, and -t fixed-zone rollover. Independently authored UTC fields and integer fractions are exactly read back on the target inode before execution; all four field selections require exact timestamps, unchanged identity/mode/content and empty channels. DST transitions, timezone databases, arbitrary fractions/ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified. CSH-097 supplies 28 touch reference cases / 112 assertions for distinct access/modification timestamps, regular and symlink-chain references, hard-linked and symlink-chain operands, all four field selections, and silent -c continuation past missing/dangling paths. Exact nanoseconds and inode relationships are independently probed before execution; post-exec metadata is captured before content reads. Reference files, link texts, inode identities and unselected fields must remain unchanged. Arbitrary graphs, creation/current-time tolerances, unsupported timestamps, races and permission/ACL errors remain unqualified. CSH-096 supplies 40 touch calendar cases / 160 assertions for the Epoch, two-digit years 70/99/00/68, omitted seconds, leap day, second-60 year rollover, the required January 2038 date and the signed-32-bit timestamp boundary. Integer UTC calendar arithmetic supplies expected timestamps; exact target and unequal fractional baselines are independently read back on the target inode before execution. Default, -a, -m and explicit -a -m selections require exact timestamps, empty channels, zero status and unchanged content. Other date/timezone forms, current-time tolerances, unsupported timestamp errors, arbitrary symlink graphs and permission/ACL boundaries remain unqualified. | DST and timezone-database, unsupported-range, current-clock, arbitrary symlink/namespace and permission/ACL environments. Exact timestamps and fixed offsets on the authored private inode do not supply DST transitions, timezone databases, arbitrary precision/ranges, creation, live clocks, races, ACLs or other identities. |
 
 ## Retained conditions
 
@@ -56,10 +56,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -68,7 +68,7 @@ test-host-filesystem-provider-audit test-host-filesystem-residual
 test-host-filesystem-isolated test-host-filesystem-interactive
 test-host-filesystem-decisions test-host-filesystem-metadata
 test-host-filesystem-recursive test-host-filesystem-path-limits test-host-filesystem-cwd
-test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime` on native macOS and Linux as an unprivileged
+test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone` on native macOS and Linux as an unprivileged
 fixture identity. Retain separate nonzero stock `make test-host-filesystem-audit`
 and stock `tests/host_filesystem.py --extended-only --provider-audit` records.
 Add bounded setup/failure/timeout cleanup regressions for new environments.
@@ -111,3 +111,32 @@ CSH-096 supplies 40 touch calendar cases / 160 assertions for the Epoch, two-dig
 CSH-097 supplies 28 touch reference cases / 112 assertions for distinct access/modification timestamps, regular and symlink-chain references, hard-linked and symlink-chain operands, all four field selections, and silent -c continuation past missing/dangling paths. Exact nanoseconds and inode relationships are independently probed before execution; post-exec metadata is captured before content reads. Reference files, link texts, inode identities and unselected fields must remain unchanged. Arbitrary graphs, creation/current-time tolerances, unsupported timestamps, races and permission/ACL errors remain unqualified. All four original U-040 conditions remain open.
 
 CSH-098 supplies 64 touch date-form cases / 256 assertions for period/comma fractional seconds down to one nanosecond, T/space separators, absent-zone fixed TZ interpretation, Z overriding nonzero TZ, and -t fixed-zone rollover. Independently authored UTC fields and integer fractions are exactly read back on the target inode before execution; all four field selections require exact timestamps, unchanged identity/mode/content and empty channels. DST transitions, timezone databases, arbitrary fractions/ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified. All four original U-040 conditions remain open.
+
+## Implementation scope
+
+CSH-099 supplies 104 touch cases / 416 assertions for unique local times around explicit northern and southern POSIX M-rule daylight-saving transitions, seasonal offsets, -d/-t forms and Z overriding daylight time. Independently authored UTC fields and exact inode timestamp probes supply the oracle; all four field selections require unchanged identity/mode/content and empty channels. Skipped/repeated times, other rule forms, timezone databases, arbitrary ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified.
+
+Based on CSH-098 commit `00b1ac1`; integration remains gated on that unmerged dependency.
+
+## Validation and disposition
+
+Review: [PR #212](https://github.com/melliott18/cshell/pull/212), based on the CSH-098 branch.
+
+[Retained CSH-099 evidence](../evidence/csh-099/README.md) records every required
+native macOS and unprivileged Linux target. Selected filesystem assertions pass
+2603/0 and 2643/0 respectively; all 416 new assertions pass on each platform
+with zero allowances. Both platforms pass 10 ownership and 96 filesystem
+harness regressions. Stock full/provider audits remain nonzero at 73/16 macOS
+and 42/8 Linux failures, with exactly the predecessor's failing IDs/modes.
+The evidence verifier confirms all earlier assertions, exact inode probes,
+channels/status/effects, provider manifest agreement, cleanup and one final
+build/test source digest across both platforms. No hosted-CI or sanitizer claim
+is made.
+
+[CSH-100](CSH-100-filesystem-environment-residuals.md) ([#211](https://github.com/melliott18/cshell/issues/211))
+now owns every individually unsupplied environment and all four original U-040
+conditions. The current section map and ownership manifest agree; utility/libc/
+platform vendors retain implementation ownership. This uses the acceptance
+criteria's explicit-disposition alternative and does not declare whole utilities
+or U-034/U-040 complete. Keep this ticket at review until integration, which
+remains gated on the CSH-098 dependency.
