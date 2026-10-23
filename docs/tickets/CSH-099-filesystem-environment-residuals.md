@@ -120,6 +120,8 @@ Based on CSH-098 commit `00b1ac1`; integration remains gated on that unmerged de
 
 ## Validation and disposition
 
+Review: [PR #212](https://github.com/melliott18/cshell/pull/212), based on the CSH-098 branch.
+
 [Retained CSH-099 evidence](../evidence/csh-099/README.md) records every required
 native macOS and unprivileged Linux target. Selected filesystem assertions pass
 2603/0 and 2643/0 respectively; all 416 new assertions pass on each platform
