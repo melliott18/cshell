@@ -1,0 +1,6 @@
+FROM cshell-test:csh-099
+COPY --chown=cshell:cshell Makefile /work/
+COPY --chown=cshell:cshell tests/ /work/tests/
+COPY --chown=cshell:cshell tools/ /work/tools/
+COPY --chown=cshell:cshell docs/ /work/docs/
+USER cshell

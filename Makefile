@@ -745,3 +745,8 @@ test-host-filesystem-datetime: cshell host-profile
 .PHONY: test-host-filesystem-timezone
 test-host-filesystem-timezone: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --timezone-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-timezone.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-100: Julian and zero-based day rules across leap/common years.
+.PHONY: test-host-filesystem-day-rules
+test-host-filesystem-day-rules: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --day-rules-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-day-rules.json $(HOST_FILESYSTEM_FLAGS)

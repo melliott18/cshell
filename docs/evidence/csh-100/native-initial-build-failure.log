@@ -1,0 +1,136 @@
+mkdir -p build/
+mkdir -p build/
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/main.c -o build/main.o
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/jobs.c -o build/jobs.o
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/traps.c -o build/traps.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/builtin.c -o build/builtin.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/utility.c -o build/utility.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/execute.c -o build/execute.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/prepare.c -o build/prepare.o
+mkdir -p build/
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/redirect.c -o build/redirect.o
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/parser.c -o build/parser.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/ast.c -o build/ast.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/lexer.c -o build/lexer.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/input.c -o build/input.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/quote.c -o build/quote.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/state.c -o build/state.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/alias.c -o build/alias.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/expand.c -o build/expand.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/arithmetic.c -o build/arithmetic.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/fields.c -o build/fields.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/pathname.c -o build/pathname.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/invocation.c -o build/invocation.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/character.c -o build/character.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -c src/stack.c -o build/stack.o
+CC="cc" CPPFLAGS="" CFLAGS="-Wall -Wextra -std=c99 -O2" LDFLAGS="" LIBS="" sh tools/host-profile/build-cp.sh
+mkdir -p build/
+cc  -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2  -o build/host-printf tools/host-profile/printf.c 
+cc  -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2  -o build/host-paths tools/host-profile/paths.c 
+cd build/host-pax-build && CC="cc" CPPFLAGS="" CFLAGS="-Wall -Wextra -std=c99 -O2" LDFLAGS="" LIBS="" sh ../../tools/host-profile/vendor/pax/Build.sh > build.log 2>&1 || { cat build/host-pax-build/build.log; exit 1; }
+tar: Failed to set default locale
+patching file src/copy.c
+patching file src/remove.c
+cc -pthread -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2  -o cshell build/main.o build/jobs.o build/traps.o build/builtin.o build/utility.o build/execute.o build/prepare.o build/redirect.o build/parser.o build/ast.o build/lexer.o build/input.o build/quote.o build/state.o build/alias.o build/expand.o build/arithmetic.o build/fields.o build/pathname.o build/invocation.o build/character.o build/stack.o 
+cc  -Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2  -o build/host-du tools/host-profile/du.c 
+cp build/host-pax-build/pax build/host-pax
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/_types/_useconds_t.h:31:33: error: 'type-name' cannot be signed or unsigned
+./lib/config.h:5253:20: note: expanded from macro 'useconds_t'
+#define useconds_t unsigned int
+                   ^
+In file included from /Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hash.c:27:
+/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hash.h:49:5: error: unknown type name 'bool'
+    bool is_n_buckets;          /* if CANDIDATE really means table size */
+    ^
+/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hash.h:86:8: error: unknown type name 'bool'
+extern bool hash_table_ok (const Hash_table *table)
+       ^
+/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hash.h:121:16: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+typedef bool (*Hash_processor) (void *entry, void *processor_data);
+               ^
+              int
+/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hash.h:121:9: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+typedef bool (*Hash_processor) (void *entry, void *processor_data);
+~~~~~~~ ^
+int
+/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hash.h:121:14: error: function cannot return function type 'int (void *, void *)'
+typedef bool (*Hash_processor) (void *entry, void *processor_data);
+             ^
+/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hash.h:131:33: error: unknown type name 'Hash_processor'
+                                Hash_processor processor, void *processor_data);
+                                ^
+/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hash.h:145:33: error: function cannot return function type 'bool' (aka 'int (int *)')
+typedef bool (*Hash_comparator) (const void *entry1, const void *entry2);
+                                ^
+/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hash.h:226:25: error: function cannot return function type 'bool' (aka 'int (int *)')
+extern bool hash_rehash (Hash_table *table, size_t candidate);
+                        ^
+In file included from /Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hard-locale.c:25:
+./lib/string.h:1635:14: error: unknown type name 'bool'
+_GL_EXTERN_C bool str_endswith (const char *string, const char *prefix)
+             ^
+/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hard-locale.c:27:1: error: unknown type name 'bool'
+bool
+^
+/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hash.c:137:5: error: use of undeclared identifier 'false'
+    false
+    ^
+/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hard-locale.c:33:12: error: use of undeclared identifier 'false'
+    return false;
+           ^
+/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hash.c:185:15: error: function cannot return function type 'bool' (aka 'int (int *)')
+hash_table_ok (const Hash_table *table)
+              ^
+/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hard-locale.c/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/group-member.c:56:13: error: use of undeclared identifier 'bool'
+:      if (! ckd_mul (&nbytes, n_group_slots, sizeof *gi->group))
+36:12/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hash.c:: error: use of undeclared identifier 'false'208
+:12: error: use of undeclared identifier 'false'
+    return true;
+           ^
+    return true;            ^
+./lib/config.h./lib/stdckdint.h:34:28: note: expanded from macro 'ckd_mul'
+
+#define ckd_mul(r, a, b) ((bool) _GL_INT_MULTIPLY_WRAPV (a, b, r))
+                           ^
+:5405:18: note: expanded from macro 'true'
+#  define true (!false)
+                 ^
+           ^
+./lib/config.h:5405:18: note: expanded from macro 'true'
+#  define true (!false)
+                 ^
+/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hard-locale.c:46:10: error: use of undeclared identifier 'false'
+  return false;
+         ^
+/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hash.c:210:10: error: use of undeclared identifier 'false'; did you mean 'else'?
+  return false;
+         ^~~~~
+         else
+/Users/mitchell/.codex/worktrees/csh-100-filesystem-environments/cshell/build/host-coreutils-src/lib/hash.c:210:10: error: expected expression
+7 errors generated.
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+12 errors generated.
+20 errors generated.
+make[1]: *** [lib/libcoreutils_a-group-member.o] Error 1
+make[1]: *** [lib/libcoreutils_a-hard-locale.o] Error 1
+make[1]: *** [lib/libcoreutils_a-hash.o] Error 1
+make: *** [build/host-cp] Error 1
