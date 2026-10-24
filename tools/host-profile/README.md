@@ -418,9 +418,16 @@ unselected fields and target identity/mode/content. Integer authored UTC fields
 and fractions supply expectations; exact inode readback precedes execution.
 No provider or allowance changes are made. DST, zoneinfo, arbitrary timestamp
 precision/ranges, live clocks and other unsupplied environments remain under
-[CSH-100](../../docs/tickets/CSH-100-filesystem-environment-residuals.md).
+[CSH-101](../../docs/tickets/CSH-101-filesystem-environment-residuals.md).
 
 CSH-099 adds `make test-host-filesystem-timezone`: 104 cases / 416 assertions
 for explicit POSIX daylight rules around unique local transition times.
 It requires the unchanged selected touch provider and zero allowances.
-Skipped/repeated times, other rules and timezone databases remain under CSH-100.
+Skipped/repeated times, other rules and timezone databases remain under CSH-101.
+
+## CSH-100 Julian and numbered day rules
+
+CSH-100 supplies 128 touch cases / 512 assertions for explicit POSIX Jn and zero-based n daylight-saving rules across common and leap years, including default 02:00 transitions and unique times before/after the authored changes. Independently authored UTC fields and exact target-inode timestamp probes supply the oracle for -d/-t and all four field selections. Skipped/repeated times, arbitrary rule values and transition times, timezone databases, timestamp ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified.
+
+See [retained evidence](../../docs/evidence/csh-100/README.md). All remaining contracts and four original U-040 conditions
+remain open under CSH-101; no whole-utility qualification is claimed.

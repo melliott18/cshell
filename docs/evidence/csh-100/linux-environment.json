@@ -1,0 +1,10 @@
+{
+  "platform": "Debian GNU/Linux 12 arm64 Docker",
+  "uid": 10001,
+  "gid": 10001,
+  "base_commit": "dab7620",
+  "image": "sha256:d2138d12287781cf8a5e5dc7343d4e1d1640640288ab897d93d7d0c2a985bec7",
+  "container": "e732287a1bbe093a6b992e96d2443e51570bda88fba0ba5b4226e67a9a06aad1",
+  "init": true,
+  "host_mounts": []
+}
