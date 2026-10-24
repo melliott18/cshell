@@ -122,6 +122,8 @@ Based on CSH-099 commit `dab7620`; integration remains gated on that unmerged de
 
 ## Validation and disposition
 
+Review: [PR #214](https://github.com/melliott18/cshell/pull/214), based on the CSH-099 branch.
+
 [Retained CSH-100 evidence](../evidence/csh-100/README.md) records all required
 native macOS and unprivileged Linux targets. Selected filesystem assertions pass
 3115/0 and 3155/0 respectively; all 512 new assertions pass with zero allowances.
