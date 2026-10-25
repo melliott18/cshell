@@ -1530,7 +1530,7 @@ file content. Setup failure is a failure, never a skip.
 This covers authored representable dates, not complete timestamp ranges,
 unsupported-range errors, current clocks, DST or privileged filesystem behavior.
 See [CSH-096 evidence](evidence/csh-096/README.md) and
-[CSH-101 residual ownership](tickets/CSH-101-filesystem-environment-residuals.md).
+[CSH-102 residual ownership](tickets/CSH-102-filesystem-environment-residuals.md).
 
 ### Reference timestamps and alias graphs (CSH-097)
 
@@ -1545,7 +1545,7 @@ failed-exec/timeout cleanup in all modes. Arbitrary graphs, live clocks,
 unsupported timestamps, races and permission/ACL errors remain open.
 
 See [CSH-097 evidence](evidence/csh-097/README.md) and
-[CSH-101 residual ownership](tickets/CSH-101-filesystem-environment-residuals.md).
+[CSH-102 residual ownership](tickets/CSH-102-filesystem-environment-residuals.md).
 
 ### Date forms and fixed timezones (CSH-098)
 
@@ -1557,7 +1557,7 @@ exact target timestamps then restores distinct fractional baselines. No DST
 or timezone database is needed. Harness regressions reject changed fields,
 content, identity/mode, channels/status, failed/rounded setup and failed-exec
 or timeout cleanup. Native and Linux commands and records are retained in
-[CSH-098 evidence](evidence/csh-098/README.md). Remaining ownership is [CSH-101](tickets/CSH-101-filesystem-environment-residuals.md).
+[CSH-098 evidence](evidence/csh-098/README.md). Remaining ownership is [CSH-102](tickets/CSH-102-filesystem-environment-residuals.md).
 
 ### Explicit daylight-saving rules (CSH-099)
 
@@ -1569,7 +1569,7 @@ The shared exact-inode timestamp setup rejects rounding and failed setup before
 exec; channels, status, selected/unselected timestamps, content and identity
 are mandatory. Setup, mutation, failed-exec and timeout cleanup regressions
 run in `test-host-inventory`. No timezone database or mktime supplies an oracle.
-See [CSH-099 evidence](evidence/csh-099/README.md) and [CSH-101 remaining ownership](tickets/CSH-101-filesystem-environment-residuals.md).
+See [CSH-099 evidence](evidence/csh-099/README.md) and [CSH-102 remaining ownership](tickets/CSH-102-filesystem-environment-residuals.md).
 
 ## CSH-100 Julian and numbered day rules
 
@@ -1577,3 +1577,16 @@ See [CSH-099 evidence](evidence/csh-099/README.md) and [CSH-101 remaining owners
 three cshell modes (512 assertions). The full selected filesystem profile also
 includes these cases. The shared exact timestamp probe must succeed before exec;
 setup failures, provider failures and cleanup are recorded separately.
+
+## Explicit transition clocks and sub-hour daylight offsets (CSH-101)
+
+`make test-host-filesystem-transition-times` runs 96 cases / 384 assertions with
+zero selected-profile allowances. It covers nondefault M/J/n transition clocks,
+offsets with minutes and seconds, and signed/next-day transitions using unique
+local times. Each -d/-t input runs all four timestamp selections and invocation
+modes. Independent UTC fields supply integer Epoch timestamps; exact inode
+probes must succeed before execution. Harness regressions reject incorrect
+fields, contents, identity, channels and status, failed/rounded setup, and
+failed-exec/timeout cleanup. No privileged environment or injected fault is used.
+See [evidence](evidence/csh-101/README.md) and
+[remaining ownership](tickets/CSH-102-filesystem-environment-residuals.md).

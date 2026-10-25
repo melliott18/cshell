@@ -418,16 +418,30 @@ unselected fields and target identity/mode/content. Integer authored UTC fields
 and fractions supply expectations; exact inode readback precedes execution.
 No provider or allowance changes are made. DST, zoneinfo, arbitrary timestamp
 precision/ranges, live clocks and other unsupplied environments remain under
-[CSH-101](../../docs/tickets/CSH-101-filesystem-environment-residuals.md).
+[CSH-102](../../docs/tickets/CSH-102-filesystem-environment-residuals.md).
 
 CSH-099 adds `make test-host-filesystem-timezone`: 104 cases / 416 assertions
 for explicit POSIX daylight rules around unique local transition times.
 It requires the unchanged selected touch provider and zero allowances.
-Skipped/repeated times, other rules and timezone databases remain under CSH-101.
+Skipped/repeated times, other rules and timezone databases remain under CSH-102.
 
 ## CSH-100 Julian and numbered day rules
 
 CSH-100 supplies 128 touch cases / 512 assertions for explicit POSIX Jn and zero-based n daylight-saving rules across common and leap years, including default 02:00 transitions and unique times before/after the authored changes. Independently authored UTC fields and exact target-inode timestamp probes supply the oracle for -d/-t and all four field selections. Skipped/repeated times, arbitrary rule values and transition times, timezone databases, timestamp ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified.
 
 See [retained evidence](../../docs/evidence/csh-100/README.md). All remaining contracts and four original U-040 conditions
-remain open under CSH-101; no whole-utility qualification is claimed.
+remain open under CSH-102; no whole-utility qualification is claimed.
+
+## CSH-101 explicit transition clocks and offsets
+
+CSH-101 supplies 96 touch cases / 384 assertions for explicit M/J/n transition clocks, minute/second standard and daylight offsets, 45-minute-10-second and 30-minute-15-second advances, and negative/next-day transition times. Independently authored UTC fields and exact target-inode probes supply the oracle for -d/-t and all four field selections. Skipped/repeated times, arbitrary rules and offsets, timezone databases, timestamp ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified.
+
+See [retained evidence](../../docs/evidence/csh-101/README.md). All remaining contracts and
+four original U-040 conditions remain open under CSH-102.
+
+The CSH-101 profile selects GNU touch 9.7 linked with pinned IANA tzcode 2025b
+on both platforms. Apple touch and the installed GNU touch on macOS return
+incorrect timestamps for the authored negative and next-day transition rules;
+those 64 stock assertions remain failures. See [provider provenance](vendor/tzcode/README.md).
+The replacement changes only the opt-in profile; no system utility, timezone
+file or shell runtime is modified. All older filesystem assertions remain required.

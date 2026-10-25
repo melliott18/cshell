@@ -21,6 +21,7 @@ def provision(destination, gnu_bin=None):
                  'pax': str(ROOT / 'build/host-pax'),
                  'cp': str(ROOT / 'build/host-cp'),
                  'rm': str(ROOT / 'build/host-rm'),
+                 'touch': str(ROOT / 'build/host-touch'),
                  'readlink': str(ROOT / 'build/host-paths'),
                  'realpath': str(ROOT / 'build/host-paths')}
     system = platform.system()
@@ -67,6 +68,14 @@ def provision(destination, gnu_bin=None):
             archive_sha256=hashlib.sha256((ROOT / 'tools/host-profile/vendor/coreutils/coreutils-9.7.tar.xz').read_bytes()).hexdigest(),
             patch_sha256=hashlib.sha256((ROOT / 'tools/host-profile/vendor/coreutils' / patch).read_bytes()).hexdigest(),
             configure=['--disable-nls', '--disable-acl', '--without-selinux', '--without-libgmp'])
+    manifest['executables']['touch']['source'] = dict(
+        version='GNU coreutils 9.7 + IANA tzcode 2025b',
+        coreutils_archive_sha256=manifest['executables']['cp']['source']['archive_sha256'],
+        tzcode_archive='tools/host-profile/vendor/tzcode/tzcode2025b.tar.gz',
+        tzcode_archive_sha256=hashlib.sha256((ROOT / 'tools/host-profile/vendor/tzcode/tzcode2025b.tar.gz').read_bytes()).hexdigest(),
+        build_script_sha256=hashlib.sha256((ROOT / 'tools/host-profile/build-touch.sh').read_bytes()).hexdigest(),
+        tzcode_flags=['-DHAVE_TZNAME=1', '-DUSG_COMPAT=1', '-DNETBSD_INSPIRED=0'],
+        configure=manifest['executables']['cp']['source']['configure'])
     (destination.parent / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
     print(destination)
 

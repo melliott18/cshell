@@ -97,6 +97,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-099](CSH-099-filesystem-environment-residuals.md) | Supply remaining filesystem environments after date-form and timezone qualification | [CSH-098](CSH-098-filesystem-environment-residuals.md) | [#209](https://github.com/melliott18/cshell/issues/209) |
 | [CSH-100](CSH-100-filesystem-environment-residuals.md) | Supply remaining filesystem environments after explicit daylight-saving rule qualification | [CSH-099](CSH-099-filesystem-environment-residuals.md) | [#211](https://github.com/melliott18/cshell/issues/211) |
 | [CSH-101](CSH-101-filesystem-environment-residuals.md) | Supply remaining filesystem environments after Julian and numbered daylight-saving rule qualification | [CSH-100](CSH-100-filesystem-environment-residuals.md) | [#213](https://github.com/melliott18/cshell/issues/213) |
+| [CSH-102](CSH-102-filesystem-environment-residuals.md) | Supply remaining filesystem environments after explicit transition-clock qualification | [CSH-101](CSH-101-filesystem-environment-residuals.md) | [#215](https://github.com/melliott18/cshell/issues/215) |
 
 ## Child implementation tickets
 
