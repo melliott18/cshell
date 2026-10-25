@@ -506,7 +506,12 @@ build/host-cp: $(HOST_CP_SOURCES)
 build/host-rm: build/host-cp
 	cp build/host-coreutils-build/src/rm $@
 
-host-profile: build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
+# GNU touch plus IANA tzcode supplies Issue 8 signed/next-day TZ transitions.
+build/host-touch: build/host-cp tools/host-profile/build-touch.sh $(wildcard tools/host-profile/vendor/tzcode/*)
+	@mkdir -p build/host-tzcode
+	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(filter-out -Werror -Wpedantic -Wshadow,$(CFLAGS))" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" sh tools/host-profile/build-touch.sh > build/host-tzcode/build.log 2>&1 || { tail -80 build/host-tzcode/build.log; exit 1; }
+
+host-profile: build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
@@ -750,3 +755,8 @@ test-host-filesystem-timezone: cshell host-profile
 .PHONY: test-host-filesystem-day-rules
 test-host-filesystem-day-rules: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --day-rules-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-day-rules.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-101: nondefault transition clocks and sub-hour daylight offsets.
+.PHONY: test-host-filesystem-transition-times
+test-host-filesystem-transition-times: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --transition-times-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-transition-times.json $(HOST_FILESYSTEM_FLAGS)

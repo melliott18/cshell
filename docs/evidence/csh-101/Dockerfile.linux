@@ -1,0 +1,8 @@
+ARG BASE_IMAGE=cshell-test:csh-100
+FROM ${BASE_IMAGE}
+COPY --chown=cshell:cshell Makefile /work/
+COPY --chown=cshell:cshell tests/ /work/tests/
+COPY --chown=cshell:cshell tools/ /work/tools/
+COPY --chown=cshell:cshell docs/ /work/docs/
+USER cshell
+COPY --chown=cshell:cshell docs/evidence/csh-101/sanitize.py docs/evidence/csh-101/supplement.py /work/docs/evidence/csh-101/

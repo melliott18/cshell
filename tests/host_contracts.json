@@ -47,8 +47,8 @@
       "prerequisite": "Supply disposable controlled credentials, privileged Darwin ACLs, and measured filesystem/namespace implementations; require actual read/write/execute controls alongside predicates. Preserve false grants, rejected grants, socket stat EINVAL and non-owner chmod failures independently."
     },
     {
-      "ticket": "CSH-101",
-      "path": "docs/tickets/CSH-101-filesystem-environment-residuals.md",
+      "ticket": "CSH-102",
+      "path": "docs/tickets/CSH-102-filesystem-environment-residuals.md",
       "title": "Supply remaining filesystem environments after explicit daylight-saving rule qualification",
       "utilities": [
         "basename",

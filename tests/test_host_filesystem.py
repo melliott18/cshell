@@ -31,12 +31,44 @@ import host_filesystem_reference as reference_cases
 import host_filesystem_datetime as datetime_cases
 import host_filesystem_timezone as timezone_cases
 import host_filesystem_day_rules as day_rules
+import host_filesystem_transition_times as transition_times
 from host_contract_inventory import utility_owner
 from host_filesystem import run_case, stdout_matches, stderr_matches
 from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, terminal_cases, effect_errors
 
 
 class FilesystemHarnessTests(unittest.TestCase):
+    def test_transition_times_have_exact_offsets_and_unique_boundaries(self):
+        rows = list(transition_times.cases())
+        seconds = [1710045934, 1710045935, 1730612444, 1730617865,
+                   1709231084, 1709231085, 1730048679, 1730052310,
+                   1709159399, 1709159400, 1729991699, 1729995300]
+        self.assertEqual(len(rows), 96)
+        self.assertEqual(len({r['id'] for r in rows}), 96)
+        expected = [s * 10**9 for s in seconds for _ in range(2)]
+        self.assertEqual([r['datetime_environment']['target_ns'] for r in rows[::4]], expected)
+        self.assertEqual({r['env']['TZ'] for r in rows},
+                         {transition_times.WEST, transition_times.EAST, transition_times.ROLLOVER})
+        self.assertEqual(sum('-t' in r['args'] for r in rows), 48)
+        for offset, advance in zip(range(0, 12, 4), (2710, 1815, 1800)):
+            self.assertEqual(seconds[offset+1] - seconds[offset], 1)
+            self.assertEqual(seconds[offset+3] - seconds[offset+2], 2*advance + 1)
+        for offset, value in enumerate(expected):
+            for row, stamps in zip(rows[offset*4:offset*4+4],
+                                   [(value, value), (value, 1000000000250000000),
+                                    (900000000125000000, value), (value, value)]):
+                effect = row['effects']['target']
+                self.assertEqual((effect['atime_ns'], effect['mtime_ns']), stamps)
+
+    def test_transition_times_channels_fields_and_contents_are_required(self):
+        self.check_datetime_channels(list(transition_times.cases())[:4])
+
+    def test_transition_times_unrepresentable_or_failed_setup_never_executes(self):
+        self.check_datetime_setup(next(transition_times.cases()))
+
+    def test_transition_times_exec_failure_and_timeout_clean_all_modes(self):
+        self.check_datetime_cleanup(next(transition_times.cases()))
+
     def test_day_rules_expected_values_distinguish_leap_day_counting(self):
         rows = list(day_rules.cases())
         seconds = [1677635999, 1677636000, 1709208000, 1709258399,
@@ -1567,7 +1599,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -1733,7 +1765,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])
