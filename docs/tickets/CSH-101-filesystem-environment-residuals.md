@@ -7,6 +7,7 @@
 - Depends on: CSH-100
 - Branch: test/CSH-101-filesystem-environments
 - Issue: [#213](https://github.com/melliott18/cshell/issues/213)
+- Pull request: [#216](https://github.com/melliott18/cshell/pull/216)
 
 ## Goal
 
