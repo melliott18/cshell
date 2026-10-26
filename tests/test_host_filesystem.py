@@ -26,6 +26,7 @@ import host_filesystem_cwd as cwd_cases
 import host_filesystem_creation as creation
 import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
+import host_filesystem_magic_strings as magic_strings
 import host_filesystem_calendar as calendar_cases
 import host_filesystem_reference as reference_cases
 import host_filesystem_datetime as datetime_cases
@@ -410,6 +411,34 @@ class FilesystemHarnessTests(unittest.TestCase):
                                 self.fail('calendar timeout child survived cleanup')
                             time.sleep(0.01)
 
+    def test_magic_strings_authored_bytes_offsets_and_eof(self):
+        rows = list(magic_strings.cases())
+        self.assertEqual(len(rows), 91)
+        self.assertEqual(len({r['id'] for r in rows}), 91)
+        exact = {r['id'].removeprefix('file/magic-strings-').removesuffix('-exact'):
+                 r['files']['sample'][16:] for r in rows if r['id'].endswith('-exact')}
+        for name, byte in [('alert', 7), ('backspace', 8), ('formfeed', 12),
+                           ('newline', 10), ('return', 13), ('tab', 9),
+                           ('vertical-tab', 11), ('octal-nul', 0), ('octal-high', 255)]:
+            self.assertEqual(exact[name], b'A' + bytes([byte]) + b'B')
+        self.assertEqual(exact['octal-three'], b'AA2')
+        self.assertEqual(exact['octal-one'], b'A\x07Z')
+        self.assertEqual(exact['octal-two'], b'A\x0aZ')
+        self.assertEqual(exact['space'], b'left right')
+        self.assertEqual(exact['backslash'], b'left\\right')
+        for name in ('decimal', 'octal', 'hex', 'hex-upper'):
+            self.assertEqual(exact['offset-' + name], b'AB')
+        for row in rows:
+            facts = row['magic_environment']
+            decoded = bytes.fromhex(facts['decoded_hex'])
+            observed = row['files']['sample'][16:16+len(decoded)]
+            self.assertEqual(observed == decoded, facts['matches'])
+            self.assertEqual(row['stdout'], b'sample: fixture' +
+                             (b' matched' if facts['matches'] else b'') + b'\n')
+            self.assertEqual(row['stderr'], b'')
+            self.assertEqual(row['status'], 0)
+        self.assertEqual(sum(r['magic_environment']['matches'] for r in rows), 34)
+
     def test_magic_numeric_samples_use_native_signed_values(self):
         rows = list(magic_cases.cases())
         self.assertEqual(len(rows), 46)
@@ -428,7 +457,12 @@ class FilesystemHarnessTests(unittest.TestCase):
             self.assertNotEqual(minimum['files']['sample'], maximum['files']['sample'])
 
     def test_magic_channels_status_and_immutable_inputs_are_required(self):
-        row = next(magic_cases.cases())
+        self.check_magic_channels_status_and_immutable_inputs_are_required(next(magic_cases.cases()))
+
+    def test_magic_strings_channels_status_and_immutable_inputs_are_required(self):
+        self.check_magic_channels_status_and_immutable_inputs_are_required(next(magic_strings.cases()))
+
+    def check_magic_channels_status_and_immutable_inputs_are_required(self, row):
         original = copy.deepcopy(row)
         for fault in (None, 'stdout', 'stderr', 'status', 'sample', 'magic'):
             def capture(binary, invocation, cwd, *args, **kw):
@@ -447,7 +481,12 @@ class FilesystemHarnessTests(unittest.TestCase):
         self.assertEqual(row, original)
 
     def test_magic_setup_failure_prevents_execution_and_cleans(self):
-        row = next(magic_cases.cases())
+        self.check_magic_setup_failure_prevents_execution_and_cleans(next(magic_cases.cases()))
+
+    def test_magic_strings_setup_failure_prevents_execution_and_cleans(self):
+        self.check_magic_setup_failure_prevents_execution_and_cleans(next(magic_strings.cases()))
+
+    def check_magic_setup_failure_prevents_execution_and_cleans(self, row):
         from host_filesystem_cases import setup
         def corrupt(directory, spec):
             cwd = setup(directory, spec)
@@ -465,7 +504,12 @@ class FilesystemHarnessTests(unittest.TestCase):
             self.assertEqual(list(Path(root).iterdir()), [])
 
     def test_magic_exec_failure_and_timeout_clean_all_modes(self):
-        row = next(magic_cases.cases())
+        self.check_magic_exec_failure_and_timeout_clean_all_modes(next(magic_cases.cases()))
+
+    def test_magic_strings_exec_failure_and_timeout_clean_all_modes(self):
+        self.check_magic_exec_failure_and_timeout_clean_all_modes(next(magic_strings.cases()))
+
+    def check_magic_exec_failure_and_timeout_clean_all_modes(self, row):
         for mode in ('direct', 'string', 'file', 'stdin'):
             for fault in ('exec', 'timeout'):
                 with self.subTest(mode=mode, fault=fault), tempfile.TemporaryDirectory() as root:
@@ -1599,7 +1643,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -1765,7 +1809,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])
