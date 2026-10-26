@@ -760,3 +760,8 @@ test-host-filesystem-day-rules: cshell host-profile
 .PHONY: test-host-filesystem-transition-times
 test-host-filesystem-transition-times: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --transition-times-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-transition-times.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-102: authored string escapes, numeric offsets and EOF boundaries.
+.PHONY: test-host-filesystem-magic-strings
+test-host-filesystem-magic-strings: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --magic-strings-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-magic-strings.json $(HOST_FILESYSTEM_FLAGS)

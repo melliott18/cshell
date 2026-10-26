@@ -1530,7 +1530,7 @@ file content. Setup failure is a failure, never a skip.
 This covers authored representable dates, not complete timestamp ranges,
 unsupported-range errors, current clocks, DST or privileged filesystem behavior.
 See [CSH-096 evidence](evidence/csh-096/README.md) and
-[CSH-102 residual ownership](tickets/CSH-102-filesystem-environment-residuals.md).
+[CSH-103 residual ownership](tickets/CSH-103-filesystem-environment-residuals.md).
 
 ### Reference timestamps and alias graphs (CSH-097)
 
@@ -1545,7 +1545,7 @@ failed-exec/timeout cleanup in all modes. Arbitrary graphs, live clocks,
 unsupported timestamps, races and permission/ACL errors remain open.
 
 See [CSH-097 evidence](evidence/csh-097/README.md) and
-[CSH-102 residual ownership](tickets/CSH-102-filesystem-environment-residuals.md).
+[CSH-103 residual ownership](tickets/CSH-103-filesystem-environment-residuals.md).
 
 ### Date forms and fixed timezones (CSH-098)
 
@@ -1557,7 +1557,7 @@ exact target timestamps then restores distinct fractional baselines. No DST
 or timezone database is needed. Harness regressions reject changed fields,
 content, identity/mode, channels/status, failed/rounded setup and failed-exec
 or timeout cleanup. Native and Linux commands and records are retained in
-[CSH-098 evidence](evidence/csh-098/README.md). Remaining ownership is [CSH-102](tickets/CSH-102-filesystem-environment-residuals.md).
+[CSH-098 evidence](evidence/csh-098/README.md). Remaining ownership is [CSH-103](tickets/CSH-103-filesystem-environment-residuals.md).
 
 ### Explicit daylight-saving rules (CSH-099)
 
@@ -1569,7 +1569,7 @@ The shared exact-inode timestamp setup rejects rounding and failed setup before
 exec; channels, status, selected/unselected timestamps, content and identity
 are mandatory. Setup, mutation, failed-exec and timeout cleanup regressions
 run in `test-host-inventory`. No timezone database or mktime supplies an oracle.
-See [CSH-099 evidence](evidence/csh-099/README.md) and [CSH-102 remaining ownership](tickets/CSH-102-filesystem-environment-residuals.md).
+See [CSH-099 evidence](evidence/csh-099/README.md) and [CSH-103 remaining ownership](tickets/CSH-103-filesystem-environment-residuals.md).
 
 ## CSH-100 Julian and numbered day rules
 
@@ -1589,4 +1589,16 @@ probes must succeed before execution. Harness regressions reject incorrect
 fields, contents, identity, channels and status, failed/rounded setup, and
 failed-exec/timeout cleanup. No privileged environment or injected fault is used.
 See [evidence](evidence/csh-101/README.md) and
-[remaining ownership](tickets/CSH-102-filesystem-environment-residuals.md).
+[remaining ownership](tickets/CSH-103-filesystem-environment-residuals.md).
+
+## String-magic byte and offset boundaries (CSH-102)
+
+`make test-host-filesystem-magic-strings` runs 91 cases / 364 assertions through
+direct exec and cshell string/file/stdin modes. Authored escape spellings and
+literal sample bytes are independent. An always-matching top-level rule makes
+nonmatching continuation output exact without relying on default classification.
+Pre-exec readback arms each fixture; status, both channels and immutable input
+contents are checked. Harness regressions reject wrong output/status, modified
+inputs and failed setup, and exercise failed-exec/timeout cleanup in every mode.
+See [CSH-102 evidence](evidence/csh-102/README.md) and
+[remaining ownership](tickets/CSH-103-filesystem-environment-residuals.md).
