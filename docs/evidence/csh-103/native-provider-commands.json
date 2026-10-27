@@ -1,0 +1,205 @@
+[
+  {
+    "name": "extract",
+    "argv": [
+      "tar",
+      "-xzf",
+      "/Users/mitchell/.codex/worktrees/csh-103/cshell/tools/host-profile/vendor/file/file-5.46.tar.gz",
+      "-C",
+      "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/file-unpatched-src",
+      "--strip-components=1"
+    ],
+    "cwd": "/Users/mitchell/.codex/worktrees/csh-103/cshell",
+    "env": null,
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 0.1421763339312747,
+    "log": "native-extract.log"
+  },
+  {
+    "name": "unpatched-configure",
+    "argv": [
+      "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/file-unpatched-src/configure",
+      "--disable-shared",
+      "--enable-static",
+      "--disable-zlib",
+      "--disable-bzlib",
+      "--disable-xzlib",
+      "--disable-zstdlib",
+      "--disable-lzlib"
+    ],
+    "cwd": "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/file-unpatched-build",
+    "env": null,
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 11.164956583059393,
+    "log": "native-unpatched-configure.log"
+  },
+  {
+    "name": "unpatched-build",
+    "argv": [
+      "make",
+      "-j4"
+    ],
+    "cwd": "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/file-unpatched-build",
+    "env": null,
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 0.11858229199424386,
+    "log": "native-unpatched-build.log"
+  },
+  {
+    "name": "unpatched-magic-messages",
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+      "tests/host_filesystem.py",
+      "./cshell",
+      "--magic-messages-only",
+      "--path",
+      "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/csh103-provider-checks/unpatched:/Users/mitchell/.codex/worktrees/csh-103/cshell/build/host-profile/bin:/bin:/usr/bin",
+      "--record",
+      "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/csh103-provider-checks/native-unpatched-magic-messages.json"
+    ],
+    "cwd": "/Users/mitchell/.codex/worktrees/csh-103/cshell",
+    "env": null,
+    "status": 1,
+    "expected_status": 1,
+    "seconds": 3.7386462909635156,
+    "log": "native-unpatched-magic-messages.log"
+  },
+  {
+    "name": "unpatched-magic",
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+      "tests/host_filesystem.py",
+      "./cshell",
+      "--magic-only",
+      "--path",
+      "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/csh103-provider-checks/unpatched:/Users/mitchell/.codex/worktrees/csh-103/cshell/build/host-profile/bin:/bin:/usr/bin",
+      "--record",
+      "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/csh103-provider-checks/native-unpatched-magic.json"
+    ],
+    "cwd": "/Users/mitchell/.codex/worktrees/csh-103/cshell",
+    "env": null,
+    "status": 1,
+    "expected_status": 1,
+    "seconds": 1.5834527909755707,
+    "log": "native-unpatched-magic.log"
+  },
+  {
+    "name": "sanitized-configure",
+    "argv": [
+      "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/host-file-src/configure",
+      "--disable-shared",
+      "--enable-static",
+      "--disable-zlib",
+      "--disable-bzlib",
+      "--disable-xzlib",
+      "--disable-zstdlib",
+      "--disable-lzlib"
+    ],
+    "cwd": "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/file-sanitized-build",
+    "env": {
+      "CFLAGS": "-g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+      "LDFLAGS": "-fsanitize=address,undefined",
+      "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/Users/mitchell/.local/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Library/TeX/texbin:/Applications/Wireshark.app/Contents/MacOS:/Applications/VMware Fusion Tech Preview.app/Contents/Public:/usr/local/share/dotnet:~/.dotnet/tools:/opt/homebrew/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/mitchell/.codex/tmp/arg0-macos/codex-arg0sc4sol:/Users/mitchell/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/mitchell/Downloads/google-cloud-sdk/bin:/opt/anaconda3/bin:/opt/anaconda3/condabin:/Users/mitchell/.opam/default/bin:/usr/local/sbin:/opt/homebrew/sbin:/Users/mitchell/.local/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/Users/mitchell/go/bin:/opt/homebrew/opt/go/libexec/bin:/usr/local/opt/mongodb-community@6.0/bin:/Users/mitchell/.config/gcu/scripts:/Users/mitchell/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+      "HOME": "/Users/mitchell"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 11.040765500045381,
+    "log": "native-sanitized-configure.log"
+  },
+  {
+    "name": "sanitized-build",
+    "argv": [
+      "make",
+      "-j4"
+    ],
+    "cwd": "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/file-sanitized-build",
+    "env": {
+      "CFLAGS": "-g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+      "LDFLAGS": "-fsanitize=address,undefined",
+      "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/Users/mitchell/.local/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Library/TeX/texbin:/Applications/Wireshark.app/Contents/MacOS:/Applications/VMware Fusion Tech Preview.app/Contents/Public:/usr/local/share/dotnet:~/.dotnet/tools:/opt/homebrew/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/mitchell/.codex/tmp/arg0-macos/codex-arg0sc4sol:/Users/mitchell/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/mitchell/Downloads/google-cloud-sdk/bin:/opt/anaconda3/bin:/opt/anaconda3/condabin:/Users/mitchell/.opam/default/bin:/usr/local/sbin:/opt/homebrew/sbin:/Users/mitchell/.local/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/Users/mitchell/go/bin:/opt/homebrew/opt/go/libexec/bin:/usr/local/opt/mongodb-community@6.0/bin:/Users/mitchell/.config/gcu/scripts:/Users/mitchell/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+      "HOME": "/Users/mitchell"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 2.0164930829778314,
+    "log": "native-sanitized-build.log"
+  },
+  {
+    "name": "sanitized-magic-messages",
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+      "tests/host_filesystem.py",
+      "./cshell",
+      "--magic-messages-only",
+      "--path",
+      "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/csh103-provider-checks/sanitized:/Users/mitchell/.codex/worktrees/csh-103/cshell/build/host-profile/bin:/bin:/usr/bin",
+      "--record",
+      "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/csh103-provider-checks/native-sanitized-magic-messages.json",
+      "--sanitizer"
+    ],
+    "cwd": "/Users/mitchell/.codex/worktrees/csh-103/cshell",
+    "env": null,
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 32.562379500013776,
+    "log": "native-sanitized-magic-messages.log"
+  },
+  {
+    "name": "sanitized-magic",
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+      "tests/host_filesystem.py",
+      "./cshell",
+      "--magic-only",
+      "--path",
+      "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/csh103-provider-checks/sanitized:/Users/mitchell/.codex/worktrees/csh-103/cshell/build/host-profile/bin:/bin:/usr/bin",
+      "--record",
+      "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/csh103-provider-checks/native-sanitized-magic.json",
+      "--sanitizer"
+    ],
+    "cwd": "/Users/mitchell/.codex/worktrees/csh-103/cshell",
+    "env": null,
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 16.703705750056542,
+    "log": "native-sanitized-magic.log"
+  },
+  {
+    "name": "sanitized-magic-strings",
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+      "tests/host_filesystem.py",
+      "./cshell",
+      "--magic-strings-only",
+      "--path",
+      "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/csh103-provider-checks/sanitized:/Users/mitchell/.codex/worktrees/csh-103/cshell/build/host-profile/bin:/bin:/usr/bin",
+      "--record",
+      "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/csh103-provider-checks/native-sanitized-magic-strings.json",
+      "--sanitizer"
+    ],
+    "cwd": "/Users/mitchell/.codex/worktrees/csh-103/cshell",
+    "env": null,
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 29.72920266597066,
+    "log": "native-sanitized-magic-strings.log"
+  },
+  {
+    "name": "sanitized-format-checks",
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+      "tests/host_file_format_checks.py",
+      "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/file-sanitized-build/src/file"
+    ],
+    "cwd": "/Users/mitchell/.codex/worktrees/csh-103/cshell",
+    "env": null,
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 1.282316124998033,
+    "log": "native-sanitized-format-checks.log"
+  }
+]
