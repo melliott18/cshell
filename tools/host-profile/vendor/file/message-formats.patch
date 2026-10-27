@@ -1,0 +1,74 @@
+--- a/src/apprentice.c
++++ b/src/apprentice.c
+@@ -1606,7 +1606,9 @@
+ 			}
+ 			i = set_text_binary(ms, mset[j].me, mset[j].count, i);
+ 		}
+-		if (mset[j].me)
++		/* Text databases obey POSIX source order; compiled system
++		 * databases retain their vendor strength ranking. */
++		if (mset[j].me && action != FILE_LOAD)
+ 			qsort(mset[j].me, mset[j].count, sizeof(*mset[0].me),
+ 			    apprentice_sort);
+ 
+@@ -2647,7 +2649,7 @@
+ 			}
+ 		} else
+ 			h = 0;
+-		while (*ptr && strchr("-.#", *ptr) != NULL)
++		while (*ptr && strchr("-+ .#", *ptr) != NULL)
+ 			ptr++;
+ #define CHECKLEN() do { \
+ 	for (len = cnt = 0; isdigit(CAST(unsigned char, *ptr)); ptr++, cnt++) \
+@@ -2721,7 +2723,8 @@
+ 			}
+ #endif
+ 		case 'c':
+-			if (h == 2)
++			/* All non-quad integers are promoted to int for printf. */
++			if (!quad)
+ 				return 0;
+ 			goto invalid;
+ 		case 'i':
+@@ -2806,9 +2809,15 @@
+ 	char *ptr;
+ 	const char *estr;
+ 
+-	for (ptr = m->desc; *ptr; ptr++)
+-		if (*ptr == '%')
+-			break;
++	for (ptr = m->desc; *ptr; ptr++) {
++		if (*ptr == '%') {
++			if (ptr[1] == '%') {
++				ptr++;
++				continue;
++			}
++			break;
++		}
++	}
+ 	if (*ptr == '\0') {
+ 		/* No format string; ok */
+ 		return 1;
+@@ -2841,6 +2850,10 @@
+ 
+ 	for (; *ptr; ptr++) {
+ 		if (*ptr == '%') {
++			if (ptr[1] == '%') {
++				ptr++;
++				continue;
++			}
+ 			file_magwarn(ms,
+ 			    "Too many format strings (should have at most one) "
+ 			    "for `%s' with description `%s'",
+--- a/src/funcs.c
++++ b/src/funcs.c
+@@ -338,9 +338,6 @@
+ 	if (nb == 0) {
+ 		def = "empty";
+ 		goto simple;
+-	} else if (nb == 1) {
+-		def = "very short file (no magic)";
+-		goto simple;
+ 	}
+ 
+ 	if ((ms->flags & MAGIC_NO_CHECK_ENCODING) == 0) {

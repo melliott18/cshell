@@ -1,0 +1,25 @@
+[
+  {
+    "argv": [
+      "make",
+      "test-runtime",
+      "test-runtime-pty",
+      "test-harness"
+    ],
+    "path": "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/host-profile/bin:/Users/mitchell/.codex/worktrees/csh-103/cshell/build/local-bin:/usr/local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/mitchell/.local/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Library/TeX/texbin:/Applications/Wireshark.app/Contents/MacOS:/Applications/VMware Fusion Tech Preview.app/Contents/Public:/usr/local/share/dotnet:~/.dotnet/tools:/opt/homebrew/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/mitchell/.codex/tmp/arg0-macos/codex-arg0sc4sol:/Users/mitchell/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/mitchell/Downloads/google-cloud-sdk/bin:/opt/anaconda3/bin:/opt/anaconda3/condabin:/Users/mitchell/.opam/default/bin:/usr/local/sbin:/opt/homebrew/sbin:/Users/mitchell/.local/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/Users/mitchell/go/bin:/opt/homebrew/opt/go/libexec/bin:/usr/local/opt/mongodb-community@6.0/bin:/Users/mitchell/.config/gcu/scripts:/Users/mitchell/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+    "status": 0,
+    "seconds": 70.37166199996136,
+    "log": "native-supplement-0.log"
+  },
+  {
+    "argv": [
+      "/usr/local/bin/python3",
+      "tests/host_file_format_checks.py",
+      "build/host-file"
+    ],
+    "path": "/Users/mitchell/.codex/worktrees/csh-103/cshell/build/host-profile/bin:/Users/mitchell/.codex/worktrees/csh-103/cshell/build/local-bin:/usr/local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/mitchell/.local/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Library/TeX/texbin:/Applications/Wireshark.app/Contents/MacOS:/Applications/VMware Fusion Tech Preview.app/Contents/Public:/usr/local/share/dotnet:~/.dotnet/tools:/opt/homebrew/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/mitchell/.codex/tmp/arg0-macos/codex-arg0sc4sol:/Users/mitchell/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/mitchell/Downloads/google-cloud-sdk/bin:/opt/anaconda3/bin:/opt/anaconda3/condabin:/Users/mitchell/.opam/default/bin:/usr/local/sbin:/opt/homebrew/sbin:/Users/mitchell/.local/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/Users/mitchell/go/bin:/opt/homebrew/opt/go/libexec/bin:/usr/local/opt/mongodb-community@6.0/bin:/Users/mitchell/.config/gcu/scripts:/Users/mitchell/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+    "status": 0,
+    "seconds": 0.09119879198260605,
+    "log": "native-supplement-1.log"
+  }
+]

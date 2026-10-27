@@ -1,0 +1,77 @@
+make  all-recursive
+make[1]: Entering directory '/work/build/file-sanitized-build'
+Making all in src
+make[2]: Entering directory '/work/build/file-sanitized-build/src'
+sed -e "s/X.YY/$(echo 5.46 | tr -d .)/" < /work/build/host-file-src/src/magic.h.in > magic.h
+make  all-am
+make[3]: Entering directory '/work/build/file-sanitized-build/src'
+  CC       file.o
+  CC       seccomp.o
+  CC       buffer.lo
+  CC       magic.lo
+  CC       apprentice.lo
+  CC       softmagic.lo
+/work/build/host-file-src/src/apprentice.c: In function 'check_format_type':
+/work/build/host-file-src/src/apprentice.c:2614:23: warning: variable 'h' set but not used [-Wunused-but-set-variable]
+ 2614 |         int quad = 0, h;
+      |                       ^
+  CC       ascmagic.lo
+  CC       encoding.lo
+  CC       compress.lo
+/work/build/host-file-src/src/softmagic.c: In function 'do_ops':
+/work/build/host-file-src/src/softmagic.c:1503:24: warning: 'offset' may be used uninitialized [-Wmaybe-uninitialized]
+ 1503 |                 offset = ~offset;
+      |                 ~~~~~~~^~~~~~~~~
+/work/build/host-file-src/src/softmagic.c:1464:18: note: 'offset' was declared here
+ 1464 |         intmax_t offset;
+      |                  ^~~~~~
+  CC       is_csv.lo
+  CC       is_json.lo
+  CC       is_simh.lo
+  CC       is_tar.lo
+  CC       readelf.lo
+  CC       print.lo
+  CC       fsmagic.lo
+  CC       funcs.lo
+  CC       apptype.lo
+  CC       der.lo
+  CC       cdf.lo
+  CC       cdf_time.lo
+  CC       readcdf.lo
+  CC       strlcpy.lo
+  CC       strlcat.lo
+  CC       fmtcheck.lo
+  CCLD     libmagic.la
+  CCLD     file
+make[3]: Leaving directory '/work/build/file-sanitized-build/src'
+make[2]: Leaving directory '/work/build/file-sanitized-build/src'
+Making all in magic
+make[2]: Entering directory '/work/build/file-sanitized-build/magic'
+../src/file -C -m magic
+make[2]: Leaving directory '/work/build/file-sanitized-build/magic'
+Making all in tests
+make[2]: Entering directory '/work/build/file-sanitized-build/tests'
+make[2]: Nothing to be done for 'all'.
+make[2]: Leaving directory '/work/build/file-sanitized-build/tests'
+Making all in doc
+make[2]: Entering directory '/work/build/file-sanitized-build/doc'
+sed -e s@__CSECTION__@1@g \
+    -e s@__FSECTION__@4@g \
+    -e s@__VERSION__@5.46@g \
+    -e s@__MAGIC__@/usr/local/share/misc/magic@g /work/build/host-file-src/doc/file.man > file.1
+sed -e s@__CSECTION__@1@g \
+    -e s@__FSECTION__@4@g \
+    -e s@__VERSION__@5.46@g \
+    -e s@__MAGIC__@/usr/local/share/misc/magic@g /work/build/host-file-src/doc/magic.man > magic.4
+sed -e s@__CSECTION__@1@g \
+    -e s@__FSECTION__@4@g \
+    -e s@__VERSION__@5.46@g \
+    -e s@__MAGIC__@/usr/local/share/misc/magic@g /work/build/host-file-src/doc/libmagic.man > libmagic.3
+make[2]: Leaving directory '/work/build/file-sanitized-build/doc'
+Making all in python
+make[2]: Entering directory '/work/build/file-sanitized-build/python'
+make[2]: Nothing to be done for 'all'.
+make[2]: Leaving directory '/work/build/file-sanitized-build/python'
+make[2]: Entering directory '/work/build/file-sanitized-build'
+make[2]: Leaving directory '/work/build/file-sanitized-build'
+make[1]: Leaving directory '/work/build/file-sanitized-build'

@@ -17,7 +17,8 @@ from host_filesystem_cases import UTILITIES
 
 def provision(destination, gnu_bin=None):
     selected = {name: shutil.which(name, path=os.defpath) for name in dict.fromkeys(HOSTS + UTILITIES)}
-    overrides = {'printf': str(ROOT / 'build/host-printf'),
+    overrides = {'file': str(ROOT / 'build/host-file'),
+                 'printf': str(ROOT / 'build/host-printf'),
                  'pax': str(ROOT / 'build/host-pax'),
                  'cp': str(ROOT / 'build/host-cp'),
                  'rm': str(ROOT / 'build/host-rm'),
@@ -76,6 +77,15 @@ def provision(destination, gnu_bin=None):
         build_script_sha256=hashlib.sha256((ROOT / 'tools/host-profile/build-touch.sh').read_bytes()).hexdigest(),
         tzcode_flags=['-DHAVE_TZNAME=1', '-DUSG_COMPAT=1', '-DNETBSD_INSPIRED=0'],
         configure=manifest['executables']['cp']['source']['configure'])
+    manifest['executables']['file']['source'] = dict(
+        version='file 5.46 + CSH-103 message repairs',
+        archive='tools/host-profile/vendor/file/file-5.46.tar.gz',
+        archive_sha256=hashlib.sha256((ROOT / 'tools/host-profile/vendor/file/file-5.46.tar.gz').read_bytes()).hexdigest(),
+        patch_sha256=hashlib.sha256((ROOT / 'tools/host-profile/vendor/file/message-formats.patch').read_bytes()).hexdigest(),
+        build_script_sha256=hashlib.sha256((ROOT / 'tools/host-profile/build-file.sh').read_bytes()).hexdigest(),
+        magic_database_sha256=hashlib.sha256((ROOT / 'build/host-file-install/share/misc/magic.mgc').read_bytes()).hexdigest(),
+        configure=['--disable-shared', '--enable-static', '--disable-zlib', '--disable-bzlib',
+                   '--disable-xzlib', '--disable-zstdlib', '--disable-lzlib'])
     (destination.parent / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
     print(destination)
 
