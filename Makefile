@@ -773,3 +773,7 @@ build/host-file: tools/host-profile/build-file.sh $(wildcard tools/host-profile/
 .PHONY: test-host-filesystem-magic-messages
 test-host-filesystem-magic-messages: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --magic-messages-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-magic-messages.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-magic-types
+test-host-filesystem-magic-types: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --magic-types-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-magic-types.json $(HOST_FILESYSTEM_FLAGS)

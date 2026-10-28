@@ -61,7 +61,7 @@ hashes are separate fields in the snapshots.
 | <a id="utility-asa"></a>[`asa`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/asa.html) | conditional FR | Not selected | `/usr/bin/asa` / **missing** | Conditional FR not selected; re-evaluate complete page if selected. |
 | <a id="utility-at"></a>[`at`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/at.html) | base | Required | `/usr/bin/at` / **missing** | Open full utility contract: [CSH-078](tickets/CSH-078-host-service-utilities.md). Availability only; behavioral qualification not established. |
 | <a id="utility-awk"></a>[`awk`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html) | base | Required | `/usr/bin/awk` / `/bin/awk` | Open full utility contract: [CSH-074](tickets/CSH-074-host-languages-editors.md). Availability only; behavioral qualification not established. |
-| <a id="utility-basename"></a>[`basename`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/basename.html) | base | Required | `/usr/bin/basename` / `/bin/basename` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-basename"></a>[`basename`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/basename.html) | base | Required | `/usr/bin/basename` / `/bin/basename` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
 | <a id="utility-batch"></a>[`batch`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/batch.html) | base | Required | `/usr/bin/batch` / **missing** | Open full utility contract: [CSH-078](tickets/CSH-078-host-service-utilities.md). Availability only; behavioral qualification not established. |
 | <a id="utility-bc"></a>[`bc`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html) | base | Required | `/usr/bin/bc` / **missing** | Open full utility contract: [CSH-074](tickets/CSH-074-host-languages-editors.md). Availability only; behavioral qualification not established. |
 | <a id="utility-bg"></a>[`bg`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bg.html) | conditional UP | Not selected | `/usr/bin/bg` / **missing** | Conditional UP not selected; re-evaluate complete page if selected. |
@@ -78,19 +78,19 @@ hashes are separate fields in the snapshots.
 | <a id="utility-comm"></a>[`comm`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/comm.html) | base | Required | `/usr/bin/comm` / `/bin/comm` | Open full utility contract: [CSH-073](tickets/CSH-073-host-text-streams.md). Availability only; behavioral qualification not established. |
 | <a id="utility-command"></a>[`command`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/command.html) | base | Exempt (§1.6) | `/usr/bin/command` / **missing** | [U-020](posix-utilities.md#u-020) clause map; cshell internal. Mapped bounded evidence retained. |
 | <a id="utility-compress"></a>[`compress`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/compress.html) | conditional XSI | Not selected | `/usr/bin/compress` / **missing** | Conditional XSI not selected; re-evaluate complete page if selected. |
-| <a id="utility-cp"></a>[`cp`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html) | base | Required | `/bin/cp` / `/bin/cp` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-cp"></a>[`cp`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html) | base | Required | `/bin/cp` / `/bin/cp` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
 | <a id="utility-crontab"></a>[`crontab`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/crontab.html) | base | Required | `/usr/bin/crontab` / **missing** | Open full utility contract: [CSH-078](tickets/CSH-078-host-service-utilities.md). Availability only; behavioral qualification not established. |
 | <a id="utility-csplit"></a>[`csplit`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/csplit.html) | base | Required | `/usr/bin/csplit` / `/bin/csplit` | Open full utility contract: [CSH-073](tickets/CSH-073-host-text-streams.md). Availability only; behavioral qualification not established. |
 | <a id="utility-ctags"></a>[`ctags`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ctags.html) | conditional CD or SD | Not selected | `/usr/bin/ctags` / **missing** | Conditional CD or SD not selected; re-evaluate complete page if selected. |
 | <a id="utility-cut"></a>[`cut`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cut.html) | base | Required | `/usr/bin/cut` / `/bin/cut` | Open full utility contract: [CSH-073](tickets/CSH-073-host-text-streams.md). Availability only; behavioral qualification not established. |
 | <a id="utility-cxref"></a>[`cxref`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cxref.html) | conditional XSI | Not selected | **missing** / **missing** | Conditional XSI not selected; re-evaluate complete page if selected. |
 | <a id="utility-date"></a>[`date`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/date.html) | base | Required | `/bin/date` / `/bin/date` | Open full utility contract: [CSH-078](tickets/CSH-078-host-service-utilities.md). Availability only; behavioral qualification not established. |
-| <a id="utility-dd"></a>[`dd`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dd.html) | base | Required | `/bin/dd` / `/bin/dd` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-dd"></a>[`dd`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dd.html) | base | Required | `/bin/dd` / `/bin/dd` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
 | <a id="utility-delta"></a>[`delta`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/delta.html) | conditional XSI | Not selected | **missing** / **missing** | Conditional XSI not selected; re-evaluate complete page if selected. |
-| <a id="utility-df"></a>[`df`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html) | base | Required | `/bin/df` / `/bin/df` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-df"></a>[`df`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html) | base | Required | `/bin/df` / `/bin/df` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
 | <a id="utility-diff"></a>[`diff`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/diff.html) | base | Required | `/usr/bin/diff` / `/bin/diff` | Open full utility contract: [CSH-073](tickets/CSH-073-host-text-streams.md). Availability only; behavioral qualification not established. |
-| <a id="utility-dirname"></a>[`dirname`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html) | base | Required | `/usr/bin/dirname` / `/bin/dirname` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
-| <a id="utility-du"></a>[`du`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html) | base | Required | `/usr/bin/du` / `/bin/du` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-dirname"></a>[`dirname`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html) | base | Required | `/usr/bin/dirname` / `/bin/dirname` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-du"></a>[`du`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html) | base | Required | `/usr/bin/du` / `/bin/du` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
 | <a id="utility-echo"></a>[`echo`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/echo.html) | base | Required | `/bin/echo` / `/bin/echo` | Open full utility contract: [CSH-070](tickets/CSH-070-host-formatted-output.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). |
 | <a id="utility-ed"></a>[`ed`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html) | base | Required | `/bin/ed` / `/bin/ed` | Open full utility contract: [CSH-074](tickets/CSH-074-host-languages-editors.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). |
 | <a id="utility-env"></a>[`env`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/env.html) | base | Required | `/usr/bin/env` / `/bin/env` | Open full utility contract: [CSH-075](tickets/CSH-075-host-execution-processes.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). |
@@ -100,8 +100,8 @@ hashes are separate fields in the snapshots.
 | <a id="utility-false"></a>[`false`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/false.html) | base | Required | `/usr/bin/false` / `/bin/false` | Open full utility contract: [CSH-075](tickets/CSH-075-host-execution-processes.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). |
 | <a id="utility-fc"></a>[`fc`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/fc.html) | conditional UP | Not selected | `/usr/bin/fc` / **missing** | Conditional UP not selected; re-evaluate complete page if selected. |
 | <a id="utility-fg"></a>[`fg`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/fg.html) | conditional UP | Not selected | `/usr/bin/fg` / **missing** | Conditional UP not selected; re-evaluate complete page if selected. |
-| <a id="utility-file"></a>[`file`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html) | base | Required | `/usr/bin/file` / **missing** | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
-| <a id="utility-find"></a>[`find`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html) | base | Required | `/usr/bin/find` / `/bin/find` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-file"></a>[`file`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html) | base | Required | `/usr/bin/file` / **missing** | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-find"></a>[`find`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html) | base | Required | `/usr/bin/find` / `/bin/find` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
 | <a id="utility-fold"></a>[`fold`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/fold.html) | base | Required | `/usr/bin/fold` / `/bin/fold` | Open full utility contract: [CSH-073](tickets/CSH-073-host-text-streams.md). Availability only; behavioral qualification not established. |
 | <a id="utility-fuser"></a>[`fuser`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/fuser.html) | conditional XSI | Not selected | `/usr/bin/fuser` / **missing** | Conditional XSI not selected; re-evaluate complete page if selected. |
 | <a id="utility-gencat"></a>[`gencat`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/gencat.html) | base | Required | `/usr/bin/gencat` / `/bin/gencat` | Open full utility contract: [CSH-076](tickets/CSH-076-host-locale-catalogs.md). Availability only; behavioral qualification not established. |
@@ -121,23 +121,23 @@ hashes are separate fields in the snapshots.
 | <a id="utility-kill"></a>[`kill`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/kill.html) | base | Required | `/bin/kill` / `/bin/kill` | Open full utility contract: [CSH-075](tickets/CSH-075-host-execution-processes.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). |
 | <a id="utility-lex"></a>[`lex`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/lex.html) | conditional CD | Not selected | `/usr/bin/lex` / **missing** | Conditional CD not selected; re-evaluate complete page if selected. |
 | <a id="utility-link"></a>[`link`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/link.html) | conditional XSI | Not selected | `/bin/link` / `/bin/link` | Conditional XSI not selected; re-evaluate complete page if selected. |
-| <a id="utility-ln"></a>[`ln`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html) | base | Required | `/bin/ln` / `/bin/ln` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-ln"></a>[`ln`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html) | base | Required | `/bin/ln` / `/bin/ln` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
 | <a id="utility-locale"></a>[`locale`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/locale.html) | base | Required | `/usr/bin/locale` / `/bin/locale` | Open full utility contract: [CSH-076](tickets/CSH-076-host-locale-catalogs.md). Availability only; behavioral qualification not established. |
 | <a id="utility-localedef"></a>[`localedef`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/localedef.html) | base | Required | `/usr/bin/localedef` / `/bin/localedef` | Open full utility contract: [CSH-076](tickets/CSH-076-host-locale-catalogs.md). Availability only; behavioral qualification not established. |
 | <a id="utility-logger"></a>[`logger`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/logger.html) | base | Required | `/usr/bin/logger` / `/bin/logger` | Open full utility contract: [CSH-078](tickets/CSH-078-host-service-utilities.md). Availability only; behavioral qualification not established. |
 | <a id="utility-logname"></a>[`logname`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/logname.html) | base | Required | `/usr/bin/logname` / `/bin/logname` | Open full utility contract: [CSH-071](tickets/CSH-071-host-permissions-identities.md). Availability only; behavioral qualification not established. |
 | <a id="utility-lp"></a>[`lp`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/lp.html) | base | Required | `/usr/bin/lp` / **missing** | Open full utility contract: [CSH-078](tickets/CSH-078-host-service-utilities.md). Availability only; behavioral qualification not established. |
-| <a id="utility-ls"></a>[`ls`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html) | base | Required | `/bin/ls` / `/bin/ls` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-ls"></a>[`ls`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html) | base | Required | `/bin/ls` / `/bin/ls` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
 | <a id="utility-m4"></a>[`m4`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html) | base | Required | `/usr/bin/m4` / **missing** | Open full utility contract: [CSH-074](tickets/CSH-074-host-languages-editors.md). Availability only; behavioral qualification not established. |
 | <a id="utility-mailx"></a>[`mailx`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mailx.html) | base | Required | `/usr/bin/mailx` / **missing** | Open full utility contract: [CSH-078](tickets/CSH-078-host-service-utilities.md). Availability only; behavioral qualification not established. |
 | <a id="utility-make"></a>[`make`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/make.html) | conditional SD | Not selected | `/usr/bin/make` / `/bin/make` | Conditional SD not selected; re-evaluate complete page if selected. |
 | <a id="utility-man"></a>[`man`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/man.html) | conditional UP | Not selected | `/usr/bin/man` / **missing** | Conditional UP not selected; re-evaluate complete page if selected. |
 | <a id="utility-mesg"></a>[`mesg`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mesg.html) | base | Required | `/usr/bin/mesg` / `/bin/mesg` | Open full utility contract: [CSH-077](tickets/CSH-077-host-terminal-utilities.md). Availability only; behavioral qualification not established. |
-| <a id="utility-mkdir"></a>[`mkdir`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html) | base | Required | `/bin/mkdir` / `/bin/mkdir` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
-| <a id="utility-mkfifo"></a>[`mkfifo`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html) | base | Required | `/usr/bin/mkfifo` / `/bin/mkfifo` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-mkdir"></a>[`mkdir`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html) | base | Required | `/bin/mkdir` / `/bin/mkdir` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-mkfifo"></a>[`mkfifo`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html) | base | Required | `/usr/bin/mkfifo` / `/bin/mkfifo` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
 | <a id="utility-more"></a>[`more`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/more.html) | conditional UP | Not selected | `/usr/bin/more` / `/bin/more` | Conditional UP not selected; re-evaluate complete page if selected. |
 | <a id="utility-msgfmt"></a>[`msgfmt`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/msgfmt.html) | base | Required | **missing** / **missing** | Open full utility contract: [CSH-076](tickets/CSH-076-host-locale-catalogs.md). Availability only; behavioral qualification not established. |
-| <a id="utility-mv"></a>[`mv`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mv.html) | base | Required | `/bin/mv` / `/bin/mv` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-mv"></a>[`mv`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mv.html) | base | Required | `/bin/mv` / `/bin/mv` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
 | <a id="utility-newgrp"></a>[`newgrp`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/newgrp.html) | base | Required | `/usr/bin/newgrp` / `/bin/newgrp` | Open full utility contract: [CSH-071](tickets/CSH-071-host-permissions-identities.md). Availability only; behavioral qualification not established. |
 | <a id="utility-ngettext"></a>[`ngettext`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ngettext.html) | base | Required | **missing** / **missing** | Open full utility contract: [CSH-076](tickets/CSH-076-host-locale-catalogs.md). Availability only; behavioral qualification not established. |
 | <a id="utility-nice"></a>[`nice`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/nice.html) | base | Required | `/usr/bin/nice` / `/bin/nice` | Open full utility contract: [CSH-075](tickets/CSH-075-host-execution-processes.md). Availability only; behavioral qualification not established. |
@@ -147,20 +147,20 @@ hashes are separate fields in the snapshots.
 | <a id="utility-od"></a>[`od`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/od.html) | base | Required | `/usr/bin/od` / `/bin/od` | Open full utility contract: [CSH-073](tickets/CSH-073-host-text-streams.md). Availability only; behavioral qualification not established. |
 | <a id="utility-paste"></a>[`paste`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/paste.html) | base | Required | `/usr/bin/paste` / `/bin/paste` | Open full utility contract: [CSH-073](tickets/CSH-073-host-text-streams.md). Availability only; behavioral qualification not established. |
 | <a id="utility-patch"></a>[`patch`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html) | base | Required | `/usr/bin/patch` / `/bin/patch` | Open full utility contract: [CSH-074](tickets/CSH-074-host-languages-editors.md). Availability only; behavioral qualification not established. |
-| <a id="utility-pathchk"></a>[`pathchk`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html) | base | Required | `/usr/bin/pathchk` / `/bin/pathchk` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
-| <a id="utility-pax"></a>[`pax`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html) | base | Required | `/bin/pax` / **missing** | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-pathchk"></a>[`pathchk`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html) | base | Required | `/usr/bin/pathchk` / `/bin/pathchk` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-pax"></a>[`pax`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html) | base | Required | `/bin/pax` / **missing** | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
 | <a id="utility-pr"></a>[`pr`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pr.html) | base | Required | `/usr/bin/pr` / `/bin/pr` | Open full utility contract: [CSH-073](tickets/CSH-073-host-text-streams.md). Availability only; behavioral qualification not established. |
 | <a id="utility-printf"></a>[`printf`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/printf.html) | base | Required | `/usr/bin/printf` / `/bin/printf` | Open full utility contract: [CSH-070](tickets/CSH-070-host-formatted-output.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). |
 | <a id="utility-prs"></a>[`prs`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/prs.html) | conditional XSI | Not selected | **missing** / **missing** | Conditional XSI not selected; re-evaluate complete page if selected. |
 | <a id="utility-ps"></a>[`ps`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ps.html) | base | Required | `/bin/ps` / `/bin/ps` | Open full utility contract: [CSH-075](tickets/CSH-075-host-execution-processes.md). Availability only; behavioral qualification not established. |
-| <a id="utility-pwd"></a>[`pwd`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html) | base | Required | `/bin/pwd` / `/bin/pwd` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-pwd"></a>[`pwd`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html) | base | Required | `/bin/pwd` / `/bin/pwd` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
 | <a id="utility-read"></a>[`read`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/read.html) | base | Exempt (§1.6) | `/usr/bin/read` / **missing** | [U-027](posix-utilities.md#u-027) clause map; cshell internal. Open shell-locale conditions: [CSH-067](tickets/CSH-067-shell-locale-pathname-qualification.md). |
-| <a id="utility-readlink"></a>[`readlink`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html) | base | Required | `/usr/bin/readlink` / `/bin/readlink` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
-| <a id="utility-realpath"></a>[`realpath`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html) | base | Required | `/bin/realpath` / `/bin/realpath` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-readlink"></a>[`readlink`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html) | base | Required | `/usr/bin/readlink` / `/bin/readlink` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-realpath"></a>[`realpath`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html) | base | Required | `/bin/realpath` / `/bin/realpath` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
 | <a id="utility-renice"></a>[`renice`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/renice.html) | base | Required | `/usr/bin/renice` / `/bin/renice` | Open full utility contract: [CSH-075](tickets/CSH-075-host-execution-processes.md). Availability only; behavioral qualification not established. |
-| <a id="utility-rm"></a>[`rm`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html) | base | Required | `/bin/rm` / `/bin/rm` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-rm"></a>[`rm`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html) | base | Required | `/bin/rm` / `/bin/rm` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
 | <a id="utility-rmdel"></a>[`rmdel`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdel.html) | conditional XSI | Not selected | **missing** / **missing** | Conditional XSI not selected; re-evaluate complete page if selected. |
-| <a id="utility-rmdir"></a>[`rmdir`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html) | base | Required | `/bin/rmdir` / `/bin/rmdir` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-rmdir"></a>[`rmdir`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html) | base | Required | `/bin/rmdir` / `/bin/rmdir` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
 | <a id="utility-sact"></a>[`sact`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sact.html) | conditional XSI | Not selected | **missing** / **missing** | Conditional XSI not selected; re-evaluate complete page if selected. |
 | <a id="utility-sccs"></a>[`sccs`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sccs.html) | conditional XSI | Not selected | **missing** / **missing** | Conditional XSI not selected; re-evaluate complete page if selected. |
 | <a id="utility-sed"></a>[`sed`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sed.html) | base | Required | `/usr/bin/sed` / `/bin/sed` | Open full utility contract: [CSH-073](tickets/CSH-073-host-text-streams.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). |
@@ -178,7 +178,7 @@ hashes are separate fields in the snapshots.
 | <a id="utility-test"></a>[`test`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html) | base | Required | `/bin/test` / `/bin/test` | Open full utility contract: [CSH-071](tickets/CSH-071-host-permissions-identities.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). |
 | <a id="utility-time"></a>[`time`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/time.html) | base | Required | `/usr/bin/time` / **missing** | Open full utility contract: [CSH-075](tickets/CSH-075-host-execution-processes.md). Availability only; behavioral qualification not established. |
 | <a id="utility-timeout"></a>[`timeout`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/timeout.html) | base | Required | **missing** / `/bin/timeout` | Open full utility contract: [CSH-075](tickets/CSH-075-host-execution-processes.md). Availability only; behavioral qualification not established. |
-| <a id="utility-touch"></a>[`touch`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html) | base | Required | `/usr/bin/touch` / `/bin/touch` | Open full utility contract: [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
+| <a id="utility-touch"></a>[`touch`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html) | base | Required | `/usr/bin/touch` / `/bin/touch` | Open full utility contract: [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). Availability only; behavioral qualification not established. [CSH-072 bounded qualification and repaired profile](host-filesystem-evidence.md); full contract remains open. |
 | <a id="utility-tput"></a>[`tput`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tput.html) | base | Required | `/usr/bin/tput` / `/bin/tput` | Open full utility contract: [CSH-077](tickets/CSH-077-host-terminal-utilities.md). Availability only; behavioral qualification not established. |
 | <a id="utility-tr"></a>[`tr`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tr.html) | base | Required | `/usr/bin/tr` / `/bin/tr` | Open full utility contract: [CSH-073](tickets/CSH-073-host-text-streams.md). Availability only; behavioral qualification not established. |
 | <a id="utility-true"></a>[`true`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/true.html) | base | Required | `/usr/bin/true` / `/bin/true` | Open full utility contract: [CSH-075](tickets/CSH-075-host-execution-processes.md). [Selected host assertions](host-utility-evidence.md), [retained CSH-064 evidence](tickets/CSH-064-host-platform-external-prerequisites.md). |
@@ -289,7 +289,7 @@ ticket, and that both directions of the Markdown utility ledger agree.
 | --- | --- | --- |
 | [CSH-070](tickets/CSH-070-host-formatted-output.md) | `printf`, `echo` | 6 |
 | [CSH-071](tickets/CSH-071-host-permissions-identities.md) | `test`, `[`, `chmod`, `chgrp`, `chown`, `id`, `logname`, `newgrp` | 7 |
-| [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md) | `basename`, `dirname`, `cp`, `dd`, `df`, `du`, `file`, `find`, `ln`, `ls`, `mkdir`, `mkfifo`, `mv`, `pathchk`, `pax`, `pwd`, `readlink`, `realpath`, `rm`, `rmdir`, `touch` | 4 |
+| [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md) | `basename`, `dirname`, `cp`, `dd`, `df`, `du`, `file`, `find`, `ln`, `ls`, `mkdir`, `mkfifo`, `mv`, `pathchk`, `pax`, `pwd`, `readlink`, `realpath`, `rm`, `rmdir`, `touch` | 4 |
 | [CSH-073](tickets/CSH-073-host-text-streams.md) | `cat`, `cksum`, `cmp`, `comm`, `csplit`, `cut`, `diff`, `expand`, `fold`, `head`, `join`, `od`, `paste`, `pr`, `sed`, `sort`, `split`, `strings`, `tail`, `tee`, `tr`, `tsort`, `unexpand`, `uniq`, `wc` | 5 |
 | [CSH-074](tickets/CSH-074-host-languages-editors.md) | `awk`, `bc`, `ed`, `expr`, `grep`, `m4`, `patch`, `xargs` | 1 |
 | [CSH-075](tickets/CSH-075-host-execution-processes.md) | `env`, `false`, `getconf`, `kill`, `nice`, `nohup`, `ps`, `renice`, `sh`, `sleep`, `time`, `timeout`, `true`, `uname` | 6 |
@@ -325,7 +325,7 @@ condition IDs and historical reasons are unchanged.
 
 CSH-085 adds private recursive allocation graphs, paired numeric magic samples
 and independently representable subsecond timestamps. CSH-086 then supplies
-bounded terminal decisions; CSH-104 owns individual residuals and all four
+bounded terminal decisions; CSH-105 owns individual residuals and all four
 original conditions. See the
 [CSH-085 evidence](evidence/csh-085/README.md) for platform results and limits.
 
@@ -333,7 +333,7 @@ original conditions. See the
 
 CSH-086 qualifies bounded C-locale cp/mv terminal decisions and corrects the
 ln -i entry: it is a vendor extension, not a base-profile requirement.
-CSH-104 owns all remaining contracts and the four retained conditions. See
+CSH-105 owns all remaining contracts and the four retained conditions. See
 [filesystem evidence](host-filesystem-evidence.md) for source/provider identity
 and the cp decline-status repair.
 
@@ -341,7 +341,7 @@ and the cp decline-status repair.
 
 CSH-087 qualifies the bounded cp/mv operand sequences, cp/rm recursive decisions
 and same-device mv directory targets listed in the current section map. All
-21 full utility contracts and four original conditions remain open under CSH-104,
+21 full utility contracts and four original conditions remain open under CSH-105,
 with explicit environments, reasons and vendor implementation ownership. See
 [CSH-087 evidence](evidence/csh-087/README.md) for provider identities, strict
 selected results, unchanged historical evidence and additional stock failures.
@@ -357,7 +357,7 @@ comparisons before, equal to and after the reference, including -H/-L reference
 symlinks. Setup and cleanup failures are failures, never profile allowances.
 
 [CSH-088 evidence](evidence/csh-088/README.md) records both platforms and
-separate stock failures. [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md)
+separate stock failures. [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md)
 owns each remaining environment and all four original conditions. Whole
 utility contracts, non-C collation, live-clock age boundaries, mount/depth
 limits, ACLs, capacity exhaustion and libc-internal faults remain unqualified.
@@ -381,7 +381,7 @@ behavior remains unchanged. Original stock failures remain separate failures;
 no output or status is translated and no selected allowance is added.
 
 [CSH-089 evidence](evidence/csh-089/README.md) records native and Linux results.
-[CSH-104](tickets/CSH-104-filesystem-environment-residuals.md) owns every remaining
+[CSH-105](tickets/CSH-105-filesystem-environment-residuals.md) owns every remaining
 utility environment and all four retained conditions. These cases do not
 qualify arbitrary branching, depth/path exhaustion, mounts, races, non-C prompts,
 ACLs, quotas, real filesystem exhaustion, libc-internal faults or whole utilities.
@@ -400,7 +400,7 @@ exercised.
 The full selected profile requires these assertions without allowances. No selected
 provider or build configuration changes. All other individual environments and the four
 original retained conditions remain open under
-[CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). See [CSH-090
+[CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). See [CSH-090
 evidence](evidence/csh-090/README.md) for native/Linux results.
 
 ## CSH-091 physical working-directory changes
@@ -415,7 +415,7 @@ external provider; they do not qualify the pwd builtin. Both option forms end in
 -P; no PWD assignment or logical-mode namespace behavior is claimed.
 
 The section map and residual ledger retain each other environment and all four
-original conditions under [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md).
+original conditions under [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md).
 No provider source or selected-profile allowance changes. See
 [CSH-091 evidence](evidence/csh-091/README.md) for native/Linux results, provenance,
 harness failure checks and separate stock audits.
@@ -433,7 +433,7 @@ are bounded witnesses. Six harness regressions check corrupted evidence, partial
 setup, failed exec, wrong probes and timeout cleanup.
 
 See [CSH-092 evidence](evidence/csh-092/README.md) for native/Linux results and
-provider provenance. [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md)
+provider provenance. [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md)
 retains each unsupplied contract and all four original conditions. Final-state
 checks do not observe transient permissions, qualify every symbolic mode, ACL
 inheritance, privilege, arbitrary graphs, capacity or whole utilities.
@@ -449,7 +449,7 @@ faults, actual filesystem exhaustion, logical namespace changes or arbitrary out
 failures.
 
 `make test-host-filesystem-output` requires zero allowances. See
-[CSH-093 evidence](evidence/csh-093/README.md). All four original conditions remain open under CSH-104.
+[CSH-093 evidence](evidence/csh-093/README.md). All four original conditions remain open under CSH-105.
 
 ### Logical cwd fallback (CSH-094)
 
@@ -462,7 +462,7 @@ specifications, corrupted markers and result channels, setup/exec failures,
 inappropriate inherited PWD and timeout/reaping/cleanup. See
 [CSH-094 evidence](evidence/csh-094/README.md). All unsupplied environments and
 four original conditions remain open under
-[CSH-104](tickets/CSH-104-filesystem-environment-residuals.md).
+[CSH-105](tickets/CSH-105-filesystem-environment-residuals.md).
 
 ### Authored numeric magic boundaries (CSH-095)
 
@@ -471,7 +471,7 @@ CSH-095 supplies 46 authored file magic cases / 184 assertions for native signed
 `make test-host-filesystem-magic` runs the focused cases. They are also mandatory
 in the full selected profile with zero allowances. See [CSH-095 evidence](evidence/csh-095/README.md).
 All four original U-040 conditions and every unsupplied environment remain open
-under [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md); utility/libc/platform
+under [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md); utility/libc/platform
 vendors retain implementation ownership. Historical evidence is unchanged.
 
 ## Calendar timestamps (CSH-096)
@@ -479,7 +479,7 @@ vendors retain implementation ownership. Historical evidence is unchanged.
 CSH-096 supplies 40 touch calendar cases / 160 assertions for the Epoch, two-digit years 70/99/00/68, omitted seconds, leap day, second-60 year rollover, the required January 2038 date and the signed-32-bit timestamp boundary. Integer UTC calendar arithmetic supplies expected timestamps; exact target and unequal fractional baselines are independently read back on the target inode before execution. Default, -a, -m and explicit -a -m selections require exact timestamps, empty channels, zero status and unchanged content. Other date/timezone forms, current-time tolerances, unsupported timestamp errors, arbitrary symlink graphs and permission/ACL boundaries remain unqualified.
 
 See [CSH-096 evidence](evidence/csh-096/README.md). Every remaining contract and
-all four retained U-040 conditions belong to [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md).
+all four retained U-040 conditions belong to [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md).
 
 ## Reference timestamps and alias graphs (CSH-097)
 
@@ -487,14 +487,14 @@ CSH-097 supplies 28 touch reference cases / 112 assertions for distinct access/m
 
 See [CSH-097 evidence](evidence/csh-097/README.md). All 21 full utility contracts
 and four original U-040 conditions remain open under
-[CSH-104](tickets/CSH-104-filesystem-environment-residuals.md).
+[CSH-105](tickets/CSH-105-filesystem-environment-residuals.md).
 
 ## CSH-098 date forms and fixed timezones
 
 CSH-098 supplies 64 touch date-form cases / 256 assertions for period/comma fractional seconds down to one nanosecond, T/space separators, absent-zone fixed TZ interpretation, Z overriding nonzero TZ, and -t fixed-zone rollover. Independently authored UTC fields and integer fractions are exactly read back on the target inode before execution; all four field selections require exact timestamps, unchanged identity/mode/content and empty channels. DST transitions, timezone databases, arbitrary fractions/ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified.
 
 The U-034 direct-exec and U-040 default contracts retain their existing evidence.
-[CSH-104](tickets/CSH-104-filesystem-environment-residuals.md) owns all unsupplied
+[CSH-105](tickets/CSH-105-filesystem-environment-residuals.md) owns all unsupplied
 environments and the four original U-040 conditions. See [CSH-098 evidence](evidence/csh-098/README.md).
 
 ## CSH-100 Julian and numbered day rules
@@ -502,7 +502,7 @@ environments and the four original U-040 conditions. See [CSH-098 evidence](evid
 CSH-100 supplies 128 touch cases / 512 assertions for explicit POSIX Jn and zero-based n daylight-saving rules across common and leap years, including default 02:00 transitions and unique times before/after the authored changes. Independently authored UTC fields and exact target-inode timestamp probes supply the oracle for -d/-t and all four field selections. Skipped/repeated times, arbitrary rule values and transition times, timezone databases, timestamp ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified.
 
 See [retained evidence](evidence/csh-100/README.md). All remaining contracts and four original U-040 conditions
-remain open under CSH-104; no whole-utility qualification is claimed.
+remain open under CSH-105; no whole-utility qualification is claimed.
 
 ## CSH-102 string magic and offset boundaries
 
@@ -510,12 +510,12 @@ CSH-102 supplies 91 file string-magic cases / 364 assertions for required backsl
 
 See [retained evidence](evidence/csh-102/README.md). U-034/U-040 remain partial;
 all 21 utility residuals and four original conditions remain owned by
-[CSH-104](tickets/CSH-104-filesystem-environment-residuals.md).
+[CSH-105](tickets/CSH-105-filesystem-environment-residuals.md).
 
 ## CSH-103 magic-message qualification
 
 CSH-103 supplies 108 file magic-message cases / 432 assertions for native signed byte/short and string printf-style descriptions at top level and in continuations. Literal expected bytes cover signs, width, precision, zero padding, decimal/octal/hexadecimal output, alternate forms, characters and literal percent signs. Exact channels/status, pre-exec readback and unchanged sample/database contents supply the oracle. The pinned file 5.46 provider repairs one-byte magic dispatch, bounded format validation and textual rule order; original stock failures remain separately retained. Other types/widths, unsigned ranges, multiple databases, arbitrary formats/encodings/locales and utility resource failures remain unqualified.
 
 All 21 residual utility contracts and four original U-040 conditions remain open in
-[CSH-104](tickets/CSH-104-filesystem-environment-residuals.md).
+[CSH-105](tickets/CSH-105-filesystem-environment-residuals.md).
 See [CSH-103 evidence](evidence/csh-103/README.md) for provider provenance, strict results and stock failures.

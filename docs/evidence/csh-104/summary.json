@@ -1,0 +1,225 @@
+{
+  "native": {
+    "native-host-filesystem-allocation.json.gz": {
+      "PASS": 240,
+      "FAIL": 0
+    },
+    "native-host-filesystem-audit.json.gz": {
+      "PASS": 5342,
+      "FAIL": 373
+    },
+    "native-host-filesystem-calendar.json.gz": {
+      "PASS": 160,
+      "FAIL": 0
+    },
+    "native-host-filesystem-creation.json.gz": {
+      "PASS": 104,
+      "FAIL": 0
+    },
+    "native-host-filesystem-cwd-logical.json.gz": {
+      "PASS": 48,
+      "FAIL": 0
+    },
+    "native-host-filesystem-cwd.json.gz": {
+      "PASS": 32,
+      "FAIL": 0
+    },
+    "native-host-filesystem-datetime.json.gz": {
+      "PASS": 256,
+      "FAIL": 0
+    },
+    "native-host-filesystem-day-rules.json.gz": {
+      "PASS": 512,
+      "FAIL": 0
+    },
+    "native-host-filesystem-decisions.json.gz": {
+      "PASS": 68,
+      "FAIL": 0
+    },
+    "native-host-filesystem-interactive.json.gz": {
+      "PASS": 39,
+      "FAIL": 0
+    },
+    "native-host-filesystem-isolated.json.gz": {
+      "PASS": 112,
+      "FAIL": 0
+    },
+    "native-host-filesystem-magic-messages.json.gz": {
+      "PASS": 432,
+      "FAIL": 0
+    },
+    "native-host-filesystem-magic-strings.json.gz": {
+      "PASS": 364,
+      "FAIL": 0
+    },
+    "native-host-filesystem-magic-types.json.gz": {
+      "PASS": 1440,
+      "FAIL": 0
+    },
+    "native-host-filesystem-magic.json.gz": {
+      "PASS": 184,
+      "FAIL": 0
+    },
+    "native-host-filesystem-metadata.json.gz": {
+      "PASS": 64,
+      "FAIL": 0
+    },
+    "native-host-filesystem-output.json.gz": {
+      "PASS": 32,
+      "FAIL": 0
+    },
+    "native-host-filesystem-path-limits.json.gz": {
+      "PASS": 32,
+      "FAIL": 0
+    },
+    "native-host-filesystem-profile.json.gz": {
+      "PASS": 5735,
+      "FAIL": 0
+    },
+    "native-host-filesystem-provider-audit.json.gz": {
+      "PASS": 168,
+      "FAIL": 0
+    },
+    "native-host-filesystem-recursive.json.gz": {
+      "PASS": 30,
+      "FAIL": 0
+    },
+    "native-host-filesystem-reference.json.gz": {
+      "PASS": 112,
+      "FAIL": 0
+    },
+    "native-host-filesystem-residual.json.gz": {
+      "PASS": 104,
+      "FAIL": 0
+    },
+    "native-host-filesystem-stock-provider-audit.json.gz": {
+      "PASS": 152,
+      "FAIL": 16
+    },
+    "native-host-filesystem-timezone.json.gz": {
+      "PASS": 416,
+      "FAIL": 0
+    },
+    "native-host-filesystem-transition-times.json.gz": {
+      "PASS": 384,
+      "FAIL": 0
+    },
+    "native-host-profile-results.json.gz": {
+      "passed": 1162,
+      "failed": 0,
+      "gaps": 0
+    }
+  },
+  "linux": {
+    "linux-host-filesystem-allocation.json.gz": {
+      "PASS": 200,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-audit.json.gz": {
+      "PASS": 5481,
+      "FAIL": 270
+    },
+    "linux-host-filesystem-calendar.json.gz": {
+      "PASS": 160,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-creation.json.gz": {
+      "PASS": 104,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-cwd-logical.json.gz": {
+      "PASS": 48,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-cwd.json.gz": {
+      "PASS": 32,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-datetime.json.gz": {
+      "PASS": 256,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-day-rules.json.gz": {
+      "PASS": 512,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-decisions.json.gz": {
+      "PASS": 68,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-interactive.json.gz": {
+      "PASS": 39,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-isolated.json.gz": {
+      "PASS": 112,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-magic-messages.json.gz": {
+      "PASS": 432,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-magic-strings.json.gz": {
+      "PASS": 364,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-magic-types.json.gz": {
+      "PASS": 1440,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-magic.json.gz": {
+      "PASS": 184,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-metadata.json.gz": {
+      "PASS": 64,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-output.json.gz": {
+      "PASS": 56,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-path-limits.json.gz": {
+      "PASS": 32,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-profile.json.gz": {
+      "PASS": 5775,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-provider-audit.json.gz": {
+      "PASS": 184,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-recursive.json.gz": {
+      "PASS": 30,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-reference.json.gz": {
+      "PASS": 112,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-residual.json.gz": {
+      "PASS": 104,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-stock-provider-audit.json.gz": {
+      "PASS": 176,
+      "FAIL": 8
+    },
+    "linux-host-filesystem-timezone.json.gz": {
+      "PASS": 416,
+      "FAIL": 0
+    },
+    "linux-host-filesystem-transition-times.json.gz": {
+      "PASS": 384,
+      "FAIL": 0
+    },
+    "linux-host-profile-results.json.gz": {
+      "passed": 1162,
+      "failed": 0,
+      "gaps": 0
+    }
+  },
+  "source_identity_sha256": "601cf941f7ed4200c4c5db5e2222facf310614461222edbcb7c8c7345b0753ff"
+}
