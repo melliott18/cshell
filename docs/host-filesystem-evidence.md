@@ -2,7 +2,7 @@
 
 CSH-072 adds a **bounded selected profile** for 21 exec-accessible utilities.
 It does not qualify complete utility pages, U-034/U-040 as a whole, or a complete
-POSIX system. [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md) owns each
+POSIX system. [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md) owns each
 remaining contract and the four original retained conditions. Implementation
 ownership stays with the selected utility/libc/platform vendor.
 
@@ -246,7 +246,7 @@ build. C-locale builds disable NLS, ACL and SELinux; those contracts stay open.
 Run `make test-host-filesystem-interactive` for the focused subset; the full
 `make test-host-profile` requires it automatically with zero allowances.
 
-CSH-104 owns every unsupplied environment and the four immutable original
+CSH-105 owns every unsupplied environment and the four immutable original
 conditions. These bounded terminal decisions do not qualify a whole utility,
 recursive/multiple-operand interaction, other locales, ACL/privileged ownership,
 cross-device behavior, real filesystem exhaustion or libc-internal faults.
@@ -270,7 +270,7 @@ oracles. Full stderr, stdout, status, setup, capture failures and cleanup remain
 separate in each record. Provider selection/builds are unchanged; stock Apple
 cp adds twelve decline-status failures while the selected repaired cp passes.
 
-[CSH-104](tickets/CSH-104-filesystem-environment-residuals.md) retains every
+[CSH-105](tickets/CSH-105-filesystem-environment-residuals.md) retains every
 unsupplied environment and all four original conditions. These witnesses do
 not qualify arbitrary recursive graphs, negative recursive-child responses,
 non-C prompts, cross-device fallback, mounts, depth exhaustion, ACLs, quotas,
@@ -288,7 +288,7 @@ comparisons before, equal to and after the reference, including -H/-L reference
 symlinks. Setup and cleanup failures are failures, never profile allowances.
 
 [CSH-088 evidence](evidence/csh-088/README.md) records both platforms and
-separate stock failures. [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md)
+separate stock failures. [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md)
 owns each remaining environment and all four original conditions. Whole
 utility contracts, non-C collation, live-clock age boundaries, mount/depth
 limits, ACLs, capacity exhaustion and libc-internal faults remain unqualified.
@@ -312,7 +312,7 @@ behavior remains unchanged. Original stock failures remain separate failures;
 no output or status is translated and no selected allowance is added.
 
 [CSH-089 evidence](evidence/csh-089/README.md) records native and Linux results.
-[CSH-104](tickets/CSH-104-filesystem-environment-residuals.md) owns every remaining
+[CSH-105](tickets/CSH-105-filesystem-environment-residuals.md) owns every remaining
 utility environment and all four retained conditions. These cases do not
 qualify arbitrary branching, depth/path exhaustion, mounts, races, non-C prompts,
 ACLs, quotas, real filesystem exhaustion, libc-internal faults or whole utilities.
@@ -331,7 +331,7 @@ exercised.
 The full selected profile requires these assertions without allowances. No selected
 provider or build configuration changes. All other individual environments and the four
 original retained conditions remain open under
-[CSH-104](tickets/CSH-104-filesystem-environment-residuals.md). See [CSH-090
+[CSH-105](tickets/CSH-105-filesystem-environment-residuals.md). See [CSH-090
 evidence](evidence/csh-090/README.md) for native/Linux results.
 
 ## CSH-091 physical working-directory changes
@@ -346,7 +346,7 @@ external provider; they do not qualify the pwd builtin. Both option forms end in
 -P; no PWD assignment or logical-mode namespace behavior is claimed.
 
 The section map and residual ledger retain each other environment and all four
-original conditions under [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md).
+original conditions under [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md).
 No provider source or selected-profile allowance changes. See
 [CSH-091 evidence](evidence/csh-091/README.md) for native/Linux results, provenance,
 harness failure checks and separate stock audits.
@@ -364,7 +364,7 @@ are bounded witnesses. Six harness regressions check corrupted evidence, partial
 setup, failed exec, wrong probes and timeout cleanup.
 
 See [CSH-092 evidence](evidence/csh-092/README.md) for native/Linux results and
-provider provenance. [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md)
+provider provenance. [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md)
 retains each unsupplied contract and all four original conditions. Final-state
 checks do not observe transient permissions, qualify every symbolic mode, ACL
 inheritance, privilege, arbitrary graphs, capacity or whole utilities.
@@ -380,7 +380,7 @@ faults, actual filesystem exhaustion, logical namespace changes or arbitrary out
 failures.
 
 `make test-host-filesystem-output` requires zero allowances. See
-[CSH-093 evidence](evidence/csh-093/README.md). All four original conditions remain open under CSH-104.
+[CSH-093 evidence](evidence/csh-093/README.md). All four original conditions remain open under CSH-105.
 
 ### Logical cwd fallback (CSH-094)
 
@@ -393,7 +393,7 @@ specifications, corrupted markers and result channels, setup/exec failures,
 inappropriate inherited PWD and timeout/reaping/cleanup. See
 [CSH-094 evidence](evidence/csh-094/README.md). All unsupplied environments and
 four original conditions remain open under
-[CSH-104](tickets/CSH-104-filesystem-environment-residuals.md).
+[CSH-105](tickets/CSH-105-filesystem-environment-residuals.md).
 
 ### Authored numeric magic boundaries (CSH-095)
 
@@ -402,7 +402,7 @@ CSH-095 supplies 46 authored file magic cases / 184 assertions for native signed
 `make test-host-filesystem-magic` runs the focused cases. They are also mandatory
 in the full selected profile with zero allowances. See [CSH-095 evidence](evidence/csh-095/README.md).
 All four original U-040 conditions and every unsupplied environment remain open
-under [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md); utility/libc/platform
+under [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md); utility/libc/platform
 vendors retain implementation ownership. Historical evidence is unchanged.
 
 ## Calendar timestamps (CSH-096)
@@ -410,7 +410,7 @@ vendors retain implementation ownership. Historical evidence is unchanged.
 CSH-096 supplies 40 touch calendar cases / 160 assertions for the Epoch, two-digit years 70/99/00/68, omitted seconds, leap day, second-60 year rollover, the required January 2038 date and the signed-32-bit timestamp boundary. Integer UTC calendar arithmetic supplies expected timestamps; exact target and unequal fractional baselines are independently read back on the target inode before execution. Default, -a, -m and explicit -a -m selections require exact timestamps, empty channels, zero status and unchanged content. Other date/timezone forms, current-time tolerances, unsupported timestamp errors, arbitrary symlink graphs and permission/ACL boundaries remain unqualified.
 
 See [CSH-096 evidence](evidence/csh-096/README.md). Every remaining contract and
-all four retained U-040 conditions belong to [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md).
+all four retained U-040 conditions belong to [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md).
 
 ## Reference timestamps and alias graphs (CSH-097)
 
@@ -418,14 +418,14 @@ CSH-097 supplies 28 touch reference cases / 112 assertions for distinct access/m
 
 See [CSH-097 evidence](evidence/csh-097/README.md). All 21 full utility contracts
 and four original U-040 conditions remain open under
-[CSH-104](tickets/CSH-104-filesystem-environment-residuals.md).
+[CSH-105](tickets/CSH-105-filesystem-environment-residuals.md).
 
 ## CSH-098 date forms and fixed timezones
 
 CSH-098 supplies 64 touch date-form cases / 256 assertions for period/comma fractional seconds down to one nanosecond, T/space separators, absent-zone fixed TZ interpretation, Z overriding nonzero TZ, and -t fixed-zone rollover. Independently authored UTC fields and integer fractions are exactly read back on the target inode before execution; all four field selections require exact timestamps, unchanged identity/mode/content and empty channels. DST transitions, timezone databases, arbitrary fractions/ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified.
 
 The U-034 direct-exec and U-040 default contracts retain their existing evidence.
-[CSH-104](tickets/CSH-104-filesystem-environment-residuals.md) owns all unsupplied
+[CSH-105](tickets/CSH-105-filesystem-environment-residuals.md) owns all unsupplied
 environments and the four original U-040 conditions. See [CSH-098 evidence](evidence/csh-098/README.md).
 
 ## CSH-099 explicit daylight-saving rules
@@ -438,7 +438,7 @@ Both zones use explicit month/week/day rules; the southern rule ends earlier
 in the year than it starts. Northern daylight offset defaults to one hour;
 southern daylight offset is explicit. No local-time conversion library is an oracle.
 
-See [CSH-099 evidence](evidence/csh-099/README.md). [CSH-104](tickets/CSH-104-filesystem-environment-residuals.md)
+See [CSH-099 evidence](evidence/csh-099/README.md). [CSH-105](tickets/CSH-105-filesystem-environment-residuals.md)
 retains all 21 residual utilities and four original U-040 conditions.
 
 ## CSH-100 Julian and numbered day rules
@@ -446,14 +446,14 @@ retains all 21 residual utilities and four original U-040 conditions.
 CSH-100 supplies 128 touch cases / 512 assertions for explicit POSIX Jn and zero-based n daylight-saving rules across common and leap years, including default 02:00 transitions and unique times before/after the authored changes. Independently authored UTC fields and exact target-inode timestamp probes supply the oracle for -d/-t and all four field selections. Skipped/repeated times, arbitrary rule values and transition times, timezone databases, timestamp ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified.
 
 See [retained evidence](evidence/csh-100/README.md). All remaining contracts and four original U-040 conditions
-remain open under CSH-104; no whole-utility qualification is claimed.
+remain open under CSH-105; no whole-utility qualification is claimed.
 
 ## CSH-101 explicit transition clocks and offsets
 
 CSH-101 supplies 96 touch cases / 384 assertions for explicit M/J/n transition clocks, minute/second standard and daylight offsets, 45-minute-10-second and 30-minute-15-second advances, and negative/next-day transition times. Independently authored UTC fields and exact target-inode probes supply the oracle for -d/-t and all four field selections. Skipped/repeated times, arbitrary rules and offsets, timezone databases, timestamp ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified.
 
 See [retained evidence](evidence/csh-101/README.md). All remaining contracts and
-four original U-040 conditions remain open under CSH-104.
+four original U-040 conditions remain open under CSH-105.
 
 The selected touch provider is GNU coreutils 9.7 linked with pinned IANA tzcode 2025b. Both Apple touch and the installed GNU touch using Darwin conversion return wrong timestamps for the authored previous-day start and next-day end boundaries (64 stock assertions). Preserve these failures separately and require all 384 new assertions without allowances for the selected provider. The replacement does not qualify arbitrary timezone rules or databases.
 
@@ -463,12 +463,20 @@ CSH-102 supplies 91 file string-magic cases / 364 assertions for required backsl
 
 See [retained evidence](evidence/csh-102/README.md). U-034/U-040 remain partial;
 all 21 utility residuals and four original conditions remain owned by
-[CSH-104](tickets/CSH-104-filesystem-environment-residuals.md).
+[CSH-105](tickets/CSH-105-filesystem-environment-residuals.md).
 
 ## CSH-103 magic-message qualification
 
 CSH-103 supplies 108 file magic-message cases / 432 assertions for native signed byte/short and string printf-style descriptions at top level and in continuations. Literal expected bytes cover signs, width, precision, zero padding, decimal/octal/hexadecimal output, alternate forms, characters and literal percent signs. Exact channels/status, pre-exec readback and unchanged sample/database contents supply the oracle. The pinned file 5.46 provider repairs one-byte magic dispatch, bounded format validation and textual rule order; original stock failures remain separately retained. Other types/widths, unsigned ranges, multiple databases, arbitrary formats/encodings/locales and utility resource failures remain unqualified.
 
 All 21 residual utility contracts and four original U-040 conditions remain open in
-[CSH-104](tickets/CSH-104-filesystem-environment-residuals.md).
+[CSH-105](tickets/CSH-105-filesystem-environment-residuals.md).
 See [CSH-103 evidence](evidence/csh-103/README.md) for provider provenance, strict results and stock failures.
+
+## CSH-104 portable numeric magic types
+
+CSH-104 supplies 360 portable numeric magic cases / 1440 assertions for dC/dS/dI/dL and uC/uS/uI/uL, their explicit byte-count forms, signed extrema, unsigned high-bit ranges, comparisons, hexadecimal/octal masks and constants, bit tests and incomplete fields. Native C ABI widths and independently authored integer bytes supply the oracle; exact channels/status and unchanged inputs are required. The pinned file provider repairs native long type selection, rejection of truncated eight-byte values and signed-minimum parsing without overflow. Default d/u widths, the long keyword alias, further numeric/message combinations, cross-database -m/-M/-d precedence, default classification, encodings/locales and utility resource failures remain unqualified.
+
+All 21 utility dispositions and four original U-040 conditions remain open under
+[CSH-105](tickets/CSH-105-filesystem-environment-residuals.md).
+See [CSH-104 evidence](evidence/csh-104/README.md).

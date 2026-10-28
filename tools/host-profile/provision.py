@@ -78,7 +78,7 @@ def provision(destination, gnu_bin=None):
         tzcode_flags=['-DHAVE_TZNAME=1', '-DUSG_COMPAT=1', '-DNETBSD_INSPIRED=0'],
         configure=manifest['executables']['cp']['source']['configure'])
     manifest['executables']['file']['source'] = dict(
-        version='file 5.46 + CSH-103 message repairs',
+        version='file 5.46 + CSH-103/104 message and numeric type repairs',
         archive='tools/host-profile/vendor/file/file-5.46.tar.gz',
         archive_sha256=hashlib.sha256((ROOT / 'tools/host-profile/vendor/file/file-5.46.tar.gz').read_bytes()).hexdigest(),
         patch_sha256=hashlib.sha256((ROOT / 'tools/host-profile/vendor/file/message-formats.patch').read_bytes()).hexdigest(),

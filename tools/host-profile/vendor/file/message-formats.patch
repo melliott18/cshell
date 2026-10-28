@@ -1,6 +1,33 @@
 --- a/src/apprentice.c
 +++ b/src/apprentice.c
-@@ -1606,7 +1606,9 @@
+@@ -352,20 +352,13 @@
+ 			type = FILE_SHORT;
+ 			break;
+ 		case 'I':
++			/* The supported hosts store int in four bytes. */
++			type = sizeof(int) == 4 ? FILE_LONG : FILE_INVALID;
++			break;
+ 		case 'L':
+-			/*
+-			 * "dI", "dL", "uI", and "uL".
+-			 *
+-			 * XXX - the actual Single UNIX Specification says
+-			 * that "L" means "long", as in the C data type,
+-			 * but we treat it as meaning "4-byte integer".
+-			 * Given that the OS X version of file 5.04 did
+-			 * the same, I guess that passes the actual SUS
+-			 * validation suite; having "dL" be dependent on
+-			 * how big a "long" is on the machine running
+-			 * "file" is silly.
+-			 */
+-			type = FILE_LONG;
++			/* POSIX dL/uL name the native C long storage width. */
++			type = sizeof(long) == 8 ? FILE_QUAD :
++			    sizeof(long) == 4 ? FILE_LONG : FILE_INVALID;
+ 			break;
+ 		case 'Q':
+ 			/* "dQ" and "uQ" */
+@@ -1606,7 +1599,9 @@
  			}
  			i = set_text_binary(ms, mset[j].me, mset[j].count, i);
  		}
@@ -11,7 +38,7 @@
  			qsort(mset[j].me, mset[j].count, sizeof(*mset[0].me),
  			    apprentice_sort);
  
-@@ -2647,7 +2649,7 @@
+@@ -2647,7 +2642,7 @@
  			}
  		} else
  			h = 0;
@@ -20,7 +47,7 @@
  			ptr++;
  #define CHECKLEN() do { \
  	for (len = cnt = 0; isdigit(CAST(unsigned char, *ptr)); ptr++, cnt++) \
-@@ -2721,7 +2723,8 @@
+@@ -2721,7 +2716,8 @@
  			}
  #endif
  		case 'c':
@@ -30,7 +57,7 @@
  				return 0;
  			goto invalid;
  		case 'i':
-@@ -2806,9 +2809,15 @@
+@@ -2806,9 +2802,15 @@
  	char *ptr;
  	const char *estr;
  
@@ -49,7 +76,7 @@
  	if (*ptr == '\0') {
  		/* No format string; ok */
  		return 1;
-@@ -2841,6 +2850,10 @@
+@@ -2841,6 +2843,10 @@
  
  	for (; *ptr; ptr++) {
  		if (*ptr == '%') {
@@ -60,6 +87,16 @@
  			file_magwarn(ms,
  			    "Too many format strings (should have at most one) "
  			    "for `%s' with description `%s'",
+@@ -2944,7 +2950,8 @@
+ 			for (q = *p; isspace(CAST(unsigned char, *q)); q++)
+ 				continue;
+ 			if (*q == '-' && ull != UINT64_MAX)
+-				ull = -CAST(int64_t, ull);
++				/* Unsigned subtraction also handles INT64_MIN. */
++				ull = 0 - ull;
+ 			switch (ts) {
+ 			case 1:
+ 				x = CAST(uint64_t, ull & ~0xffULL);
 --- a/src/funcs.c
 +++ b/src/funcs.c
 @@ -338,9 +338,6 @@
@@ -72,3 +109,15 @@
  	}
  
  	if ((ms->flags & MAGIC_NO_CHECK_ENCODING) == 0) {
+--- a/src/softmagic.c
++++ b/src/softmagic.c
+@@ -1851,6 +1851,9 @@
+ 			return 0;
+ 		break;
+ 
++	case FILE_QUAD:
++	case FILE_BEQUAD:
++	case FILE_LEQUAD:
+ 	case FILE_DOUBLE:
+ 	case FILE_BEDOUBLE:
+ 	case FILE_LEDOUBLE:

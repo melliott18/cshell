@@ -28,6 +28,7 @@ import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
 import host_filesystem_magic_strings as magic_strings
 import host_filesystem_magic_messages as magic_messages
+import host_filesystem_magic_types as magic_types
 import host_filesystem_calendar as calendar_cases
 import host_filesystem_reference as reference_cases
 import host_filesystem_datetime as datetime_cases
@@ -411,6 +412,44 @@ class FilesystemHarnessTests(unittest.TestCase):
                             if time.monotonic() >= deadline:
                                 self.fail('calendar timeout child survived cleanup')
                             time.sleep(0.01)
+
+    def test_magic_types_independent_predicates_and_native_widths(self):
+        import ctypes
+        rows = list(magic_types.cases())
+        self.assertEqual(len(rows), 360)
+        self.assertEqual(len({r['id'] for r in rows}), len(rows))
+        widths = {letter: ctypes.sizeof(ctype) for letter, ctype in magic_types.TYPES}
+        for row in rows:
+            facts = row['magic_environment']
+            payload = row['files']['sample'][facts['offset']:]
+            self.assertEqual(facts['bytes'], widths[facts['c_type']])
+            if 'value' in facts:
+                value = int.from_bytes(payload, sys.byteorder, signed=facts['signed'])
+                self.assertEqual(value, facts['value'])
+                if '&' in facts['kind']:
+                    # Both authored mask spellings denote 127.
+                    value &= 127
+                op, raw = facts['predicate'][0], facts['predicate'][1:]
+                constant = int(raw, 16 if raw.startswith('0x') else
+                               8 if raw.startswith('0') and len(raw) > 1 else 10)
+                expected = {'=': value == constant, '<': value < constant,
+                            '>': value > constant, '&': value & constant == constant,
+                            '^': value & constant != constant}[op]
+            else:
+                expected = len(payload) == facts['bytes']
+            self.assertEqual(facts['matches'], expected, row['id'])
+        # High unsigned values must distinguish unsigned from signed comparison.
+        high = next(r for r in rows if r['id'] == 'file/magic-types-unsigned-L-native-maximum-yes')
+        self.assertEqual(high['files']['sample'][6:], b'\xff' * widths['L'])
+
+    def test_magic_types_channels_status_and_immutable_inputs_are_required(self):
+        self.check_magic_channels_status_and_immutable_inputs_are_required(next(magic_types.cases()))
+
+    def test_magic_types_setup_failure_prevents_execution_and_cleans(self):
+        self.check_magic_setup_failure_prevents_execution_and_cleans(next(magic_types.cases()))
+
+    def test_magic_types_exec_failure_and_timeout_clean_all_modes(self):
+        self.check_magic_exec_failure_and_timeout_clean_all_modes(next(magic_types.cases()))
 
     def test_magic_messages_literal_oracles_and_native_arguments(self):
         rows = list(magic_messages.cases())
@@ -1675,7 +1714,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -1841,7 +1880,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

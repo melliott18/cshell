@@ -35,6 +35,7 @@ import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
 import host_filesystem_magic_strings as magic_strings
 import host_filesystem_magic_messages as magic_messages
+import host_filesystem_magic_types as magic_types
 import host_filesystem_calendar as calendar_cases
 import host_filesystem_reference as reference_cases
 import host_filesystem_datetime as datetime_cases
@@ -316,6 +317,7 @@ def main():
     parser.add_argument('--audit', action='store_true')
     parser.add_argument('--sanitizer', action='store_true')
     parser.add_argument('--provider-audit', action='store_true', help='Require cycle/archive/fault provider contracts; all are mandatory in the selected profile')
+    parser.add_argument('--magic-types-only', action='store_true', help='Select CSH-104 portable numeric magic types')
     parser.add_argument('--magic-messages-only', action='store_true', help='Select CSH-103 printf-style magic messages')
     parser.add_argument('--magic-strings-only', action='store_true', help='Select CSH-102 string escapes and offset boundaries')
     parser.add_argument('--transition-times-only', action='store_true', help='Select CSH-101 explicit transition clocks and sub-hour daylight offsets')
@@ -352,7 +354,9 @@ def main():
             pass
     locale.setlocale(locale.LC_CTYPE, previous)
     rows = [row for row in extended_cases() if args.provider_audit or not row.get('provider_audit')]
-    if args.magic_messages_only:
+    if args.magic_types_only:
+        rows = list(magic_types.cases())
+    elif args.magic_messages_only:
         rows = list(magic_messages.cases())
     elif args.magic_strings_only:
         rows = list(magic_strings.cases())
@@ -395,7 +399,7 @@ def main():
     elif args.remaining_only:
         rows = list(remaining_cases())
     elif not args.extended_only:
-        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows + list(remaining_cases()) + list(residual.cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases()) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases())
+        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows + list(remaining_cases()) + list(residual.cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases()) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases())
     records = []
     for row in rows:
         for mode in row.get('modes', ('direct', 'string', 'file', 'stdin')):
@@ -405,8 +409,8 @@ def main():
             if record['verdict'] != 'PASS':
                 print(json.dumps(record), flush=True)
     totals = {key: sum(r['verdict'] == key for r in records) for key in ('PASS', 'FAIL')}
-    result = dict(ticket='CSH-103', predecessor='CSH-102', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
-                  full_contracts_qualified=False, selection='magic-messages' if args.magic_messages_only else 'magic-strings' if args.magic_strings_only else 'transition-times' if args.transition_times_only else 'day-rules' if args.day_rules_only else 'timezone' if args.timezone_only else 'datetime' if args.datetime_only else 'reference' if args.reference_only else 'calendar' if args.calendar_only else 'magic' if args.magic_only else 'cwd-logical' if args.cwd_logical_only else 'output' if args.output_only else 'creation' if args.creation_only else 'cwd' if args.cwd_only else 'path-limits' if args.path_limits_only else 'recursive' if args.recursive_only else 'metadata' if args.metadata_only else 'decisions' if args.decisions_only else 'interactive' if args.interactive_only else 'isolated' if args.isolated_only else 'residual' if args.residual_only else 'remaining' if args.remaining_only else 'extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
+    result = dict(ticket='CSH-104', predecessor='CSH-103', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
+                  full_contracts_qualified=False, selection='magic-types' if args.magic_types_only else 'magic-messages' if args.magic_messages_only else 'magic-strings' if args.magic_strings_only else 'transition-times' if args.transition_times_only else 'day-rules' if args.day_rules_only else 'timezone' if args.timezone_only else 'datetime' if args.datetime_only else 'reference' if args.reference_only else 'calendar' if args.calendar_only else 'magic' if args.magic_only else 'cwd-logical' if args.cwd_logical_only else 'output' if args.output_only else 'creation' if args.creation_only else 'cwd' if args.cwd_only else 'path-limits' if args.path_limits_only else 'recursive' if args.recursive_only else 'metadata' if args.metadata_only else 'decisions' if args.decisions_only else 'interactive' if args.interactive_only else 'isolated' if args.isolated_only else 'residual' if args.residual_only else 'remaining' if args.remaining_only else 'extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
                   unavailable_capabilities=[] if platform.system() == 'Linux' else ['Linux virtual-device ENOSPC'],
                   path=args.path, providers=providers, platform=platform.platform(),
                   libc=platform.libc_ver(), utf8_locale=utf8, uid=os.getuid(), gid=os.getgid(), groups=os.getgroups(),

@@ -47,8 +47,8 @@
       "prerequisite": "Supply disposable controlled credentials, privileged Darwin ACLs, and measured filesystem/namespace implementations; require actual read/write/execute controls alongside predicates. Preserve false grants, rejected grants, socket stat EINVAL and non-owner chmod failures independently."
     },
     {
-      "ticket": "CSH-104",
-      "path": "docs/tickets/CSH-104-filesystem-environment-residuals.md",
+      "ticket": "CSH-105",
+      "path": "docs/tickets/CSH-105-filesystem-environment-residuals.md",
       "title": "Supply remaining filesystem environments after magic-message qualification",
       "utilities": [
         "basename",
