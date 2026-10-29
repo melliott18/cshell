@@ -208,3 +208,7 @@ platform results and retained stock failures. Every unsupplied contract and
 original condition remains explicitly open under
 [CSH-086](tickets/CSH-086-filesystem-unsupplied-contracts.md); no full utility
 page or profile is qualified.
+
+## CSH-105 default numeric magic
+
+CSH-105 supplies 280 file cases / 1120 assertions for default d/u (the selected provider uses native int/unsigned int) and byte/short/long aliases, at top level and in continuations. Native ABI widths and independent integer bytes cover signed extrema, unsigned high-bit comparisons, masks, bit tests, every truncated length and trailing bytes. The selected provider repairs textual long to mean native dL while retaining the vendor compiled-database encoding. Exact channels/status and unchanged inputs are required. Further numeric/message combinations, cross-database -m/-M/-d precedence, default classification, encodings/locales and utility resource failures remain unqualified. U-034/U-040 remain partial; [CSH-106](tickets/CSH-106-filesystem-environment-residuals.md) owns the residuals. See [evidence](evidence/csh-105/README.md).
