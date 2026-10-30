@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "python3",
+    "docs/evidence/csh-106/refresh.py",
+    "linux",
+    "--resume"
+  ],
+  "status": 0,
+  "source_identity_sha256": "95a8346c65ad928aad51b7835bd1919036baf95ed5d59f2740cd22408da74eb6",
+  "container_state": {
+    "Status": "exited",
+    "Running": false,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 0,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-10-30T16:14:41.346093464Z",
+    "FinishedAt": "2026-10-30T16:17:55.757036013Z"
+  },
+  "image": "sha256:779da089d224e6b54f4731e5052cb4d3515fe29059b382a2f56cbd15518b3977"
+}

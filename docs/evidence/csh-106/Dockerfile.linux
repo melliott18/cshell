@@ -1,0 +1,9 @@
+ARG BASE_IMAGE=cshell-test:csh-105
+FROM ${BASE_IMAGE}
+COPY --chown=cshell:cshell Makefile /work/
+COPY --chown=cshell:cshell tests/ /work/tests/
+COPY --chown=cshell:cshell docs/ /work/docs/
+COPY --chown=cshell:cshell tools/ /work/tools/
+USER cshell
+RUN make -j4 cshell host-profile
+USER cshell

@@ -1,11 +1,11 @@
 # CSH-106: Supply remaining filesystem environments after default numeric magic qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-105
-- Branch: Assigned when work starts
+- Branch: test/CSH-106-filesystem-environments
 - Issue: [#223](https://github.com/melliott18/cshell/issues/223)
 
 ## Goal
@@ -38,7 +38,7 @@ section map is `tests/host_filesystem_contracts.json`.
 | [`pathchk`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html) | Alternate filesystem limits, credential/ACL combinations and non-C repertoires remain unqualified. CSH-080 supplies -P and -p/-P order combinations; CSH-084 supplies ordinary owner-mode search denial. CSH-090 supplies 32 total pathname byte assertions: the selected filesystem PATH_MAX and portable 256-byte limit, operand lengths limit-1, limit and limit+1 (the limit includes NUL), plus diagnostic continuation across two invalid operands and a valid missing operand. Independent pathconf and unnormalized stat probes distinguish kernel ENAMETOOLONG from the portable policy. Components are at most two bytes; no deep tree or filesystem exhaustion is exercised. Arbitrary tree-depth/resource limits and namespace races remain open. | measured alternate filesystem limits, controlled credentials/ACLs and non-C repertoire oracles. The authored ./ spellings measure total bytes on the supplied filesystem only; they do not exercise deep trees, alternate filesystems, ACLs, races or non-C repertoires. |
 | [`pax`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html) | pax/cpio formats and extended headers, remaining options/patterns, privileged identities, character-set conversion, multi-volume and recovery remain unqualified. The selected pinned pax repairs ustar mode encoding and final partial writes and requires the complete existing type-graph, truncation, EPIPE, EFBIG and Linux virtual-device ENOSPC assertions. Original Apple/Linux stock-provider failures remain separately retained. | independent pax/cpio/extended-header fixtures, credentials, encoding and multi-volume oracle. Ustar fixtures and selected repairs do not qualify other formats or recovery. |
 | [`pwd`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html) | Inaccessible ancestors, total PATH_MAX, allocation and other stdio failures, logical-mode namespace changes and arbitrary namespace races remain unqualified. CSH-080 supplies ordinary -L/-P precedence. CSH-091 supplies 32 physical pwd assertions after renaming the current directory or its parent, and after removing the current directory alone or together with its parent. The helper independently checks unchanged cwd device/inode, absence of the old pathname, and exact getcwd resolution or ENOENT before exec. Both option forms end in -P. No PWD assignment, logical-mode, arbitrary race, permission, path-limit, allocation or stdio-error qualification is claimed. CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures. CSH-094 supplies 48 external pwd assertions after leaf/parent rename/removal, with default options, -L and -P -L. The helper observes unchanged inherited PWD: absent for direct exec or naming the fixture root for shell modes, independently distinct from the cwd inode. It never sets or unsets PWD. Physical resolution or ENOENT is measured before exact provider exec. Valid logical symlink paths, arbitrary namespace races, inaccessible ancestors, path limits and allocation failures remain unqualified. | disposable denied ancestors, total path limits, logical-mode namespace oracles and libc/stdio fault controls. Physical rename/removal witnesses do not supply permission, path length, logical-mode or allocation/stdio boundaries. CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures. CSH-094 supplies 48 external pwd assertions after leaf/parent rename/removal, with default options, -L and -P -L. The helper observes unchanged inherited PWD: absent for direct exec or naming the fixture root for shell modes, independently distinct from the cwd inode. It never sets or unsets PWD. Physical resolution or ENOENT is measured before exact provider exec. Valid logical symlink paths, arbitrary namespace races, inaccessible ancestors, path limits and allocation failures remain unqualified. |
-| [`readlink`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html) | Byte/repertoire combinations beyond the selected three invalid UTF-8 bytes, libc-internal allocation failures and true filesystem limits remain unqualified. | arbitrary byte/repertoire fixtures, real filesystem limits and libc-internal fault controls. CSH-084 covers opaque link bytes in C/UTF-8 and an independently proved EACCES prefix. This does not qualify all byte combinations, libc internals or kernel resource limits. |
+| [`readlink`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html) | CSH-106 supplies 1088 readlink cases / 4352 assertions: each non-NUL byte, authored valid and invalid UTF-8 sequences, embedded newlines and shell metacharacters, and mixed targets of 255/256/257/511/512/513/1023 bytes, in C and an installed UTF-8 locale, with and without -n. Authored output bytes are independent of the provider; pre-exec lstat/readlink probes establish stored bytes, and post-exec probes require unchanged inode, mode, size and contents. Exact channels/status and cleanup are mandatory. Arbitrary byte sequences and locale repertoires, libc-internal allocation failures, true filesystem limits, namespace races and other error environments remain unqualified. | Additional byte/repertoire fixtures, real filesystem limits and libc-internal fault controls. Finite byte/sequence witnesses do not qualify arbitrary combinations, limits or races. |
 | [`realpath`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html) | Permission/namespace races, libc-internal allocation failures, double-leading-slash policy and exact resource boundaries remain unqualified. CSH-080 adds test-only provider call-site ENOMEM including dynamic links and relative/absolute missing-final fallback; it does not inject libc internals. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. | controlled namespace races/credentials, exact link/path limits and libc-internal faults. Call-site injection does not qualify libc internal recovery or races. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. |
 | [`rm`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html) | Recursive descriptor/depth exhaustion, disposable mount boundaries, further operand continuation, permissions, races and prompt locales/recursive graphs remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-087 adds negative descent with operand continuation, affirmative leaf removal followed by yes/no final directory removal, recursive symlink non-traversal, and last -f/-i precedence. CSH-089 supplies declined regular/link children, nested descent refusals, final parent decisions including nonempty-parent errors and later-operand continuation on one-child chains. Branching and arbitrary prompt graphs remain open. | private mount/depth/credential profiles and automated recursive prompt/race controls. One-level continuation and yes/no PTY witnesses do not supply mount boundaries. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. CSH-089 extends one-child chains with declined children and nested decisions; arbitrary branching, non-C locales, mount and depth limits remain open. |
 | [`rmdir`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html) | Ancestor permissions, total depth/path boundaries and other filesystem errors remain unqualified. CSH-080 adds symlink rejection and continuation after a nonempty operand. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. | private credentials, bounded path/depth and filesystem failure profiles. Symlink/continuation cases do not establish permission or capacity behavior. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. |
@@ -56,10 +56,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -128,3 +128,44 @@ CSH-104 supplies 360 portable numeric magic cases / 1440 assertions for dC/dS/dI
 All four original conditions remain open. Utility/libc/platform vendors retain implementation ownership.
 
 CSH-105 supplies 280 file cases / 1120 assertions for default d/u (the selected provider uses native int/unsigned int) and byte/short/long aliases, at top level and in continuations. Native ABI widths and independent integer bytes cover signed extrema, unsigned high-bit comparisons, masks, bit tests, every truncated length and trailing bytes. The selected provider repairs textual long to mean native dL while retaining the vendor compiled-database encoding. Exact channels/status and unchanged inputs are required. Further numeric/message combinations, cross-database -m/-M/-d precedence, default classification, encodings/locales and utility resource failures remain unqualified. All four original conditions remain open. Utility/libc/platform vendors retain implementation ownership.
+
+## Implementation scope
+
+CSH-106 supplies 1088 readlink cases / 4352 assertions: each non-NUL byte, authored valid and invalid UTF-8 sequences, embedded newlines and shell metacharacters, and mixed targets of 255/256/257/511/512/513/1023 bytes, in C and an installed UTF-8 locale, with and without -n. Authored output bytes are independent of the provider; pre-exec lstat/readlink probes establish stored bytes, and post-exec probes require unchanged inode, mode, size and contents. Exact channels/status and cleanup are mandatory.
+
+Arbitrary byte sequences and locale repertoires, libc-internal allocation failures, true filesystem limits, namespace races and other error environments remain unqualified. All 21 utility dispositions and four original U-040 conditions transfer individually to [CSH-107](CSH-107-filesystem-environment-residuals.md). Integration remains gated on CSH-105.
+
+## Retained readlink stock failure
+
+The macOS stock readlink omits the required additional newline when the
+stored link target already ends in newline. The authored `absent/\n\r\n\n`
+target must produce `absent/\n\r\n\n\n` without `-n`; stock output is the target
+alone. Both C/UTF-8 locales and all four modes fail (eight assertions).
+The selected host-paths provider passes; Linux stock also passes. This adds
+eight native stock failures while retaining all previous ones, with no allowance.
+
+## Validation record
+
+Implemented in a separate managed worktree on `test/CSH-106-filesystem-environments`,
+stacked on CSH-105 commit `626e514`. [Retained evidence](../evidence/csh-106/README.md)
+includes exact provider/source hashes, channels/status/effects, setup and cleanup.
+Native macOS and unprivileged Debian/Linux Docker selected filesystem profiles
+pass 11207/11247 assertions, including all 4352 new assertions. Both general
+host profiles pass 1162 assertions with zero gaps. Both pass 10 ownership and
+124 filesystem harness tests, 3950 runtime cases, 33 terminal cases and 93
+harness tests (one Darwin-only skip on Linux). Regular format/compiled-database
+regressions pass 14/5 checks on each platform. No C source changed; no sanitizer
+or separately hosted native-Linux run is claimed.
+
+The verifier confirms unchanged CSH-105 expectations and all original stock
+failures, exact new oracles, fixture cleanup, and one final source digest.
+Stock full/provider failures remain separately retained: 689/16 on macOS and
+578/8 on Linux. The eight new macOS failures are exactly the newline cases
+above. No allowances were introduced. Preliminary overlapping build logs,
+older-source reports and the failed first Linux evidence refresh remain
+separate; final reports pass verification.
+
+The explicit-disposition alternative transfers every remaining utility contract
+and all four original U-040 conditions to [CSH-107](CSH-107-filesystem-environment-residuals.md)
+([#225](https://github.com/melliott18/cshell/issues/225)). U-034/U-040 remain partial.
+Integration remains gated on CSH-105; review does not mark either ticket integrated.
