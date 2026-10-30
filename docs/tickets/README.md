@@ -102,6 +102,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-104](CSH-104-filesystem-environment-residuals.md) | Supply remaining filesystem environments after magic-message qualification | [CSH-103](CSH-103-filesystem-environment-residuals.md) | [#219](https://github.com/melliott18/cshell/issues/219) |
 | [CSH-105](CSH-105-filesystem-environment-residuals.md) | Supply remaining filesystem environments after portable numeric magic qualification | [CSH-104](CSH-104-filesystem-environment-residuals.md) | [#221](https://github.com/melliott18/cshell/issues/221) |
 | [CSH-106](CSH-106-filesystem-environment-residuals.md) | Supply remaining filesystem environments after default numeric magic qualification | [CSH-105](CSH-105-filesystem-environment-residuals.md) | [#223](https://github.com/melliott18/cshell/issues/223) |
+| [CSH-107](CSH-107-filesystem-environment-residuals.md) | Supply remaining filesystem environments after opaque link byte qualification | [CSH-106](CSH-106-filesystem-environment-residuals.md) | [#225](https://github.com/melliott18/cshell/issues/225) |
 
 ## Child implementation tickets
 

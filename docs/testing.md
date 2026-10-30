@@ -1569,7 +1569,7 @@ The shared exact-inode timestamp setup rejects rounding and failed setup before
 exec; channels, status, selected/unselected timestamps, content and identity
 are mandatory. Setup, mutation, failed-exec and timeout cleanup regressions
 run in `test-host-inventory`. No timezone database or mktime supplies an oracle.
-See [CSH-099 evidence](evidence/csh-099/README.md) and [CSH-106 remaining ownership](tickets/CSH-106-filesystem-environment-residuals.md).
+See [CSH-099 evidence](evidence/csh-099/README.md) and [CSH-107 remaining ownership](tickets/CSH-107-filesystem-environment-residuals.md).
 
 ## CSH-100 Julian and numbered day rules
 
@@ -1589,7 +1589,7 @@ probes must succeed before execution. Harness regressions reject incorrect
 fields, contents, identity, channels and status, failed/rounded setup, and
 failed-exec/timeout cleanup. No privileged environment or injected fault is used.
 See [evidence](evidence/csh-101/README.md) and
-[remaining ownership](tickets/CSH-106-filesystem-environment-residuals.md).
+[remaining ownership](tickets/CSH-107-filesystem-environment-residuals.md).
 
 ## String-magic byte and offset boundaries (CSH-102)
 
@@ -1601,7 +1601,7 @@ Pre-exec readback arms each fixture; status, both channels and immutable input
 contents are checked. Harness regressions reject wrong output/status, modified
 inputs and failed setup, and exercise failed-exec/timeout cleanup in every mode.
 See [CSH-102 evidence](evidence/csh-102/README.md) and
-[remaining ownership](tickets/CSH-106-filesystem-environment-residuals.md).
+[remaining ownership](tickets/CSH-107-filesystem-environment-residuals.md).
 
 ## CSH-103 magic-message qualification
 
@@ -1621,3 +1621,10 @@ oracles. Stock failures and selected provider repairs are retained separately.
 ### Default numeric magic and aliases (CSH-105)
 
 `make test-host-filesystem-magic-defaults` requires the opt-in provider and runs all 280 authored cases through direct execution and cshell string/file/stdin modes (1120 assertions on the qualified LP64 hosts). Defaults d/u use the selected native int width; byte/short/long use their POSIX C-type aliases. Every truncated length and both top-level/continuation placement are checked. `python3 tests/host_file_type_checks.py build/host-file` separately protects the vendor compiled-database encoding. See [evidence](evidence/csh-105/README.md) for native/Linux and focused sanitizer validation.
+
+## CSH-106 readlink byte qualification
+
+Run `make test-host-filesystem-link-bytes` for the required opaque link byte suite.
+CSH-106 supplies 1088 readlink cases / 4352 assertions: each non-NUL byte, authored valid and invalid UTF-8 sequences, embedded newlines and shell metacharacters, and mixed targets of 255/256/257/511/512/513/1023 bytes, in C and an installed UTF-8 locale, with and without -n. Authored output bytes are independent of the provider; pre-exec lstat/readlink probes establish stored bytes, and post-exec probes require unchanged inode, mode, size and contents. Exact channels/status and cleanup are mandatory.
+
+Arbitrary byte sequences and locale repertoires, libc-internal allocation failures, true filesystem limits, namespace races and other error environments remain unqualified. No provider code changed.

@@ -781,3 +781,7 @@ test-host-filesystem-magic-types: cshell host-profile
 .PHONY: test-host-filesystem-magic-defaults
 test-host-filesystem-magic-defaults: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --magic-defaults-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-magic-defaults.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-link-bytes
+test-host-filesystem-link-bytes: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --link-bytes-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-link-bytes.json $(HOST_FILESYSTEM_FLAGS)

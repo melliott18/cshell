@@ -461,3 +461,10 @@ CSH-103 supplies 108 file magic-message cases / 432 assertions for native signed
 All 21 residual utility contracts and four original U-040 conditions remain open in
 [CSH-105](../../docs/tickets/CSH-105-filesystem-environment-residuals.md).
 See [CSH-103 evidence](../../docs/evidence/csh-103/README.md) for provider provenance, strict results and stock failures.
+
+## CSH-106 readlink byte qualification
+
+Run `make test-host-filesystem-link-bytes` for the required opaque link byte suite.
+CSH-106 supplies 1088 readlink cases / 4352 assertions: each non-NUL byte, authored valid and invalid UTF-8 sequences, embedded newlines and shell metacharacters, and mixed targets of 255/256/257/511/512/513/1023 bytes, in C and an installed UTF-8 locale, with and without -n. Authored output bytes are independent of the provider; pre-exec lstat/readlink probes establish stored bytes, and post-exec probes require unchanged inode, mode, size and contents. Exact channels/status and cleanup are mandatory.
+
+Arbitrary byte sequences and locale repertoires, libc-internal allocation failures, true filesystem limits, namespace races and other error environments remain unqualified. No provider code changed.

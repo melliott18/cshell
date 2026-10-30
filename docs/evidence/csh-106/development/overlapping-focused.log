@@ -1,0 +1,4 @@
+CC="cc" CPPFLAGS="" CFLAGS="-Wall -Wextra -std=c99 -O2" LDFLAGS="" LIBS="" sh tools/host-profile/build-cp.sh
+tar: Failed to set default locale
+patching file src/copy.c
+patching file src/remove.c

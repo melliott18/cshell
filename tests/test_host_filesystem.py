@@ -30,6 +30,7 @@ import host_filesystem_magic_strings as magic_strings
 import host_filesystem_magic_messages as magic_messages
 import host_filesystem_magic_types as magic_types
 import host_filesystem_magic_defaults as magic_defaults
+import host_filesystem_link_bytes as link_bytes
 import host_filesystem_calendar as calendar_cases
 import host_filesystem_reference as reference_cases
 import host_filesystem_datetime as datetime_cases
@@ -42,6 +43,71 @@ from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, ter
 
 
 class FilesystemHarnessTests(unittest.TestCase):
+    def test_link_bytes_cover_nonzero_repertoire_and_growth_boundaries(self):
+        rows = list(link_bytes.cases())
+        self.assertEqual(len(rows), 1088)
+        self.assertEqual(len({r['id'] for r in rows}), len(rows))
+        for utf8 in (False, True):
+            for no_newline in (False, True):
+                selected = [r for r in rows if r['utf8'] == utf8 and ('-n' in r['args']) == no_newline]
+                singles = [r['byte_link'][8:-1] for r in selected if '/link-bytes-byte-' in r['id']]
+                self.assertEqual(singles, [bytes([i]) for i in range(1, 256)])
+                lengths = [len(r['byte_link']) for r in selected if '/link-bytes-length-' in r['id']]
+                self.assertEqual(lengths, [255, 256, 257, 511, 512, 513, 1023])
+                for row in selected:
+                    self.assertNotIn(b'\0', row['byte_link'])
+                    self.assertEqual(row['stdout'], row['byte_link'] + (b'' if no_newline else b'\n'))
+                    self.assertEqual((row['stderr'], row['status']), (b'', 0))
+
+    def test_link_bytes_require_channels_status_and_unchanged_inode_and_bytes(self):
+        row = next(link_bytes.cases())
+        original = copy.deepcopy(row)
+        for fault in (None, 'stdout', 'stderr', 'status', 'target', 'inode', 'type', 'missing'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                path = cwd / 'opaque'
+                if fault in ('target', 'inode', 'type', 'missing'):
+                    # Keep the old inode alive so reuse cannot hide replacement.
+                    path.rename(cwd / 'saved-link')
+                    if fault in ('target', 'inode'):
+                        os.symlink(b'changed' if fault == 'target' else row['byte_link'], os.fsencode(path))
+                    elif fault == 'type':
+                        path.write_bytes(row['byte_link'])
+                return (1 if fault == 'status' else 0,
+                        dict(stdout=b'wrong' if fault == 'stdout' else row['stdout'],
+                             stderr=b'diagnostic' if fault == 'stderr' else b''), [])
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'readlink': {'path': '/usr/bin/readlink'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'PASS' if fault is None else 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+        self.assertEqual(row, original)
+
+    def test_link_bytes_setup_failures_prevent_exec_and_clean(self):
+        from host_filesystem_residual_cases import setup as real_setup
+        row = next(link_bytes.cases())
+        for fault in ('readback', 'creation', 'locale'):
+            def setup(directory, spec):
+                real_setup(directory, spec)
+                if fault == 'creation':
+                    raise OSError('controlled link creation failure')
+                (directory / 'opaque').unlink()
+                (directory / 'opaque').symlink_to('wrong')
+            spec = dict(row, utf8=fault == 'locale')
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.residual.setup', side_effect=setup), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'readlink': {'path': '/usr/bin/readlink'}},
+                                  os.defpath, spec, 'direct', Path(root), None)
+                capture.assert_not_called()
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'), record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_link_bytes_exec_failure_and_timeout_clean_all_modes(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(link_bytes.cases()))
+
     def test_transition_times_have_exact_offsets_and_unique_boundaries(self):
         rows = list(transition_times.cases())
         seconds = [1710045934, 1710045935, 1730612444, 1730617865,
@@ -460,7 +526,7 @@ class FilesystemHarnessTests(unittest.TestCase):
         self.check_magic_setup_failure_prevents_execution_and_cleans(next(magic_defaults.cases()))
 
     def test_magic_defaults_exec_failure_and_timeout_clean_all_modes(self):
-        self.check_magic_exec_failure_and_timeout_clean_all_modes(next(magic_defaults.cases()))
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(magic_defaults.cases()))
 
     def test_magic_types_independent_predicates_and_native_widths(self):
         import ctypes
@@ -498,7 +564,7 @@ class FilesystemHarnessTests(unittest.TestCase):
         self.check_magic_setup_failure_prevents_execution_and_cleans(next(magic_types.cases()))
 
     def test_magic_types_exec_failure_and_timeout_clean_all_modes(self):
-        self.check_magic_exec_failure_and_timeout_clean_all_modes(next(magic_types.cases()))
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(magic_types.cases()))
 
     def test_magic_messages_literal_oracles_and_native_arguments(self):
         rows = list(magic_messages.cases())
@@ -529,7 +595,7 @@ class FilesystemHarnessTests(unittest.TestCase):
         self.check_magic_setup_failure_prevents_execution_and_cleans(next(magic_messages.cases()))
 
     def test_magic_messages_exec_failure_and_timeout_clean_all_modes(self):
-        self.check_magic_exec_failure_and_timeout_clean_all_modes(next(magic_messages.cases()))
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(magic_messages.cases()))
 
     def test_magic_strings_authored_bytes_offsets_and_eof(self):
         rows = list(magic_strings.cases())
@@ -624,24 +690,24 @@ class FilesystemHarnessTests(unittest.TestCase):
             self.assertEqual(list(Path(root).iterdir()), [])
 
     def test_magic_exec_failure_and_timeout_clean_all_modes(self):
-        self.check_magic_exec_failure_and_timeout_clean_all_modes(next(magic_cases.cases()))
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(magic_cases.cases()))
 
     def test_magic_strings_exec_failure_and_timeout_clean_all_modes(self):
-        self.check_magic_exec_failure_and_timeout_clean_all_modes(next(magic_strings.cases()))
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(magic_strings.cases()))
 
-    def check_magic_exec_failure_and_timeout_clean_all_modes(self, row):
+    def check_fixture_exec_failure_and_timeout_clean_all_modes(self, row):
         for mode in ('direct', 'string', 'file', 'stdin'):
             for fault in ('exec', 'timeout'):
                 with self.subTest(mode=mode, fault=fault), tempfile.TemporaryDirectory() as root:
                     root = Path(root)
-                    provider = root / 'file'
+                    provider = root / row['utility']
                     pidfile = root / 'pid'
                     provider.write_text('#!/nonexistent-csh095-interpreter\n' if fault == 'exec' else
                                         '#!/bin/sh\necho $$ > "' + str(pidfile) + '"\nexec /bin/sleep 60\n')
                     provider.chmod(0o700)
                     # A missing interpreter can make shells continue PATH search.
-                    # Exclude the real file utility from this failure fixture.
-                    record = run_case(Path('/bin/sh'), {'file': {'path': str(provider)}},
+                    # Exclude the real utility from this failure fixture.
+                    record = run_case(Path('/bin/sh'), {row['utility']: {'path': str(provider)}},
                                       str(root), row, mode, root, None, timeout=1)
                     self.assertEqual(record['verdict'], 'FAIL', record)
                     self.assertTrue(record['cleanup'])
@@ -1773,7 +1839,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -1821,6 +1887,9 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
             self.assertEqual(row['next_owner'], utility_owner(row['utility']))
             self.assertEqual(row['status'], 'open')
             self.assertTrue(all(row[key] for key in ('reason', 'required_environment', 'remaining', 'implementation_owner')))
+        link = next(r for r in ledger['utilities'] if r['utility'] == 'readlink')
+        self.assertEqual(set(link['csh106_assertions']), {r['id'] for r in link_bytes.cases()})
+        self.assertTrue(set(link['csh106_assertions']) <= set(link['assertions']))
         manifest = json.loads((root / 'host_contracts.json').read_text())
         conditions = {c for owner in manifest['owners'] if 'basename' in owner['utilities'] for c in owner['conditions']}
         self.assertEqual({r['id'] for r in ledger['conditions']}, conditions)
@@ -1939,7 +2008,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])
