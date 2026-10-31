@@ -17,7 +17,9 @@ from host_filesystem_cases import UTILITIES
 
 def provision(destination, gnu_bin=None):
     selected = {name: shutil.which(name, path=os.defpath) for name in dict.fromkeys(HOSTS + UTILITIES)}
-    overrides = {'file': str(ROOT / 'build/host-file'),
+    overrides = {'mkdir': str(ROOT / 'build/host-mkdir'),
+                 'mkfifo': str(ROOT / 'build/host-mkfifo'),
+                 'file': str(ROOT / 'build/host-file'),
                  'printf': str(ROOT / 'build/host-printf'),
                  'pax': str(ROOT / 'build/host-pax'),
                  'cp': str(ROOT / 'build/host-cp'),
@@ -69,6 +71,15 @@ def provision(destination, gnu_bin=None):
             archive_sha256=hashlib.sha256((ROOT / 'tools/host-profile/vendor/coreutils/coreutils-9.7.tar.xz').read_bytes()).hexdigest(),
             patch_sha256=hashlib.sha256((ROOT / 'tools/host-profile/vendor/coreutils' / patch).read_bytes()).hexdigest(),
             configure=['--disable-nls', '--disable-acl', '--without-selinux', '--without-libgmp'])
+    for program in ('mkdir', 'mkfifo'):
+        manifest['executables'][program]['source'] = dict(
+            version='GNU coreutils 9.7',
+            archive=manifest['executables']['cp']['source']['archive'],
+            archive_sha256=manifest['executables']['cp']['source']['archive_sha256'],
+            configure=manifest['executables']['cp']['source']['configure'],
+            build_targets=['src/mkdir', 'src/mkfifo'],
+            log='build/host-coreutils-build/creation.log',
+            scope='unmodified creation utilities from the shared pinned source build')
     manifest['executables']['touch']['source'] = dict(
         version='GNU coreutils 9.7 + IANA tzcode 2025b',
         coreutils_archive_sha256=manifest['executables']['cp']['source']['archive_sha256'],

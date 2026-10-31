@@ -85,3 +85,34 @@ def restore(directory, row):
         path = directory / name
         if path.is_dir() and not path.is_symlink():
             path.chmod(0o700)
+
+
+def omitted_who_cases():
+    """CSH-107: chmod EXTENDED DESCRIPTION with the creation initial modes.
+
+    Omitted who masks bits being added/removed; '=' first clears ALL bits.
+    The literal triples below are in mask order 027, 077, 777. Expected modes
+    are authored independently of chmod, mkdir, mkfifo or a mode parser.
+    """
+    for utility, kind in (('mkdir', 'directory'), ('mkfifo', 'fifo')):
+        directory = utility == 'mkdir'
+        modes = [
+            ('remove-write', '-w', (0o577, 0o577, 0o777) if directory else (0o466, 0o466, 0o666)),
+            ('explicit-remove-write', 'a-w', (0o555,) * 3 if directory else (0o444,) * 3),
+            ('clear-add', 'a=,+rwx', (0o750, 0o700, 0o000)),
+            ('explicit-clear-add', 'a=,a+rwx', (0o777,) * 3),
+            ('assign', '=rw', (0o640, 0o600, 0o000)),
+            ('explicit-assign', 'a=rw', (0o666,) * 3),
+            ('copy-add', 'u=rw,g=r,o=,+u', (0o640,) * 3),
+            ('copy-remove', '-u', (0o027, 0o077, 0o777) if directory else (0o026, 0o066, 0o666)),
+            ('copy-assign', 'u=rw,g=r,o=,=u', (0o640, 0o600, 0o000)),
+            ('conditional-execute', 'a-rwx,+X', (0o110, 0o100, 0o000) if directory else (0o000,) * 3),
+            ('empty-assign', '=', (0o000,) * 3),
+            ('action-list', 'a=,+rw-x', (0o640, 0o600, 0o000)),
+        ]
+        for name, mode, expected in modes:
+            for mask, permissions in zip((0o027, 0o077, 0o777), expected):
+                yield case(utility, f'omitted-who-{mask:03o}-{name}',
+                           ['-m', mode, 'created'], ticket='CSH-107',
+                           creation_mask=mask,
+                           effects={'created': {'type': kind, 'mode': permissions}})
