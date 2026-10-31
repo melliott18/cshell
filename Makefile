@@ -511,7 +511,15 @@ build/host-touch: build/host-cp tools/host-profile/build-touch.sh $(wildcard too
 	@mkdir -p build/host-tzcode
 	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(filter-out -Werror -Wpedantic -Wshadow,$(CFLAGS))" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" sh tools/host-profile/build-touch.sh > build/host-tzcode/build.log 2>&1 || { tail -80 build/host-tzcode/build.log; exit 1; }
 
-host-profile: build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
+# CSH-107: selected GNU creation utilities honor omitted-who copy assignment.
+build/host-mkdir: build/host-cp
+	$(MAKE) -C build/host-coreutils-build -j4 src/mkdir src/mkfifo > build/host-coreutils-build/creation.log 2>&1 || { cat build/host-coreutils-build/creation.log; exit 1; }
+	cp build/host-coreutils-build/src/mkdir $@
+
+build/host-mkfifo: build/host-mkdir
+	cp build/host-coreutils-build/src/mkfifo $@
+
+host-profile: build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
@@ -785,3 +793,8 @@ test-host-filesystem-magic-defaults: cshell host-profile
 .PHONY: test-host-filesystem-link-bytes
 test-host-filesystem-link-bytes: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --link-bytes-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-link-bytes.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-107: omitted-who symbolic creation modes under independently proved masks.
+.PHONY: test-host-filesystem-omitted-who
+test-host-filesystem-omitted-who: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --omitted-who-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-omitted-who.json $(HOST_FILESYSTEM_FLAGS)

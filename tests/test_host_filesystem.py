@@ -946,6 +946,66 @@ class FilesystemHarnessTests(unittest.TestCase):
                     time.sleep(.02)
                 self.assertEqual(list(root.iterdir()), [provider])
 
+    def test_omitted_who_matrix_and_independent_modes(self):
+        rows = list(creation.omitted_who_cases())
+        self.assertEqual(len(rows), 72)
+        for utility in ('mkdir', 'mkfifo'):
+            selected = [r for r in rows if r['utility'] == utility]
+            self.assertEqual(len(selected), 36)
+            for mask in (0o027, 0o077, 0o777):
+                self.assertEqual(len([r for r in selected if r['creation_mask'] == mask]), 12)
+        lookup = {r['id']: r for r in rows}
+        # '=' clears masked bits too; copying must not retain prior group r.
+        self.assertEqual(lookup['mkdir/omitted-who-077-copy-assign']['effects']['created']['mode'], 0o600)
+        self.assertEqual(lookup['mkfifo/omitted-who-777-copy-assign']['effects']['created']['mode'], 0)
+        self.assertEqual(lookup['mkdir/omitted-who-027-conditional-execute']['effects']['created']['mode'], 0o110)
+        self.assertEqual(lookup['mkfifo/omitted-who-027-conditional-execute']['effects']['created']['mode'], 0)
+
+    def test_omitted_who_rejects_wrong_mode_channels_status_and_unarmed_mask(self):
+        from smoke import capture as real_capture
+        row = next(r for r in creation.omitted_who_cases() if r['id'] == 'mkdir/omitted-who-777-empty-assign')
+        original = copy.deepcopy(row)
+        for fault in ('mode', 'stdout', 'stderr', 'status', 'mask'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                if fault == 'mode':
+                    (cwd / 'created').chmod(0o640)
+                elif fault == 'mask':
+                    marker = cwd / creation.MARKER
+                    data = json.loads(marker.read_text()); data['observed_mask'] = 0
+                    marker.write_text(json.dumps(data))
+                elif fault == 'status':
+                    status = 1
+                else:
+                    output[fault] = b'unexpected'
+                return status, output, errors
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'mkdir': {'path': '/bin/mkdir'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+                self.assertEqual(row, original)
+
+    def test_omitted_who_partial_setup_failure_prevents_execution(self):
+        row = next(creation.omitted_who_cases())
+        def fail(directory, row):
+            (directory / 'created').mkdir(mode=0)
+            raise OSError('controlled partial creation setup')
+        with tempfile.TemporaryDirectory() as root, \
+                patch('host_filesystem.creation.setup', side_effect=fail), \
+                patch('host_filesystem.smoke.capture') as capture:
+            record = run_case(Path('/bin/sh'), {'mkdir': {'path': '/bin/mkdir'}},
+                              os.defpath, row, 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            capture.assert_not_called()
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_omitted_who_exec_failure_and_timeout_clean_all_modes(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(creation.omitted_who_cases()))
+
     def test_creation_cases_and_immutable_spec(self):
         import shutil
         rows = list(creation.cases())
@@ -1839,7 +1899,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -1890,6 +1950,11 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         link = next(r for r in ledger['utilities'] if r['utility'] == 'readlink')
         self.assertEqual(set(link['csh106_assertions']), {r['id'] for r in link_bytes.cases()})
         self.assertTrue(set(link['csh106_assertions']) <= set(link['assertions']))
+        for utility in ('mkdir', 'mkfifo'):
+            entry = next(r for r in ledger['utilities'] if r['utility'] == utility)
+            self.assertEqual(set(entry['csh107_assertions']),
+                             {r['id'] for r in creation.omitted_who_cases() if r['utility'] == utility})
+            self.assertTrue(set(entry['csh107_assertions']) <= set(entry['assertions']))
         manifest = json.loads((root / 'host_contracts.json').read_text())
         conditions = {c for owner in manifest['owners'] if 'basename' in owner['utilities'] for c in owner['conditions']}
         self.assertEqual({r['id'] for r in ledger['conditions']}, conditions)
@@ -2008,7 +2073,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])
