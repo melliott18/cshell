@@ -1,0 +1,36 @@
+[
+  {
+    "argv": [
+      "make",
+      "test-runtime",
+      "test-runtime-pty",
+      "test-harness"
+    ],
+    "path": "/Users/mitchell/.codex/worktrees/csh-108-filesystem-environments/cshell/build/host-profile/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/mitchell/.local/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Library/TeX/texbin:/Applications/Wireshark.app/Contents/MacOS:/Applications/VMware Fusion Tech Preview.app/Contents/Public:/usr/local/share/dotnet:~/.dotnet/tools:/opt/homebrew/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/mitchell/.codex/tmp/arg0-macos/codex-arg0xSBCfL:/Users/mitchell/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/mitchell/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+    "status": 0,
+    "seconds": 79.57618933398044,
+    "log": "native-supplement-0.log.gz"
+  },
+  {
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+      "tests/host_file_format_checks.py",
+      "build/host-file"
+    ],
+    "path": "/Users/mitchell/.codex/worktrees/csh-108-filesystem-environments/cshell/build/host-profile/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/mitchell/.local/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Library/TeX/texbin:/Applications/Wireshark.app/Contents/MacOS:/Applications/VMware Fusion Tech Preview.app/Contents/Public:/usr/local/share/dotnet:~/.dotnet/tools:/opt/homebrew/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/mitchell/.codex/tmp/arg0-macos/codex-arg0xSBCfL:/Users/mitchell/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/mitchell/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+    "status": 0,
+    "seconds": 0.24201041701599024,
+    "log": "native-supplement-1.log"
+  },
+  {
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+      "tests/host_file_type_checks.py",
+      "build/host-file"
+    ],
+    "path": "/Users/mitchell/.codex/worktrees/csh-108-filesystem-environments/cshell/build/host-profile/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/mitchell/.local/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/Library/TeX/texbin:/Applications/Wireshark.app/Contents/MacOS:/Applications/VMware Fusion Tech Preview.app/Contents/Public:/usr/local/share/dotnet:~/.dotnet/tools:/opt/homebrew/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/mitchell/.codex/tmp/arg0-macos/codex-arg0xSBCfL:/Users/mitchell/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/mitchell/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS",
+    "status": 0,
+    "seconds": 0.0569964160094969,
+    "log": "native-supplement-2.log"
+  }
+]
