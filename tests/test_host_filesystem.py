@@ -4,6 +4,7 @@ from contextlib import nullcontext
 import errno
 import json
 import os
+import stat
 from pathlib import Path
 import sys
 import tempfile
@@ -713,6 +714,7 @@ class FilesystemHarnessTests(unittest.TestCase):
                     self.assertTrue(record['cleanup'])
                     if fault == 'timeout':
                         self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                        pidfile.chmod(0o600)  # Child may deliberately inherit umask 777.
                         pid = int(pidfile.read_text())
                         deadline = time.monotonic() + 2
                         while True:
@@ -945,6 +947,113 @@ class FilesystemHarnessTests(unittest.TestCase):
                     self.assertLess(time.monotonic(), deadline, 'timed-out provider was not reaped')
                     time.sleep(.02)
                 self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_parent_graph_matrix_and_preserved_objects(self):
+        rows = list(creation.parent_graph_cases())
+        self.assertEqual(len(rows), 60)
+        self.assertEqual(len({r['id'] for r in rows}), 60)
+        for mask in (0o027, 0o077, 0o777):
+            self.assertEqual(sum(r['creation_mask'] == mask for r in rows), 20)
+        for row in rows:
+            self.assertEqual(row['effects']['existing']['mode'], 0o751)
+            self.assertEqual(row['effects']['absent'], {'type': 'absent'})
+        restrictive = next(r for r in rows if r['id'] == 'mkdir/parent-graph-777-empty-shared')
+        self.assertEqual(restrictive['effects']['existing/new']['mode'], 0o300)
+        self.assertEqual(restrictive['effects']['existing/new/a/left']['mode'], 0)
+
+    def test_parent_graph_oracle_rejects_corruption(self):
+        from smoke import capture as real_capture
+        row = next(r for r in creation.parent_graph_cases()
+                   if r['id'] == 'mkdir/parent-graph-777-empty-shared')
+        original = copy.deepcopy(row)
+        for fault in ('parent', 'leaf', 'existing', 'identity', 'symlink', 'stdout', 'stderr', 'status', 'mask'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                if fault in ('parent', 'leaf', 'existing'):
+                    path = {'parent': 'existing/new', 'leaf': 'existing/new/a/right', 'existing': 'existing'}[fault]
+                    (cwd / path).chmod(0o755)
+                elif fault == 'identity':
+                    (cwd / 'existing').rename(cwd / 'saved')
+                    (cwd / 'existing').mkdir(mode=0o751)
+                    # Keep a second reference so the old inode cannot be reused.
+                    (cwd / 'saved').rename(cwd / 'existing/old')
+                    (cwd / 'existing/old/new').chmod(0o700)
+                    (cwd / 'existing/old/new/a').chmod(0o700)
+                    for name in ('left', 'right'):
+                        (cwd / ('existing/old/new/a/' + name)).chmod(0o700)
+                elif fault == 'symlink':
+                    (cwd / 'parent-alias').unlink()
+                    (cwd / 'parent-alias').symlink_to('tree')
+                elif fault == 'mask':
+                    (cwd / creation.MARKER).unlink()
+                elif fault == 'status':
+                    status = 1
+                else:
+                    output[fault] = b'unexpected'
+                return status, output, errors
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'mkdir': {'path': '/bin/mkdir'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'], record)
+                self.assertEqual(list(Path(root).iterdir()), [])
+                self.assertEqual(row, original)
+
+    def test_parent_graph_timeout_restores_restrictive_tree(self):
+        row = next(r for r in creation.parent_graph_cases()
+                   if r['id'] == 'mkdir/parent-graph-777-empty-shared')
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                provider = root / 'mkdir'
+                provider.write_text('#!' + sys.executable + ' -S\n'
+                    'import os,time\n'
+                    'for name in ("existing/new", "existing/new/a", "existing/new/a/left", "existing/new/a/right"):\n'
+                    ' os.mkdir(name); os.chmod(name, 0o700)\n'
+                    'for name in ("existing/new/a/left", "existing/new/a/right"):\n'
+                    ' os.chmod(name, 0)\n'
+                    'os.chmod("existing/new", 0o300); os.chmod("existing/new/a", 0o300)\n'
+                    'print("armed", flush=True)\ntime.sleep(60)\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'mkdir': {'path': str(provider)}},
+                                  str(root), row, mode, root, None, timeout=1)
+                self.assertEqual(record['captured']['stdout'], {'hex': b'armed\n'.hex()})
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertTrue(any('timeout' in e for e in record['errors']))
+                self.assertTrue(record['cleanup'], record)
+                self.assertEqual(list(root.iterdir()), [provider])
+                with self.assertRaises(ProcessLookupError):
+                    os.kill(record['creation_environment']['pid'], 0)
+
+    def test_parent_graph_partial_setup_does_not_dispatch(self):
+        original = creation.setup
+        def fail(directory, row):
+            original(directory, row)
+            (directory / 'existing/new').mkdir(mode=0)
+            raise OSError('controlled partial parent graph setup')
+        with tempfile.TemporaryDirectory() as root, \
+                patch('host_filesystem.creation.setup', side_effect=fail), \
+                patch('host_filesystem.smoke.capture') as capture:
+            record = run_case(Path('/bin/sh'), {'mkdir': {'path': '/bin/mkdir'}},
+                              os.defpath, next(creation.parent_graph_cases()), 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            capture.assert_not_called()
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_parent_graph_exec_failure_timeout_and_cleanup_symlink_boundary(self):
+        row = next(r for r in creation.parent_graph_cases()
+                   if r['id'] == 'mkdir/parent-graph-777-empty-shared')
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(row)
+        with tempfile.TemporaryDirectory() as root, tempfile.TemporaryDirectory() as outside:
+            root, outside = Path(root), Path(outside)
+            outside.chmod(0o751)
+            (outside / 'new').mkdir(mode=0o751)
+            (root / 'existing').symlink_to(outside)
+            creation.restore(root, row)
+            self.assertEqual(stat.S_IMODE(outside.stat().st_mode), 0o751)
+            self.assertEqual(stat.S_IMODE((outside / 'new').stat().st_mode), 0o751)
 
     def test_omitted_who_matrix_and_independent_modes(self):
         rows = list(creation.omitted_who_cases())
@@ -1899,7 +2008,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -1955,6 +2064,9 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
             self.assertEqual(set(entry['csh107_assertions']),
                              {r['id'] for r in creation.omitted_who_cases() if r['utility'] == utility})
             self.assertTrue(set(entry['csh107_assertions']) <= set(entry['assertions']))
+        entry = next(r for r in ledger['utilities'] if r['utility'] == 'mkdir')
+        self.assertEqual(set(entry['csh108_assertions']), {r['id'] for r in creation.parent_graph_cases()})
+        self.assertTrue(set(entry['csh108_assertions']) <= set(entry['assertions']))
         manifest = json.loads((root / 'host_contracts.json').read_text())
         conditions = {c for owner in manifest['owners'] if 'basename' in owner['utilities'] for c in owner['conditions']}
         self.assertEqual({r['id'] for r in ledger['conditions']}, conditions)
@@ -2073,7 +2185,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

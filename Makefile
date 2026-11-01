@@ -798,3 +798,8 @@ test-host-filesystem-link-bytes: cshell host-profile
 .PHONY: test-host-filesystem-omitted-who
 test-host-filesystem-omitted-who: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --omitted-who-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-omitted-who.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-108: bounded mkdir -p graphs and preserved existing objects.
+.PHONY: test-host-filesystem-parent-graphs
+test-host-filesystem-parent-graphs: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --parent-graphs-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-parent-graphs.json $(HOST_FILESYSTEM_FLAGS)
