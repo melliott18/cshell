@@ -69,6 +69,7 @@ make test-host-filesystem-path-limits # Measured total pathname byte boundaries
 make test-host-filesystem-creation # Child masks and final directory/FIFO modes
 make test-host-filesystem-cwd-logical # Inherited-PWD fallback after cwd rename/removal
 make test-host-profile   # Opt-in qualified utilities, strict gaps and boundaries
+make test-host-filesystem-removal # rmdir parent graphs, permissions and continuation
 make test-evaluation # Evaluation, lookup, aliases, and remaining utilities
 make test-builtins # Replacement state builtins and executor integration
 make test-state-builtins # Clause-mapped runtime state and utility evidence

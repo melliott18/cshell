@@ -25,6 +25,7 @@ import host_filesystem_recursive as recursive
 import host_filesystem_path_limits as path_limits
 import host_filesystem_cwd as cwd_cases
 import host_filesystem_creation as creation
+import host_filesystem_removal as removal
 import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
 import host_filesystem_magic_strings as magic_strings
@@ -947,6 +948,97 @@ class FilesystemHarnessTests(unittest.TestCase):
                     self.assertLess(time.monotonic(), deadline, 'timed-out provider was not reaped')
                     time.sleep(.02)
                 self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_removal_matrix_and_independent_effects(self):
+        rows = list(removal.cases())
+        self.assertEqual(len(rows), 19)
+        self.assertEqual(len({r['id'] for r in rows}), 19)
+        for row in rows:
+            self.assertEqual(row['stdout'], b'')
+            self.assertEqual(row['ticket'], 'CSH-109')
+        lookup = {r['id']: r for r in rows}
+        self.assertEqual(lookup['rmdir/removal-write-denied-2']['effects']['guard/child/child'], {'type': 'absent'})
+        self.assertEqual(lookup['rmdir/removal-write-denied-2']['effects']['guard/child']['type'], 'directory')
+        self.assertEqual(lookup['rmdir/removal-search-denied-2']['effects']['guard/child/child']['type'], 'directory')
+
+    def test_removal_oracle_rejects_corruption(self):
+        from smoke import capture as real_capture
+        row = next(r for r in removal.cases() if r['id'] == 'rmdir/removal-nonempty-file')
+        original = copy.deepcopy(row)
+        for fault in ('removed', 'identity', 'content', 'mode', 'stdout', 'stderr', 'status'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                if fault == 'removed':
+                    (cwd / 'after').mkdir()
+                elif fault == 'identity':
+                    (cwd / 'guard/keep').rename(cwd / 'saved')
+                    (cwd / 'guard/keep').write_bytes(b'preserve\n')
+                    (cwd / 'guard/keep').chmod(0o600)
+                elif fault == 'content':
+                    (cwd / 'guard/keep').write_bytes(b'changed\n')
+                elif fault == 'mode':
+                    (cwd / 'guard').chmod(0o755)
+                elif fault == 'status':
+                    status = 0
+                else:
+                    output[fault] = b'unexpected' if fault == 'stdout' else b''
+                return status, output, errors
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'rmdir': {'path': '/bin/rmdir'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'], record)
+                self.assertEqual(list(Path(root).iterdir()), [])
+                self.assertEqual(row, original)
+
+    def test_removal_partial_setup_and_unproved_denial_prevent_dispatch(self):
+        row = next(r for r in removal.cases() if r['removal_denial'] == 'search')
+        original = removal.setup
+        def fail(directory, case):
+            original(directory, case)
+            (directory / 'guard').chmod(0)
+            raise OSError('controlled partial removal setup')
+        for target, failure in [('setup', fail), ('arm', OSError('controlled probe failure'))]:
+            with self.subTest(target=target), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.removal.' + target, side_effect=failure), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'rmdir': {'path': '/bin/rmdir'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+                capture.assert_not_called()
+                self.assertTrue(record['cleanup'], record)
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_removal_probe_requires_eacces_and_restores_access(self):
+        row = next(r for r in removal.cases() if r['removal_denial'] == 'write')
+        for error in (None, OSError(errno.EIO, 'controlled probe error')):
+            with self.subTest(error=error), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                environment = removal.setup(root, row)
+                original = Path.rmdir
+                def probe(path):
+                    if path.name == '.removal-probe' and stat.S_IMODE(path.parent.stat().st_mode) == 0o500:
+                        if error:
+                            raise error
+                        return None
+                    return original(path)
+                with patch.object(Path, 'rmdir', probe), self.assertRaises(OSError):
+                    removal.arm(root, row, environment)
+                self.assertNotIn('denial', environment)
+                self.assertEqual(stat.S_IMODE((root / 'guard').stat().st_mode), 0o700)
+                self.assertFalse((root / 'guard/.removal-probe').exists())
+
+    def test_removal_failure_timeout_and_symlink_cleanup(self):
+        for denial in ('write', 'search'):
+            row = next(r for r in removal.cases() if r['removal_denial'] == denial)
+            self.check_fixture_exec_failure_and_timeout_clean_all_modes(row)
+        with tempfile.TemporaryDirectory() as root, tempfile.TemporaryDirectory() as outside:
+            root, outside = Path(root), Path(outside)
+            outside.chmod(0o751)
+            (root / 'guard').symlink_to(outside)
+            removal.restore(root, row)
+            self.assertEqual(stat.S_IMODE(outside.stat().st_mode), 0o751)
 
     def test_parent_graph_matrix_and_preserved_objects(self):
         rows = list(creation.parent_graph_cases())
@@ -2008,7 +2100,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -2067,6 +2159,9 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         entry = next(r for r in ledger['utilities'] if r['utility'] == 'mkdir')
         self.assertEqual(set(entry['csh108_assertions']), {r['id'] for r in creation.parent_graph_cases()})
         self.assertTrue(set(entry['csh108_assertions']) <= set(entry['assertions']))
+        entry = next(r for r in ledger['utilities'] if r['utility'] == 'rmdir')
+        self.assertEqual(set(entry['csh109_assertions']), {r['id'] for r in removal.cases()})
+        self.assertTrue(set(entry['csh109_assertions']) <= set(entry['assertions']))
         manifest = json.loads((root / 'host_contracts.json').read_text())
         conditions = {c for owner in manifest['owners'] if 'basename' in owner['utilities'] for c in owner['conditions']}
         self.assertEqual({r['id'] for r in ledger['conditions']}, conditions)
@@ -2185,7 +2280,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

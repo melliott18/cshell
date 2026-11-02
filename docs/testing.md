@@ -1637,3 +1637,12 @@ CSH-107 supplies 72 mkdir/mkfifo cases / 288 assertions for symbolic creation mo
 Further symbolic-mode and parent graphs, special-bit modes, transient permissions, ACL inheritance, other identities, path/depth limits and capacity exhaustion remain unqualified; FIFO transfer is outside creation. Apple stock failures are retained separately; no allowances are introduced.
 
 `make test-host-filesystem-parent-graphs` runs the 60 CSH-108 mkdir parent graphs in all four invocation modes (240 assertions). Final/intermediate modes, unchanged existing identities, child mask probes, channels, status and cleanup are mandatory. See [the evidence](evidence/csh-108/README.md).
+
+## CSH-109 directory removal environments
+
+`make test-host-filesystem-removal` runs 19 rmdir graphs in direct, string, file
+and stdin modes. Private owner-mode write/search denial requires an unprivileged
+identity and an independently observed EACCES before execution. Exact effects
+and preserved inode identities are checked before cleanup; denial is restored
+for inspection. Arbitrary graphs, mounts, ACLs, limits and races remain open.
+See [CSH-109 evidence](evidence/csh-109/README.md).
