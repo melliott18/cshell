@@ -1646,3 +1646,14 @@ identity and an independently observed EACCES before execution. Exact effects
 and preserved inode identities are checked before cleanup; denial is restored
 for inspection. Arbitrary graphs, mounts, ACLs, limits and races remain open.
 See [CSH-109 evidence](evidence/csh-109/README.md).
+
+## CSH-110 link destination environments
+
+`make test-host-filesystem-link-graphs` runs 29 authored `ln` cases through
+direct exec and all three cshell modes (116 assertions). The same assertions
+are required by the selected full profile and retained in the stock audit.
+The fixture records pre-exec object identities and readback, post-exec link
+counts and inode relationships, bytes, modes, channels/status and cleanup.
+Failure tests reject corrupted effects, incomplete setup and readback; failed
+exec and timeout checks require reaped children and removed fixtures.
+See [CSH-110 evidence](evidence/csh-110/README.md).
