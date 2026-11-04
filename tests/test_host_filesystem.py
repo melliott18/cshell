@@ -27,6 +27,7 @@ import host_filesystem_cwd as cwd_cases
 import host_filesystem_creation as creation
 import host_filesystem_removal as removal
 import host_filesystem_link_graphs as link_graphs
+import host_filesystem_link_permissions as link_permissions
 import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
 import host_filesystem_magic_strings as magic_strings
@@ -949,6 +950,147 @@ class FilesystemHarnessTests(unittest.TestCase):
                     self.assertLess(time.monotonic(), deadline, 'timed-out provider was not reaped')
                     time.sleep(.02)
                 self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_link_permission_matrix_and_all_modes(self):
+        rows = list(link_permissions.cases())
+        self.assertEqual(len(rows), 21)
+        self.assertEqual(len({r['id'] for r in rows}), 21)
+        self.assertEqual(sum(r['status'] == 0 for r in rows), 3)
+        for row in rows:
+            for mode in ('direct', 'string', 'file', 'stdin'):
+                with self.subTest(case=row['id'], mode=mode), tempfile.TemporaryDirectory() as root:
+                    record = run_case(Path('/bin/sh'), {'ln': {'path': '/bin/ln'}},
+                                      os.defpath, row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS', record)
+                    marker = record['link_permission_environment']
+                    self.assertEqual(marker['errno'], errno.EACCES)
+                    self.assertEqual(marker['mode'], row['link_permission']['mode'])
+                    self.assertEqual(len(marker['probes']), 1 if row['link_permission']['source'] else 2)
+                    json.dumps(record)
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_link_permission_dispatch_marker_is_required(self):
+        from smoke import capture as real_capture
+        row = next(r for r in link_permissions.cases() if r['id'] == 'ln/link-permission-write-hard-file')
+        for fault in ('missing', 'malformed', 'provider', 'identity', 'phase'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                result = real_capture(binary, invocation, cwd, *args, **kw)
+                marker = cwd / '.link-exec.json'
+                value = json.loads(marker.read_text())
+                if fault == 'missing':
+                    marker.unlink()
+                elif fault == 'malformed':
+                    marker.write_text('{')
+                else:
+                    value[{'identity': 'euid'}.get(fault, fault)] = 'wrong'
+                    marker.write_text(json.dumps(value))
+                return result
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'ln': {'path': '/bin/ln'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_link_permission_oracle_rejects_corruption(self):
+        from smoke import capture as real_capture
+        row = next(r for r in link_permissions.cases() if r['id'] == 'ln/link-permission-write-hard-link')
+        original = copy.deepcopy(row)
+        for fault in ('removed', 'identity', 'content', 'mode', 'nlink', 'stdout', 'stderr', 'status'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                if fault in ('removed', 'identity'):
+                    (cwd / 'targets').chmod(0o700)
+                    (cwd / 'targets/first').rename(cwd / 'saved')
+                    if fault == 'identity':
+                        (cwd / 'targets/first').symlink_to('../referent')
+                    (cwd / 'targets').chmod(0o500)
+                elif fault == 'content':
+                    (cwd / 'referent').write_bytes(b'changed')
+                elif fault == 'mode':
+                    (cwd / 'targets').chmod(0o700)
+                elif fault == 'nlink':
+                    os.link(cwd / 'sources/first', cwd / 'extra')
+                elif fault == 'status':
+                    status = 0
+                else:
+                    output[fault] = b'unexpected' if fault == 'stdout' else b''
+                return status, output, errors
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'ln': {'path': '/bin/ln'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'], record)
+                self.assertEqual(list(Path(root).iterdir()), [])
+                self.assertEqual(row, original)
+
+    def test_link_permission_unproved_denial_prevents_dispatch(self):
+        for row in (r for r in link_permissions.cases() if r['id'] in (
+                'ln/link-permission-source-L', 'ln/link-permission-write-hard-file',
+                'ln/link-permission-search-symbolic-fifo')):
+            for error in (None, OSError(errno.EIO, 'controlled probe error')):
+                target = 'os.symlink' if row['link_permission']['symbolic'] else 'os.link'
+                real = os.symlink if row['link_permission']['symbolic'] else os.link
+                def probe(source, destination, *args, **kwargs):
+                    if Path(destination).name in ('.link-probe', '.create-probe'):
+                        if error:
+                            raise error
+                        return None
+                    return real(source, destination, *args, **kwargs)
+                with self.subTest(case=row['id'], error=error), tempfile.TemporaryDirectory() as root, \
+                        patch(target, side_effect=probe), patch('host_filesystem.smoke.capture') as capture:
+                    record = run_case(Path('/bin/sh'), {'ln': {'path': '/bin/ln'}},
+                                      os.defpath, row, 'direct', Path(root), None)
+                    self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'), record)
+                    capture.assert_not_called()
+                    self.assertTrue(record['cleanup'], record)
+                    self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_link_permission_unlink_and_partial_setup_failures(self):
+        row = next(r for r in link_permissions.cases() if r['id'] == 'ln/link-permission-write-hard-file')
+        real = Path.unlink
+        for error in (None, OSError(errno.EIO, 'controlled unlink error')):
+            def unlink(path, *args, **kwargs):
+                if path.name == '.unlink-probe' and stat.S_IMODE(path.parent.stat().st_mode) == 0o500:
+                    if error:
+                        raise error
+                    return None
+                return real(path, *args, **kwargs)
+            with tempfile.TemporaryDirectory() as root, patch.object(Path, 'unlink', unlink), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'ln': {'path': '/bin/ln'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'), record)
+                capture.assert_not_called()
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+        original = link_permissions.arm
+        def fail(directory, row):
+            original(directory, row)
+            raise OSError('controlled failure after arming')
+        with tempfile.TemporaryDirectory() as root, \
+                patch('host_filesystem.link_permissions.arm', side_effect=fail), \
+                patch('host_filesystem.smoke.capture') as capture:
+            record = run_case(Path('/bin/sh'), {'ln': {'path': '/bin/ln'}},
+                              os.defpath, row, 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            capture.assert_not_called()
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_link_permission_failure_timeout_and_symlink_cleanup(self):
+        for name in ('source-L', 'write-hard-fifo', 'search-symbolic-file'):
+            row = next(r for r in link_permissions.cases() if r['id'] == 'ln/link-permission-' + name)
+            self.check_fixture_exec_failure_and_timeout_clean_all_modes(row)
+        with tempfile.TemporaryDirectory() as root, tempfile.TemporaryDirectory() as outside:
+            root, outside = Path(root), Path(outside)
+            outside.chmod(0o751)
+            (root / 'targets').symlink_to(outside)
+            link_permissions.restore(root, row)
+            self.assertEqual(stat.S_IMODE(outside.stat().st_mode), 0o751)
 
     def test_link_graph_matrix(self):
         rows = list(link_graphs.cases())
@@ -2192,7 +2334,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -2257,6 +2399,8 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         entry = next(r for r in ledger['utilities'] if r['utility'] == 'ln')
         self.assertEqual(set(entry['csh110_assertions']), {r['id'] for r in link_graphs.cases()})
         self.assertTrue(set(entry['csh110_assertions']) <= set(entry['assertions']))
+        self.assertEqual(set(entry['csh111_assertions']), {r['id'] for r in link_permissions.cases()})
+        self.assertTrue(set(entry['csh111_assertions']) <= set(entry['assertions']))
         manifest = json.loads((root / 'host_contracts.json').read_text())
         conditions = {c for owner in manifest['owners'] if 'basename' in owner['utilities'] for c in owner['conditions']}
         self.assertEqual({r['id'] for r in ledger['conditions']}, conditions)
@@ -2375,7 +2519,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])
