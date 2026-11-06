@@ -34,6 +34,7 @@ import host_filesystem_creation as creation
 import host_filesystem_removal as removal
 import host_filesystem_link_graphs as link_graphs
 import host_filesystem_link_permissions as link_permissions
+import host_filesystem_touch_permissions as touch_permissions
 import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
 import host_filesystem_magic_strings as magic_strings
@@ -149,6 +150,9 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
         environment = isolated.setup(directory, row)
         if environment is not None:
             record["isolated_environment"] = environment
+        touch_permission_environment = touch_permissions.setup(directory, row)
+        if touch_permission_environment is not None:
+            record['touch_permission_environment'] = serial(touch_permission_environment)
         reference_environment = reference_cases.setup(directory, row)
         if reference_environment is not None:
             record["reference_environment"] = reference_environment
@@ -197,6 +201,9 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
         if row.get('link_permission'):
             argv = [sys.executable, '-S', str(Path(__file__).with_name('host_filesystem_link_exec.py')), *direct]
             direct = argv
+        if row.get('touch_permission'):
+            argv = [sys.executable, '-S', str(Path(__file__).with_name('host_filesystem_touch_exec.py')), *direct]
+            direct = argv
         script = shlex.join(argv) + '\n'
         invocation = dict(stdin='', env=env)
         executable = binary
@@ -219,6 +226,9 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
         link_permission_environment = link_permissions.arm(directory, row)
         if link_permission_environment is not None:
             record['link_permission_environment'] = link_permission_environment
+        touch_permission_armed = touch_permissions.arm(directory, row)
+        if touch_permission_armed is not None:
+            record['touch_permission_armed'] = touch_permission_armed
         removal.arm(directory, row, removal_environment)
         permission = residual.arm(directory, row)
         if permission is not None:
@@ -260,6 +270,14 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
                     errors.append('link provider exec failed or identity changed')
             except (OSError, ValueError) as error:
                 errors.append('missing/invalid link exec marker: ' + str(error))
+        if row.get('touch_permission'):
+            try:
+                marker = json.loads((cwd / '.touch-exec.json').read_text())
+                record['touch_exec'] = marker
+                if marker != dict(phase='exec', provider=provider, uid=os.getuid(), euid=os.geteuid()):
+                    errors.append('touch provider exec failed or identity changed')
+            except (OSError, ValueError) as error:
+                errors.append('missing/invalid touch exec marker: ' + str(error))
         if action:
             try:
                 marker = json.loads((cwd / '.io-fault.json').read_text())
@@ -294,6 +312,10 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
             except (OSError, ValueError, TypeError) as error:
                 errors.append('missing/invalid creation marker: ' + str(error))
         residual.restore(directory, row)
+        touch_errors, touch_observed = touch_permissions.verify(directory, row, touch_permission_environment)
+        errors.extend(touch_errors)
+        if touch_observed is not None:
+            record['touch_permission_observed'] = touch_observed
         link_permission_errors, link_permission_observed = link_permissions.verify(directory, row)
         errors.extend(link_permission_errors)
         if link_permission_observed is not None:
@@ -348,6 +370,7 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
             creation.restore(directory, row)
             removal.restore(directory, row)
             link_permissions.restore(directory, row)
+            touch_permissions.restore(directory, row)
             shutil.rmtree(directory)
             record['cleanup'] = not directory.exists()
         except OSError as error:
@@ -364,6 +387,7 @@ def main():
     parser.add_argument('--audit', action='store_true')
     parser.add_argument('--sanitizer', action='store_true')
     parser.add_argument('--provider-audit', action='store_true', help='Require cycle/archive/fault provider contracts; all are mandatory in the selected profile')
+    parser.add_argument('--touch-permissions-only', action='store_true', help='Select CSH-112 touch permission boundaries')
     parser.add_argument('--link-permissions-only', action='store_true', help='Select CSH-111 ln permission boundaries')
     parser.add_argument('--link-graphs-only', action='store_true', help='Select CSH-110 ln destinations and continuation')
     parser.add_argument('--removal-only', action='store_true', help='Select CSH-109 rmdir graphs and ancestor permissions')
@@ -408,7 +432,9 @@ def main():
             pass
     locale.setlocale(locale.LC_CTYPE, previous)
     rows = [row for row in extended_cases() if args.provider_audit or not row.get('provider_audit')]
-    if args.link_permissions_only:
+    if args.touch_permissions_only:
+        rows = list(touch_permissions.cases())
+    elif args.link_permissions_only:
         rows = list(link_permissions.cases())
     elif args.link_graphs_only:
         rows = list(link_graphs.cases())
@@ -467,7 +493,7 @@ def main():
     elif args.remaining_only:
         rows = list(remaining_cases())
     elif not args.extended_only:
-        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows + list(remaining_cases()) + list(residual.cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases()) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases())
+        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows + list(remaining_cases()) + list(residual.cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases()) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases())
     records = []
     for row in rows:
         for mode in row.get('modes', ('direct', 'string', 'file', 'stdin')):
@@ -477,8 +503,8 @@ def main():
             if record['verdict'] != 'PASS':
                 print(json.dumps(record), flush=True)
     totals = {key: sum(r['verdict'] == key for r in records) for key in ('PASS', 'FAIL')}
-    result = dict(ticket='CSH-111', predecessor='CSH-110', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
-                  full_contracts_qualified=False, selection='link-permissions' if args.link_permissions_only else 'link-graphs' if args.link_graphs_only else 'removal' if args.removal_only else 'parent-graphs' if args.parent_graphs_only else 'omitted-who' if args.omitted_who_only else 'link-bytes' if args.link_bytes_only else 'magic-defaults' if args.magic_defaults_only else 'magic-types' if args.magic_types_only else 'magic-messages' if args.magic_messages_only else 'magic-strings' if args.magic_strings_only else 'transition-times' if args.transition_times_only else 'day-rules' if args.day_rules_only else 'timezone' if args.timezone_only else 'datetime' if args.datetime_only else 'reference' if args.reference_only else 'calendar' if args.calendar_only else 'magic' if args.magic_only else 'cwd-logical' if args.cwd_logical_only else 'output' if args.output_only else 'creation' if args.creation_only else 'cwd' if args.cwd_only else 'path-limits' if args.path_limits_only else 'recursive' if args.recursive_only else 'metadata' if args.metadata_only else 'decisions' if args.decisions_only else 'interactive' if args.interactive_only else 'isolated' if args.isolated_only else 'residual' if args.residual_only else 'remaining' if args.remaining_only else 'extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
+    result = dict(ticket='CSH-112', predecessor='CSH-111', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
+                  full_contracts_qualified=False, selection='touch-permissions' if args.touch_permissions_only else 'link-permissions' if args.link_permissions_only else 'link-graphs' if args.link_graphs_only else 'removal' if args.removal_only else 'parent-graphs' if args.parent_graphs_only else 'omitted-who' if args.omitted_who_only else 'link-bytes' if args.link_bytes_only else 'magic-defaults' if args.magic_defaults_only else 'magic-types' if args.magic_types_only else 'magic-messages' if args.magic_messages_only else 'magic-strings' if args.magic_strings_only else 'transition-times' if args.transition_times_only else 'day-rules' if args.day_rules_only else 'timezone' if args.timezone_only else 'datetime' if args.datetime_only else 'reference' if args.reference_only else 'calendar' if args.calendar_only else 'magic' if args.magic_only else 'cwd-logical' if args.cwd_logical_only else 'output' if args.output_only else 'creation' if args.creation_only else 'cwd' if args.cwd_only else 'path-limits' if args.path_limits_only else 'recursive' if args.recursive_only else 'metadata' if args.metadata_only else 'decisions' if args.decisions_only else 'interactive' if args.interactive_only else 'isolated' if args.isolated_only else 'residual' if args.residual_only else 'remaining' if args.remaining_only else 'extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
                   unavailable_capabilities=[] if platform.system() == 'Linux' else ['Linux virtual-device ENOSPC'],
                   path=args.path, providers=providers, platform=platform.platform(),
                   libc=platform.libc_ver(), utf8_locale=utf8, uid=os.getuid(), gid=os.getgid(), groups=os.getgroups(),

@@ -180,3 +180,5 @@ Originally authored by Mitchell Elliott.
 The [CSH-012 requirement, defect, platform and documentation review](docs/conformance-acceptance-review.md) records the current acceptance decisions and open limitations.
 
 [CSH-012 audit closure](docs/conformance-closure.md) records complete requirement accounting and scoped defect dispositions; known implementation gaps remain open.
+
+`make test-host-filesystem-touch-permissions` checks CSH-112 ordinary owner-mode touch permissions, explicit timestamps and operand continuation in direct execution and all shell input modes. See [CSH-112 evidence](docs/evidence/csh-112/README.md).
