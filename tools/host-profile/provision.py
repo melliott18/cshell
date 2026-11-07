@@ -13,6 +13,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'tests'))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from host_utility_cases import HOSTS
 from build_iconv import build as build_iconv
 from host_filesystem_cases import UTILITIES
