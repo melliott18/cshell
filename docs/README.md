@@ -78,3 +78,7 @@ The [CSH-012 requirement, defect, platform and documentation review](conformance
 - [Selected formatted-output contracts](host-formatted-output.md): CSH-070 policies, section accounting and resource evidence.
 
 - [Text and byte stream qualification](host-text-contracts.md): CSH-073 assertions, per-page section ledger, sparse offsets, signal/capacity probes and strict vendor audit.
+
+CSH-071 adds [predicate, permission and identity qualification](host-permissions-identities.md),
+including `make test-host-permissions`, direct exec, public cshell dispatch,
+independent effects, and explicit unqualified vendor/session/platform branches.

@@ -525,14 +525,24 @@ build/host-ln: build/host-mkfifo
 	$(MAKE) -C build/host-coreutils-build -j4 src/ln > build/host-coreutils-build/ln.log 2>&1 || { cat build/host-coreutils-build/ln.log; exit 1; }
 	cp build/host-coreutils-build/src/ln $@
 
-host-profile: build/host-ln build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
+host-profile: build/host-test build/host-chmod build/host-newgrp build/host-ln build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin $(if $(HOST_TEXT_PROVIDER_BIN),--text-bin "$(HOST_TEXT_PROVIDER_BIN)")
+
+build/host-chmod: tools/host-profile/chmod.c
+	@mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS) $(if $(filter Linux,$(shell uname -s)),-lbsd)
+
+build/host-newgrp-provider.h: host-test-provider-check tools/host-profile/provision.py
+	$(PYTHON) tools/host-profile/provision.py $@ --newgrp-header
+
+build/host-newgrp: tools/host-profile/newgrp.c build/host-newgrp-provider.h
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -Ibuild -o $@ $< $(LDLIBS)
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_printf_faults.c $(LDLIBS)
 
-test-host-profile: test-host-filesystem-allocation test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
+test-host-profile: test-host-filesystem-allocation test-host-inventory test-host-permissions cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 	$(PYTHON) tests/host_filesystem.py ./cshell --audit --provider-audit --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-profile.json $(HOST_FILESYSTEM_FLAGS) $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 	$(PYTHON) tests/host_text.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --boundaries $(HOST_TEXT_FLAGS) --record build/tests/host-text-results.json
@@ -939,3 +949,18 @@ test-host-text-faults: cshell build/tests/host_text_faults.so
 
 test-host-text-native-capacity: cshell
 	$(PYTHON) tests/host_text_capacity.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --audit --record build/tests/host-text-native-capacity.json
+
+.PHONY: test-host-permissions
+test-host-permissions: cshell host-profile test-host-permissions-harness
+	$(PYTHON) tests/host_permissions.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-permissions-results.json $(HOST_PERMISSIONS_FLAGS) $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+.PHONY: host-test-provider-check
+build/host-test-provider.h: host-test-provider-check tools/host-profile/provision.py
+	$(PYTHON) tools/host-profile/provision.py $@ --test-header
+
+build/host-test: tools/host-profile/test.c build/host-test-provider.h
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Ibuild $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+.PHONY: test-host-permissions-harness
+test-host-permissions-harness:
+	$(PYTHON) tests/test_host_permissions.py

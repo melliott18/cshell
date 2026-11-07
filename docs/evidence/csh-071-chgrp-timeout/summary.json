@@ -1,0 +1,14 @@
+{
+  "before-probe": {
+    "cases": 80,
+    "failures": 0,
+    "median_seconds": 0.05137645860668272,
+    "max_seconds": 0.0981560000218451
+  },
+  "probe": {
+    "cases": 320,
+    "failures": 0,
+    "median_seconds": 0.059996271040290594,
+    "max_seconds": 2.837620083009824
+  }
+}

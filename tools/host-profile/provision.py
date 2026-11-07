@@ -15,6 +15,14 @@ from host_utility_cases import HOSTS
 from host_filesystem_cases import UTILITIES
 
 
+def test_provider(gnu_bin=None):
+    search = str(gnu_bin) if gnu_bin else os.environ.get('PATH', os.defpath)
+    path = shutil.which('gtest', path=search) if platform.system() == 'Darwin' else shutil.which('test', path=os.defpath)
+    if not path:
+        raise ValueError('Missing vendor test provider; Darwin requires Homebrew coreutils')
+    return path
+
+
 def text_overrides(text_bin, system):
     manifest = json.loads((text_bin.parent / 'manifest.json').read_text())
     expected = {'cat', 'head', 'cut', 'tsort', 'sed', 'ed', 'cmp'}
@@ -33,7 +41,10 @@ def text_overrides(text_bin, system):
 
 def provision(destination, gnu_bin=None, text_bin=None):
     selected = {name: shutil.which(name, path=os.defpath) for name in dict.fromkeys(HOSTS + UTILITIES)}
-    overrides = {'ln': str(ROOT / 'build/host-ln'),
+    overrides = {'chmod': str(ROOT / 'build/host-chmod'),
+                 'newgrp': str(ROOT / 'build/host-newgrp'),
+                 'test': str(ROOT / 'build/host-test'), '[': str(ROOT / 'build/host-test'),
+                 'ln': str(ROOT / 'build/host-ln'),
                  'mkdir': str(ROOT / 'build/host-mkdir'),
                  'mkfifo': str(ROOT / 'build/host-mkfifo'),
                  'file': str(ROOT / 'build/host-file'),
@@ -49,7 +60,7 @@ def provision(destination, gnu_bin=None, text_bin=None):
         # Homebrew's prefixed names do not change the system PATH or echo policy.
         search = str(gnu_bin) if gnu_bin else os.environ.get('PATH', os.defpath)
         overrides.update({name: shutil.which('g' + name, path=search)
-                         for name in ('test', '[', 'find', 'dd')})
+                         for name in ('find', 'dd')})
     elif system == 'Linux':
         overrides['kill'] = shutil.which('busybox', path=os.defpath)
         overrides['du'] = str(ROOT / 'build/host-du')
@@ -123,6 +134,12 @@ def provision(destination, gnu_bin=None, text_bin=None):
         magic_database_sha256=hashlib.sha256((ROOT / 'build/host-file-install/share/misc/magic.mgc').read_bytes()).hexdigest(),
         configure=['--disable-shared', '--enable-static', '--disable-zlib', '--disable-bzlib',
                    '--disable-xzlib', '--disable-zstdlib', '--disable-lzlib'])
+    backend = json.loads((ROOT / 'build/host-test-provider.h').read_text().removeprefix('#define CSH_TEST_PROVIDER ').strip())
+    manifest['test_backend'] = dict(path=backend, realpath=os.path.realpath(backend),
+                                    sha256=hashlib.sha256(Path(backend).read_bytes()).hexdigest())
+    backend = json.loads((ROOT / 'build/host-newgrp-provider.h').read_text().removeprefix('#define CSH_NEWGRP_PROVIDER ').strip())
+    manifest['newgrp_backend'] = dict(path=backend, realpath=os.path.realpath(backend),
+                                      sha256=hashlib.sha256(Path(backend).read_bytes()).hexdigest())
     (destination.parent / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
     print(destination)
 
@@ -132,8 +149,20 @@ if __name__ == '__main__':
     parser.add_argument('destination', type=Path)
     parser.add_argument('--gnu-bin', type=Path)
     parser.add_argument('--text-bin', type=Path)
+    parser.add_argument('--test-header', action='store_true')
+    parser.add_argument('--newgrp-header', action='store_true')
     args = parser.parse_args()
     try:
-        provision(args.destination, args.gnu_bin, args.text_bin)
+        if args.test_header or args.newgrp_header:
+            backend = shutil.which('newgrp', path=os.defpath) if args.newgrp_header else test_provider(args.gnu_bin)
+            if not backend:
+                raise ValueError('Missing newgrp provider in system path')
+            macro = 'CSH_NEWGRP_PROVIDER' if args.newgrp_header else 'CSH_TEST_PROVIDER'
+            content = '#define ' + macro + ' ' + json.dumps(backend) + '\n'
+            args.destination.parent.mkdir(parents=True, exist_ok=True)
+            if not args.destination.exists() or args.destination.read_text() != content:
+                args.destination.write_text(content)
+        else:
+            provision(args.destination, args.gnu_bin, args.text_bin)
     except ValueError as error:
         parser.error(str(error))

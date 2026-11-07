@@ -310,3 +310,7 @@ separate stock failures. [CSH-089](tickets/CSH-089-filesystem-environment-residu
 owns each remaining environment and all four original conditions. Whole
 utility contracts, non-C collation, live-clock age boundaries, mount/depth
 limits, ACLs, capacity exhaustion and libc-internal faults remain unqualified.
+
+CSH-071 adds [predicate, permission and identity qualification](host-permissions-identities.md),
+including `make test-host-permissions`, direct exec, public cshell dispatch,
+independent effects, and explicit unqualified vendor/session/platform branches.

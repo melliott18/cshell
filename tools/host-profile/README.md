@@ -7,8 +7,8 @@ cshell's builtin allocation. All tools are real exec-accessible programs;
 
 | Host | Selected replacements | Provisioning |
 | --- | --- | --- |
-| macOS | Standalone printf and local readlink/realpath; Homebrew `gtest`, `g[` and `gfind`; GNU `gdd`; pinned local pax | `brew install coreutils findutils`; prefixed binaries must be on the provisioning process's PATH |
-| Debian/Ubuntu | Standalone printf, local readlink/realpath and pinned pax; BusyBox kill; GNU du in POSIX mode | `apt-get install build-essential python3 ed busybox locales acl file pax`; generate `fr_FR.UTF-8` |
+| macOS | Standalone printf, test/bracket, chmod and newgrp adapters, and local readlink/realpath; Homebrew `gtest`, `g[` and `gfind`; GNU `gdd`; pinned local pax | `brew install coreutils findutils`; prefixed binaries must be on the provisioning process's PATH |
+| Debian/Ubuntu | Standalone printf, test/bracket, chmod and newgrp adapters, local readlink/realpath and pinned pax; BusyBox kill; GNU du in POSIX mode | `apt-get install build-essential python3 ed busybox locales acl file pax libbsd-dev`; generate `fr_FR.UTF-8` |
 
 Other scoped commands use `os.defpath` without additional symlinks, preserving
 cshell's PATH-associated pwd builtin selection. In particular, echo remains the system
@@ -46,6 +46,41 @@ runs the suite as UID 10001. Missing device access, root-only execution, and
 missing French locales are individually recorded limitations owned by CSH-062;
 these do not become passes. `--strict-gaps` concerns unmet assertions, not
 universal capability coverage.
+
+## Chmod and supplied device witnesses
+
+The selected `chmod.c` uses BSD `setmode`/`getmode` (system libc on macOS,
+`libbsd` on Linux) so `X` tests the file's original mode while permission copies
+observe preceding actions. It supports the POSIX `-R`, octal and symbolic forms,
+and `--`. Physical traversal follows command-line symlinks, skips encountered
+symlinks, and updates directories after their children so removing search access
+does not prevent descendant changes. It calls the kernel even for unchanged
+modes, preserving authorization checks, ctime updates and filesystem ACL behavior.
+The binary is never installed set-ID. GNU/BSD extension options are outside this
+selected interface. `--vendor-residuals --case-prefix chmod/` checks original-X,
+recursion, inaccessible final directory modes, symlinks and continued processing
+after an invalid operand. Linux evidence records the installed libbsd version.
+
+For mapped namespaces unable to create nodes, `host_utilities.py
+--device-fixtures DIRECTORY` accepts private precreated `block` and `character`
+nodes. It verifies their types and stable metadata identity, creates only a
+fixture symlink, and records the supplied path/device/inode. Neither node is
+opened; the parent environment owns their final removal. This qualifies stat
+predicates in the supplied namespace, not permission to call `mknod` there.
+
+## Newgrp dispatch adapter
+
+The selected `newgrp.c` first checks literal group names, then resolves an
+existing numeric GID to its canonical name before execing the absolute system
+provider recorded in `build/host-newgrp-provider.h`. For an unknown nonnumeric
+name it diagnoses the failed group assignment and execs the current user's
+password-database shell with unchanged credentials, cwd, umask and environment.
+It ignores the exported SHELL variable when choosing that fallback shell.
+This adapter has no set-ID installation and implements no authentication or
+credential changes. Known-group authorization/password handling and unsupported
+argument forms still belong to the inventoried vendor; their broader contracts
+remain open. `--session-controls` tests existing root/daemon and the `SUDO_USER`
+account on CI (or the Docker image's `cshell` account), without changing accounts.
 
 ## Standalone printf provenance
 
@@ -524,3 +559,17 @@ after `make host-text-providers`. Omitting the variable restores the original
 profile selection. Only declared symlinks in `build/host-profile/bin` change;
 stock PATH and system executables are unchanged. Download/source/compiler/patch
 and executable identities are retained in the build manifest and text results.
+
+## CSH-071 predicates and identities
+
+`test.c` adds POSIX.1-2024 locale-aware `<`/`>` and effective-credential r/w/x
+predicates, delegating remaining expressions to the absolute GNU test provider
+selected during the build. Both adapter and
+backend hashes are retained. `build/host-test-provider.h` records the provider;
+`make host-profile` regenerates it when the selected path changes. No
+system executable is replaced. The adapter now uses effective-credential
+`faccessat` for r/w/x predicates; remaining expressions retain their vendor backend.
+
+`make test-host-permissions` is included in `make test-host-profile`. Its
+[clause map](../../docs/host-permissions-identities.md) records the exact subset,
+Linux-root flags, strict vendor reproducers and still-open CSH-071 obligations.

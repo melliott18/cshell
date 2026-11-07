@@ -19,6 +19,7 @@
 # Complete host ownership checks read these normative/accounting inputs.
 !docs/
 !docs/host-system-inventory.md
+!docs/host-permissions-identities.md
 !docs/tickets/
 !docs/tickets/*.md
 !docs/evidence/

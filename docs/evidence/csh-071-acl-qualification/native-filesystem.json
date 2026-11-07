@@ -1,0 +1,28 @@
+{
+  "fixture_filesystem": {
+    "path": "/private/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T",
+    "device": 16777233,
+    "platform": "Darwin",
+    "mount": null
+  },
+  "commands": [
+    {
+      "argv": [
+        "/bin/df",
+        "-P",
+        "/private/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T"
+      ],
+      "status": 0,
+      "stdout": "Filesystem   512-blocks       Used Available Capacity  Mounted on\n/dev/disk3s5 3896910480 3648577432 121507264    97%    /System/Volumes/Data\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/sbin/mount"
+      ],
+      "status": 0,
+      "stdout": "/dev/disk3s1s1 on / (apfs, sealed, local, read-only, journaled)\ndevfs on /dev (devfs, local, nobrowse)\n/dev/disk3s6 on /System/Volumes/VM (apfs, local, noexec, journaled, noatime, nobrowse)\n/dev/disk3s2 on /System/Volumes/Preboot (apfs, local, journaled, nobrowse)\n/dev/disk3s4 on /System/Volumes/Update (apfs, local, journaled, nobrowse)\n/dev/disk1s2 on /System/Volumes/xarts (apfs, local, noexec, journaled, noatime, nobrowse)\n/dev/disk1s1 on /System/Volumes/iSCPreboot (apfs, local, journaled, nobrowse)\n/dev/disk1s3 on /System/Volumes/Hardware (apfs, local, journaled, nobrowse)\n/dev/disk3s5 on /System/Volumes/Data (apfs, local, journaled, nobrowse, protect, root data)\nmap auto_home on /System/Volumes/Data/home (autofs, automounted, nobrowse)\n/dev/disk5s1 on /Library/Developer/CoreSimulator/Volumes/iOS_21F79 (apfs, local, nodev, nosuid, read-only, journaled, noowners, noatime, nobrowse)\n/dev/disk2s1 on /System/Volumes/Update/SFR/mnt1 (apfs, local, journaled, nobrowse)\n/dev/disk7s1 on /Volumes/Extreme Pro 4TB (apfs, local, nodev, nosuid, journaled, noowners)\n/dev/disk12s1 on /Volumes/balenaEtcher (hfs, local, nodev, nosuid, read-only, noowners, quarantine, mounted by mitchell)\n",
+      "stderr": ""
+    }
+  ]
+}
