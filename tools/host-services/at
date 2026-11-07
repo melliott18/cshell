@@ -1,0 +1,40 @@
+#!/usr/bin/python3
+"""Keep Debian at scheduling; normalize its extra listing columns to POSIX."""
+import getopt
+import os
+import subprocess
+import sys
+
+arguments = sys.argv[1:]
+try:
+    options, _ = getopt.getopt(arguments, 'f:lmq:rt:')
+except getopt.GetoptError:
+    options = []
+if not any(option == '-l' for option, _ in options):
+    os.execv('/usr/bin/at', ['/usr/bin/at', *arguments])
+
+# Stream the listing so the wrapper does not accumulate an unbounded queue.
+# Debian appends a one-letter queue and login name; date text stays unchanged.
+child = subprocess.Popen(['/usr/bin/at', *arguments], stdout=subprocess.PIPE)
+failed = False
+try:
+    for line in child.stdout:
+        fields = line.rstrip(b'\n').rsplit(b' ', 2)
+        if len(fields) != 3 or len(fields[1]) != 1 or b'\t' not in fields[0]:
+            print('at: unexpected provider listing format', file=sys.stderr)
+            failed = True
+            break
+        sys.stdout.buffer.write(fields[0] + b'\n')
+    sys.stdout.buffer.flush()
+except (OSError, BrokenPipeError) as error:
+    print('at: cannot write listing: ' + str(error), file=sys.stderr)
+    failed = True
+finally:
+    child.stdout.close()
+    if failed:
+        try:
+            child.terminate()
+        except ProcessLookupError:
+            pass
+    status = child.wait()
+raise SystemExit(1 if failed else (status if status >= 0 else 128 - status))

@@ -1,0 +1,4 @@
+#!/bin/sh
+# POSIX.1-2024 batch is defined as exactly this invocation. Debian's stock
+# wrapper omits -m and therefore fails silent-job completion notification.
+exec /usr/bin/at -q b -m now

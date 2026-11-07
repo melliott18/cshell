@@ -1918,3 +1918,22 @@ locales and independently checks installed Darwin locale identities.
 `make test-host-catalog-contracts` runs the complete strict retained
 reproducers; the repaired selected providers have no failure exclusions. See the
 [clause map, bounds, providers and open contracts](host-locale-catalogs.md).
+
+
+## Disposable host services (CSH-078)
+
+`make test-host-profile` includes `test-host-service-codecs`, which runs only
+safe codecs and read-only date formats natively. Linux requires `sharutils`;
+macOS builds the opt-in `uudecode` provider. `make test-host-service-harness`
+checks false successes, missing providers, timeout/descendant ownership and
+output bounds without any host service effects.
+
+`make docker-test-host-services` builds a separate service image and runs with
+no network, no host mounts, no clock-setting capability, and an outer deadline.
+The launcher saves image/package/executable identities, all assertions and
+cleanup results under `build/tests/host-services/`, including failed runs, then
+removes the container. CI retains that directory as an artifact. Do not invoke
+`--services` on the developer host; it fails its environment guard.
+See the [profile and clause boundaries](host-service-profile.md) and
+[native/Linux evidence](evidence/csh-078/README.md). Full utility contracts
+remain open under CSH-078; the CUPS byte sink is not a physical printer.

@@ -95,3 +95,5 @@ ownership of unqualified full contracts and physical-terminal prerequisites.
 cover gencat/gettext/iconv/locale/localedef/msgfmt/ngettext. `make test-host-profile`
 includes the bounded strict subset; `make test-host-catalog-contracts` also runs
 retained failing vendor reproducers. Full utility contracts remain open.
+
+- [Disposable host service profile](host-service-profile.md): native codecs and isolated scheduler, mail, logging, print and clock witnesses.

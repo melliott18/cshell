@@ -525,7 +525,7 @@ build/host-ln: build/host-mkfifo
 	$(MAKE) -C build/host-coreutils-build -j4 src/ln > build/host-coreutils-build/ln.log 2>&1 || { cat build/host-coreutils-build/ln.log; exit 1; }
 	cp build/host-coreutils-build/src/ln $@
 
-host-profile: build/host-ed build/host-xargs build/host-m4 build/host-patch build/host-test build/host-chmod build/host-newgrp build/host-ln build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
+host-profile: build/host-uudecode build/host-ed build/host-xargs build/host-m4 build/host-patch build/host-test build/host-chmod build/host-newgrp build/host-ln build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin --cc="$(CC)" --cppflags="$(CPPFLAGS)" --cflags="$(CFLAGS)" --ldflags="$(LDFLAGS)" --ldlibs="$(LDLIBS)" $(if $(HOST_TEXT_PROVIDER_BIN),--text-bin "$(HOST_TEXT_PROVIDER_BIN)")
 
 build/host-chmod: tools/host-profile/chmod.c
@@ -538,11 +538,21 @@ build/host-newgrp-provider.h: host-test-provider-check tools/host-profile/provis
 build/host-newgrp: tools/host-profile/newgrp.c build/host-newgrp-provider.h
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -Ibuild -o $@ $< $(LDLIBS)
 
+HOST_UUDECODE_LIBS = -lresolv
+ifeq ($(shell uname -s),Linux)
+HOST_UUDECODE_LIBS += -lbsd
+endif
+
+build/host-uudecode: tools/host-profile/uudecode.c tools/host-profile/vendor/uudecode.c
+	@mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/uudecode.c $(HOST_UUDECODE_LIBS) $(LDLIBS)
+
+
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_printf_faults.c $(LDLIBS)
 
-test-host-profile: test-host-catalogs test-host-filesystem-allocation test-host-inventory test-host-permissions cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile test-host-terminal-residuals test-host-terminal-effects test-host-terminal-profile test-host-terminal-harness build/tests/host_ed_faults
+test-host-profile: test-host-service-codecs test-host-catalogs test-host-filesystem-allocation test-host-inventory test-host-permissions cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile test-host-terminal-residuals test-host-terminal-effects test-host-terminal-profile test-host-terminal-harness build/tests/host_ed_faults
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --locale-path "$(abspath build/host-profile/locales)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 	$(PYTHON) tests/host_filesystem.py ./cshell --audit --provider-audit --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-profile.json $(HOST_FILESYSTEM_FLAGS) $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 	$(PYTHON) tests/host_text.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --boundaries $(HOST_TEXT_FLAGS) --record build/tests/host-text-results.json
@@ -1068,3 +1078,17 @@ host-catalog-fixtures: host-locales host-profile build/tests/host_catalog_probe
 build/tests/locale_adapter_fixture: tests/locale_adapter_fixture.c tools/host-profile/locale_adapter.c
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+
+# Service effects are available only in the dedicated disposable image. Native
+# qualification invokes only codecs and read-only date formats.
+.PHONY: test-host-service-codecs test-host-service-harness docker-test-host-services
+test-host-service-codecs: cshell host-profile
+	$(PYTHON) tests/host_services.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-service-codecs.json
+
+test-host-service-harness:
+	$(PYTHON) -m unittest discover -s tests -p 'test_host_service*.py'
+
+docker-test-host-services:
+	docker build -f tools/host-services/Dockerfile -t cshell-services:local .
+	$(PYTHON) tools/host-services/run.py

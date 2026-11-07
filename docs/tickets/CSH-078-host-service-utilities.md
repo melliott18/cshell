@@ -1,11 +1,11 @@
 # CSH-078: Qualify host scheduling, mail and service utilities
 
-- Status: ready
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: Assigned when work starts
+- Branch: test/CSH-078-host-service-utilities
 - Issue: [#150](https://github.com/melliott18/cshell/issues/150)
 
 ## Goal
@@ -52,17 +52,17 @@ contracts above are still open.
 
 ## Acceptance criteria
 
-- [ ] Select each required exec-accessible provider, supply missing packages/services,
+- [x] Select each required exec-accessible provider, supply missing packages/services,
   and retain exact PATH, realpath, executable hash, package and environment identity.
 - [ ] Map every applicable page section and common default to clause-derived
   assertions or an individually justified disposition; repair required-contract
   failures. Selected examples alone do not complete a utility contract.
-- [ ] Resolve each assigned retained condition with its required capability and
+- [x] Resolve each assigned retained condition with its required capability and
   strict evidence, or transfer that individual condition to a concrete open owner.
   Preserve vendor ownership, setup failures and failed assertions separately.
-- [ ] Verify public cshell dispatch and direct exec access, exact output/status and
+- [x] Verify public cshell dispatch and direct exec access, exact output/status and
   relevant effects, with zero gap allowances for every declared qualified subset.
-- [ ] Update the inventory, current ownership manifest and clause maps with the
+- [x] Update the inventory, current ownership manifest and clause maps with the
   exact qualification boundary; keep stock-host, qualified subset and full-system
   claims separate.
 
@@ -78,6 +78,53 @@ processes and disposable files/services and verify cleanup after failure/timeout
 
 ## Implementation notes/evidence
 
-Work has not started. CSH-068 transfers ownership only; it supplies no new vendor
-implementation, service, privileged host or physical terminal. CSH-064 remains
-done for its bounded capability work and repaired probe cleanup.
+The [disposable service profile](../host-service-profile.md) now supplies all
+nine exec-accessible providers, isolated atd/cron/Exim/CUPS/syslog services, a
+read-only test clock, and independent direct/cshell assertions. Native execution
+is restricted to codecs and read-only date. Two selected provider repairs add
+Issue 8 stdout-cookie handling to macOS uudecode and mandatory silent completion
+mail to the Linux batch profile. The stock failures are retained.
+
+The [machine section/disposition map](../../tests/host_service_contracts.json)
+accounts for every page section and common defaults with bounded assertions,
+optional-profile exclusions and 20 individually named open residuals. Current
+ownership links that map; inventory validation rejects lost sections, closed
+owners and false full-page qualification. No CSH-064 retained condition was
+assigned here. CSH-064 and its historical evidence are unchanged.
+
+**This ticket remains in progress.** The supplied profile is bounded; physical
+printing, further calendar/locale/option combinations and error/signal contracts
+remain unqualified. The residuals stay with CSH-078 instead of being transferred
+or described as passing. The full-contract acceptance checkbox stays open.
+See [all attempts and validation](../evidence/csh-078/README.md).
+
+The 2026-09-30 UTC continuation verifies **872 disposable-service checks** and
+**490 native codec/date checks**, with 12 inventory and 8 harness tests passing.
+It adds queue filtering/removal, job process context, mail headers/no-subject
+send, logging precedence/error cases, and two-destination print routing plus
+paused-queue copy independence. Final-source Docker execution and cleanup are
+verified. Authorized Docker recovery removed all four previously stranded
+CSH-078 containers; the unrelated CSH-073 stages had already finished, and only
+its stalled Docker client ended. Both failed and passing continuation attempts
+and the restart record remain in the [evidence](../evidence/csh-078/README.md#disposable-service-continuation-2026-09-30-utc).
+
+Further edge qualification repairs the selected decoder's pathname, symbolic
+mode/umask and Base64 behavior on macOS/Linux, including a sanitizer-detected
+pointer bounds defect. Disposable adapters correct `at -l` output and logger's
+missing-sink success status. Coverage now includes batch queue identity, codec
+permissions and output errors, locale/DST cases, kernel-attested logger PIDs,
+and mail boundary/transport failures. See the retained [edge attempts](../evidence/csh-078/README.md#further-repairs-and-environment-audit-2026-09-30-utc).
+
+Remaining environment requirements are now explicit in the contract map and
+[capability matrix](../host-service-profile.md#remaining-environments-and-manual-work).
+Most work is automated fixture development. Deterministic scheduler calendar
+coverage needs a controlled daemon clock or disposable VM; native macOS service
+claims need an isolated macOS environment. Actual hardcopy needs a dedicated
+printer and human inspection. Full-contract qualification remains open.
+
+Final edge validation: **1182 Docker checks** pass in both ordinary and decoder
+ASan/UBSan builds; **620 native checks** pass ordinarily and under Clang
+ASan/UBSan. Inventory (12) and harness (9) regressions pass. All final Docker
+containers were removed. An earlier native sanitizer abort left PID 82167 in
+an uninterruptible state despite SIGKILL; its sample and cleanup observations
+remain recorded separately from the repaired passing runs.

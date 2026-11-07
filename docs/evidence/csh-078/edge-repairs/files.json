@@ -1,0 +1,212 @@
+[
+  {
+    "file": "native-initial.json.gz",
+    "sha256": "c236437e689d52f2905d468730c9a8c79c8edb39d1f9f31d97151b4a8fd1fd38",
+    "bytes": 1754977
+  },
+  {
+    "file": "native-initial.log.gz",
+    "sha256": "48b8ef7799088258005367d899571e0acd9a2a79b8c811bcbfe1e11aa1adabf0",
+    "bytes": 1595
+  },
+  {
+    "file": "symbolic-mask-initial.json.gz",
+    "sha256": "943cd1b5240f426353ecfc8c17c9bfedace84d5c47a39482f9c844d7c7586d6e",
+    "bytes": 1760203
+  },
+  {
+    "file": "symbolic-mask-initial.log.gz",
+    "sha256": "dee974ba6d4c67f04d78f596d3a9323c306ce8d244bcf101e44edbb8b192d4a7",
+    "bytes": 1002
+  },
+  {
+    "file": "native-sanitizer-initial.json.gz",
+    "sha256": "5280b22c7c361abdf22422dc8b7edf8f0bc7067bba06dfafccc178f2a0db1dea",
+    "bytes": 1663614
+  },
+  {
+    "file": "native-sanitizer-initial.log.gz",
+    "sha256": "deffb1c36b5a3685d4b6a67ed28bd96aff10099f2476b148cfd11767972ed117",
+    "bytes": 81
+  },
+  {
+    "file": "native-sanitizer-sample.txt.gz",
+    "sha256": "4b5a7eef6e0e409b37f3fca181997125378eef91ce6cb77c7c533042d8eff2ee",
+    "bytes": 9366
+  },
+  {
+    "file": "native-sanitizer-cleanup.json.gz",
+    "sha256": "5444b18bfd545acaacc1e24da03503b383f8432571f9210f4a0f4dfbbb13822d",
+    "bytes": 327
+  },
+  {
+    "file": "native-sanitizer-repaired.json.gz",
+    "sha256": "9ee4db5630e54cbc2647b9557c2f55ba46cc64e3c46891c158b2a2b3f2d0d476",
+    "bytes": 1766860
+  },
+  {
+    "file": "native-sanitizer-repaired.log.gz",
+    "sha256": "ef9a9ba5156e42b73df0107174d7e05e63952333922e5ccd7467b87cf771e512",
+    "bytes": 61
+  },
+  {
+    "file": "native-repaired.json.gz",
+    "sha256": "9437c64906399e96403c328ad74025c4ddc34d974c963270a99df4eb652162c5",
+    "bytes": 1765907
+  },
+  {
+    "file": "native-repaired.log.gz",
+    "sha256": "58f14fc91b7cfbcca60653de956f36bd57ca1b294c5128edaa36283b5f104138",
+    "bytes": 997
+  },
+  {
+    "file": "checks.log.gz",
+    "sha256": "7f35d178115fb36326c07e1a1b41502dae07082b5dbca321711bb78566dabf02",
+    "bytes": 463
+  },
+  {
+    "file": "sanitizer-image-resolution-failure.log.gz",
+    "sha256": "95af89bddc8a4d91d91bf920c429140964658720f62c9a3421b33fd56137ee7a",
+    "bytes": 1529
+  },
+  {
+    "file": "linux-stock-codec.json.gz",
+    "sha256": "95027ca5efeaf705347bdfe52f01a013f3bb825283b8333f46e992fddb710e50",
+    "bytes": 2315494
+  },
+  {
+    "file": "linux-stock-codec-launcher.json.gz",
+    "sha256": "682cffebed63ffcda7cf44431aaf642794e912fbb35c1b0e3d01651bac8042f2",
+    "bytes": 4885
+  },
+  {
+    "file": "linux-stock-codec.log.gz",
+    "sha256": "d4a9291016788a1bec577ad01cf3afa6cd7085d8ea9c19cc21e0312181e4bd8c",
+    "bytes": 1059
+  },
+  {
+    "file": "linux-sink-failure.json.gz",
+    "sha256": "62805c2add9513aec3d24904311c5f7ca20f7eebe0f49ee5ec17641f5ff16c61",
+    "bytes": 2557495
+  },
+  {
+    "file": "linux-sink-failure-launcher.json.gz",
+    "sha256": "11d2ecaa2bffc4917da91e25421e7def6bc9cf4189705cc10a646e8a5d162146",
+    "bytes": 4886
+  },
+  {
+    "file": "linux-sink-failure.log.gz",
+    "sha256": "d7559b1bf50f78ff2a528a7c859c76d1767fbee4172cc4ea70a82cb9082d9ff9",
+    "bytes": 321
+  },
+  {
+    "file": "linux-mail-fixture.json.gz",
+    "sha256": "1c560a58b38fb6c70aaa9899bc2e1c353dd2981967428dfeba000a8cec920317",
+    "bytes": 2594334
+  },
+  {
+    "file": "linux-mail-fixture-launcher.json.gz",
+    "sha256": "2651df5d47a5fc2c3fa2f8171f9e627bc43981507bef50df6317ef2855f7c091",
+    "bytes": 4885
+  },
+  {
+    "file": "linux-mail-fixture.log.gz",
+    "sha256": "3b08e8a35927cacdd932d3607b71e448a87a7907b20fd14ba4ef9ad6386565bd",
+    "bytes": 478
+  },
+  {
+    "file": "linux-list-format.json.gz",
+    "sha256": "02b9b288ce26b11aa6ab086b3bf09eed906e89de0c548252d9d70dcf349f53cb",
+    "bytes": 2609656
+  },
+  {
+    "file": "linux-list-format-launcher.json.gz",
+    "sha256": "0a50e14d2c9b7654a2fdf6e410862da7f1c21b5937e4b8299ebb5711785869ea",
+    "bytes": 4885
+  },
+  {
+    "file": "linux-list-format.log.gz",
+    "sha256": "f611927a40a9dcb15c29bc87d9a8178115c9d6e2b8f3a9e226684f44918565a7",
+    "bytes": 916
+  },
+  {
+    "file": "linux-adapted.json.gz",
+    "sha256": "0d2b84b82b30d4844f38fd0c37e4408f77f18d7dde29c611ddb94793494d752b",
+    "bytes": 2609717
+  },
+  {
+    "file": "linux-adapted-launcher.json.gz",
+    "sha256": "5f0bd7bb27df9d2f7ea2ecd23eb3d09937d8be03eff22edd55ab7c1ce04ab8f7",
+    "bytes": 4801
+  },
+  {
+    "file": "linux-adapted.log.gz",
+    "sha256": "ada29321e40065e953df391e926dcd7d9414aeda1b937f602f16abeb28a83f38",
+    "bytes": 185
+  },
+  {
+    "file": "linux-before-sanitizer-fix.json.gz",
+    "sha256": "e78b3a08c5bf608cba866bb58e3654ac140e4610014abfd3080c97e1f65c04e2",
+    "bytes": 2626560
+  },
+  {
+    "file": "linux-before-sanitizer-fix-launcher.json.gz",
+    "sha256": "f38c64552a50d7be96eaa568a61a5cc936221a832eadfad4998ac705d27298f6",
+    "bytes": 4806
+  },
+  {
+    "file": "linux-before-sanitizer-fix.log.gz",
+    "sha256": "1522f60fc26ef696abda9309f8bb87ae6085570c6e090c7c79c24a91d7e1b719",
+    "bytes": 185
+  },
+  {
+    "file": "linux-final.json.gz",
+    "sha256": "674c671445b6c8fb0f4e73e07f7beda282697f24163261190bea6d7e78a834c2",
+    "bytes": 2626607
+  },
+  {
+    "file": "linux-final-launcher.json.gz",
+    "sha256": "6a53295b1440d381f5df4c454caa1d95d706f984b469fc0232fccae91342a68b",
+    "bytes": 4804
+  },
+  {
+    "file": "linux-final.log.gz",
+    "sha256": "1522f60fc26ef696abda9309f8bb87ae6085570c6e090c7c79c24a91d7e1b719",
+    "bytes": 185
+  },
+  {
+    "file": "final-build.log.gz",
+    "sha256": "d125a120dfeab318fa2e3f480aab7639398f0db3c72c4a01a62a2d4aa5ef04ff",
+    "bytes": 7722
+  },
+  {
+    "file": "sanitizer.Dockerfile.gz",
+    "sha256": "88bcf4bc83e4657d597395e04ad27a578edea831d31c09b20782035609e2095d",
+    "bytes": 346
+  },
+  {
+    "file": "sanitizer-build.log.gz",
+    "sha256": "f0905fcb3534fd435ace7fe4ad9296bc2b3107d9adb7c10184f1875ade59edeb",
+    "bytes": 1227
+  },
+  {
+    "file": "native-cleanup-final.json.gz",
+    "sha256": "9223d1f81844813feb08a7f47bee74fe15f9cb7b3d5336339c5179bdfc3b402c",
+    "bytes": 338
+  },
+  {
+    "file": "linux-sanitized-final.json.gz",
+    "sha256": "57b8250e305385fb9606beaa01e494cb12e47081cf68a1255e0c88810b3f50fc",
+    "bytes": 2776847
+  },
+  {
+    "file": "linux-sanitized-final-launcher.json.gz",
+    "sha256": "aa14bac51f9f9ac2ceb15fdfce9856af0b35af19716e5e32bf02eae6200176cd",
+    "bytes": 5083
+  },
+  {
+    "file": "linux-sanitized-final.log.gz",
+    "sha256": "1522f60fc26ef696abda9309f8bb87ae6085570c6e090c7c79c24a91d7e1b719",
+    "bytes": 185
+  }
+]

@@ -87,6 +87,8 @@ make host-catalog-fixtures # Shared verified locales/catalogs; no shell build
 make host-locales       # Locale-only setup for dependent tracks
 make test-host-catalogs  # Bounded locale/catalog subset; private Linux locales
 make test-host-catalog-contracts # Strict complete retained case set (no failure exclusions)
+make test-host-service-harness # Service fixture timeout/failure cleanup
+make docker-test-host-services # Disposable scheduler/mail/log/print service witnesses
 make test-evaluation # Evaluation, lookup, aliases, and remaining utilities
 make test-builtins # Replacement state builtins and executor integration
 make test-state-builtins # Clause-mapped runtime state and utility evidence

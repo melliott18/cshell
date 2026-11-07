@@ -737,3 +737,18 @@ failure exclusions. First catalog setup downloads and checks the pinned GNU
 archive; builds are private and reused after verification. See
 [provider provenance and licenses](vendor/catalog-providers.md) for patches,
 compiler policy, source hashes, charmap fallback and redistribution notices.
+
+## CSH-078 codecs and services
+
+Linux codec qualification additionally requires `sharutils` and `libbsd-dev`.
+Both host profiles build a standalone Apple/FreeBSD `uudecode` with corrected
+stdout cookies, output paths, symbolic permissions and MIME decoding; source commit, license and build adapters are documented in
+[the service profile](../../docs/host-service-profile.md#selected-provider-repairs).
+`make test-host-profile` now includes safe native codec/read-only date witnesses.
+
+`make docker-test-host-services` separately provisions scheduler, local mail,
+logging and CUPS services inside an owned disposable container. It never invokes
+those services on the developer host. Exact commands, isolation, qualified
+subsets and the full-contract exclusions are in the
+[service profile](../../docs/host-service-profile.md) and
+[retained results](../../docs/evidence/csh-078/README.md).

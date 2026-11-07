@@ -274,3 +274,5 @@ Other identities and ACLs, subsecond current-time accuracy and clock changes, ar
 [CSH-077 terminal/session section map](host-terminal-contracts.md) records the
 strict selected profile and [CSH-081](tickets/CSH-081-host-terminal-residual-contracts.md)
 ownership of unqualified full contracts and physical-terminal prerequisites.
+
+CSH-078 adds [bounded disposable service and native codec evidence](host-service-profile.md) for U-034/U-040. The [section map](../tests/host_service_contracts.json) retains every remaining full-page contract under CSH-078; no stock-host or full-system qualification is inferred.

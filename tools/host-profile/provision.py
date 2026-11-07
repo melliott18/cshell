@@ -50,7 +50,8 @@ def provision(destination, gnu_bin=None, text_bin=None, catalog_bin=None, cc="cc
         if record.exists():
             record.unlink()
     selected = {name: shutil.which(name, path=os.defpath) for name in dict.fromkeys(HOSTS + UTILITIES + LANGUAGE_UTILITIES)}
-    overrides = {'ed': str(ROOT / 'build/host-ed'),
+    overrides = {'uudecode': str(ROOT / 'build/host-uudecode'),
+                 'ed': str(ROOT / 'build/host-ed'),
                  'xargs': str(ROOT / 'build/host-xargs'),
                  'm4': str(ROOT / 'build/host-m4'),
                  'patch': str(ROOT / 'build/host-patch'),

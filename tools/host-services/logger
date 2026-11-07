@@ -1,0 +1,4 @@
+#!/bin/sh
+# util-linux defaults to suppressing errors when the local syslog socket is
+# absent. The selected profile must report failure when delivery is impossible.
+exec /usr/bin/logger --socket-errors=on "$@"
