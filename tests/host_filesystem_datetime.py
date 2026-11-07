@@ -74,9 +74,10 @@ def setup(directory, row):
             raise OSError('filesystem cannot represent authored datetime timestamps on the target inode')
         measured.append(dict(requested_ns=stamps, observed_ns=actual,
                              device=info.st_dev, inode=info.st_ino))
-    return dict(phase='armed', timezone=row['env']['TZ'], **spec,
-                probes=measured, before=before,
-                scope='private exact timestamps and fixed TZ; no DST, range or failure qualification')
+    return dict(phase='armed', timezone=row['env']['TZ'],
+                **dict(spec, scope=spec.get('scope',
+                    'private exact timestamps and fixed TZ; no DST, range or failure qualification')),
+                probes=measured, before=before)
 
 
 def verify(directory, environment):
