@@ -18,17 +18,17 @@ jobs:
     runs-on: ${{ matrix.os }}
     # Native macOS continued making progress in sanitizer runtime tests at
     # 45 minutes. Preserve per-case deadlines and budget the complete job.
-    timeout-minutes: ${{ matrix.os == 'macos-15' && 90 || 60 }}
+    timeout-minutes: ${{ matrix.timeout }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: ubuntu-24.04
             cc: gcc
-            timeout: 45
+            timeout: 60
           - os: macos-15
             cc: clang
-            timeout: 75
+            timeout: 90
     env:
       CC: ${{ matrix.cc }}
     steps:
@@ -105,11 +105,15 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential locales ed busybox bc m4
+          sudo apt-get install -y build-essential locales ed busybox bc m4 acl sharutils file pax libbsd-dev ncurses-bin libncurses-dev bsdextrautils gettext curl ca-certificates
           sudo localedef -i en_US -f UTF-8 en_US.UTF-8
       - name: Supply macOS profile
         if: runner.os == 'macOS'
-        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+        run: |
+          for package in coreutils findutils gettext; do
+            brew list "$package" >/dev/null 2>&1 || brew install "$package"
+          done
+          echo "$(brew --prefix gettext)/bin" >> "$GITHUB_PATH"
       - name: Qualify native language contracts
         run: |
           make -j2 test-host-languages

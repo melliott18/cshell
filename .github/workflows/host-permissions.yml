@@ -23,10 +23,14 @@ jobs:
           python-version: '3.11'
       - name: Linux dependencies
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y ed busybox acl libbsd-dev
+        run: sudo apt-get update && sudo apt-get install -y ed busybox acl libbsd-dev build-essential locales sharutils file pax ncurses-bin libncurses-dev bsdextrautils bc m4 gettext curl ca-certificates
       - name: Darwin dependencies
         if: runner.os == 'macOS'
-        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+        run: |
+          for package in coreutils findutils gettext; do
+            brew list "$package" >/dev/null 2>&1 || brew install "$package"
+          done
+          echo "$(brew --prefix gettext)/bin" >> "$GITHUB_PATH"
       - name: Supply exec-accessible disposable source tree
         run: |
           qualification=$(mktemp -d /tmp/cshell-permission.XXXXXX)

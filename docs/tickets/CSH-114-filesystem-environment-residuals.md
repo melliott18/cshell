@@ -6,7 +6,7 @@
 - Parent: None
 - Depends on: CSH-113
 - Branch: Assigned when work starts
-- Issue: Pending allocation
+- Issue: [#240](https://github.com/melliott18/cshell/issues/240)
 
 ## Goal
 

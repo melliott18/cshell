@@ -29,10 +29,14 @@ jobs:
           python-version: '3.11'
       - name: Linux providers
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y busybox ncurses-bin libncurses-dev bsdextrautils locales && sudo localedef -i en_US -f UTF-8 en_US.UTF-8
+        run: sudo apt-get update && sudo apt-get install -y busybox ncurses-bin libncurses-dev bsdextrautils locales build-essential ed acl sharutils file pax libbsd-dev bc m4 gettext curl ca-certificates && sudo localedef -i en_US -f UTF-8 en_US.UTF-8
       - name: macOS profile providers
         if: runner.os == 'macOS'
-        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+        run: |
+          for package in coreutils findutils gettext; do
+            brew list "$package" >/dev/null 2>&1 || brew install "$package"
+          done
+          echo "$(brew --prefix gettext)/bin" >> "$GITHUB_PATH"
       - name: Strict terminal and data-effect subsets
         run: make -j2 test-host-terminal-profile test-host-terminal-effects test-host-terminal-residuals test-host-terminal-harness
       - name: Isolated registered sessions

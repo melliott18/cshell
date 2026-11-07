@@ -6,7 +6,7 @@ RUN printf '#!/bin/sh\nexit 101\n' > /usr/sbin/policy-rc.d \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
        build-essential python3 at cron bsd-mailx exim4-daemon-light \
-       cups-daemon cups-client sharutils libbsd-dev busybox ed locales acl \
+       cups-daemon cups-client sharutils libbsd-dev busybox ed locales acl file pax ncurses-bin libncurses-dev bsdextrautils bc m4 gettext curl ca-certificates \
     && localedef -i fr_FR -f UTF-8 fr_FR.UTF-8 \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --create-home --uid 10001 cshell \
@@ -24,8 +24,11 @@ COPY src/ src/
 COPY tests/ tests/
 COPY tools/ tools/
 COPY docs/ docs/
-RUN make -j2 cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile \
-    && cc -std=c99 -Wall -Wextra -Werror -fPIC -shared -o build/tests/host_service_clock.so tests/host_service_clock.c -ldl \
+RUN chown -R cshell:cshell /work
+USER cshell
+RUN make -j2 cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
+USER root
+RUN cc -std=c99 -Wall -Wextra -Werror -fPIC -shared -o build/tests/host_service_clock.so tests/host_service_clock.c -ldl \
     && mkdir -p /work/build/host-services/bin \
     && cp tools/host-services/at tools/host-services/batch tools/host-services/logger build/host-services/bin/ \
     && chmod 755 build/host-services/bin/at build/host-services/bin/batch build/host-services/bin/logger \

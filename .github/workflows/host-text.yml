@@ -27,7 +27,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential binutils locales ed
+          sudo apt-get install -y build-essential binutils locales ed busybox acl sharutils file pax libbsd-dev ncurses-bin libncurses-dev bsdextrautils bc m4 gettext curl ca-certificates
           sudo localedef -i en_US -f UTF-8 en_US.UTF-8
       - name: Build and verify qualification harness
         run: make -j2 cshell test-host-inventory test-host-text-harness
@@ -57,7 +57,7 @@ jobs:
       - uses: actions/checkout@v6
       - name: Build selected Linux environment
         run: |
-          docker build -t cshell-text:ci .
+          docker build --target development -t cshell-text:ci .
           mkdir -p build/text-evidence
           chmod 777 build/text-evidence
           docker image inspect cshell-text:ci > build/text-evidence/image.json
@@ -102,11 +102,15 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential binutils locales ed busybox curl xz-utils lzip
+          sudo apt-get install -y build-essential binutils locales ed busybox curl xz-utils lzip acl sharutils file pax libbsd-dev ncurses-bin libncurses-dev bsdextrautils bc m4 gettext ca-certificates
           sudo localedef -i en_US -f UTF-8 en_US.UTF-8
       - name: Supply macOS profile dependencies
         if: runner.os == 'macOS'
-        run: brew install coreutils
+        run: |
+          for package in coreutils findutils gettext; do
+            brew list "$package" >/dev/null 2>&1 || brew install "$package"
+          done
+          echo "$(brew --prefix gettext)/bin" >> "$GITHUB_PATH"
       - name: Strict repaired audit
         run: make -j2 cshell test-host-inventory test-host-text-harness && make test-host-text-repaired
       - name: Attested short-I/O, interruption and allocation faults
@@ -138,7 +142,7 @@ jobs:
       - uses: actions/checkout@v6
       - name: Build pinned Linux providers
         run: |
-          docker build -t cshell-text:ci .
+          docker build --target development -t cshell-text:ci .
           docker build -f tools/host-profile/text/Dockerfile -t cshell-text-repaired:ci .
           mkdir -p build/text-repaired-evidence
           chmod 777 build/text-repaired-evidence

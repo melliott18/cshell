@@ -44,3 +44,7 @@
 # CSH-076 current profile accounting and evidence index.
 !docs/evidence/csh-076/
 !docs/evidence/csh-076/README.md
+
+# Shared accounting inputs required by the integrated qualification profiles.
+!docs/host-locale-catalogs.md
+!docs/tickets/allocations.json

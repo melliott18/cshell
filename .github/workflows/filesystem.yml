@@ -31,13 +31,14 @@ jobs:
           python-version: '3.11'
       - name: Supply Linux providers
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y build-essential ed busybox file pax
+        run: sudo apt-get update && sudo apt-get install -y build-essential ed busybox file pax locales acl sharutils libbsd-dev ncurses-bin libncurses-dev bsdextrautils bc m4 gettext curl ca-certificates
       - name: Supply macOS predicate providers
         if: runner.os == 'macOS'
         run: |
-          for package in coreutils findutils; do
+          for package in coreutils findutils gettext; do
             brew list "$package" >/dev/null 2>&1 || brew install "$package"
           done
+          echo "$(brew --prefix gettext)/bin" >> "$GITHUB_PATH"
       - name: Build selected profile and verify the harness
         run: make -j2 cshell host-profile test-host-inventory test-host-filesystem-allocation
       - name: Qualify the declared filesystem subset
