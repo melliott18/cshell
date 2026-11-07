@@ -526,7 +526,7 @@ build/host-ln: build/host-mkfifo
 	cp build/host-coreutils-build/src/ln $@
 
 host-profile: build/host-ln build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
-	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
+	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin $(if $(HOST_TEXT_PROVIDER_BIN),--text-bin "$(HOST_TEXT_PROVIDER_BIN)")
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
 	@mkdir -p $(@D)
@@ -535,6 +535,7 @@ build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/pr
 test-host-profile: test-host-filesystem-allocation test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 	$(PYTHON) tests/host_filesystem.py ./cshell --audit --provider-audit --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-profile.json $(HOST_FILESYSTEM_FLAGS) $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+	$(PYTHON) tests/host_text.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --boundaries $(HOST_TEXT_FLAGS) --record build/tests/host-text-results.json
 
 # Public entry point with only the command input read syscall instrumented.
 build/tests/command-read-input.o: src/input.c tests/command_read_faults.h $(INPUT_HEADERS)
@@ -686,6 +687,7 @@ test-host-inventory:
 	$(PYTHON) tests/host_contract_inventory.py
 	$(PYTHON) tests/test_host_contract_inventory.py
 	$(PYTHON) tests/test_host_filesystem.py
+	$(PYTHON) tests/host_text_contracts.py
 
 # CSH-072: independent direct-exec and public-runtime filesystem witnesses.
 .PHONY: test-host-filesystem test-host-filesystem-audit
@@ -905,3 +907,35 @@ build/tests/host_echo_interrupt: tests/host_formatted_interrupt.c tools/host-pro
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -DHOST_FORMATTED_ECHO -o $@ $< $(LDLIBS)
 
 test-host-formatted test-host-formatted-contracts test-host-formatted-sanitize: build/tests/host_printf_interrupt build/tests/host_echo_interrupt
+
+# Strict declared text/byte subset; audit adds still-unqualified provider contracts.
+.PHONY: test-host-text test-host-text-audit test-host-text-harness
+test-host-text: cshell
+	$(PYTHON) tests/host_text.py ./cshell --boundaries $(HOST_TEXT_FLAGS) --record build/tests/host-text-results.json
+
+test-host-text-audit: cshell
+	$(PYTHON) tests/host_text.py ./cshell --boundaries --audit $(HOST_TEXT_FLAGS) --record build/tests/host-text-audit.json
+
+test-host-text-harness:
+	$(PYTHON) -m unittest discover -s tests -p 'test_host_text.py'
+
+# Explicit opt-in network fetch/build; never changes the system PATH.
+.PHONY: host-text-providers test-host-text-repaired
+host-text-providers:
+	$(PYTHON) tools/host-profile/text/build.py
+
+test-host-text-repaired: cshell host-text-providers
+	$(MAKE) host-profile HOST_TEXT_PROVIDER_BIN="$(abspath build/text-providers/bin)"
+	$(PYTHON) tests/host_text.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --boundaries --audit $(HOST_TEXT_FLAGS) --record build/tests/host-text-repaired.json
+
+# Test-only provider interposition. Loader settings apply only after shell exec.
+.PHONY: test-host-text-faults test-host-text-native-capacity
+build/tests/host_text_faults.so: tests/host_text_faults.c
+	@mkdir -p $(@D)
+	$(CC) -std=c99 -Wall -Wextra -O2 -fPIC $(if $(filter Darwin,$(shell uname -s)),-dynamiclib,-shared) -o $@ $< $(if $(filter Linux,$(shell uname -s)),-ldl,)
+
+test-host-text-faults: cshell build/tests/host_text_faults.so
+	$(PYTHON) tests/host_text_faults.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --library build/tests/host_text_faults.so --record build/tests/host-text-faults.json
+
+test-host-text-native-capacity: cshell
+	$(PYTHON) tests/host_text_capacity.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --audit --record build/tests/host-text-native-capacity.json

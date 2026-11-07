@@ -1,0 +1,195 @@
+{
+  "implementation_commits": [
+    "708f9654ce9f4d031e13ad1556f9394bc0bfed44",
+    "cc6d43984edc4e97416c12be3fb97dc0e602bd29"
+  ],
+  "hosted_run": "https://github.com/melliott18/cshell/actions/runs/36644920521",
+  "macos15_hosted_status": "queued at evidence capture; no result claimed",
+  "final_subsets": [
+    {
+      "host": "macOS-14.8.7",
+      "totals": {
+        "pass": 726,
+        "fail": 0,
+        "unavailable": 8
+      },
+      "groups": {
+        "transformations": {
+          "pass": 68,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "offsets": {
+          "pass": 56,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "large-inputs": {
+          "pass": 48,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "interruptions": {
+          "pass": 22,
+          "fail": 0,
+          "unavailable": 0
+        }
+      },
+      "source_sha256": "1ce178c1b362706df81c2e17bc283f9b2a02c0fb3c884780e0e0fb7d61f48a82",
+      "current_source_mismatches": [],
+      "platform": "macOS-14.8.7-arm64-arm-64bit",
+      "binary_sha256": "1366988642c41424c2d0a1099e9deff76109f8af8d2f178628f271c17b825409",
+      "credentials": {
+        "uid": 501,
+        "euid": 501,
+        "gid": 20,
+        "egid": 20,
+        "groups": [
+          20,
+          101,
+          12,
+          61,
+          79,
+          80,
+          81,
+          98,
+          33,
+          100,
+          204,
+          250,
+          395,
+          398,
+          399,
+          400
+        ]
+      }
+    },
+    {
+      "host": "Ubuntu",
+      "totals": {
+        "pass": 732,
+        "fail": 0,
+        "unavailable": 2
+      },
+      "groups": {
+        "transformations": {
+          "pass": 68,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "offsets": {
+          "pass": 56,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "large-inputs": {
+          "pass": 48,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "interruptions": {
+          "pass": 22,
+          "fail": 0,
+          "unavailable": 0
+        }
+      },
+      "source_sha256": "1ce178c1b362706df81c2e17bc283f9b2a02c0fb3c884780e0e0fb7d61f48a82",
+      "current_source_mismatches": [],
+      "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+      "binary_sha256": "d882a1f1ce35bb5990f5a091b0d40bd6283edcbadaf4c04dfef2e32829e67ec2",
+      "credentials": {
+        "uid": 1001,
+        "euid": 1001,
+        "gid": 1001,
+        "egid": 1001,
+        "groups": [
+          4,
+          100,
+          118,
+          999,
+          1001
+        ]
+      }
+    },
+    {
+      "host": "Debian-Docker",
+      "totals": {
+        "pass": 734,
+        "fail": 0,
+        "unavailable": 0
+      },
+      "groups": {
+        "transformations": {
+          "pass": 68,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "offsets": {
+          "pass": 56,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "large-inputs": {
+          "pass": 48,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "interruptions": {
+          "pass": 22,
+          "fail": 0,
+          "unavailable": 0
+        }
+      },
+      "source_sha256": "1ce178c1b362706df81c2e17bc283f9b2a02c0fb3c884780e0e0fb7d61f48a82",
+      "current_source_mismatches": [],
+      "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.36",
+      "binary_sha256": "402640ee75cc879ebbcd00f2a0f909bef885afc1450f3a3551489945c6059976",
+      "credentials": {
+        "uid": 10001,
+        "euid": 10001,
+        "gid": 10001,
+        "egid": 10001,
+        "groups": [
+          10001
+        ]
+      }
+    }
+  ],
+  "files": {
+    "hosted-final/debian-audit.json.gz": "1081845cdd4b829193db13224a23578bd0b13dfc41fb4c2e4c83ab1b00f83f67",
+    "hosted-final/debian-audit.status.gz": "e90a5df1e4731c80807cd1158a710d9d52313a7930921de3488037d616dbf3ac",
+    "hosted-final/debian-image.json.gz": "7f4ec554354f7a6d9001d4443fd3cc8d32612293d791f01a21fd955c17032851",
+    "hosted-final/debian-subset.json.gz": "27b9fed3f5149e601489ef4bada2bf482fa6fa0876b30b4260e5ebebb0910c89",
+    "hosted-final/ubuntu-host-text-audit.json.gz": "5753e4def6d5752df8ce8d52e77a4fc890be7643873054f66610be47d2ebece3",
+    "hosted-final/ubuntu-host-text-audit.status.gz": "e90a5df1e4731c80807cd1158a710d9d52313a7930921de3488037d616dbf3ac",
+    "hosted-final/ubuntu-host-text-results.json.gz": "30dba8af3e69ad20567f137da81750ce2e3fb450f0c27cf1c84487cd54ece985",
+    "hosted-initial/debian-audit.json.gz": "1df5a48e281cb79b3679db106633ea45c6c2d1fa8e4e359c730df0fea0aec1b6",
+    "hosted-initial/debian-audit.status.gz": "e90a5df1e4731c80807cd1158a710d9d52313a7930921de3488037d616dbf3ac",
+    "hosted-initial/debian-image.json.gz": "89f0bf3db1983adad99bf87a8920fb1e8fd5977804f61c7143259870d53c36ac",
+    "hosted-initial/debian-subset.json.gz": "91ae530e13d188f61657dd0ecdb14e2068f11e210478f71dcfa5ad6f075eabaa",
+    "hosted-initial/ubuntu-host-text-audit.json.gz": "ae96c38a25b3e06129c42f03293e5d229b54e63cd5a97eac5211b7eda0f8b044",
+    "hosted-initial/ubuntu-host-text-audit.status.gz": "e90a5df1e4731c80807cd1158a710d9d52313a7930921de3488037d616dbf3ac",
+    "hosted-initial/ubuntu-host-text-results.json.gz": "c4eff5b4b09bec31a553a1f9f6f4874dde5752aafccf80350d2e6f650c0bb099",
+    "text-extension-ci-final.json.gz": "b2170abf8c030aee810bf4c7d4126f744ca3d9158e58414ac7620ac235610cce",
+    "text-extension-ci-initial.json.gz": "0ff33fabd50eb8aa74a6cc66f73fb159557fff61d6759f5fc8293c44ea565122",
+    "text-extension-docker-unavailable.log.gz": "89e5c045155cb5054829be5aa796c63ba4e4162420007653a538a67159c8cffa",
+    "text-extension-docker-unavailable.status": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "text-extension-exploratory.json.gz": "9e5babc58bf78b450366d650eb58490c40ed43a3819de1c310c2f34e13893efb",
+    "text-extension-harness-final.log.gz": "44dbd5573bdfa998f92b5c7e1871a0f3d1fe9e9541b207fa42d67caaf9c7e4c2",
+    "text-extension-harness-initial.log.gz": "85c04fe2dc97b408f9e6419c4ca01a623d7e6474279788b1d1ea985179e1d12f",
+    "text-extension-harness-signal-final.log.gz": "a0226d4953a182578e3f27c223555bde1e2fa87bd83bf775265b43e8fe45b32f",
+    "text-extension-harness.log.gz": "2f31a27cc8f1213fe41b9b20fc2cd3f70ac22a1598bddaf76199db0b53bbfc32",
+    "text-extension-native-audit.json.gz": "846b6451a42bcdf2b6dc41f985fd43f9998d56614eb8adfb3ac1c2765efbd046",
+    "text-extension-native-audit.log.gz": "0d0606d098adddb55ebf153ab3a50900046e9ef2b4e112995eca7687cb5b74cc",
+    "text-extension-native-audit.status": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "text-extension-native-final.json.gz": "9050c98033462be48811a4e8d3e38ff172f5f5c2dfd3b8088f6d674fed7e4565",
+    "text-extension-native-final.log.gz": "6988a50a06d52cbaa790fe50f05cb83ea1ca8cb82307087298ed10ead7317347",
+    "text-extension-native-final.status": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "text-extension-native-initial.json.gz": "83bffead20129edcbeb4d29d728bc5d68637247f268437d356e4e34f99158401",
+    "text-extension-native-initial.log.gz": "6988a50a06d52cbaa790fe50f05cb83ea1ca8cb82307087298ed10ead7317347",
+    "text-extension-native-signal-final.json.gz": "8b4ce39afc90d8b343b54ec61492c01333062e483c024ced01ff0bda426bd3c5",
+    "text-extension-native-signal-final.log.gz": "6988a50a06d52cbaa790fe50f05cb83ea1ca8cb82307087298ed10ead7317347",
+    "text-extension-native-signal-final.status": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "text-interruption-exploratory.json.gz": "c131b18e1889155c43768c90a46eccb99a3f4bee44bf0ce53cd71692a922601a"
+  }
+}

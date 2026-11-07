@@ -1,0 +1,220 @@
+{
+  "tested_commit": "4f3de8e84a47f2867638ae12e5c434885b562571",
+  "hosted_run": "https://github.com/melliott18/cshell/actions/runs/36672619639",
+  "macos15": "queued at capture; no result claimed",
+  "final_audits": [
+    {
+      "host": "macOS-14.8.7",
+      "totals": {
+        "pass": 784,
+        "fail": 0,
+        "unavailable": 8
+      },
+      "groups": {
+        "transformations": {
+          "pass": 68,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "offsets": {
+          "pass": 56,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "large-inputs": {
+          "pass": 48,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "interruptions": {
+          "pass": 22,
+          "fail": 0,
+          "unavailable": 0
+        }
+      },
+      "source_sha256": "f013da3761ce656e202d22793c9efb5ec008f18a8f610c08e1bbad3a9f606880",
+      "source_mismatches": [],
+      "binary_sha256": "1366988642c41424c2d0a1099e9deff76109f8af8d2f178628f271c17b825409"
+    },
+    {
+      "host": "Ubuntu",
+      "totals": {
+        "pass": 790,
+        "fail": 0,
+        "unavailable": 2
+      },
+      "groups": {
+        "transformations": {
+          "pass": 68,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "offsets": {
+          "pass": 56,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "large-inputs": {
+          "pass": 48,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "interruptions": {
+          "pass": 22,
+          "fail": 0,
+          "unavailable": 0
+        }
+      },
+      "source_sha256": "f013da3761ce656e202d22793c9efb5ec008f18a8f610c08e1bbad3a9f606880",
+      "source_mismatches": [],
+      "binary_sha256": "d882a1f1ce35bb5990f5a091b0d40bd6283edcbadaf4c04dfef2e32829e67ec2"
+    },
+    {
+      "host": "Debian",
+      "totals": {
+        "pass": 792,
+        "fail": 0,
+        "unavailable": 0
+      },
+      "groups": {
+        "transformations": {
+          "pass": 68,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "offsets": {
+          "pass": 56,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "large-inputs": {
+          "pass": 48,
+          "fail": 0,
+          "unavailable": 0
+        },
+        "interruptions": {
+          "pass": 22,
+          "fail": 0,
+          "unavailable": 0
+        }
+      },
+      "source_sha256": "f013da3761ce656e202d22793c9efb5ec008f18a8f610c08e1bbad3a9f606880",
+      "source_mismatches": [],
+      "binary_sha256": "402640ee75cc879ebbcd00f2a0f909bef885afc1450f3a3551489945c6059976"
+    }
+  ],
+  "files": {
+    "exploratory-build/coreutils-build-complete.log.gz": "261d5cba818ac6588145f68cd274616462c04fd658e9604cad0685c58c3acf2c",
+    "exploratory-build/coreutils-build.log.gz": "68dfde25c73e6a1ed641a58612bb818d91ca798741ba308bf80969b2b7f1db7c",
+    "exploratory-build/coreutils-configure.log.gz": "6eedb86bdef12d82f9d8e40e7f0d54cd76af3219ba5bfbdb2c5b43d33dbf6417",
+    "exploratory-build/ed-build.log.gz": "1d0734bc565f64123d5504de7807d758dc35833ad464103e91af621e022217b0",
+    "exploratory-build/ed-configure.log.gz": "4909415d75389e37117f7a4721ccfb1abf929d0e8f1e9991f865e743f864266f",
+    "exploratory-build/sed-build.log.gz": "5c944d7c8ee307171d00da769dc2f85b8ab55bfefbac92acb71fb231407fd98c",
+    "exploratory-build/sed-configure.log.gz": "67e802ec82e2149d5acf2cc4e2f3dc0d8f2aada50c81f70c319d38f9047cc041",
+    "hosted-final/debian/audit.json.gz": "a006ffc59c13b3203e0851100fe2711b5a42709bfec0890e773126756d98b921",
+    "hosted-final/debian/image.json.gz": "11c2912c079c1e467a3968cd36b6ecc706bf4042d58e928f810636e256f50487",
+    "hosted-final/debian/profile.json.gz": "b7c0a6a378b7fa59e57a22956bc39071cf0baa2005ddcfb1840df41cf9534004",
+    "hosted-final/debian/providers.json.gz": "452439146cd9d3e92c44109bb94b22795ce5b220ef50306cdd9db46ef1fc8c24",
+    "hosted-final/ubuntu/host-profile/manifest.json.gz": "90ba29dfde0ba994cd0b85a8fb2fd99b6017db17abdca6e50b05465e035fb7bf",
+    "hosted-final/ubuntu/tests/host-text-repaired.json.gz": "e58f3d8ba67c646bcc3ee1408b1d1a53f23150dacfcd37fff87d0017cba8e555",
+    "hosted-final/ubuntu/text-providers/manifest.json.gz": "d032a7beabc3208d726a370ac6f5451aa5940f9bb9e7cdefa5d601beec95043f",
+    "hosted-final/ubuntu/text-providers/sources-ovrv82kv/chimerautils-download.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "hosted-final/ubuntu/text-providers/sources-ovrv82kv/chimerautils-extract.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "hosted-final/ubuntu/text-providers/sources-ovrv82kv/coreutils-build.log.gz": "222d69c37e1594c3c2ff3e885e42d329199cdba15bb67648324343bb38acd60b",
+    "hosted-final/ubuntu/text-providers/sources-ovrv82kv/coreutils-configure.log.gz": "127bcd24cad4e6a61d62cd42eae147d89f171b47d929f5cfd402191460aa15b9",
+    "hosted-final/ubuntu/text-providers/sources-ovrv82kv/coreutils-download.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "hosted-final/ubuntu/text-providers/sources-ovrv82kv/coreutils-extract.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "hosted-final/ubuntu/text-providers/sources-ovrv82kv/ed-build.log.gz": "e78ccf0e406161baf7446fec7223c3ff09cd9aeff6b99f2d01495dbd73889565",
+    "hosted-final/ubuntu/text-providers/sources-ovrv82kv/ed-check.log.gz": "32d3db6e38e31c8920f0ff25c605f0bdfd1eaf0d2a39312f036f4f44eb5da429",
+    "hosted-final/ubuntu/text-providers/sources-ovrv82kv/ed-configure.log.gz": "4909415d75389e37117f7a4721ccfb1abf929d0e8f1e9991f865e743f864266f",
+    "hosted-final/ubuntu/text-providers/sources-ovrv82kv/ed-download.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "hosted-final/ubuntu/text-providers/sources-ovrv82kv/ed-extract.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "hosted-final/ubuntu/text-providers/sources-ovrv82kv/ed-patch.log.gz": "ae79ad1d40d06ad7259af23eb6c0f960e1df5241cd26e054e4a27a2d3cadc48e",
+    "hosted-final/ubuntu/text-providers/sources-ovrv82kv/sed-build.log.gz": "03461575a30704a3c0029e776a6dba6625cdbdf38fb546425ff871563aebf445",
+    "hosted-final/ubuntu/text-providers/sources-ovrv82kv/sed-configure.log.gz": "41ad745786119941f8deb8ad0452e7cc4861ac1a2d975c2e0871895733f2f9f9",
+    "hosted-final/ubuntu/text-providers/sources-ovrv82kv/sed-download.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "hosted-final/ubuntu/text-providers/sources-ovrv82kv/sed-extract.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "hosted-final/ubuntu/text-providers/sources-ovrv82kv/tail-build.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "hosted-initial/debian/audit.json.gz": "2fbbadd80b61b53bec39d3062a2a3655be4e9e8a74055e9bbda4c5cae2811dc3",
+    "hosted-initial/debian/image.json.gz": "65a2c6bf6d4c31096ee63fe124ae8e1377cdd498a0a40f7312c5da71a45543bf",
+    "hosted-initial/debian/profile.json.gz": "6fa115976ff39b722ff66de2dbb0a5d0405e608889b37bb03d222848a3dd2808",
+    "hosted-initial/debian/providers.json.gz": "627a35760b07e2be84ab755d63dada830f98aec7dd73293e0f24b6e4b29ade9e",
+    "hosted-initial/ubuntu/host-profile/manifest.json.gz": "aa50bbb40a2041183b682afd88d917f5db4445a3fe7b6335cfd714073f201d3e",
+    "hosted-initial/ubuntu/tests/host-text-repaired.json.gz": "4dfdb2f879d2fd1904cde36ce67cb75642823e01ad41a213669a688e5620dcbd",
+    "hosted-initial/ubuntu/text-providers/manifest.json.gz": "dd287e00dcdecdc277359674c77bdc6bd177d385d58b758056ba9d5b8c1f744d",
+    "hosted-initial/ubuntu/text-providers/sources-xtvnn6xd/chimerautils-download.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "hosted-initial/ubuntu/text-providers/sources-xtvnn6xd/chimerautils-extract.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "hosted-initial/ubuntu/text-providers/sources-xtvnn6xd/coreutils-build.log.gz": "d628cc26c1ff6481d5301d4352f1dec47747e7998408086917381d4b493d891b",
+    "hosted-initial/ubuntu/text-providers/sources-xtvnn6xd/coreutils-configure.log.gz": "d79bbf53cb8e0e7da6574bf627a3871d4c784b969bf41601af81e10c101c3196",
+    "hosted-initial/ubuntu/text-providers/sources-xtvnn6xd/coreutils-download.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "hosted-initial/ubuntu/text-providers/sources-xtvnn6xd/coreutils-extract.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "hosted-initial/ubuntu/text-providers/sources-xtvnn6xd/ed-build.log.gz": "73e1de5242b539fd6ade030676cbd9af4d4e521c0febc4057ef2240e7bc93a22",
+    "hosted-initial/ubuntu/text-providers/sources-xtvnn6xd/ed-check.log.gz": "f66a76c15bd24af4e9c17678c1f16de7047623d9931c91c05f504aae5390e320",
+    "hosted-initial/ubuntu/text-providers/sources-xtvnn6xd/ed-configure.log.gz": "4909415d75389e37117f7a4721ccfb1abf929d0e8f1e9991f865e743f864266f",
+    "hosted-initial/ubuntu/text-providers/sources-xtvnn6xd/ed-download.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "hosted-initial/ubuntu/text-providers/sources-xtvnn6xd/ed-extract.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "hosted-initial/ubuntu/text-providers/sources-xtvnn6xd/ed-patch.log.gz": "ae79ad1d40d06ad7259af23eb6c0f960e1df5241cd26e054e4a27a2d3cadc48e",
+    "hosted-initial/ubuntu/text-providers/sources-xtvnn6xd/sed-build.log.gz": "bff9369fa0f87122f0d46c0f2ae8c823395df1c5657a4fcefac0c76f789a0679",
+    "hosted-initial/ubuntu/text-providers/sources-xtvnn6xd/sed-configure.log.gz": "232ca4eb8485e98f541bbe1088fe4bb74e4b2724f9ba375daed9605d27d0dcf8",
+    "hosted-initial/ubuntu/text-providers/sources-xtvnn6xd/sed-download.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "hosted-initial/ubuntu/text-providers/sources-xtvnn6xd/sed-extract.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "hosted-initial/ubuntu/text-providers/sources-xtvnn6xd/tail-build.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "native-builds/sources-1qlwckf6/coreutils-build.log.gz": "dca4b60c2ecdddfc7a006691ea4d489dc5552525a983d740300fdd3b52930d8f",
+    "native-builds/sources-1qlwckf6/coreutils-configure.log.gz": "331491fe281bb462c20eb169264e86dd9a11dd3e18c4f459641b32c771e3926f",
+    "native-builds/sources-1qlwckf6/coreutils-extract.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "native-builds/sources-1qlwckf6/ed-build.log.gz": "40183d8a96c759d13ee05cdcde10d10f4bbe1e9ddaf2c9108e6541fef23ac419",
+    "native-builds/sources-1qlwckf6/ed-check.log.gz": "e6d43fad3bf6efd800f5c1ccd594a8efefd8443fddc77f664cf803b6625279f8",
+    "native-builds/sources-1qlwckf6/ed-configure.log.gz": "4909415d75389e37117f7a4721ccfb1abf929d0e8f1e9991f865e743f864266f",
+    "native-builds/sources-1qlwckf6/ed-extract.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "native-builds/sources-1qlwckf6/ed-patch.log.gz": "ae79ad1d40d06ad7259af23eb6c0f960e1df5241cd26e054e4a27a2d3cadc48e",
+    "native-builds/sources-1qlwckf6/sed-build.log.gz": "801f5e4c43197c11a5df1a45c64e4146afb5a14df9749c0bef13b0ae33163b45",
+    "native-builds/sources-1qlwckf6/sed-configure.log.gz": "67e802ec82e2149d5acf2cc4e2f3dc0d8f2aada50c81f70c319d38f9047cc041",
+    "native-builds/sources-1qlwckf6/sed-extract.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "native-builds/sources-iqr02mx0/coreutils-build.log.gz": "d90f69d13339742aca8214132a0429a097b803c0c6380bbece1921cc13378538",
+    "native-builds/sources-iqr02mx0/coreutils-configure.log.gz": "676d74660fe0341997d733c51da4f0de6b28077c08801bd5a05694047d6a2aff",
+    "native-builds/sources-iqr02mx0/coreutils-extract.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "native-builds/sources-iqr02mx0/ed-build.log.gz": "40183d8a96c759d13ee05cdcde10d10f4bbe1e9ddaf2c9108e6541fef23ac419",
+    "native-builds/sources-iqr02mx0/ed-check.log.gz": "e6d43fad3bf6efd800f5c1ccd594a8efefd8443fddc77f664cf803b6625279f8",
+    "native-builds/sources-iqr02mx0/ed-configure.log.gz": "4909415d75389e37117f7a4721ccfb1abf929d0e8f1e9991f865e743f864266f",
+    "native-builds/sources-iqr02mx0/ed-extract.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "native-builds/sources-iqr02mx0/ed-patch.log.gz": "ae79ad1d40d06ad7259af23eb6c0f960e1df5241cd26e054e4a27a2d3cadc48e",
+    "native-builds/sources-iqr02mx0/sed-build.log.gz": "01f0604926c385a1e459bb40161c694b0d11bae44036ec60f33c80bde527cdd7",
+    "native-builds/sources-iqr02mx0/sed-configure.log.gz": "67e802ec82e2149d5acf2cc4e2f3dc0d8f2aada50c81f70c319d38f9047cc041",
+    "native-builds/sources-iqr02mx0/sed-extract.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "native-builds/sources-zhgc92pv/coreutils-build.log.gz": "3b86d16f7db7342ca3a3183699ebe4eeb63e0e0c65679212813e8e94fd9bdbde",
+    "native-builds/sources-zhgc92pv/coreutils-configure.log.gz": "cf8f9593fc47311e873cb2afa680ae435615ca0ce0d34b12539dc74930a728dd",
+    "native-builds/sources-zhgc92pv/coreutils-extract.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "native-builds/sources-zhgc92pv/ed-build.log.gz": "40183d8a96c759d13ee05cdcde10d10f4bbe1e9ddaf2c9108e6541fef23ac419",
+    "native-builds/sources-zhgc92pv/ed-check.log.gz": "e6d43fad3bf6efd800f5c1ccd594a8efefd8443fddc77f664cf803b6625279f8",
+    "native-builds/sources-zhgc92pv/ed-configure.log.gz": "4909415d75389e37117f7a4721ccfb1abf929d0e8f1e9991f865e743f864266f",
+    "native-builds/sources-zhgc92pv/ed-extract.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "native-builds/sources-zhgc92pv/ed-patch.log.gz": "ae79ad1d40d06ad7259af23eb6c0f960e1df5241cd26e054e4a27a2d3cadc48e",
+    "native-builds/sources-zhgc92pv/sed-build.log.gz": "7e12c05f77b1030be44d3f442b309c886a5370e44243c39382d4e5d98fde1832",
+    "native-builds/sources-zhgc92pv/sed-configure.log.gz": "67e802ec82e2149d5acf2cc4e2f3dc0d8f2aada50c81f70c319d38f9047cc041",
+    "native-builds/sources-zhgc92pv/sed-extract.log.gz": "f1b651238a58fe290baec6c5e32f3bdb1943dd2bd582f02569231f7a757c7837",
+    "native-final/audit.json.gz": "569fad0d2f7674709ace43e70441d4ef634c0385f3f8dd54aa331da94cdca412",
+    "native-final/profile.json.gz": "cb1e4da2492a497503802a1777294eb2043e545aa9a7241c3d6eb29f6b938211",
+    "native-final/providers.json.gz": "0a265f812fc5ac3055eff4182d94065d5514396671d984e2273945d4f6a62cd3",
+    "text-provider-build-final.log.gz": "3e78dbd1783e3f19ab866270065928a8ad4f3e3831caa33345df277a96661711",
+    "text-provider-build.log.gz": "3e78dbd1783e3f19ab866270065928a8ad4f3e3831caa33345df277a96661711",
+    "text-provider-ci-final.json.gz": "4d0656dec441810ef67ff3aeb4bc9eee77d75f3b7f4f066174c90031a300823b",
+    "text-provider-ci-initial.json.gz": "c848e2825cb4cef2904229d56d80435510d049a4acfd15d0e0ca3b6022b80888",
+    "text-provider-ci-integrity.json.gz": "497bd90758e576b0525acaea11a51512513a09df14fdee7bf31e07ff51b679f8",
+    "text-provider-exploratory.json.gz": "67a68561ac7272cac416d1f804bd471ff838712b5803cf919532195464e32331",
+    "text-provider-exploratory.log.gz": "cfda8d58ac3d6b0825043bd38a93cb021c1c26bb4e1652d9db588194fa44a872",
+    "text-provider-harness-final.log.gz": "d840f028ab26297a35f6bbfb0c362ee695313ae0f8850008465970b5a3820566",
+    "text-provider-harness.log.gz": "9309b3eecc3144c2a2bde4d7da79ab03125158aa9629769b7a053ace5e83af8c",
+    "text-provider-native-final.log.gz": "530d96e5f50cec15bf1a2f5771fdd82727050c7c2c87aff2665e1303ef6268af",
+    "text-provider-native-profile.log.gz": "dcb11f53c9d9185e5529e23c991df5e4030c11b66ef9e4d828913bab1d7a01ee",
+    "text-provider-native-profile.status.gz": "20c148978dbd3180469fa3f43c2076f7a1f97fe430474622903cf1c2954751c0",
+    "text-provider-native-pty-cleanup.json.gz": "a624364646df05db70b532fd9997e44bdce4f80d926f8949abfc0c5492324b02",
+    "text-provider-native-pty-retry.log.gz": "11023b450c2b0d398148d673467b9112f4a97ecc8d13e0619d6300472a2c50f2",
+    "text-provider-native-pty-retry.status.gz": "e90a5df1e4731c80807cd1158a710d9d52313a7930921de3488037d616dbf3ac",
+    "text-provider-native-runtime-pty.log.gz": "c39fc58a13775393883075db68b990aad466cdd25d31e163b07865a67049cde7",
+    "text-provider-native-runtime-pty.status.gz": "20c148978dbd3180469fa3f43c2076f7a1f97fe430474622903cf1c2954751c0",
+    "text-provider-native-runtime.log.gz": "fa03b817751063665d074a8a9879651e66511f2f218780d73105a6aac3e34b1f",
+    "text-provider-native-runtime.status.gz": "9d5a1d1f7fb3d248f901f884a71e325f1cb0c035a4704d54b991b6029de1c8c7",
+    "text-provider-stock-pty-control.log.gz": "179127de364836fd34b53de5df592abb76d370fe81ded52febd891d547a9de9b",
+    "text-provider-stock-pty-control.status.gz": "e90a5df1e4731c80807cd1158a710d9d52313a7930921de3488037d616dbf3ac"
+  }
+}

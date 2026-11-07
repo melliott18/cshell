@@ -239,3 +239,13 @@ apply only to the opt-in provider. [CSH-079](tickets/CSH-079-formatted-output-re
 owns the six retained conditions and conditional allocation-helper prerequisite;
 the original historical limitation reasons remain unchanged. Darwin 1 MiB stack
 exec searches failed cleanup and are excluded from the selected profile.
+
+
+## CSH-073 text stream subset
+
+The [text/byte clause map](host-text-contracts.md) and
+[section ledger](../tests/host_text_contracts.json) add bounded assertions for all 25 CSH-073 utilities,
+sparse offsets, owned signal fixtures and explicitly supplied Linux ENOSPC.
+The strict provider audit retains failed contracts separately; no full utility
+page or common-default family is promoted. CSH-073 remains open for the listed
+residuals, with CSH-074 sharing the ed signal requirement.

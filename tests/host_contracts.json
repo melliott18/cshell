@@ -270,5 +270,8 @@
       "boundary": "Safe native/Linux thresholds own each child before exec and verify reap/PID disappearance. Ordinary Darwin low-stack calls are rejected before launch. Disposable hosted Darwin 24.6.0 passed four 8 MiB controls then failed at 1 MiB with SIGSEGV; every child was reaped and absent. Other low-stack configurations and original Darwin 23.6.0 stuck-exec/ps failures remain open.",
       "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
     }
+  },
+  "qualification_maps": {
+    "CSH-073": "tests/host_text_contracts.json"
   }
 }

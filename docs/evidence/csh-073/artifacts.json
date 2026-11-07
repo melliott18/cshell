@@ -1,0 +1,107 @@
+{
+  "base_commit": "60295934db1c971a2b3aac582f88b0f766eccce2",
+  "docker_image_before_handshake": "sha256:e013dce829cec2b11eb28e5203f15590cdc0a0b36919c1cce331c537425aadc5",
+  "docker_image_completion": "sha256:8a44f875cb1077650d43ca387a893d6076d53184af6e53bd6aaae8d4fbdcd006",
+  "docker_image_identity_source": "docker-build-completion.log.gz (subsequent inspect returned Docker API 500)",
+  "final_runs": [
+    {
+      "run": "native-text-completion",
+      "totals": {
+        "pass": 532,
+        "fail": 0,
+        "unavailable": 8
+      },
+      "source_sha256": "5c89602bc4cd1447e378c42bc8488087c2a4f0f4abc5ca31ace02bc08920f183",
+      "current_source_mismatches": [],
+      "platform": "macOS-14.8.7-arm64-arm-64bit",
+      "binary_sha256": "1366988642c41424c2d0a1099e9deff76109f8af8d2f178628f271c17b825409",
+      "utf8_locale": "en_US.UTF-8"
+    },
+    {
+      "run": "native-audit-completion",
+      "totals": {
+        "pass": 548,
+        "fail": 14,
+        "unavailable": 8
+      },
+      "source_sha256": "5c89602bc4cd1447e378c42bc8488087c2a4f0f4abc5ca31ace02bc08920f183",
+      "current_source_mismatches": [],
+      "platform": "macOS-14.8.7-arm64-arm-64bit",
+      "binary_sha256": "1366988642c41424c2d0a1099e9deff76109f8af8d2f178628f271c17b825409",
+      "utf8_locale": "en_US.UTF-8"
+    },
+    {
+      "run": "docker-text-completion",
+      "totals": {
+        "pass": 540,
+        "fail": 0,
+        "unavailable": 0
+      },
+      "source_sha256": "5c89602bc4cd1447e378c42bc8488087c2a4f0f4abc5ca31ace02bc08920f183",
+      "current_source_mismatches": [],
+      "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+      "binary_sha256": "01db4d7d05f8d91402df59d7bb90debaf3c03b7fdd88f5066316a0b16574175d",
+      "utf8_locale": "en_US.UTF-8"
+    },
+    {
+      "run": "docker-audit-completion",
+      "totals": {
+        "pass": 552,
+        "fail": 18,
+        "unavailable": 0
+      },
+      "source_sha256": "5c89602bc4cd1447e378c42bc8488087c2a4f0f4abc5ca31ace02bc08920f183",
+      "current_source_mismatches": [],
+      "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+      "binary_sha256": "01db4d7d05f8d91402df59d7bb90debaf3c03b7fdd88f5066316a0b16574175d",
+      "utf8_locale": "en_US.UTF-8"
+    }
+  ],
+  "files": {
+    "accounting-completion.log.gz": "4d51e9f13c3fa14fd3c135e81e68f9793e7158df48bbede1509593a3755cb67e",
+    "docker-accounting-completion.log.gz": "a8f913b56cde3218ee9df0fc52fe95eb5fd5712aff1d306d7b24703ad408dad5",
+    "docker-accounting-completion.status": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "docker-audit-completion.json.gz": "2524437b3599b55caa7e6880c6b4e160e4e7c203fa4e2117324005eaeb3fa2ad",
+    "docker-audit-completion.log.gz": "ef6c3cdb0b7a20855c662b2ee5047c6fa903c721b26900fd957720ca764d500f",
+    "docker-audit-completion.status": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "docker-build-completion.log.gz": "28aa69f5b5b74ea0a0eda97c8c62ac9e93660eaa01318d7cdafb47d2badd9daf",
+    "docker-build-final.log.gz": "9bd56bebdba082352184743e466351d005b04634701b73d6db957ba4cd3a1e28",
+    "docker-build-final.status": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "docker-profile-final.json.gz": "ca89addfda59d40b31d0215b6e409df317d25bfc1859d21be3818f7e13887128",
+    "docker-profile-final.log.gz": "465c644e6b3b6ba10886860b7777d9c7a3e80839172f1fe04d655594a213a601",
+    "docker-profile-final.status": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "docker-text-audit-final.json.gz": "7aab50da9d3e2653a584151a4f3bb2a3928002ac404b34f30d956f3a77f8c9a1",
+    "docker-text-audit-final.log.gz": "1682c7847a304cfd7db46b967059511078bd1b170360bca48929ba3a9ac92e30",
+    "docker-text-audit-final.status": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "docker-text-audit-initial.json.gz": "ec51c944fda732e22818853ea2c3d26a8a420e1c908204fa77fe1c6fed5712f1",
+    "docker-text-audit-initial.log.gz": "12b57543322cfd8160b9e2b761c2cdf2680a97944eaede2197a600c2325364d6",
+    "docker-text-completion.json.gz": "e1c027a2a175887966cec8559cf0b46f2db375083b4b386ececb79178217986d",
+    "docker-text-completion.log.gz": "bec467119a415c6bdffd36f28e68817654f610cb719245e8f20a3db0d51d73b7",
+    "docker-text-completion.status": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "docker-text-final.json.gz": "33763a260a8cc3682f4e91885c9d643a39104c9ad9f094f9c6fab66c64a3e936",
+    "native-audit-completion.json.gz": "67441ff635a9a51e91f4940e88db74d1948993bcce47dfbf1a6e41a0081098e8",
+    "native-audit-completion.log.gz": "28af9f6c3273e692232d2602b06c2ad4e27b149b58f583443c90296e80f4fcae",
+    "native-audit-completion.status": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "native-boundaries-completion.json.gz": "c1ecfd7a58ca2147fc0d1a75b634c0786254424393f3d6156dc475c331c0419f",
+    "native-boundaries-fixed.json.gz": "7ba8daaa3c62d0ebcec7a5ec87ea65603a2c62ff3c41c8cc010eba9f4ce53ef3",
+    "native-boundaries.json.gz": "ebad8f11be7d9e434776ceb78d92c8df88b8f736279391fcfd84baf1966f5a5e",
+    "native-profile-final.json.gz": "822030cadba5b507c75e14398ef29f4c15804df6502a94158490b8dcd8f6df88",
+    "native-profile-final.log.gz": "0d54a1c092a345b6b3914101d688a7cbabe7be62c9b0fe4da7d2f0fa50506956",
+    "native-text-audit-final.json.gz": "b68e6228c4496daa7ba93e0907bbc320859e10fd0e6dc70c9b2d9d3b8fd07af8",
+    "native-text-audit-final.log.gz": "d57734a107041578498c5ade3a8347342d6e9604d1791840983c7cc5926e1f35",
+    "native-text-audit-final.status": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "native-text-audit-initial.json.gz": "4e6dfd5ea4b014d6a3e658f4177e140d3a6f4896d7c949c7707e1d0edd5cc683",
+    "native-text-audit-initial.log.gz": "cdc64d8eea59160f440c3481e8bab928fb8416cf2697c29ec7ecf8ac8fc95a2e",
+    "native-text-completion.json.gz": "291652ae8798cc02542b92960ef53e3b4639aa93b3df7f3a1c1d37259ee5ecb3",
+    "native-text-completion.log.gz": "a85a815b75ab118e83676de1552499f89700ec514f7da06b5adcba22a1a07fca",
+    "native-text-completion.status": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "native-text-final.json.gz": "f4b9ed5c0a02e3dca7169816376358b7745cbd0cacd2a877cdb6c53c5c854e90",
+    "native-text-final.log.gz": "812b9d5621940f64716389a6e3dab8864144c585597fa504b6572d8e53b38868",
+    "native-text-final.status": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "native-text-initial.json.gz": "e9ae7f18fb155af96bb13e46fd2c2828391d369f0279cb7e8b5b1347fe21a7a4",
+    "native-text-initial.log.gz": "a23551879f42ad5728d6cc9dffcb17293852ebef700d39a329bbb08f1efe60be",
+    "native-text-prefinal.json.gz": "30e9543bdda92d062ed27edce2372ec539b4cef6d14c6c1923ca14e6c75768d0",
+    "native-text-qualified-final.log.gz": "a85a815b75ab118e83676de1552499f89700ec514f7da06b5adcba22a1a07fca",
+    "normative-sources.json": "7f16553c72e5d38ad10979784fb13a47780213ce8d479fd94bc8286530a5198a"
+  }
+}

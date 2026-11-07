@@ -503,3 +503,24 @@ apply only to the opt-in provider. [CSH-079](../../docs/tickets/CSH-079-formatte
 owns the six retained conditions and conditional allocation-helper prerequisite;
 the original historical limitation reasons remain unchanged. Darwin 1 MiB stack
 exec searches failed cleanup and are excluded from the selected profile.
+
+
+## CSH-073 text stream subset
+
+The [text/byte clause map](../../docs/host-text-contracts.md) and
+[section ledger](../../tests/host_text_contracts.json) add bounded assertions for all 25 CSH-073 utilities,
+sparse offsets, owned signal fixtures and explicitly supplied Linux ENOSPC.
+The strict provider audit retains failed contracts separately; no full utility
+page or common-default family is promoted. CSH-073 remains open for the listed
+residuals, with CSH-074 sharing the ed signal requirement.
+
+
+## CSH-073 pinned text repairs
+
+`make test-host-text-repaired` builds and selects the [pinned text providers](text/README.md)
+for the strict text audit. To select the same providers for the broader profile,
+run `make test-host-profile HOST_TEXT_PROVIDER_BIN="$PWD/build/text-providers/bin"`
+after `make host-text-providers`. Omitting the variable restores the original
+profile selection. Only declared symlinks in `build/host-profile/bin` change;
+stock PATH and system executables are unchanged. Download/source/compiler/patch
+and executable identities are retained in the build manifest and text results.

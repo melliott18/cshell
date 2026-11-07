@@ -71,6 +71,9 @@ make test-host-filesystem-cwd-logical # Inherited-PWD fallback after cwd rename/
 make test-host-formatted # Catalogs, format/resource regressions and exec thresholds
 make test-host-profile   # Opt-in qualified utilities, strict gaps and boundaries
 make test-host-filesystem-removal # rmdir parent graphs, permissions and continuation
+
+make test-host-text      # Strict bounded text/byte utility subset
+make test-host-text-audit # Required-contract audit (retains current provider failures)
 make test-evaluation # Evaluation, lookup, aliases, and remaining utilities
 make test-builtins # Replacement state builtins and executor integration
 make test-state-builtins # Clause-mapped runtime state and utility evidence

@@ -1,0 +1,11 @@
+--- a/main_loop.c
++++ b/main_loop.c
+@@ -817,7 +817,7 @@
+   status = setjmp( jmp_state );
+   if( status == 0 )			/* direct invocation of setjmp */
+     { enable_interrupts(); if( initial_error ) status = err_status = 1; }
+-  else { status = -1; fputs( "\n?\n", stdout ); set_error_msg( "Interrupt" );
++  else { status = -1; fputs( "?\n", stdout ); set_error_msg( "Interrupt" );
+          if( get_tmpname( false ) ) remove( get_tmpname( false ) ); }
+ 
+   while( true )

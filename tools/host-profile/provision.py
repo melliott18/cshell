@@ -15,7 +15,23 @@ from host_utility_cases import HOSTS
 from host_filesystem_cases import UTILITIES
 
 
-def provision(destination, gnu_bin=None):
+def text_overrides(text_bin, system):
+    manifest = json.loads((text_bin.parent / 'manifest.json').read_text())
+    expected = {'cat', 'head', 'cut', 'tsort', 'sed', 'ed', 'cmp'}
+    if system == 'Linux':
+        expected.add('tail')
+    if set(manifest['executables']) != expected or manifest['recipe']['system'] != system:
+        raise ValueError('Text provider manifest does not match this host')
+    overrides = {}
+    for name in expected:
+        candidate = text_bin / name
+        if hashlib.sha256(candidate.read_bytes()).hexdigest() != manifest['executables'][name]['sha256']:
+            raise ValueError('Text provider checksum mismatch: ' + name)
+        overrides[name] = str(candidate.resolve())
+    return overrides
+
+
+def provision(destination, gnu_bin=None, text_bin=None):
     selected = {name: shutil.which(name, path=os.defpath) for name in dict.fromkeys(HOSTS + UTILITIES)}
     overrides = {'ln': str(ROOT / 'build/host-ln'),
                  'mkdir': str(ROOT / 'build/host-mkdir'),
@@ -41,6 +57,8 @@ def provision(destination, gnu_bin=None):
             raise ValueError('Missing GNU du backend /usr/bin/du')
     else:
         raise ValueError('Only Darwin and Linux profiles are defined')
+    if text_bin:
+        overrides.update(text_overrides(text_bin, system))
     selected.update(overrides)
     for name, path in selected.items():
         if not path or not Path(path).is_file() or not os.access(path, os.X_OK):
@@ -113,8 +131,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('destination', type=Path)
     parser.add_argument('--gnu-bin', type=Path)
+    parser.add_argument('--text-bin', type=Path)
     args = parser.parse_args()
     try:
-        provision(args.destination, args.gnu_bin)
+        provision(args.destination, args.gnu_bin, args.text_bin)
     except ValueError as error:
         parser.error(str(error))
