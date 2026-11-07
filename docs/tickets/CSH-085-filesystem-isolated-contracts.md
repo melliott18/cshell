@@ -1,11 +1,11 @@
 # CSH-085: Supply remaining filesystem contracts and isolated environments
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-084
-- Branch: Assigned when work starts
+- Branch: test/CSH-085-filesystem-isolated-contracts
 - Issue: [#181](https://github.com/melliott18/cshell/issues/181)
 
 ## Goal
@@ -15,7 +15,7 @@ CSH-084. Selected utility/libc/platform vendors retain implementation ownership.
 Neither bounded passing examples nor unavailable environments qualify a whole
 utility page. Preserve CSH-072, CSH-080 and CSH-084 evidence and stock failures.
 
-## Individual remaining contracts
+## Original CSH-084 handoff contracts
 
 Each row includes U-034 direct exec accessibility and U-040 common defaults.
 The machine-readable ledger is `tests/host_filesystem_residuals.json`; the
@@ -59,10 +59,10 @@ remain retained. CSH-080's ordinary cases do not complete the residuals.
 
 ## Acceptance criteria
 
-- [ ] Supply every individual environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Preserve zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and timeout cleanup separately; distinguish libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the section map, current ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply every individual environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Preserve zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and timeout cleanup separately; distinguish libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the section map, current ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -76,3 +76,38 @@ Use only private disposable filesystems and credentials. Never fill the host
 volume or use protected mounts; `/dev/full` is not filesystem exhaustion.
 Privileged provisioning needs a separate isolated runner; prompt assertions
 must use automated owned PTYs.
+
+## Implementation and disposition
+
+CSH-085 adds 28 cases / 112 assertions for three independently supplied private
+environments: recursive `du` allocation graphs, matching/nonmatching numeric
+`file` magic samples, and representable subsecond `touch` timestamps. The full
+selected profile requires them, with no allowances. Linux selects a standalone exec launcher configuring GNU
+`du` in its documented POSIX mode, retaining the unchanged stock default-unit
+failure and both launcher/backend identities.
+Seven new harness regressions cover wrong/duplicate/missing accounting records,
+hard-link double counting, partial setup, timestamp precision, positive/negative
+magic oracles and timeouts with owned-process and fixture cleanup.
+
+The table above preserves the original handoff scope. The current
+[section map](../../tests/host_filesystem_contracts.json) and
+[residual ledger](../../tests/host_filesystem_residuals.json) identify exact
+assertions and narrowed remaining contracts. Every unsupplied contract and the
+four original conditions have explicit environment/reason/vendor ownership in
+[CSH-086](CSH-086-filesystem-unsupplied-contracts.md) ([#183](https://github.com/melliott18/cshell/issues/183)).
+This uses the acceptance criteria's individual-disposition alternative. No
+entire utility page, privileged filesystem, real ENOSPC/EIO, ACL, shared-extent,
+libc-internal fault or full locale repertoire is qualified.
+
+CSH-084 is implemented but unmerged. This branch is stacked on its exact head
+`5f30e232b5cb35b289939784e32350413811fa1b` and remains in review until integration.
+Native/Linux commands, provenance, stock failures and cleanup are retained in
+[CSH-085 evidence](../evidence/csh-085/README.md).
+
+Final native/macOS validation passes 1026 filesystem, 240 allocation and 1162
+host integration assertions, plus 112 focused CSH-085 assertions. Docker/Linux
+passes 1042 filesystem, 200 allocation and 1162 host integration assertions,
+plus the same 112 focused assertions and selected-PATH runtime/PTY checks.
+Both pass inventory and 31 filesystem harness tests. All fixture cleanup passes.
+Stock audits remain nonzero: native 52 failures, Linux 36 (including the four
+new du default-unit failures); stock extended audits retain 16/8 failures.

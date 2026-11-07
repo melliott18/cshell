@@ -280,3 +280,33 @@ denials, authored magic, opaque link bytes and stdout faults; see the
 contracts and their required environments now belong to
 [CSH-085](tickets/CSH-085-filesystem-isolated-contracts.md). No complete utility
 or common-default requirement is qualified by these bounded witnesses.
+
+CSH-085 adds 112 U-034/U-040 assertions for private recursive `du` accounting,
+numeric `file` magic and subsecond `touch` behavior, with direct exec and all
+three public input modes. [Evidence](evidence/csh-085/README.md) records separate
+platform results and retained stock failures. Every unsupplied contract and
+original condition remains explicitly open under
+[CSH-086](tickets/CSH-086-filesystem-unsupplied-contracts.md); no full utility
+page or profile is qualified.
+
+CSH-087 adds 68 U-034/U-040 filesystem assertions for multi-operand and recursive
+terminal decisions plus same-device directory replacement, with unchanged
+selected providers. [Native/Linux records](evidence/csh-087/README.md) preserve
+stock failures separately. [CSH-089](tickets/CSH-089-filesystem-environment-residuals.md)
+retains all unsupplied environments and four original conditions.
+
+## CSH-088 measured metadata and timestamp environments
+
+CSH-088 adds 64 U-034/U-040 assertions through direct exec and cshell string,
+file and stdin modes. Private lstat measurements check numeric ls listings
+for regular files, hard links, directories, FIFOs and symlinks. Authored sizes
+and independently read-back access/modification timestamps check sorting,
+C-locale ties and reversal. Exact nanosecond readback precedes find -newer
+comparisons before, equal to and after the reference, including -H/-L reference
+symlinks. Setup and cleanup failures are failures, never profile allowances.
+
+[CSH-088 evidence](evidence/csh-088/README.md) records both platforms and
+separate stock failures. [CSH-089](tickets/CSH-089-filesystem-environment-residuals.md)
+owns each remaining environment and all four original conditions. Whole
+utility contracts, non-C collation, live-clock age boundaries, mount/depth
+limits, ACLs, capacity exhaustion and libc-internal faults remain unqualified.
