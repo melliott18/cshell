@@ -1,11 +1,11 @@
 # CSH-094: Supply remaining filesystem environments after output-error qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-093
-- Branch: Assigned when work starts
+- Branch: `test/CSH-094-filesystem-environments`
 - Issue: [#199](https://github.com/melliott18/cshell/issues/199)
 
 ## Goal
@@ -56,10 +56,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -101,3 +101,30 @@ CSH-091 supplies 32 physical pwd assertions after renaming the current directory
 CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under independently proved child-only masks 027, 077 and 777. Explicit symbolic removal, sequential copies, conditional execute, existing-middle continuation and bounded mkdir -p graphs are covered. Transient permissions, further mode/graph combinations, ACL inheritance, identities, path limits and capacity exhaustion remain unqualified. All four retained conditions remain open.
 
 CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures. All four original U-040 conditions remain open.
+
+## Implementation and current dispositions
+
+CSH-094 supplies 48 external pwd assertions after leaf/parent rename/removal, with default options, -L and -P -L. The helper observes unchanged inherited PWD: absent for direct exec or naming the fixture root for shell modes, independently distinct from the cwd inode. It never sets or unsets PWD. Physical resolution or ENOENT is measured before exact provider exec. Valid logical symlink paths, arbitrary namespace races, inaccessible ancestors, path limits and allocation failures remain unqualified.
+
+These cases qualify only logical fallback when inherited PWD cannot identify the
+cwd. No application assignment/unset of PWD, valid logical symlink namespace,
+permission/path-limit, arbitrary race, allocation or I/O fault is supplied.
+The incoming table is historical scope. The current section map, ownership
+manifest and residual ledger assign every unsupplied contract and all four
+original conditions to [CSH-095](CSH-095-filesystem-environment-residuals.md)
+([#201](https://github.com/melliott18/cshell/issues/201)). Utility/libc/platform
+vendors retain implementation ownership. This uses the explicit-disposition
+acceptance alternative; no whole utility or U-034/U-040 completion is claimed.
+
+The branch is stacked on published CSH-093 commit
+`7f13aaba40a39ba9edf4a6dc518842539c0e0f00`. Integration is gated on that unmerged
+dependency. See [CSH-094 evidence](../evidence/csh-094/README.md) for independent
+oracles, native/Linux results, provenance, stock failures and reproduction.
+
+The complete required target set and focused logical-cwd target pass on native
+macOS UID 501 and Debian Linux Docker UID 10001: 1475/1515 selected filesystem
+assertions, 1162 host integration assertions, 10 ownership tests and 76 harness
+tests. Separate stock audits preserve exactly the CSH-093 failure IDs/modes:
+73/42 full-audit failures and 16/8 provider-audit failures. Every filesystem
+case reports successful cleanup, and final native/Linux source maps match.
+No sanitizer or hosted-CI qualification is claimed.

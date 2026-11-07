@@ -1,7 +1,7 @@
-"""CSH-091 physical pwd after private directory namespace changes.
+"""CSH-091 physical pwd and CSH-094 logical fallback after namespace changes.
 
-The helper changes only its own cwd. No PWD assignment or logical-mode claim:
-POSIX makes application changes to PWD unspecified. Both option forms end in -P.
+The helper changes only its own cwd, never PWD. Physical cases end in -P;
+logical cases prove inherited PWD cannot identify the changed cwd.
 """
 import json
 import os
@@ -13,15 +13,26 @@ MARKER = '.cwd-environment.json'
 
 
 def cases():
+    return _cases(False)
+
+
+def logical_cases():
+    """Inherited PWD is absent or names the fixture root, never the changed cwd."""
+    return _cases(True)
+
+
+def _cases(logical):
     for action in ('rename-leaf', 'rename-parent', 'delete-leaf', 'delete-parent'):
         deleted = action.startswith('delete')
-        for options in (['-P'], ['-L', '-P']):
+        for options in (([], ['-L'], ['-P', '-L']) if logical else (['-P'], ['-L', '-P'])):
             effects = {'cwd-parent/cwd-leaf': {'type': 'absent'},
                        'cwd-parent': {'type': 'absent' if action.endswith('parent') else 'directory'}}
             if not deleted:
                 effects['cwd-renamed' + ('/cwd-leaf' if action.endswith('parent') else '')] = {'type': 'directory'}
-            yield case('pwd', 'cwd-' + action + ('-last-P' if len(options) == 2 else '-P'),
-                       options, ticket='CSH-091', cwd_action=action,
+            suffix = '-default' if not options else '-last-' + options[-1][1:] if len(options) == 2 else options[0]
+            extra = dict(logical_fallback=True) if logical else {}
+            yield case('pwd', ('cwd-logical-' if logical else 'cwd-') + action + suffix,
+                       options, ticket='CSH-094' if logical else 'CSH-091', cwd_action=action, **extra,
                        out=b'' if deleted else 'cwd-renamed',
                        status='nonzero' if deleted else 0,
                        err='nonempty' if deleted else b'', effects=effects)
@@ -53,8 +64,21 @@ def verify(directory, row, provider):
              and isinstance(before, dict) and set(before) == {'device', 'inode'}
              and all(type(v) is int for v in before.values()) and before == after == row['cwd_identity']
              and type(marker.get('pid')) is int and marker['pid'] > 0
+             and type(marker.get('getcwd_errno')) is int
+             and type(marker.get('old_path_errno')) is int
              and marker.get('getcwd_errno') == (errno.ENOENT if deleted else 0)
              and marker.get('getcwd') == (None if deleted else expected_path(directory, action)))
+    if row.get('logical_fallback'):
+        pwd = marker.get('pwd')
+        root = directory.stat()
+        root_identity = dict(device=root.st_dev, inode=root.st_ino)
+        valid = (valid and marker.get('logical_fallback') is True
+                 and 'pwd' in marker and 'pwd_after' in marker and pwd == marker['pwd_after']
+                 and 'pwd_identity' in marker
+                 and ((pwd is None and marker['pwd_identity'] is None)
+                      or (isinstance(pwd, str) and pwd == str(directory.resolve())
+                          and marker['pwd_identity'] == root_identity
+                          and root_identity != before)))
     if not deleted:
         info = os.stat(expected_path(directory, action))
         valid = valid and before == dict(device=info.st_dev, inode=info.st_ino)

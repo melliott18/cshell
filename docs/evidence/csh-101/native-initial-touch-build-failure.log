@@ -1,0 +1,12 @@
+tar: Failed to set default locale
+printf '%s\n' >tzdir.h.out \
+		  '#ifndef TZDEFAULT' \
+		  '# define TZDEFAULT "/etc/localtime" /* default zone */' \
+		  '#endif' \
+		  '#ifndef TZDIR' \
+		  '# define TZDIR "/usr/share/zoneinfo" /* TZif directory */' \
+		  '#endif'
+mv tzdir.h.out tzdir.h
+cc  -Wno-format-extra-args -Wno-implicit-const-int-float-conversion -Wno-tautological-constant-out-of-range-compare -Wall -Wextra -std=c99 -O2   -o src/touch src/touch.o ../host-tzcode/localtime.o src/libver.a lib/libcoreutils.a   lib/libcoreutils.a  
+clang: error: no such file or directory: 'src/touch.o'
+make[1]: *** [src/touch] Error 1
