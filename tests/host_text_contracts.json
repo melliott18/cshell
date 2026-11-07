@@ -577,6 +577,9 @@
         "bytes": 11684
       },
       "cases": [
+        "expand/locale-wide-tab",
+        "expand/locale-combining-tab",
+        "expand/locale-wide-backspace",
         "expand/default",
         "expand/stops",
         "expand/backspace",
@@ -636,7 +639,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Default/explicit tab stops and backspace covered; multibyte column widths and I/O faults remain open."
+      "remaining_contracts": "UTF-8 wide and combining character tab alignment and wide-character backspace are supplied by the selected provider. Other locale widths and I/O faults remain open."
     },
     {
       "utility": "fold",
@@ -649,6 +652,10 @@
         "bytes": 14326
       },
       "cases": [
+        "fold/locale-wide-columns",
+        "fold/locale-combining-columns",
+        "fold/locale-bytes-whole-character",
+        "fold/locale-space-boundary",
         "fold/backspace-column",
         "fold/mib-byte-fold",
         "fold/default",
@@ -711,7 +718,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Default, byte, space, carriage return, backspace-column folding and a 1 MiB byte-fold input are covered. Multibyte widths, tab combinations and interruptions remain open."
+      "remaining_contracts": "UTF-8 wide and combining columns, whole-character byte mode and space boundaries are supplied. Other widths and interruptions remain open."
     },
     {
       "utility": "head",
@@ -1740,6 +1747,8 @@
         "bytes": 12836
       },
       "cases": [
+        "unexpand/locale-wide-tab",
+        "unexpand/locale-combining-tab",
         "unexpand/backspace-column",
         "unexpand/tab-stops-exhausted",
         "unexpand/existing-tabs",
@@ -1802,7 +1811,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Leading/all blanks, explicit/exhausted stops, backspace and preexisting tabs are covered. Multibyte widths and I/O faults remain open."
+      "remaining_contracts": "UTF-8 wide and combining character alignment with -a is supplied. Further tab/blank interactions and I/O faults remain open."
     },
     {
       "utility": "uniq",
@@ -1815,6 +1824,10 @@
         "bytes": 16090
       },
       "cases": [
+        "uniq/locale-skip-character",
+        "uniq/locale-combining-is-character",
+        "uniq/locale-skip-field-then-character",
+        "uniq/locale-skip-past-end",
         "uniq/counts",
         "uniq/combined-skips",
         "uniq/large-adjacent-run",
@@ -1880,7 +1893,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Adjacent/nonadjacent duplicates, -c/-d/-u, combined field/character skips, output file and a 200000-line duplicate run are covered. Multibyte characters and I/O faults remain open."
+      "remaining_contracts": "UTF-8 character skipping, combining characters, field-plus-character skipping and skips beyond end are supplied. Other locale blanks and I/O faults remain open."
     },
     {
       "utility": "wc",
@@ -1893,6 +1906,9 @@
         "bytes": 13468
       },
       "cases": [
+        "wc/locale-ascii-whitespace",
+        "wc/locale-ideographic-space",
+        "wc/locale-combining-word",
         "wc/eight-mib-byte-count",
         "wc/counts",
         "wc/bytes",
@@ -1955,7 +1971,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Default counts, newlines, totals, UTF-8 characters and 8 MiB byte count are covered. Further locale whitespace, word boundaries and I/O faults remain open."
+      "remaining_contracts": "ASCII whitespace, UTF-8 ideographic space and combining-character word/character counts are supplied. Other locale word boundaries and I/O faults remain open."
     }
   ],
   "coverage_groups": {

@@ -534,7 +534,7 @@ build/host-touch: build/host-cp tools/host-profile/build-touch.sh $(wildcard too
 
 # CSH-107: selected GNU creation utilities honor omitted-who copy assignment.
 build/host-mkdir: build/host-cp
-	$(MAKE) -C build/host-coreutils-build -j4 src/mkdir src/mkfifo > build/host-coreutils-build/creation.log 2>&1 || { cat build/host-coreutils-build/creation.log; exit 1; }
+	env -u MAKEFLAGS -u MFLAGS -u MAKEOVERRIDES $(MAKE) -C build/host-coreutils-build -j4 src/mkdir src/mkfifo > build/host-coreutils-build/creation.log 2>&1 || { cat build/host-coreutils-build/creation.log; exit 1; }
 	cp build/host-coreutils-build/src/mkdir $@
 
 build/host-mkfifo: build/host-mkdir
@@ -543,10 +543,15 @@ build/host-mkfifo: build/host-mkdir
 # CSH-110: pinned ln preserves a same-entry symbolic source under -fs.
 # Serialize after creation to avoid concurrent writes in the shared build tree.
 build/host-ln: build/host-mkfifo
-	$(MAKE) -C build/host-coreutils-build -j4 src/ln > build/host-coreutils-build/ln.log 2>&1 || { cat build/host-coreutils-build/ln.log; exit 1; }
+	env -u MAKEFLAGS -u MFLAGS -u MAKEOVERRIDES $(MAKE) -C build/host-coreutils-build -j4 src/ln > build/host-coreutils-build/ln.log 2>&1 || { cat build/host-coreutils-build/ln.log; exit 1; }
 	cp build/host-coreutils-build/src/ln $@
 
-host-profile: build/host-awk build/host-uudecode build/host-ed build/host-xargs build/host-m4 build/host-patch build/host-test build/host-chmod build/host-newgrp build/host-ln build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
+# Linux stock mv can report a declined interactive move as failure.
+build/host-mv: build/host-ln
+	env -u MAKEFLAGS -u MFLAGS -u MAKEOVERRIDES $(MAKE) -C build/host-coreutils-build -j4 src/mv > build/host-coreutils-build/mv.log 2>&1 || { cat build/host-coreutils-build/mv.log; exit 1; }
+	cp build/host-coreutils-build/src/mv $@
+
+host-profile: build/host-bc build/host-mv build/host-awk build/host-uudecode build/host-ed build/host-xargs build/host-m4 build/host-patch build/host-test build/host-chmod build/host-newgrp build/host-ln build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin --cc="$(CC)" --cppflags="$(CPPFLAGS)" --cflags="$(CFLAGS)" --ldflags="$(LDFLAGS)" --ldlibs="$(LDLIBS)" $(if $(HOST_TEXT_PROVIDER_BIN),--text-bin "$(HOST_TEXT_PROVIDER_BIN)")
 
 build/host-chmod: tools/host-profile/chmod.c
@@ -1172,3 +1177,7 @@ build/tests/host_formatted_alloc: tests/host_formatted_alloc_main.c tools/host-p
 .PHONY: test-host-formatted-allocator
 test-host-formatted-allocator: cshell build/tests/host_formatted_alloc build/tests/host_formatted_libc_alloc.dylib
 	$(PYTHON) tests/host_formatted_libc.py --provider --record build/tests/host-formatted-allocator.json
+
+# GNU bc with the POSIX empty return production retained in generated sources.
+build/host-bc: tools/host-profile/build_bc.py $(wildcard tools/host-profile/vendor/bc/*)
+	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" $(PYTHON) tools/host-profile/build_bc.py

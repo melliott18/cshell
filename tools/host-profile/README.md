@@ -776,3 +776,10 @@ caller attestation and child cleanup. The separate libc comparison still returns
 nonzero for its recorded allocator crashes. Normal, sanitizer and resource-helper
 GNU builds use separate directories so resource controls remain uninstrumented.
 See the [provider repair evidence](../../docs/evidence/host-contract-continuation-2026-11-07/provider-repairs/README.md).
+
+The profile now also builds GNU bc 1.08.2 from its retained source archive. Its
+local grammar patch accepts the POSIX empty `return()` form; generated parser
+sources are retained, so Bison is unnecessary for builds. Linux selects the
+pinned shared coreutils mv with declined-interactive success, preserving actual
+move failures. Vendor build subprocesses discard outer Make overrides so -B and
+-Werror cannot override their configured flags; instrumentation flags remain.

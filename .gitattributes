@@ -8,3 +8,5 @@ tools/host-profile/vendor/patch/cshell.patch whitespace=-space-before-tab,-blank
 # Preserve GNU Awk's upstream attribution and unified patch context verbatim.
 tools/host-profile/vendor/gawk/AUTHORS whitespace=-blank-at-eol
 tools/host-profile/vendor/gawk/cshell.patch whitespace=-space-before-tab,-blank-at-eol
+# Generated bc parser patch preserves upstream tabs and blank context.
+tools/host-profile/vendor/bc/cshell.patch whitespace=-space-before-tab,-blank-at-eol

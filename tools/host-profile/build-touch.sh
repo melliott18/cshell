@@ -1,6 +1,8 @@
 #!/bin/sh
 # Link the pinned GNU touch to pinned IANA conversion code. No system mutation.
 set -eu
+# Parent make command-line overrides must not replace configured vendor flags.
+unset MAKEFLAGS MFLAGS MAKEOVERRIDES
 root=$(pwd)
 source_dir="$root/build/host-tzcode"
 archive="$root/tools/host-profile/vendor/tzcode/tzcode2025b.tar.gz"

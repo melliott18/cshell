@@ -30,7 +30,8 @@ def test_provider(gnu_bin=None):
 
 def text_overrides(text_bin, system):
     manifest = json.loads((text_bin.parent / 'manifest.json').read_text())
-    expected = {'cat', 'head', 'cut', 'tsort', 'paste', 'sed', 'ed', 'cmp'}
+    expected = {'cat', 'head', 'cut', 'tsort', 'paste', 'sed', 'ed', 'cmp',
+                'expand', 'unexpand', 'fold', 'uniq', 'wc'}
     if system == 'Linux':
         expected.add('tail')
     if set(manifest['executables']) != expected or manifest['recipe']['system'] != system:
@@ -51,7 +52,8 @@ def provision(destination, gnu_bin=None, text_bin=None, catalog_bin=None, cc="cc
         if record.exists():
             record.unlink()
     selected = {name: shutil.which(name, path=os.defpath) for name in dict.fromkeys(HOSTS + UTILITIES + LANGUAGE_UTILITIES)}
-    overrides = {'awk': str(ROOT / 'build/host-awk'),
+    overrides = {'bc': str(ROOT / 'build/host-bc'),
+                 'awk': str(ROOT / 'build/host-awk'),
                  'uudecode': str(ROOT / 'build/host-uudecode'),
                  'ed': str(ROOT / 'build/host-ed'),
                  'xargs': str(ROOT / 'build/host-xargs'),
@@ -81,6 +83,7 @@ def provision(destination, gnu_bin=None, text_bin=None, catalog_bin=None, cc="cc
         overrides.update({name: shutil.which('g' + name, path=search)
                          for name in ('find', 'dd', 'expr')})
     elif system == 'Linux':
+        overrides['mv'] = str(ROOT / 'build/host-mv')
         overrides['kill'] = shutil.which('busybox', path=os.defpath)
         overrides['du'] = str(ROOT / 'build/host-du')
         if not os.access('/usr/bin/du', os.X_OK):

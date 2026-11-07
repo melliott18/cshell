@@ -267,3 +267,10 @@ used. Native and Debian language suites retain passing SIGINT/SIGHUP recovery
 and backing-store failures. The five retained CSH-073 capabilities remain
 supplied, but the 25 utility pages and common-default remainder still prevent
 whole-ticket acceptance. No additional ticket criterion is marked complete.
+
+## Coverage and CI continuation (2026-11-07)
+
+Added UTF-8 column-width, whole-character folding, uniq skip and whitespace
+contracts, with five additional pinned GNU text providers.
+The [coverage and CI review](../evidence/host-contract-continuation-2026-11-07/coverage-ci/README.md)
+records validation and remaining obligations. This ticket remains unaccepted.

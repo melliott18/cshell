@@ -191,3 +191,10 @@ The user has no disposable resettable Mac available. The historical low-stack
 reproduction remains unchecked, and the ticket remains blocked and unaccepted.
 See the [provider repair review](../evidence/host-contract-continuation-2026-11-07/provider-repairs/README.md)
 for final cross-platform checks and remaining obligations.
+
+## Coverage and CI continuation (2026-11-07)
+
+Added 70 precision, exponent, signed-zero, dynamic-field and integer-limit
+assertions. The unavailable disposable Mac still blocks low-stack reproduction.
+The [coverage and CI review](../evidence/host-contract-continuation-2026-11-07/coverage-ci/README.md)
+records validation and remaining obligations. This ticket remains unaccepted.

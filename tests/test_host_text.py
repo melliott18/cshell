@@ -275,7 +275,7 @@ class TextProviderIntegrityTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             bindir=Path(root)/'bin'; bindir.mkdir()
             metadata={'recipe':{'system':'Linux'},'executables':{}}
-            for name in ('cat','head','cut','tsort','paste','sed','ed','cmp','tail'):
+            for name in ('cat','head','cut','tsort','paste','sed','ed','cmp','tail','expand','unexpand','fold','uniq','wc'):
                 (bindir/name).write_bytes(b'original provider')
                 metadata['executables'][name]={'sha256':hashlib.sha256(b'original provider').hexdigest()}
             (Path(root)/'manifest.json').write_text(json.dumps(metadata))

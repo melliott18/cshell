@@ -191,3 +191,10 @@ status cases bring the native and Debian suites to 981 passing assertions.
 Full-page/common-default coverage remains incomplete, so this ticket is not
 accepted. See the [provider repair review](../evidence/host-contract-continuation-2026-11-07/provider-repairs/README.md)
 for source identities, sanitizer results, retained failures and remaining scope.
+
+## Coverage and CI continuation (2026-11-07)
+
+Added 27 grammar, arithmetic, scope, record/field and editor-state cases.
+The selected private bc repairs the POSIX empty return production.
+The [coverage and CI review](../evidence/host-contract-continuation-2026-11-07/coverage-ci/README.md)
+records validation and remaining obligations. This ticket remains unaccepted.

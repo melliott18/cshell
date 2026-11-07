@@ -27,9 +27,12 @@ def build(destination, jobs):
     destination = destination.resolve()
     destination.mkdir(parents=True, exist_ok=True)
     env = dict(os.environ, LC_ALL='C')
+    for name in ('MAKEFLAGS', 'MFLAGS', 'MAKEOVERRIDES'):
+        env.pop(name, None)
     compiler = shlex.split(env.get('CC', 'cc'))
     compiler_version = subprocess.check_output(compiler+['--version'],text=True,env=env)
-    expected = {'cat', 'head', 'cut', 'tsort', 'paste', 'sed', 'ed', 'cmp'} | ({'tail'} if system == 'Linux' else set())
+    expected = {'cat', 'head', 'cut', 'tsort', 'paste', 'sed', 'ed', 'cmp',
+                'expand', 'unexpand', 'fold', 'uniq', 'wc'} | ({'tail'} if system == 'Linux' else set())
     recipe = dict(system=system, machine=platform.machine(), release=platform.release(), sources=pins,
                   build_script=sha(__file__), patches={name:sha(HERE/name) for name in ('ed-sigint.patch','sed-getdelim.patch')},
                   compiler=compiler, compiler_version=compiler_version, environment={k:env.get(k) for k in
@@ -83,7 +86,7 @@ def build(destination, jobs):
     run(['make','check'],source['ed'],'ed-check')
     run(['./configure','--disable-nls'],source['diffutils'],'diffutils-configure')
     run(['make','-j'+str(jobs)],source['diffutils'],'diffutils-build')
-    products = {n:source['coreutils']/'src'/n for n in ('cat','head','cut','tsort','paste')}
+    products = {n:source['coreutils']/'src'/n for n in ('cat','head','cut','tsort','paste','expand','unexpand','fold','uniq','wc')}
     products['cmp'] = source['diffutils']/'src/cmp'
     products.update(sed=source['sed']/'sed/sed', ed=source['ed']/'ed')
     if system == 'Linux':

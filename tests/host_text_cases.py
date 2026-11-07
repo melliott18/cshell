@@ -24,6 +24,9 @@ def case(tool, name, args=(), data=b'', out=b'', status=0, err=b'', **kw):
 
 
 def cases(utf8=None, audit=False):
+    if audit:
+        from host_text_locale_cases import cases as locale_cases
+        yield from locale_cases(utf8)
     from host_text_completion_cases import cases as completion_cases
     yield from completion_cases(audit=audit)
     from host_text_extended import cases as extended_cases

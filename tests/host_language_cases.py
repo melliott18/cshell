@@ -12,6 +12,8 @@ BASE = 'https://pubs.opengroup.org/onlinepubs/9799919799/utilities/'
 
 
 def cases():
+    from host_language_coverage_cases import cases as coverage_cases
+    yield from coverage_cases()
     from host_language_completion_cases import cases as completion_cases
     yield from completion_cases()
     def case(utility, name, args=(), stdin=b'', out=b'', status=0, err=b'',

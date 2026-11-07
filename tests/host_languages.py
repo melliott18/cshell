@@ -234,7 +234,7 @@ def main():
                 limits={'case_seconds':5,'signal_seconds':7,'cleanup_seconds':1,'terminal_cleanup_seconds':5,'output_bytes':65536,
                         'child_resources':'smoke.child_limits; 1 MiB files, 64 descriptors, no core dumps'},
                 selection=args.case,multibyte_audit=args.multibyte_audit,ed_faults=({"path":str(args.ed_faults.resolve()),"sha256":sha(args.ed_faults)} if args.ed_faults else None),extended_sigint=not args.multibyte_audit,sanitizer=args.sanitizer,totals=counts,cases=records)
-    for utility in ('awk', 'm4', 'patch'):
+    for utility in ('awk', 'bc', 'm4', 'patch'):
         build_record=Path(__file__).resolve().parents[1]/('build/host-'+utility+'-build.json')
         if build_record.is_file() and tools[utility]['path']:
             identity=json.loads(build_record.read_text())

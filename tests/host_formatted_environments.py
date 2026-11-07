@@ -16,6 +16,27 @@ from host_formatted_failures import invocation, run_owned
 
 
 def conversion_cases():
+    # Optional floating conversions have authored expectations at precision and
+    # exponent boundaries. The L and dynamic-width forms are declared provider
+    # extensions; they must still be memory-safe and preserve exact bytes.
+    for name, argv, output in [
+        ('general exponent lower boundary', ['%.1g:%.1g:%.1G', '0.0001', '0.00001', '0.00001'], b'0.0001:1e-05:1E-05'),
+        ('general exponent upper boundary', ['%.3g:%.3g:%.3G', '999', '1000', '1000'], b'999:1e+03:1E+03'),
+        ('general zero precision', ['%.0g:%#.0g:%.0G:%#.0G', '1', '1', '1', '1'], b'1:1.:1:1.'),
+        ('signed zero exponent', ['%+.0e:%#.0E:% .0f', '-0', '0', '0'], b'-0e+00:0.E+00: 0'),
+        ('zero width sign padding', ['[%+08.2f][%-+08.2f]', '0', '0'], b'[+0000.00][+0.00   ]'),
+        ('long double zero forms', ['%.2Lf:%.2Le:%#.3Lg', '0', '0', '0'], b'0.00:0.00e+00:0.00'),
+        ('long double exponent boundaries', ['%.3Lg:%.3LG', '1000', '1000'], b'1e+03:1E+03'),
+        ('dynamic long double fields', ['[%*.*Lf]', '-8', '2', '1.25'], b'[1.25    ]'),
+        ('negative dynamic precision', ['[%.*f]', '-1', '1.25'], b'[1.250000]'),
+        ('dynamic zero precision integer', ['[%*.*d]', '5', '0', '0'], b'[     ]'),
+        ('dynamic binary precision', ['[%*.*b]', '-5', '3', r'a\000bc'], b'[a\0b  ]'),
+        ('literal after zero string precision', ['%.0s:%.0b:%%:%s', 'x', 'y', 'after'], b'::%:after'),
+        ('integer minimum precision padding', ['%+.21d', '-9223372036854775808'], b'-009223372036854775808'),
+        ('unsigned maximum hexadecimal', ['%#x:%#X:%#o', '18446744073709551615', '18446744073709551615', '18446744073709551615'], b'0xffffffffffffffff:0XFFFFFFFFFFFFFFFF:01777777777777777777777'),
+    ]:
+        yield dict(name='CSH-079 coverage ' + name, utility='printf', argv=argv,
+                   stdout=output, stderr=b'', status=0, env={})
     for name, argv, output in [
         ('selected long-double extension', ['%.2Lf:%+.1Le:%#.3Lg', '1.25', '2', '1'], b'1.25:+2.0e+00:1.00'),
         ('exact binary float rounding', ['%.0f:%.0f:%.2f:%.2f', '2.5', '3.5', '1.125', '1.375'], b'2:4:1.12:1.38'),
