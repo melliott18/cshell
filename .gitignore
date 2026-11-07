@@ -3,3 +3,6 @@
 .DS_Store
 __pycache__/
 *.pyc
+/test-results/
+/container-test-results/
+/cshell-test-results/

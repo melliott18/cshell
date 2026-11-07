@@ -1,0 +1,102 @@
+{
+  "host": "macOS-14.8.7-arm64-arm-64bit",
+  "docker_engine": {
+    "Platform": {
+      "Name": "Docker Desktop 4.25.2 (129061)"
+    },
+    "Components": [
+      {
+        "Name": "Engine",
+        "Version": "24.0.6",
+        "Details": {
+          "ApiVersion": "1.43",
+          "Arch": "arm64",
+          "BuildTime": "Mon Sep  4 12:31:36 2023",
+          "Experimental": "false",
+          "GitCommit": "1a79695",
+          "GoVersion": "go1.20.7",
+          "KernelVersion": "6.4.16-linuxkit",
+          "MinAPIVersion": "1.12",
+          "Os": "linux"
+        }
+      },
+      {
+        "Name": "containerd",
+        "Version": "1.6.22",
+        "Details": {
+          "GitCommit": "8165feabfdfe38c65b599c4993d227328c231fca"
+        }
+      },
+      {
+        "Name": "runc",
+        "Version": "1.1.8",
+        "Details": {
+          "GitCommit": "v1.1.8-0-g82f18fe"
+        }
+      },
+      {
+        "Name": "docker-init",
+        "Version": "0.19.0",
+        "Details": {
+          "GitCommit": "de40ad0"
+        }
+      }
+    ],
+    "Version": "24.0.6",
+    "ApiVersion": "1.43",
+    "MinAPIVersion": "1.12",
+    "GitCommit": "1a79695",
+    "GoVersion": "go1.20.7",
+    "Os": "linux",
+    "Arch": "arm64",
+    "KernelVersion": "6.4.16-linuxkit",
+    "BuildTime": "2023-09-04T12:31:36.000000000+00:00"
+  },
+  "images": [
+    {
+      "Id": "sha256:04541088f948d7ddda343af76d35bbe33476e042482a471d149ae4e1db09f98b",
+      "Architecture": "arm64",
+      "Os": "linux",
+      "Size": 99108853
+    },
+    {
+      "Id": "sha256:75a8839efe3a844a76f4cb799ac51831501d6c1b47279d81ce6d36a4fd154b9b",
+      "Architecture": "arm64",
+      "Os": "linux",
+      "Size": 475507464
+    }
+  ],
+  "container": {
+    "exit_code": 0,
+    "oom_killed": false,
+    "user": "10001:10001",
+    "limits": {
+      "NetworkMode": "none",
+      "Memory": 1073741824,
+      "NanoCpus": 2000000000,
+      "PidsLimit": 256,
+      "CapDrop": [
+        "ALL"
+      ],
+      "SecurityOpt": [
+        "no-new-privileges"
+      ]
+    }
+  },
+  "junit": [
+    {
+      "path": "junit.xml",
+      "sha256": "e1f0d000515fbe56c188a6af03c72383c8ecfeef3d01a8cd6200d7877abc1f20",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "runtime_checks": 9,
+  "native_harness_checks": 89,
+  "shell_sha256": "01db4d7d05f8d91402df59d7bb90debaf3c03b7fdd88f5066316a0b16574175d",
+  "test_runtime_binary_identical": true,
+  "pipeline_commit": "25a5a799443e340cde13bccf00ecbe797ff0d973",
+  "application_base": "ff736b7894b7ae992ca99ecd33d977cd2376a8e1"
+}

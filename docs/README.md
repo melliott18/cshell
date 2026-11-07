@@ -97,3 +97,5 @@ includes the bounded strict subset; `make test-host-catalog-contracts` also runs
 retained failing vendor reproducers. Full utility contracts remain open.
 
 - [Disposable host service profile](host-service-profile.md): native codecs and isolated scheduler, mail, logging, print and clock witnesses.
+
+- [Application containers and Pipeline](containers.md): image targets, reports, runtime checks, and registration handoff.

@@ -6,6 +6,8 @@ LDLIBS ?=
 PYTHON ?= python3
 DOCKER ?= docker
 DOCKER_IMAGE ?= cshell-test:local
+RUNTIME_IMAGE ?= cshell:local
+PIPELINE_IMAGE ?= cshell-pipeline-test:local
 TEST_BINARY ?= ./cshell
 TEST_SUITE ?= build/tests/runtime.json
 # Clear TEST_TARGET when testing an already available executable, e.g. /bin/sh.
@@ -333,7 +335,7 @@ test-harness:
 	$(PYTHON) -m unittest discover -s tests -p 'test_*harness.py' -v
 
 docker-build:
-	$(DOCKER) build --tag "$(DOCKER_IMAGE)" --build-arg "TEST_TARGET=$(TEST_TARGET)" .
+	$(DOCKER) build --target development --tag "$(DOCKER_IMAGE)" --build-arg "TEST_TARGET=$(TEST_TARGET)" .
 
 docker-test: docker-build
 	$(DOCKER) run --rm --init "$(DOCKER_IMAGE)" make test \
@@ -1092,3 +1094,14 @@ test-host-service-harness:
 docker-test-host-services:
 	docker build -f tools/host-services/Dockerfile -t cshell-services:local .
 	$(PYTHON) tools/host-services/run.py
+
+
+.PHONY: docker-runtime docker-runtime-test docker-pipeline-build
+docker-runtime:
+	$(DOCKER) build --target runtime --tag "$(RUNTIME_IMAGE)" .
+
+docker-runtime-test: docker-runtime
+	$(PYTHON) tests/container_runtime.py --docker "$(DOCKER)" --image "$(RUNTIME_IMAGE)"
+
+docker-pipeline-build:
+	$(DOCKER) build --target test --tag "$(PIPELINE_IMAGE)" .

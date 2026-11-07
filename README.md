@@ -7,7 +7,8 @@ POSIX language, not the C shell (`csh`) language.
 
 The current target is the [base shell profile](docs/posix.md#selected-profile).
 Native macOS and Linux and the documented Docker image are tested; this
-repository has no installation target yet. Build locally and run `./cshell`.
+repository has no native installation target yet. Build locally and run `./cshell`,
+or use the [application container and Pipeline guide](docs/containers.md).
 
 ## Build and run
 
@@ -41,6 +42,20 @@ See [Runtime behavior](docs/candidate-runtime.md) for the exact subset and statu
 make clean     # Remove the executable and generated build files
 make CC=clang  # Select a compiler
 ```
+
+## Application container
+
+```sh
+make docker-runtime
+docker run --rm -it cshell:local
+docker run --rm cshell:local -c 'printf "hello world\n"'
+make docker-runtime-test
+```
+
+The Dockerfile provides separate `test` and `runtime` targets for Pipeline. The
+[test contract](docs/containers.md#pipeline-test-contract) documents JUnit reports,
+resource limits, and application registration. Packaging prepares development
+testing; it does not establish production or POSIX qualification.
 
 ## Test
 
