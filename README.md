@@ -57,6 +57,7 @@ make test-expand   # Replacement value/field expansion, arithmetic, and quote AP
 make test-substitution # Integrated expansion, child ownership, and capture failures
 make test-fields   # IFS splitting, pathname expansion, and cleanup checks
 make test-options  # Invocation/set, option effects, and environment interactions
+make test-host-terminal-residuals # Strict residual terminal/locale/error witnesses
 make test-host-inventory # Complete utility and residual ownership consistency
 make test-host-utilities # Stock-host integration, identities and known gaps
 make test-host-terminal # Stock terminal-provider checks (strict failures retained)

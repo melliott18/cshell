@@ -409,6 +409,32 @@ reopens #99: its outer deadline expired after at least 448 successful fill
 iterations, with the last output received at 58.721 seconds. The specific cause
 of the elapsed time remains unconfirmed; the old acceptance does not cover this
 new failure, and the investigation proposes no runtime or deadline change.
+The [failure capture](evidence/csh-057-retention-diagnostics/README.md) adds
+per-child monotonic timestamps, read-only alarm observations and bounded macOS
+stack sampling while preserving the exact oracle and both deadlines. It does
+not disposition the recurrence or the newly recorded terminal-fault timeout. The
+[later hosted trace and budget repair](evidence/csh-057-retention-budget/README.md)
+measures 59.503 seconds of progressing run/reap work before the outer kill.
+Retention now has a finite 120-second aggregate budget, with all 619 children,
+exact assertions, same-manager reuse and five-second phase alarms preserved.
+This corrects the demonstrated budget mismatch. The subsequent
+[terminal isolation repair](evidence/csh-057-terminal-crash-notification/README.md)
+reproduces a five-second fault-fixture timeout caused by an inherited Mach
+crash receiver. Only the deliberate SIGQUIT test child clears that task port;
+exact signal/terminal assertions remain. A held-reply negative control and
+no-op mutation verify the fix. The historical receiver was not recorded, and
+#99 then remained at review pending integration and hosted validation. The
+[public PTY teardown repair](evidence/csh-057-pty-teardown/README.md) subsequently
+closes the master before reaping the killed leader and gives the unchanged
+32-cycle oracle a ten-second aggregate budget; the other 29 cases remain at
+five seconds. Both later hosted macOS jobs hit the 45-minute job limit while
+progressing, so that independent aggregate budget becomes 60 minutes.
+The [final hosted verification](evidence/csh-057-final-verification/README.md)
+passes the full PR workflow and the repaired cases in both macOS runs. PRs
+#167/#172/#173 are integrated at `57e8c40`, whose tree equals the tested head.
+CSH-057 is complete with same-ticket recurrence ownership. Seventeen separate
+exit-operand timeouts in the duplicate push job remain failures under reopened
+[CSH-054 / #90](tickets/CSH-054-signal-contract-gaps.md).
 
 <a id="csh-058"></a>
 

@@ -1,0 +1,12 @@
+--- a/tests/retention_trace.c
++++ b/tests/retention_trace.c
+@@ -109,6 +109,9 @@
+     pid_t child;
+     int number;
+     csh_retention_trace_event("fork+", 0);
++    /* Diagnostic-only cumulative cost: retain all real launches/assertions. */
++    struct timespec delay = {0, 100000000};
++    while (nanosleep(&delay, &delay) < 0 && errno == EINTR) {}
+     child = fork();
+     number = errno;
+     csh_retention_trace_event(child == 0 ? "fork-child" : "fork-parent", child);

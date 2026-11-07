@@ -1,0 +1,3 @@
+Final local observation after exact owned-PID SIGKILL requests; no successful teardown claimed:
+18538     1 18538 UE   /Users/mitchell/.codex/worktrees/csh-057-retention-diagnostics/cshell/build/tests/execute_faults --jobs-terminal
+99718     1 99718 UE   /Users/mitchell/.codex/worktrees/csh-057-retention-diagnostics/cshell/build/tests/signal_edges_helper probe 3

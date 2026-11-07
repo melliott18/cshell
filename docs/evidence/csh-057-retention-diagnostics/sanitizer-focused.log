@@ -1,0 +1,9 @@
+python3 tests/retention_diagnostics.py ./build/tests/jobs_lifecycle
+Suite: job-retention [module] candidate=/Users/mitchell/.codex/worktrees/csh-057-retention-diagnostics/cshell/build/tests/jobs_lifecycle
+PASS: CSH-057 bounded CHILD_MAX retention and eviction
+  retention diagnostics: /Users/mitchell/.codex/worktrees/csh-057-retention-diagnostics/cshell/build/retention-diagnostics/retention-7odlwenc
+Result: 1 passed, 0 failed, 0 skipped
+python3 tests/retention_trace_checks.py ./build/tests/jobs_lifecycle
+PASS: diagnostic stalled child: default alarm (expected failure retained)
+PASS: diagnostic stalled child: blocked alarm (expected failure retained)
+PASS: real macOS root and child stack capture

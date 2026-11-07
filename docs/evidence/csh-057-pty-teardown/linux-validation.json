@@ -1,0 +1,275 @@
+{
+  "base_commit": "0f80030053cfb4648e403da9b2ef1ec9cd236036",
+  "source_patch": "tested-source.patch",
+  "tested_source_sha256": {
+    ".github/workflows/tests.yml": "21fb8593ef00a66143077a246f8dd10a4c8db37b54f25fe3292ebb6af27e4cb9",
+    "Makefile": "52b42d07f5d93b5f14143d35beee8f009680d6dd5ca37e9fb1f48f18a199445d",
+    "tests/helpers/pty_candidate.py": "d6f8e4bb364c9fe0419fbe8ee06d81c7c437398d34e5cb60c5fdadc18fc6ca7e",
+    "tests/jobs_cases.py": "546336cf433371380559c7cf253ea974bddc2745099b6ac2072882c8f5a0cc82",
+    "tests/pty_harness.py": "77bd796e1d475143e153c44cf0e14fadbbb50f7b256f7f7c305d76a73a72f555",
+    "tests/test_cleanup_harness.py": "2dfa0188f0b2a525e2f482266ef903d82cd66c2f163acbc6064d87e4b797a652",
+    "tests/test_pty_harness.py": "b41897f6a2520f5a63d2c7cee8ab7f38f1284731eb9fcef7b419047170298fc4"
+  },
+  "source_review_against_final": {
+    ".github/workflows/tests.yml": {
+      "tested_sha256": "21fb8593ef00a66143077a246f8dd10a4c8db37b54f25fe3292ebb6af27e4cb9",
+      "current_sha256": "21fb8593ef00a66143077a246f8dd10a4c8db37b54f25fe3292ebb6af27e4cb9",
+      "byte_identical": true
+    },
+    "Makefile": {
+      "tested_sha256": "52b42d07f5d93b5f14143d35beee8f009680d6dd5ca37e9fb1f48f18a199445d",
+      "current_sha256": "52b42d07f5d93b5f14143d35beee8f009680d6dd5ca37e9fb1f48f18a199445d",
+      "byte_identical": true
+    },
+    "tests/helpers/pty_candidate.py": {
+      "tested_sha256": "d6f8e4bb364c9fe0419fbe8ee06d81c7c437398d34e5cb60c5fdadc18fc6ca7e",
+      "current_sha256": "d6f8e4bb364c9fe0419fbe8ee06d81c7c437398d34e5cb60c5fdadc18fc6ca7e",
+      "byte_identical": true
+    },
+    "tests/jobs_cases.py": {
+      "tested_sha256": "546336cf433371380559c7cf253ea974bddc2745099b6ac2072882c8f5a0cc82",
+      "current_sha256": "546336cf433371380559c7cf253ea974bddc2745099b6ac2072882c8f5a0cc82",
+      "byte_identical": true
+    },
+    "tests/pty_harness.py": {
+      "tested_sha256": "77bd796e1d475143e153c44cf0e14fadbbb50f7b256f7f7c305d76a73a72f555",
+      "current_sha256": "f0d11145482d4a76689f88879ff103766956deae68fa8ef54017829c660c9591",
+      "byte_identical": false,
+      "same_ast_except_top_level_import_order": true
+    },
+    "tests/test_cleanup_harness.py": {
+      "tested_sha256": "2dfa0188f0b2a525e2f482266ef903d82cd66c2f163acbc6064d87e4b797a652",
+      "current_sha256": "2dfa0188f0b2a525e2f482266ef903d82cd66c2f163acbc6064d87e4b797a652",
+      "byte_identical": true
+    },
+    "tests/test_pty_harness.py": {
+      "tested_sha256": "b41897f6a2520f5a63d2c7cee8ab7f38f1284731eb9fcef7b419047170298fc4",
+      "current_sha256": "34e545514b237675c1dee2be5ec79f3483d6c037841fb26dbb8005839995190f",
+      "byte_identical": false,
+      "same_ast_except_top_level_import_order": true
+    }
+  },
+  "source_review_note": "Post-validation edits only reorder select/signal imports and reword comments. Parsed Python ASTs match apart from top-level import ordering. Exact tested source is preserved by base plus tested-source.patch.",
+  "image": "sha256:8fabcf1f00260c857aedf1fd11ebd90b5b64b8cdd2e7a7e81ae3dc9dc7ba41df",
+  "base_image": "sha256:076245259ad6ce1afb53bbff9c5654786e08703c29964faae328668d3bbdf523",
+  "architecture": "arm64",
+  "platform": {
+    "uname": [
+      "Linux",
+      "60ac8460968b",
+      "6.4.16-linuxkit",
+      "#1 SMP PREEMPT Thu Nov 16 10:49:20 UTC 2023",
+      "aarch64",
+      ""
+    ],
+    "python": "3.11.2",
+    "compiler": "cc (Debian 12.2.0-14+deb12u1) 12.2.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n"
+  },
+  "docker_server_version": "24.0.6",
+  "runs": [
+    {
+      "name": "csh057-cleanup-review-normal",
+      "image": "sha256:8fabcf1f00260c857aedf1fd11ebd90b5b64b8cdd2e7a7e81ae3dc9dc7ba41df",
+      "command": [
+        "make",
+        "-j2",
+        "test-harness",
+        "test-jobs-pty"
+      ],
+      "environment": [
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      ],
+      "started_at": "2026-10-01T19:19:27.517770799Z",
+      "finished_at": "2026-10-01T19:19:43.094044334Z",
+      "exit_code": 0
+    },
+    {
+      "name": "csh057-cleanup-review-sanitized",
+      "image": "sha256:8fabcf1f00260c857aedf1fd11ebd90b5b64b8cdd2e7a7e81ae3dc9dc7ba41df",
+      "command": [
+        "/bin/sh",
+        "-c",
+        "make -j2 cshell build/tests/jobs-pty.json build/tests/execute_faults CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined' && python3 tests/smoke.py ./cshell --suite build/tests/jobs-pty.json --timeout 10 --case 'repeated background resumes preserve prompt and terminal' && python3 tests/smoke.py ./build/tests/execute_faults --suite tests/fixtures/jobs-fault-pty.json"
+      ],
+      "environment": [
+        "ASAN_OPTIONS=halt_on_error=1:detect_leaks=0",
+        "UBSAN_OPTIONS=halt_on_error=1",
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      ],
+      "started_at": "2026-10-01T19:19:27.517770757Z",
+      "finished_at": "2026-10-01T19:19:37.969894054Z",
+      "exit_code": 0
+    }
+  ],
+  "normal_results": {
+    "harness_passed": 95,
+    "harness_duration_seconds": 15.376,
+    "jobs_pty_passed": 30,
+    "notification_passed": 1,
+    "terminal_fault_passed": 1
+  },
+  "sanitized_results": {
+    "repeated_resume_passed": 1,
+    "terminal_fault_passed": 1,
+    "extra_no_pie_flags": false
+  },
+  "fixture_oracle_review": {
+    "base": "0f800300",
+    "case_count": 30,
+    "unchanged_oracle_excluding_timeout": true,
+    "cases": [
+      {
+        "name": "interactive ignored signals with monitor +m",
+        "timeout": 5,
+        "steps": 14
+      },
+      {
+        "name": "interactive ignored signals with monitor -m",
+        "timeout": 5,
+        "steps": 14
+      },
+      {
+        "name": "nested foreground startup and restoration",
+        "timeout": 5,
+        "steps": 9
+      },
+      {
+        "name": "nested background startup and restoration",
+        "timeout": 5,
+        "steps": 9
+      },
+      {
+        "name": "foreground Ctrl-C and restored terminal",
+        "timeout": 5,
+        "steps": 8
+      },
+      {
+        "name": "pipeline shares foreground group and Ctrl-C",
+        "timeout": 5,
+        "steps": 10
+      },
+      {
+        "name": "Ctrl-Z jobs bg fg Ctrl-C",
+        "timeout": 5,
+        "steps": 17
+      },
+      {
+        "name": "repeated background resumes preserve prompt and terminal",
+        "timeout": 10,
+        "steps": 419
+      },
+      {
+        "name": "pipeline stop resume group and wait",
+        "timeout": 5,
+        "steps": 13
+      },
+      {
+        "name": "stopped job modes saved and shell modes restored",
+        "timeout": 5,
+        "steps": 11
+      },
+      {
+        "name": "monitor transitions and unavailable jobs",
+        "timeout": 5,
+        "steps": 11
+      },
+      {
+        "name": "terminal descriptor survives redirection operands",
+        "timeout": 5,
+        "steps": 7
+      },
+      {
+        "name": "background terminal reader stops and fg can read",
+        "timeout": 5,
+        "steps": 11
+      },
+      {
+        "name": "stopped jobs survive monitor toggles",
+        "timeout": 5,
+        "steps": 13
+      },
+      {
+        "name": "current previous and ambiguous job operands",
+        "timeout": 5,
+        "steps": 16
+      },
+      {
+        "name": "background completion and wait status",
+        "timeout": 5,
+        "steps": 5
+      },
+      {
+        "name": "unmonitored job stays unmonitored after enabling monitor",
+        "timeout": 5,
+        "steps": 5
+      },
+      {
+        "name": "CSH-057 session leader reclaims initially foreign foreground",
+        "timeout": 5,
+        "steps": 9
+      },
+      {
+        "name": "CSH-057 SIGSTOP inside builtin then CONT",
+        "timeout": 5,
+        "steps": 9
+      },
+      {
+        "name": "CSH-057 SIGSTOP inside builtin leaves child stopped until fg",
+        "timeout": 5,
+        "steps": 9
+      },
+      {
+        "name": "CSH-057 background pipeline group membership",
+        "timeout": 5,
+        "steps": 5
+      },
+      {
+        "name": "CSH-057 background compound group membership",
+        "timeout": 5,
+        "steps": 5
+      },
+      {
+        "name": "CSH-057 TSTP retains ID then successful fg consumes it",
+        "timeout": 5,
+        "steps": 10
+      },
+      {
+        "name": "CSH-057 TTIN retains ID then successful fg consumes it",
+        "timeout": 5,
+        "steps": 10
+      },
+      {
+        "name": "CSH-057 TTOU retains ID then successful fg consumes it",
+        "timeout": 5,
+        "steps": 10
+      },
+      {
+        "name": "CSH-057 STOP retains ID then successful fg consumes it",
+        "timeout": 5,
+        "steps": 10
+      },
+      {
+        "name": "CSH-057 foreground compound discards pending commands on stop",
+        "timeout": 5,
+        "steps": 7
+      },
+      {
+        "name": "CSH-057 numeric stop-like exit still completes a compound",
+        "timeout": 5,
+        "steps": 4
+      },
+      {
+        "name": "CSH-057 suspension does not trigger errexit",
+        "timeout": 5,
+        "steps": 7
+      },
+      {
+        "name": "CSH-057 compound fg stop resume without replay",
+        "timeout": 5,
+        "steps": 17
+      }
+    ]
+  },
+  "unexpected_failures": [],
+  "scope": "Linux portability and fixture validation. Darwin-specific PTY exit behavior is validated separately on macOS; Linux success alone does not establish the platform mechanism."
+}

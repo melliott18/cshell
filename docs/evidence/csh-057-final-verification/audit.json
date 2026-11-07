@@ -1,0 +1,949 @@
+{
+  "head_sha": "48af5bc524795f3d12ae0ce7ec0cc8722e9cf38f",
+  "pr_merge_sha": "72190b7bf1f117bd11e9a063852e58dd62588698",
+  "head_tree": "490c2136fb7fdc6c9cc63f7f795fb2649f4faa3b",
+  "merge_tree": "490c2136fb7fdc6c9cc63f7f795fb2649f4faa3b",
+  "head_merge_changed_files": [],
+  "runs": [
+    {
+      "run_id": 36914086960,
+      "event": "pull_request",
+      "run_conclusion": "success",
+      "run_url": "https://github.com/melliott18/cshell/actions/runs/36914086960",
+      "jobs": [
+        {
+          "name": "Native (ubuntu-24.04, gcc)",
+          "id": 110543652473,
+          "conclusion": "success",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36914086960/job/110543652473"
+        },
+        {
+          "name": "Native (macos-15, clang)",
+          "id": 110543652615,
+          "conclusion": "success",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36914086960/job/110543652615"
+        },
+        {
+          "name": "Docker (Linux)",
+          "id": 110543653045,
+          "conclusion": "success",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36914086960/job/110543653045"
+        }
+      ],
+      "macos": {
+        "job_id": 110543652615,
+        "checkout_sha": "72190b7bf1f117bd11e9a063852e58dd62588698",
+        "started_at": "2026-10-01T19:24:56Z",
+        "completed_at": "2026-10-01T20:18:58Z",
+        "elapsed_seconds": 3242.0,
+        "checks": {
+          "mach": [
+            {
+              "line": 1404,
+              "timestamp": "2026-10-01T19:25:31.5264860Z",
+              "message": "crash notification isolation checks passed",
+              "step": "Test replacement APIs, cshell runtime, and selected behavior"
+            },
+            {
+              "line": 15607,
+              "timestamp": "2026-10-01T19:29:55.0422400Z",
+              "message": "crash notification isolation checks passed",
+              "step": "Check replacement modules and cshell runtime with ASan and UBSan"
+            }
+          ],
+          "retention": [
+            {
+              "line": 1398,
+              "timestamp": "2026-10-01T19:25:31.2805420Z",
+              "message": "PASS: CSH-057 bounded CHILD_MAX retention and eviction",
+              "step": "Test replacement APIs, cshell runtime, and selected behavior"
+            },
+            {
+              "line": 17982,
+              "timestamp": "2026-10-01T19:38:30.3094660Z",
+              "message": "PASS: CSH-057 bounded CHILD_MAX retention and eviction",
+              "step": "Check replacement modules and cshell runtime with ASan and UBSan"
+            }
+          ],
+          "repeated_resume": [
+            {
+              "line": 9938,
+              "timestamp": "2026-10-01T19:28:20.5539960Z",
+              "message": "PASS: repeated background resumes preserve prompt and terminal",
+              "step": "Test cshell terminal behavior and selected terminal suite"
+            },
+            {
+              "line": 15192,
+              "timestamp": "2026-10-01T19:29:13.8902620Z",
+              "message": "PASS: repeated background resumes preserve prompt and terminal",
+              "step": "Qualify host utilities and rerun runtime with selected PATH"
+            },
+            {
+              "line": 19356,
+              "timestamp": "2026-10-01T19:44:05.2807140Z",
+              "message": "PASS: repeated background resumes preserve prompt and terminal",
+              "step": "Check replacement modules and cshell runtime with ASan and UBSan"
+            }
+          ],
+          "terminal_fault": [
+            {
+              "line": 9964,
+              "timestamp": "2026-10-01T19:28:21.5554190Z",
+              "message": "PASS: process group and terminal handoff restoration failures",
+              "step": "Test cshell terminal behavior and selected terminal suite"
+            },
+            {
+              "line": 15218,
+              "timestamp": "2026-10-01T19:29:14.6893990Z",
+              "message": "PASS: process group and terminal handoff restoration failures",
+              "step": "Qualify host utilities and rerun runtime with selected PATH"
+            },
+            {
+              "line": 19401,
+              "timestamp": "2026-10-01T19:44:20.2627690Z",
+              "message": "PASS: process group and terminal handoff restoration failures",
+              "step": "Check replacement modules and cshell runtime with ASan and UBSan"
+            }
+          ],
+          "queued_output_cleanup_regression": [
+            {
+              "line": 15328,
+              "timestamp": "2026-10-01T19:29:27.4458000Z",
+              "message": "test_cleanup_reaps_a_killed_leader_with_unread_terminal_output (test_pty_harness.PtyHarnessTests.test_cleanup_reaps_a_killed_leader_with_unread_terminal_output) ... ok",
+              "step": "Test harness failure handling"
+            }
+          ],
+          "harness": [
+            {
+              "line": 15366,
+              "timestamp": "2026-10-01T19:29:39.3970770Z",
+              "message": "Ran 95 tests in 23.679s",
+              "step": "Test harness failure handling"
+            }
+          ],
+          "csh058": [
+            {
+              "line": 4261,
+              "timestamp": "2026-10-01T19:26:31.8524360Z",
+              "message": "CSH-058 signal edges passed (2464 cases)",
+              "step": "Test replacement APIs, cshell runtime, and selected behavior"
+            },
+            {
+              "line": 21839,
+              "timestamp": "2026-10-01T19:58:22.2361100Z",
+              "message": "CSH-058 signal edges passed (2464 cases)",
+              "step": "Check replacement modules and cshell runtime with ASan and UBSan"
+            }
+          ],
+          "csh054_positive_suite": [
+            {
+              "line": 4630,
+              "timestamp": "2026-10-01T19:26:37.5020730Z",
+              "message": "Result: 361 passed, 0 failed, 0 skipped",
+              "step": "Test replacement APIs, cshell runtime, and selected behavior"
+            },
+            {
+              "line": 22262,
+              "timestamp": "2026-10-01T20:02:47.1854040Z",
+              "message": "Result: 361 passed, 0 failed, 0 skipped",
+              "step": "Check replacement modules and cshell runtime with ASan and UBSan"
+            }
+          ]
+        },
+        "failed_cases": [],
+        "error_lines": [],
+        "failure_results": [],
+        "retention_artifacts": [
+          {
+            "member": "retention-diagnostics/retention-670b0aal/result.json",
+            "case": "CSH-057 bounded CHILD_MAX retention and eviction",
+            "duration_seconds": 79.47594954100009,
+            "case_failures": [],
+            "diagnostic_failures": [],
+            "watcher_cleanup_failures": [],
+            "trace_summary": {
+              "bytes": 489227,
+              "truncated": false,
+              "partial_final_record": false,
+              "errors": [],
+              "events": 5571,
+              "root_pid": 85346,
+              "root_finished": true,
+              "first_time_us": 840134498,
+              "last_time_us": 919110351,
+              "alarm_states": [
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "alarm_query_failures": 0
+            },
+            "expected_control_failure": false
+          },
+          {
+            "member": "retention-diagnostics-checks/retention-itnlh0c8/result.json",
+            "case": "diagnostic stalled child: blocked alarm",
+            "duration_seconds": 6.198626916999956,
+            "case_failures": [
+              "timeout after 6s (no output received; 0 bytes captured; process group killed)",
+              "status: expected 0, got -9"
+            ],
+            "diagnostic_failures": [],
+            "watcher_cleanup_failures": [],
+            "trace_summary": {
+              "bytes": 607,
+              "truncated": false,
+              "partial_final_record": false,
+              "errors": [],
+              "events": 7,
+              "root_pid": 72821,
+              "root_finished": false,
+              "first_time_us": 518186159,
+              "last_time_us": 518220447,
+              "alarm_states": [
+                [
+                  1,
+                  0,
+                  0
+                ]
+              ],
+              "alarm_query_failures": 0
+            },
+            "expected_control_failure": true
+          },
+          {
+            "member": "retention-diagnostics-checks/retention-m49lue6b/result.json",
+            "case": "diagnostic stalled child: default alarm",
+            "duration_seconds": 5.326536749999946,
+            "case_failures": [
+              "status: expected 0, got -14"
+            ],
+            "diagnostic_failures": [],
+            "watcher_cleanup_failures": [],
+            "trace_summary": {
+              "bytes": 607,
+              "truncated": false,
+              "partial_final_record": false,
+              "errors": [],
+              "events": 7,
+              "root_pid": 72538,
+              "root_finished": false,
+              "first_time_us": 512803396,
+              "last_time_us": 512836009,
+              "alarm_states": [
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "alarm_query_failures": 0
+            },
+            "expected_control_failure": true
+          }
+        ],
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-01T19:24:57Z",
+            "completed_at": "2026-10-01T19:24:58Z"
+          },
+          {
+            "name": "Run actions/checkout@v6",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-01T19:24:58Z",
+            "completed_at": "2026-10-01T19:25:01Z"
+          },
+          {
+            "name": "Run actions/setup-python@v6",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-01T19:25:01Z",
+            "completed_at": "2026-10-01T19:25:01Z"
+          },
+          {
+            "name": "Install Linux build dependencies",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 4,
+            "started_at": "2026-10-01T19:25:01Z",
+            "completed_at": "2026-10-01T19:25:01Z"
+          },
+          {
+            "name": "Install macOS profile dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-01T19:25:01Z",
+            "completed_at": "2026-10-01T19:25:05Z"
+          },
+          {
+            "name": "Build",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-01T19:25:05Z",
+            "completed_at": "2026-10-01T19:25:08Z"
+          },
+          {
+            "name": "Test replacement APIs, cshell runtime, and selected behavior",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-01T19:25:08Z",
+            "completed_at": "2026-10-01T19:28:19Z"
+          },
+          {
+            "name": "Test cshell terminal behavior and selected terminal suite",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-10-01T19:28:19Z",
+            "completed_at": "2026-10-01T19:28:22Z"
+          },
+          {
+            "name": "Qualify host utilities and rerun runtime with selected PATH",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-10-01T19:28:22Z",
+            "completed_at": "2026-10-01T19:29:15Z"
+          },
+          {
+            "name": "Test harness failure handling",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-10-01T19:29:15Z",
+            "completed_at": "2026-10-01T19:29:39Z"
+          },
+          {
+            "name": "Check replacement modules and cshell runtime with ASan and UBSan",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-10-01T19:29:39Z",
+            "completed_at": "2026-10-01T20:18:51Z"
+          },
+          {
+            "name": "Preserve retention timing and stack diagnostics",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-10-01T20:18:51Z",
+            "completed_at": "2026-10-01T20:18:53Z"
+          },
+          {
+            "name": "Post Run actions/setup-python@v6",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 23,
+            "started_at": "2026-10-01T20:18:53Z",
+            "completed_at": "2026-10-01T20:18:53Z"
+          },
+          {
+            "name": "Post Run actions/checkout@v6",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 24,
+            "started_at": "2026-10-01T20:18:53Z",
+            "completed_at": "2026-10-01T20:18:53Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25,
+            "started_at": "2026-10-01T20:18:53Z",
+            "completed_at": "2026-10-01T20:18:56Z"
+          }
+        ]
+      }
+    },
+    {
+      "run_id": 36914080409,
+      "event": "push",
+      "run_conclusion": "failure",
+      "run_url": "https://github.com/melliott18/cshell/actions/runs/36914080409",
+      "jobs": [
+        {
+          "name": "Native (ubuntu-24.04, gcc)",
+          "id": 110543631215,
+          "conclusion": "success",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36914080409/job/110543631215"
+        },
+        {
+          "name": "Docker (Linux)",
+          "id": 110543631266,
+          "conclusion": "success",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36914080409/job/110543631266"
+        },
+        {
+          "name": "Native (macos-15, clang)",
+          "id": 110543631273,
+          "conclusion": "failure",
+          "url": "https://github.com/melliott18/cshell/actions/runs/36914080409/job/110543631273"
+        }
+      ],
+      "macos": {
+        "job_id": 110543631273,
+        "checkout_sha": "48af5bc524795f3d12ae0ce7ec0cc8722e9cf38f",
+        "started_at": "2026-10-01T19:24:51Z",
+        "completed_at": "2026-10-01T20:08:58Z",
+        "elapsed_seconds": 2647.0,
+        "checks": {
+          "mach": [
+            {
+              "line": 1409,
+              "timestamp": "2026-10-01T19:25:34.0715220Z",
+              "message": "crash notification isolation checks passed",
+              "step": "Test replacement APIs, cshell runtime, and selected behavior"
+            },
+            {
+              "line": 15612,
+              "timestamp": "2026-10-01T19:31:02.0483650Z",
+              "message": "crash notification isolation checks passed",
+              "step": "Check replacement modules and cshell runtime with ASan and UBSan"
+            }
+          ],
+          "retention": [
+            {
+              "line": 1403,
+              "timestamp": "2026-10-01T19:25:33.7830450Z",
+              "message": "PASS: CSH-057 bounded CHILD_MAX retention and eviction",
+              "step": "Test replacement APIs, cshell runtime, and selected behavior"
+            },
+            {
+              "line": 18004,
+              "timestamp": "2026-10-01T19:40:52.1166120Z",
+              "message": "PASS: CSH-057 bounded CHILD_MAX retention and eviction",
+              "step": "Check replacement modules and cshell runtime with ASan and UBSan"
+            }
+          ],
+          "repeated_resume": [
+            {
+              "line": 9943,
+              "timestamp": "2026-10-01T19:28:50.9268270Z",
+              "message": "PASS: repeated background resumes preserve prompt and terminal",
+              "step": "Test cshell terminal behavior and selected terminal suite"
+            },
+            {
+              "line": 15197,
+              "timestamp": "2026-10-01T19:30:07.3454980Z",
+              "message": "PASS: repeated background resumes preserve prompt and terminal",
+              "step": "Qualify host utilities and rerun runtime with selected PATH"
+            },
+            {
+              "line": 19380,
+              "timestamp": "2026-10-01T19:47:15.3041370Z",
+              "message": "PASS: repeated background resumes preserve prompt and terminal",
+              "step": "Check replacement modules and cshell runtime with ASan and UBSan"
+            }
+          ],
+          "terminal_fault": [
+            {
+              "line": 9969,
+              "timestamp": "2026-10-01T19:28:52.2038060Z",
+              "message": "PASS: process group and terminal handoff restoration failures",
+              "step": "Test cshell terminal behavior and selected terminal suite"
+            },
+            {
+              "line": 15223,
+              "timestamp": "2026-10-01T19:30:08.4680450Z",
+              "message": "PASS: process group and terminal handoff restoration failures",
+              "step": "Qualify host utilities and rerun runtime with selected PATH"
+            },
+            {
+              "line": 19426,
+              "timestamp": "2026-10-01T19:47:32.7903760Z",
+              "message": "PASS: process group and terminal handoff restoration failures",
+              "step": "Check replacement modules and cshell runtime with ASan and UBSan"
+            }
+          ],
+          "queued_output_cleanup_regression": [
+            {
+              "line": 15333,
+              "timestamp": "2026-10-01T19:30:26.4814130Z",
+              "message": "test_cleanup_reaps_a_killed_leader_with_unread_terminal_output (test_pty_harness.PtyHarnessTests.test_cleanup_reaps_a_killed_leader_with_unread_terminal_output) ... ok",
+              "step": "Test harness failure handling"
+            }
+          ],
+          "harness": [
+            {
+              "line": 15371,
+              "timestamp": "2026-10-01T19:30:39.2155180Z",
+              "message": "Ran 95 tests in 28.813s",
+              "step": "Test harness failure handling"
+            }
+          ],
+          "csh058": [
+            {
+              "line": 4266,
+              "timestamp": "2026-10-01T19:26:42.4012970Z",
+              "message": "CSH-058 signal edges passed (2464 cases)",
+              "step": "Test replacement APIs, cshell runtime, and selected behavior"
+            },
+            {
+              "line": 21844,
+              "timestamp": "2026-10-01T20:01:28.0570060Z",
+              "message": "CSH-058 signal edges passed (2464 cases)",
+              "step": "Check replacement modules and cshell runtime with ASan and UBSan"
+            }
+          ],
+          "csh054_positive_suite": [
+            {
+              "line": 4635,
+              "timestamp": "2026-10-01T19:26:48.4794480Z",
+              "message": "Result: 361 passed, 0 failed, 0 skipped",
+              "step": "Test replacement APIs, cshell runtime, and selected behavior"
+            }
+          ]
+        },
+        "failed_cases": [
+          {
+            "line": 21958,
+            "timestamp": "2026-10-01T20:02:16.5363090Z",
+            "message": "FAIL: signal contracts: exit operands 0 through 15 (string)",
+            "details": [
+              "2026-10-01T20:02:16.5368200Z   timeout after 5s (last output at 4.704s; no output for 0.306s; 32 bytes captured; process group killed)",
+              "2026-10-01T20:02:16.5472980Z   status: expected 0, got -9",
+              "2026-10-01T20:02:16.5578130Z   stdout: expected b'0\\n1\\n2\\n3\\n4\\n5\\n6\\n7\\n8\\n9\\n10\\n11\\n12\\n13\\n14\\n15\\n' (38 bytes), got b'0\\n1\\n2\\n3\\n4\\n5\\n6\\n7\\n8\\n9\\n10\\n11\\n12\\n13\\n' (32 captured bytes)"
+            ]
+          },
+          {
+            "line": 21962,
+            "timestamp": "2026-10-01T20:02:21.6338050Z",
+            "message": "FAIL: signal contracts: exit operands 0 through 15 (file)",
+            "details": [
+              "2026-10-01T20:02:21.6493980Z   timeout after 5s (last output at 4.948s; no output for 0.053s; 32 bytes captured; process group killed)",
+              "2026-10-01T20:02:21.6615250Z   status: expected 0, got -9",
+              "2026-10-01T20:02:21.6891290Z   stdout: expected b'0\\n1\\n2\\n3\\n4\\n5\\n6\\n7\\n8\\n9\\n10\\n11\\n12\\n13\\n14\\n15\\n' (38 bytes), got b'0\\n1\\n2\\n3\\n4\\n5\\n6\\n7\\n8\\n9\\n10\\n11\\n12\\n13\\n' (32 captured bytes)"
+            ]
+          },
+          {
+            "line": 21967,
+            "timestamp": "2026-10-01T20:02:31.5785180Z",
+            "message": "FAIL: signal contracts: exit operands 16 through 31 (string)",
+            "details": [
+              "2026-10-01T20:02:31.5875050Z   timeout after 5s (last output at 4.693s; no output for 0.308s; 42 bytes captured; process group killed)",
+              "2026-10-01T20:02:31.5978900Z   status: expected 0, got -9",
+              "2026-10-01T20:02:31.6095270Z   stdout: expected b'16\\n17\\n18\\n19\\n20\\n21\\n22\\n23\\n24\\n25\\n26\\n27\\n28\\n29\\n30\\n31\\n' (48 bytes), got b'16\\n17\\n18\\n19\\n20\\n21\\n22\\n23\\n24\\n25\\n26\\n27\\n28\\n29\\n' (42 captured bytes)"
+            ]
+          },
+          {
+            "line": 21971,
+            "timestamp": "2026-10-01T20:02:36.8218920Z",
+            "message": "FAIL: signal contracts: exit operands 16 through 31 (file)",
+            "details": [
+              "2026-10-01T20:02:36.8321260Z   timeout after 5s (last output at 4.983s; no output for 0.019s; 45 bytes captured; process group killed)",
+              "2026-10-01T20:02:36.8423280Z   status: expected 0, got -9",
+              "2026-10-01T20:02:36.8527020Z   stdout: expected b'16\\n17\\n18\\n19\\n20\\n21\\n22\\n23\\n24\\n25\\n26\\n27\\n28\\n29\\n30\\n31\\n' (48 bytes), got b'16\\n17\\n18\\n19\\n20\\n21\\n22\\n23\\n24\\n25\\n26\\n27\\n28\\n29\\n30\\n' (45 captured bytes)"
+            ]
+          },
+          {
+            "line": 21975,
+            "timestamp": "2026-10-01T20:02:41.9587420Z",
+            "message": "FAIL: signal contracts: exit operands 16 through 31 (stdin)",
+            "details": [
+              "2026-10-01T20:02:41.9693710Z   timeout after 5s (last output at 4.614s; no output for 0.397s; 30 bytes captured; process group killed)",
+              "2026-10-01T20:02:41.9777130Z   status: expected 0, got -9",
+              "2026-10-01T20:02:41.9803710Z   stdout: expected b'16\\n17\\n18\\n19\\n20\\n21\\n22\\n23\\n24\\n25\\n26\\n27\\n28\\n29\\n30\\n31\\n' (48 bytes), got b'16\\n17\\n18\\n19\\n20\\n21\\n22\\n23\\n24\\n25\\n' (30 captured bytes)"
+            ]
+          },
+          {
+            "line": 21979,
+            "timestamp": "2026-10-01T20:02:47.2140000Z",
+            "message": "FAIL: signal contracts: exit operands 32 through 47 (string)",
+            "details": [
+              "2026-10-01T20:02:47.2244120Z   timeout after 5s (last output at 4.572s; no output for 0.436s; 33 bytes captured; process group killed)",
+              "2026-10-01T20:02:47.2350540Z   status: expected 0, got -9",
+              "2026-10-01T20:02:47.2455300Z   stdout: expected b'32\\n33\\n34\\n35\\n36\\n37\\n38\\n39\\n40\\n41\\n42\\n43\\n44\\n45\\n46\\n47\\n' (48 bytes), got b'32\\n33\\n34\\n35\\n36\\n37\\n38\\n39\\n40\\n41\\n42\\n' (33 captured bytes)"
+            ]
+          },
+          {
+            "line": 21983,
+            "timestamp": "2026-10-01T20:02:52.4415620Z",
+            "message": "FAIL: signal contracts: exit operands 32 through 47 (file)",
+            "details": [
+              "2026-10-01T20:02:52.4563800Z   timeout after 5s (last output at 4.575s; no output for 0.427s; 33 bytes captured; process group killed)",
+              "2026-10-01T20:02:52.5261130Z   status: expected 0, got -9",
+              "2026-10-01T20:02:52.5419040Z   stdout: expected b'32\\n33\\n34\\n35\\n36\\n37\\n38\\n39\\n40\\n41\\n42\\n43\\n44\\n45\\n46\\n47\\n' (48 bytes), got b'32\\n33\\n34\\n35\\n36\\n37\\n38\\n39\\n40\\n41\\n42\\n' (33 captured bytes)"
+            ]
+          },
+          {
+            "line": 21987,
+            "timestamp": "2026-10-01T20:02:57.6249700Z",
+            "message": "FAIL: signal contracts: exit operands 32 through 47 (stdin)",
+            "details": [
+              "2026-10-01T20:02:57.6330460Z   timeout after 5s (last output at 4.755s; no output for 0.250s; 33 bytes captured; process group killed)",
+              "2026-10-01T20:02:57.6440420Z   status: expected 0, got -9",
+              "2026-10-01T20:02:57.6615780Z   stdout: expected b'32\\n33\\n34\\n35\\n36\\n37\\n38\\n39\\n40\\n41\\n42\\n43\\n44\\n45\\n46\\n47\\n' (48 bytes), got b'32\\n33\\n34\\n35\\n36\\n37\\n38\\n39\\n40\\n41\\n42\\n' (33 captured bytes)"
+            ]
+          },
+          {
+            "line": 21991,
+            "timestamp": "2026-10-01T20:03:02.7724510Z",
+            "message": "FAIL: signal contracts: exit operands 48 through 63 (string)",
+            "details": [
+              "2026-10-01T20:03:02.7726620Z   timeout after 5s (last output at 4.692s; no output for 0.310s; 33 bytes captured; process group killed)",
+              "2026-10-01T20:03:02.7727990Z   status: expected 0, got -9",
+              "2026-10-01T20:03:02.7728790Z   stdout: expected b'48\\n49\\n50\\n51\\n52\\n53\\n54\\n55\\n56\\n57\\n58\\n59\\n60\\n61\\n62\\n63\\n' (48 bytes), got b'48\\n49\\n50\\n51\\n52\\n53\\n54\\n55\\n56\\n57\\n58\\n' (33 captured bytes)"
+            ]
+          },
+          {
+            "line": 21995,
+            "timestamp": "2026-10-01T20:03:07.9062260Z",
+            "message": "FAIL: signal contracts: exit operands 48 through 63 (file)",
+            "details": [
+              "2026-10-01T20:03:07.9065800Z   timeout after 5s (last output at 4.882s; no output for 0.120s; 39 bytes captured; process group killed)",
+              "2026-10-01T20:03:07.9068220Z   status: expected 0, got -9",
+              "2026-10-01T20:03:07.9070760Z   stdout: expected b'48\\n49\\n50\\n51\\n52\\n53\\n54\\n55\\n56\\n57\\n58\\n59\\n60\\n61\\n62\\n63\\n' (48 bytes), got b'48\\n49\\n50\\n51\\n52\\n53\\n54\\n55\\n56\\n57\\n58\\n59\\n60\\n' (39 captured bytes)"
+            ]
+          },
+          {
+            "line": 21999,
+            "timestamp": "2026-10-01T20:03:13.0471160Z",
+            "message": "FAIL: signal contracts: exit operands 48 through 63 (stdin)",
+            "details": [
+              "2026-10-01T20:03:13.0524010Z   timeout after 5s (last output at 4.942s; no output for 0.060s; 39 bytes captured; process group killed)",
+              "2026-10-01T20:03:13.0677410Z   status: expected 0, got -9",
+              "2026-10-01T20:03:13.1000930Z   stdout: expected b'48\\n49\\n50\\n51\\n52\\n53\\n54\\n55\\n56\\n57\\n58\\n59\\n60\\n61\\n62\\n63\\n' (48 bytes), got b'48\\n49\\n50\\n51\\n52\\n53\\n54\\n55\\n56\\n57\\n58\\n59\\n60\\n' (39 captured bytes)"
+            ]
+          },
+          {
+            "line": 22003,
+            "timestamp": "2026-10-01T20:03:18.2969210Z",
+            "message": "FAIL: signal contracts: exit operands 64 through 79 (string)",
+            "details": [
+              "2026-10-01T20:03:18.3091830Z   timeout after 5s (last output at 4.746s; no output for 0.257s; 33 bytes captured; process group killed)",
+              "2026-10-01T20:03:18.3222570Z   status: expected 0, got -9",
+              "2026-10-01T20:03:18.3325020Z   stdout: expected b'64\\n65\\n66\\n67\\n68\\n69\\n70\\n71\\n72\\n73\\n74\\n75\\n76\\n77\\n78\\n79\\n' (48 bytes), got b'64\\n65\\n66\\n67\\n68\\n69\\n70\\n71\\n72\\n73\\n74\\n' (33 captured bytes)"
+            ]
+          },
+          {
+            "line": 22007,
+            "timestamp": "2026-10-01T20:03:23.4126460Z",
+            "message": "FAIL: signal contracts: exit operands 64 through 79 (file)",
+            "details": [
+              "2026-10-01T20:03:23.4256990Z   timeout after 5s (last output at 4.917s; no output for 0.086s; 33 bytes captured; process group killed)",
+              "2026-10-01T20:03:23.4385910Z   status: expected 0, got -9",
+              "2026-10-01T20:03:23.4506590Z   stdout: expected b'64\\n65\\n66\\n67\\n68\\n69\\n70\\n71\\n72\\n73\\n74\\n75\\n76\\n77\\n78\\n79\\n' (48 bytes), got b'64\\n65\\n66\\n67\\n68\\n69\\n70\\n71\\n72\\n73\\n74\\n' (33 captured bytes)"
+            ]
+          },
+          {
+            "line": 22011,
+            "timestamp": "2026-10-01T20:03:28.5270710Z",
+            "message": "FAIL: signal contracts: exit operands 64 through 79 (stdin)",
+            "details": [
+              "2026-10-01T20:03:28.5366090Z   timeout after 5s (last output at 4.889s; no output for 0.113s; 36 bytes captured; process group killed)",
+              "2026-10-01T20:03:28.5469350Z   status: expected 0, got -9",
+              "2026-10-01T20:03:28.5571430Z   stdout: expected b'64\\n65\\n66\\n67\\n68\\n69\\n70\\n71\\n72\\n73\\n74\\n75\\n76\\n77\\n78\\n79\\n' (48 bytes), got b'64\\n65\\n66\\n67\\n68\\n69\\n70\\n71\\n72\\n73\\n74\\n75\\n' (36 captured bytes)"
+            ]
+          },
+          {
+            "line": 22015,
+            "timestamp": "2026-10-01T20:03:33.7709030Z",
+            "message": "FAIL: signal contracts: exit operands 80 through 95 (string)",
+            "details": [
+              "2026-10-01T20:03:33.7713900Z   timeout after 5s (last output at 4.932s; no output for 0.070s; 36 bytes captured; process group killed)",
+              "2026-10-01T20:03:33.7716130Z   status: expected 0, got -9",
+              "2026-10-01T20:03:33.7718050Z   stdout: expected b'80\\n81\\n82\\n83\\n84\\n85\\n86\\n87\\n88\\n89\\n90\\n91\\n92\\n93\\n94\\n95\\n' (48 bytes), got b'80\\n81\\n82\\n83\\n84\\n85\\n86\\n87\\n88\\n89\\n90\\n91\\n' (36 captured bytes)"
+            ]
+          },
+          {
+            "line": 22019,
+            "timestamp": "2026-10-01T20:03:38.8737620Z",
+            "message": "FAIL: signal contracts: exit operands 80 through 95 (file)",
+            "details": [
+              "2026-10-01T20:03:38.8741490Z   timeout after 5s (last output at 4.842s; no output for 0.159s; 39 bytes captured; process group killed)",
+              "2026-10-01T20:03:38.8743190Z   status: expected 0, got -9",
+              "2026-10-01T20:03:38.8744080Z   stdout: expected b'80\\n81\\n82\\n83\\n84\\n85\\n86\\n87\\n88\\n89\\n90\\n91\\n92\\n93\\n94\\n95\\n' (48 bytes), got b'80\\n81\\n82\\n83\\n84\\n85\\n86\\n87\\n88\\n89\\n90\\n91\\n92\\n' (39 captured bytes)"
+            ]
+          },
+          {
+            "line": 22023,
+            "timestamp": "2026-10-01T20:03:44.0854110Z",
+            "message": "FAIL: signal contracts: exit operands 80 through 95 (stdin)",
+            "details": [
+              "2026-10-01T20:03:44.0855310Z   timeout after 5s (last output at 4.686s; no output for 0.314s; 39 bytes captured; process group killed)",
+              "2026-10-01T20:03:44.0856040Z   status: expected 0, got -9",
+              "2026-10-01T20:03:44.0857160Z   stdout: expected b'80\\n81\\n82\\n83\\n84\\n85\\n86\\n87\\n88\\n89\\n90\\n91\\n92\\n93\\n94\\n95\\n' (48 bytes), got b'80\\n81\\n82\\n83\\n84\\n85\\n86\\n87\\n88\\n89\\n90\\n91\\n92\\n' (39 captured bytes)"
+            ]
+          }
+        ],
+        "error_lines": [
+          {
+            "line": 22327,
+            "timestamp": "2026-10-01T20:06:02.3484960Z",
+            "message": "make: *** [test-traps] Error 1"
+          },
+          {
+            "line": 22328,
+            "timestamp": "2026-10-01T20:06:02.3485940Z",
+            "message": "make: *** Waiting for unfinished jobs...."
+          },
+          {
+            "line": 22506,
+            "timestamp": "2026-10-01T20:08:51.5204190Z",
+            "message": "##[error]Process completed with exit code 2."
+          }
+        ],
+        "failure_results": [
+          {
+            "line": 22318,
+            "timestamp": "2026-10-01T20:06:02.2840130Z",
+            "message": "Result: 344 passed, 17 failed, 0 skipped"
+          }
+        ],
+        "retention_artifacts": [
+          {
+            "member": "retention-diagnostics/retention-cid6lo9j/result.json",
+            "case": "CSH-057 bounded CHILD_MAX retention and eviction",
+            "duration_seconds": 85.25413229200001,
+            "case_failures": [],
+            "diagnostic_failures": [],
+            "watcher_cleanup_failures": [],
+            "trace_summary": {
+              "bytes": 491164,
+              "truncated": false,
+              "partial_final_record": false,
+              "errors": [],
+              "events": 5571,
+              "root_pid": 88106,
+              "root_finished": true,
+              "first_time_us": 942002642,
+              "last_time_us": 1026848427,
+              "alarm_states": [
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "alarm_query_failures": 0
+            },
+            "expected_control_failure": false
+          },
+          {
+            "member": "retention-diagnostics-checks/retention-535wexjv/result.json",
+            "case": "diagnostic stalled child: blocked alarm",
+            "duration_seconds": 6.227208666000024,
+            "case_failures": [
+              "timeout after 6s (no output received; 0 bytes captured; process group killed)",
+              "status: expected 0, got -9"
+            ],
+            "diagnostic_failures": [],
+            "watcher_cleanup_failures": [],
+            "trace_summary": {
+              "bytes": 607,
+              "truncated": false,
+              "partial_final_record": false,
+              "errors": [],
+              "events": 7,
+              "root_pid": 74243,
+              "root_finished": false,
+              "first_time_us": 579026051,
+              "last_time_us": 579127236,
+              "alarm_states": [
+                [
+                  1,
+                  0,
+                  0
+                ]
+              ],
+              "alarm_query_failures": 0
+            },
+            "expected_control_failure": true
+          },
+          {
+            "member": "retention-diagnostics-checks/retention-j2dpv6od/result.json",
+            "case": "diagnostic stalled child: default alarm",
+            "duration_seconds": 5.41397158299992,
+            "case_failures": [
+              "status: expected 0, got -14"
+            ],
+            "diagnostic_failures": [],
+            "watcher_cleanup_failures": [],
+            "trace_summary": {
+              "bytes": 607,
+              "truncated": false,
+              "partial_final_record": false,
+              "errors": [],
+              "events": 7,
+              "root_pid": 74173,
+              "root_finished": false,
+              "first_time_us": 573520194,
+              "last_time_us": 573559732,
+              "alarm_states": [
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "alarm_query_failures": 0
+            },
+            "expected_control_failure": true
+          }
+        ],
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-01T19:24:51Z",
+            "completed_at": "2026-10-01T19:24:53Z"
+          },
+          {
+            "name": "Run actions/checkout@v6",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-01T19:24:53Z",
+            "completed_at": "2026-10-01T19:24:57Z"
+          },
+          {
+            "name": "Run actions/setup-python@v6",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-01T19:24:57Z",
+            "completed_at": "2026-10-01T19:24:57Z"
+          },
+          {
+            "name": "Install Linux build dependencies",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 4,
+            "started_at": "2026-10-01T19:24:57Z",
+            "completed_at": "2026-10-01T19:24:58Z"
+          },
+          {
+            "name": "Install macOS profile dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-01T19:24:58Z",
+            "completed_at": "2026-10-01T19:25:01Z"
+          },
+          {
+            "name": "Build",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-01T19:25:01Z",
+            "completed_at": "2026-10-01T19:25:05Z"
+          },
+          {
+            "name": "Test replacement APIs, cshell runtime, and selected behavior",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-01T19:25:05Z",
+            "completed_at": "2026-10-01T19:28:49Z"
+          },
+          {
+            "name": "Test cshell terminal behavior and selected terminal suite",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-10-01T19:28:49Z",
+            "completed_at": "2026-10-01T19:28:53Z"
+          },
+          {
+            "name": "Qualify host utilities and rerun runtime with selected PATH",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-10-01T19:28:53Z",
+            "completed_at": "2026-10-01T19:30:10Z"
+          },
+          {
+            "name": "Test harness failure handling",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-10-01T19:30:10Z",
+            "completed_at": "2026-10-01T19:30:39Z"
+          },
+          {
+            "name": "Check replacement modules and cshell runtime with ASan and UBSan",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 11,
+            "started_at": "2026-10-01T19:30:39Z",
+            "completed_at": "2026-10-01T20:08:51Z"
+          },
+          {
+            "name": "Preserve retention timing and stack diagnostics",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-10-01T20:08:51Z",
+            "completed_at": "2026-10-01T20:08:53Z"
+          },
+          {
+            "name": "Post Run actions/setup-python@v6",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 23,
+            "started_at": "2026-10-01T20:08:53Z",
+            "completed_at": "2026-10-01T20:08:53Z"
+          },
+          {
+            "name": "Post Run actions/checkout@v6",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 24,
+            "started_at": "2026-10-01T20:08:53Z",
+            "completed_at": "2026-10-01T20:08:53Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25,
+            "started_at": "2026-10-01T20:08:53Z",
+            "completed_at": "2026-10-01T20:08:55Z"
+          }
+        ]
+      }
+    }
+  ],
+  "interpretation": "The PR run passed all three jobs, including a complete macOS sanitizer suite. The push macOS sanitizer failure consists of 17 five-second CSH-054 exit-operand case timeouts. Its CSH-057 checks passed. The successful PR run does not erase the push failures, and this audit does not diagnose the underlying cause of the CSH-054 timing failures.",
+  "failure_ownership": {
+    "owner": "CSH-054 / issue90",
+    "source": "tests/signal_contracts.py:2 and :69-73; archived exact tested source signal_contracts.py",
+    "cases": "0 through15 in string/file; batches16\u201331,32\u201347,48\u201363,64\u201379,80\u201395 in string/file/stdin",
+    "count": 17,
+    "result": "344 passed,17 failed,0 skipped",
+    "mechanism_observed": "Eachcase hit5s, produced an exact expected output prefix but incomplete batch, received -9 after process-group timeout kill. No sanitizer fault reported; not aggregate job budget expiration."
+  },
+  "members_sha256": {
+    "annotations110543631273.json": "4f7c2e337c9daa0979b4543c1e84f33c94bce84cb950b05d7d0a70514c59b4be",
+    "commit-head.json": "4387eae874a258154b5f11bbd3734af5ed8c52363d24b927c2bb3170cff73ea4",
+    "commit-merge.json": "bdc5c14508d9771ff2020468c1b6668fce3ba226285aa9ddc5d668e61a5779af",
+    "compare-head-merge.json": "a7250dacbce9be9484f4422beb022f8d82250fa3e243a531685657447b066840",
+    "job110543631273.json": "cbc6f86a17088e4c3bb1c54efb0bfcdd9354b24be3c5b9ff1359acaaad6707f5",
+    "job110543631273.log": "80446a85d9af9dd3aaefea802df97e99df4e9514404d9d6eec2ae6f46242b330",
+    "job110543652615.json": "0ae8a0b035b5282e48707d0fb7c2f480b5defd2ffaead2947e13eda8c16afe74",
+    "job110543652615.log": "2c4fe3fdca96eb285469073044f557a1f2362e33e2fb0f7be42ca93d57de63d5",
+    "jobs36914080409.json": "a1593c7aa38a3ec8e620c65f77ef3cf57f6101383c4a193f0696510cd8f6a60f",
+    "jobs36914086960.json": "7ef33736b40a40fdbfd33607389ffad19a1f93bda2b0c63d718deff02ab937fe",
+    "retention-pr.zip": "95699ae24118db35d938999b180fbc8a1b25cdb908a54e5bd9eb0bbde06dc02d",
+    "retention-push.zip": "aeb6c35d8fa3d970f214f5fe8b853390526b9840c6323afc89373d6b95f38742",
+    "run36914080409.json": "8438a4e9b8a7e6794fea791ce3b65e2d349250ac49501a8c37c5cd0e146324ec",
+    "run36914086960.json": "d849ecec28ea15436733a061b4800c4f62171723ce5553bcf3be0b0e04ca3ada",
+    "signal_contracts.py": "9bda97f8d5e19bb2a24b649f804e7f946dfb91313163ec10e7bf6ffb10b421d9",
+    "tested-tests.yml": "21fb8593ef00a66143077a246f8dd10a4c8db37b54f25fe3292ebb6af27e4cb9"
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "source_commit": "bc74783bde46cd3b5783be03c778036f7132d460",
+  "reviewed_patch": {
+    "tests/fixtures/job-retention.json": {
+      "case_timeout": 120
+    },
+    "tests/retention_diagnostics.py": {
+      "timeout": 120,
+      "total_threshold": 117.0
+    }
+  },
+  "source_sha256": {
+    "tests/fixtures/job-retention.json": "927a4df773c087cbe19059582d87365eea7cc359a497c5865371e9208d0087dc",
+    "tests/retention_diagnostics.py": "f0c53efd956c211cc9d1dc99a8383462550d739856fd7ec1d04e1dd3bea3c33b"
+  },
+  "docker_image": "sha256:cf1f92633ea89faa9e9e150c6393caff8d29dcdd936657fcfd6cb1dac1556afa",
+  "architecture": "arm64",
+  "normal_targets": [
+    "test-jobs",
+    "test-retention-diagnostics",
+    "test-harness",
+    "test-jobs-pty"
+  ],
+  "sanitized_targets": [
+    "test-job-retention",
+    "test-retention-diagnostics"
+  ],
+  "sanitizer_cflags": "-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -fno-pie",
+  "sanitizer_ldflags": "-fsanitize=address,undefined -no-pie",
+  "unexpected_failures": [],
+  "limitation": "Linux native stack sampler unavailable by design; controls verified alarms, traces, and cleanup.",
+  "platform": {
+    "uname": [
+      "Linux",
+      "372c06e545d7",
+      "6.4.16-linuxkit",
+      "#1 SMP PREEMPT Thu Nov 16 10:49:20 UTC 2023",
+      "aarch64",
+      ""
+    ],
+    "compiler": "cc (Debian 12.2.0-14+deb12u1) 12.2.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+    "python": "3.11.2 (main, May 12 2026, 05:17:27) [GCC 12.2.0]"
+  },
+  "docker_server_version": "24.0.6",
+  "non_pie_rationale": "An explicit conservative configuration was selected for this isolated GCC sanitizer probe. No PIE failure was observed or reproduced in this investigation; the non-PIE flags are not a claimed repair, and this build is not identical to hosted CI sanitizer flags.",
+  "normal_case_counts": {
+    "harness": 94,
+    "jobs": 148,
+    "public_jobs_pty": 30,
+    "lifecycle_pty": 14,
+    "notifications": 1,
+    "terminal_faults": 1,
+    "retention": 1
+  },
+  "results": {
+    "normal": {
+      "retention": {
+        "duration_seconds": 0.36379629200382624,
+        "case_failures": [],
+        "diagnostic_failures": [],
+        "watcher_cleanup_failures": [],
+        "trace_summary": {
+          "bytes": 483535,
+          "truncated": false,
+          "partial_final_record": false,
+          "errors": [],
+          "events": 5572,
+          "root_pid": 436,
+          "root_finished": true,
+          "first_time_us": 77336694600,
+          "last_time_us": 77336997724,
+          "alarm_states": [
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "alarm_query_failures": 0
+        }
+      },
+      "controls": [
+        {
+          "name": "diagnostic stalled child: default alarm",
+          "verdict": "PASS",
+          "duration_seconds": 5.0585148770042,
+          "case_failures": [
+            "status: expected 0, got -14"
+          ],
+          "diagnostic_failures": [],
+          "watcher_cleanup_failures": []
+        },
+        {
+          "name": "diagnostic stalled child: blocked alarm",
+          "verdict": "PASS",
+          "duration_seconds": 6.038994294998702,
+          "case_failures": [
+            "timeout after 6s (no output received; 0 bytes captured; process group killed)",
+            "status: expected 0, got -9"
+          ],
+          "diagnostic_failures": [],
+          "watcher_cleanup_failures": []
+        }
+      ]
+    },
+    "sanitized": {
+      "retention": {
+        "duration_seconds": 2.2771850419958355,
+        "case_failures": [],
+        "diagnostic_failures": [],
+        "watcher_cleanup_failures": [],
+        "trace_summary": {
+          "bytes": 483172,
+          "truncated": false,
+          "partial_final_record": false,
+          "errors": [],
+          "events": 5572,
+          "root_pid": 109,
+          "root_finished": true,
+          "first_time_us": 77339414159,
+          "last_time_us": 77340696709,
+          "alarm_states": [
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "alarm_query_failures": 0
+        }
+      },
+      "controls": [
+        {
+          "name": "diagnostic stalled child: default alarm",
+          "verdict": "PASS",
+          "duration_seconds": 5.057537044005585,
+          "case_failures": [
+            "status: expected 0, got -14"
+          ],
+          "diagnostic_failures": [],
+          "watcher_cleanup_failures": []
+        },
+        {
+          "name": "diagnostic stalled child: blocked alarm",
+          "verdict": "PASS",
+          "duration_seconds": 6.039413585996954,
+          "case_failures": [
+            "timeout after 6s (no output received; 0 bytes captured; process group killed)",
+            "status: expected 0, got -9"
+          ],
+          "diagnostic_failures": [],
+          "watcher_cleanup_failures": []
+        }
+      ]
+    }
+  },
+  "archive": "linux-validation.tar.gz",
+  "archive_sha256": "b71c96f888fdd6333dc818891057096ba8bc0c142734ea2c463e5e6b53c7411c"
+}

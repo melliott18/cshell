@@ -3,6 +3,7 @@ name: Terminal qualification
 on:
   pull_request:
     paths:
+      - 'Makefile'
       - 'tests/host_terminal*'
       - 'tests/test_host_terminal.py'
       - 'tests/host_registered_sessions.py'
@@ -28,12 +29,12 @@ jobs:
           python-version: '3.11'
       - name: Linux providers
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y busybox ncurses-bin libncurses-dev bsdextrautils
+        run: sudo apt-get update && sudo apt-get install -y busybox ncurses-bin libncurses-dev bsdextrautils locales && sudo localedef -i en_US -f UTF-8 en_US.UTF-8
       - name: macOS profile providers
         if: runner.os == 'macOS'
         run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
       - name: Strict terminal and data-effect subsets
-        run: make -j2 test-host-terminal-profile test-host-terminal-effects test-host-terminal-harness
+        run: make -j2 test-host-terminal-profile test-host-terminal-effects test-host-terminal-residuals test-host-terminal-harness
       - name: Isolated registered sessions
         if: runner.os == 'Linux'
         run: |
@@ -53,7 +54,7 @@ jobs:
           UBSAN_OPTIONS: halt_on_error=1
           MallocNanoZone: '0'
         run: |
-          make -B -j2 test-host-terminal-profile test-host-terminal-effects test-host-terminal-harness \
+          make -B -j2 test-host-terminal-profile test-host-terminal-effects test-host-terminal-residuals test-host-terminal-harness \
             CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' \
             LDFLAGS='-fsanitize=address,undefined'
       - name: Sanitized isolated sessions

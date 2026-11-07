@@ -1,12 +1,33 @@
 # CSH-054: Complete residual jobs and signal contracts
 
-- Status: done
+- Status: ready
 - Type: fix
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-034, CSH-035
 - Branch: fix/CSH-054-signal-contracts
 - Issue: [#90](https://github.com/melliott18/cshell/issues/90)
+
+## Reopened: hosted exit-operand timeouts
+
+The [CSH-057 final hosted audit](../evidence/csh-057-final-verification/README.md)
+retains 17 ASan/UBSan `signal contracts: exit operands` batch timeouts in
+macOS push job `110543631273` at `48af5bc`. The 0–15 batch fails in string/file
+modes; batches 16–95 fail in all three modes. Each exceeds its unchanged
+five-second case bound. The signal suite reports 344 passed and 17 failed,
+and `make test-traps` fails. The complete same-tree PR workflow passes, but
+that pass does not explain or erase the push failures. Earlier five-batch
+failures remain in the [prior hosted record](../evidence/csh-057-terminal-crash-notification/hosted-verification/README.md).
+
+This ticket is reopened to diagnose those exit-operand timeouts. They are
+separate from the repaired CSH-057 retention and terminal cases, which pass
+both final macOS runs. No shell defect, common root cause, or unsolvable
+condition is inferred merely from these elapsed-time failures. Existing
+case bounds and assertions remain enforced.
+
+- [ ] Diagnose the recurrent hosted exit-operand timeouts, retain failures and
+  controlled evidence, and repair the demonstrated cause or document a scoped
+  disposition before closing this follow-up.
 
 ## Goal
 

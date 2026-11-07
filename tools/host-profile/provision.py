@@ -19,7 +19,7 @@ def provision(destination, gnu_bin=None):
     overrides = {'printf': str(ROOT / 'build/host-printf'),
                  'write': str(ROOT / 'build/host-write')}
     overrides.update({name: str(ROOT / ('build/host-terminal-' + name))
-                      for name in ('tabs', 'tput', 'mesg', 'who')})
+                      for name in ('stty', 'tabs', 'tput', 'tty', 'mesg', 'who')})
     system = platform.system()
     if system == 'Darwin':
         # Homebrew's prefixed names do not change the system PATH or echo policy.

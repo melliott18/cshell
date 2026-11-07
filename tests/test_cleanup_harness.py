@@ -108,6 +108,7 @@ class GroupCleanupTests(unittest.TestCase):
     def test_pty_cleanup_accepts_groups_that_exit_after_the_snapshot(self):
         process = mock.Mock(pid=self.SESSION)
         with mock.patch.object(pty_harness.sys, "platform", "darwin"), \
+                mock.patch.object(pty_harness.os, "close") as close, \
                 mock.patch.object(pty_harness.os, "tcgetpgrp", return_value=-1), \
                 mock.patch.object(pty_harness.os, "killpg", side_effect=
                                   PermissionError(errno.EPERM, "zombie group")) as kill, \
@@ -118,10 +119,12 @@ class GroupCleanupTests(unittest.TestCase):
         self.assertEqual(kill.call_args_list, [mock.call(self.GROUP, signal.SIGKILL),
                                               mock.call(self.SESSION, signal.SIGKILL)])
         process.wait.assert_called_once()
+        close.assert_called_once_with(0)
 
     def test_pty_cleanup_reports_permission_failure_for_a_live_group(self):
         process = mock.Mock(pid=self.SESSION)
         with mock.patch.object(pty_harness.sys, "platform", "darwin"), \
+                mock.patch.object(pty_harness.os, "close") as close, \
                 mock.patch.object(pty_harness.os, "tcgetpgrp", return_value=-1), \
                 mock.patch.object(pty_harness.os, "killpg", side_effect=
                                   PermissionError(errno.EPERM, "live group denied")), \
@@ -131,6 +134,7 @@ class GroupCleanupTests(unittest.TestCase):
         self.assertTrue(any("cleanup failed" in failure and "live group denied" in failure
                             for failure in failures), failures)
         process.wait.assert_called_once()
+        close.assert_called_once_with(0)
 
     @unittest.skipUnless(sys.platform in ("darwin", "linux"),
                          "process snapshots support native macOS and Linux")

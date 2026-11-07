@@ -1,0 +1,32 @@
+{
+  "review_date": "2026-09-30",
+  "repository": "melliott18/cshell",
+  "pull_request": 167,
+  "comparison_record": "hosted-comparison.json",
+  "inputs": {
+    "failed": {
+      "archive": "hosted-failed.tar.gz",
+      "archive_sha256": "de0f4651e6636583131435617b24256a16caf9c83384811395b83feaa2e774ab",
+      "artifact_name": "retention-macos-15-36662308140-1",
+      "case_directory": "retention-diagnostics/retention-bdzb1shd",
+      "run_id": 36662308140,
+      "job_id": 109719513272,
+      "job_url": "https://github.com/melliott18/cshell/actions/runs/36662308140/job/109719513272",
+      "job_record": "hosted-failed-job.json"
+    },
+    "peer": {
+      "archive": "hosted-peer.tar.gz",
+      "archive_sha256": "613df74b124f5484934ce6d3b78e5be66f82b00cf21019fa7037ed3ff4885003",
+      "artifact_name": "retention-macos-15-36662312181-1",
+      "case_directory": "retention-diagnostics/retention-9cct22u9",
+      "run_id": 36662312181,
+      "job_id": 109719525200,
+      "job_url": "https://github.com/melliott18/cshell/actions/runs/36662312181/job/109719525200",
+      "job_record": "hosted-peer-job.json"
+    }
+  },
+  "notes": [
+    "Artifacts downloaded intact with gh run download; deterministic tar/gzip packaging changes packaging only, not file bytes.",
+    "GitHub job head_sha identifies the PR source for both jobs; metadata ci_identity.GITHUB_SHA records actual checkout, including the peer synthetic merge."
+  ]
+}

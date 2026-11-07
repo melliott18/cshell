@@ -1,0 +1,15 @@
+{
+  "container_id": "3296a7ff2522dd88c376b8eab2df8cb77c98b0bd24fa0ed47501f348ca638b2a",
+  "image_id": "sha256:717bead1a866bc7d9c3bf959d6bd14d4d1e33e83ff5670105f82fa7e85c99bfb",
+  "capabilities": [
+    "SYS_ADMIN"
+  ],
+  "security_options": [
+    "seccomp=unconfined"
+  ],
+  "source_path": "/Users/mitchell/.codex/worktrees/csh-081-terminal-residuals/cshell",
+  "source_mount_readonly": true,
+  "invocation": "docker run -d --name csh081-validation --user root --cap-add SYS_ADMIN --security-opt seccomp=unconfined -v WORKTREE:/source:ro cshell-test:csh-077-followup sleep 7200",
+  "source_setup": "Copy Makefile, Dockerfile, src, include, tests, tools and docs into /csh081; build as cshell, sessions as root under unshare; no host binaries reused.",
+  "python": "3.12.2 (v3.12.2:6abddd9f6a, Feb  6 2024, 17:02:06) [Clang 13.0.0 (clang-1300.0.29.30)]"
+}

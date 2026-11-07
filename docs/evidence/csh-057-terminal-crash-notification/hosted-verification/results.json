@@ -1,0 +1,55 @@
+{
+  "review_date": "2026-10-01",
+  "head_commit": "4d689e87b289d8ddb3cffe2142cee8e7f06133fe",
+  "pr_checkout": "8858ae4193d325df73012791d1e09764c6482ef5",
+  "both_checkout_tree": "51d0b6721d103b9e89dc9173ddc6e6c6725f5d3d",
+  "tree_comparison": "PR commit tree from GitHub commits API matches local head commit tree.",
+  "push_run": 36883868559,
+  "push_macos_job": 110442116646,
+  "pr_run": 36883886472,
+  "pr_macos_job": 110442178677,
+  "push_failure": {
+    "case": "repeated background resumes preserve prompt and terminal",
+    "timeout_seconds": 5,
+    "waiting_step": 328,
+    "last_completed_step": 327,
+    "last_completed_seconds": 4.973,
+    "no_advancement_seconds": 0.05,
+    "cleanup": "could not reap leader within 1s",
+    "expected_status": 130,
+    "actual_status": null,
+    "captured_bytes": 5684,
+    "expected_bytes": 7280,
+    "scope_owner": "CSH-057 / #99"
+  },
+  "pr_failure": {
+    "scope_owner": "CSH-054 / exit-operand signal contracts",
+    "timeout_seconds": 5,
+    "cases": [
+      "48 through 63 (string)",
+      "48 through 63 (file)",
+      "48 through 63 (stdin)",
+      "96 through 111 (string)",
+      "224 through 239 (file)"
+    ],
+    "suite_passed": 356,
+    "suite_failed": 5
+  },
+  "terminal_verification": {
+    "push_normal": true,
+    "push_selected_path": true,
+    "push_sanitizer": "not reached after public PTY failure",
+    "pr_normal": true,
+    "pr_selected_path": true,
+    "pr_sanitizer": true
+  },
+  "mach_and_retention": "Normal and ASan/UBSan passed in both macOS jobs.",
+  "ubuntu_and_docker": "Both jobs passed in both complete runs.",
+  "closure": "Not closed: a separate CSH-057 public PTY timeout and cleanup failure remain; repair PR stack also unmerged.",
+  "archive_members_sha256": {
+    "push-macos.log": "b59c1b6547b6dc0ab66383ab987a5d40dbac8c832c0b7a3914c2e2ae33ef7d72",
+    "push-run.json": "e5d66bbeb0a578cdfb3b560727a1a4cdfeb1c8d761207f96fc2052757b344448",
+    "pr-macos.log": "71173517f6f123db9755afc60f8dd35ae7b3e7fac937a655cc98ff8ae3712ab7",
+    "pr-run.json": "76502753ca8f6dfea2dd6f71f62c704bb1a5bcf76c1a49990486183dbe13a51e"
+  }
+}

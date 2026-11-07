@@ -1,0 +1,47 @@
+mkdir -p build/tests/
+mkdir -p build/tests/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -DCSH_RETENTION_INTERPOSE_FORK -include tests/retention_trace.h -c src/execute.c -o build/tests/lifecycle-execute.o
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -Dsysconf=csh_lifecycle_sysconf -c src/jobs.c -o build/tests/lifecycle-jobs.o
+mkdir -p build/tests/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c tests/retention_trace.c -o build/tests/retention-trace.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/jobs.c -o build/jobs.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/traps.c -o build/traps.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/builtin.c -o build/builtin.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/utility.c -o build/utility.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/execute.c -o build/execute.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/prepare.c -o build/prepare.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/redirect.c -o build/redirect.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/parser.c -o build/parser.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/ast.c -o build/ast.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/lexer.c -o build/lexer.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/input.c -o build/input.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/quote.c -o build/quote.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/state.c -o build/state.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/alias.c -o build/alias.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/expand.c -o build/expand.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/arithmetic.c -o build/arithmetic.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/fields.c -o build/fields.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/pathname.c -o build/pathname.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/character.c -o build/character.o
+mkdir -p build/
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -c src/stack.c -o build/stack.o
+cc  -pthread -D_POSIX_C_SOURCE=200809L -Iinclude -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -fsanitize=address,undefined -o build/tests/jobs_lifecycle tests/jobs_lifecycle.c build/tests/lifecycle-jobs.o build/tests/lifecycle-execute.o build/tests/retention-trace.o build/traps.o build/builtin.o build/utility.o build/prepare.o build/redirect.o build/parser.o build/ast.o build/lexer.o build/input.o build/quote.o build/state.o build/alias.o build/expand.o build/arithmetic.o build/fields.o build/pathname.o build/character.o build/stack.o 

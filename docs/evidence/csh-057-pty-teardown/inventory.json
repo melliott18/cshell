@@ -1,0 +1,12 @@
+{
+  "algorithm": "SHA-256",
+  "files": {
+    "README.md": "40facef8959ce6182e06b0d531ac3def8e48c25ba73518c868288706c68a1f76",
+    "hosted-artifacts.tar.gz": "93f660691ff4484c7be6aa992d2f3655f3cc116e248a7944a94d90fd2c7327b5",
+    "hosted-audit.json": "934a1e5d2ce49144e3c2d53fa9fbe35a09f9486504410a28a11f7cf88d30cc7c",
+    "linux-validation.json": "0858f47312d90ae5b29b226a5bcf15587b69955ca4bcab3bbce58de1cdf28a6f",
+    "linux-validation.tar.gz": "62b452916f5bbc31ddec4603b6c9224c5d1c9daf55377f6cc92efc6275ef7edd",
+    "native-artifacts.tar.gz": "1ed6127b87eed801f643da5655b96f3cb0311c9012dc753d6b610f0f17331708",
+    "native-validation.json": "e0dbf7dd40509064689b17403d7e8913df34f60d79da16dcd038d36e84471bc0"
+  }
+}

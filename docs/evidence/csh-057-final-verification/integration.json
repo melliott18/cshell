@@ -1,0 +1,43 @@
+{
+  "verified_date": "2026-10-02",
+  "baseline": "ff736b7894b7ae992ca99ecd33d977cd2376a8e1",
+  "tested_head": "48af5bc524795f3d12ae0ce7ec0cc8722e9cf38f",
+  "tested_pr_merge": "72190b7bf1f117bd11e9a063852e58dd62588698",
+  "integrated_main": "57e8c40420a7be764737032eda8296abe71a0b93",
+  "trees": {
+    "48af5bc524795f3d12ae0ce7ec0cc8722e9cf38f": "490c2136fb7fdc6c9cc63f7f795fb2649f4faa3b",
+    "72190b7bf1f117bd11e9a063852e58dd62588698": "490c2136fb7fdc6c9cc63f7f795fb2649f4faa3b",
+    "57e8c40420a7be764737032eda8296abe71a0b93": "490c2136fb7fdc6c9cc63f7f795fb2649f4faa3b"
+  },
+  "identical_trees": true,
+  "merges": [
+    {
+      "pr": 167,
+      "merge": "0938eeb326e1c581626085af3baf8b9d270b9cc4"
+    },
+    {
+      "pr": 172,
+      "merge": "d06891e649db0bfbc2e338b2fa204822adad80b1"
+    },
+    {
+      "pr": 173,
+      "merge": "57e8c40420a7be764737032eda8296abe71a0b93"
+    }
+  ],
+  "review": {
+    "actionable_blockers": [],
+    "production_src_and_include_unchanged": true,
+    "scopes": [
+      "PTY descriptor ownership and failure preservation",
+      "Mach notification and exact-child cleanup",
+      "retention observer bounds and fork interposition",
+      "exact test assertions and scope of aggregate budgets"
+    ],
+    "validation": "Existing focused native/Linux evidence and final hosted checks; no duplicate test run."
+  },
+  "disposition": {
+    "CSH-057": "done; recurrence remains owned by issue99",
+    "CSH-054": "reopen issue90 for17 unchanged exit-operand timeouts; no cause inferred"
+  },
+  "documentation_only_followup": true
+}

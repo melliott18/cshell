@@ -1,29 +1,149 @@
 # CSH-057: Verify remaining job lifecycle boundaries
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-034, CSH-035
-- Branch: docs/CSH-057-retention-recurrence
+- Branch: fix/CSH-057-terminal-fault-timeout
 - Issue: [#99](https://github.com/melliott18/cshell/issues/99)
 
-## Current review: hosted recurrence
+## Final verification and integration: 2026-10-02
 
-The 2026-09-29 macOS sanitizer recurrence remains unresolved under issue #99.
-The [recorded-progress investigation](../evidence/csh-057-retention-recurrence/README.md)
-establishes that the 60-second outer deadline expired after at least 448
-successful capacity-fill iterations. The runner received the last checkpoint
-at 58.721 seconds; this is a receipt time, not a per-child completion timestamp.
-It does not establish a five-second operation stall or identify the cause of
-the hosted elapsed time. The same source tree passed the peer sanitizer job in
-51.183 seconds. Local unmodified and instrumented sanitizer probes pass but do
-not diagnose or repair the hosted failure.
+[Final hosted evidence](../evidence/csh-057-final-verification/README.md)
+verifies repair head `48af5bc` in the complete PR workflow: Ubuntu, Docker and
+macOS normal/sanitizer checks passed. The duplicate push workflow passed Ubuntu
+and Docker; its macOS job failed 17 separate CSH-054 exit-operand batches.
+Both macOS jobs passed retention, crash-notification isolation, repeated
+resumes, terminal faults and the new queued-output cleanup regression. The
+push failure remains a failure, owned by reopened [CSH-054 / #90](CSH-054-signal-contract-gaps.md).
 
-Runtime, assertions and deadlines remain unchanged. Closure requires a
-demonstrated corrective change or an explicit new disposition of this
-recurrence and its aggregate budget; another passing retry is insufficient.
-The historical acceptance below does not apply to this new failure.
+Independent review found no actionable blocker. PRs
+[#167](https://github.com/melliott18/cshell/pull/167),
+[#172](https://github.com/melliott18/cshell/pull/172), and
+[#173](https://github.com/melliott18/cshell/pull/173) are integrated into `main`
+as `0938eeb`, `d06891e`, and `57e8c40`, respectively. The final integration tree
+is byte-for-byte identical to the verified repair head and PR merge tree.
+All eight acceptance criteria have their mapped evidence, so this ticket is
+complete. These repairs change tests, diagnostics and their aggregate budgets;
+production runtime sources remain unchanged by this stack.
+
+This disposition does not prove every historical failure's cause or declare
+an unsolvable bug. The unrecorded historical Mach receiver remains a potential
+host/fixture issue. A new CSH-057 timeout, status/ownership error, sanitizer
+finding or cleanup failure reopens #99; a passing retry does not erase it.
+CSH-054, CSH-058 and the broader conformance gates retain their separate owners.
+
+## Integrated repair: public PTY teardown and aggregate timing
+
+The [follow-up diagnosis](../evidence/csh-057-pty-teardown/README.md) reproduces
+the remaining cleanup failure with the real sanitizer shell. After killing its
+owned groups, the open PTY master can hold the leader in exit while unread
+output remains. An empty session snapshot does not prove the child is waitable.
+Closing that master releases the exact-child wait immediately. Cleanup now
+closes it after group teardown and before the unchanged one-second reap. A
+queued-output regression fails under the old cleanup and passes with the fix;
+the captured transcript and any original timeout failure remain unchanged.
+
+The same 32-cycle shell/fixture binary, with a controlled 160 ms startup delay
+per helper, exceeds five seconds but passes all 419 steps in about 6.3 seconds.
+Only that case receives ten seconds of aggregate headroom. All 29 other public
+jobs PTY cases retain five seconds. Separately, both subsequent hosted macOS
+jobs exhausted their 45-minute job budget while still passing tests. The native
+job budget is now 60 minutes, with individual case bounds unchanged apart from
+the explicitly scoped repeated-resume correction.
+
+These changes repair demonstrated harness and budget defects; they do not
+reconstruct every historical scheduling interval or prove an unsolvable shell
+bug. Final verification and integration are recorded above. Prior failures
+below remain in the record, including separate CSH-054 exit-operand observations.
+
+## Earlier closure verification: 2026-10-01
+
+The [hosted verification](../evidence/csh-057-terminal-crash-notification/hosted-verification/README.md)
+confirms the terminal-fault repair in normal and ASan/UBSan macOS checks.
+Mach isolation and retention also passed both builds in both hosted runs.
+However, the push run's sanitizer `repeated background resumes preserve prompt
+and terminal` case timed out at five seconds while waiting for step 328, then
+failed to reap its leader within one second. This separate public PTY recurrence
+was owned by CSH-057 / #99, so the condition for closing the whole ticket
+was not then met. The passing peer did not erase it. The peer's overall macOS failure
+belongs to CSH-054 exit-operand tests. Ubuntu and Docker passed both runs.
+
+[PR #173](https://github.com/melliott18/cshell/pull/173) and its prerequisite
+PRs #172/#167 were then unmerged and status remained `review`. The final
+verification above supersedes that hold; no issue is declared unsolvable and
+no failing result is converted to a pass.
+
+## Integrated repair: terminal crash-notification isolation
+
+The [terminal investigation](../evidence/csh-057-terminal-crash-notification/README.md)
+reproduces the terminal-fault timeout with a controlled inherited Mach
+`EXC_CRASH` receiver. The original `execute_faults --jobs-terminal` binary
+hits its unchanged five-second deadline with empty output and status -9 when
+the receiver withholds its reply. Replying releases the exiting child. With
+the fixture fix, the same original oracle passes in 0.058 seconds without a
+notification to that receiver; the sanitizer build passes in 0.901 seconds.
+
+Only the test child deliberately receiving SIGQUIT clears its inherited
+task-level crash-notification port on macOS. Signal dispositions, masks,
+SIGQUIT status, production code, terminal assertions and all deadlines remain
+unchanged. The new `test-job-crash-notification` regression demonstrates the
+held-notification/SIGKILL dependency and verifies isolation with exact SIGQUIT
+termination. Removing the isolation call makes that regression fail, with
+bounded cleanup. Linux explicitly reports this Mach-specific check unavailable
+and continues its existing terminal and job checks.
+
+The original orphan's exact binary and machine-code return addresses narrow
+its location to the pending launch-signal loop. Its specific signal and actual
+exception receiver were not recorded. The controlled experiment establishes
+an actionable fixture vulnerability with the same failure signature; it does
+not retrospectively prove the original receiver's identity or an operating
+system bug. No evidence proves this issue unsolvable. Its retained uncertainty
+is documented as a potential host/fixture issue, with same-ticket ownership if
+the failure recurs after isolation.
+
+This change builds on retention-budget [PR #172](https://github.com/melliott18/cshell/pull/172),
+which builds on diagnostic [PR #167](https://github.com/melliott18/cshell/pull/167).
+CSH-057 then remained at `review` pending integration and resolution of the
+public PTY recurrence above; final verification now closes that hold. The
+historical terminal failure is not erased or converted into a passing run.
+The distinct CSH-058 signal-probe observation below is not fixed by this
+child-specific change.
+
+### Retention aggregate-budget repair
+
+The [retention evidence](../evidence/csh-057-retention-budget/README.md)
+records 59.503 seconds of completed short run/reap operations before the hosted
+60-second outer timeout. PR #172 raises the finite aggregate budget to 120
+seconds, preserving all 619 children, exact assertions, manager reuse and
+five-second phase alarms. Its controlled slowed binary failed at the old
+60-second limit and passed the same assertions in 90.578 seconds under the new
+budget. The evidence retains normal/sanitizer macOS and Docker validation and
+the limits of inferring older failure causes.
+
+### Separate failures retained from the diagnostic review
+
+The diagnostic PR's native normal validation passed 94 harness checks, 148 jobs
+cases and 30 public jobs PTY cases. The subsequent unchanged `execute_faults
+--jobs-terminal` case hit its five-second outer deadline with empty output;
+cleanup exhausted its snapshot budget and reported fallback EPERM for leader
+group 18494. This historical terminal-fault observation motivated the isolation
+repair above; its exact original receiver remains unknown under issue #99.
+The separate full normal suite stopped in the unchanged CSH-058
+`runtime/QUIT/interactive=0/entry-ignore=0/action=0/subshell/reset=False`
+probe with status 142 and only `default:` output, owned by
+[CSH-058 / #100](CSH-058-signal-edge-evidence.md).
+
+Both attempts left owned children reported as `UE` after SIGKILL: terminal
+fixture child 18538 and signal-probe child 99718. Preserved samples locate the
+terminal child in `context_job` through `sigprocmask`, and the signal-probe
+child in `raise` through `__pthread_kill`. These observations do not establish
+a shared cause or a connection to hosted retention timing. The cleanup EPERM
+names the terminal leader's group, not child 18538's group; a snapshot-budget
+failure does not by itself prove one slow `ps` invocation. No complete normal
+suite pass is claimed. Final sanitizer outcomes belong to the linked evidence
+record and are not inferred here.
 
 ## Historical review disposition
 

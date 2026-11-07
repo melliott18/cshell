@@ -1,0 +1,148 @@
+{
+  "id": 109719525200,
+  "run_id": 36662312181,
+  "workflow_name": "Tests",
+  "head_branch": "test/CSH-057-retention-diagnostics",
+  "run_url": "https://api.github.com/repos/melliott18/cshell/actions/runs/36662312181",
+  "run_attempt": 1,
+  "node_id": "CR_kwDOJPzIE88AAAAZi8sXUA",
+  "head_sha": "bc74783bde46cd3b5783be03c778036f7132d460",
+  "url": "https://api.github.com/repos/melliott18/cshell/actions/jobs/109719525200",
+  "html_url": "https://github.com/melliott18/cshell/actions/runs/36662312181/job/109719525200",
+  "status": "completed",
+  "conclusion": "success",
+  "created_at": "2026-09-30T02:58:52Z",
+  "started_at": "2026-09-30T03:38:31Z",
+  "completed_at": "2026-09-30T04:23:31Z",
+  "name": "Native (macos-15, clang)",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1,
+      "started_at": "2026-09-30T03:38:32Z",
+      "completed_at": "2026-09-30T03:38:33Z"
+    },
+    {
+      "name": "Run actions/checkout@v6",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2,
+      "started_at": "2026-09-30T03:38:33Z",
+      "completed_at": "2026-09-30T03:38:35Z"
+    },
+    {
+      "name": "Run actions/setup-python@v6",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3,
+      "started_at": "2026-09-30T03:38:35Z",
+      "completed_at": "2026-09-30T03:38:35Z"
+    },
+    {
+      "name": "Install Linux build dependencies",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 4,
+      "started_at": "2026-09-30T03:38:35Z",
+      "completed_at": "2026-09-30T03:38:35Z"
+    },
+    {
+      "name": "Install macOS profile dependencies",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5,
+      "started_at": "2026-09-30T03:38:35Z",
+      "completed_at": "2026-09-30T03:38:39Z"
+    },
+    {
+      "name": "Build",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 6,
+      "started_at": "2026-09-30T03:38:39Z",
+      "completed_at": "2026-09-30T03:38:41Z"
+    },
+    {
+      "name": "Test replacement APIs, cshell runtime, and selected behavior",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 7,
+      "started_at": "2026-09-30T03:38:41Z",
+      "completed_at": "2026-09-30T03:41:45Z"
+    },
+    {
+      "name": "Test cshell terminal behavior and selected terminal suite",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 8,
+      "started_at": "2026-09-30T03:41:45Z",
+      "completed_at": "2026-09-30T03:41:48Z"
+    },
+    {
+      "name": "Qualify host utilities and rerun runtime with selected PATH",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 9,
+      "started_at": "2026-09-30T03:41:48Z",
+      "completed_at": "2026-09-30T03:42:49Z"
+    },
+    {
+      "name": "Test harness failure handling",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 10,
+      "started_at": "2026-09-30T03:42:49Z",
+      "completed_at": "2026-09-30T03:43:16Z"
+    },
+    {
+      "name": "Check replacement modules and cshell runtime with ASan and UBSan",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 11,
+      "started_at": "2026-09-30T03:43:16Z",
+      "completed_at": "2026-09-30T04:23:25Z"
+    },
+    {
+      "name": "Preserve retention timing and stack diagnostics",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 12,
+      "started_at": "2026-09-30T04:23:25Z",
+      "completed_at": "2026-09-30T04:23:27Z"
+    },
+    {
+      "name": "Post Run actions/setup-python@v6",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 23,
+      "started_at": "2026-09-30T04:23:27Z",
+      "completed_at": "2026-09-30T04:23:27Z"
+    },
+    {
+      "name": "Post Run actions/checkout@v6",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 24,
+      "started_at": "2026-09-30T04:23:27Z",
+      "completed_at": "2026-09-30T04:23:28Z"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 25,
+      "started_at": "2026-09-30T04:23:28Z",
+      "completed_at": "2026-09-30T04:23:29Z"
+    }
+  ],
+  "check_run_url": "https://api.github.com/repos/melliott18/cshell/check-runs/109719525200",
+  "labels": [
+    "macos-15"
+  ],
+  "runner_id": 1000005953,
+  "runner_name": "GitHub Actions 1000005953",
+  "runner_group_id": 0,
+  "runner_group_name": "GitHub Actions"
+}

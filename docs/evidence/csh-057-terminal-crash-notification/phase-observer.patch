@@ -1,0 +1,106 @@
+--- a/tests/execute_faults.c
++++ b/tests/execute_faults.c
+@@ -1,5 +1,6 @@
+ #define CSHELL_EXECUTE_FAULT_IMPLEMENTATION
+ #include "execute_faults.h"
++#include "retention_trace.h"
+ #include "cshell/execute.h"
+ #include "cshell/parser.h"
+ #include "cshell/jobs.h"
+@@ -157,7 +158,7 @@
+     ++fork_calls;
+     if (fail_fork && --fail_fork == 0) { errno = EAGAIN; return -1; }
+     if (launch_signal) assert(pipe(launch_ready) == 0);
+-    child = fork();
++    child = csh_retention_fork();
+     if (child > 0) {
+         assert(launched_count < sizeof(launched) / sizeof(launched[0]));
+         launched[launched_count++] = child;
+@@ -963,6 +964,8 @@
+     tree = parse("/bin/echo unsafe >/dev/null | /bin/cat | /bin/cat\n");
+     for (int kind = 0; kind < 4; ++kind) {
+         for (int point = 1; point <= (kind == 0 ? 3 : kind == 1 ? 2 : kind == 2 ? 1 : 3); ++point) {
++            csh_retention_trace_context(kind + 1, point, 0);
++            csh_retention_trace_event("run+", 0);
+             arm(0);
+             assert(csh_jobs_create(&context.jobs, state, 0) == 0);
+             assert(csh_jobs_monitor(context.jobs));
+@@ -980,6 +983,7 @@
+             csh_jobs_destroy(context.jobs);
+             context.jobs = NULL;
+             assert(live == baseline && fd_count() == before);
++            csh_retention_trace_event("run-", 0);
+         }
+     }
+     csh_ast_destroy(tree);
+@@ -993,6 +997,8 @@
+         arm(0);
+         assert(csh_jobs_create(&context.jobs, state, 0) == 0);
+         assert(sigprocmask(SIG_SETMASK, NULL, &original_mask) == 0);
++        csh_retention_trace_context(5, sent, i);
++        csh_retention_trace_event("run+", 0);
+         launch_signal = sent;
+         assert(csh_execute_context_ast(&context, tree, &result, &error) == 0);
+         if (result.status != 128 + sent)
+@@ -1015,12 +1021,15 @@
+         context.jobs = NULL;
+         assert(waitpid(-1, &status, WNOHANG) == -1 && errno == ECHILD);
+         assert(live == baseline && fd_count() == before);
++        csh_retention_trace_event("run-", 0);
+     }
+     csh_ast_destroy(tree);
+     /* Darwin can reject SIGCONT with EPERM for an exited process group.
+      * Exercise the real kernel result, both known error forms portably, and
+      * an actual refusal to continue a still-live job. */
+     for (int scenario = 0; scenario < 5; ++scenario) {
++        csh_retention_trace_context(6, scenario, 0);
++        csh_retention_trace_event("run+", 0);
+         struct csh_job *job;
+         int ready[2], saved, sink, suspended = -1;
+         pid_t child;
+@@ -1029,7 +1038,7 @@
+         assert(csh_jobs_create(&context.jobs, state, 0) == 0);
+         job = csh_jobs_add(context.jobs, 1, "resume-race", 1, 0);
+         assert(job && job->grouped && pipe(ready) == 0);
+-        child = fork();
++        child = csh_retention_fork();
+         assert(child >= 0);
+         if (!child) {
+             assert(setpgid(0, 0) == 0);
+@@ -1093,7 +1102,9 @@
+         context.jobs = NULL;
+         assert(waitpid(-1, &status, WNOHANG) == -1 && errno == ECHILD);
+         assert(live == baseline && fd_count() == before);
+-    }
++        csh_retention_trace_event("run-", 0);
++    }
++    csh_retention_trace_event("finish", 0);
+     puts("terminal job failure cleanup passed");
+ }
+ 
+@@ -1232,7 +1243,10 @@
+     if (argc == 2 && strcmp(argv[1], "--jobs-terminal") == 0) {
+         invocation.interactive = 1;
+         assert(csh_state_create(&state, &invocation, NULL) == CSH_STATE_OK);
++        csh_retention_trace_init();
++        csh_retention_trace_event("start", 0);
+         terminal_job_faults(state);
++        csh_retention_trace_close();
+         csh_state_destroy(state);
+         assert(live == 0);
+         return 0;
+--- a/Makefile
++++ b/Makefile
+@@ -244,9 +244,9 @@
+ 	mkdir -p $(dir $@)
+ 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/execute_faults.h -c $< -o $@
+ 
+-build/tests/execute_faults: tests/execute_faults.c tests/execute_faults.h $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/alias.o build/builtin.o $(EXECUTE_HEADERS) build/character.o build/stack.o
+-	mkdir -p $(dir $@)
+-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/execute_faults.c $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/alias.o build/builtin.o build/character.o build/stack.o $(LDLIBS)
++build/tests/execute_faults: build/tests/retention-trace.o tests/execute_faults.c tests/execute_faults.h $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/alias.o build/builtin.o $(EXECUTE_HEADERS) build/character.o build/stack.o
++	mkdir -p $(dir $@)
++	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/execute_faults.c $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/alias.o build/builtin.o build/character.o build/stack.o $(LDLIBS) build/tests/retention-trace.o
+ 
+ build/tests/assignment_fixture: tests/assignment_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o build/stack.o
+ 	mkdir -p $(dir $@)
