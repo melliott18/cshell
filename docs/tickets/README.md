@@ -112,6 +112,8 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-114](CSH-114-filesystem-environment-residuals.md) | Supply remaining filesystem environments after touch creation qualification | [CSH-113](CSH-113-filesystem-environment-residuals.md) | Pending allocation |
 | [CSH-079](CSH-079-formatted-output-residuals.md) | Remaining formatted-output environments and Darwin exec cleanup | [CSH-052](CSH-052-host-utility-evidence.md), [CSH-056](CSH-056-host-contract-gaps.md) | [#157](https://github.com/melliott18/cshell/issues/157) |
 
+| [CSH-081](CSH-081-host-terminal-residual-contracts.md) | Qualify residual terminal and session contracts | [CSH-077](CSH-077-host-terminal-utilities.md) | [#159](https://github.com/melliott18/cshell/issues/159) |
+
 ## Child implementation tickets
 
 ### CSH-002: Legacy safety (superseded)

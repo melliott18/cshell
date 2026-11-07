@@ -41,7 +41,8 @@ def text_overrides(text_bin, system):
 
 def provision(destination, gnu_bin=None, text_bin=None):
     selected = {name: shutil.which(name, path=os.defpath) for name in dict.fromkeys(HOSTS + UTILITIES)}
-    overrides = {'chmod': str(ROOT / 'build/host-chmod'),
+    overrides = {'write': str(ROOT / 'build/host-write'),
+                 'chmod': str(ROOT / 'build/host-chmod'),
                  'newgrp': str(ROOT / 'build/host-newgrp'),
                  'test': str(ROOT / 'build/host-test'), '[': str(ROOT / 'build/host-test'),
                  'ln': str(ROOT / 'build/host-ln'),
@@ -55,6 +56,8 @@ def provision(destination, gnu_bin=None, text_bin=None):
                  'touch': str(ROOT / 'build/host-touch'),
                  'readlink': str(ROOT / 'build/host-paths'),
                  'realpath': str(ROOT / 'build/host-paths')}
+    overrides.update({name: str(ROOT / ('build/host-terminal-' + name))
+                      for name in ('stty', 'tabs', 'tput', 'tty', 'mesg', 'who')})
     system = platform.system()
     if system == 'Darwin':
         # Homebrew's prefixed names do not change the system PATH or echo policy.

@@ -200,9 +200,9 @@
       "prerequisite": "Supply missing catalog providers, generated disposable locales/catalogs and independent encoding/translation expectations. Shared French/German/UTF-8/GB18030 provisioning is owned here; per-utility behavior remains with its named contract owner."
     },
     {
-      "ticket": "CSH-077",
-      "path": "docs/tickets/CSH-077-host-terminal-utilities.md",
-      "title": "Qualify host terminal and session utilities",
+      "ticket": "CSH-081",
+      "path": "docs/tickets/CSH-081-host-terminal-residual-contracts.md",
+      "title": "Qualify residual terminal and session contracts",
       "utilities": [
         "stty",
         "tabs",
@@ -215,7 +215,7 @@
       "conditions": [
         "U-040/stty-physical-terminal"
       ],
-      "prerequisite": "Supply controlled PTYs, session records and terminal capabilities; physical serial/terminal assertions require supplied hardware. Message fixtures must use disposable owned sessions."
+      "prerequisite": "Retain the strict CSH-077/081 software witnesses. Supply disposable physical serial hardware and a privileged disposable Darwin VM; complete remaining per-utility locale/signal/I/O/resource and login-record cases in the section map."
     },
     {
       "ticket": "CSH-078",
@@ -286,5 +286,31 @@
   },
   "qualification_maps": {
     "CSH-073": "tests/host_text_contracts.json"
+  },
+  "terminal_evidence": {
+    "ticket": "CSH-081",
+    "map": "docs/host-terminal-contracts.md",
+    "runner": "tests/host_terminal.py",
+    "scope": "133 strict bounded cases in five dispatch modes; not full-page qualification",
+    "residual_owner": "CSH-081",
+    "extensions": [
+      {
+        "runner": "tests/host_terminal_effects.py",
+        "scope": "18 controlled PTY data/priority/private-record cases in five dispatch modes; 90 strict assertions"
+      },
+      {
+        "runner": "tests/host_registered_sessions.py",
+        "scope": "28 strict registered-session cases in five dispatch modes; 140 assertions in a private Linux mount namespace",
+        "unqualified_conditions": [],
+        "closed_selected_conditions": [
+          "write/POSIX-EOT",
+          "write/two-sender-alerts"
+        ]
+      },
+      {
+        "runner": "tests/host_terminal_residuals.py",
+        "scope": "137 strict cases in five dispatch modes; 685 assertions; remaining full-page contracts stay open"
+      }
+    ]
   }
 }

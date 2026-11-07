@@ -1849,3 +1849,43 @@ signal status while avoiding a launcher crash-reporting dependency.
 CSH-071 adds [predicate, permission and identity qualification](host-permissions-identities.md),
 including `make test-host-permissions`, direct exec, public cshell dispatch,
 independent effects, and explicit unqualified vendor/session/platform branches.
+
+## Terminal and session providers (CSH-077)
+
+`make test-host-terminal` tests stock providers; known contract failures stay
+strict. `make test-host-terminal-profile` tests the opt-in repaired subset.
+`make test-host-profile` includes the latter, `test-host-terminal-effects`
+(90 real-byte, descriptor-priority and private-record assertions), and
+`test-host-terminal-harness`.
+The [section map](host-terminal-contracts.md) defines all 133 cases, five paths,
+bounds, independent oracles and remaining CSH-081 contracts. No real login
+records or recipient terminals are changed. Linux requires `ncurses-bin` and
+`bsdextrautils` (included in Docker/CI); native macOS uses system tic/write.
+Use `HOST_TERMINAL_FLAGS=--case=tty/` only for diagnosis.
+
+The Linux registered-session subset is opt-in and requires a private mount
+namespace. The [isolating command and scope](host-terminal-contracts.md#controlled-data-and-session-extension)
+cover 47 strict session assertions with dropped credentials, including EOT,
+sender alerts, canonical editing and synchronized SIGINT. The [repair evidence](evidence/csh-077-repairs/README.md)
+retains current normal and sanitizer results separately; earlier extension
+evidence remains unchanged. No physical hardware was supplied.
+
+### CSH-081 terminal residuals
+
+`make test-host-terminal-residuals` runs 137 strict residual cases through direct
+exec, command strings, files, stdin and explicit exec. It is also required by
+`make test-host-profile` and the terminal CI workflow, including ASan/UBSan.
+It checks independent PTY termios and tab-stop models, error statuses, timezone
+fields, locale precedence and inherited unused-input offsets. The continuation
+adds three-phase tput initialization/reset policy, base stty report values checked
+against the kernel, and private who idle-time records. See the
+[section map](host-terminal-contracts.md#csh-081-residual-implementation) for the
+exact boundary; there are no gap allowances or hidden skips.
+
+The isolated Linux session runner now has 140 strict assertions, including
+synchronized SIGINT/SIGTERM/SIGHUP/SIGQUIT/SIGPIPE through every path, UTF-8
+conversion, IEXTEN, distinct registered users, cross-owner permission cases and
+recipient closure during data/EOT output. It still requires root in a private mount namespace
+and uses only its own PTYs and private login records. The syscall/command/PTY
+captures and provider hashes are retained on failure. Physical serial devices
+and privileged Darwin sessions were not supplied and remain unqualified.

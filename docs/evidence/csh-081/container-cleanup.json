@@ -1,0 +1,12 @@
+{
+  "command": [
+    "docker",
+    "rm",
+    "-f",
+    "csh081-validation"
+  ],
+  "status": 0,
+  "stdout": "csh081-validation\n",
+  "stderr": "",
+  "time_utc": "2026-10-06T19:15:10.781094+00:00"
+}

@@ -57,6 +57,7 @@ make test-expand   # Replacement value/field expansion, arithmetic, and quote AP
 make test-substitution # Integrated expansion, child ownership, and capture failures
 make test-fields   # IFS splitting, pathname expansion, and cleanup checks
 make test-options  # Invocation/set, option effects, and environment interactions
+make test-host-terminal-residuals # Strict residual terminal/locale/error witnesses
 make test-host-inventory # Complete utility and residual ownership consistency
 make test-host-utilities # Stock-host integration, identities and known gaps
 make test-host-filesystem # Bounded filesystem/pathname provider witnesses
@@ -71,6 +72,9 @@ make test-host-filesystem-cwd-logical # Inherited-PWD fallback after cwd rename/
 make test-host-formatted # Catalogs, format/resource regressions and exec thresholds
 
 make test-host-permissions # Predicate, mode, ownership and identity assertions
+
+make test-host-terminal # Stock terminal-provider checks (strict failures retained)
+make test-host-terminal-profile # Qualified bounded PTY/session-record checks
 make test-host-profile   # Opt-in qualified utilities, strict gaps and boundaries
 make test-host-filesystem-removal # rmdir parent graphs, permissions and continuation
 

@@ -270,3 +270,7 @@ Other identities and ACLs, current-time and successful-creation tolerances, arbi
 CSH-113 supplies 60 touch cases / 240 assertions for current-time existing-file updates, creation and silent -c handling, plus creation with explicit UTC or reference timestamps. All four field selections and child-only masks 027, 077 and 777 require accessible operands before and after the middle operand. Independent kernel creation probes, authored timestamp readback and realtime/monotonic brackets supply the oracles. Current times use a documented one-second lower-bound floor; this is seconds-resolution evidence, not nanosecond accuracy. Exact channels/status, preserved identities/modes/bytes/link counts, created empty-file modes, exec records and cleanup are required.
 
 Other identities and ACLs, subsecond current-time accuracy and clock changes, arbitrary namespace graphs and races, skipped/repeated timezone times, further rules and databases, timestamp ranges, filesystem failures, diagnostic locales and resource exhaustion remain unqualified. Remaining contracts are owned by [CSH-114](tickets/CSH-114-filesystem-environment-residuals.md). U-034/U-040 remain partial. See [retained validation](evidence/csh-113/README.md).
+
+[CSH-077 terminal/session section map](host-terminal-contracts.md) records the
+strict selected profile and [CSH-081](tickets/CSH-081-host-terminal-residual-contracts.md)
+ownership of unqualified full contracts and physical-terminal prerequisites.
