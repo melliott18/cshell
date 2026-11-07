@@ -1,6 +1,6 @@
 # CSH-083: Prevent ticket identity collisions
 
-- Status: review
+- Status: done
 - Type: chore
 - Kind: implementation
 - Parent: None
@@ -46,8 +46,8 @@ for issue #176 after the filesystem follow-up moved to CSH-080 (#158).
   shared-branch records and historical evidence labels.
 - [Audit record and scope](../evidence/csh-083/README.md).
 
-The Ticket integrity workflow is proposed with this implementation; it becomes
-available repository-wide after merge and is not yet a required main check.
+The Ticket integrity workflow is integrated and available repository-wide.
+Making it a required merge check remains a separate maintainer setting.
 
 ## Continued verification (2026-10-08)
 
@@ -64,4 +64,21 @@ Offline ref checks use the worktree snapshot as their authority.
 - Strict Python compilation and `git diff --check` pass.
 - [Retained logs, revision scope and source hashes](../evidence/csh-083/README.md#continued-verification-2026-10-08).
 
-The ticket remains in review pending integration of PR #177.
+## Acceptance review (2026-11-07)
+
+Accepted after reviewing the allocator, identity validator, regression tests,
+CI workflow, contributor instructions and retained audit evidence. PR #177 is
+integrated into `main` through merge `13f57750b1bbd77c97396a75721c1486983f8b53`.
+All four acceptance criteria are satisfied; no blocking findings remain.
+
+- `make test-tickets`: all 24 tests and offline identity checks pass, including
+  real concurrent Git clients, lost-response recovery and rejected writes.
+- `python3 tools/tickets.py check --live --ref origin/main`: both snapshots pass
+  against 114 shared reservations. No implementation PRs remain open to audit.
+- Strict Python compilation passes. Live registry protection requires linear
+  history and forbids force pushes and deletion, including for administrators.
+- CSH-044/045 historical branch warnings and CSH-073/082 closed-issue lifecycle
+  warnings are separate from identity correctness. This acceptance synchronizes
+  CSH-083's own Markdown and GitHub body status to `done`.
+
+The historical October audit records remain unchanged.
