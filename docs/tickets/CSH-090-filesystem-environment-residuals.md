@@ -1,11 +1,11 @@
 # CSH-090: Supply remaining filesystem environments after recursive decision qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-089
-- Branch: Assigned when work starts
+- Branch: `test/CSH-090-filesystem-environments`
 - Issue: [#191](https://github.com/melliott18/cshell/issues/191)
 
 ## Goal
@@ -56,10 +56,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -67,7 +67,7 @@ Run `make test-host-inventory test-host-profile test-host-filesystem-allocation
 test-host-filesystem-provider-audit test-host-filesystem-residual
 test-host-filesystem-isolated test-host-filesystem-interactive
 test-host-filesystem-decisions test-host-filesystem-metadata
-test-host-filesystem-recursive` on native macOS and Linux as an unprivileged
+test-host-filesystem-recursive test-host-filesystem-path-limits` on native macOS and Linux as an unprivileged
 fixture identity. Retain separate nonzero stock `make test-host-filesystem-audit`
 and stock `tests/host_filesystem.py --extended-only --provider-audit` records.
 Add bounded setup/failure/timeout cleanup regressions for new environments.
@@ -90,3 +90,45 @@ rm provider restores mandatory final parent prompts after a declined nested
 descent; unpatched GNU failures remain separate stock evidence. Preserve the
 patch, provider provenance, required assertions and all older stock failures.
 This does not qualify arbitrary graphs, recursion limits or whole utilities.
+
+## Implementation and current dispositions
+
+CSH-090 adds eight cases / 32 assertions for `pathchk` total pathname bytes.
+On each private fixture filesystem, `pathconf` supplies PATH_MAX and NAME_MAX;
+unnormalized `stat` calls relative to an owned directory fd independently prove
+the successful resolution, ENAMETOOLONG boundary, and valid missing operands.
+The portable policy uses the normative 256-byte minimum. Operands contain
+limit-1, limit and limit+1 bytes; the limit includes the terminating NUL.
+Every component is at most two bytes, separating total length from NAME_MAX.
+
+Each default/portable group includes continuation over two invalid operands
+separated by a valid missing operand. Direct exec and cshell string/file/stdin
+modes require empty stdout, one length diagnostic naming each invalid operand,
+zero/positive-error status, unchanged private directories and successful cleanup.
+Five harness regressions cover setup/probe errors, missing/wrong diagnostics,
+output/status/effect corruption, immutable case specifications and timeout
+cleanup in all four modes. No selected provider source or build flag changes.
+
+The table above retains the incoming scope. The current section map and residual
+ledger record the bounded witnesses and assign every unsupplied environment
+and all four retained conditions to [CSH-091](CSH-091-filesystem-environment-residuals.md)
+([#193](https://github.com/melliott18/cshell/issues/193)). Utility/libc/platform
+vendors retain implementation ownership. This uses the explicit-disposition
+acceptance alternative; no whole utility, arbitrary depth, alternate filesystem,
+mount, quota, capacity, ACL, race or libc-internal allocation contract is closed.
+
+The branch is stacked on published CSH-089 commit
+`9b66eb7bd867536ef7f8d1a7c7e8d108337eef48`; integration remains gated on that
+unmerged dependency. See [CSH-090 evidence](../evidence/csh-090/README.md) for
+commands, results, source/provider provenance and separate stock failures.
+
+The complete requested target set plus `make test-host-filesystem-path-limits`
+passes on macOS UID 501 and Debian Linux Docker UID 10001: 1259/1275 selected
+filesystem assertions, 1162 host integration assertions, 10 ownership tests and
+54 filesystem harness tests. The focused target passes all 32 assertions on
+each platform. Separate stock audits retain exactly the CSH-089 failure sets:
+73/42 full-audit failures and 16/8 provider-audit failures. All filesystem
+fixtures report successful cleanup. Final reports share the same build/test
+source hash and retain exact selected-provider provenance. A development
+Linux timeout-test reaping race and its bounded-check correction are retained
+separately in the evidence.

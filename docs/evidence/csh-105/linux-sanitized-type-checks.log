@@ -1,0 +1,78 @@
+{
+  "binary": "/work/build/file-sanitized-build/src/file",
+  "sha256": "f70ca56d11ee1c48cf5d8ade4edc2891ba861965c77112a1f1e2ce8ee6fb68ce",
+  "c_long_bytes": 8,
+  "cases": [
+    {
+      "name": ".tmp",
+      "args": [
+        "-C",
+        "-m",
+        "magic"
+      ],
+      "status": 0,
+      "stdout_hex": "",
+      "stderr_hex": "",
+      "errors": [],
+      "passed": true,
+      "cleanup": true
+    },
+    {
+      "name": ".tmp",
+      "args": [
+        "-m",
+        "text",
+        "sample"
+      ],
+      "status": 0,
+      "stdout_hex": "73616d706c653a20666978747572650a",
+      "stderr_hex": "",
+      "errors": [],
+      "passed": true,
+      "cleanup": true
+    },
+    {
+      "name": ".tmp",
+      "args": [
+        "-m",
+        "magic.mgc",
+        "sample"
+      ],
+      "status": 0,
+      "stdout_hex": "73616d706c653a2066697874757265206d6174636865640a",
+      "stderr_hex": "",
+      "errors": [],
+      "passed": true,
+      "cleanup": true
+    },
+    {
+      "name": ".tmp",
+      "args": [
+        "-m",
+        "text",
+        "sample"
+      ],
+      "status": 0,
+      "stdout_hex": "73616d706c653a2066697874757265206d6174636865640a",
+      "stderr_hex": "",
+      "errors": [],
+      "passed": true,
+      "cleanup": true
+    },
+    {
+      "name": ".tmp",
+      "args": [
+        "-m",
+        "magic.mgc",
+        "sample"
+      ],
+      "status": 0,
+      "stdout_hex": "73616d706c653a2066697874757265206d6174636865640a",
+      "stderr_hex": "",
+      "errors": [],
+      "passed": true,
+      "cleanup": true
+    }
+  ],
+  "passed": 5
+}
