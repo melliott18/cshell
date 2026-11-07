@@ -182,3 +182,5 @@ The [CSH-012 requirement, defect, platform and documentation review](docs/confor
 [CSH-012 audit closure](docs/conformance-closure.md) records complete requirement accounting and scoped defect dispositions; known implementation gaps remain open.
 
 `make test-host-filesystem-touch-permissions` checks CSH-112 ordinary owner-mode touch permissions, explicit timestamps and operand continuation in direct execution and all shell input modes. See [CSH-112 evidence](docs/evidence/csh-112/README.md).
+
+`make test-host-filesystem-touch-current` checks CSH-113 touch creation modes and bounded current-time behavior in direct execution and all shell input modes. See [CSH-113 evidence](docs/evidence/csh-113/README.md).
