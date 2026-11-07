@@ -819,3 +819,16 @@ test-host-filesystem-removal: cshell host-profile
 .PHONY: test-host-filesystem-link-graphs
 test-host-filesystem-link-graphs: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --link-graphs-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-link-graphs.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-111: independently proved private ln permission boundaries.
+.PHONY: test-host-filesystem-link-permissions
+test-host-filesystem-link-permissions: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --link-permissions-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-link-permissions.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-touch-permissions
+test-host-filesystem-touch-permissions: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --touch-permissions-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-touch-permissions.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-touch-current
+test-host-filesystem-touch-current: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --touch-current-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-touch-current.json $(HOST_FILESYSTEM_FLAGS)

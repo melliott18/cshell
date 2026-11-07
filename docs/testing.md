@@ -1657,3 +1657,16 @@ counts and inode relationships, bytes, modes, channels/status and cleanup.
 Failure tests reject corrupted effects, incomplete setup and readback; failed
 exec and timeout checks require reaped children and removed fixtures.
 See [CSH-110 evidence](evidence/csh-110/README.md).
+
+## Link permission boundaries (CSH-111)
+
+`make test-host-filesystem-link-permissions` runs 21 private ln cases in direct
+execution and cshell string/file/stdin modes. Independent EACCES probes precede
+the selected provider. Exact inode/link-count/content effects, channels, status,
+exec records and cleanup are required. Run as an unprivileged identity. These
+fixtures do not qualify ACLs, other credentials, mounts or exhaustion.
+See [retained evidence](evidence/csh-111/README.md).
+
+`make test-host-filesystem-touch-permissions` checks CSH-112 ordinary owner-mode touch permissions, explicit timestamps and operand continuation in direct execution and all shell input modes. See [CSH-112 evidence](evidence/csh-112/README.md).
+
+`make test-host-filesystem-touch-current` checks CSH-113 touch creation modes and bounded current-time behavior in direct execution and all shell input modes. See [CSH-113 evidence](evidence/csh-113/README.md).

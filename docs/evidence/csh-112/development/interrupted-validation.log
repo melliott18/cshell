@@ -1,0 +1,50 @@
+python3 tests/host_contract_inventory.py
+PASS: 156 utility names; 101 external contracts; 30 retained conditions; current open owners
+python3 tests/test_host_contract_inventory.py
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 0.138s
+
+OK
+python3 tests/test_host_filesystem.py
+...................................................Traceback (most recent call last):
+  File "/Users/mitchell/.codex/worktrees/csh-112-filesystem-environments/cshell/tests/test_host_filesystem.py", line 2668, in <module>
+    unittest.main()
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/main.py", line 105, in __init__
+    self.runTests()
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/main.py", line 281, in runTests
+    self.result = testRunner.run(self.test)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/runner.py", line 240, in run
+    test(result)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/suite.py", line 122, in run
+    test(result)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/suite.py", line 122, in run
+    test(result)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/case.py", line 690, in __call__
+    return self.run(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/case.py", line 634, in run
+    self._callTestMethod(testMethod)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/case.py", line 589, in _callTestMethod
+    if method() is not None:
+       ^^^^^^^^
+  File "/Users/mitchell/.codex/worktrees/csh-112-filesystem-environments/cshell/tests/test_host_filesystem.py", line 1065, in test_link_permission_matrix_and_all_modes
+    record = run_case(Path('/bin/sh'), {'ln': {'path': '/bin/ln'}},
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mitchell/.codex/worktrees/csh-112-filesystem-environments/cshell/tests/host_filesystem.py", line 374, in run_case
+    shutil.rmtree(directory)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/shutil.py", line 785, in rmtree
+    _rmtree_safe_fd(fd, path, onexc)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/shutil.py", line 686, in _rmtree_safe_fd
+    _rmtree_safe_fd(dirfd, fullname, onexc)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/shutil.py", line 715, in _rmtree_safe_fd
+    os.unlink(entry.name, dir_fd=topfd)
+KeyboardInterrupt
+make: *** [test-host-inventory] Interrupt: 2
