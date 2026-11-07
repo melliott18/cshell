@@ -1668,3 +1668,5 @@ fixtures do not qualify ACLs, other credentials, mounts or exhaustion.
 See [retained evidence](evidence/csh-111/README.md).
 
 `make test-host-filesystem-touch-permissions` checks CSH-112 ordinary owner-mode touch permissions, explicit timestamps and operand continuation in direct execution and all shell input modes. See [CSH-112 evidence](evidence/csh-112/README.md).
+
+`make test-host-filesystem-touch-current` checks CSH-113 touch creation modes and bounded current-time behavior in direct execution and all shell input modes. See [CSH-113 evidence](evidence/csh-113/README.md).

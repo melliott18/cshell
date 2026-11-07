@@ -1,11 +1,11 @@
 # CSH-113: Supply remaining filesystem environments after touch permission qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-112
-- Branch: Assigned when work starts
+- Branch: `test/CSH-113-filesystem-environments`
 - Issue: [#237](https://github.com/melliott18/cshell/issues/237)
 
 ## Goal
@@ -56,10 +56,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -68,7 +68,7 @@ test-host-filesystem-provider-audit test-host-filesystem-residual
 test-host-filesystem-isolated test-host-filesystem-interactive
 test-host-filesystem-decisions test-host-filesystem-metadata
 test-host-filesystem-recursive test-host-filesystem-path-limits test-host-filesystem-cwd
-test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times test-host-filesystem-magic-strings test-host-filesystem-magic-messages test-host-filesystem-magic-types test-host-filesystem-magic-defaults test-host-filesystem-link-bytes test-host-filesystem-omitted-who test-host-filesystem-parent-graphs test-host-filesystem-removal test-host-filesystem-link-graphs test-host-filesystem-link-permissions test-host-filesystem-touch-permissions` on native macOS and Linux as an unprivileged
+test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times test-host-filesystem-magic-strings test-host-filesystem-magic-messages test-host-filesystem-magic-types test-host-filesystem-magic-defaults test-host-filesystem-link-bytes test-host-filesystem-omitted-who test-host-filesystem-parent-graphs test-host-filesystem-removal test-host-filesystem-link-graphs test-host-filesystem-link-permissions test-host-filesystem-touch-permissions test-host-filesystem-touch-current` on native macOS and Linux as an unprivileged
 fixture identity. Retain separate nonzero stock `make test-host-filesystem-audit`
 and stock `tests/host_filesystem.py --extended-only --provider-audit` records.
 Add bounded setup/failure/timeout cleanup regressions for new environments.
@@ -82,3 +82,34 @@ Privileged provisioning requires an isolated runner; prompts require owned PTYs.
 CSH-111 supplies 21 ln cases / 84 assertions for denied source search and destination write/search permissions. Independent link, symlink and unlink probes require kernel EACCES under one unprivileged fixture identity before exact provider exec. Hard-link failures continue to later operands; -s with and without -L/-P preserves inaccessible source spellings as literal link contents. Forced replacement failures preserve regular files, symlinks, FIFOs and referents. Inodes, modes, link counts, bytes, channels, status, exec records and cleanup are required.
 
 Further graph/default-policy alternatives, cross-device and other permission/ACL errors, other identities, hard-link count limits, namespace races, filesystem failures, diagnostic locales and resource exhaustion remain unqualified. Directory hard-link behavior and destinations created earlier in the same invocation have no portable oracle here. All 21 utility dispositions and four original U-040 conditions remain open. Utility/libc/platform vendors retain implementation ownership.
+
+## Implementation scope
+
+CSH-113 supplies 60 touch cases / 240 assertions for current-time existing-file updates, creation and silent -c handling, plus creation with explicit UTC or reference timestamps. All four field selections and child-only masks 027, 077 and 777 require accessible operands before and after the middle operand. Independent kernel creation probes, authored timestamp readback and realtime/monotonic brackets supply the oracles. Current times use a documented one-second lower-bound floor; this is seconds-resolution evidence, not nanosecond accuracy. Exact channels/status, preserved identities/modes/bytes/link counts, created empty-file modes, exec records and cleanup are required.
+
+Other identities and ACLs, subsecond current-time accuracy and clock changes, arbitrary namespace graphs and races, skipped/repeated timezone times, further rules and databases, timestamp ranges, filesystem failures, diagnostic locales and resource exhaustion remain unqualified. All 21 utility dispositions and four original U-040 conditions remain individually open under [CSH-114](CSH-114-filesystem-environment-residuals.md). Utility/libc/platform vendors retain implementation ownership.
+
+## Implementation and validation
+
+Implemented in the separate worktree on
+`test/CSH-113-filesystem-environments`, stacked on CSH-112 commit `636cdb8`.
+Integration remains gated on that open dependency. [Retained evidence](../evidence/csh-113/README.md)
+contains native macOS and unprivileged Linux/Docker commands, output, statuses,
+effects, clock/mask/timestamp probes, cleanup and provider/build identities.
+
+`python3 docs/evidence/csh-113/validate.py native` and its Linux equivalent pass
+all ticket-listed selected targets: 12331/12371 full filesystem assertions,
+240 focused assertions per platform, 1162 general host assertions with zero gaps,
+and 10 ownership plus 159 filesystem harness tests. Separate stock full/provider
+audits retain 749/16 native and 578/8 Linux failures. No allowances were added.
+`python3 docs/evidence/csh-113/verify.py` passes exact predecessor expectation,
+new-case, source/provider identity, stock-failure, clock/mask/timestamp and cleanup
+comparisons. The initial timeout-reporting harness failure is retained under
+`development/`, followed by corrected complete validation runs.
+
+All 21 utility dispositions and four original U-040 conditions remain explicitly
+open in the local [CSH-114 follow-up](CSH-114-filesystem-environment-residuals.md),
+whose GitHub allocation is pending. Utility/libc/platform vendors retain their
+implementation ownership. U-034/U-040 stay partial. No shell/runtime or provider
+change, new sanitizer run or separately hosted native-Linux run is claimed.
+This ticket is ready for review; it is not integrated into `main`.
