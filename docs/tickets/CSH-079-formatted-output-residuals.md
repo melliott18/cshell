@@ -8,6 +8,7 @@
 - Branch: `test/CSH-079-formatted-output-environments`
 - Issue: [#157](https://github.com/melliott18/cshell/issues/157)
 - Pull request: [#175](https://github.com/melliott18/cshell/pull/175)
+- Continuation pull request: [#241](https://github.com/melliott18/cshell/pull/241)
 
 ## Acceptance review (2026-11-07)
 

@@ -7,6 +7,7 @@
 - Depends on: CSH-052, CSH-056
 - Branch: test/CSH-074-host-languages-editors
 - Issue: [#146](https://github.com/melliott18/cshell/issues/146)
+- Pull request: [#241](https://github.com/melliott18/cshell/pull/241)
 
 ## Acceptance review (2026-11-07)
 

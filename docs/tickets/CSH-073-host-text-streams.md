@@ -7,6 +7,7 @@
 - Depends on: CSH-052, CSH-056
 - Branch: test/CSH-073-host-contract-completion
 - Issue: [#145](https://github.com/melliott18/cshell/issues/145)
+- Pull request: [#241](https://github.com/melliott18/cshell/pull/241)
 
 ## Acceptance review (2026-11-07)
 
