@@ -59,3 +59,19 @@ The implementation merge is `13f57750b1bbd77c97396a75721c1486983f8b53`. Every ac
 - [CSH-079](CSH-079-formatted-output-residuals.md): The checked criteria cover a bounded investigation and individual dispositions. The ticket explicitly retains Darwin libc-internal allocation, other locale/format/signal partitions and the unresolved original low-stack observation; it is not ready for whole-ticket closure.
 
 CSH-073 is reopened because its automatic issue closure did not satisfy its remaining acceptance criteria. The other two remain open. No acceptance is inferred from a checked box alone.
+
+## CSH-114 integration acceptance
+
+Accepted CSH-114 after [PR #243](https://github.com/melliott18/cshell/pull/243)
+merged as `a44c1047fed654dc78bf2fdf9d81e8e80f58b930`. The earlier open-ticket
+review missed the isolated implementation `52ccffa`; main still had only its
+backlog document. The implementation and original full evidence are now included.
+
+The [integration review](../evidence/csh-114/integration/README.md) verifies the
+original evidence, preserved source and oracle boundaries, and fresh macOS/Linux
+results: 112 assertions and 166 harness tests per platform. Ownership, ticket
+tests and live registry checks pass. CSH-115 / issue #242 is now the registered
+open owner of all 21 remaining utility dispositions and four retained conditions.
+Closure uses CSH-114's explicit individual-disposition acceptance criterion; it
+does not promote remaining contracts to qualified. Broader hosted CI was still
+running or queued at acceptance; ticket-integrity CI passed.

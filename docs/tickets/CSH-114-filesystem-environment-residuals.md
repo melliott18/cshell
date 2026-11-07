@@ -1,12 +1,13 @@
 # CSH-114: Supply remaining filesystem environments after touch creation qualification
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-113
 - Branch: `test/CSH-114-touch-integration`
 - Issue: [#240](https://github.com/melliott18/cshell/issues/240)
+- Pull request: [#243](https://github.com/melliott18/cshell/pull/243)
 
 ## Goal
 
@@ -136,3 +137,10 @@ does not qualify full utility pages or a full POSIX system.
 Fresh integration checks and their exact source identities are retained in
 [the integration review](../evidence/csh-114/integration/README.md). The original
 records remain unchanged and are not relabeled as results from the new tree.
+
+Accepted after integration in [PR #243](https://github.com/melliott18/cshell/pull/243),
+merge `a44c1047fed654dc78bf2fdf9d81e8e80f58b930`. Both fresh platforms pass all
+112 focused assertions and 166 filesystem harness tests. The original complete
+profiles and their failures remain preserved. Ticket-integrity CI passed; broader
+hosted checks were still running or queued at acceptance and are not claimed
+as passing evidence. Remaining contracts stay open in CSH-115 / issue #242.
