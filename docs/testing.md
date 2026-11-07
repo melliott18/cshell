@@ -1942,3 +1942,6 @@ remain open under CSH-078; the CUPS byte sink is not a physical printer.
 
 See [Containers and Pipeline](containers.md) for the named test/runtime targets,
 JUnit stage reports, restricted test-container command, and runtime-image checks.
+
+
+`make test-host-filesystem-touch-objects` checks CSH-114 directory/FIFO timestamps and namespace-error continuation in direct execution and all shell input modes. See [CSH-114 evidence](evidence/csh-114/README.md).

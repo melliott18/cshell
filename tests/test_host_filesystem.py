@@ -32,6 +32,7 @@ import host_filesystem_link_graphs as link_graphs
 import host_filesystem_link_permissions as link_permissions
 import host_filesystem_touch_permissions as touch_permissions
 import host_filesystem_touch_current as touch_current
+import host_filesystem_touch_objects as touch_objects
 import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
 import host_filesystem_magic_strings as magic_strings
@@ -954,6 +955,134 @@ class FilesystemHarnessTests(unittest.TestCase):
                     self.assertLess(time.monotonic(), deadline, 'timed-out provider was not reaped')
                     time.sleep(.02)
                 self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_touch_objects_matrix_and_all_modes(self):
+        rows = list(touch_objects.cases())
+        self.assertEqual(len(rows), 28)
+        self.assertEqual(len({r['id'] for r in rows}), 28)
+        self.assertEqual(sum(r['status'] == 'nonzero' for r in rows), 8)
+        for row in rows:
+            original = copy.deepcopy(row)
+            for mode in ('direct', 'string', 'file', 'stdin'):
+                with self.subTest(case=row['id'], mode=mode), tempfile.TemporaryDirectory() as root:
+                    record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                      os.defpath, row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS', record)
+                    self.assertEqual(record['touch_object_environment']['errno'], row['touch_objects']['errno'])
+                    self.assertEqual(record['touch_object_observed']['errno'], row['touch_objects']['errno'])
+                    self.assertEqual(record['touch_exec']['phase'], 'exec')
+                    json.dumps(record)
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+                    self.assertEqual(row, original)
+
+    def test_touch_objects_corrupt_effects_and_channels_are_rejected(self):
+        from smoke import capture as real_capture
+        for boundary in ('directory-chain', 'fifo-hard', 'not-directory', 'symlink-loop'):
+            row = next(r for r in touch_objects.cases() if r['touch_objects']['boundary'] == boundary
+                       and r['id'].endswith('-access'))
+            for fault in ('selected', 'unselected', 'identity', 'mode', 'nlink', 'content',
+                          'link', 'link-mtime', 'child', 'stdout', 'stderr', 'status'):
+                def capture(binary, invocation, cwd, *args, **kw):
+                    status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                    path = cwd / 'last'
+                    if fault in ('selected', 'unselected'):
+                        info = path.stat()
+                        stamps = (touch_objects.BASELINE[0], info.st_mtime_ns) if fault == 'selected' else (info.st_atime_ns, 0)
+                        os.utime(path, ns=stamps)
+                    elif fault == 'identity':
+                        path.rename(cwd / 'saved')
+                        path.write_bytes(touch_objects.CONTENT)
+                        path.chmod(0o640)
+                        os.utime(path, ns=row['touch_objects']['target_ns'])
+                    elif fault == 'mode':
+                        (cwd / 'object').chmod(0o600)
+                    elif fault == 'nlink':
+                        os.link(path, cwd / 'extra')
+                    elif fault == 'content':
+                        path.write_bytes(b'corrupt bytes')
+                        os.utime(path, ns=row['touch_objects']['target_ns'])
+                    elif fault == 'link':
+                        (cwd / 'object-chain').unlink()
+                        (cwd / 'object-chain').symlink_to('obstruction')
+                    elif fault == 'link-mtime':
+                        os.utime(cwd / 'object-chain', ns=(0, 0), follow_symlinks=False)
+                    elif fault == 'child':
+                        if boundary == 'directory-chain':
+                            (cwd / 'object/extra').write_bytes(b'unexpected')
+                        else:
+                            os.utime(cwd / 'obstruction', ns=(0, 0))
+                    elif fault == 'status':
+                        status = 0 if status else 1
+                    else:
+                        output[fault] = b'' if output[fault] else b'unexpected'
+                    return status, output, errors
+                with self.subTest(boundary=boundary, fault=fault), tempfile.TemporaryDirectory() as root, \
+                        patch('host_filesystem.smoke.capture', side_effect=capture):
+                    record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                      os.defpath, row, 'direct', Path(root), None)
+                    self.assertEqual(record['verdict'], 'FAIL', record)
+                    self.assertTrue(record['cleanup'], record)
+                    self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_touch_objects_unproved_setup_and_partial_failure(self):
+        row = next(touch_objects.cases())
+        real_setup = touch_objects.setup
+        def partial(directory, row):
+            real_setup(directory, row)
+            raise OSError('controlled error after graph creation')
+        for target, replacement in (('setup', partial), ('os.utime', lambda *a, **k: None)):
+            with self.subTest(target=target), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem_touch_objects.' + target, side_effect=replacement), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+                capture.assert_not_called()
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+        for observed in (None, errno.EIO):
+            with patch.object(Path, 'stat', side_effect=OSError(observed, 'wrong error') if observed else None):
+                with self.assertRaises(OSError):
+                    touch_objects.namespace_probe(Path('unused'), errno.ELOOP)
+
+    def test_touch_objects_dispatch_marker_is_required(self):
+        from smoke import capture as real_capture
+        row = next(r for r in touch_objects.cases() if r['touch_objects']['errno'])
+        for fault in ('missing', 'malformed', 'provider', 'euid', 'phase'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                result = real_capture(binary, invocation, cwd, *args, **kw)
+                marker = cwd / '.touch-exec.json'
+                value = json.loads(marker.read_text())
+                if fault == 'missing':
+                    marker.unlink()
+                elif fault == 'malformed':
+                    marker.write_text('{')
+                else:
+                    value[fault] = 'wrong'
+                    marker.write_text(json.dumps(value))
+                return result
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_touch_objects_cleanup_does_not_follow_replacement_link(self):
+        row = next(touch_objects.cases())
+        with tempfile.TemporaryDirectory() as root, tempfile.TemporaryDirectory() as outside:
+            root, outside = Path(root), Path(outside)
+            outside.chmod(0o751)
+            (root / 'object').symlink_to(outside)
+            touch_objects.restore(root, row)
+            self.assertEqual(stat.S_IMODE(outside.stat().st_mode), 0o751)
+
+    def test_touch_objects_failed_exec_and_timeout_cleanup(self):
+        for boundary in ('directory', 'fifo', 'not-directory', 'symlink-loop'):
+            row = next(r for r in touch_objects.cases() if r['touch_objects']['boundary'] == boundary)
+            self.check_fixture_exec_failure_and_timeout_clean_all_modes(row)
 
     def test_touch_current_matrix_and_all_modes(self):
         rows = list(touch_current.cases())
@@ -2590,7 +2719,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -2715,6 +2844,8 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         self.assertTrue(set(entry['csh112_assertions']) <= set(entry['assertions']))
         self.assertEqual(set(entry['csh113_assertions']), {r['id'] for r in touch_current.cases()})
         self.assertTrue(set(entry['csh113_assertions']) <= set(entry['assertions']))
+        self.assertEqual(set(entry['csh114_assertions']), {r['id'] for r in touch_objects.cases()})
+        self.assertTrue(set(entry['csh114_assertions']) <= set(entry['assertions']))
         manifest = json.loads((root / 'host_contracts.json').read_text())
         conditions = {c for owner in manifest['owners'] if 'basename' in owner['utilities'] for c in owner['conditions']}
         self.assertEqual({r['id'] for r in ledger['conditions']}, conditions)
@@ -2833,7 +2964,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

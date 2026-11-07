@@ -1111,3 +1111,7 @@ docker-pipeline-build:
 test-tickets:
 	$(PYTHON) tests/test_ticket_registry.py
 	$(PYTHON) tools/tickets.py check
+
+.PHONY: test-host-filesystem-touch-objects
+test-host-filesystem-touch-objects: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --touch-objects-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-touch-objects.json $(HOST_FILESYSTEM_FLAGS)

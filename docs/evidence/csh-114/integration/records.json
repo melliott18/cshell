@@ -1,0 +1,47 @@
+{
+  "native-build.log.gz": {
+    "uncompressed_sha256": "fa0ed3bf30e1167463ae0a3d8d43c07e535914108887d560c9524688bec33888"
+  },
+  "native-touch-objects.json.gz": {
+    "uncompressed_sha256": "800df7f721c67b5496e73ae91133c1a22c517e65079c99fab5abe9c44046e57e"
+  },
+  "native-touch-objects.log.gz": {
+    "uncompressed_sha256": "4f47c7800dad3e18d26103328e6321a679c21ad5b9cb83f748235fb8a77c70c7"
+  },
+  "native-harness.log.gz": {
+    "uncompressed_sha256": "f2547a7984860933195c0770142d9d05628219459d3b2aa5006e9f6f2482edeb"
+  },
+  "linux-build.log.gz": {
+    "uncompressed_sha256": "2a54caeaa7aa5343b224e446e90bd371d9348c7879bb13e7c32a73f926f382e5"
+  },
+  "linux-touch-objects.json.gz": {
+    "uncompressed_sha256": "10d10e0ca70a0b4f196b9cfa57b402d9bad5613b81934f7bbd2fc0892f450a19"
+  },
+  "linux-touch-objects.log.gz": {
+    "uncompressed_sha256": "4f47c7800dad3e18d26103328e6321a679c21ad5b9cb83f748235fb8a77c70c7"
+  },
+  "linux-harness.log.gz": {
+    "uncompressed_sha256": "757193e0d4c0a2f00670dabeb29a9744cd2adbfae2d9b4d60d232d0cdc9aae8e"
+  },
+  "tickets.log.gz": {
+    "uncompressed_sha256": "d1f943230347dd51cae60a7f93d4388a82b6e5252bdc3555da34af03bdf514b4"
+  },
+  "native": {
+    "totals": {
+      "PASS": 112,
+      "FAIL": 0
+    },
+    "source_identity_sha256": "ac66f1f35cc34e55212506ac9776f9e4a0643fd0f6dcb35229c8624c56273316",
+    "provider_sha256": "771bce2c41eb6d15e09ab213d799855bf255bc2908c75a3f183fad45f7ab713f"
+  },
+  "linux": {
+    "totals": {
+      "PASS": 112,
+      "FAIL": 0
+    },
+    "source_identity_sha256": "ac66f1f35cc34e55212506ac9776f9e4a0643fd0f6dcb35229c8624c56273316",
+    "provider_sha256": "6c94fc031962846701ad16f21b0a2ce7b8e336f0a417792a622db77ed78714c2"
+  },
+  "integration_source_commit": "cee800ea2fc5afbc5f5e99a0fa32797de1a14c32",
+  "original_implementation": "52ccffa"
+}
