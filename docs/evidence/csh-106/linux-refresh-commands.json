@@ -1,0 +1,249 @@
+[
+  {
+    "argv": [
+      "make",
+      "test-host-inventory"
+    ],
+    "status": 0,
+    "seconds": 103.69100954799796,
+    "log": "linux-refresh-inventory.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-allocation"
+    ],
+    "status": 0,
+    "seconds": 0.688769376007258,
+    "log": "linux-refresh-host-filesystem-allocation.log.gz"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "tests/host_utilities.py",
+      "./cshell",
+      "build/tests/host_utility_helper",
+      "--path",
+      "/work/build/host-profile/bin:/bin:/usr/bin",
+      "--strict-gaps",
+      "--boundaries",
+      "--printf-faults",
+      "build/tests/host_printf_faults",
+      "--record",
+      "build/tests/host-profile-results.json"
+    ],
+    "status": 0,
+    "seconds": 6.157673585010343,
+    "log": "linux-refresh-host-profile-results.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-calendar"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 0.9579198340070434,
+    "log": "linux-refresh-calendar.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-creation"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 1.8857314170018071,
+    "log": "linux-refresh-creation.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-cwd-logical"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 0.9053179589973297,
+    "log": "linux-refresh-cwd-logical.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-cwd"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 0.6952971249993425,
+    "log": "linux-refresh-cwd.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-datetime"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 1.1731862080050632,
+    "log": "linux-refresh-datetime.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-day-rules"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 2.1388828759954777,
+    "log": "linux-refresh-day-rules.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-decisions"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 1.6451957919925917,
+    "log": "linux-refresh-decisions.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-interactive"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 1.6512197090050904,
+    "log": "linux-refresh-interactive.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-isolated"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 1.0536128340027062,
+    "log": "linux-refresh-isolated.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-magic-strings"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 2.254848292999668,
+    "log": "linux-refresh-magic-strings.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-magic"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 1.7422987500031013,
+    "log": "linux-refresh-magic.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-metadata"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 0.6137602079979843,
+    "log": "linux-refresh-metadata.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-output"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 1.4355126249865862,
+    "log": "linux-refresh-output.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-path-limits"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 0.5350115000037476,
+    "log": "linux-refresh-path-limits.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-profile"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 164.9769103669969,
+    "log": "linux-refresh-profile.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-provider-audit"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 1.4164061670016963,
+    "log": "linux-refresh-provider-audit.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-recursive"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 0.9052778750046855,
+    "log": "linux-refresh-recursive.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-reference"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 0.7336766249936773,
+    "log": "linux-refresh-reference.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-residual"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 0.7973593759961659,
+    "log": "linux-refresh-residual.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-timezone"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 1.7613302919926355,
+    "log": "linux-refresh-timezone.log.gz"
+  },
+  {
+    "argv": [
+      "make",
+      "test-host-filesystem-transition-times"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 1.7396545850060647,
+    "log": "linux-refresh-transition-times.log.gz"
+  }
+]
