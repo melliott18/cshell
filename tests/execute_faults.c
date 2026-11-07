@@ -1,5 +1,6 @@
 #define CSHELL_EXECUTE_FAULT_IMPLEMENTATION
 #include "execute_faults.h"
+#include "crash_notification.h"
 #include "cshell/execute.h"
 #include "cshell/parser.h"
 #include "cshell/jobs.h"
@@ -162,6 +163,8 @@ pid_t csh_execute_fault_fork(void)
         assert(launched_count < sizeof(launched) / sizeof(launched[0]));
         launched[launched_count++] = child;
     } else if (child == 0) {
+        if (launch_signal == SIGQUIT)
+            assert(csh_test_clear_crash_notification() == 0);
         /* Parent allocation sweeps stop at fork; child setup has its own
          * explicitly selected failure point below. */
         fail_allocation = 0;

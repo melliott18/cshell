@@ -222,3 +222,20 @@ to repair the recorded Issue-8 gaps; stock failures remain separate.
 [CSH-080](tickets/CSH-080-filesystem-remaining-contracts.md) owns each unqualified
 page contract and the four original filesystem conditions. No utility family or
 full-system requirement is promoted.
+## CSH-070 formatted-output profile
+
+`make test-host-formatted` builds a catalog-capable printf and separately
+selects the new literal echo build in a private PATH. It is also a prerequisite
+of `make test-host-profile`; the latter retains its stock echo selection.
+[Whole-page accounting and declared policies](host-formatted-output.md)
+explain the new exact locale/conversion cases, libc and stack controls, bounded
+exec threshold searches and explicit remaining scope. French/German catalog
+sources are checked in and compiled using `gencat` under `en_US.UTF-8`.
+
+The new source fixes propagate libc formatting failure, move the input-sized
+conversion workspace off the stack, diagnose trailing character-constant text,
+and evaluate floating operands as `strtod` input. Catalog and conversion changes
+apply only to the opt-in provider. [CSH-079](tickets/CSH-079-formatted-output-residuals.md)
+owns the six retained conditions and conditional allocation-helper prerequisite;
+the original historical limitation reasons remain unchanged. Darwin 1 MiB stack
+exec searches failed cleanup and are excluded from the selected profile.

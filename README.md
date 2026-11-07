@@ -68,6 +68,7 @@ make test-host-filesystem-metadata # Measured metadata and exact timestamp check
 make test-host-filesystem-path-limits # Measured total pathname byte boundaries
 make test-host-filesystem-creation # Child masks and final directory/FIFO modes
 make test-host-filesystem-cwd-logical # Inherited-PWD fallback after cwd rename/removal
+make test-host-formatted # Catalogs, format/resource regressions and exec thresholds
 make test-host-profile   # Opt-in qualified utilities, strict gaps and boundaries
 make test-host-filesystem-removal # rmdir parent graphs, permissions and continuation
 make test-evaluation # Evaluation, lookup, aliases, and remaining utilities

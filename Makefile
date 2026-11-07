@@ -244,7 +244,7 @@ $(EXECUTE_FAULT_OBJECTS): build/tests/execute-fault-%.o: src/%.c $(EXECUTE_HEADE
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -include tests/execute_faults.h -c $< -o $@
 
-build/tests/execute_faults: tests/execute_faults.c tests/execute_faults.h $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/alias.o build/builtin.o $(EXECUTE_HEADERS) build/character.o build/stack.o
+build/tests/execute_faults: tests/execute_faults.c tests/execute_faults.h tests/crash_notification.h $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/alias.o build/builtin.o $(EXECUTE_HEADERS) build/character.o build/stack.o
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/execute_faults.c $(EXECUTE_FAULT_OBJECTS) $(PARSER_OBJECTS) build/alias.o build/builtin.o build/character.o build/stack.o $(LDLIBS)
 
@@ -371,7 +371,7 @@ build/tests/jobs-pty.json: tests/jobs_cases.py build/tests/jobs_helper
 
 .PHONY: test-jobs-pty
 test-jobs-pty: cshell build/tests/jobs-pty.json build/tests/execute_faults
-	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/jobs-pty.json
+	$(PYTHON) tests/smoke.py ./cshell --suite build/tests/jobs-pty.json --timeout 10
 	$(PYTHON) tests/smoke.py ./build/tests/execute_faults --suite tests/fixtures/jobs-fault-pty.json
 
 build/tests/jobs_fixture: tests/jobs_fixture.c $(EXECUTE_OBJECTS) $(EXECUTE_HEADERS) build/character.o build/stack.o
@@ -562,13 +562,37 @@ build/tests/lifecycle-jobs.o: src/jobs.c $(EXECUTE_HEADERS)
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -Dsysconf=csh_lifecycle_sysconf -c $< -o $@
 
-build/tests/jobs_lifecycle: tests/jobs_lifecycle.c build/tests/lifecycle-jobs.o $(EXECUTE_OBJECTS) build/character.o build/stack.o
-	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/tests/lifecycle-jobs.o $(filter-out build/jobs.o,$(EXECUTE_OBJECTS)) build/character.o build/stack.o $(LDLIBS)
+# Observe fork boundaries only in the lifecycle fixture's executor copy.
+build/tests/lifecycle-execute.o: src/execute.c $(EXECUTE_HEADERS) tests/retention_trace.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -DCSH_RETENTION_INTERPOSE_FORK -include tests/retention_trace.h -c $< -o $@
+
+build/tests/retention-trace.o: tests/retention_trace.c tests/retention_trace.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+build/tests/jobs_lifecycle: tests/jobs_lifecycle.c tests/retention_trace.h build/tests/lifecycle-jobs.o build/tests/lifecycle-execute.o build/tests/retention-trace.o $(EXECUTE_OBJECTS) build/character.o build/stack.o
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/tests/lifecycle-jobs.o build/tests/lifecycle-execute.o build/tests/retention-trace.o $(filter-out build/jobs.o build/execute.o,$(EXECUTE_OBJECTS)) build/character.o build/stack.o $(LDLIBS)
 
 test-jobs: test-job-retention
+.PHONY: test-job-crash-notification
+test-jobs: test-job-crash-notification
+test-job-crash-notification: build/tests/crash_notification
+	./build/tests/crash_notification
+
+build/tests/crash_notification: tests/crash_notification.c tests/crash_notification.h
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
 .PHONY: test-job-retention
 test-job-retention: build/tests/jobs_lifecycle
-	$(PYTHON) tests/smoke.py ./build/tests/jobs_lifecycle --suite tests/fixtures/job-retention.json --timeout 60
+	$(PYTHON) tests/retention_diagnostics.py ./build/tests/jobs_lifecycle
+
+.PHONY: test-retention-diagnostics
+test-retention-diagnostics: build/tests/jobs_lifecycle
+	$(PYTHON) tests/retention_trace_checks.py ./build/tests/jobs_lifecycle
+
+test: test-retention-diagnostics
 
 test-jobs-pty: test-job-notifications
 .PHONY: test-job-notifications
@@ -832,3 +856,52 @@ test-host-filesystem-touch-permissions: cshell host-profile
 .PHONY: test-host-filesystem-touch-current
 test-host-filesystem-touch-current: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --touch-current-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-touch-current.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-070 uses private catalogs and a separately selected literal echo policy.
+.PHONY: test-host-formatted
+build/host-echo-literal: tools/host-profile/echo.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+build/host-profile/catalogs/%.cat: tools/host-profile/catalogs/%.msg
+	@mkdir -p $(@D)
+	rm -f $@.tmp
+	LC_ALL=en_US.UTF-8 gencat $@.tmp $< && mv $@.tmp $@
+
+build/tests/host_printf_resources: tests/host_printf_resources.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(filter-out -fsanitize=%,$(CFLAGS)) $(filter-out -fsanitize=%,$(LDFLAGS)) -o $@ $< $(LDLIBS)
+
+test-host-formatted: cshell host-profile build/host-echo-literal build/tests/host_printf_resources build/host-profile/catalogs/fr.cat build/host-profile/catalogs/de.cat build/host-profile/catalogs/incomplete.cat build/tests/host_printf_faults
+	$(PYTHON) tests/test_host_formatted.py
+	$(PYTHON) tests/host_formatted.py --record build/tests/host-formatted.json $(if $(findstring -fsanitize,$(CFLAGS) $(LDFLAGS)),--instrumented)
+
+test-host-profile: test-host-formatted
+
+.PHONY: test-host-formatted-sanitize
+build/host-formatted-sanitizer/printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) -std=c99 -Wall -Wextra -Wpedantic -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -o $@ $< $(LDLIBS)
+
+build/host-formatted-sanitizer/echo: tools/host-profile/echo.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) -std=c99 -Wall -Wextra -Wpedantic -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -o $@ $< $(LDLIBS)
+
+test-host-formatted-sanitize: cshell build/host-formatted-sanitizer/printf build/host-formatted-sanitizer/echo build/tests/host_printf_resources build/host-profile/catalogs/fr.cat build/host-profile/catalogs/de.cat build/host-profile/catalogs/incomplete.cat build/tests/host_printf_faults
+	$(PYTHON) tests/host_formatted.py --sanitizer --record build/tests/host-formatted-sanitize.json
+
+.PHONY: test-host-formatted-contracts
+test-host-formatted-contracts: cshell build/host-printf build/host-echo-literal build/tests/host_printf_resources build/tests/host_printf_faults build/host-profile/catalogs/fr.cat build/host-profile/catalogs/de.cat build/host-profile/catalogs/incomplete.cat
+	$(PYTHON) tests/test_host_formatted.py
+	$(PYTHON) tests/host_formatted.py --scope contracts --record build/tests/host-formatted-contracts.json $(if $(findstring -fsanitize,$(CFLAGS) $(LDFLAGS)),--instrumented)
+
+# Actual interrupted stdio on a private full pipe, normal and test-only copies.
+build/tests/host_printf_interrupt: tests/host_formatted_interrupt.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+build/tests/host_echo_interrupt: tests/host_formatted_interrupt.c tools/host-profile/echo.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -DHOST_FORMATTED_ECHO -o $@ $< $(LDLIBS)
+
+test-host-formatted test-host-formatted-contracts test-host-formatted-sanitize: build/tests/host_printf_interrupt build/tests/host_echo_interrupt

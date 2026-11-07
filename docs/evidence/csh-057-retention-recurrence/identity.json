@@ -1,0 +1,13 @@
+{
+  "base": "60295934db1c971a2b3aac582f88b0f766eccce2",
+  "failed_source": "c707ecb6f2681a30e4f899709b12c7b4f7bc7d62",
+  "failure_run": 36602681743,
+  "failure_job": 109523732498,
+  "peer_run": 36602689841,
+  "peer_job": 109523761967,
+  "uname": "Darwin Mitchells-MacBook-Pro-2.local 23.6.0 Darwin Kernel Version 23.6.0: Tue Apr 21 20:21:28 PDT 2026; root:xnu-10063.141.1.712.16~1/RELEASE_ARM64_T6000 arm64",
+  "clang": "Apple clang version 15.0.0 (clang-1500.3.9.4)\nTarget: arm64-apple-darwin23.6.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin",
+  "branch": "docs/CSH-057-retention-recurrence",
+  "sw_vers": "ProductName:\t\tmacOS\nProductVersion:\t\t14.8.7\nBuildVersion:\t\t23J520",
+  "python": "Python 3.12.2"
+}

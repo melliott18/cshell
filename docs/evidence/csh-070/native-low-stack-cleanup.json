@@ -1,0 +1,51 @@
+[
+  {
+    "pid": 84727,
+    "observation": "84727     1 84727 UEs  /Users/mitchell/.codex/worktrees/csh-070-formatted-output/cshell/build/host-echo-literal",
+    "action": "SIGKILL sent again; prior watchdog SIGKILL did not reap within two seconds",
+    "final_observation": "84727     1 84727 UEs  /Users/mitchell/.codex/worktrees/csh-070-formatted-output/cshell/build/host-echo-literal",
+    "final_pid_exists": true
+  },
+  {
+    "pid": 85433,
+    "observation": "85433     1 85433 UEs  /Users/mitchell/.codex/worktrees/csh-070-formatted-output/cshell/build/host-echo-literal",
+    "action": "SIGKILL sent again; prior watchdog SIGKILL did not reap within two seconds",
+    "final_observation": "85433     1 85433 UEs  /Users/mitchell/.codex/worktrees/csh-070-formatted-output/cshell/build/host-echo-literal",
+    "final_pid_exists": true
+  },
+  {
+    "pid": 86535,
+    "observation": "86535     1 86535 UEs  /Users/mitchell/.codex/worktrees/csh-070-formatted-output/cshell/build/host-echo-literal",
+    "action": "SIGKILL sent again; prior watchdog SIGKILL did not reap within two seconds",
+    "final_observation": "86535     1 86535 UEs  /Users/mitchell/.codex/worktrees/csh-070-formatted-output/cshell/build/host-echo-literal",
+    "final_pid_exists": true
+  },
+  {
+    "pid": 92610,
+    "observation": "92610     1 92610 UEs  /Users/mitchell/.codex/worktrees/csh-070-formatted-output/cshell/build/host-echo-literal",
+    "action": "SIGKILL sent again; prior watchdog SIGKILL did not reap within two seconds",
+    "final_observation": "92610     1 92610 UEs  /Users/mitchell/.codex/worktrees/csh-070-formatted-output/cshell/build/host-echo-literal",
+    "final_pid_exists": true
+  },
+  {
+    "pid": 93661,
+    "observation": "93661     1 93661 UEs  /Users/mitchell/.codex/worktrees/csh-070-formatted-output/cshell/build/host-echo-literal",
+    "action": "SIGKILL sent again; prior watchdog SIGKILL did not reap within two seconds",
+    "final_observation": "93661     1 93661 UEs  /Users/mitchell/.codex/worktrees/csh-070-formatted-output/cshell/build/host-echo-literal",
+    "final_pid_exists": true
+  },
+  {
+    "pid": 95169,
+    "observation": "95169     1 95169 UEs  /Users/mitchell/.codex/worktrees/csh-070-formatted-output/cshell/build/host-echo-literal",
+    "action": "SIGKILL sent again; prior watchdog SIGKILL did not reap within two seconds",
+    "final_observation": "95169     1 95169 UEs  /Users/mitchell/.codex/worktrees/csh-070-formatted-output/cshell/build/host-echo-literal",
+    "final_pid_exists": true
+  },
+  {
+    "pid": 95715,
+    "observation": "95715     1 95715 UEs  /Users/mitchell/.codex/worktrees/csh-070-formatted-output/cshell/build/host-echo-literal",
+    "action": "SIGKILL sent again; prior watchdog SIGKILL did not reap within two seconds",
+    "final_observation": "95715     1 95715 UEs  /Users/mitchell/.codex/worktrees/csh-070-formatted-output/cshell/build/host-echo-literal",
+    "final_pid_exists": true
+  }
+]

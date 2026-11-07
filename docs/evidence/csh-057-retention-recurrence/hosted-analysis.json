@@ -1,0 +1,270 @@
+{
+  "logs": [
+    {
+      "artifact": "hosted-failure.log.gz",
+      "artifact_sha256": "ec5803f38040814251417168f47a00df8e7f06752709dec6cd63e327af04218c",
+      "run": 36602681743,
+      "job": 109523732498,
+      "url": "https://github.com/melliott18/cshell/actions/runs/36602681743/job/109523732498",
+      "checkout_commit": "c707ecb6f2681a30e4f899709b12c7b4f7bc7d62",
+      "checkout_evidence": {
+        "line": 121,
+        "timestamp": "2026-09-29T17:07:31.1267440Z",
+        "text": "c707ecb6f2681a30e4f899709b12c7b4f7bc7d62"
+      },
+      "environment": {
+        "os": "macOS",
+        "version": "15.7.9",
+        "build": "24G830",
+        "runner_image": "macos-15-arm64",
+        "runner_image_version": "20260907.0337.1"
+      },
+      "sanitizer_invocation": {
+        "line": 15182,
+        "timestamp": "2026-09-29T17:12:31.8911480Z",
+        "text": "make -j2 test test-pty test-host-profile CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'"
+      },
+      "sanitizer_options": {
+        "CC": "clang",
+        "ASAN_OPTIONS": "halt_on_error=1:detect_leaks=0",
+        "MallocNanoZone": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1"
+      },
+      "make_parallel_job_limit": 2,
+      "retention_cases": [
+        {
+          "build": "normal",
+          "outcome": "PASS",
+          "suite_start": {
+            "line": 1389,
+            "timestamp": "2026-09-29T17:08:02.8256810Z",
+            "text": "Suite: job-retention [module] candidate=/Users/runner/work/cshell/cshell/build/tests/jobs_lifecycle"
+          },
+          "case_result": {
+            "line": 1390,
+            "timestamp": "2026-09-29T17:08:03.2418090Z",
+            "text": "PASS: CSH-057 bounded CHILD_MAX retention and eviction"
+          },
+          "github_log_timestamp_interval_seconds": 0.416128
+        },
+        {
+          "build": "ASan/UBSan",
+          "outcome": "FAIL",
+          "suite_start": {
+            "line": 16863,
+            "timestamp": "2026-09-29T17:19:39.5441950Z",
+            "text": "Suite: job-retention [module] candidate=/Users/runner/work/cshell/cshell/build/tests/jobs_lifecycle"
+          },
+          "case_result": {
+            "line": 16864,
+            "timestamp": "2026-09-29T17:20:39.6097580Z",
+            "text": "FAIL: CSH-057 bounded CHILD_MAX retention and eviction"
+          },
+          "github_log_timestamp_interval_seconds": 60.065563,
+          "failure": {
+            "timeout_diagnostic": {
+              "line": 16865,
+              "timestamp": "2026-09-29T17:20:39.6121950Z",
+              "text": "  timeout after 60s (last output at 58.721s; no output for 1.282s; 524 bytes captured; process group killed)"
+            },
+            "status_diagnostic": {
+              "line": 16866,
+              "timestamp": "2026-09-29T17:20:39.6124760Z",
+              "text": "  status: expected 0, got -9"
+            },
+            "stdout_diagnostic": {
+              "line": 16867,
+              "timestamp": "2026-09-29T17:20:39.6141040Z",
+              "text": "  stdout: expected b'retention capacity=32 round=1 completed=0\\nretention capacity=32 round=1 completed=32\\nretention capacity=32 round=2 completed=0\\nretention capacity=32 round=2 completed=32\\nretention capacity=256 round=1 completed=0\\nretention capacity=256 round=1 completed=64\\nretention capacity=256 round=1 completed=128\\nretention capacity=256 round=1 completed=192\\nretention capacity=256 round=1 completed=256\\nretention capacity=256 round=2 completed=0\\nretention capacity=256 round=2 completed=64\\nretention capacity=256 round=2 completed=128\\nretention capacity=256 round=2 completed=192\\nretention capacity=256 round=2 completed=256\\nCHILD_MAX=32 and fallback=256: capacity, saved/unsaved IDs, foreground preservation, oldest eviction passed\\nretention live records\\nretention formatting\\nretention complete\\n' (785 bytes), got b'retention capacity=32 round=1 completed=0\\nretention capacity=32 round=1 completed=32\\nretention capacity=32 round=2 completed=0\\nretention capacity=32 round=2 completed=32\\nretention capacity=256 round=1 completed=0\\nretention capacity=256 round=1 completed=64\\nretention capacity=256 round=1 completed=128\\nretention capacity=256 round=1 completed=192\\nretention capacity=256 round=1 completed=256\\nretention capacity=256 round=2 completed=0\\nretention capacity=256 round=2 completed=64\\nretention capacity=256 round=2 completed=128\\n' (524 captured bytes)"
+            },
+            "runner_deadline_seconds": 60.0,
+            "runner_last_output_seconds_since_capture_start": 58.721,
+            "runner_seconds_without_output": 1.282,
+            "expected_status": 0,
+            "actual_status": -9,
+            "expected_stdout_bytes": 785,
+            "captured_stdout_bytes": 524,
+            "expected_stdout": "retention capacity=32 round=1 completed=0\nretention capacity=32 round=1 completed=32\nretention capacity=32 round=2 completed=0\nretention capacity=32 round=2 completed=32\nretention capacity=256 round=1 completed=0\nretention capacity=256 round=1 completed=64\nretention capacity=256 round=1 completed=128\nretention capacity=256 round=1 completed=192\nretention capacity=256 round=1 completed=256\nretention capacity=256 round=2 completed=0\nretention capacity=256 round=2 completed=64\nretention capacity=256 round=2 completed=128\nretention capacity=256 round=2 completed=192\nretention capacity=256 round=2 completed=256\nCHILD_MAX=32 and fallback=256: capacity, saved/unsaved IDs, foreground preservation, oldest eviction passed\nretention live records\nretention formatting\nretention complete\n",
+            "captured_stdout": "retention capacity=32 round=1 completed=0\nretention capacity=32 round=1 completed=32\nretention capacity=32 round=2 completed=0\nretention capacity=32 round=2 completed=32\nretention capacity=256 round=1 completed=0\nretention capacity=256 round=1 completed=64\nretention capacity=256 round=1 completed=128\nretention capacity=256 round=1 completed=192\nretention capacity=256 round=1 completed=256\nretention capacity=256 round=2 completed=0\nretention capacity=256 round=2 completed=64\nretention capacity=256 round=2 completed=128\n",
+            "captured_is_exact_expected_prefix": true,
+            "last_checkpoint": {
+              "capacity": 256,
+              "round": 2,
+              "completed": 128
+            },
+            "completed_fill_children_lower_bound": 448,
+            "completed_by_capacity_round": [
+              {
+                "capacity": 32,
+                "round": 1,
+                "completed": 32
+              },
+              {
+                "capacity": 32,
+                "round": 2,
+                "completed": 32
+              },
+              {
+                "capacity": 256,
+                "round": 1,
+                "completed": 256
+              },
+              {
+                "capacity": 256,
+                "round": 2,
+                "completed": 128
+              }
+            ],
+            "not_reached_in_captured_output": [
+              "retention live records",
+              "retention formatting",
+              "retention complete"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "artifact": "hosted-peer.log.gz",
+      "artifact_sha256": "5b09d462f1e4a4eec33aba448bf40aca0e144bea558af0580ce2f408e68a40a7",
+      "run": 36602689841,
+      "job": 109523761967,
+      "url": "https://github.com/melliott18/cshell/actions/runs/36602689841/job/109523761967",
+      "checkout_commit": "b77a5d5d04233bd16cf745a6f016f7d78cee061e",
+      "checkout_evidence": {
+        "line": 116,
+        "timestamp": "2026-09-29T17:07:30.9917190Z",
+        "text": "b77a5d5d04233bd16cf745a6f016f7d78cee061e"
+      },
+      "environment": {
+        "os": "macOS",
+        "version": "15.7.9",
+        "build": "24G830",
+        "runner_image": "macos-15-arm64",
+        "runner_image_version": "20260907.0337.1"
+      },
+      "sanitizer_invocation": {
+        "line": 15177,
+        "timestamp": "2026-09-29T17:11:05.4854300Z",
+        "text": "make -j2 test test-pty test-host-profile CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'"
+      },
+      "sanitizer_options": {
+        "CC": "clang",
+        "ASAN_OPTIONS": "halt_on_error=1:detect_leaks=0",
+        "MallocNanoZone": "0",
+        "UBSAN_OPTIONS": "halt_on_error=1"
+      },
+      "make_parallel_job_limit": 2,
+      "retention_cases": [
+        {
+          "build": "normal",
+          "outcome": "PASS",
+          "suite_start": {
+            "line": 1384,
+            "timestamp": "2026-09-29T17:07:57.0254130Z",
+            "text": "Suite: job-retention [module] candidate=/Users/runner/work/cshell/cshell/build/tests/jobs_lifecycle"
+          },
+          "case_result": {
+            "line": 1385,
+            "timestamp": "2026-09-29T17:07:57.3595650Z",
+            "text": "PASS: CSH-057 bounded CHILD_MAX retention and eviction"
+          },
+          "github_log_timestamp_interval_seconds": 0.334152
+        },
+        {
+          "build": "ASan/UBSan",
+          "outcome": "PASS",
+          "suite_start": {
+            "line": 16858,
+            "timestamp": "2026-09-29T17:16:02.6378460Z",
+            "text": "Suite: job-retention [module] candidate=/Users/runner/work/cshell/cshell/build/tests/jobs_lifecycle"
+          },
+          "case_result": {
+            "line": 16859,
+            "timestamp": "2026-09-29T17:16:53.8213010Z",
+            "text": "PASS: CSH-057 bounded CHILD_MAX retention and eviction"
+          },
+          "github_log_timestamp_interval_seconds": 51.183455
+        }
+      ]
+    }
+  ],
+  "source_comparison_failure_to_peer": {
+    "api_endpoint": "repos/melliott18/cshell/compare/c707ecb6f2681a30e4f899709b12c7b4f7bc7d62...b77a5d5d04233bd16cf745a6f016f7d78cee061e",
+    "base_commit": "c707ecb6f2681a30e4f899709b12c7b4f7bc7d62",
+    "base_tree": "7f26ac69a90fbb493bb3e718ae1d2cbded807c0a",
+    "peer_commit": "b77a5d5d04233bd16cf745a6f016f7d78cee061e",
+    "peer_tree": "7f26ac69a90fbb493bb3e718ae1d2cbded807c0a",
+    "ahead_by": 1,
+    "behind_by": 0,
+    "changed_files": [],
+    "identical_tracked_source_trees": true
+  },
+  "source_review": {
+    "prior_green_integration_commit": "faf2e9525dfe2c2c2cba4598a1d63d49552fc1d7",
+    "failed_commit": "c707ecb6f2681a30e4f899709b12c7b4f7bc7d62",
+    "unchanged_relevant_files": [
+      {
+        "path": "src/jobs.c",
+        "prior_blob": "018e9a634bd0defbd0a1e29b7a26f0cd1cf61c30",
+        "failed_blob": "018e9a634bd0defbd0a1e29b7a26f0cd1cf61c30",
+        "unchanged": true
+      },
+      {
+        "path": "tests/jobs_lifecycle.c",
+        "prior_blob": "4b947891405ef17a3d32032de71a15d32d6d3593",
+        "failed_blob": "4b947891405ef17a3d32032de71a15d32d6d3593",
+        "unchanged": true
+      },
+      {
+        "path": "tests/fixtures/job-retention.json",
+        "prior_blob": "ccfa3aff1b7ab252514bd9e0c613b641fd253a9a",
+        "failed_blob": "ccfa3aff1b7ab252514bd9e0c613b641fd253a9a",
+        "unchanged": true
+      },
+      {
+        "path": "tests/smoke.py",
+        "prior_blob": "0e5deed4b7900a9214307fd557c427d573d82dbf",
+        "failed_blob": "0e5deed4b7900a9214307fd557c427d573d82dbf",
+        "unchanged": true
+      },
+      {
+        "path": "tests/pty_harness.py",
+        "prior_blob": "99bda4f1d48bb002da1f31f9a88b6211ba7be724",
+        "failed_blob": "99bda4f1d48bb002da1f31f9a88b6211ba7be724",
+        "unchanged": true
+      }
+    ],
+    "changed_runtime_paths": [
+      "include/cshell/arithmetic.h",
+      "include/cshell/execute.h",
+      "include/cshell/expand.h",
+      "include/cshell/parser.h",
+      "include/cshell/stack.h",
+      "src/arithmetic.c",
+      "src/execute.c",
+      "src/expand.c",
+      "src/lexer.c",
+      "src/parser.c",
+      "src/prepare.c",
+      "src/stack.c"
+    ],
+    "review": "CSH-066 changes shallow parse/execute/expand cost through native-stack checks, getrlimit, thread-local bound caching and iterative execution-plan ownership. It does not change jobs.c, the retention fixture, or pipe/PTY capture. A source diff alone does not quantify throughput effects or establish causation."
+  },
+  "interpretation": {
+    "established": [
+      "The failing sanitizer case hit the outer 60-second deadline and the runner reported killing its group; the resulting leader status was -9.",
+      "All captured bytes are the exact required prefix. By its final checkpoint, at least 448 capacity-fill children completed their run/reap assertions: 32 + 32 + 256 + 128.",
+      "The runner received its last output at 58.721 seconds and reported 1.282 seconds without output at timeout. This is evidence of observed progress near the outer bound.",
+      "The peer passed on a distinct checkout commit with an identical tracked source tree."
+    ],
+    "supported_diagnosis": "The aggregate outer case deadline expired after substantial completed work. The record does not demonstrate a five-second operation stall or establish why the hosted work took this long.",
+    "limits": [
+      "GitHub suite-start/result timestamp differences include logging and runner overhead; they are not internal per-operation timings.",
+      "Last-output time measures receipt by the runner, not the exact child completion time. Checkpoints occur every 64 fills and do not record each intervening duration.",
+      "The record cannot rule out earlier or late stalls, scheduling delays or progress after the last checkpoint, and it does not contain timeout-time stacks or inherited alarm state.",
+      "make -j2 establishes a permitted concurrent test configuration, not actual machine load or a measured cause of slowing.",
+      "The new recurrence does not retrospectively prove the cause of the earlier failure with empty fully buffered stdout. The peer pass does not erase either failure."
+    ]
+  }
+}

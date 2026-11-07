@@ -1,0 +1,12 @@
+{
+  "baseline": {
+    "sha256": "e228c52b87c7ecb335b7e9cdc08a041f200a82bc0471aa7387381a945dada670",
+    "source": "60295934db1c971a2b3aac582f88b0f766eccce2",
+    "kind": "ASan+UBSan, unmodified"
+  },
+  "profile": {
+    "sha256": "8a5a8a4275714947204eaedd122b3dbafb7e86e73dbf66ee6e05ffa3ac683e04",
+    "source": "60295934db1c971a2b3aac582f88b0f766eccce2",
+    "patch": "profile.patch"
+  }
+}

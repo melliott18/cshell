@@ -18,7 +18,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     # Native macOS continued making progress in sanitizer runtime tests at
     # 45 minutes. Preserve per-case deadlines and budget the complete job.
-    timeout-minutes: ${{ matrix.os == 'macos-15' && 90 || 45 }}
+    timeout-minutes: ${{ matrix.os == 'macos-15' && 90 || 60 }}
     strategy:
       fail-fast: false
       matrix:
@@ -71,6 +71,16 @@ jobs:
         run: |
           make clean
           make -j2 test test-pty test-host-profile CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+      - name: Preserve retention timing and stack diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: retention-${{ matrix.os }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            build/retention-diagnostics/
+            build/retention-diagnostics-checks/
+          if-no-files-found: ignore
+          retention-days: 30
 
   docker:
     name: Docker (Linux)

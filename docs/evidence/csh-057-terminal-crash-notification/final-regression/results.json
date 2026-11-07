@@ -1,0 +1,503 @@
+{
+  "purpose": "Final ownership guard plus saved/default/restored SIGCHLD regression. Earlier manifests and raw archives remain unchanged.",
+  "temporary_build_directory": "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4",
+  "source_sha256": {
+    "tests/crash_notification.c": "17491fa22c042c3ee893ce89c28e72693fe09d11bb0b503098c79a24842ddf80",
+    "tests/crash_notification.h": "3262c45f2f1bc298c09ad31da0d8a17e5e5d74b7c1a7908831c641be8d03129e",
+    "docs/evidence/csh-057-terminal-crash-notification/reproduce_fixture.c": "550759400826696f611b3b7153720ea35ea6f1363841976094a35fd6d8e8a7d9"
+  },
+  "binary_sha256": {
+    "normal": "ad4a57072125294535630e3a8d03a8268d29268df3c563d62401422290ad8789",
+    "sanitizer": "48bd2629dc7eb5c544cb346261109d51137b7f4682230e7e84d1a057b870ab46",
+    "helper-noop": "230e4b482509923326be5270e9b8935d66ac945e1c5b4617ec3c1705f6011bd7",
+    "ignored-sigchld": "fc52e6bc512773c29346c27749ddc24c61b2786074d915fd4a37b24b1d9a3a94",
+    "ignored-sigchld-sanitizer": "5493cfeecba2c40f132e4ee47f2d811f3d1f6b27c6b1e24cb94ba629ad0bc86b",
+    "autoreap-mutation": "41d89cb392c37049ac6104a4e2d8d86ee1a882e5547e70fac8d9b5779bc34c04",
+    "reproduce-fixture": "ac4aec9078c72f553a2850edd7e5ff97d7f0071fe5679cfb374f548c0e0e8f52",
+    "wrapper-ignored-sigchld": "5858464a92271423a3f25fa9d24e4c00f67d57b934e4423158465e28f1777468",
+    "wrapper-autoreap-mutation": "7b81c299dbf05a6896780659e8fa4e191015556be4e76a321ca4d7d985f737ea",
+    "original-execute_faults": "d1f736eb2ac98c1a80bea7ea8f71904bf1e9b263470dc2b3f619bb14df50fb76",
+    "execute_faults": "8c8fffb39ebb80c3ea1a5b06a16427b4a97f19c5699f14af1a29bd0d25185ea6"
+  },
+  "results": [
+    {
+      "name": "build-normal",
+      "command": [
+        "cc",
+        "-Itests",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "/Users/mitchell/Projects/cshell/tests/crash_notification.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/normal"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.525735,
+      "log": "build-normal.log"
+    },
+    {
+      "name": "normal",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/normal"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.322815,
+      "log": "normal.log"
+    },
+    {
+      "name": "build-sanitizer",
+      "command": [
+        "cc",
+        "-Itests",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "-fsanitize=address,undefined",
+        "-fno-omit-frame-pointer",
+        "/Users/mitchell/Projects/cshell/tests/crash_notification.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/sanitizer"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.176281,
+      "log": "build-sanitizer.log"
+    },
+    {
+      "name": "sanitizer",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/sanitizer"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.46988,
+      "log": "sanitizer.log"
+    },
+    {
+      "name": "build-helper-noop",
+      "command": [
+        "cc",
+        "-Itests",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/helper-noop.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/helper-noop"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.12037,
+      "log": "build-helper-noop.log"
+    },
+    {
+      "name": "helper-noop",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/helper-noop"
+      ],
+      "status": 1,
+      "expected_status": 1,
+      "elapsed_seconds": 0.254988,
+      "log": "helper-noop.log"
+    },
+    {
+      "name": "build-ignored-sigchld-object",
+      "command": [
+        "cc",
+        "-Itests",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "-Dkill=csh_regression_kill",
+        "-c",
+        "/Users/mitchell/Projects/cshell/tests/crash_notification.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/ignored-sigchld.o"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.079496,
+      "log": "build-ignored-sigchld-object.log"
+    },
+    {
+      "name": "build-ignored-sigchld",
+      "command": [
+        "cc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/ignored-sigchld.o",
+        "/Users/mitchell/Projects/cshell/docs/evidence/csh-057-terminal-crash-notification/final-regression/observe_kill.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/ignored-sigchld"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.083348,
+      "log": "build-ignored-sigchld.log"
+    },
+    {
+      "name": "ignored-sigchld",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/ignored-sigchld"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.265532,
+      "log": "ignored-sigchld.log"
+    },
+    {
+      "name": "build-ignored-sigchld-sanitizer-object",
+      "command": [
+        "cc",
+        "-Itests",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "-fsanitize=address,undefined",
+        "-fno-omit-frame-pointer",
+        "-Dkill=csh_regression_kill",
+        "-c",
+        "/Users/mitchell/Projects/cshell/tests/crash_notification.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/ignored-sigchld-sanitizer.o"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.144929,
+      "log": "build-ignored-sigchld-sanitizer-object.log"
+    },
+    {
+      "name": "build-ignored-sigchld-sanitizer",
+      "command": [
+        "cc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "-fsanitize=address,undefined",
+        "-fno-omit-frame-pointer",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/ignored-sigchld-sanitizer.o",
+        "/Users/mitchell/Projects/cshell/docs/evidence/csh-057-terminal-crash-notification/final-regression/observe_kill.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/ignored-sigchld-sanitizer"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.095652,
+      "log": "build-ignored-sigchld-sanitizer.log"
+    },
+    {
+      "name": "ignored-sigchld-sanitizer",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/ignored-sigchld-sanitizer"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.394036,
+      "log": "ignored-sigchld-sanitizer.log"
+    },
+    {
+      "name": "build-autoreap-mutation-object",
+      "command": [
+        "cc",
+        "-Itests",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "-Dkill=csh_regression_kill",
+        "-c",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/autoreap-mutation.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/autoreap-mutation.o"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.076466,
+      "log": "build-autoreap-mutation-object.log"
+    },
+    {
+      "name": "build-autoreap-mutation",
+      "command": [
+        "cc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/autoreap-mutation.o",
+        "/Users/mitchell/Projects/cshell/docs/evidence/csh-057-terminal-crash-notification/final-regression/observe_kill.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/autoreap-mutation"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.09009,
+      "log": "build-autoreap-mutation.log"
+    },
+    {
+      "name": "autoreap-mutation",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/autoreap-mutation"
+      ],
+      "status": 1,
+      "expected_status": 1,
+      "elapsed_seconds": 0.275252,
+      "log": "autoreap-mutation.log",
+      "cleanup_sent_no_additional_signal": true
+    },
+    {
+      "name": "build-reproduce-fixture",
+      "command": [
+        "cc",
+        "-Itests",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "/Users/mitchell/Projects/cshell/docs/evidence/csh-057-terminal-crash-notification/reproduce_fixture.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/reproduce-fixture"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.113688,
+      "log": "build-reproduce-fixture.log"
+    },
+    {
+      "name": "reproduce-fixture",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/reproduce-fixture",
+        "0",
+        "/usr/bin/true"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.185686,
+      "log": "reproduce-fixture.log"
+    },
+    {
+      "name": "build-wrapper-ignored-sigchld-object",
+      "command": [
+        "cc",
+        "-Itests",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "-Dkill=csh_regression_kill",
+        "-c",
+        "/Users/mitchell/Projects/cshell/docs/evidence/csh-057-terminal-crash-notification/reproduce_fixture.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/wrapper-ignored-sigchld.o"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.067017,
+      "log": "build-wrapper-ignored-sigchld-object.log"
+    },
+    {
+      "name": "build-wrapper-ignored-sigchld",
+      "command": [
+        "cc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/wrapper-ignored-sigchld.o",
+        "/Users/mitchell/Projects/cshell/docs/evidence/csh-057-terminal-crash-notification/final-regression/observe_kill.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/wrapper-ignored-sigchld"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.097034,
+      "log": "build-wrapper-ignored-sigchld.log"
+    },
+    {
+      "name": "wrapper-ignored-sigchld",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/wrapper-ignored-sigchld",
+        "0",
+        "/usr/bin/true"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.166967,
+      "log": "wrapper-ignored-sigchld.log"
+    },
+    {
+      "name": "build-wrapper-autoreap-mutation-object",
+      "command": [
+        "cc",
+        "-Itests",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "-Dkill=csh_regression_kill",
+        "-c",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/wrapper-autoreap-mutation.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/wrapper-autoreap-mutation.o"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.065362,
+      "log": "build-wrapper-autoreap-mutation-object.log"
+    },
+    {
+      "name": "build-wrapper-autoreap-mutation",
+      "command": [
+        "cc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Werror",
+        "-g",
+        "-O1",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/wrapper-autoreap-mutation.o",
+        "/Users/mitchell/Projects/cshell/docs/evidence/csh-057-terminal-crash-notification/final-regression/observe_kill.c",
+        "-o",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/wrapper-autoreap-mutation"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.078697,
+      "log": "build-wrapper-autoreap-mutation.log"
+    },
+    {
+      "name": "wrapper-autoreap-mutation",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/wrapper-autoreap-mutation",
+        "0",
+        "/usr/bin/true"
+      ],
+      "status": 1,
+      "expected_status": 1,
+      "elapsed_seconds": 0.157863,
+      "log": "wrapper-autoreap-mutation.log",
+      "cleanup_sent_no_signal": true
+    },
+    {
+      "name": "fixture-before",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/reproduce-fixture",
+        "1",
+        "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+        "/Users/mitchell/Projects/cshell/docs/evidence/csh-057-terminal-crash-notification/fixture_case.py",
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-terminal-l14kfzp0/original-execute_faults",
+        "/Users/mitchell/Projects/cshell/docs/evidence/csh-057-terminal-crash-notification/final-regression/fixture-before.json"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 6.08409,
+      "log": "fixture-before.log"
+    },
+    {
+      "name": "fixture-after",
+      "command": [
+        "/var/folders/1s/p32k5z617vqc6qxm89nx29dc0000gn/T/csh057-final-cleanup-jp3qqku4/reproduce-fixture",
+        "0",
+        "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+        "/Users/mitchell/Projects/cshell/docs/evidence/csh-057-terminal-crash-notification/fixture_case.py",
+        "/Users/mitchell/Projects/cshell/build/tests/execute_faults",
+        "/Users/mitchell/Projects/cshell/docs/evidence/csh-057-terminal-crash-notification/final-regression/fixture-after.json"
+      ],
+      "status": 0,
+      "expected_status": 0,
+      "elapsed_seconds": 0.113964,
+      "log": "fixture-after.log"
+    }
+  ],
+  "log_sha256": {
+    "autoreap-mutation.log": "585d56f977156b0e81c5faab9897ff28021b7556310d9c133f7a09f1950f45af",
+    "build-autoreap-mutation-object.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-autoreap-mutation.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-helper-noop.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-ignored-sigchld-object.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-ignored-sigchld-sanitizer-object.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-ignored-sigchld-sanitizer.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-ignored-sigchld.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-normal.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-reproduce-fixture.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-sanitizer.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-wrapper-autoreap-mutation-object.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-wrapper-autoreap-mutation.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-wrapper-ignored-sigchld-object.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build-wrapper-ignored-sigchld.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fixture-after.log": "6ac6671172864b44d6a0a6460ae9464e10603a452192fc44d39f8a535d1ade25",
+    "fixture-before.log": "b8f970f74237c5a1305f3b40040f88410bf0b495cc18cc76136bb22e05445b9c",
+    "helper-noop.log": "e049b6932564ead89ac9b718fe93884008cdb225820a1d4d1302beca9f93d23f",
+    "ignored-sigchld-sanitizer.log": "8563bef82bf1be4d39600025ec66976a15d24d8217fae3b56bacebe611617d20",
+    "ignored-sigchld.log": "79d03082bb7a44be64edcac683a7dffc753fff52e3f0d3d75516e116140a3b9b",
+    "normal.log": "de4b74251c559bd5af6797fec4d92158c5dc7229618c7b3a78058876d5277bc2",
+    "reproduce-fixture.log": "75bdf7e309126d83f5e097d2b443699e58cfa8dd5730bd8a5c781e204080da51",
+    "sanitizer.log": "de4b74251c559bd5af6797fec4d92158c5dc7229618c7b3a78058876d5277bc2",
+    "wrapper-autoreap-mutation.log": "f58a3b621a03a5bfa45a8504ffef0062bc34bf0cda2f2ac1f582cee5f8a0bd19",
+    "wrapper-ignored-sigchld.log": "fbdf555ee1cb1874465d4d5973b0ecd0603d6ca228db2e713ee8d2172e5ada08"
+  }
+}

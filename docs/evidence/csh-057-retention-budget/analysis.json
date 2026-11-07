@@ -1,0 +1,664 @@
+{
+  "cases": {
+    "failed": {
+      "alarm_state_fields": [
+        "blocked",
+        "pending",
+        "disposition_0_default"
+      ],
+      "alarm_states": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "binary_sha256": "abe77477ec2ad0203068348d96f2622d809225a92f96e018879aad22ea20a1a5",
+      "capture_duration_seconds": 60.05702704200007,
+      "capture_start_reference": "immediately before smoke.run_case; includes fixture setup",
+      "case_failures": [
+        "timeout after 60s (last output at 53.508s; no output for 6.494s; 569 bytes captured; process group killed)",
+        "status: expected 0, got -9",
+        "stdout: expected b'retention capacity=32 round=1 completed=0\\nretention capacity=32 round=1 completed=32\\nretention capacity=32 round=2 completed=0\\nretention capacity=32 round=2 completed=32\\nretention capacity=256 round=1 completed=0\\nretention capacity=256 round=1 completed=64\\nretention capacity=256 round=1 completed=128\\nretention capacity=256 round=1 completed=192\\nretention capacity=256 round=1 completed=256\\nretention capacity=256 round=2 completed=0\\nretention capacity=256 round=2 completed=64\\nretention capacity=256 round=2 completed=128\\nretention capacity=256 round=2 completed=192\\nretention capacity=256 round=2 completed=256\\nCHILD_MAX=32 and fallback=256: capacity, saved/unsaved IDs, foreground preservation, oldest eviction passed\\nretention live records\\nretention formatting\\nretention complete\\n' (785 bytes), got b'retention capacity=32 round=1 completed=0\\nretention capacity=32 round=1 completed=32\\nretention capacity=32 round=2 completed=0\\nretention capacity=32 round=2 completed=32\\nretention capacity=256 round=1 completed=0\\nretention capacity=256 round=1 completed=64\\nretention capacity=256 round=1 completed=128\\nretention capacity=256 round=1 completed=192\\nretention capacity=256 round=1 completed=256\\nretention capacity=256 round=2 completed=0\\nretention capacity=256 round=2 completed=64\\nretention capacity=256 round=2 completed=128\\nretention capacity=256 round=2 completed=192\\n' (569 captured bytes)"
+      ],
+      "checkout": "bc74783bde46cd3b5783be03c778036f7132d460",
+      "child_entry_records": 578,
+      "completed_capacity_fills": 573,
+      "diagnostic_controls": [
+        {
+          "case_failures": [
+            "status: expected 0, got -14"
+          ],
+          "name": "diagnostic stalled child: default alarm",
+          "verdict": "PASS"
+        },
+        {
+          "case_failures": [
+            "timeout after 6s (no output received; 0 bytes captured; process group killed)",
+            "status: expected 0, got -9"
+          ],
+          "name": "diagnostic stalled child: blocked alarm",
+          "verdict": "PASS"
+        }
+      ],
+      "diagnostic_failures": [],
+      "event_counts": {
+        "alarm_armed": 1,
+        "cleanup+": 1,
+        "cleanup-": 1,
+        "fg+": 3,
+        "fg-": 3,
+        "fork+": 578,
+        "fork-child": 578,
+        "fork-parent": 578,
+        "overflow+": 1,
+        "overflow-": 1,
+        "reap+": 575,
+        "reap-": 574,
+        "round+": 4,
+        "round-": 3,
+        "run+": 574,
+        "run-": 574,
+        "start": 1,
+        "wait+": 321,
+        "wait-": 321,
+        "wait_all+": 3,
+        "wait_all-": 3
+      },
+      "events": 4698,
+      "forks_without_child_entry_record": [],
+      "job_conclusion": "failure",
+      "job_id": 109719513272,
+      "job_url": "https://github.com/melliott18/cshell/actions/runs/36662308140/job/109719513272",
+      "last_completed_reap": {
+        "a": [
+          0,
+          0,
+          0,
+          4901175
+        ],
+        "c": 88262,
+        "e": "reap-",
+        "i": 253,
+        "n": 256,
+        "p": 85806,
+        "r": 2,
+        "t": 932780471
+      },
+      "last_event": {
+        "a": [
+          0,
+          0,
+          0,
+          4951594
+        ],
+        "c": 88264,
+        "e": "reap+",
+        "i": 254,
+        "n": 256,
+        "p": 85806,
+        "r": 2,
+        "t": 932828912
+      },
+      "last_event_after_capture_start_seconds": 59.997545,
+      "last_event_after_root_start_seconds": 59.904408,
+      "last_reap_after_capture_start_seconds": 59.949104,
+      "last_reap_after_root_start_seconds": 59.855967,
+      "maximum_root_event_gap_seconds": 0.152365,
+      "nonoverlapping_run_reap_sum_seconds": 59.502795,
+      "original_member_sha256": {
+        "retention-diagnostics-checks/checks.json": "97657ee731b5236772d8824906034d84ca28282b3ead5030dbf1458bc9167df0",
+        "retention-diagnostics-checks/retention-91t3362z/capture-start.json": "6a43c2eea618c7f584db9c0e80b92d63e0a0076059044fdd8cfd66f75f02af1d",
+        "retention-diagnostics-checks/retention-91t3362z/metadata.json": "f24685a4b9295058487dd3a2f2e2c530ca51add911ad02ac9f68e5372d0fbd6b",
+        "retention-diagnostics-checks/retention-91t3362z/result.json": "bf2086044976a73f0300dd73bc40033d50950358c10334fe7159a4c3822467af",
+        "retention-diagnostics-checks/retention-91t3362z/stack-child-74238.console.txt": "643222f3bfa2c3dbe9e59369268b12f8b3eb56163486c57d7715dc509d268006",
+        "retention-diagnostics-checks/retention-91t3362z/stack-child-74238.txt": "a7971c7368951d6face99b5df6fe763423fa7f625a4b59d4a94f75c71c1f5f8f",
+        "retention-diagnostics-checks/retention-91t3362z/stack-root-74235.console.txt": "737eb0f33af5f91c7dbd5518cce2d8dbd3d0e8192c4e24a445a52e1fc45424e4",
+        "retention-diagnostics-checks/retention-91t3362z/stack-root-74235.txt": "72a22e72e788a1f9f04bb18969069c9a941083d1bb69c8025ee91f50a7dda8ed",
+        "retention-diagnostics-checks/retention-91t3362z/trace.jsonl": "3b6e28aef487488cf0571cc2e164f43eacf65c0ffb8612f481c5c6abf87cfa91",
+        "retention-diagnostics-checks/retention-91t3362z/watcher-config.json": "868732e30989cf39f47094c03389dd3a2c91685ee0e49c27e48a913c58e051cc",
+        "retention-diagnostics-checks/retention-91t3362z/watcher-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "retention-diagnostics-checks/retention-91t3362z/watcher.json": "cda812a0d91f3592bd178f73c014990ae33cc14dcb3e2462488ba0a13bf7cda9",
+        "retention-diagnostics-checks/retention-eld4h9ga/capture-start.json": "4f5211e67d5461f03a784a2fffe33b79e16a8658beee2ba2f6d5e1aef30234c6",
+        "retention-diagnostics-checks/retention-eld4h9ga/metadata.json": "608ba8c63510a78f12d4e7a09fa13ed9b13af442b9f93d472d7e51d665dc0c71",
+        "retention-diagnostics-checks/retention-eld4h9ga/result.json": "7fbc981a65b41fff9e7e6d87e19fb64bdbfaab40111bf015be27439a015d8bcf",
+        "retention-diagnostics-checks/retention-eld4h9ga/stack-child-73954.console.txt": "5bec3629a3e363fb4e503b43f8ad37540fdd17aac9da1044de80d83184ebad8d",
+        "retention-diagnostics-checks/retention-eld4h9ga/stack-child-73954.txt": "db2543bc6cab317f7811cddb6c7fc1e8f4b6169fa8e25ec961537f30f13ed5f8",
+        "retention-diagnostics-checks/retention-eld4h9ga/stack-root-73953.console.txt": "fa1aafb965ecd5af432c2010a33d2fbe940b97b48451d7ff3c2f7f3914ca16da",
+        "retention-diagnostics-checks/retention-eld4h9ga/stack-root-73953.txt": "9b83cb6c5fd0c09875aed15b9fbb5d1cfa5b84e4d22f45c0cfcd0043c085cd52",
+        "retention-diagnostics-checks/retention-eld4h9ga/trace.jsonl": "28ceacdecd4f6adb1239de0caa614a25d682c18019ada2f5d83d30d6c1e986b1",
+        "retention-diagnostics-checks/retention-eld4h9ga/watcher-config.json": "0110f911d5af985412015e8c4f2b01ff6f8b9fef9c63a9aa3b697d8741fca02b",
+        "retention-diagnostics-checks/retention-eld4h9ga/watcher-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "retention-diagnostics-checks/retention-eld4h9ga/watcher.json": "9cacb389ba4a477bcfb4d3ddbb3d4c6d468b6f3d95a7549df9a92742863b6c74",
+        "retention-diagnostics/retention-bdzb1shd/capture-start.json": "cfff1b827f8976a9c04192912d0d77a55746138d15c22d37f0b26b48ccc86cd7",
+        "retention-diagnostics/retention-bdzb1shd/metadata.json": "4e4a9cc117b4eb361c3417b87689a4c66465ec5c87ec7581d2dc2c052c97fbf6",
+        "retention-diagnostics/retention-bdzb1shd/result.json": "04e7e5e26459b4af5ba5f81a9c95ac88fdda565e2efa85170dd09fbfb635f760",
+        "retention-diagnostics/retention-bdzb1shd/stack-root-85806.console.txt": "9ab2c284086c1fd5b64b952da4125f4a9fc5aeaa486a751e7a8a4ec673a54547",
+        "retention-diagnostics/retention-bdzb1shd/stack-root-85806.txt": "237e8a1ecb9ead6a559a65129e937fc0b17be6ecd76f419b9ee33c9fe96546a4",
+        "retention-diagnostics/retention-bdzb1shd/trace.jsonl": "f038bcc364877a36a03291a4d661676735f4c850d2a5dfa2f53ce6f0db5a51d3",
+        "retention-diagnostics/retention-bdzb1shd/watcher-config.json": "9c7cbff18fb32edcadb3f7d256590abed93e7fccd7b4f953ae1c6f7d2c8f1710",
+        "retention-diagnostics/retention-bdzb1shd/watcher-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "retention-diagnostics/retention-bdzb1shd/watcher.json": "dfa15c38a5c26f9a94799805d61967f3428ace466904a474e3c0037d9b64aebc"
+      },
+      "phase_timings": {
+        "cleanup": {
+          "completed": 1,
+          "max_context": {
+            "i": 33,
+            "n": 32,
+            "r": 2
+          },
+          "max_seconds": 1.8e-05,
+          "sum_seconds": 1.8e-05
+        },
+        "fg": {
+          "completed": 3,
+          "max_context": {
+            "i": 0,
+            "n": 32,
+            "r": 1
+          },
+          "max_seconds": 0.10331,
+          "sum_seconds": 0.292254
+        },
+        "fork": {
+          "completed": 578,
+          "max_context": {
+            "i": 78,
+            "n": 256,
+            "r": 1
+          },
+          "max_seconds": 0.137022,
+          "sum_seconds": 30.367362
+        },
+        "overflow": {
+          "completed": 1,
+          "max_context": {
+            "i": 33,
+            "n": 32,
+            "r": 2
+          },
+          "max_seconds": 0.04425,
+          "sum_seconds": 0.04425
+        },
+        "reap": {
+          "completed": 574,
+          "max_context": {
+            "i": 222,
+            "n": 256,
+            "r": 1
+          },
+          "max_seconds": 0.152365,
+          "sum_seconds": 28.993772
+        },
+        "round": {
+          "completed": 3,
+          "max_context": {
+            "i": 256,
+            "n": 256,
+            "r": 1
+          },
+          "max_seconds": 25.984709,
+          "sum_seconds": 33.127825
+        },
+        "run": {
+          "completed": 574,
+          "max_context": {
+            "i": 78,
+            "n": 256,
+            "r": 1
+          },
+          "max_seconds": 0.137856,
+          "sum_seconds": 30.509023
+        },
+        "wait": {
+          "completed": 321,
+          "max_context": {
+            "i": 33,
+            "n": 32,
+            "r": 2
+          },
+          "max_seconds": 0.000423,
+          "sum_seconds": 0.019158
+        },
+        "wait_all": {
+          "completed": 3,
+          "max_context": {
+            "i": 32,
+            "n": 32,
+            "r": 1
+          },
+          "max_seconds": 0.000215,
+          "sum_seconds": 0.000387
+        }
+      },
+      "root_finished": false,
+      "run_id": 36662308140,
+      "successful_parent_forks": 578,
+      "uname": [
+        "Darwin",
+        "iad20-eo1205-b16af65b-3279-49d1-8216-e74e9583039a-66A6C3BDA9FF.local",
+        "24.6.0",
+        "Darwin Kernel Version 24.6.0: Tue Jul 21 20:51:34 PDT 2026; root:xnu-11417.140.69.711.44~1/RELEASE_ARM64_VMAPPLE",
+        "arm64"
+      ],
+      "unfinished_phases": {
+        "reap": {
+          "a": [
+            0,
+            0,
+            0,
+            4951594
+          ],
+          "c": 88264,
+          "e": "reap+",
+          "i": 254,
+          "n": 256,
+          "p": 85806,
+          "r": 2,
+          "t": 932828912
+        },
+        "round": {
+          "a": [
+            0,
+            0,
+            0,
+            4794489
+          ],
+          "c": 0,
+          "e": "round+",
+          "i": 0,
+          "n": 256,
+          "p": 85806,
+          "r": 2,
+          "t": 906052760
+        }
+      },
+      "watcher": {
+        "attempts": [
+          {
+            "command": [
+              "/usr/bin/sample",
+              "85806",
+              "1",
+              "1",
+              "-mayDie",
+              "-file",
+              "/Users/runner/work/cshell/cshell/build/retention-diagnostics/retention-bdzb1shd/stack-root-85806.txt"
+            ],
+            "console": "/Users/runner/work/cshell/cshell/build/retention-diagnostics/retention-bdzb1shd/stack-root-85806.console.txt",
+            "console_bytes": 275,
+            "output": "/Users/runner/work/cshell/cshell/build/retention-diagnostics/retention-bdzb1shd/stack-root-85806.txt",
+            "output_bytes": 11400,
+            "returncode": 0,
+            "role": "root",
+            "seconds": 1.613565666999989,
+            "status": "captured",
+            "target_pid": 85806,
+            "truncated": false
+          }
+        ],
+        "cleanup_failures": [],
+        "cleanup_returncode": -9,
+        "pid": 85794,
+        "root_pid": 85806,
+        "self_cleanup": "owned session descendants, then SIGKILL to watcher group",
+        "status": "sampled",
+        "trigger": {
+          "alarm_record": {
+            "a": [
+              0,
+              0,
+              0,
+              4952063
+            ],
+            "c": 88030,
+            "e": "reap+",
+            "i": 227,
+            "n": 256,
+            "p": 85806,
+            "r": 2,
+            "t": 929847373
+          },
+          "case_age_seconds": 57.040311,
+          "observed_monotonic_us": 929871678.0,
+          "operation": {
+            "a": [
+              0,
+              0,
+              0,
+              4952063
+            ],
+            "c": 88030,
+            "e": "reap+",
+            "i": 227,
+            "n": 256,
+            "p": 85806,
+            "r": 2,
+            "t": 929847373
+          },
+          "operation_age_seconds": 0.024305,
+          "projected_alarm_remaining_seconds": 4.927758,
+          "reason": "case-age"
+        }
+      },
+      "watcher_cleanup_failures": []
+    },
+    "peer": {
+      "alarm_state_fields": [
+        "blocked",
+        "pending",
+        "disposition_0_default"
+      ],
+      "alarm_states": [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "binary_sha256": "e0e17b42a06284a9b4e01b89ec962809d49094b0076238a8139ca27aaec5b735",
+      "capture_duration_seconds": 35.12337754200007,
+      "capture_start_reference": "immediately before smoke.run_case; includes fixture setup",
+      "case_failures": [],
+      "checkout": "5e8bb85d3f2ba8dd65dc8503e3b37a4ffb4a93e9",
+      "child_entry_records": 618,
+      "completed_capacity_fills": 576,
+      "diagnostic_controls": [
+        {
+          "case_failures": [
+            "status: expected 0, got -14"
+          ],
+          "name": "diagnostic stalled child: default alarm",
+          "verdict": "PASS"
+        },
+        {
+          "case_failures": [
+            "timeout after 6s (no output received; 0 bytes captured; process group killed)",
+            "status: expected 0, got -9"
+          ],
+          "name": "diagnostic stalled child: blocked alarm",
+          "verdict": "PASS"
+        }
+      ],
+      "diagnostic_failures": [],
+      "event_counts": {
+        "alarm_armed": 1,
+        "cancel+": 3,
+        "cancel-": 3,
+        "cleanup+": 5,
+        "cleanup-": 5,
+        "fg+": 4,
+        "fg-": 4,
+        "finish": 1,
+        "fork+": 619,
+        "fork-child": 618,
+        "fork-parent": 619,
+        "formats+": 1,
+        "formats-": 1,
+        "live+": 1,
+        "live-": 1,
+        "live_stop+": 1,
+        "live_stop-": 1,
+        "overflow+": 2,
+        "overflow-": 2,
+        "reap+": 611,
+        "reap-": 611,
+        "round+": 4,
+        "round-": 4,
+        "run+": 609,
+        "run-": 609,
+        "start": 1,
+        "wait+": 611,
+        "wait-": 611,
+        "wait_all+": 4,
+        "wait_all-": 4
+      },
+      "events": 5571,
+      "forks_without_child_entry_record": [
+        {
+          "a": [
+            0,
+            0,
+            0,
+            4770350
+          ],
+          "c": 92473,
+          "e": "fork-parent",
+          "i": 0,
+          "n": 0,
+          "p": 90631,
+          "r": 0,
+          "t": 997839908
+        }
+      ],
+      "job_conclusion": "success",
+      "job_id": 109719525200,
+      "job_url": "https://github.com/melliott18/cshell/actions/runs/36662312181/job/109719525200",
+      "last_completed_reap": {
+        "a": [
+          0,
+          0,
+          0,
+          4923501
+        ],
+        "c": 92470,
+        "e": "reap-",
+        "i": 33,
+        "n": 32,
+        "p": 90631,
+        "r": 0,
+        "t": 997686757
+      },
+      "last_event": {
+        "a": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "c": 0,
+        "e": "finish",
+        "i": 0,
+        "n": 0,
+        "p": 90631,
+        "r": 0,
+        "t": 997881325
+      },
+      "last_event_after_capture_start_seconds": 35.084841,
+      "last_event_after_root_start_seconds": 35.053287,
+      "last_reap_after_capture_start_seconds": 34.890273,
+      "last_reap_after_root_start_seconds": 34.858719,
+      "maximum_root_event_gap_seconds": 0.083845,
+      "nonoverlapping_run_reap_sum_seconds": 34.37548,
+      "original_member_sha256": {
+        "retention-diagnostics-checks/checks.json": "4df58046473ef6223a9619dd7298d0924db7de87aa9b997a8c676d0e36c209bf",
+        "retention-diagnostics-checks/retention-nko8j1m6/capture-start.json": "5d2c9af4e5f7fabd015513ebf592decc26f5d7cc23e3aa8c8a850fca022cf2aa",
+        "retention-diagnostics-checks/retention-nko8j1m6/metadata.json": "0f16a1b8960b0c188b9bfb35be6f00cc19303175af66d57d4fceae62e2dc9ea2",
+        "retention-diagnostics-checks/retention-nko8j1m6/result.json": "0d164e3ae5e3467bc2ef800500da3ed74df95c814ec3b5282fca7fd421b434aa",
+        "retention-diagnostics-checks/retention-nko8j1m6/stack-child-85003.console.txt": "483e6ecb73a9db06bb1c17c89e074d594d7b8bb6d54b4566849cc148e02c0541",
+        "retention-diagnostics-checks/retention-nko8j1m6/stack-child-85003.txt": "f240429cbf2d0ce48de6217bc3a41251e93ea1f7581924ceb2acacdb40ce355d",
+        "retention-diagnostics-checks/retention-nko8j1m6/stack-root-84995.console.txt": "ab3ffae65a9af39339175d5a0a6abae1c4766366e3d0e752e102d8ff581e9a1b",
+        "retention-diagnostics-checks/retention-nko8j1m6/stack-root-84995.txt": "565e6235589a7ca7e7b9626168f257cda38547f231ef6f3fa69edf2a2a7dffd5",
+        "retention-diagnostics-checks/retention-nko8j1m6/trace.jsonl": "4a01d83b5e252f4dcf9cfc07fe87904796c2285cd472de726d4d1bab0286dd4c",
+        "retention-diagnostics-checks/retention-nko8j1m6/watcher-config.json": "ba474487182d2ea96f36b4bc76b40e9129f4553e7b5eb88f7b56aafde46ec1d9",
+        "retention-diagnostics-checks/retention-nko8j1m6/watcher-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "retention-diagnostics-checks/retention-nko8j1m6/watcher.json": "1a26b3ce803e61306552e503d2a60b4ff00877a2ffccf8645fa4460ae8b7e08d",
+        "retention-diagnostics-checks/retention-z2lsa616/capture-start.json": "f1e3b403d8e65bea3b52e59692ff7cbfa32ee0c414337c4be9bca1bf61004e5a",
+        "retention-diagnostics-checks/retention-z2lsa616/metadata.json": "8a25f3d26d6a065372ff79950d24efc1aaac66173e0c8e1a7cf5dd7695693284",
+        "retention-diagnostics-checks/retention-z2lsa616/result.json": "95994de3c715266dc6c0470ba9efc8400bcbf6a1f488dea7cbd4004a7aab4439",
+        "retention-diagnostics-checks/retention-z2lsa616/stack-child-84670.console.txt": "78286dba73869b28d684dbd51bebf6d191ba675a4996418915a95005b42a615b",
+        "retention-diagnostics-checks/retention-z2lsa616/stack-child-84670.txt": "758620d1b461e909b5619192c67fb025cac2bdec8eccb385bfbf28018a888b24",
+        "retention-diagnostics-checks/retention-z2lsa616/stack-root-84668.console.txt": "547ccf6f7257ac9a33863c15aaeb79f5cba9c54650a29f43888c11e6ca09dbdc",
+        "retention-diagnostics-checks/retention-z2lsa616/stack-root-84668.txt": "e9dc0fb5d69849e8ebad555c0254782c0174757a682f0d83c7b608b91ed05d59",
+        "retention-diagnostics-checks/retention-z2lsa616/trace.jsonl": "cd612511409673117311fe1127b5b214c0667970c1dfaf1e04a2c2f3b9458ce3",
+        "retention-diagnostics-checks/retention-z2lsa616/watcher-config.json": "8e486b04781bca3d4ce366ad8ceb104c6b79c5683c7119b4352741cdd663ce22",
+        "retention-diagnostics-checks/retention-z2lsa616/watcher-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "retention-diagnostics-checks/retention-z2lsa616/watcher.json": "403f548fc8f5ea49ee0106a44456fc24168ba1332328d3d4c88c19e180b18421",
+        "retention-diagnostics/retention-9cct22u9/capture-start.json": "08fe69906389e629be0fc10d2baf01f91150b04f2979fcd85e00d39fac4404cd",
+        "retention-diagnostics/retention-9cct22u9/metadata.json": "06d23f05c146bfc2b0dd5b2cd017cca79fbf60d3e73bfe6bebe7dbafa5f0d055",
+        "retention-diagnostics/retention-9cct22u9/result.json": "2d8fc0e185ecd1d3a3e01290e6ec88e6a25d6b85405218154acdbafc0df4f286",
+        "retention-diagnostics/retention-9cct22u9/trace.jsonl": "19785e86fb028827a3fc50b1ccb47e252622d93a8e943af94b0bc38cc9804369",
+        "retention-diagnostics/retention-9cct22u9/watcher-config.json": "0b1d7588015c17ad10fb9ace14ea0345f4ee78d809e0bfa8e1bd3b40e8b0cd75",
+        "retention-diagnostics/retention-9cct22u9/watcher-process.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "retention-diagnostics/retention-9cct22u9/watcher.json": "32fd4291bec071a67b71dd3118433c07c01bd4df265ed1fa03f38f740c451b45"
+      },
+      "phase_timings": {
+        "cancel": {
+          "completed": 3,
+          "max_context": {
+            "i": 33,
+            "n": 32,
+            "r": 0
+          },
+          "max_seconds": 0.040691,
+          "sum_seconds": 0.109578
+        },
+        "cleanup": {
+          "completed": 5,
+          "max_context": {
+            "i": 33,
+            "n": 32,
+            "r": 0
+          },
+          "max_seconds": 5.2e-05,
+          "sum_seconds": 0.000145
+        },
+        "fg": {
+          "completed": 4,
+          "max_context": {
+            "i": 0,
+            "n": 256,
+            "r": 2
+          },
+          "max_seconds": 0.081164,
+          "sum_seconds": 0.246048
+        },
+        "fork": {
+          "completed": 619,
+          "max_context": {
+            "i": 178,
+            "n": 256,
+            "r": 2
+          },
+          "max_seconds": 0.083845,
+          "sum_seconds": 19.816514
+        },
+        "formats": {
+          "completed": 1,
+          "max_context": {
+            "i": 0,
+            "n": 0,
+            "r": 0
+          },
+          "max_seconds": 0.122283,
+          "sum_seconds": 0.122283
+        },
+        "live": {
+          "completed": 1,
+          "max_context": {
+            "i": 33,
+            "n": 32,
+            "r": 0
+          },
+          "max_seconds": 2.260531,
+          "sum_seconds": 2.260531
+        },
+        "live_stop": {
+          "completed": 1,
+          "max_context": {
+            "i": 2,
+            "n": 32,
+            "r": 0
+          },
+          "max_seconds": 0.00055,
+          "sum_seconds": 0.00055
+        },
+        "overflow": {
+          "completed": 2,
+          "max_context": {
+            "i": 33,
+            "n": 32,
+            "r": 2
+          },
+          "max_seconds": 0.03692,
+          "sum_seconds": 0.073048
+        },
+        "reap": {
+          "completed": 611,
+          "max_context": {
+            "i": 159,
+            "n": 256,
+            "r": 2
+          },
+          "max_seconds": 0.064316,
+          "sum_seconds": 14.546919
+        },
+        "round": {
+          "completed": 4,
+          "max_context": {
+            "i": 257,
+            "n": 256,
+            "r": 2
+          },
+          "max_seconds": 16.876856,
+          "sum_seconds": 32.670081
+        },
+        "run": {
+          "completed": 609,
+          "max_context": {
+            "i": 178,
+            "n": 256,
+            "r": 2
+          },
+          "max_seconds": 0.084438,
+          "sum_seconds": 19.828561
+        },
+        "wait": {
+          "completed": 611,
+          "max_context": {
+            "i": 2,
+            "n": 32,
+            "r": 0
+          },
+          "max_seconds": 0.000521,
+          "sum_seconds": 0.047994
+        },
+        "wait_all": {
+          "completed": 4,
+          "max_context": {
+            "i": 32,
+            "n": 32,
+            "r": 1
+          },
+          "max_seconds": 0.000114,
+          "sum_seconds": 0.000335
+        }
+      },
+      "root_finished": true,
+      "run_id": 36662312181,
+      "successful_parent_forks": 619,
+      "uname": [
+        "Darwin",
+        "sat12-dp155-e7530c11-b92c-47c1-9234-99b02c41b224-8A9C0A20DACA.local",
+        "24.6.0",
+        "Darwin Kernel Version 24.6.0: Tue Jul 21 20:51:34 PDT 2026; root:xnu-11417.140.69.711.44~1/RELEASE_ARM64_VMAPPLE",
+        "arm64"
+      ],
+      "unfinished_phases": {},
+      "watcher": {
+        "attempts": [],
+        "cleanup_failures": [],
+        "cleanup_returncode": -9,
+        "pid": 90630,
+        "root_pid": 90631,
+        "self_cleanup": "owned session descendants, then SIGKILL to watcher group",
+        "status": "completed-before-sampling",
+        "trigger": null
+      },
+      "watcher_cleanup_failures": []
+    }
+  },
+  "same_source_tree": "74bb7a54bab992e8c055f6f69a3ae90921594eeb",
+  "source_files_changed": []
+}

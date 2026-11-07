@@ -1,0 +1,18 @@
+{
+  "platform": "macOS-14.8.7-arm64-arm-64bit",
+  "python": "3.12.2 (v3.12.2:6abddd9f6a, Feb  6 2024, 17:02:06) [Clang 13.0.0 (clang-1300.0.29.30)]",
+  "compiler": "Apple clang version 15.0.0 (clang-1500.3.9.4)\nTarget: arm64-apple-darwin23.6.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin\n",
+  "base": "ff736b7894b7ae992ca99ecd33d977cd2376a8e1",
+  "source_diff": [
+    ".github/workflows/tests.yml",
+    "Makefile",
+    "docs/tickets/CSH-057-job-lifecycle-boundaries.md",
+    "tests/jobs_lifecycle.c"
+  ],
+  "normal_archive_members": [
+    "build/retention-diagnostics-checks",
+    "build/retention-diagnostics-validation",
+    "build/retention-c-trace-check.json",
+    "build/retention-diagnostics"
+  ]
+}

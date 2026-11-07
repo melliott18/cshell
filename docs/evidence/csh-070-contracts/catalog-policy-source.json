@@ -1,0 +1,6 @@
+{
+  "url": "https://github.com/apple-oss-distributions/Libc/blob/Libc-1592.100.35/nls/FreeBSD/msgcat.c",
+  "sha256": "655ada674d367dc90eb722b4fc41589794af36a4d97e152acefe81e17c8bb08c",
+  "policy": "CORRUPT prints a catalog-system diagnostic and returns an error; catgets then uses caller fallback",
+  "scope": "Vendor source reference; binary identity and actual assertions are recorded independently"
+}

@@ -3,7 +3,7 @@
 These are capability limitations, never known-gap allowances or passing tests.
 Current per-contract tickets own qualification; vendors own utility semantics.
 """
-from host_contract_inventory import condition_owner
+from host_contract_inventory import condition_owner, condition_update
 
 BASE = 'https://pubs.opengroup.org/onlinepubs/9799919799/utilities/'
 
@@ -47,6 +47,7 @@ def limitations(environment, inventory):
     return [dict(condition=condition, source=BASE + utility + '.html',
                  environment=environment, reason=reason, owner=condition_owner(condition),
                  implementation_owner='selected utility/libc/platform vendor',
+                 current_qualification=condition_update(condition),
                  executable=inventory[utility],
                  related_executable=inventory['['] if utility == 'test' else None)
             for condition, utility, reason in RESIDUAL]

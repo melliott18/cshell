@@ -1,0 +1,38 @@
+{
+  "source_archive": "../csh-057-retention-diagnostics/normal-artifacts.tar.gz",
+  "source_archive_sha256": "20a89cd36fe1e21bbc03dc82bf9205b5531df6a3dd59ff6a5a95684e8bc7acef",
+  "archive": "historical-artifacts.tar.gz",
+  "archive_sha256": "520fed5efff98471d8b79c1e22588758215ab03003c6469f4722760265661957",
+  "original_base": "ff736b7894b7ae992ca99ecd33d977cd2376a8e1",
+  "retained_binary_paths": {
+    "execute_faults": "build/tests/execute_faults",
+    "signal_edges_helper": "build/tests/signal_edges_helper"
+  },
+  "members_sha256": {
+    "execute-faults-disassembly.txt": "5ed0632def8ce7a6c8831c22ca8d92e1966c0c53544b95b81604f6c67338b3f5",
+    "execute-faults-symbols.txt": "e1b0a8fadba7dd56f022c6d5cd7a78fe4bb30ae525ba650ded1a8bb77345f300",
+    "execute-faults-uuid.txt": "741449610a5c0b0170fd8e10f6bd524b631d623706de503bfe57a36245e68e1c",
+    "execute.c": "a4bfd606ad33bcde15c9eed64d52d39ac360aeb405aaff44a344cc410d6451d4",
+    "execute_faults-original": "d1f736eb2ac98c1a80bea7ea8f71904bf1e9b263470dc2b3f619bb14df50fb76",
+    "execute_faults.c": "9a8c65734f75dcc9d36fb846c8e635c650b37cc35e5ed56b9f97e40c1150dba1",
+    "metadata.json": "ea4bda39f9a27fdd9280261ff25a2333e8804fc3eeebe0dc2362eedd4ebd3611",
+    "native-full.log": "81b3668bd701538304c751f4e1b71ca6aa9f7316238e0d1675681f4ac4a930cd",
+    "native-jobs.log": "9756514e1b80a320ac584109dbba8c553aa6260385fbb7790ecf6029a26e0826",
+    "pty_harness.py": "8f5521d9e407b974171fa6fb16931887d90c8cfb305f7d70522284e0e4fd25e7",
+    "signal-edge-orphan-stack.txt": "4b7ea59531ab971a53a12b624749a9f032ee2634930613593cbdf4bd955c81d5",
+    "signal-edge-orphan.json": "9cdcd43765e437ebf925857d092877f8fa08af6aa74382f630d5a0757cb2259c",
+    "signal-helper-disassembly.txt": "6664bb400dfdd16b9a5efa203e552f4cbc5853ae0982c4cd7794fe6a40d55c06",
+    "signal-helper-uuid.txt": "dc00c80f9a5a6bdc38b3356e9b163d30dca4090a526fdcd96b770e913e649d3d",
+    "signal_edges_helper-original": "e090a9a484e3a86ba4c83b1ee7ce7ad62d89536e3f564f1ecb71e79542a089d1",
+    "signal_edges_helper.c": "97afc18626570f20a632f35e6a7aa2477fc43c7aae785b53de0539fb1b813c36",
+    "terminal-fault-orphan-stack.txt": "65c6427b7e4d12463af48c3cd21471819fd03404bb7919f4e4488db1b59d157b",
+    "terminal-fault-orphan.json": "96f8f1c17b7f16bff70f23ee344401841a6e284ef9187e956eee1d3817fdc05c"
+  },
+  "notes": [
+    "Raw historical logs, samples and orphan reports are copied unchanged from the source archive.",
+    "Existing local binaries match the Mach-O UUIDs in those samples; they were copied before any rebuild.",
+    "Source snapshots match the original base byte for byte as independently recorded in metadata.",
+    "No historical process was signaled or sampled during this investigation; these PIDs were already absent.",
+    "A narrow crash-report search found no record for historical PIDs18538 or99718 among32 helper reports dated2026-09-29; no unrelated reports are archived here."
+  ]
+}

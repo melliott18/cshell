@@ -486,3 +486,20 @@ that failure remains required in the strict stock audit. The 29 link graph
 cases require all earlier assertions and introduce no selected-profile allowance.
 See [CSH-110 evidence](../../docs/evidence/csh-110/README.md). System executables
 are untouched; only the opt-in PATH selects this provider.
+## CSH-070 formatted-output profile
+
+`make test-host-formatted` builds a catalog-capable printf and separately
+selects the new literal echo build in a private PATH. It is also a prerequisite
+of `make test-host-profile`; the latter retains its stock echo selection.
+[Whole-page accounting and declared policies](../../docs/host-formatted-output.md)
+explain the new exact locale/conversion cases, libc and stack controls, bounded
+exec threshold searches and explicit remaining scope. French/German catalog
+sources are checked in and compiled using `gencat` under `en_US.UTF-8`.
+
+The new source fixes propagate libc formatting failure, move the input-sized
+conversion workspace off the stack, diagnose trailing character-constant text,
+and evaluate floating operands as `strtod` input. Catalog and conversion changes
+apply only to the opt-in provider. [CSH-079](../../docs/tickets/CSH-079-formatted-output-residuals.md)
+owns the six retained conditions and conditional allocation-helper prerequisite;
+the original historical limitation reasons remain unchanged. Darwin 1 MiB stack
+exec searches failed cleanup and are excluded from the selected profile.

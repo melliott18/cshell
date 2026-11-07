@@ -193,6 +193,14 @@ def main():
         record_processes(marker)
         emit("hanging\n")
         wait_forever()
+    elif mode == "queued-output":
+        # A separate pipe proves the PTY write completed without requiring the
+        # runner to drain it before exercising teardown.
+        emit("queued\n")
+        ready = int(arguments[0])
+        os.write(ready, b"r")
+        os.close(ready)
+        wait_forever()
     elif mode in ("fork-hang", "fork-exit"):
         fork_background(mode, marker)
     elif mode == "flood":

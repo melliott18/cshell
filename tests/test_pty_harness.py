@@ -4,14 +4,17 @@
 import copy
 from contextlib import redirect_stdout
 import errno
+import fcntl
 import io
 import json
 import os
 from pathlib import Path
+import select
 import signal
 import subprocess
 import sys
 import tempfile
+import termios
 import time
 import unittest
 from unittest import mock
@@ -381,6 +384,56 @@ class PtyHarnessTests(unittest.TestCase):
             failures = pty_harness.cleanup_session(process, -1)
         self.assertTrue(any("snapshot exhausted deadline" in f for f in failures), failures)
         process.wait.assert_called_once_with(timeout=1.0)
+
+    def test_cleanup_reaps_a_killed_leader_with_unread_terminal_output(self):
+        master, slave = pty_harness.open_terminal()
+        ready_read, ready_write = os.pipe()
+        process = None
+        master_closed = False
+        real_close = os.close
+
+        def child_setup():
+            fcntl.ioctl(0, termios.TIOCSCTTY, 0)
+            os.tcsetpgrp(0, os.getpgrp())
+
+        def close(descriptor):
+            nonlocal master_closed
+            if descriptor == master:
+                master_closed = True
+            real_close(descriptor)
+
+        try:
+            process = subprocess.Popen(
+                [sys.executable, str(CANDIDATE), "queued-output", str(ready_write)],
+                stdin=slave, stdout=slave, stderr=slave, start_new_session=True,
+                pass_fds=(ready_write,), preexec_fn=child_setup)
+            # Keep one extra slave reference, as a descendant may do while the
+            # leader exits. This avoids relying on the final-slave-close drain
+            # timeout; the unread output remains until the master is released.
+            os.close(ready_write)
+            ready_write = None
+            self.assertTrue(select.select([ready_read], [], [], 2)[0],
+                            "candidate did not confirm queued output")
+            self.assertEqual(os.read(ready_read, 1), b"r")
+            # Do not read master: Darwin's leader-exit path waits for these
+            # bytes even after SIGKILL. Teardown must release the master before
+            # the existing one-second exact-child wait can complete.
+            with mock.patch.object(pty_harness.os, "close", side_effect=close):
+                failures = pty_harness.cleanup_session(process, master)
+            self.assertEqual(failures, [])
+            self.assertEqual(process.returncode, -signal.SIGKILL)
+            self.assertTrue(master_closed)
+        finally:
+            # Also release the dependency when checking a broken implementation
+            # so a failing regression cannot leave an owned child behind.
+            if not master_closed:
+                os.close(master)
+            for descriptor in (slave, ready_read, ready_write):
+                if descriptor is not None:
+                    os.close(descriptor)
+            if process is not None and process.poll() is None:
+                process.kill()
+                process.wait(timeout=2)
 
     def test_controlling_terminal_unavailable_cannot_hide_teardown_failure(self):
         ioctl = pty_harness.fcntl.ioctl
