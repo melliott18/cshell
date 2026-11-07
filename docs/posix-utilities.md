@@ -211,4 +211,62 @@ page or profile is qualified.
 
 ## CSH-105 default numeric magic
 
-CSH-105 supplies 280 file cases / 1120 assertions for default d/u (the selected provider uses native int/unsigned int) and byte/short/long aliases, at top level and in continuations. Native ABI widths and independent integer bytes cover signed extrema, unsigned high-bit comparisons, masks, bit tests, every truncated length and trailing bytes. The selected provider repairs textual long to mean native dL while retaining the vendor compiled-database encoding. Exact channels/status and unchanged inputs are required. Further numeric/message combinations, cross-database -m/-M/-d precedence, default classification, encodings/locales and utility resource failures remain unqualified. U-034/U-040 remain partial; [CSH-106](tickets/CSH-106-filesystem-environment-residuals.md) owns the residuals. See [evidence](evidence/csh-105/README.md).
+CSH-105 supplies 280 file cases / 1120 assertions for default d/u (the selected provider uses native int/unsigned int) and byte/short/long aliases, at top level and in continuations. Native ABI widths and independent integer bytes cover signed extrema, unsigned high-bit comparisons, masks, bit tests, every truncated length and trailing bytes. The selected provider repairs textual long to mean native dL while retaining the vendor compiled-database encoding. Exact channels/status and unchanged inputs are required. Further numeric/message combinations, cross-database -m/-M/-d precedence, default classification, encodings/locales and utility resource failures remain unqualified. U-034/U-040 remain partial; [CSH-114](tickets/CSH-114-filesystem-environment-residuals.md) owns the residuals. See [evidence](evidence/csh-105/README.md).
+
+## CSH-106 opaque link bytes
+
+CSH-106 supplies 1088 readlink cases / 4352 assertions: each non-NUL byte, authored valid and invalid UTF-8 sequences, embedded newlines and shell metacharacters, and mixed targets of 255/256/257/511/512/513/1023 bytes, in C and an installed UTF-8 locale, with and without -n. Authored output bytes are independent of the provider; pre-exec lstat/readlink probes establish stored bytes, and post-exec probes require unchanged inode, mode, size and contents. Exact channels/status and cleanup are mandatory.
+
+Arbitrary byte sequences and locale repertoires, libc-internal allocation failures, true filesystem limits, namespace races and other error environments remain unqualified. U-034/U-040 remain partial; [CSH-114](tickets/CSH-114-filesystem-environment-residuals.md) owns all residuals. See [retained evidence](evidence/csh-106/README.md).
+
+## CSH-107 omitted-who creation modes
+
+CSH-107 supplies 72 mkdir/mkfifo cases / 288 assertions for symbolic creation modes with omitted who under independently proved child-only masks 027, 077 and 777. Authored literal modes cover masked addition/removal, copy addition/removal/assignment, conditional execute, empty assignment and multiple actions, alongside explicit-who controls. Exact channels/status, final type/mode and cleanup are required. The selected pinned GNU coreutils 9.7 creation utilities replace Apple providers that retain masked group bits during copy assignment.
+
+Further symbolic-mode and parent graphs, special-bit modes, transient permissions, ACL inheritance, other identities, path/depth limits and capacity exhaustion remain unqualified; FIFO transfer is outside creation. U-034/U-040 remain partial; [CSH-114](tickets/CSH-114-filesystem-environment-residuals.md) owns all residuals. See [retained evidence](evidence/csh-107/README.md).
+
+## CSH-108 bounded parent graphs
+
+CSH-108 supplies 60 mkdir -p cases / 240 assertions for shared parents, repeated operands, existing directory symlinks and continuation after regular-file or dangling-symlink prefix obstructions. Literal final and intermediate modes under independently proved child-only masks 027, 077 and 777 cover default, numeric, empty and copy-assignment modes. Existing directory, file and link identities/modes and contents are preserved; output, status, effects and cleanup are required.
+
+Further mode/parent graphs, special bits, transient permissions, ACL inheritance, other identities, path/depth limits, namespace races and capacity exhaustion remain unqualified. All 21 utility dispositions and four original U-040 conditions remain open under [CSH-114](tickets/CSH-114-filesystem-environment-residuals.md). See [retained evidence](evidence/csh-108/README.md).
+
+## CSH-109 directory removal graphs
+
+CSH-109 adds 19 rmdir cases / 76 assertions for ordered child and sibling
+removal, parent chains, nonempty ancestors, duplicate/shared operands and
+continuation after errors. Independent rmdir probes require EACCES for private
+owner-mode write/search denial before dispatch. Removed paths and preserved
+identities, modes, bytes and links, channels/status and cleanup are mandatory.
+Native Apple and Linux GNU rmdir need no provider override.
+
+U-034/U-040 remain partial. Arbitrary graphs, credentials/ACLs, mounts, total
+depth/path boundaries, namespace races, other filesystem failures and diagnostic
+locales remain open under [CSH-114](tickets/CSH-114-filesystem-environment-residuals.md).
+See [CSH-109 evidence](evidence/csh-109/README.md).
+
+## CSH-110 link destination graphs
+
+CSH-110 supplies 29 ln cases / 116 assertions for directory and directory-symlink destinations, literal symbolic-link contents, explicit -L/-P precedence for valid/dangling source links, physical links to directory symlinks, and continuation past missing sources and existing file/link/dangling/FIFO/directory destinations. Forced replacement and same-entry refusal require exact inode relationships, link counts, preserved identities/modes/bytes, channels, status and cleanup. The selected unmodified GNU coreutils 9.7 ln preserves same-entry symbolic sources that Apple ln -fs incorrectly replaces; stock failures remain failures.
+
+Further graphs and default-policy alternatives, cross-device and permission/ACL errors, other identities, hard-link count limits, namespace races, filesystem failures, diagnostic locales and resource exhaustion remain unqualified. Directory hard-link behavior and destinations created earlier in the same invocation are not assigned a portable oracle.
+
+All 21 utility dispositions and four original U-040 conditions remain open under [CSH-114](tickets/CSH-114-filesystem-environment-residuals.md). U-034/U-040 remain partial. See [CSH-110 evidence](evidence/csh-110/README.md).
+
+## CSH-111: link permission environments
+
+CSH-111 supplies 21 ln cases / 84 assertions for denied source search and destination write/search permissions. Independent link, symlink and unlink probes require kernel EACCES under one unprivileged fixture identity before exact provider exec. Hard-link failures continue to later operands; -s with and without -L/-P preserves inaccessible source spellings as literal link contents. Forced replacement failures preserve regular files, symlinks, FIFOs and referents. Inodes, modes, link counts, bytes, channels, status, exec records and cleanup are required.
+
+Further graph/default-policy alternatives, cross-device and other permission/ACL errors, other identities, hard-link count limits, namespace races, filesystem failures, diagnostic locales and resource exhaustion remain unqualified. Directory hard-link behavior and destinations created earlier in the same invocation have no portable oracle here. Remaining contracts are owned by [CSH-114](tickets/CSH-114-filesystem-environment-residuals.md). U-034/U-040 remain partial. See [retained validation](evidence/csh-111/README.md).
+
+## CSH-112: touch permission environments
+
+CSH-112 supplies 20 touch cases / 80 assertions for denied ancestor search on existing and missing operands, denied parent write during creation, silent -c suppression, and explicit timestamps on owned non-writable files. All four field selections process accessible operands before and after the middle operand. Independent kernel EACCES probes and exact authored timestamp readback precede exact provider exec. Timestamps, inode identities, modes, link counts, bytes, channels, status, exec records and cleanup are required.
+
+Other identities and ACLs, current-time and successful-creation tolerances, arbitrary namespace graphs and races, skipped/repeated timezone times, further rules and databases, timestamp ranges, filesystem failures, diagnostic locales and resource exhaustion remain unqualified. Remaining contracts are owned by [CSH-114](tickets/CSH-114-filesystem-environment-residuals.md). U-034/U-040 remain partial. See [retained validation](evidence/csh-112/README.md).
+
+## CSH-113: touch creation and current time
+
+CSH-113 supplies 60 touch cases / 240 assertions for current-time existing-file updates, creation and silent -c handling, plus creation with explicit UTC or reference timestamps. All four field selections and child-only masks 027, 077 and 777 require accessible operands before and after the middle operand. Independent kernel creation probes, authored timestamp readback and realtime/monotonic brackets supply the oracles. Current times use a documented one-second lower-bound floor; this is seconds-resolution evidence, not nanosecond accuracy. Exact channels/status, preserved identities/modes/bytes/link counts, created empty-file modes, exec records and cleanup are required.
+
+Other identities and ACLs, subsecond current-time accuracy and clock changes, arbitrary namespace graphs and races, skipped/repeated timezone times, further rules and databases, timestamp ranges, filesystem failures, diagnostic locales and resource exhaustion remain unqualified. Remaining contracts are owned by [CSH-114](tickets/CSH-114-filesystem-environment-residuals.md). U-034/U-040 remain partial. See [retained validation](evidence/csh-113/README.md).
