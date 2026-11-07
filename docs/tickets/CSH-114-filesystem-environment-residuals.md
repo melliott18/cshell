@@ -104,9 +104,9 @@ search permission from the owned directory. Its log is retained under
 `development/`. Cleanup now restores that directory without following a
 replacement symlink, and the complete native harness passes 165 tests.
 
-Remaining contracts are individually owned by the local
-[CSH-115 follow-up](CSH-115-filesystem-environment-residuals.md), with GitHub
-allocation pending. U-034/U-040 remain partial. No new sanitizer or separately
+Remaining contracts are individually owned by the registered
+[CSH-115 follow-up](CSH-115-filesystem-environment-residuals.md),
+[issue #242](https://github.com/melliott18/cshell/issues/242). U-034/U-040 remain partial. No new sanitizer or separately
 hosted native-Linux run is claimed.
 
 Both complete platform validations pass every ticket-listed selected target:
@@ -119,3 +119,20 @@ per platform, 1162 general-host assertions with zero gaps, and 10 ownership plus
 new-case, source/provider, stock-failure, setup/effect and cleanup comparisons.
 Both platforms record selected/stock-full/stock-provider statuses `[0, 2, 1]`.
 The result is ready for review and is not integrated into `main`.
+
+## Integration review — 2026-11-07
+
+The original isolated implementation `52ccffa` was not included in the earlier
+PR integration. Its original verifier passed before rebasing: 112 new assertions
+on each platform, every predecessor expectation, exact stock failure sets,
+provider/source identities and cleanup. CSH-113 is now integrated and accepted.
+
+The implementation is reconciled with `main` on
+`test/CSH-114-touch-integration`, preserving current unrelated work. CSH-115 is
+reserved in the shared registry as issue #242 and owns each of the 21 residual
+utility rows and four original conditions. These remain open; this acceptance
+does not qualify full utility pages or a full POSIX system.
+
+Fresh integration checks and their exact source identities are retained in
+[the integration review](../evidence/csh-114/integration/README.md). The original
+records remain unchanged and are not relabeled as results from the new tree.
