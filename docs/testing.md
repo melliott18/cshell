@@ -1516,3 +1516,157 @@ cleanup have harness regressions. No provider/source/build flags change.
 See [CSH-095 evidence](evidence/csh-095/README.md) for native/Linux results and
 retained stock failures. Other types/ranges, multiple-database precedence and
 all four original U-040 conditions remain open under CSH-096.
+
+### Calendar timestamp qualification (CSH-096)
+
+`make test-host-filesystem-calendar` runs 40 cases / 160 strict assertions against
+the inventoried external touch provider directly and via cshell string/file/stdin.
+The full selected profile includes these cases. Integer UTC calendar arithmetic
+supplies exact expectations; target and unequal fractional baseline timestamps
+must survive independent utime/stat probes before exec. The cases require empty
+channels, status zero, exact selected and preserved timestamps, and unchanged
+file content. Setup failure is a failure, never a skip.
+
+This covers authored representable dates, not complete timestamp ranges,
+unsupported-range errors, current clocks, DST or privileged filesystem behavior.
+See [CSH-096 evidence](evidence/csh-096/README.md) and
+[CSH-106 residual ownership](tickets/CSH-106-filesystem-environment-residuals.md).
+
+### Reference timestamps and alias graphs (CSH-097)
+
+`make test-host-filesystem-reference` runs 28 cases / 112 assertions through
+direct exec and cshell string/file/stdin dispatch. The full selected profile
+includes every case. Independent timestamp probes and stat/lstat measurements
+prove the private graph before execution. All metadata is captured before
+content reads can alter a hard-linked inode’s atime. Exact field selection,
+unchanged reference files and links, and no-create continuation are required.
+Four harness regressions cover corrupt effects/channels, setup failures and
+failed-exec/timeout cleanup in all modes. Arbitrary graphs, live clocks,
+unsupported timestamps, races and permission/ACL errors remain open.
+
+See [CSH-097 evidence](evidence/csh-097/README.md) and
+[CSH-106 residual ownership](tickets/CSH-106-filesystem-environment-residuals.md).
+
+### Date forms and fixed timezones (CSH-098)
+
+`make test-host-filesystem-datetime` runs 64 cases / 256 assertions for touch
+fractional seconds, date separators, fixed POSIX TZ offsets and explicit UTC.
+All are also mandatory in the full selected host profile. Python authors UTC
+fields and integer fractions independently of provider parsing; setup probes
+exact target timestamps then restores distinct fractional baselines. No DST
+or timezone database is needed. Harness regressions reject changed fields,
+content, identity/mode, channels/status, failed/rounded setup and failed-exec
+or timeout cleanup. Native and Linux commands and records are retained in
+[CSH-098 evidence](evidence/csh-098/README.md). Remaining ownership is [CSH-106](tickets/CSH-106-filesystem-environment-residuals.md).
+
+### Explicit daylight-saving rules (CSH-099)
+
+`make test-host-filesystem-timezone` runs 104 cases / 416 assertions through
+direct exec and cshell string/file/stdin modes. Independently authored UTC
+fields cover seasonal offsets, unique local times around northern/southern
+M-rule transitions, both -d/-t forms and Z overriding daylight time.
+The shared exact-inode timestamp setup rejects rounding and failed setup before
+exec; channels, status, selected/unselected timestamps, content and identity
+are mandatory. Setup, mutation, failed-exec and timeout cleanup regressions
+run in `test-host-inventory`. No timezone database or mktime supplies an oracle.
+See [CSH-099 evidence](evidence/csh-099/README.md) and [CSH-107 remaining ownership](tickets/CSH-107-filesystem-environment-residuals.md).
+
+## CSH-100 Julian and numbered day rules
+
+`make test-host-filesystem-day-rules` runs 128 cases through direct exec and all
+three cshell modes (512 assertions). The full selected filesystem profile also
+includes these cases. The shared exact timestamp probe must succeed before exec;
+setup failures, provider failures and cleanup are recorded separately.
+
+## Explicit transition clocks and sub-hour daylight offsets (CSH-101)
+
+`make test-host-filesystem-transition-times` runs 96 cases / 384 assertions with
+zero selected-profile allowances. It covers nondefault M/J/n transition clocks,
+offsets with minutes and seconds, and signed/next-day transitions using unique
+local times. Each -d/-t input runs all four timestamp selections and invocation
+modes. Independent UTC fields supply integer Epoch timestamps; exact inode
+probes must succeed before execution. Harness regressions reject incorrect
+fields, contents, identity, channels and status, failed/rounded setup, and
+failed-exec/timeout cleanup. No privileged environment or injected fault is used.
+See [evidence](evidence/csh-101/README.md) and
+[remaining ownership](tickets/CSH-107-filesystem-environment-residuals.md).
+
+## String-magic byte and offset boundaries (CSH-102)
+
+`make test-host-filesystem-magic-strings` runs 91 cases / 364 assertions through
+direct exec and cshell string/file/stdin modes. Authored escape spellings and
+literal sample bytes are independent. An always-matching top-level rule makes
+nonmatching continuation output exact without relying on default classification.
+Pre-exec readback arms each fixture; status, both channels and immutable input
+contents are checked. Harness regressions reject wrong output/status, modified
+inputs and failed setup, and exercise failed-exec/timeout cleanup in every mode.
+See [CSH-102 evidence](evidence/csh-102/README.md) and
+[remaining ownership](tickets/CSH-107-filesystem-environment-residuals.md).
+
+## CSH-103 magic-message qualification
+
+CSH-103 supplies 108 file magic-message cases / 432 assertions for native signed byte/short and string printf-style descriptions at top level and in continuations. Literal expected bytes cover signs, width, precision, zero padding, decimal/octal/hexadecimal output, alternate forms, characters and literal percent signs. Exact channels/status, pre-exec readback and unchanged sample/database contents supply the oracle. The pinned file 5.46 provider repairs one-byte magic dispatch, bounded format validation and textual rule order; original stock failures remain separately retained. Other types/widths, unsigned ranges, multiple databases, arbitrary formats/encodings/locales and utility resource failures remain unqualified.
+
+Run `make test-host-filesystem-magic-messages` for the focused assertions.
+All 21 residual utility contracts and four original U-040 conditions remain open in
+[CSH-106](tickets/CSH-106-filesystem-environment-residuals.md).
+See [CSH-103 evidence](evidence/csh-103/README.md) for provider provenance, strict results and stock failures.
+
+`make test-host-filesystem-magic-types` selects the 360 CSH-104 portable numeric
+magic cases in direct exec and all three cshell modes (1440 assertions). The
+full selected profile also requires them. Native ABI widths, signed/unsigned
+boundaries, masks, comparisons and truncated-field rejection have independent
+oracles. Stock failures and selected provider repairs are retained separately.
+
+### Default numeric magic and aliases (CSH-105)
+
+`make test-host-filesystem-magic-defaults` requires the opt-in provider and runs all 280 authored cases through direct execution and cshell string/file/stdin modes (1120 assertions on the qualified LP64 hosts). Defaults d/u use the selected native int width; byte/short/long use their POSIX C-type aliases. Every truncated length and both top-level/continuation placement are checked. `python3 tests/host_file_type_checks.py build/host-file` separately protects the vendor compiled-database encoding. See [evidence](evidence/csh-105/README.md) for native/Linux and focused sanitizer validation.
+
+## CSH-106 readlink byte qualification
+
+Run `make test-host-filesystem-link-bytes` for the required opaque link byte suite.
+CSH-106 supplies 1088 readlink cases / 4352 assertions: each non-NUL byte, authored valid and invalid UTF-8 sequences, embedded newlines and shell metacharacters, and mixed targets of 255/256/257/511/512/513/1023 bytes, in C and an installed UTF-8 locale, with and without -n. Authored output bytes are independent of the provider; pre-exec lstat/readlink probes establish stored bytes, and post-exec probes require unchanged inode, mode, size and contents. Exact channels/status and cleanup are mandatory.
+
+Arbitrary byte sequences and locale repertoires, libc-internal allocation failures, true filesystem limits, namespace races and other error environments remain unqualified. No provider code changed.
+
+## CSH-107 omitted-who creation modes
+
+Run `make test-host-filesystem-omitted-who` for the 288 required assertions.
+CSH-107 supplies 72 mkdir/mkfifo cases / 288 assertions for symbolic creation modes with omitted who under independently proved child-only masks 027, 077 and 777. Authored literal modes cover masked addition/removal, copy addition/removal/assignment, conditional execute, empty assignment and multiple actions, alongside explicit-who controls. Exact channels/status, final type/mode and cleanup are required. The selected pinned GNU coreutils 9.7 creation utilities replace Apple providers that retain masked group bits during copy assignment.
+
+Further symbolic-mode and parent graphs, special-bit modes, transient permissions, ACL inheritance, other identities, path/depth limits and capacity exhaustion remain unqualified; FIFO transfer is outside creation. Apple stock failures are retained separately; no allowances are introduced.
+
+`make test-host-filesystem-parent-graphs` runs the 60 CSH-108 mkdir parent graphs in all four invocation modes (240 assertions). Final/intermediate modes, unchanged existing identities, child mask probes, channels, status and cleanup are mandatory. See [the evidence](evidence/csh-108/README.md).
+
+## CSH-109 directory removal environments
+
+`make test-host-filesystem-removal` runs 19 rmdir graphs in direct, string, file
+and stdin modes. Private owner-mode write/search denial requires an unprivileged
+identity and an independently observed EACCES before execution. Exact effects
+and preserved inode identities are checked before cleanup; denial is restored
+for inspection. Arbitrary graphs, mounts, ACLs, limits and races remain open.
+See [CSH-109 evidence](evidence/csh-109/README.md).
+
+## CSH-110 link destination environments
+
+`make test-host-filesystem-link-graphs` runs 29 authored `ln` cases through
+direct exec and all three cshell modes (116 assertions). The same assertions
+are required by the selected full profile and retained in the stock audit.
+The fixture records pre-exec object identities and readback, post-exec link
+counts and inode relationships, bytes, modes, channels/status and cleanup.
+Failure tests reject corrupted effects, incomplete setup and readback; failed
+exec and timeout checks require reaped children and removed fixtures.
+See [CSH-110 evidence](evidence/csh-110/README.md).
+
+## Link permission boundaries (CSH-111)
+
+`make test-host-filesystem-link-permissions` runs 21 private ln cases in direct
+execution and cshell string/file/stdin modes. Independent EACCES probes precede
+the selected provider. Exact inode/link-count/content effects, channels, status,
+exec records and cleanup are required. Run as an unprivileged identity. These
+fixtures do not qualify ACLs, other credentials, mounts or exhaustion.
+See [retained evidence](evidence/csh-111/README.md).
+
+`make test-host-filesystem-touch-permissions` checks CSH-112 ordinary owner-mode touch permissions, explicit timestamps and operand continuation in direct execution and all shell input modes. See [CSH-112 evidence](evidence/csh-112/README.md).
+
+`make test-host-filesystem-touch-current` checks CSH-113 touch creation modes and bounded current-time behavior in direct execution and all shell input modes. See [CSH-113 evidence](evidence/csh-113/README.md).

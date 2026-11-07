@@ -1,0 +1,11 @@
+{
+  "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html",
+  "sha256": "7d37d11b3829422919fbc928cf3e4e0e2c9ba3d0eaba2e2e36362e80f4086576",
+  "bytes": 13670,
+  "sections": [
+    "OPTIONS",
+    "EXIT STATUS",
+    "CONSEQUENCES OF ERRORS"
+  ],
+  "matches_retained_CSH_012_source": true
+}
