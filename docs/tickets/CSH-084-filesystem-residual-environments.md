@@ -1,11 +1,11 @@
 # CSH-084: Supply residual filesystem environments and contract oracles
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-080
-- Branch: Assigned when work starts
+- Branch: test/CSH-084-filesystem-residual-environments
 - Issue: [#178](https://github.com/melliott18/cshell/issues/178)
 
 ## Goal
@@ -14,7 +14,7 @@ Own the individual open contracts retained after CSH-080. Selected utility,
 libc and platform vendors retain implementation ownership. Neither bounded
 passing examples nor unavailable environments qualify an entire utility page.
 
-## Individual remaining contracts
+## Original CSH-080 handoff contracts
 
 Each row includes U-034 direct exec accessibility and U-040 common defaults.
 The machine-readable ledger is `tests/host_filesystem_residuals.json`; the
@@ -57,10 +57,10 @@ remain retained. CSH-080's ordinary cases do not complete the residuals.
 
 ## Acceptance criteria
 
-- [ ] Supply each individual environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Preserve zero allowances in the selected profile, with exact provider and build provenance for any repair.
-- [ ] Retain separate native/Linux output, status, effects, setup failures and cleanup; keep call-site injection separate from libc-internal and real kernel faults.
-- [ ] Update the section map, ownership manifest and U-034/U-040 evidence without rewriting historical records.
+- [x] Supply each individual environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Preserve zero allowances in the selected profile, with exact provider and build provenance for any repair.
+- [x] Retain separate native/Linux output, status, effects, setup failures and cleanup; keep call-site injection separate from libc-internal and real kernel faults.
+- [x] Update the section map, ownership manifest and U-034/U-040 evidence without rewriting historical records.
 
 ## Validation
 
@@ -76,3 +76,32 @@ Quota, actual filesystem ENOSPC, EIO, credentials, and cross-device work require
 separate disposable environments; Linux /dev/full is not filesystem exhaustion.
 No manual prompting is required: owned PTYs supply scripted responses.
 Provisioning privileged volumes/identities may require an isolated runner.
+
+
+## Implementation and validation
+
+CSH-084 supplies 26 cases / 104 assertions across 16 utilities: independently
+verified owner-mode permission denials, authored magic databases, opaque link
+bytes in C/UTF-8, and basename/dirname EBADF/EPIPE. All run through direct exec
+and public cshell string/file/stdin modes with independent effects and cleanup.
+The selected providers require no new repairs; stock readlink's missing denial
+diagnostic remains a strict failure on both platforms.
+
+[Evidence](../evidence/csh-084/README.md) records native **914 filesystem,
+240 allocation, 1162 host integration** passes and Docker/Linux **930 filesystem,
+200 allocation, 1162 host integration** passes, with zero selected failures/gaps.
+Both platforms pass the 104 focused assertions, provider audit, inventory and
+24 filesystem harness tests. Stock audits remain nonzero and separately retained.
+All filesystem fixture cleanup records pass.
+
+The table above preserves the original handoff scope. The current
+[section map](../../tests/host_filesystem_contracts.json) and
+[residual ledger](../../tests/host_filesystem_residuals.json) narrow the supplied
+claims and name every unsupplied environment/reason. Each remaining contract
+and all four original conditions transfer to open
+[CSH-085](CSH-085-filesystem-isolated-contracts.md) ([#181](https://github.com/melliott18/cshell/issues/181)).
+This uses the acceptance criteria's individual-disposition alternative, not a
+claim that privileged filesystems, ACLs, quotas, actual ENOSPC/EIO, libc internals
+or complete utility semantics have been supplied. No protected mount or host
+disk content is used. CSH-080 is implemented but unmerged; this PR is stacked on
+its exact head and remains in review until integration.
