@@ -1,5 +1,16 @@
 --- a/src/copy.c
 +++ b/src/copy.c
+@@ -2424,7 +2424,9 @@
+                     *rename_succeeded = true;
+ 
+                   skipped = true;
+-                  return_val = x->update == UPDATE_NONE;
++                  /* A declined interactive move is not a failure.  Keep
++                     the explicit --update=none-fail extension distinct.  */
++                  return_val = x->update != UPDATE_NONE_FAIL;
+                 }
+             }
+           else
 @@ -2437,7 +2437,9 @@
                                               dst_relname, &dst_sb))))
                  {

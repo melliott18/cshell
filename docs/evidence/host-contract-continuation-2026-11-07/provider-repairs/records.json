@@ -1,0 +1,602 @@
+[
+  {
+    "file": "allocator-native-before-gnulib-fix.json.gz",
+    "source": "build/contract-third/allocator-native-before-gnulib-fix.json",
+    "uncompressed_bytes": 1552441,
+    "sha256": "94f7d178ecaeb958241fc28afd2a0336260b86329c49eb79ece6494062d8e593"
+  },
+  {
+    "file": "allocator-native-expanded-failures.json.gz",
+    "source": "build/contract-third/allocator-native-expanded-failures.json",
+    "uncompressed_bytes": 810732,
+    "sha256": "2ae7d320ca0c5cca19a8631116c36284d2ba39a9ba406fc55dcb36c71bc4a380"
+  },
+  {
+    "file": "allocator-native-expanded.log.gz",
+    "source": "build/contract-third/allocator-native-expanded.log",
+    "uncompressed_bytes": 4327,
+    "sha256": "2226f13aea31d552169c4dc2914586d8d1c24335ce9b3edd79f9e3ff4d31a489"
+  },
+  {
+    "file": "allocator-native-final.json.gz",
+    "source": "build/contract-third/allocator-native-final.json",
+    "uncompressed_bytes": 1552441,
+    "sha256": "61df9072cc31824afae1ad7867c024d682e3ba792b73fb2e4d7a09c592922bf9"
+  },
+  {
+    "file": "allocator-native-first.json.gz",
+    "source": "build/contract-third/allocator-native-first.json",
+    "uncompressed_bytes": 224246,
+    "sha256": "1fc4c561defb5c3c73039c1a0531f53168294b1e147820b3bd79ed6e7e9c3696"
+  },
+  {
+    "file": "allocator-native-first.log.gz",
+    "source": "build/contract-third/allocator-native-first.log",
+    "uncompressed_bytes": 660,
+    "sha256": "cd7466a67f910f0a9a75159fbf3312933eec53e04b3b382e2375e7aee7e5884d"
+  },
+  {
+    "file": "awk-native-build.json.gz",
+    "source": "build/contract-third/awk-native-build.json",
+    "uncompressed_bytes": 429,
+    "sha256": "b777a8bea2ed69fed0942a6bd1cd4c3b2d8c04e47fcac941b5aff5167db099aa"
+  },
+  {
+    "file": "awk-sanitizer-build.log.gz",
+    "source": "build/contract-third/awk-sanitizer-build.log",
+    "uncompressed_bytes": 71317,
+    "sha256": "3ceb69f4a92ba960f6abda6173bd86daa8a60aa8f6075214aacc16f8ecaa2e9e"
+  },
+  {
+    "file": "format-probe-audit.json.gz",
+    "source": "build/contract-third/format-probe-audit.json",
+    "uncompressed_bytes": 223990,
+    "sha256": "946917ab0ce7f579aa30aef123342b29f883c295872a5fa9856d1870c7d3559b"
+  },
+  {
+    "file": "format-probe-audit.log.gz",
+    "source": "build/contract-third/format-probe-audit.log",
+    "uncompressed_bytes": 660,
+    "sha256": "cd7466a67f910f0a9a75159fbf3312933eec53e04b3b382e2375e7aee7e5884d"
+  },
+  {
+    "file": "format-sanitizer-build.log.gz",
+    "source": "build/contract-third/format-sanitizer-build.log",
+    "uncompressed_bytes": 51506,
+    "sha256": "4944ec75e4455bedb8edbb6a4793da237b8c4682cdb1ae8c1e7e861335a77262"
+  },
+  {
+    "file": "formatted-native-before.json.gz",
+    "source": "build/contract-third/formatted-native-before.json",
+    "uncompressed_bytes": 1045736,
+    "sha256": "1bed62cd2d686cfdeca832180efdc73d084d99f1db658c75e78855e5f3d9f4e0"
+  },
+  {
+    "file": "formatted-native-final.json.gz",
+    "source": "build/contract-third/formatted-native-final.json",
+    "uncompressed_bytes": 1054248,
+    "sha256": "2962eda0fc2f929220dd302b9bc7054202641e277c233925ff39b42e74b1eab1"
+  },
+  {
+    "file": "formatted-native-final.log.gz",
+    "source": "build/contract-third/formatted-native-final.log",
+    "uncompressed_bytes": 8969,
+    "sha256": "721173b50507869fcce9289fab7d7236a5d5f99f0b20f31d4ec5a44064e1bea6"
+  },
+  {
+    "file": "formatted-native-first.log.gz",
+    "source": "build/contract-third/formatted-native-first.log",
+    "uncompressed_bytes": 330,
+    "sha256": "2f58fef896feecc428aa3b5bed30ce694af89846df83955603a0509180f4135f"
+  },
+  {
+    "file": "formatted-native-repaired.log.gz",
+    "source": "build/contract-third/formatted-native-repaired.log",
+    "uncompressed_bytes": 8908,
+    "sha256": "85bd79c8914f6a8f95b72cad7f634c4abcc30f84dc6080d6124005b12d2b055e"
+  },
+  {
+    "file": "formatted-native-verified-build.log.gz",
+    "source": "build/contract-third/formatted-native-verified-build.log",
+    "uncompressed_bytes": 8775,
+    "sha256": "84c6b7a80c82a06447d8fecf8e561294ff782fba9df599b8c87e05b5a7e8b7e7"
+  },
+  {
+    "file": "formatted-sanitizer-linux-before.json.gz",
+    "source": "build/contract-third/formatted-sanitizer-linux-before.json",
+    "uncompressed_bytes": 689551,
+    "sha256": "cc1fb4fa25c9db9605ef00e7e454ac9dfc90d1489506c4dfd505a3f4972112ab"
+  },
+  {
+    "file": "formatted-sanitizer-linux-before.log.gz",
+    "source": "build/contract-third/formatted-sanitizer-linux-before.log",
+    "uncompressed_bytes": 6925,
+    "sha256": "68bc1df1d29fffe49651e216729acdd7d19b8f3dc1e8c40388d90797f50d9c4c"
+  },
+  {
+    "file": "formatted-sanitizer-native-before.json.gz",
+    "source": "build/contract-third/formatted-sanitizer-native-before.json",
+    "uncompressed_bytes": 721307,
+    "sha256": "b5c13a01407742c602bb52b862be4c549cc91b554bdd6336d9dd66669b699ea2"
+  },
+  {
+    "file": "formatted-sanitizer-native-truncated-before.json.gz",
+    "source": "build/contract-third/formatted-sanitizer-native-truncated-before.json",
+    "uncompressed_bytes": 785786,
+    "sha256": "755ce7bf1b92d1e4a521d98c5def77be0951af60724a313c63f22431a609108e"
+  },
+  {
+    "file": "formatted-sanitizer-native-truncated-before.log.gz",
+    "source": "build/contract-third/formatted-sanitizer-native-truncated-before.log",
+    "uncompressed_bytes": 56651,
+    "sha256": "f7ebf3afd60c1dddebb5bc37b031e5be63968a21f2bfccd49885a85dcc2d2d85"
+  },
+  {
+    "file": "formatted-sanitizer-native.log.gz",
+    "source": "build/contract-third/formatted-sanitizer-native.log",
+    "uncompressed_bytes": 178,
+    "sha256": "5d2ffe2f182dfa91cf9b712d78a3115281ad3b79541b635b69ebc9fb55b7aea6"
+  },
+  {
+    "file": "harness-first.log.gz",
+    "source": "build/contract-third/harness-first.log",
+    "uncompressed_bytes": 118,
+    "sha256": "f961c1fbb669ae97f4b852d2dc16bfb3a760df7f70676f0cd7077f1c8bf5539e"
+  },
+  {
+    "file": "harness-native-final.log.gz",
+    "source": "build/contract-third/harness-native-final.log",
+    "uncompressed_bytes": 136,
+    "sha256": "2d2432fedd3b79395d2d7d91be465c988ec9a589bc7b025f7c7be2cb05377a36"
+  },
+  {
+    "file": "interrupt-asan-native.json.gz",
+    "source": "build/contract-third/interrupt-asan-native.json",
+    "uncompressed_bytes": 56129,
+    "sha256": "2e0b80b3355e835973d91a52758af4a438a96c22867018376d93e24863ad05a6"
+  },
+  {
+    "file": "inventory-final.log.gz",
+    "source": "build/contract-third/inventory-final.log",
+    "uncompressed_bytes": 1180,
+    "sha256": "2c398368b8f1e13a77d3aa4f768fced600d7138c71e835a0afa02f522e94d308"
+  },
+  {
+    "file": "language-build.log.gz",
+    "source": "build/contract-third/language-build.log",
+    "uncompressed_bytes": 239141,
+    "sha256": "8c34fea00736449b06e1976e28b42d41532cf3f0c0e6b1544984f77847939ba6"
+  },
+  {
+    "file": "languages-native-final-2.json.gz",
+    "source": "build/contract-third/languages-native-final-2.json",
+    "uncompressed_bytes": 1764206,
+    "sha256": "f341ae7d2849320b1b6a8df25e7258b743d84e277032b66caef01c9c59c8ace3"
+  },
+  {
+    "file": "languages-native-final-2.log.gz",
+    "source": "build/contract-third/languages-native-final-2.log",
+    "uncompressed_bytes": 34562,
+    "sha256": "17a55b89aa8ceac3d53dc115f4587f53d93be5ea48c705123facb235b581a298"
+  },
+  {
+    "file": "languages-native-final.json.gz",
+    "source": "build/contract-third/languages-native-final.json",
+    "uncompressed_bytes": 1764158,
+    "sha256": "c8a9e4d3aa94393c40b5a04d1d5a34cc3696d359e3d4b407ad45e5a2f8c313cc"
+  },
+  {
+    "file": "languages-native-final.log.gz",
+    "source": "build/contract-third/languages-native-final.log",
+    "uncompressed_bytes": 34562,
+    "sha256": "17a55b89aa8ceac3d53dc115f4587f53d93be5ea48c705123facb235b581a298"
+  },
+  {
+    "file": "languages-native-first.json.gz",
+    "source": "build/contract-third/languages-native-first.json",
+    "uncompressed_bytes": 1604917,
+    "sha256": "32f51a51f1c8ffdaf826052fd747fb69437675134c06e03fa3a9cf5d26f5bfb2"
+  },
+  {
+    "file": "languages-native-first.log.gz",
+    "source": "build/contract-third/languages-native-first.log",
+    "uncompressed_bytes": 30512,
+    "sha256": "0722e340748ab6a5250d07daf7b15e3bafae0c8862deb3454e33c6120323ae9b"
+  },
+  {
+    "file": "languages-sanitizer-native.json.gz",
+    "source": "build/contract-third/languages-sanitizer-native.json",
+    "uncompressed_bytes": 908715,
+    "sha256": "c8b69cf01d9eafcb6bd946577dc3781ef8215b8061439f70c91cc3495353cecc"
+  },
+  {
+    "file": "languages-sanitizer-native.log.gz",
+    "source": "build/contract-third/languages-sanitizer-native.log",
+    "uncompressed_bytes": 15300,
+    "sha256": "4621a0ebfe1a42e82336159768ce60391540d1129cd7a2c67e4f5a98d9d0b314"
+  },
+  {
+    "file": "libc-comparison-native.json.gz",
+    "source": "build/contract-third/libc-comparison-native.json",
+    "uncompressed_bytes": 148689,
+    "sha256": "70bde15f8885237e72c456925301a4437a3ce81f30c555a302c1a17fc0e7e0f2"
+  },
+  {
+    "file": "libc-comparison-native.log.gz",
+    "source": "build/contract-third/libc-comparison-native.log",
+    "uncompressed_bytes": 663,
+    "sha256": "bed62118a0015ffdeda2b50e051f6058ac149a5061a40714b7a4588609007d8e"
+  },
+  {
+    "file": "linux--tmp--formatted-third-final.log.gz",
+    "source": "build/contract-third/linux/tmp--formatted-third-final.log",
+    "uncompressed_bytes": 1136,
+    "sha256": "d4c583adf76978ebdade0b2050d2e93ea40c41df169ba78393cd4be6923b8a4c"
+  },
+  {
+    "file": "linux--tmp--formatted-third-sanitizer.json.gz",
+    "source": "build/contract-third/linux/tmp--formatted-third-sanitizer.json",
+    "uncompressed_bytes": 689551,
+    "sha256": "cc1fb4fa25c9db9605ef00e7e454ac9dfc90d1489506c4dfd505a3f4972112ab"
+  },
+  {
+    "file": "linux--tmp--formatted-third-sanitizer.log.gz",
+    "source": "build/contract-third/linux/tmp--formatted-third-sanitizer.log",
+    "uncompressed_bytes": 6925,
+    "sha256": "68bc1df1d29fffe49651e216729acdd7d19b8f3dc1e8c40388d90797f50d9c4c"
+  },
+  {
+    "file": "linux--tmp--formatted-third-verified.log.gz",
+    "source": "build/contract-third/linux/tmp--formatted-third-verified.log",
+    "uncompressed_bytes": 698,
+    "sha256": "0e3901efbff528aeddaa337c7254eff420337bb93b22d0d5cfe08d035b4ac24a"
+  },
+  {
+    "file": "linux--tmp--formatted-third.log.gz",
+    "source": "build/contract-third/linux/tmp--formatted-third.log",
+    "uncompressed_bytes": 332,
+    "sha256": "65709bc88df8605c30984b1c0e472f5825f57aba0cde85672a0a829083582b5d"
+  },
+  {
+    "file": "linux--tmp--formatted-truncated-before.json.gz",
+    "source": "build/contract-third/linux/tmp--formatted-truncated-before.json",
+    "uncompressed_bytes": 748233,
+    "sha256": "0f85b798f733164ac09bf5fd8714f5583b43b8d6c33c0479cf3ba3839337a263"
+  },
+  {
+    "file": "linux--tmp--formatted-truncated-before.log.gz",
+    "source": "build/contract-third/linux/tmp--formatted-truncated-before.log",
+    "uncompressed_bytes": 54995,
+    "sha256": "4cec4d1a68c19e2e889adacbf0b815982f6b8456c67ab73989e16497261e8de6"
+  },
+  {
+    "file": "linux--tmp--languages-third-final.json.gz",
+    "source": "build/contract-third/linux/tmp--languages-third-final.json",
+    "uncompressed_bytes": 1630956,
+    "sha256": "1ffb9f2570916bc89a8ee68f7ee1d541e98dbc82f5322778d5079aabb9cc64a6"
+  },
+  {
+    "file": "linux--tmp--languages-third-final.log.gz",
+    "source": "build/contract-third/linux/tmp--languages-third-final.log",
+    "uncompressed_bytes": 34562,
+    "sha256": "17a55b89aa8ceac3d53dc115f4587f53d93be5ea48c705123facb235b581a298"
+  },
+  {
+    "file": "linux--tmp--languages-third-sanitizer.json.gz",
+    "source": "build/contract-third/linux/tmp--languages-third-sanitizer.json",
+    "uncompressed_bytes": 837632,
+    "sha256": "da3443e0f7720f57a1943dc52742827925d8aa0fe8cc36060e545298a7da77a2"
+  },
+  {
+    "file": "linux--tmp--languages-third-sanitizer.log.gz",
+    "source": "build/contract-third/linux/tmp--languages-third-sanitizer.log",
+    "uncompressed_bytes": 15300,
+    "sha256": "4621a0ebfe1a42e82336159768ce60391540d1129cd7a2c67e4f5a98d9d0b314"
+  },
+  {
+    "file": "linux--tmp--languages-third.json.gz",
+    "source": "build/contract-third/linux/tmp--languages-third.json",
+    "uncompressed_bytes": 1630904,
+    "sha256": "5af1a93bd8230b279aadc9268fed43097e39935c0cf20a7c469d43e144785865"
+  },
+  {
+    "file": "linux--tmp--languages-third.log.gz",
+    "source": "build/contract-third/linux/tmp--languages-third.log",
+    "uncompressed_bytes": 34562,
+    "sha256": "17a55b89aa8ceac3d53dc115f4587f53d93be5ea48c705123facb235b581a298"
+  },
+  {
+    "file": "linux--tmp--profile-third.log.gz",
+    "source": "build/contract-third/linux/tmp--profile-third.log",
+    "uncompressed_bytes": 161717,
+    "sha256": "6f09aab5b496ea1620abc836896e3bbf706174f0dff77553bf902f68fd8622fa"
+  },
+  {
+    "file": "linux--tmp--resources-third-uninstrumented.json.gz",
+    "source": "build/contract-third/linux/tmp--resources-third-uninstrumented.json",
+    "uncompressed_bytes": 574378,
+    "sha256": "bf3fee65b9b826d87a8f43a917a7715a4bc075b7e59251d1d5e23a39ae04b60b"
+  },
+  {
+    "file": "linux--tmp--resources-third.json.gz",
+    "source": "build/contract-third/linux/tmp--resources-third.json",
+    "uncompressed_bytes": 574378,
+    "sha256": "ddd58b12d5195262801da5e400bc2c20179b542efc619211426fde0283acb4cf"
+  },
+  {
+    "file": "linux--tmp--runtime-third.log.gz",
+    "source": "build/contract-third/linux/tmp--runtime-third.log",
+    "uncompressed_bytes": 226376,
+    "sha256": "52ca633a4e842a98c01cd6673bc102a3a17f9a65b26b35bdd783fdd08031f695"
+  },
+  {
+    "file": "linux--tmp--sanitizer-printf-rebuild.log.gz",
+    "source": "build/contract-third/linux/tmp--sanitizer-printf-rebuild.log",
+    "uncompressed_bytes": 273,
+    "sha256": "41e374770bb800bcec7e391a999f7f75b8fa2b53c59977376c20e6be6bb1cec5"
+  },
+  {
+    "file": "linux--tmp--third-completion-build.log.gz",
+    "source": "build/contract-third/linux/tmp--third-completion-build.log",
+    "uncompressed_bytes": 140587,
+    "sha256": "7202f0be2672d719e62d37f3f6405574dea1f4f57e5da4f66252e1749aada86f"
+  },
+  {
+    "file": "linux--tmp--third-final-printf-build.log.gz",
+    "source": "build/contract-third/linux/tmp--third-final-printf-build.log",
+    "uncompressed_bytes": 743,
+    "sha256": "a41b0df270184a1bc2aae9c96dda81680f5b5f9e8df625aa1850d2889f48c17e"
+  },
+  {
+    "file": "linux--tmp--third-resource-build-sanitizer-flags.log.gz",
+    "source": "build/contract-third/linux/tmp--third-resource-build-sanitizer-flags.log",
+    "uncompressed_bytes": 39738,
+    "sha256": "4125beb87f766a3f378ca6c959cd6e39dd57ec515ecb58465bc5a5de627ad473"
+  },
+  {
+    "file": "linux--tmp--third-sanitizer-awk-build.log.gz",
+    "source": "build/contract-third/linux/tmp--third-sanitizer-awk-build.log",
+    "uncompressed_bytes": 29371,
+    "sha256": "536f3c8335f3e629fb1ad063e993bcf4db50c1bb57833cb00026c14dedc79f39"
+  },
+  {
+    "file": "linux--tmp--third-sanitizer-final--formatted.json.gz",
+    "source": "build/contract-third/linux/tmp--third-sanitizer-final--formatted.json",
+    "uncompressed_bytes": 695292,
+    "sha256": "8540803359124c860b081ad730731f599d0acb0dc2bfc615bfbc884dd50426e0"
+  },
+  {
+    "file": "linux--tmp--third-sanitizer-final--formatted.log.gz",
+    "source": "build/contract-third/linux/tmp--third-sanitizer-final--formatted.log",
+    "uncompressed_bytes": 84,
+    "sha256": "324d9795ac73646ce2d837a5d5201a776948b46e677caf9474b2ec370cd9d5c8"
+  },
+  {
+    "file": "linux--tmp--third-sanitizer-final--languages.json.gz",
+    "source": "build/contract-third/linux/tmp--third-sanitizer-final--languages.json",
+    "uncompressed_bytes": 837684,
+    "sha256": "a88611d00a95abb4f81486771b691ae826610c6eea2f96070d5fb1a3e1611c67"
+  },
+  {
+    "file": "linux--tmp--third-sanitizer-final--languages.log.gz",
+    "source": "build/contract-third/linux/tmp--third-sanitizer-final--languages.log",
+    "uncompressed_bytes": 15300,
+    "sha256": "4621a0ebfe1a42e82336159768ce60391540d1129cd7a2c67e4f5a98d9d0b314"
+  },
+  {
+    "file": "linux--tmp--third-sanitizer-format-build.log.gz",
+    "source": "build/contract-third/linux/tmp--third-sanitizer-format-build.log",
+    "uncompressed_bytes": 40162,
+    "sha256": "0d091152f7fcaa77277714f2ba88ad01a59cbea641fe9fb9ae87fe0996d67c33"
+  },
+  {
+    "file": "linux--tmp--third-zero-fix-build.log.gz",
+    "source": "build/contract-third/linux/tmp--third-zero-fix-build.log",
+    "uncompressed_bytes": 85582,
+    "sha256": "b46596d39903527b63e30a9879b456414e0d1144e0a8f4decfa63cb4a0941166"
+  },
+  {
+    "file": "linux--work--build--host-awk-build.json.gz",
+    "source": "build/contract-third/linux/work--build--host-awk-build.json",
+    "uncompressed_bytes": 429,
+    "sha256": "6688874531b1836a687bf8bd99e31a65ccdf1936b7111b45d27551f30e920d81"
+  },
+  {
+    "file": "linux--work--build--host-format-plain--build--host-m4-build.json.gz",
+    "source": "build/contract-third/linux/work--build--host-format-plain--build--host-m4-build.json",
+    "uncompressed_bytes": 480,
+    "sha256": "ca25d6621b31a13ac53a916c0f78d835f27f7c1cb147e876442fe5eacd6e44df"
+  },
+  {
+    "file": "linux--work--build--host-format-sanitizer--build--host-m4-build.json.gz",
+    "source": "build/contract-third/linux/work--build--host-format-sanitizer--build--host-m4-build.json",
+    "uncompressed_bytes": 614,
+    "sha256": "572fa7bbbce6d7f881f0a59cfdd3b404d12328cb7865d355a9c865cffecdd41b"
+  },
+  {
+    "file": "linux--work--build--host-m4-build.json.gz",
+    "source": "build/contract-third/linux/work--build--host-m4-build.json",
+    "uncompressed_bytes": 542,
+    "sha256": "cabdae2c5621cab2656130c5a99b037b29eafddd82f435a9c8cb5ee5f0d5c51d"
+  },
+  {
+    "file": "linux--work--build--host-profile--manifest.json.gz",
+    "source": "build/contract-third/linux/work--build--host-profile--manifest.json",
+    "uncompressed_bytes": 38638,
+    "sha256": "f68e296942caf50bfaf2405309e336d2ab7e5ec5cc8b8ae9c7c594e160a6315b"
+  },
+  {
+    "file": "linux--work--build--tests--host-formatted-contracts.json.gz",
+    "source": "build/contract-third/linux/work--build--tests--host-formatted-contracts.json",
+    "uncompressed_bytes": 1008301,
+    "sha256": "8aecb331451803459db9f204686fe83d646b0a55a4dec1675d0f70084528ddaa"
+  },
+  {
+    "file": "m4-native-build.json.gz",
+    "source": "build/contract-third/m4-native-build.json",
+    "uncompressed_bytes": 542,
+    "sha256": "743784c6ccaf52612584591f07b99ad049f8b754198d1bd79ff31988f8d0aa7d"
+  },
+  {
+    "file": "m4-sanitizer-native-build.json.gz",
+    "source": "build/contract-third/m4-sanitizer-native-build.json",
+    "uncompressed_bytes": 614,
+    "sha256": "69e2ec2b43cc33021d0a239210881cbcced1858a570a224e96913298553878f8"
+  },
+  {
+    "file": "multibyte-native-extended.json.gz",
+    "source": "build/contract-third/multibyte-native-extended.json",
+    "uncompressed_bytes": 277510,
+    "sha256": "10a56fa2131e558de59cfa2a27f8ae0bb56ccc66345d81cd8dca090eedaad235"
+  },
+  {
+    "file": "multibyte-native-extended.log.gz",
+    "source": "build/contract-third/multibyte-native-extended.log",
+    "uncompressed_bytes": 6642,
+    "sha256": "f3c63cc6fc84877d848f084a6a1402bcae21892c0f558b701f4e2d5efd03b184"
+  },
+  {
+    "file": "multibyte-native-final.json.gz",
+    "source": "build/contract-third/multibyte-native-final.json",
+    "uncompressed_bytes": 277521,
+    "sha256": "a31496d51b9594f486fdca4f1c62e2f60259b6ff13cf78fab46028f4514a5fff"
+  },
+  {
+    "file": "multibyte-native-final.log.gz",
+    "source": "build/contract-third/multibyte-native-final.log",
+    "uncompressed_bytes": 6642,
+    "sha256": "f3c63cc6fc84877d848f084a6a1402bcae21892c0f558b701f4e2d5efd03b184"
+  },
+  {
+    "file": "multibyte-native-first.json.gz",
+    "source": "build/contract-third/multibyte-native-first.json",
+    "uncompressed_bytes": 184810,
+    "sha256": "34a41abaeff49e7af8b875ea2bf9c87340a8a2c3807e8ff98eada8dac959943c"
+  },
+  {
+    "file": "multibyte-native-first.log.gz",
+    "source": "build/contract-third/multibyte-native-first.log",
+    "uncompressed_bytes": 3858,
+    "sha256": "ce3c4d1732ecd3950dd0001ecdac8614e23b157e37a157bd776fbffd822237e6"
+  },
+  {
+    "file": "profile-native-final.log.gz",
+    "source": "build/contract-third/profile-native-final.log",
+    "uncompressed_bytes": 151412,
+    "sha256": "ee4c8f815f172972b745aa19bf70bb3eae54a6965add143bab2d6c1015b055ce"
+  },
+  {
+    "file": "profile-native-manifest.json.gz",
+    "source": "build/contract-third/profile-native-manifest.json",
+    "uncompressed_bytes": 51234,
+    "sha256": "20a0871b4d76ffc2ec62b982b58740a041b1dc7badb70d220385a9c8a82c4b6f"
+  },
+  {
+    "file": "profile-native.log.gz",
+    "source": "build/contract-third/profile-native.log",
+    "uncompressed_bytes": 521,
+    "sha256": "d7f681a3715b4f9ea1cf115bdf302fe15b693743575eba500bc1c47781b68fd2"
+  },
+  {
+    "file": "providers-build.log.gz",
+    "source": "build/contract-third/providers-build.log",
+    "uncompressed_bytes": 240293,
+    "sha256": "19dfa5ef421804cda53eba2d1235b0d03bbb0d3ccabae29a6e2ab66342b8386f"
+  },
+  {
+    "file": "providers-zero-fix-build.log.gz",
+    "source": "build/contract-third/providers-zero-fix-build.log",
+    "uncompressed_bytes": 89433,
+    "sha256": "055ed9828bb1d52baf55ed4bcc71121d7bf98d095074bc122a0b51224a7dbd29"
+  },
+  {
+    "file": "resource-check.py.gz",
+    "source": "build/contract-third/resource-check.py",
+    "uncompressed_bytes": 1183,
+    "sha256": "b695411d5131ce9c262c0903eaff7867e09b4f537be196afc5da11362b26dfe0"
+  },
+  {
+    "file": "resources-native-final.json.gz",
+    "source": "build/contract-third/resources-native-final.json",
+    "uncompressed_bytes": 573854,
+    "sha256": "ff9d8450b2cee6fb25c05efb0ec298841c28a0b2313faa242a808a9ef65b222e"
+  },
+  {
+    "file": "resources-native.json.gz",
+    "source": "build/contract-third/resources-native.json",
+    "uncompressed_bytes": 573854,
+    "sha256": "b243fa4df41b87465c4e5b1c4388722a165b7b6d2d0c04c19ea592740bb13e5d"
+  },
+  {
+    "file": "runtime-native.log.gz",
+    "source": "build/contract-third/runtime-native.log",
+    "uncompressed_bytes": 226658,
+    "sha256": "cccd8356f79968de4a7f4a017bb6b063c19648217c13c362db8df3c569c16985"
+  },
+  {
+    "file": "sanitize-providers.sh.gz",
+    "source": "build/contract-third/sanitize-providers.sh",
+    "uncompressed_bytes": 1353,
+    "sha256": "7edef187f5d4b2cdfce95d502c5ef6ed617eff52ea87d499355b7e11404f38cb"
+  },
+  {
+    "file": "sanitizer-native-final--formatted.json.gz",
+    "source": "build/contract-third/sanitizer-native-final/formatted.json",
+    "uncompressed_bytes": 731189,
+    "sha256": "30d8b319e1f69583e0426abf27d6bbc0f9cbb7e79392d97b1fb384916c2eb7b6"
+  },
+  {
+    "file": "sanitizer-native-final--formatted.log.gz",
+    "source": "build/contract-third/sanitizer-native-final/formatted.log",
+    "uncompressed_bytes": 84,
+    "sha256": "324d9795ac73646ce2d837a5d5201a776948b46e677caf9474b2ec370cd9d5c8"
+  },
+  {
+    "file": "sanitizer-native-final--languages.json.gz",
+    "source": "build/contract-third/sanitizer-native-final/languages.json",
+    "uncompressed_bytes": 903781,
+    "sha256": "287102bcca74c7fb6e920a6f2774a164854697711730c376239efbc085079960"
+  },
+  {
+    "file": "sanitizer-native-final--languages.log.gz",
+    "source": "build/contract-third/sanitizer-native-final/languages.log",
+    "uncompressed_bytes": 15300,
+    "sha256": "4621a0ebfe1a42e82336159768ce60391540d1129cd7a2c67e4f5a98d9d0b314"
+  },
+  {
+    "file": "sanitizer-printf-native-rebuild.log.gz",
+    "source": "build/contract-third/sanitizer-printf-native-rebuild.log",
+    "uncompressed_bytes": 273,
+    "sha256": "41e374770bb800bcec7e391a999f7f75b8fa2b53c59977376c20e6be6bb1cec5"
+  },
+  {
+    "file": "sanitizer-zero-fix-build.log.gz",
+    "source": "build/contract-third/sanitizer-zero-fix-build.log",
+    "uncompressed_bytes": 51373,
+    "sha256": "05a5b2b1a0c5426d569c53e873ab40ef17dfba65fa3a70404cac9cd44fbb38cb"
+  },
+  {
+    "file": "ticket-identities.json.gz",
+    "source": "build/contract-third/ticket-identities.json",
+    "uncompressed_bytes": 2815,
+    "sha256": "255d22fb8f50b327ac0c65407a906c262238091b17d524fe2bb8820b9c99f6b0"
+  },
+  {
+    "file": "ticket-live-final.log.gz",
+    "source": "build/contract-third/ticket-live-final.log",
+    "uncompressed_bytes": 274,
+    "sha256": "5fb756d2fb7cc172d68cc128d4a56e918911da4ac4c523f79c20417274421965"
+  },
+  {
+    "file": "ticket-live.log.gz",
+    "source": "build/contract-third/ticket-live.log",
+    "uncompressed_bytes": 274,
+    "sha256": "5fb756d2fb7cc172d68cc128d4a56e918911da4ac4c523f79c20417274421965"
+  },
+  {
+    "file": "tickets-final.log.gz",
+    "source": "build/contract-third/tickets-final.log",
+    "uncompressed_bytes": 466,
+    "sha256": "a2f33b6a085791ae58a187cc82f917063406f17c59c2e71fa9651d83b70ac637"
+  }
+]

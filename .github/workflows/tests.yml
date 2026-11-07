@@ -107,6 +107,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential locales ed busybox bc m4 acl sharutils file pax libbsd-dev ncurses-bin libncurses-dev bsdextrautils gettext curl ca-certificates
           sudo localedef -i en_US -f UTF-8 en_US.UTF-8
+          sudo localedef -i fr_FR -f UTF-8 fr_FR.UTF-8
+          sudo localedef -i de_DE -f UTF-8 de_DE.UTF-8
       - name: Supply macOS profile
         if: runner.os == 'macOS'
         run: |
@@ -118,6 +120,11 @@ jobs:
         run: |
           make -j2 test-host-languages
           cp build/tests/host-languages-results.json "$RUNNER_TEMP/csh074-native.json"
+      - name: Qualify Darwin formatter allocation recovery
+        if: runner.os == 'macOS'
+        run: |
+          make test-host-formatted-allocator
+          cp build/tests/host-formatted-allocator.json "$RUNNER_TEMP/csh079-formatter-allocator.json"
       - name: Qualify language contracts with sanitizers
         env:
           ASAN_OPTIONS: halt_on_error=1:detect_leaks=0
@@ -132,6 +139,7 @@ jobs:
           name: csh074-${{ matrix.os }}
           path: |
             ${{ runner.temp }}/csh074-native.json
+            ${{ runner.temp }}/csh079-formatter-allocator.json
             build/tests/host-languages-results.json
             build/host-profile/manifest.json
 

@@ -5,8 +5,9 @@
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: test/CSH-073-host-text-streams
+- Branch: test/CSH-073-host-contract-completion
 - Issue: [#145](https://github.com/melliott18/cshell/issues/145)
+- Pull request: [#241](https://github.com/melliott18/cshell/pull/241)
 
 ## Acceptance review (2026-11-07)
 
@@ -86,7 +87,7 @@ profiles and executable/environment identities, remains unchanged.
 - [ ] Map every applicable page section and common default to clause-derived
   assertions or an individually justified disposition; repair required-contract
   failures. Selected examples alone do not complete a utility contract.
-- [ ] Resolve each assigned retained condition with its required capability and
+- [x] Resolve each assigned retained condition with its required capability and
   strict evidence, or transfer that individual condition to a concrete open owner.
   Preserve vendor ownership, setup failures and failed assertions separately.
 - [x] Verify public cshell dispatch and direct exec access, exact output/status and
@@ -233,3 +234,43 @@ additional UE-state child after the owned attempt was stopped. That optional
 analysis needs a compatible Valgrind runtime; the required injected fault suite
 passes independently. OS cleanup of the four old UE children is unresolved;
 no reboot was performed. Complete utility-page qualification remains open.
+
+## Contract continuation (2026-11-07)
+
+Added 33 operand/format cases (132 assertions), repaired native serial-empty
+paste by selecting pinned GNU paste, and supplied lzip in Docker development
+provisioning. The repaired native capacity audit passes 924 assertions and all
+24 injected-fault assertions; the private image was detached and removed.
+
+The five retained capability prerequisites have supplied strict witnesses, so
+that acceptance criterion is checked. Whole-page qualification remains open;
+this does not qualify arbitrary errors, other locales or the remaining formats.
+The [continuation evidence and review](../evidence/host-contract-continuation-2026-11-07/README.md)
+retain the initial paste failures and native strings timeouts separately. The
+ticket remains in review and is not accepted.
+
+## Streaming and multibyte follow-up (2026-11-07)
+
+Added 14 passing direct/exec live-stream assertions on native macOS and Debian
+for cat -u, tee output/copies/append, and tail -f regular files, renamed
+descriptors, named FIFOs and stdin pipes. Negative controls reject buffering and
+missing file copies. The section ledger now records these bounded witnesses;
+remaining complete-page contracts still prevent acceptance.
+
+See the [follow-up evidence and acceptance review](../evidence/host-contract-continuation-2026-11-07/streaming-multibyte/README.md) for commands, identities, failures and remaining work.
+
+## Shared editor provider review (2026-11-07)
+
+The [language-provider continuation](../evidence/host-contract-continuation-2026-11-07/provider-repairs/README.md)
+keeps the repaired GNU-regex ed selected even when optional text overrides are
+used. Native and Debian language suites retain passing SIGINT/SIGHUP recovery
+and backing-store failures. The five retained CSH-073 capabilities remain
+supplied, but the 25 utility pages and common-default remainder still prevent
+whole-ticket acceptance. No additional ticket criterion is marked complete.
+
+## Coverage and CI continuation (2026-11-07)
+
+Added UTF-8 column-width, whole-character folding, uniq skip and whitespace
+contracts, with five additional pinned GNU text providers.
+The [coverage and CI review](../evidence/host-contract-continuation-2026-11-07/coverage-ci/README.md)
+records validation and remaining obligations. This ticket remains unaccepted.

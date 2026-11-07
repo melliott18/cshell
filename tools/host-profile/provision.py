@@ -30,7 +30,8 @@ def test_provider(gnu_bin=None):
 
 def text_overrides(text_bin, system):
     manifest = json.loads((text_bin.parent / 'manifest.json').read_text())
-    expected = {'cat', 'head', 'cut', 'tsort', 'sed', 'ed', 'cmp'}
+    expected = {'cat', 'head', 'cut', 'tsort', 'paste', 'sed', 'ed', 'cmp',
+                'expand', 'unexpand', 'fold', 'uniq', 'wc'}
     if system == 'Linux':
         expected.add('tail')
     if set(manifest['executables']) != expected or manifest['recipe']['system'] != system:
@@ -51,7 +52,9 @@ def provision(destination, gnu_bin=None, text_bin=None, catalog_bin=None, cc="cc
         if record.exists():
             record.unlink()
     selected = {name: shutil.which(name, path=os.defpath) for name in dict.fromkeys(HOSTS + UTILITIES + LANGUAGE_UTILITIES)}
-    overrides = {'uudecode': str(ROOT / 'build/host-uudecode'),
+    overrides = {'bc': str(ROOT / 'build/host-bc'),
+                 'awk': str(ROOT / 'build/host-awk'),
+                 'uudecode': str(ROOT / 'build/host-uudecode'),
                  'ed': str(ROOT / 'build/host-ed'),
                  'xargs': str(ROOT / 'build/host-xargs'),
                  'm4': str(ROOT / 'build/host-m4'),
@@ -78,8 +81,9 @@ def provision(destination, gnu_bin=None, text_bin=None, catalog_bin=None, cc="cc
         # Homebrew's prefixed names do not change the system PATH or echo policy.
         search = str(gnu_bin) if gnu_bin else os.environ.get('PATH', os.defpath)
         overrides.update({name: shutil.which('g' + name, path=search)
-                         for name in ('find', 'dd')})
+                         for name in ('find', 'dd', 'expr')})
     elif system == 'Linux':
+        overrides['mv'] = str(ROOT / 'build/host-mv')
         overrides['kill'] = shutil.which('busybox', path=os.defpath)
         overrides['du'] = str(ROOT / 'build/host-du')
         if not os.access('/usr/bin/du', os.X_OK):
@@ -88,6 +92,8 @@ def provision(destination, gnu_bin=None, text_bin=None, catalog_bin=None, cc="cc
         raise ValueError('Only Darwin and Linux profiles are defined')
     if text_bin:
         overrides.update(text_overrides(text_bin, system))
+        # Keep the shared GNU-regex ed repair even with optional text overrides.
+        overrides['ed'] = str(ROOT / 'build/host-ed')
     # Catalog programs are selected explicitly; no host install is performed.
     search = str(catalog_bin) if catalog_bin else os.environ.get('PATH', os.defpath)
     catalog_providers = {name: shutil.which(name, path=search)
@@ -169,7 +175,10 @@ def provision(destination, gnu_bin=None, text_bin=None, catalog_bin=None, cc="cc
             path='/usr/bin/du', realpath=os.path.realpath('/usr/bin/du'),
             sha256=hashlib.sha256(Path('/usr/bin/du').read_bytes()).hexdigest(),
             environment={'POSIXLY_CORRECT': '1'})
-    for program, patch in (('cp', 'cp-decline-status.patch'), ('rm', 'rm-parent-prompt.patch')):
+    coreutils_patches = [('cp', 'cp-decline-status.patch'), ('rm', 'rm-parent-prompt.patch')]
+    if system == 'Linux':
+        coreutils_patches.append(('mv', 'cp-decline-status.patch'))
+    for program, patch in coreutils_patches:
         manifest['executables'][program]['source'] = dict(
             version='GNU coreutils 9.7', archive='tools/host-profile/vendor/coreutils/coreutils-9.7.tar.xz',
             archive_sha256=hashlib.sha256((ROOT / 'tools/host-profile/vendor/coreutils/coreutils-9.7.tar.xz').read_bytes()).hexdigest(),

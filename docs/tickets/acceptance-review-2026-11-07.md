@@ -60,6 +60,36 @@ The implementation merge is `13f57750b1bbd77c97396a75721c1486983f8b53`. Every ac
 
 CSH-073 is reopened because its automatic issue closure did not satisfy its remaining acceptance criteria. The other two remain open. No acceptance is inferred from a checked box alone.
 
+## Subsequent 073/074/079 implementation review
+
+The [contract continuation](../evidence/host-contract-continuation-2026-11-07/README.md)
+repairs paste and patch behavior and adds interrupted-write and real Darwin
+libc allocation probes. CSH-073's retained capability prerequisite criterion is
+now satisfied; its complete-page criterion remains open. CSH-074 remains open
+for complete-page coverage. CSH-079 is blocked for acceptance by attested Darwin
+libc allocation crashes and the required disposable low-stack investigation.
+None of these three tickets is accepted by this continuation.
+
+## Provider repair review
+
+The [provider repairs](../evidence/host-contract-continuation-2026-11-07/provider-repairs/README.md)
+resolve the demonstrated awk/expr/ed multibyte failures and qualify the selected
+GNU formatter against the observed Darwin allocation failures. The native-libc
+comparison remains failing historical evidence. CSH-073 and CSH-074 are the only
+tickets still in review; their complete-page criteria remain unchecked. CSH-079
+remains blocked by the unavailable resettable Mac and retains its other declared
+partitions. No additional ticket satisfies all acceptance criteria.
+
+## Additional coverage and CI review
+
+The [additional coverage](../evidence/host-contract-continuation-2026-11-07/coverage-ci/README.md)
+adds strict grammar, character/column and formatting assertions, repairs GNU bc
+empty return, fixes vendor build flag propagation and Linux mv decline status.
+CSH-073/074 still own full-page/common-default remainders and CSH-079 still owns
+the unavailable disposable-Mac investigation and remaining partitions. The only
+tickets in review remain CSH-073 and CSH-074; neither meets all acceptance
+criteria. No new ticket is accepted.
+
 ## CSH-114 integration acceptance
 
 Accepted CSH-114 after [PR #243](https://github.com/melliott18/cshell/pull/243)

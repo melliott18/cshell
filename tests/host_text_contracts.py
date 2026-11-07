@@ -50,6 +50,8 @@ def validate(data):
                               if c.get('category') == name}
                        for name in ('transformations', 'offsets', 'large-inputs')}
     expected_groups['interruptions'] = {tool+'/'+kind for tool, kind in definitions()}
+    from host_text_streams import definitions as streams
+    expected_groups['streaming'] = {tool+'/'+kind for tool, kind in streams()}
     for name, expected_group in expected_groups.items():
         actual_group = data.get('coverage_groups', {}).get(name, [])
         if set(actual_group) != expected_group or len(actual_group) != len(expected_group):

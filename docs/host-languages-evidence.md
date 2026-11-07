@@ -14,13 +14,15 @@ CSH_TEST_PATH="$PWD/build/host-profile/bin:$(getconf PATH)" make test-host-langu
 ```
 
 The Dockerfile and Linux CI explicitly install Debian/Ubuntu `bc` and `m4`.
-The private profile builds GNU ed 1.22.6 with the exact POSIX SIGINT marker,
+The private profile builds GNU Awk 5.3.2 in POSIX mode and GNU ed 1.22.6
+with GNU regex and the exact POSIX SIGINT marker,
 a FreeBSD-derived xargs with Issue 8 empty-input, NUL and size handling,
 GNU M4 1.4.20 with wrap-order and error-status corrections,
 and GNU patch 2.8 with output-backup correction.
 Their checked-in source, upstream hashes, local changes and licenses are under
 `tools/host-profile/vendor`; none of these executables is linked into cshell.
-The M4 provider builds offline from its pinned complete source archive and
+Darwin selects GNU expr from the existing Homebrew coreutils package; Linux
+uses its GNU coreutils expr. Both the Awk and M4 providers build offline from its pinned complete source archive and
 reviewable patch. GNU M4/gnulib retain their upstream warning policy: the build
 removes only `-Werror` from the requested CFLAGS, preserving sanitizer, language
 and optimization flags. Requested/effective flags, patch/archive hashes and
@@ -203,3 +205,11 @@ Sections whose entire normative content is “None” now have explicit
 `not-applicable` accounting, instead of fictitious missing cases. Other
 unqualified headings and partial sections remain open. No physical terminal or
 human confirmation requirement has been identified for these CSH-074 cases.
+
+## Multibyte provider and formatter continuation
+
+The [provider repair evidence](evidence/host-contract-continuation-2026-11-07/provider-repairs/README.md)
+repairs the known awk, expr and ed failures. All previous multibyte cases now
+belong to the ordinary repaired subset, together with fifteen additional locale,
+regex and command-status cases. Native and Debian language suites pass 981
+assertions. Full-page acceptance remains open.

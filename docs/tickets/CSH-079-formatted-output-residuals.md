@@ -1,6 +1,6 @@
 # CSH-079: Qualify remaining formatted-output environments
 
-- Status: review
+- Status: blocked
 - Type: test
 - Kind: implementation
 - Parent: None
@@ -8,10 +8,11 @@
 - Branch: `test/CSH-079-formatted-output-environments`
 - Issue: [#157](https://github.com/melliott18/cshell/issues/157)
 - Pull request: [#175](https://github.com/melliott18/cshell/pull/175)
+- Continuation pull request: [#241](https://github.com/melliott18/cshell/pull/241)
 
 ## Acceptance review (2026-11-07)
 
-Not accepted. The checked criteria cover a bounded investigation and individual dispositions. The ticket explicitly retains Darwin libc-internal allocation, other locale/format/signal partitions and the unresolved original low-stack observation; it is not ready for whole-ticket closure. See the [acceptance review](acceptance-review-2026-11-07.md) for validation and limitations.
+Not accepted. The selected GNU formatter now has passing controlled Darwin allocation coverage; the original stock-libc failures remain vendor evidence. Other locale/format/signal partitions and the unresolved original low-stack observation still prevent whole-ticket closure. See the [acceptance review](acceptance-review-2026-11-07.md) for validation and limitations.
 
 ## Goal
 
@@ -31,7 +32,7 @@ is qualified by the selected profile's passing examples.
 | --- | --- |
 | `U-035/locale-catalogs` | French/German catgets catalogs supplied and strict diagnostic expectations added. Further catalog encodings, installation/search patterns and malformed/unreadable catalogs require supplied fixtures. NLSPATH is an explicitly selected extension, not a base-profile requirement. |
 | `U-035/other-locales` | French/German LANG/category/LC_ALL precedence, decimal comma and UTF-8 character/byte semantics supplied. Other independently specified locales and stateful encodings remain unqualified. |
-| `U-035/format-allocation-limits` | Linux 16 MiB RLIMIT_AS induces libc formatting ENOMEM; 64 KiB post-startup stack exercises a 256 KiB format. Darwin libc allocation failure and other libc allocation sites/limits require controlled instrumentation. |
+| `U-035/format-allocation-limits` | Linux 16 MiB RLIMIT_AS induces libc formatting ENOMEM; 64 KiB post-startup stack exercises a 256 KiB format. The selected GNU formatter now has controlled Darwin allocation instrumentation and passing recovery/error assertions. Other allocation sites, physical capacity and formats remain unqualified. |
 | `U-035/full-format` | New flag/precision/base, numbered/binary/reuse and diagnostic-continuation combinations supplied, including repairs for quoted float and trailing character constants. Further valid combinations, precision/range edges, asynchronous/default signal and interrupted output behavior remain unqualified. |
 | `U-036/alternative-policies` | Newly built literal policy has exact byte/status/catalog expectations and identity. Other vendor/build policies need separately declared oracles and identities; no universal policy claim. |
 | `U-036/argument-limits` | Adjacent success/E2BIG searches for fixed single and 1024-byte aggregate operands, two environment sizes and recorded stacks. Darwin 1 MiB stack searches left stuck exec processes despite SIGKILL; reproduce only in a disposable OS with reset capability. Other layouts, stacks, environments and kernel versions remain unqualified. |
@@ -44,7 +45,7 @@ manifest links this boundary without rewriting the historical observations.
 
 - [x] Account for each retained condition above separately with new supplied
   capabilities and strict assertions, or an explicit individual disposition.
-- [x] Investigate the Darwin near-ARG_MAX low-stack exec failure with kernel/OS
+- [ ] Investigate the Darwin near-ARG_MAX low-stack exec failure with kernel/OS
   identity and owned-process disappearance, including timeout cleanup. Do not
   repeat it on a personal host merely to retry a failed run.
 - [x] Supply independent libc/locale/conversion and signal/error oracles; keep
@@ -143,3 +144,57 @@ above. Current ownership checks and the retained-evidence audit pass.
 retain every failed, interrupted and successful attempt separately. All newly
 owned local containers were stopped and removed. This is a reviewable bounded
 implementation, with the individual unqualified contracts still open here.
+
+## Contract continuation and acceptance blocker (2026-11-07)
+
+Actual SA_RESTART and partial-write probes add 16 assertions. Native formatted
+contracts pass 704 checks; the 40 interruption checks also pass ASan/UBSan.
+
+The newly supplied Darwin libc allocator audit exposes a required-contract
+failure: three allocations originating in `__Balloc_D2A` cause SIGSEGV when
+returned ENOMEM during real `vprintf`. Direct and cshell exec paths both fail;
+all six children are reaped with verified PID disappearance. This is controlled
+allocator failure inside libc, not the previous API-return injection. The audit
+returns nonzero and is retained as failing evidence.
+
+Acceptance is blocked pending a repair or separately qualified replacement for
+that Darwin libc path, plus the resettable Darwin 23.6 environment needed for the
+historical low-stack investigation. Other locale/format remainders also remain
+owned here. The [continuation evidence and review](../evidence/host-contract-continuation-2026-11-07/README.md)
+provide the reproducer, traces, passing controls and remaining boundaries.
+This ticket is not accepted or closed.
+
+## Streaming and multibyte follow-up (2026-11-07)
+
+Restart witnesses now require SA_SIGINFO instruction-pointer evidence inside
+write, resolved outside the signal handler. All 40 interruption assertions pass
+on native macOS and Debian, and under native ASan/UBSan. A negative control
+rejects alarms delivered outside write. The user has no disposable resettable
+Mac available; no low-stack reproduction was attempted. Darwin libc allocator
+crashes and the other retained obligations remain unresolved. The low-stack
+checkbox is unchecked because a blocker disposition is not completed reproduction.
+
+See the [follow-up evidence and acceptance review](../evidence/host-contract-continuation-2026-11-07/streaming-multibyte/README.md) for commands, identities, failures and remaining work.
+
+## Selected formatter repair (2026-11-07)
+
+The FreeBSD command parser now uses pinned GNU vasnprintf for checked floating
+conversion, with exact-byte writes and propagated allocation/write errors. All
+176 Darwin allocation assertions pass across fixed/scientific/general/hex and
+the declared L extension. The original native-libc comparison still retains six
+crashes; this replaces that selected implementation path rather than repairing
+stock libc. The parser preserves the L conversion character and diagnoses a
+truncated modifier. A Linux UBSan finding in GNU zero conversion is repaired
+by skipping a zero-limb null memcpy.
+
+The user has no disposable resettable Mac available. The historical low-stack
+reproduction remains unchecked, and the ticket remains blocked and unaccepted.
+See the [provider repair review](../evidence/host-contract-continuation-2026-11-07/provider-repairs/README.md)
+for final cross-platform checks and remaining obligations.
+
+## Coverage and CI continuation (2026-11-07)
+
+Added 70 precision, exponent, signed-zero, dynamic-field and integer-limit
+assertions. The unavailable disposable Mac still blocks low-stack reproduction.
+The [coverage and CI review](../evidence/host-contract-continuation-2026-11-07/coverage-ci/README.md)
+records validation and remaining obligations. This ticket remains unaccepted.

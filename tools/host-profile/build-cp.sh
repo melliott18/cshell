@@ -1,6 +1,8 @@
 #!/bin/sh
 # Offline reproducible GNU cp/rm build; all mutations stay under ignored build/.
 set -eu
+# Parent make command-line overrides must not replace configured vendor flags.
+unset MAKEFLAGS MFLAGS MAKEOVERRIDES
 root=$(pwd)
 source_dir="$root/build/host-coreutils-src"
 build_dir="$root/build/host-coreutils-build"

@@ -14,8 +14,10 @@ full-page contract and all six retained condition IDs.
 flush-error and binary `%b` patches. CSH-070 adds catalog messages, a heap
 conversion workspace, libc-formatting failure propagation, and two numeric
 operand corrections. FreeBSD retains upstream implementation ownership;
-repository maintainers own these adapters, and the selected libc/platform
-vendors own their implementation. Nothing is linked into the cshell runtime.
+repository maintainers own these adapters, and the selected library/platform
+vendors own their implementation. The current selected provider uses pinned GNU
+vasnprintf through `tools/host-profile/format.c`, avoiding the demonstrated
+Darwin libc conversion-allocation crashes. Nothing is linked into the cshell runtime.
 
 `build/host-echo-literal` is a separately selected base-profile provider.
 All arguments are literal, including `--`, `-n`, `-e`, `-E`, combinations and
@@ -156,3 +158,14 @@ OUTPUT FILES, STDIN, OPTIONS and unselected XSI policy retain the preceding
 section dispositions. CSH-079 remains the open owner of unsupplied environments
 and the historical low-stack and ps/PTY failures. In particular, no unsafe
 Darwin exec is repeated without a disposable OS with reset capability.
+
+## Checked formatter continuation
+
+The [replacement formatter evidence](evidence/host-contract-continuation-2026-11-07/provider-repairs/README.md)
+records 176 passing Darwin allocation assertions for the GNU formatter, while
+the separate native-libc comparison retains six crashes. Normal native and
+Debian formatted suites pass 719 assertions. `make test-host-formatted-allocator`
+selects the repaired formatter; `make test-host-formatted-libc-audit` preserves
+the failing vendor comparison. The L conversion extension also preserves its
+conversion character after the modifier. This does not close the historical
+low-stack investigation or qualify arbitrary formats and allocation paths.

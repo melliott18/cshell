@@ -7,6 +7,7 @@
 - Depends on: CSH-052, CSH-056
 - Branch: test/CSH-074-host-languages-editors
 - Issue: [#146](https://github.com/melliott18/cshell/issues/146)
+- Pull request: [#241](https://github.com/melliott18/cshell/pull/241)
 
 ## Acceptance review (2026-11-07)
 
@@ -156,3 +157,44 @@ extra newline; GNU ed adds a leading newline on stdout. Both fail the strict
 ed provider repair and full-page qualification; CSH-073 retains the shared
 `U-040/other-interruptions` condition and fixture. No passing sleep or cat signal
 case qualifies ed recovery. See [retained results](../evidence/csh-073/README.md).
+
+## Contract continuation (2026-11-07)
+
+Added 15 patch cases (60 assertions) for progress/prompt streams, locale-specific
+affirmative responses, filename precedence and repeated/interleaved output
+versions. The private provider repairs these paths, including empty intermediate
+output and ed scripts. Native ordinary qualification passes 833 assertions;
+all 136 patch assertions also pass ASan/UBSan.
+
+The [continuation evidence and review](../evidence/host-contract-continuation-2026-11-07/README.md)
+retain the original failures and exact validation boundaries. Complete-page
+coverage of the eight owned utilities remains open. This ticket is not accepted.
+
+## Streaming and multibyte follow-up (2026-11-07)
+
+Repaired M4 multibyte len/index/substr/translit operations and signed overflow
+for INT_MAX substring counts. Eleven new cases add 44 assertions; the native
+language/editor suite passes 877 assertions and M4 passes 148 assertions under
+ASan/UBSan and in Debian. The separate multibyte audit retains 16 native failures
+(awk, expr and ed) and 12 Debian failures (awk). Required provider repairs and
+full-page coverage remain open; this ticket is not accepted.
+
+See the [follow-up evidence and acceptance review](../evidence/host-contract-continuation-2026-11-07/streaming-multibyte/README.md) for commands, identities, failures and remaining work.
+
+## Language provider repairs (2026-11-07)
+
+Pinned GNU Awk in POSIX mode, GNU coreutils expr, and GNU-regex ed repair all
+previously retained multibyte failures. The Awk adapter also returns command exit
+status from system() instead of raw wait bits. All old multibyte cases are now
+required in the ordinary repaired profile; fifteen additional locale, regex and
+status cases bring the native and Debian suites to 981 passing assertions.
+Full-page/common-default coverage remains incomplete, so this ticket is not
+accepted. See the [provider repair review](../evidence/host-contract-continuation-2026-11-07/provider-repairs/README.md)
+for source identities, sanitizer results, retained failures and remaining scope.
+
+## Coverage and CI continuation (2026-11-07)
+
+Added 27 grammar, arithmetic, scope, record/field and editor-state cases.
+The selected private bc repairs the POSIX empty return production.
+The [coverage and CI review](../evidence/host-contract-continuation-2026-11-07/coverage-ci/README.md)
+records validation and remaining obligations. This ticket remains unaccepted.

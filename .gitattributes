@@ -4,4 +4,9 @@ tools/host-profile/vendor/coreutils/cp-decline-status.patch whitespace=-blank-at
 tools/host-profile/vendor/file/message-formats.patch whitespace=-space-before-tab,-blank-at-eol,-blank-at-eof
 # Unified patch context uses a single space for an empty source line.
 tools/host-profile/vendor/m4/cshell.patch whitespace=-blank-at-eol
-tools/host-profile/vendor/patch/cshell.patch whitespace=-blank-at-eol
+tools/host-profile/vendor/patch/cshell.patch whitespace=-space-before-tab,-blank-at-eol
+# Preserve GNU Awk's upstream attribution and unified patch context verbatim.
+tools/host-profile/vendor/gawk/AUTHORS whitespace=-blank-at-eol
+tools/host-profile/vendor/gawk/cshell.patch whitespace=-space-before-tab,-blank-at-eol
+# Generated bc parser patch preserves upstream tabs and blank context.
+tools/host-profile/vendor/bc/cshell.patch whitespace=-space-before-tab,-blank-at-eol

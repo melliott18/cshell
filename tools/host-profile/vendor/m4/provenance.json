@@ -4,7 +4,9 @@
   "archive_sha256": "6ac4fc31ce440debe63987c2ebbf9d7b6634e67a7c3279257dc7361de8bdb3ef",
   "local_changes": [
     "src/input.c: process wrap text FIFO while preserving obstack LIFO allocation lifetimes.",
-    "src/builtin.c: retain nonzero final status after nonnumeric argument and mkstemp errors."
+    "src/builtin.c: retain nonzero final status after nonnumeric argument and mkstemp errors.",
+    "src/builtin.c: count and translate multibyte characters in len/index/substr/translit; avoid signed overflow in substring bounds. GNU translit ranges retain their existing extension semantics.",
+    "lib/vasnprintf.c: avoid passing a null zero-limb numerator to memcpy during zero floating conversion; diagnosed by Linux UBSan."
   ],
   "license": "GPL-3.0-or-later; see COPYING and complete source archive"
 }

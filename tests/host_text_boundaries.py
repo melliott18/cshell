@@ -256,6 +256,8 @@ def capacity_case(binary,path,selected,mode,root):
 def run_boundaries(binary,path,identity,fixture_root,capacity_root=None,audit=False):
     from host_text_interruptions import run_cases
     rows=run_cases(binary,path,identity,fixture_root)
+    from host_text_streams import run_cases as stream_cases
+    rows.extend(stream_cases(binary,path,identity,fixture_root))
     for mode in ('direct','exec'):
         for tool in ('cat','head','cmp','ed'):
             for kind in ((('interrupt-recovery','hangup-recovery') if audit else ('hangup-recovery',)) if tool=='ed' else ('read-termination','write-termination')):

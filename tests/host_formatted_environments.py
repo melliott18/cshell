@@ -3,6 +3,7 @@
 Expectations are authored here, never collected from a reference utility.
 Source-including probes are distinct from the unmodified executable witnesses.
 """
+import hashlib
 import json
 import locale
 import os
@@ -15,7 +16,29 @@ from host_formatted_failures import invocation, run_owned
 
 
 def conversion_cases():
+    # Optional floating conversions have authored expectations at precision and
+    # exponent boundaries. The L and dynamic-width forms are declared provider
+    # extensions; they must still be memory-safe and preserve exact bytes.
     for name, argv, output in [
+        ('general exponent lower boundary', ['%.1g:%.1g:%.1G', '0.0001', '0.00001', '0.00001'], b'0.0001:1e-05:1E-05'),
+        ('general exponent upper boundary', ['%.3g:%.3g:%.3G', '999', '1000', '1000'], b'999:1e+03:1E+03'),
+        ('general zero precision', ['%.0g:%#.0g:%.0G:%#.0G', '1', '1', '1', '1'], b'1:1.:1:1.'),
+        ('signed zero exponent', ['%+.0e:%#.0E:% .0f', '-0', '0', '0'], b'-0e+00:0.E+00: 0'),
+        ('zero width sign padding', ['[%+08.2f][%-+08.2f]', '0', '0'], b'[+0000.00][+0.00   ]'),
+        ('long double zero forms', ['%.2Lf:%.2Le:%#.3Lg', '0', '0', '0'], b'0.00:0.00e+00:0.00'),
+        ('long double exponent boundaries', ['%.3Lg:%.3LG', '1000', '1000'], b'1e+03:1E+03'),
+        ('dynamic long double fields', ['[%*.*Lf]', '-8', '2', '1.25'], b'[1.25    ]'),
+        ('negative dynamic precision', ['[%.*f]', '-1', '1.25'], b'[1.250000]'),
+        ('dynamic zero precision integer', ['[%*.*d]', '5', '0', '0'], b'[     ]'),
+        ('dynamic binary precision', ['[%*.*b]', '-5', '3', r'a\000bc'], b'[a\0b  ]'),
+        ('literal after zero string precision', ['%.0s:%.0b:%%:%s', 'x', 'y', 'after'], b'::%:after'),
+        ('integer minimum precision padding', ['%+.21d', '-9223372036854775808'], b'-009223372036854775808'),
+        ('unsigned maximum hexadecimal', ['%#x:%#X:%#o', '18446744073709551615', '18446744073709551615', '18446744073709551615'], b'0xffffffffffffffff:0XFFFFFFFFFFFFFFFF:01777777777777777777777'),
+    ]:
+        yield dict(name='CSH-079 coverage ' + name, utility='printf', argv=argv,
+                   stdout=output, stderr=b'', status=0, env={})
+    for name, argv, output in [
+        ('selected long-double extension', ['%.2Lf:%+.1Le:%#.3Lg', '1.25', '2', '1'], b'1.25:+2.0e+00:1.00'),
         ('exact binary float rounding', ['%.0f:%.0f:%.2f:%.2f', '2.5', '3.5', '1.125', '1.375'], b'2:4:1.12:1.38'),
         ('negative zero optional float', ['%+.1f:%+.1f', '-0', '0'], b'-0.0:+0.0'),
         ('integer precision exceeds width', ['[%+3.6d][%#3.6o][%#3.6X]', '-12', '8', '31'], b'[-000012][000010][0X00001F]'),
@@ -25,6 +48,10 @@ def conversion_cases():
     ]:
         yield dict(name='CSH-079 ' + name, utility='printf', argv=argv,
                    stdout=output, stderr=b'', status=0, env={})
+    for invalid in ('%L', '%10.2L'):
+        yield dict(name='CSH-079 truncated long-double extension '+invalid,
+                   utility='printf', argv=[invalid], stdout=b'',
+                   stderr=b'{program}: missing format character\n', status=1, env={})
     # intmax_t in the selected native/Debian providers is signed 64-bit.
     # POSIX requires a range diagnostic and continued accumulated-value output;
     # exact English strerror wording is a declared Darwin/glibc policy.
@@ -113,6 +140,17 @@ def api_error_cases(shell, prefix, helper):
                            actual=dict(status=result['status'], stdout_hex=output.hex(), stderr_hex=diagnostic.hex()))
 
 
+def restarted_write(measured, captured, utility):
+    """Reject success if the alarm arrived outside the actual write syscall."""
+    return (measured.get('signals', 0) > 0 and
+            measured.get('interrupted_symbol') in
+            ('write', '__write', '__write_nocancel', '__libc_write') and
+            measured.get('prefill_remaining') == 0 and measured.get('drain_error') == 0 and
+            measured.get('stream_error') == 0 and measured.get('provider_status') == 0 and
+            captured == b'value' + (b'\n' if utility == 'echo' else b'') and
+            measured.get('drained') == len(captured))
+
+
 def interrupt_cases(shell, prefix, helpers):
     with tempfile.TemporaryDirectory(prefix='interrupt-', dir=prefix.parent) as temporary:
         selected = Path(temporary)
@@ -121,7 +159,7 @@ def interrupt_cases(shell, prefix, helpers):
         for utility, args in [('printf', ['value']), ('printf', ['%s', 'value']),
                               ('printf', ['%b', 'value']), ('echo', ['value'])]:
             for mode in ('direct', 'exec'):
-                for disposition in ('control', 'caught', 'default'):
+                for disposition in ('control', 'caught', 'default', 'restart', 'partial'):
                     environment = dict(PATH=str(selected) + ':' + os.defpath, LC_ALL='C',
                                        CSH_FORMATTED_INTERRUPT=disposition)
                     with tempfile.TemporaryDirectory(dir=selected) as work:
@@ -133,18 +171,32 @@ def interrupt_cases(shell, prefix, helpers):
                             output, diagnostic = out.read(65537), err.read(65537)
                         path = Path(work) / 'interrupt.json'
                         measured = json.loads(path.read_text()) if path.exists() else None
+                        capture = Path(work) / 'interrupt-output'
+                        captured = capture.read_bytes() if capture.exists() else None
                     expected_out = b'value' + (b'\n' if utility == 'echo' else b'') if disposition == 'control' else b''
                     expected_err = (b'echo: write error\n' if utility == 'echo' else
-                                    b'printf: write or formatting error: Interrupted system call\n') if disposition == 'caught' else b''
-                    expected_status = {'control': 0, 'caught': 1, 'default': -signal.SIGALRM}[disposition]
+                                    b'printf: write or formatting error: Interrupted system call\n') if disposition in ('caught', 'partial') else b''
+                    expected_status = {'control': 0, 'caught': 1, 'default': -signal.SIGALRM,
+                                       'restart': 0, 'partial': 1}[disposition]
                     observed = measured is None if disposition == 'control' else bool(measured and measured['ready'] and measured['filled'] > 0)
                     if disposition == 'caught':
                         observed = bool(observed and measured.get('signals', 0) > 0 and
                                         measured.get('drained') == measured['filled'] and
+                                        measured.get('stream_error') == 1 and measured.get('provider_status') == 1 and
+                                        captured == b'p' * measured['filled'])
+                    if disposition == 'restart':
+                        observed = bool(observed and restarted_write(measured, captured, utility))
+                    if disposition == 'partial':
+                        observed = bool(observed and measured.get('signals', 0) > 0 and captured and
+                                        0 < len(captured) < measured.get('payload_size', 0) and
+                                        len(captured) == measured.get('drained') and
+                                        captured == (b'ab' * ((len(captured)+1)//2))[:len(captured)] and
                                         measured.get('stream_error') == 1 and measured.get('provider_status') == 1)
                     ok = (observed and not result['errors'] and result['reaped'] and result['pid_disappeared'] and
                           result['status'] == expected_status and output == expected_out and diagnostic == expected_err)
                     yield dict(name='CSH-079 interrupted ' + utility + ' ' + args[0] + ' ' + disposition,
                                mode=mode, verdict='PASS' if ok else 'FAIL', invocation=result, measured=measured,
                                expected=dict(status=expected_status, stdout_hex=expected_out.hex(), stderr_hex=expected_err.hex()),
-                               actual=dict(status=result['status'], stdout_hex=output.hex(), stderr_hex=diagnostic.hex()))
+                               actual=dict(status=result['status'], stdout_hex=output.hex(), stderr_hex=diagnostic.hex(),
+                                           captured_bytes=len(captured) if captured is not None else None,
+                                           captured_sha256=hashlib.sha256(captured).hexdigest() if captured is not None else None))

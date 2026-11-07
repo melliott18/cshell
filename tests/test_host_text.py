@@ -13,6 +13,23 @@ from host_text_boundaries import signal_case
 
 
 class TextEvidenceTests(unittest.TestCase):
+    def test_live_stream_rejects_buffering_and_missing_copies(self):
+        from host_text_streams import run_case as stream_case
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            provider = root/'provider'
+            for tool, program in (
+                ('cat', 'import sys; sys.stdout.buffer.write(sys.stdin.buffer.read())'),
+                ('tee', 'import os; [open(n,"wb").close() for n in ("one","two")]; '
+                        '\nwhile True:\n b=os.read(0,4096)\n if not b: break\n os.write(1,b)')):
+                provider.write_text('#!'+sys.executable+'\n'+program+'\n')
+                provider.chmod(0o700)
+                row = stream_case(Path('/bin/sh'), os.defpath, str(provider),
+                                  tool, 'unbuffered-live', 'direct', root, timeout=.3)
+                self.assertEqual(row['verdict'], 'FAIL')
+                self.assertTrue(row['leader_reaped'])
+                self.assertTrue(row['fixture_removed'])
+
     def test_crc_independent_known_answers(self):
         self.assertEqual(crc(b''), 4294967295)
         self.assertEqual(crc(b'123456789'), 930766865)
@@ -258,7 +275,7 @@ class TextProviderIntegrityTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             bindir=Path(root)/'bin'; bindir.mkdir()
             metadata={'recipe':{'system':'Linux'},'executables':{}}
-            for name in ('cat','head','cut','tsort','sed','ed','cmp','tail'):
+            for name in ('cat','head','cut','tsort','paste','sed','ed','cmp','tail','expand','unexpand','fold','uniq','wc'):
                 (bindir/name).write_bytes(b'original provider')
                 metadata['executables'][name]={'sha256':hashlib.sha256(b'original provider').hexdigest()}
             (Path(root)/'manifest.json').write_text(json.dumps(metadata))

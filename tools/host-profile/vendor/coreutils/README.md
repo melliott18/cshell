@@ -1,4 +1,4 @@
-# Selected cp and rm providers (CSH-086 / CSH-089)
+# Selected cp, mv and rm providers (CSH-086 / CSH-089)
 
 The unmodified release archive is GNU coreutils 9.7 from
 <https://ftp.gnu.org/gnu/coreutils/coreutils-9.7.tar.xz>, SHA-256
@@ -9,16 +9,20 @@ COPYING is also reproduced beside it. No network access is needed to build.
 `../../build-cp.sh` verifies and extracts this archive into
 ignored build directories, applies `cp-decline-status.patch`, configures and
 builds `src/cp` and `src/rm`, then installs cp as `build/host-cp`.
-The dependent Make target installs rm as `build/host-rm`. Make passes
+Dependent Make targets install rm as `build/host-rm` and build mv as
+`build/host-mv`. Make passes
 CC, CPPFLAGS, CFLAGS, LDFLAGS and LIBS; configure/build logs remain under
 `build/host-coreutils-build`. The profile manifest records the archive, patch
 and selected executable hashes. All platforms select this same patched source.
 
-The patch changes only cp's decision to skip an existing destination after a
+The patch changes cp and mv decisions to skip an existing destination after a
 negative interactive response. POSIX.1-2024 cp EXIT STATUS excludes declined
 files from the requested copies. GNU's `--update=none-fail` extension retains
 its failure result. No output or process exit status is translated externally.
-Move behavior and all actual copy-error paths are unchanged. The patch is a
+Linux now selects the patched mv as well: a negative interactive response
+retains the source and destination and succeeds, while actual move errors and
+the explicit --update=none-fail extension still fail. Darwin retains its stock
+mv. The patch is a
 local provider repair; it does not claim an accepted upstream change.
 
 The C-locale profile disables message catalogs, ACL support, SELinux and GMP.

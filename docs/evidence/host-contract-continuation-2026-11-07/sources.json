@@ -1,0 +1,46 @@
+{
+  "patch": {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html",
+    "sha256": "f9b52d950df15a4c1d0d3f6dac174e422b4ecb68fe67268f8232ccca67fb9589"
+  },
+  "paste": {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/paste.html",
+    "sha256": "3482c9627b8c3ca34ddb638b468c9b70d0a34ebb165ee70d147d69fb1e90e2b9"
+  },
+  "comm": {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/comm.html",
+    "sha256": "f17b73b15918149a456f6f0ecf9f1335e1a2dbd92d64282131afc6d7f8e2e210"
+  },
+  "join": {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/join.html",
+    "sha256": "3fef7c9f2ddcd7ae0a924604a7b30c1f8de7e25c59719cd5823a9c5c4da523d2"
+  },
+  "sort": {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/sort.html",
+    "sha256": "a395f75e0d56093c8eae8847281bb4a0064e26706801dc73d2bc1aa4a26e7aa5"
+  },
+  "split": {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/split.html",
+    "sha256": "8af2dcb947db849c4f140988a3395734d3bf10a5fc2be3f9e5e1f5c1190039ff"
+  },
+  "od": {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/od.html",
+    "sha256": "9f4155dfc0f80092b11a3ca0a272347a4e6903e64d3201b2021ea4afa4cb3626"
+  },
+  "pr": {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pr.html",
+    "sha256": "289d54c3627dd93fb954d5ee2faf1ebe040c9a8186075aa148b52b6770fb681c"
+  },
+  "tr": {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/tr.html",
+    "sha256": "05b7fa7c0f1c2080cd4f5049c6cf9496ef352d6fd8bf2a51931a8fadcd6ee8dc"
+  },
+  "unexpand": {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/unexpand.html",
+    "sha256": "562701109c3ecb6268b8e57940e68695c52c24156b5606c43030e87ac0ea1318"
+  },
+  "printf": {
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/printf.html",
+    "sha256": "10a8cae0fcf8fba5c33a685266219c1eef19e9a40ceb34d3dd02ba01dc242a5e"
+  }
+}

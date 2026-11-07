@@ -21,7 +21,7 @@ verifies the build manifest and each executable hash before changing any links.
 
 | Provider | Repair and scope |
 | --- | --- |
-| GNU coreutils 9.11 `cat`, `head`, `cut`, `tsort` | Accept the bounded large head count, honor multibyte cut `-c`/`-b -n`, and support tsort `-w`. GNU tsort uses an implementation-defined cycle-status maximum of one; this is permitted by Issue 8, not an exact count of arbitrary cycles. |
+| GNU coreutils 9.11 `cat`, `head`, `cut`, `tsort`, `paste`, `expand`, `unexpand`, `fold`, `uniq`, `wc` | Accept the bounded large head count, honor multibyte cut `-c`/`-b -n`, support tsort `-w`, and emit the required newline for an empty serial paste operand. The selected column/word utilities also preserve UTF-8 character and display-width semantics. GNU tsort uses an implementation-defined cycle-status maximum of one; this is permitted by Issue 8, not an exact count of arbitrary cycles. |
 | GNU sed 4.9 plus `sed-getdelim.patch` | Use GNU regex for native multibyte backreferences; diagnose getdelim allocation failure even when libc does not set ferror. |
 | GNU diffutils 3.10 `cmp` | Source build allows attested read faults without modifying macOS protected system executables. GNU cat is likewise selected for test interposition. |
 | GNU ed 1.22.6 plus `ed-sigint.patch` | Remove the extra newline preceding the specified SIGINT `?\n` stdout response. The patch changes only that write; upstream `make check`, strict INT buffer recovery and HUP saving are required. |

@@ -3,7 +3,11 @@
   "url": "https://ftp.gnu.org/gnu/patch/patch-2.8.tar.xz",
   "archive_sha256": "f87cee69eec2b4fcbf60a396b030ad6aa3415f192aa5f7ee84cad5e11f7f5ae3",
   "local_changes": [
-    "src/patch.c: save an existing -o output before truncation when -b is specified."
+    "src/patch.c: save an existing -o output before truncation when -b is specified.",
+    "Select POSIX semantics by default in the private provider, including Index fallback and controlling-terminal reads.",
+    "Route progress, rejects and reverse prompts to stderr; retain the filename prompt on stdout.",
+    "Initialize the locale and use LC_MESSAGES yesexpr for reverse confirmations.",
+    "Keep anonymous per-input intermediate versions for repeated and interleaved -o patches, including ed scripts."
   ],
   "license": "GPL-3.0-or-later; see COPYING and complete source archive"
 }

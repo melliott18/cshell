@@ -10,6 +10,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include "format.h"
+
+#ifndef HOST_VPRINTF
+#define HOST_VPRINTF csh_vprintf
+#endif
 
 static nl_catd messages = (nl_catd)-1;
 static int formatting_error;
@@ -25,7 +30,7 @@ static int host_printf(const char *format, ...)
     va_list args;
     int result;
     va_start(args, format);
-    result = vprintf(format, args);
+    result = HOST_VPRINTF(format, args);
     va_end(args);
     if (result < 0 && !formatting_error)
         formatting_error = errno ? errno : EIO;
@@ -59,7 +64,7 @@ int HOST_PRINTF_MAIN(int argc, char **argv)
     free(conversion_format);
     conversion_format = NULL;
     conversion_capacity = 0;
-    /* vprintf may fail without setting the stream's error indicator (ENOMEM). */
+    /* The formatter may fail without setting the stream's error indicator (ENOMEM). */
     if (fflush(stdout) == EOF || ferror(stdout) || formatting_error) {
         if (formatting_error) errno = formatting_error;
         warn("%s", host_message(10, "write or formatting error"));

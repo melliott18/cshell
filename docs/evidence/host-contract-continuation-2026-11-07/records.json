@@ -1,0 +1,162 @@
+{
+  "patch-before.json.gz": {
+    "source": "build/contract-completion/patch-before.json",
+    "uncompressed_sha256": "88e26f58b1c0cae2ed9debe5b039215ad934a78db89f6ff8269768dfed02ff79",
+    "bytes": 157659
+  },
+  "patch-after.json.gz": {
+    "source": "build/contract-completion/patch-expanded.json",
+    "uncompressed_sha256": "a7667df8095b7bc1fc76ef823106aff8eafb0aa657b78b4d3d314d657b8de335",
+    "bytes": 335447
+  },
+  "patch-sanitizer-native.json.gz": {
+    "source": "build/contract-completion/patch-sanitizer-native.json",
+    "uncompressed_sha256": "8df5e40da9614e3fc9efd4c56417c78548d99e0fe93abf0687fe6ac8c7e0d9c8",
+    "bytes": 362147
+  },
+  "languages-native.json.gz": {
+    "source": "build/contract-completion/languages-native.json",
+    "uncompressed_sha256": "76f629abd19d740bdd041507584567d645c53d2bef8ca29865dd87583b34f7f7",
+    "bytes": 1549343
+  },
+  "text-first.json.gz": {
+    "source": "build/contract-completion/text-first.json",
+    "uncompressed_sha256": "a22d658a25b5deff6b974a1bf9fbbcf04bf99fc72dc39d3885457e4795150e47",
+    "bytes": 64472
+  },
+  "patch-build-native.json.gz": {
+    "source": "build/host-patch-build.json",
+    "uncompressed_sha256": "dc3481937f9a3b4d7b82c8cf0cebd4705aa95e46e272a085a4af8627a046a9de",
+    "bytes": 429
+  },
+  "text-build-native.json.gz": {
+    "source": "build/text-providers/manifest.json",
+    "uncompressed_sha256": "c933cbc2abc7f4a3038afb7ed27ae6be967806a70a0788262d53c7a139197e30",
+    "bytes": 5411
+  },
+  "text-native-timeouts.json.gz": {
+    "source": "build/contract-completion/text-native.json",
+    "uncompressed_sha256": "33038ad332b7f184336f8e1b7c9b0946d673caa66a8a6406ae468fb85a2dcbac",
+    "bytes": 1745215
+  },
+  "text-native.json.gz": {
+    "source": "build/tests/host-text-native-capacity.json",
+    "uncompressed_sha256": "a508b0c5032d62649c6857a055481defaf5d926943c646b484d1313e6742fa0e",
+    "bytes": 1746147
+  },
+  "capacity-native.json.gz": {
+    "source": "build/tests/host-text-native-capacity.capacity.json",
+    "uncompressed_sha256": "cfc761829d3ed056934c1a8baeb112d3ac7cadec0eb0bbacc700e86701e293c4",
+    "bytes": 1589
+  },
+  "text-faults-native.json.gz": {
+    "source": "build/tests/host-text-faults.json",
+    "uncompressed_sha256": "be8f481702d8a08d4986e8b21bf4302528995377788076b405d7cf48a8ad3772",
+    "bytes": 178284
+  },
+  "formatted-native.json.gz": {
+    "source": "build/tests/host-formatted-contracts.json",
+    "uncompressed_sha256": "6b6efd09f3326d2f9a1387cf96ad0f8dfa051e1a324df05f45572ea7225db411",
+    "bytes": 1037861
+  },
+  "interrupt-sanitizer-native.json.gz": {
+    "source": "build/contract-completion/interrupt-sanitizer-native.json",
+    "uncompressed_sha256": "3143e16274c5e57ea08931326a943c6da906b884c2d734ad6f9158edcdb1cc2f",
+    "bytes": 56177
+  },
+  "libc-native.json.gz": {
+    "source": "build/tests/host-formatted-libc-audit.json",
+    "uncompressed_sha256": "6e2c2ccd743882da8e3a59b013b9780252046fc8ab5705215ab3bbd40b1d4ad6",
+    "bytes": 146845
+  },
+  "runtime-native.log.gz": {
+    "source": "build/contract-completion/runtime-native.log",
+    "uncompressed_sha256": "2efbe65c9553d7ef15938281f6a5f02ea04aa33d73bacccf4a9c71e702788fd4",
+    "bytes": 229185
+  },
+  "inventory-text-harness.log.gz": {
+    "source": "build/contract-completion/inventory-text-harness.log",
+    "uncompressed_sha256": "509e1fbec3143781d0f07f610e31037bdd6a06b99913406e06d44297603dcad5",
+    "bytes": 891
+  },
+  "language-harness.log.gz": {
+    "source": "build/contract-completion/language-harness.log",
+    "uncompressed_sha256": "9f1ad6151007d802f89eba44580c25b9a4c0b4e9e83a0b026b3767954d0c2007",
+    "bytes": 106
+  },
+  "formatted-setup-failure.log.gz": {
+    "source": "build/contract-completion/formatted-native.log",
+    "uncompressed_sha256": "980ae6981dba6221e81253e2181dab131f20d2085c8d478bd06fb29ed25b6d2d",
+    "bytes": 1221
+  },
+  "linux-setup-failure.log.gz": {
+    "source": "build/contract-completion/linux-first/build.log",
+    "uncompressed_sha256": "b3bd8abc5320bb3875460636c5f66cbab437d02ab42bdfa71bb5dc37aa28bf7b",
+    "bytes": 23878
+  },
+  "linux-languages.json.gz": {
+    "source": "build/contract-completion/linux-final/languages.json",
+    "uncompressed_sha256": "83661d379c6df00ff6a5c1734c570f09b72296b4ae52e3bfba7f11d639d50279",
+    "bytes": 1423901
+  },
+  "linux-text.json.gz": {
+    "source": "build/contract-completion/linux-final/text.json",
+    "uncompressed_sha256": "90b49ded87100619f7874aa39f8c7600adbf94202dafa3d549e0b8f8fa3b6136",
+    "bytes": 1554082
+  },
+  "linux-formatted.json.gz": {
+    "source": "build/contract-completion/linux/formatted.json",
+    "uncompressed_sha256": "67d6b16de2609868af3c46c067a3abef89b24d3e81a10db60eb10f4c6dc8dac4",
+    "bytes": 992803
+  },
+  "linux-harness.log.gz": {
+    "source": "build/contract-completion/linux-final/harness.log",
+    "uncompressed_sha256": "d1cf9c565e20e39824e25f8b6ab7817a58493a1041a3ed8e2b2d0c46cde16cd7",
+    "bytes": 891
+  },
+  "linux-patch-sanitizer.json.gz": {
+    "source": "build/contract-completion/linux-final/patch-sanitizer.json",
+    "uncompressed_sha256": "215a6f735743b4f3c806bff6596df01e9a7bdbeb6a5fad76f0d4ef2f52cd12d1",
+    "bytes": 338680
+  },
+  "linux-interrupt-sanitizer.json.gz": {
+    "source": "build/contract-completion/linux-final/interrupt-sanitizer.json",
+    "uncompressed_sha256": "f24cb97b2834f68fafa07486b82763e48f769764897d0250ca062f12c5a437ec",
+    "bytes": 51617
+  },
+  "linux-runtime.log.gz": {
+    "source": "build/contract-completion/linux-final/runtime.log",
+    "uncompressed_sha256": "2220109a75e69d835a1f578dd20d41eda0bf76f01e68f6f09e89a8794539932b",
+    "bytes": 228735
+  },
+  "linux-text-faults.json.gz": {
+    "source": "build/contract-completion/linux-final/text-faults.json",
+    "uncompressed_sha256": "6a018ab8168a21c93b82b33af205fae3f67a511fad0f5e43da1d6d0812a7e15c",
+    "bytes": 176964
+  },
+  "linux-validate-extra.sh.gz": {
+    "source": "build/contract-completion/linux-final/validate-extra.sh",
+    "uncompressed_sha256": "4bdb9c6ab6a6938b6d12c4f4a80748e6ef0f0a2e4968d37a413a862ecb8c883f",
+    "bytes": 2229
+  },
+  "docker-context.json.gz": {
+    "source": "build/contract-completion/docker-context.json",
+    "uncompressed_sha256": "5c0cace2e495a2a483c4c15a8abf537f8562f1950ff3a0e1dd78456388962909",
+    "bytes": 29468
+  },
+  "ownership-final.log.gz": {
+    "source": "build/contract-completion/ownership-final.log",
+    "uncompressed_sha256": "a9e91fa84e2bbcfc397607fb9599948a7dbcd722d5eee32dc92a904d6c53156f",
+    "bytes": 512
+  },
+  "tickets.log.gz": {
+    "source": "build/contract-completion/tickets.log",
+    "uncompressed_sha256": "563a55be2c9a4eacbcd71a44ab2cea81387fda569e2a28ab22b880ee4fae58da",
+    "bytes": 466
+  },
+  "tickets-live.log.gz": {
+    "source": "build/contract-completion/tickets-live.log",
+    "uncompressed_sha256": "5fb756d2fb7cc172d68cc128d4a56e918911da4ac4c523f79c20417274421965",
+    "bytes": 274
+  }
+}

@@ -1,0 +1,24 @@
+--- a/main.c
++++ b/main.c
+@@ -307,6 +307,9 @@
+ 	/* set up the single byte case table */
+ 	if (gawk_mb_cur_max == 1)
+ 		load_casetable();
++
++	/* The cshell provider selects POSIX syntax and locale semantics. */
++	do_flags |= DO_POSIX;
+ 
+ 	/* check for POSIXLY_CORRECT environment variable */
+ 	if (! do_posix && getenv("POSIXLY_CORRECT") != NULL) {
+--- a/builtin.c
++++ b/builtin.c
+@@ -1107,7 +1107,8 @@
+ 		ret = status;
+ 		if (status != -1) {
+ 			if (do_posix)
+-				;	/* leave it alone, full 16 bits */
++				/* POSIX.1-2024 requires the command exit status. */
++				ret = sanitize_exit_status(status);
+ 			else if (do_traditional)
+ #ifdef __MINGW32__
+ 				ret = (((unsigned)status) & ~0xC0000000);

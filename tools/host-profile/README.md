@@ -99,9 +99,10 @@ precision count bytes, including NUL, and numbered reuse and `\c` retain their
 upstream control flow. Literal `%b` width/precision above `INT_MAX` fail with a
 diagnostic; this adapter limit is distinct from ARG_MAX and fixture limits.
 Other formatting and argument conversion remain in the upstream implementation. The qualification scope does not
-certify every extension or input accepted by that source. The underlying libc
-implements numeric conversion (`intmax_t` is 64 bits on the recorded hosts),
-locale behavior, and allocation limits.
+certify every extension or input accepted by that source. The selected formatter now uses the pinned GNU vasnprintf adapter described
+below. Libc still parses numeric operands (`intmax_t` is 64 bits on the recorded
+hosts) and supplies locale data; controlled allocation checks cover the selected
+formatter separately.
 
 
 ## Extended boundary evidence
@@ -680,12 +681,19 @@ original counts above describe the earlier CSH-077 increment.
 
 ## CSH-074 language/editor providers
 
-The profile builds private ed, xargs, m4 and patch executables offline, alongside printf.
+The profile builds private awk, ed, xargs, m4 and patch executables offline, alongside printf.
+GNU Awk 5.3.2 is checksum-pinned with explicit POSIX mode and command exit-status
+handling. Darwin selects gexpr from its existing Homebrew coreutils package;
+Linux selects GNU coreutils expr. The private ed and its fault helper use the
+configured GNU regex library from M4, including when text overrides are selected.
 `vendor/ed` is GNU ed 1.22.6, GPL-2.0-or-later; its COPYING and complete compiled
 sources are retained. `vendor/xargs` derives from FreeBSD commit
 `16a79708d089423ec0c3d32f25e7ca97ae58e97b`; each source retains its license.
 `vendor/m4` retains the complete GNU M4 1.4.20 source archive and GPL-3.0-or-later
-COPYING, plus a reviewable patch for FIFO wrap processing and error status.
+COPYING, plus a reviewable patch for FIFO wrap processing, error status,
+locale-aware len/index/substr/translit character operations and overflow-safe
+substring bounds. Interior translit hyphen ranges retain GNU extension semantics;
+leading and trailing hyphens use the POSIX literal-character behavior.
 Each directory's `provenance.json` records upstream hashes and local changes. These are independent host processes, never linked into cshell.
 
 The ed adapter emits the exact POSIX SIGINT stdout marker. The xargs adapter
@@ -717,7 +725,12 @@ of one file; the local diff additionally backs up an existing `-o` output when
 the same upstream warning policy as M4. `build/host-patch-build.json` records
 archive/diff/binary hashes and requested/effective build flags. The suite now
 includes automated controlling-terminal editor and xargs prompt checks, and
-patch conditional-output and backup interactions.
+patch conditional-output and backup interactions. The private provider now
+selects POSIX defaults, separates filename prompts (stdout) from diagnostics
+and reverse confirmations (stderr), and uses the locale affirmative expression.
+Repeated and interleaved `-o` patches retain anonymous per-input intermediate
+versions, including empty versions and ed scripts. CSH-074's continuation
+checks these effects and preserves the original files.
 
 ## CSH-076 locale and catalog subset
 
@@ -752,3 +765,21 @@ those services on the developer host. Exact commands, isolation, qualified
 subsets and the full-contract exclusions are in the
 [service profile](../../docs/host-service-profile.md) and
 [retained results](../../docs/evidence/csh-078/README.md).
+
+## Checked floating conversion allocation
+
+The selected printf uses `format.c` and pinned GNU vasnprintf rather than native
+vprintf. GNU library and provider hashes identify the build; native libc remains
+responsible for locale, stdio and other interfaces. `make test-host-formatted-allocator`
+is a Darwin-only real-allocation test for the selected formatter, including
+caller attestation and child cleanup. The separate libc comparison still returns
+nonzero for its recorded allocator crashes. Normal, sanitizer and resource-helper
+GNU builds use separate directories so resource controls remain uninstrumented.
+See the [provider repair evidence](../../docs/evidence/host-contract-continuation-2026-11-07/provider-repairs/README.md).
+
+The profile now also builds GNU bc 1.08.2 from its retained source archive. Its
+local grammar patch accepts the POSIX empty `return()` form; generated parser
+sources are retained, so Bison is unnecessary for builds. Linux selects the
+pinned shared coreutils mv with declined-interactive success, preserving actual
+move failures. Vendor build subprocesses discard outer Make overrides so -B and
+-Werror cannot override their configured flags; instrumentation flags remain.
