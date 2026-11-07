@@ -1,0 +1,38 @@
+[
+  {
+    "utility": "pwd",
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html",
+    "sha256": "6c0724e219d469ac68640fc07c825a95e090931483b9cee2d089dec136efd7f6",
+    "retrieved": "2026-10-17",
+    "sections": [
+      "STDOUT",
+      "STDERR",
+      "EXIT STATUS",
+      "CONSEQUENCES OF ERRORS"
+    ]
+  },
+  {
+    "utility": "basename",
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/basename.html",
+    "sha256": "76c256427a758fc4388559e7a71fcc9351ed0cfb19afc5af07d38c4cf25c8ab2",
+    "retrieved": "2026-10-17",
+    "sections": [
+      "STDOUT",
+      "STDERR",
+      "EXIT STATUS",
+      "CONSEQUENCES OF ERRORS"
+    ]
+  },
+  {
+    "utility": "dirname",
+    "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html",
+    "sha256": "f218ded1508843cdd90913db7cd56ee938d43f67050d6f0645d88cbf916ec6c4",
+    "retrieved": "2026-10-17",
+    "sections": [
+      "STDOUT",
+      "STDERR",
+      "EXIT STATUS",
+      "CONSEQUENCES OF ERRORS"
+    ]
+  }
+]

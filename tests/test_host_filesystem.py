@@ -1,9 +1,14 @@
 """CSH-072 harness failure and oracle regressions, not provider conformance."""
+import copy
+from contextlib import nullcontext
+import errno
 import json
 import os
+import stat
 from pathlib import Path
 import sys
 import tempfile
+import time
 import unittest
 from unittest.mock import patch
 
@@ -16,12 +21,2150 @@ import host_filesystem_isolated as isolated
 import host_filesystem_interactive as interactive
 import host_filesystem_decisions as decisions
 import host_filesystem_metadata as metadata
+import host_filesystem_recursive as recursive
+import host_filesystem_path_limits as path_limits
+import host_filesystem_cwd as cwd_cases
+import host_filesystem_creation as creation
+import host_filesystem_removal as removal
+import host_filesystem_link_graphs as link_graphs
+import host_filesystem_link_permissions as link_permissions
+import host_filesystem_touch_permissions as touch_permissions
+import host_filesystem_touch_current as touch_current
+import host_filesystem_output as output_cases
+import host_filesystem_magic as magic_cases
+import host_filesystem_magic_strings as magic_strings
+import host_filesystem_magic_messages as magic_messages
+import host_filesystem_magic_types as magic_types
+import host_filesystem_magic_defaults as magic_defaults
+import host_filesystem_link_bytes as link_bytes
+import host_filesystem_calendar as calendar_cases
+import host_filesystem_reference as reference_cases
+import host_filesystem_datetime as datetime_cases
+import host_filesystem_timezone as timezone_cases
+import host_filesystem_day_rules as day_rules
+import host_filesystem_transition_times as transition_times
 from host_contract_inventory import utility_owner
 from host_filesystem import run_case, stdout_matches, stderr_matches
 from host_filesystem_cases import UTILITIES, DATA, case, cases, audit_cases, terminal_cases, effect_errors
 
 
 class FilesystemHarnessTests(unittest.TestCase):
+    def test_link_bytes_cover_nonzero_repertoire_and_growth_boundaries(self):
+        rows = list(link_bytes.cases())
+        self.assertEqual(len(rows), 1088)
+        self.assertEqual(len({r['id'] for r in rows}), len(rows))
+        for utf8 in (False, True):
+            for no_newline in (False, True):
+                selected = [r for r in rows if r['utf8'] == utf8 and ('-n' in r['args']) == no_newline]
+                singles = [r['byte_link'][8:-1] for r in selected if '/link-bytes-byte-' in r['id']]
+                self.assertEqual(singles, [bytes([i]) for i in range(1, 256)])
+                lengths = [len(r['byte_link']) for r in selected if '/link-bytes-length-' in r['id']]
+                self.assertEqual(lengths, [255, 256, 257, 511, 512, 513, 1023])
+                for row in selected:
+                    self.assertNotIn(b'\0', row['byte_link'])
+                    self.assertEqual(row['stdout'], row['byte_link'] + (b'' if no_newline else b'\n'))
+                    self.assertEqual((row['stderr'], row['status']), (b'', 0))
+
+    def test_link_bytes_require_channels_status_and_unchanged_inode_and_bytes(self):
+        row = next(link_bytes.cases())
+        original = copy.deepcopy(row)
+        for fault in (None, 'stdout', 'stderr', 'status', 'target', 'inode', 'type', 'missing'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                path = cwd / 'opaque'
+                if fault in ('target', 'inode', 'type', 'missing'):
+                    # Keep the old inode alive so reuse cannot hide replacement.
+                    path.rename(cwd / 'saved-link')
+                    if fault in ('target', 'inode'):
+                        os.symlink(b'changed' if fault == 'target' else row['byte_link'], os.fsencode(path))
+                    elif fault == 'type':
+                        path.write_bytes(row['byte_link'])
+                return (1 if fault == 'status' else 0,
+                        dict(stdout=b'wrong' if fault == 'stdout' else row['stdout'],
+                             stderr=b'diagnostic' if fault == 'stderr' else b''), [])
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'readlink': {'path': '/usr/bin/readlink'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'PASS' if fault is None else 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+        self.assertEqual(row, original)
+
+    def test_link_bytes_setup_failures_prevent_exec_and_clean(self):
+        from host_filesystem_residual_cases import setup as real_setup
+        row = next(link_bytes.cases())
+        for fault in ('readback', 'creation', 'locale'):
+            def setup(directory, spec):
+                real_setup(directory, spec)
+                if fault == 'creation':
+                    raise OSError('controlled link creation failure')
+                (directory / 'opaque').unlink()
+                (directory / 'opaque').symlink_to('wrong')
+            spec = dict(row, utf8=fault == 'locale')
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.residual.setup', side_effect=setup), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'readlink': {'path': '/usr/bin/readlink'}},
+                                  os.defpath, spec, 'direct', Path(root), None)
+                capture.assert_not_called()
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'), record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_link_bytes_exec_failure_and_timeout_clean_all_modes(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(link_bytes.cases()))
+
+    def test_transition_times_have_exact_offsets_and_unique_boundaries(self):
+        rows = list(transition_times.cases())
+        seconds = [1710045934, 1710045935, 1730612444, 1730617865,
+                   1709231084, 1709231085, 1730048679, 1730052310,
+                   1709159399, 1709159400, 1729991699, 1729995300]
+        self.assertEqual(len(rows), 96)
+        self.assertEqual(len({r['id'] for r in rows}), 96)
+        expected = [s * 10**9 for s in seconds for _ in range(2)]
+        self.assertEqual([r['datetime_environment']['target_ns'] for r in rows[::4]], expected)
+        self.assertEqual({r['env']['TZ'] for r in rows},
+                         {transition_times.WEST, transition_times.EAST, transition_times.ROLLOVER})
+        self.assertEqual(sum('-t' in r['args'] for r in rows), 48)
+        for offset, advance in zip(range(0, 12, 4), (2710, 1815, 1800)):
+            self.assertEqual(seconds[offset+1] - seconds[offset], 1)
+            self.assertEqual(seconds[offset+3] - seconds[offset+2], 2*advance + 1)
+        for offset, value in enumerate(expected):
+            for row, stamps in zip(rows[offset*4:offset*4+4],
+                                   [(value, value), (value, 1000000000250000000),
+                                    (900000000125000000, value), (value, value)]):
+                effect = row['effects']['target']
+                self.assertEqual((effect['atime_ns'], effect['mtime_ns']), stamps)
+
+    def test_transition_times_channels_fields_and_contents_are_required(self):
+        self.check_datetime_channels(list(transition_times.cases())[:4])
+
+    def test_transition_times_unrepresentable_or_failed_setup_never_executes(self):
+        self.check_datetime_setup(next(transition_times.cases()))
+
+    def test_transition_times_exec_failure_and_timeout_clean_all_modes(self):
+        self.check_datetime_cleanup(next(transition_times.cases()))
+
+    def test_day_rules_expected_values_distinguish_leap_day_counting(self):
+        rows = list(day_rules.cases())
+        seconds = [1677635999, 1677636000, 1709208000, 1709258399,
+                   1709258400, 1677635999, 1677636000, 1709171999,
+                   1709172000, 1709290800, 1729987199, 1729994400,
+                   1729900799, 1729908000, 1698372000, 1698372000]
+        self.assertEqual(len(rows), 128)
+        self.assertEqual(len({r['id'] for r in rows}), 128)
+        expected = [s * 10**9 for s in seconds for _ in range(2)]
+        self.assertEqual([r['datetime_environment']['target_ns'] for r in rows[::4]], expected)
+        self.assertEqual({r['env']['TZ'] for r in rows}, {day_rules.JULIAN, day_rules.NUMBERED})
+        self.assertEqual(sum('-t' in r['args'] for r in rows), 64)
+        for offset, value in enumerate(expected):
+            for row, stamps in zip(rows[offset*4:offset*4+4],
+                                   [(value, value), (value, 1000000000250000000),
+                                    (900000000125000000, value), (value, value)]):
+                effect = row['effects']['target']
+                self.assertEqual((effect['atime_ns'], effect['mtime_ns']), stamps)
+
+    def test_day_rules_channels_fields_and_contents_are_required(self):
+        self.check_datetime_channels(list(day_rules.cases())[:4])
+
+    def test_day_rules_unrepresentable_or_failed_setup_never_executes(self):
+        self.check_datetime_setup(next(day_rules.cases()))
+
+    def test_day_rules_exec_failure_and_timeout_clean_all_modes(self):
+        self.check_datetime_cleanup(next(day_rules.cases()))
+
+    def test_timezone_expected_values_are_independent_of_local_conversion(self):
+        rows = list(timezone_cases.cases())
+        # Literal Epoch seconds, independently checked against UTC dates. This
+        # catches daylight offset signs, southern year wrap and transition dates.
+        seconds = [1705338000, 1721059200, 1710053999, 1710054000,
+                   1730609999, 1730617200, 1705280400, 1721008800,
+                   1728143999, 1728144000, 1712415599, 1712422800]
+        expected = [s * 1000000000 for s in seconds for _ in range(2)]
+        expected += [1721044800000000000, 1705320000000000000]
+        self.assertEqual(len(rows), 104)
+        self.assertEqual([r['datetime_environment']['target_ns'] for r in rows[::4]], expected)
+        for offset, value in enumerate(expected):
+            for row, stamps in zip(rows[offset*4:offset*4+4],
+                                   [(value, value), (value, 1000000000250000000),
+                                    (900000000125000000, value), (value, value)]):
+                effect = row['effects']['target']
+                self.assertEqual((effect['atime_ns'], effect['mtime_ns']), stamps)
+        self.assertEqual({r['env']['TZ'] for r in rows}, {timezone_cases.NORTH, timezone_cases.SOUTH})
+        self.assertEqual(sum('-t' in r['args'] for r in rows), 48)
+
+    def test_reference_oracle_distinguishes_fields_and_aliases(self):
+        rows = list(reference_cases.cases())
+        self.assertEqual(len(rows), 28)
+        expected = {'both': (1000000000125000000, 1100000000250000000),
+                    'access': (1000000000125000000, 950000000500000000),
+                    'modify': (900000000375000000, 1100000000250000000),
+                    'explicit-both': (1000000000125000000, 1100000000250000000)}
+        for row in rows:
+            selection = next(n for n, flags in reference_cases.SELECTIONS
+                             if row['args'][:len(flags)] == flags and
+                             (row['args'][len(flags)] in ('-r', '-c')))
+            self.assertEqual(row['reference_environment']['target_ns'], expected[selection])
+        self.assertEqual(sum(r['reference_environment']['no_create'] for r in rows), 4)
+        self.assertEqual({r['reference_environment']['reference'] for r in rows},
+                         {'reference', 'reference-link', 'reference-chain'})
+
+    def test_reference_oracle_rejects_wrong_fields_graphs_channels_and_contents(self):
+        # Include all selections and the no-create branch. Metadata must be
+        # captured before a content read through either hard-linked name.
+        for row in list(reference_cases.cases())[-4:]:
+            original = copy.deepcopy(row)
+            for fault in (None, 'atime', 'mtime', 'reference-time', 'reference-content',
+                          'target-content', 'inode', 'link', 'created', 'stdout', 'stderr', 'status'):
+                def capture(binary, invocation, cwd, *args, **kw):
+                    stamps = row['reference_environment']['target_ns']
+                    if fault == 'inode':
+                        (cwd / 'target').unlink()
+                        (cwd / 'target').write_bytes(reference_cases.FILES['target'])
+                    if fault in ('reference-content', 'target-content'):
+                        (cwd / fault.split('-')[0]).write_bytes(b'changed')
+                    os.utime(cwd / 'target', ns=(stamps[0] + (fault == 'atime'),
+                                                stamps[1] + (fault == 'mtime')))
+                    ref = reference_cases.REFERENCE
+                    os.utime(cwd / 'reference', ns=(ref[0], ref[1] + (fault == 'reference-time')))
+                    if fault == 'link':
+                        (cwd / 'target-chain').unlink()
+                        (cwd / 'target-chain').symlink_to('reference')
+                    if fault == 'created':
+                        (cwd / 'missing-target').touch()
+                    return (1 if fault == 'status' else 0,
+                            dict(stdout=b'wrong' if fault == 'stdout' else b'',
+                                 stderr=b'wrong' if fault == 'stderr' else b''), [])
+                with self.subTest(case=row['id'], fault=fault), tempfile.TemporaryDirectory() as root, \
+                        patch('host_filesystem.smoke.capture', side_effect=capture):
+                    record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                      os.defpath, row, 'direct', Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS' if fault is None else 'FAIL', record)
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(row, original)
+
+    def test_reference_setup_failure_prevents_exec_and_cleans(self):
+        row = next(reference_cases.cases())
+        real_utime = os.utime
+        for fault in ('link', 'timestamp', 'rounded', 'baseline'):
+            def utime(path, ns):
+                if fault == 'timestamp' or (fault == 'baseline' and ns == reference_cases.BASELINE):
+                    raise OSError(errno.EIO, 'synthetic timestamp setup failure')
+                real_utime(path, ns=(ns[0] + (fault == 'rounded'), ns[1]))
+            control = patch('host_filesystem_reference.os.link', side_effect=OSError(errno.EPERM, 'link')) \
+                if fault == 'link' else patch('host_filesystem_reference.utime', side_effect=utime)
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, control, \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                capture.assert_not_called()
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_reference_exec_failure_and_timeout_clean_all_modes(self):
+        row = next(reference_cases.cases())
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            for fault in ('exec', 'timeout'):
+                with self.subTest(mode=mode, fault=fault), tempfile.TemporaryDirectory() as root:
+                    root = Path(root)
+                    provider, pidfile = root / 'touch', root / 'pid'
+                    provider.write_text('#!/nonexistent-csh097-interpreter\n' if fault == 'exec' else
+                                        '#!/bin/sh\necho $$ > "' + str(pidfile) + '"\nexec /bin/sleep 60\n')
+                    provider.chmod(0o700)
+                    record = run_case(Path('/bin/sh'), {'touch': {'path': str(provider)}},
+                                      str(root), row, mode, root, None, timeout=1)
+                    self.assertEqual(record['verdict'], 'FAIL', record)
+                    self.assertTrue(record['cleanup'])
+                    self.assertFalse(list(root.glob('csh-filesystem-*')))
+                    if fault == 'timeout':
+                        self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                        pid = int(pidfile.read_text())
+                        deadline = time.monotonic() + 2
+                        while True:
+                            try:
+                                os.kill(pid, 0)
+                            except ProcessLookupError:
+                                break
+                            if time.monotonic() >= deadline:
+                                self.fail('reference timeout child survived cleanup')
+                            time.sleep(0.01)
+
+    def test_calendar_oracle_has_independent_epoch_and_century_boundaries(self):
+        rows = {r['id']: r for r in calendar_cases.cases()}
+        self.assertEqual(len(rows), 40)
+        for name, seconds in [('epoch', 0), ('year-70', 1), ('year-99', 946684799),
+                              ('year-00-default-seconds', 946684800),
+                              ('second-60-rollover', 946684800),
+                              ('leap-day', 951868799), ('after-signed32', 2147483648),
+                              ('year-68', 3124223999)]:
+            row = rows['touch/calendar-' + name + '-both']
+            self.assertEqual(row['calendar_environment']['target_ns'], seconds * 10**9)
+        for row in rows.values():
+            self.assertEqual(row['env'], {'TZ': 'UTC0'})
+            self.assertNotEqual(row['calendar_environment']['target_ns'], calendar_cases.BASELINE[0])
+            self.assertNotEqual(row['calendar_environment']['target_ns'], calendar_cases.BASELINE[1])
+
+    def test_datetime_expected_values_do_not_parse_provider_inputs(self):
+        rows = list(datetime_cases.cases())
+        self.assertEqual(len(rows), 64)
+        # Independent epoch constants catch sign, rollover and fraction scaling errors.
+        expected = [946684800100000000, 946684800100000000, 946684800000000001,
+                    946684800999999999, 946684800123456789, 946684800000001000,
+                    946684800000000000, 946684800250000000, 946701000500000000,
+                    951849900125000000, 946697400000000000, 946664100000000000,
+                    946684800125000000, 946684800500000000, 946701000000000000,
+                    951849900000000000]
+        self.assertEqual([r['datetime_environment']['target_ns'] for r in rows[::4]], expected)
+        for group, value in zip((rows[n:n+4] for n in range(0, 64, 4)), expected):
+            for row, stamps in zip(group, [(value, value), (value, 1000000000250000000),
+                                          (900000000125000000, value), (value, value)]):
+                effect = row['effects']['target']
+                self.assertEqual((effect['atime_ns'], effect['mtime_ns']), stamps)
+        self.assertEqual({r['env']['TZ'] for r in rows},
+                         {'UTC0', 'FST5', 'FST-5:30', 'FST3:30', 'FST-5:45'})
+
+    def test_datetime_channels_fields_and_contents_are_required(self):
+        self.check_datetime_channels(list(datetime_cases.cases())[:4])
+
+    def test_timezone_channels_fields_and_contents_are_required(self):
+        self.check_datetime_channels(list(timezone_cases.cases())[24:28])
+
+    def check_datetime_channels(self, rows):
+        for row in rows:
+            original = copy.deepcopy(row)
+            for fault in (None, 'atime', 'mtime', 'content', 'mode', 'inode', 'stdout', 'stderr', 'status'):
+                def capture(binary, invocation, cwd, *args, **kw):
+                    expected = row['effects']['target']
+                    if fault == 'content':
+                        (cwd / 'target').write_bytes(b'changed')
+                    if fault == 'mode':
+                        (cwd / 'target').chmod(0o700)
+                    if fault == 'inode':
+                        (cwd / 'target').rename(cwd / 'original')
+                        (cwd / 'target').write_bytes(datetime_cases.CONTENT)
+                    stamps = (expected['atime_ns'] + (fault == 'atime'),
+                              expected['mtime_ns'] + (fault == 'mtime'))
+                    os.utime(cwd / 'target', ns=stamps)
+                    return (1 if fault == 'status' else 0,
+                            dict(stdout=b'wrong' if fault == 'stdout' else b'',
+                                 stderr=b'wrong' if fault == 'stderr' else b''), [])
+                with self.subTest(case=row['id'], fault=fault), tempfile.TemporaryDirectory() as root, \
+                        patch('host_filesystem.smoke.capture', side_effect=capture):
+                    record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                      os.defpath, row, 'direct', Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS' if fault is None else 'FAIL', record)
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+            self.assertEqual(row, original)
+
+    def test_datetime_unrepresentable_or_failed_setup_never_executes(self):
+        self.check_datetime_setup(next(datetime_cases.cases()))
+
+    def test_timezone_unrepresentable_or_failed_setup_never_executes(self):
+        self.check_datetime_setup(next(timezone_cases.cases()))
+
+    def check_datetime_setup(self, row):
+        real_utime = os.utime
+        for failure in ('error', 'rounded', 'baseline'):
+            def utime(path, *, ns):
+                if failure == 'error' or (failure == 'baseline' and ns == datetime_cases.BASELINE):
+                    raise OSError(errno.EIO, 'synthetic timestamp setup error')
+                actual = (ns[0] + 1000000000, ns[1]) if failure == 'rounded' else ns
+                real_utime(path, ns=actual)
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem_datetime.utime', side_effect=utime), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                capture.assert_not_called()
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_datetime_exec_failure_and_timeout_clean_all_modes(self):
+        self.check_datetime_cleanup(next(datetime_cases.cases()))
+
+    def test_timezone_exec_failure_and_timeout_clean_all_modes(self):
+        self.check_datetime_cleanup(next(timezone_cases.cases()))
+
+    def check_datetime_cleanup(self, row):
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            for fault in ('exec', 'timeout'):
+                with self.subTest(mode=mode, fault=fault), tempfile.TemporaryDirectory() as root:
+                    root = Path(root)
+                    provider, pidfile = root / 'touch', root / 'pid'
+                    provider.write_text('#!/nonexistent-csh098-interpreter\n' if fault == 'exec' else
+                                        '#!/bin/sh\necho $$ > "' + str(pidfile) + '"\nexec /bin/sleep 60\n')
+                    provider.chmod(0o700)
+                    record = run_case(Path('/bin/sh'), {'touch': {'path': str(provider)}},
+                                      str(root), row, mode, root, None, timeout=1)
+                    self.assertEqual(record['verdict'], 'FAIL', record)
+                    self.assertTrue(record['cleanup'])
+                    self.assertFalse(list(root.glob('csh-filesystem-*')))
+                    if fault == 'timeout':
+                        self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                        pid = int(pidfile.read_text())
+                        deadline = time.monotonic() + 2
+                        while True:
+                            try:
+                                os.kill(pid, 0)
+                            except ProcessLookupError:
+                                break
+                            if time.monotonic() >= deadline:
+                                self.fail('datetime timeout child survived cleanup')
+                            time.sleep(0.01)
+
+    def test_calendar_channels_fields_and_contents_are_required(self):
+        rows = list(calendar_cases.cases())[:4]
+        for row in rows:
+            original = copy.deepcopy(row)
+            for fault in (None, 'atime', 'mtime', 'content', 'stdout', 'stderr', 'status'):
+                def capture(binary, invocation, cwd, *args, **kw):
+                    expected = row['effects']['target']
+                    if fault == 'content':
+                        (cwd / 'target').write_bytes(b'changed')
+                    stamps = (expected['atime_ns'] + (fault == 'atime'),
+                              expected['mtime_ns'] + (fault == 'mtime'))
+                    os.utime(cwd / 'target', ns=stamps)
+                    return (1 if fault == 'status' else 0,
+                            dict(stdout=b'wrong' if fault == 'stdout' else b'',
+                                 stderr=b'wrong' if fault == 'stderr' else b''), [])
+                with self.subTest(case=row['id'], fault=fault), tempfile.TemporaryDirectory() as root, \
+                        patch('host_filesystem.smoke.capture', side_effect=capture):
+                    record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                      os.defpath, row, 'direct', Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS' if fault is None else 'FAIL', record)
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+            self.assertEqual(row, original)
+
+    def test_calendar_unrepresentable_or_failed_setup_never_executes(self):
+        row = next(calendar_cases.cases())
+        real_utime = os.utime
+        for failure in ('error', 'rounded', 'baseline'):
+            def utime(path, *, ns):
+                if failure == 'error' or (failure == 'baseline' and ns == calendar_cases.BASELINE):
+                    raise OSError(errno.EIO, 'synthetic timestamp setup error')
+                actual = (ns[0] + 1000000000, ns[1]) if failure == 'rounded' else ns
+                real_utime(path, ns=actual)
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem_calendar.utime', side_effect=utime), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                capture.assert_not_called()
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_calendar_exec_failure_and_timeout_clean_all_modes(self):
+        row = next(calendar_cases.cases())
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            for fault in ('exec', 'timeout'):
+                with self.subTest(mode=mode, fault=fault), tempfile.TemporaryDirectory() as root:
+                    root = Path(root)
+                    provider, pidfile = root / 'touch', root / 'pid'
+                    provider.write_text('#!/nonexistent-csh096-interpreter\n' if fault == 'exec' else
+                                        '#!/bin/sh\necho $$ > "' + str(pidfile) + '"\nexec /bin/sleep 60\n')
+                    provider.chmod(0o700)
+                    record = run_case(Path('/bin/sh'), {'touch': {'path': str(provider)}},
+                                      str(root), row, mode, root, None, timeout=1)
+                    self.assertEqual(record['verdict'], 'FAIL', record)
+                    self.assertTrue(record['cleanup'])
+                    self.assertFalse(list(root.glob('csh-filesystem-*')))
+                    if fault == 'timeout':
+                        self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                        pid = int(pidfile.read_text())
+                        deadline = time.monotonic() + 2
+                        while True:
+                            try:
+                                os.kill(pid, 0)
+                            except ProcessLookupError:
+                                break
+                            if time.monotonic() >= deadline:
+                                self.fail('calendar timeout child survived cleanup')
+                            time.sleep(0.01)
+
+    def test_magic_defaults_independent_widths_predicates_and_truncations(self):
+        import ctypes
+        rows = list(magic_defaults.cases())
+        widths = {kind: ctypes.sizeof(ctype) for kind, ctype, _ in magic_defaults.TYPES}
+        self.assertEqual(len(rows), sum(2 * (16 + (2 if kind == 'u' else 0) +
+                                          2 * (width + 1) + 2)
+                                        for kind, width in widths.items()))
+        self.assertEqual(len({r['id'] for r in rows}), len(rows))
+        for row in rows:
+            facts = row['magic_environment']
+            kind = facts['kind'].split('&')[0]
+            self.assertEqual(facts['bytes'], widths[kind])
+            payload = row['files']['sample'][facts['offset']:]
+            if 'value' in facts:
+                value = int.from_bytes(payload[:widths[kind]], sys.byteorder,
+                                       signed=facts['signed'])
+                self.assertEqual(value, facts['value'])
+                self.assertEqual(len(payload), widths[kind] + facts.get('trailing', 0))
+                if '&' in facts['kind']:
+                    value &= 127
+                op, raw = facts['predicate'][0], facts['predicate'][1:]
+                constant = int(raw, 16 if raw.startswith('0x') else
+                               8 if raw.startswith('0') and len(raw) > 1 else 10)
+                expected = {'=': value == constant, '<': value < constant,
+                            '>': value > constant, '&': value & constant == constant,
+                            '^': value & constant != constant}[op]
+            else:
+                expected = len(payload) >= widths[kind]
+            self.assertEqual(facts['matches'], expected, row['id'])
+        for kind, width in widths.items():
+            for placement in ('top', 'continuation'):
+                for predicate in ('x', '=0'):
+                    self.assertEqual({r['magic_environment']['available'] for r in rows
+                                      if r['magic_environment']['kind'] == kind
+                                      and r['magic_environment']['placement'] == placement
+                                      and r['magic_environment']['predicate'] == predicate
+                                      and 'available' in r['magic_environment']},
+                                     set(range(width + 1)))
+
+    def test_magic_defaults_channels_status_and_immutable_inputs_are_required(self):
+        self.check_magic_channels_status_and_immutable_inputs_are_required(next(magic_defaults.cases()))
+
+    def test_magic_defaults_setup_failure_prevents_execution_and_cleans(self):
+        self.check_magic_setup_failure_prevents_execution_and_cleans(next(magic_defaults.cases()))
+
+    def test_magic_defaults_exec_failure_and_timeout_clean_all_modes(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(magic_defaults.cases()))
+
+    def test_magic_types_independent_predicates_and_native_widths(self):
+        import ctypes
+        rows = list(magic_types.cases())
+        self.assertEqual(len(rows), 360)
+        self.assertEqual(len({r['id'] for r in rows}), len(rows))
+        widths = {letter: ctypes.sizeof(ctype) for letter, ctype in magic_types.TYPES}
+        for row in rows:
+            facts = row['magic_environment']
+            payload = row['files']['sample'][facts['offset']:]
+            self.assertEqual(facts['bytes'], widths[facts['c_type']])
+            if 'value' in facts:
+                value = int.from_bytes(payload, sys.byteorder, signed=facts['signed'])
+                self.assertEqual(value, facts['value'])
+                if '&' in facts['kind']:
+                    # Both authored mask spellings denote 127.
+                    value &= 127
+                op, raw = facts['predicate'][0], facts['predicate'][1:]
+                constant = int(raw, 16 if raw.startswith('0x') else
+                               8 if raw.startswith('0') and len(raw) > 1 else 10)
+                expected = {'=': value == constant, '<': value < constant,
+                            '>': value > constant, '&': value & constant == constant,
+                            '^': value & constant != constant}[op]
+            else:
+                expected = len(payload) == facts['bytes']
+            self.assertEqual(facts['matches'], expected, row['id'])
+        # High unsigned values must distinguish unsigned from signed comparison.
+        high = next(r for r in rows if r['id'] == 'file/magic-types-unsigned-L-native-maximum-yes')
+        self.assertEqual(high['files']['sample'][6:], b'\xff' * widths['L'])
+
+    def test_magic_types_channels_status_and_immutable_inputs_are_required(self):
+        self.check_magic_channels_status_and_immutable_inputs_are_required(next(magic_types.cases()))
+
+    def test_magic_types_setup_failure_prevents_execution_and_cleans(self):
+        self.check_magic_setup_failure_prevents_execution_and_cleans(next(magic_types.cases()))
+
+    def test_magic_types_exec_failure_and_timeout_clean_all_modes(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(magic_types.cases()))
+
+    def test_magic_messages_literal_oracles_and_native_arguments(self):
+        rows = list(magic_messages.cases())
+        self.assertEqual(len(rows), 108)
+        self.assertEqual(len({r['id'] for r in rows}), 108)
+        for row in rows:
+            facts = row['magic_environment']
+            data = row['files']['sample'][facts['offset']:]
+            if 'value' in facts:
+                self.assertEqual(int.from_bytes(data, sys.byteorder, signed=True), facts['value'])
+                self.assertEqual(len(data), facts['bytes'])
+            else:
+                self.assertEqual(data, b'AlphaTRAILING')
+                self.assertEqual(facts['matched_hex'], b'Alpha'.hex())
+            prefix = b'fixture ' if facts['placement'] == 'continuation' else b''
+            self.assertEqual(row['stdout'], b'sample: ' + prefix + b'[' +
+                             bytes.fromhex(facts['rendered_hex']) + b']\n')
+        # Distinguish widths, precision, signs, case, prefixes and literal %.
+        expected = {r['id']: r['stdout'] for r in rows}
+        self.assertEqual(expected['file/magic-messages-short-width-precision-top'], b'sample: [   -0007]\n')
+        self.assertEqual(expected['file/magic-messages-byte-hex-zero-pad-top'], b'sample: [0x00002a]\n')
+        self.assertEqual(expected['file/magic-messages-string-percent-top'], b'sample: [%:Alpha:%]\n')
+
+    def test_magic_messages_channels_status_and_immutable_inputs_are_required(self):
+        self.check_magic_channels_status_and_immutable_inputs_are_required(next(magic_messages.cases()))
+
+    def test_magic_messages_setup_failure_prevents_execution_and_cleans(self):
+        self.check_magic_setup_failure_prevents_execution_and_cleans(next(magic_messages.cases()))
+
+    def test_magic_messages_exec_failure_and_timeout_clean_all_modes(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(magic_messages.cases()))
+
+    def test_magic_strings_authored_bytes_offsets_and_eof(self):
+        rows = list(magic_strings.cases())
+        self.assertEqual(len(rows), 91)
+        self.assertEqual(len({r['id'] for r in rows}), 91)
+        exact = {r['id'].removeprefix('file/magic-strings-').removesuffix('-exact'):
+                 r['files']['sample'][16:] for r in rows if r['id'].endswith('-exact')}
+        for name, byte in [('alert', 7), ('backspace', 8), ('formfeed', 12),
+                           ('newline', 10), ('return', 13), ('tab', 9),
+                           ('vertical-tab', 11), ('octal-nul', 0), ('octal-high', 255)]:
+            self.assertEqual(exact[name], b'A' + bytes([byte]) + b'B')
+        self.assertEqual(exact['octal-three'], b'AA2')
+        self.assertEqual(exact['octal-one'], b'A\x07Z')
+        self.assertEqual(exact['octal-two'], b'A\x0aZ')
+        self.assertEqual(exact['space'], b'left right')
+        self.assertEqual(exact['backslash'], b'left\\right')
+        for name in ('decimal', 'octal', 'hex', 'hex-upper'):
+            self.assertEqual(exact['offset-' + name], b'AB')
+        for row in rows:
+            facts = row['magic_environment']
+            decoded = bytes.fromhex(facts['decoded_hex'])
+            observed = row['files']['sample'][16:16+len(decoded)]
+            self.assertEqual(observed == decoded, facts['matches'])
+            self.assertEqual(row['stdout'], b'sample: fixture' +
+                             (b' matched' if facts['matches'] else b'') + b'\n')
+            self.assertEqual(row['stderr'], b'')
+            self.assertEqual(row['status'], 0)
+        self.assertEqual(sum(r['magic_environment']['matches'] for r in rows), 34)
+
+    def test_magic_numeric_samples_use_native_signed_values(self):
+        rows = list(magic_cases.cases())
+        self.assertEqual(len(rows), 46)
+        for row in rows:
+            facts = row['magic_environment']
+            sample = row['files']['sample'][5:]
+            if 'value' in facts:
+                self.assertEqual(int.from_bytes(sample, sys.byteorder, signed=True), facts['value'])
+                self.assertEqual(len(sample), facts['bytes'])
+            if 'complete' in facts:
+                self.assertEqual(len(sample), facts['bytes'] - (not facts['complete']))
+        # Distinct boundary witnesses must not collapse to the same bytes.
+        for kind in ('byte', 'short'):
+            minimum = next(r for r in rows if r['id'] == 'file/magic-' + kind + '-minimum-yes')
+            maximum = next(r for r in rows if r['id'] == 'file/magic-' + kind + '-maximum-yes')
+            self.assertNotEqual(minimum['files']['sample'], maximum['files']['sample'])
+
+    def test_magic_channels_status_and_immutable_inputs_are_required(self):
+        self.check_magic_channels_status_and_immutable_inputs_are_required(next(magic_cases.cases()))
+
+    def test_magic_strings_channels_status_and_immutable_inputs_are_required(self):
+        self.check_magic_channels_status_and_immutable_inputs_are_required(next(magic_strings.cases()))
+
+    def check_magic_channels_status_and_immutable_inputs_are_required(self, row):
+        original = copy.deepcopy(row)
+        for fault in (None, 'stdout', 'stderr', 'status', 'sample', 'magic'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                if fault in ('sample', 'magic'):
+                    (cwd / fault).write_bytes(b'changed')
+                return (1 if fault == 'status' else 0,
+                        dict(stdout=b'wrong' if fault == 'stdout' else row['stdout'],
+                             stderr=b'diagnostic' if fault == 'stderr' else b''), [])
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'file': {'path': '/usr/bin/file'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'PASS' if fault is None else 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+        self.assertEqual(row, original)
+
+    def test_magic_setup_failure_prevents_execution_and_cleans(self):
+        self.check_magic_setup_failure_prevents_execution_and_cleans(next(magic_cases.cases()))
+
+    def test_magic_strings_setup_failure_prevents_execution_and_cleans(self):
+        self.check_magic_setup_failure_prevents_execution_and_cleans(next(magic_strings.cases()))
+
+    def check_magic_setup_failure_prevents_execution_and_cleans(self, row):
+        from host_filesystem_cases import setup
+        def corrupt(directory, spec):
+            cwd = setup(directory, spec)
+            (directory / 'sample').write_bytes(b'wrong')
+            return cwd
+        with tempfile.TemporaryDirectory() as root, \
+                patch('host_filesystem.setup', side_effect=corrupt), \
+                patch('host_filesystem.smoke.capture') as capture:
+            record = run_case(Path('/bin/sh'), {'file': {'path': '/usr/bin/file'}},
+                              os.defpath, row, 'direct', Path(root), None)
+            capture.assert_not_called()
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            self.assertIn('readback mismatch', record['error'])
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_magic_exec_failure_and_timeout_clean_all_modes(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(magic_cases.cases()))
+
+    def test_magic_strings_exec_failure_and_timeout_clean_all_modes(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(magic_strings.cases()))
+
+    def check_fixture_exec_failure_and_timeout_clean_all_modes(self, row):
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            for fault in ('exec', 'timeout'):
+                with self.subTest(mode=mode, fault=fault), tempfile.TemporaryDirectory() as root:
+                    root = Path(root)
+                    provider = root / row['utility']
+                    pidfile = root / 'pid'
+                    provider.write_text('#!/nonexistent-csh095-interpreter\n' if fault == 'exec' else
+                                        '#!/bin/sh\necho $$ > "' + str(pidfile) + '"\nexec /bin/sleep 60\n')
+                    provider.chmod(0o700)
+                    # A missing interpreter can make shells continue PATH search.
+                    # Exclude the real utility from this failure fixture.
+                    record = run_case(Path('/bin/sh'), {row['utility']: {'path': str(provider)}},
+                                      str(root), row, mode, root, None, timeout=1)
+                    self.assertEqual(record['verdict'], 'FAIL', record)
+                    self.assertTrue(record['cleanup'])
+                    if fault == 'timeout':
+                        self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                        pidfile.chmod(0o600)  # Child may deliberately inherit umask 777.
+                        pid = int(pidfile.read_text())
+                        deadline = time.monotonic() + 2
+                        while True:
+                            try:
+                                os.kill(pid, 0)
+                            except ProcessLookupError:
+                                break
+                            self.assertLess(time.monotonic(), deadline, 'provider was not reaped')
+                            time.sleep(.02)
+                        pidfile.unlink()
+                    self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_logical_cwd_cases_preserve_spec_and_inherited_environment(self):
+        rows = list(cwd_cases.logical_cases())
+        self.assertEqual(len(rows), 12)
+        for row in rows:
+            original = copy.deepcopy(row)
+            for mode in ('direct', 'string', 'file', 'stdin'):
+                with self.subTest(case=row['id'], mode=mode), tempfile.TemporaryDirectory() as root:
+                    record = run_case(Path('/bin/sh'), {'pwd': {'path': '/bin/pwd'}},
+                                      os.defpath, row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS', record)
+                    marker = record['cwd_environment']
+                    self.assertEqual(marker['pwd'], marker['pwd_after'])
+                    self.assertNotEqual(marker['pwd_identity'], marker['after'])
+                    self.assertEqual(marker['pwd'], None if mode == 'direct' else str(Path(record['fixture']).resolve()))
+                    self.assertEqual(row, original)
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_logical_cwd_rejects_corrupt_environment_and_error_results(self):
+        from smoke import capture as real_capture
+        faults = ('missing-marker', 'missing-pwd', 'pwd', 'pwd_after', 'pwd_identity',
+                  'logical_fallback', 'getcwd_errno', 'status', 'stdout', 'stderr', 'effect')
+        for fault in faults:
+            def capture(binary, invocation, cwd, *args, **kw):
+                status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                path = cwd / cwd_cases.MARKER
+                marker = json.loads(path.read_text())
+                if fault == 'missing-marker':
+                    path.unlink()
+                elif fault == 'effect':
+                    (cwd / 'cwd-parent').mkdir()
+                elif fault in ('stdout', 'stderr'):
+                    output[fault] = b'unexpected\n' if fault == 'stdout' else b''
+                elif fault == 'status':
+                    status = 0
+                else:
+                    if fault == 'missing-pwd':
+                        del marker['pwd']
+                    else:
+                        marker[fault] = (False if fault == 'getcwd_errno' else
+                                         marker['after'] if fault == 'pwd_identity' else 'corrupt')
+                    path.write_text(json.dumps(marker))
+                return status, output, errors
+            row = next(r for r in cwd_cases.logical_cases() if r['cwd_action'] == 'delete-parent')
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'pwd': {'path': '/bin/pwd'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+
+    def test_logical_cwd_setup_and_exec_errors_cannot_pass(self):
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            for fault in ('setup', 'exec'):
+                with self.subTest(mode=mode, fault=fault), tempfile.TemporaryDirectory() as root:
+                    root = Path(root)
+                    provider = root / 'pwd'
+                    provider.write_text('#!/nonexistent-csh094-interpreter\n')
+                    provider.chmod(0o700)
+                    row = next(r for r in cwd_cases.logical_cases() if r['cwd_action'] == 'delete-parent')
+                    with patch('host_filesystem_cwd.setup') if fault == 'setup' else nullcontext():
+                        record = run_case(Path('/bin/sh'), {'pwd': {'path': str(provider)}},
+                                          os.defpath, row, mode, root, None)
+                    self.assertEqual(record['verdict'], 'FAIL', record)
+                    self.assertEqual(record['cwd_environment']['phase'], fault + '-failure')
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_logical_cwd_helper_rejects_a_valid_or_foreign_pwd_before_mutation(self):
+        import subprocess
+        helper = str(Path(__file__).with_name('host_filesystem_cwd_exec.py').resolve())
+        for value in ('cwd-parent/cwd-leaf', 'other'):
+            with self.subTest(value=value), tempfile.TemporaryDirectory() as root:
+                root = Path(root).resolve()
+                leaf = root / 'cwd-parent/cwd-leaf'
+                leaf.mkdir(parents=True)
+                # Deliberately corrupt the inherited input to test the harness;
+                # this is never a utility qualification assertion.
+                result = subprocess.run([sys.executable, '-S', helper, '--logical-fallback',
+                                         'rename-leaf', '/bin/true'], cwd=root,
+                                        env={'PWD': str(root / value)}, capture_output=True, timeout=5)
+                self.assertEqual(result.returncode, 125)
+                marker = json.loads((root / cwd_cases.MARKER).read_text())
+                self.assertEqual(marker['phase'], 'setup-failure')
+                self.assertTrue(leaf.is_dir())
+                self.assertFalse((root / 'cwd-renamed').exists())
+
+    def test_logical_cwd_timeout_reaps_provider_and_cleans_all_modes(self):
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            for action in ('rename-parent', 'delete-parent'):
+                with self.subTest(mode=mode, action=action), tempfile.TemporaryDirectory() as root:
+                    root = Path(root)
+                    provider = root / 'pwd'
+                    provider.write_text('#!/bin/sh\nexec /bin/sleep 60\n')
+                    provider.chmod(0o700)
+                    row = next(r for r in cwd_cases.logical_cases() if r['cwd_action'] == action)
+                    record = run_case(Path('/bin/sh'), {'pwd': {'path': str(provider)}},
+                                      os.defpath, row, mode, root, None, timeout=1)
+                    self.assertEqual(record['verdict'], 'FAIL')
+                    self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                    self.assertTrue(record['cleanup'])
+                    pid = record['cwd_environment']['pid']
+                    deadline = time.monotonic() + 2
+                    while True:
+                        try:
+                            os.kill(pid, 0)
+                        except ProcessLookupError:
+                            break
+                        self.assertLess(time.monotonic(), deadline, 'timed-out provider was not reaped')
+                        time.sleep(.02)
+                    self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_output_cases_and_immutable_spec(self):
+        import shutil
+        self.assertEqual(len(list(output_cases.cases('Darwin'))), 8)
+        self.assertEqual(len(list(output_cases.cases('Linux'))), 14)
+        for row in output_cases.cases():
+            original = copy.deepcopy(row)
+            provider = shutil.which(row['utility'], path=os.defpath)
+            with self.subTest(case=row['id']), tempfile.TemporaryDirectory() as root:
+                record = run_case(Path('/bin/sh'), {row['utility']: {'path': provider}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'PASS', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(row, original)
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_output_marker_channels_status_and_effect_corruption(self):
+        from smoke import capture as real_capture
+        row = next(output_cases.cases())
+        for fault in ('missing', 'malformed', 'list', 'phase', 'provider', 'action',
+                      'errno', 'pid', 'stdout', 'stderr', 'status', 'effect'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                marker = cwd / '.io-fault.json'
+                if fault == 'missing':
+                    marker.unlink()
+                elif fault in ('malformed', 'list'):
+                    marker.write_text('{' if fault == 'malformed' else '[]')
+                elif fault == 'effect':
+                    (cwd / 'data').write_bytes(b'changed')
+                elif fault in ('stdout', 'stderr'):
+                    output[fault] = b'corrupt' if fault == 'stdout' else b''
+                elif fault == 'status':
+                    status = 0
+                else:
+                    data = json.loads(marker.read_text())
+                    data[fault] = 'corrupt'
+                    marker.write_text(json.dumps(data))
+                return status, output, errors
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'pwd': {'path': '/bin/pwd'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'], record)
+
+    def test_output_exec_failure_and_missing_setup_do_not_pass(self):
+        row = next(output_cases.cases())
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                provider = Path(root) / 'pwd'
+                provider.write_text('#!/nonexistent-csh093-interpreter\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'pwd': {'path': str(provider)}},
+                                  os.defpath, row, mode, Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertEqual(record['kernel_fault']['phase'], 'exec-failure')
+                self.assertTrue(record['cleanup'])
+            with tempfile.TemporaryDirectory() as root, patch('host_filesystem.smoke.capture',
+                    return_value=(125, {'stdout': b'', 'stderr': b'setup failed'}, [])):
+                record = run_case(Path('/bin/sh'), {'pwd': {'path': '/bin/pwd'}},
+                                  os.defpath, row, mode, Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+
+    def test_output_wrong_kernel_probe_and_device_marker(self):
+        import subprocess
+        from host_filesystem_fault import marker_matches
+        helper = str(Path(__file__).with_name('host_filesystem_fault.py').resolve())
+        # A successful write probe must abort before exec, even with the right action.
+        script = ('import os,runpy,sys; os.write=lambda *args: 1; '
+                  'sys.argv=[sys.argv[1],"broken-pipe","/bin/pwd","-P"]; '
+                  'runpy.run_path(sys.argv[0],run_name="__main__")')
+        with tempfile.TemporaryDirectory() as root:
+            result = subprocess.run([sys.executable, '-c', script, helper], cwd=root,
+                                    capture_output=True, timeout=5)
+            self.assertEqual(result.returncode, 125)
+            marker = json.loads((Path(root) / '.io-fault.json').read_text())
+            self.assertEqual(marker['phase'], 'setup-failure')
+            self.assertFalse(marker_matches(marker, 'broken-pipe', '/bin/pwd', errno.EPIPE))
+        marker = dict(phase='armed', action='enospc', provider='/bin/pwd',
+                      errno=errno.ENOSPC, pid=123, device=dict(path='/dev/full', major=1, minor=7))
+        self.assertTrue(marker_matches(marker, 'enospc', '/bin/pwd', errno.ENOSPC))
+        for key, value in [('device', {}), ('pid', True), ('pid', 0), ('errno', str(errno.ENOSPC))]:
+            corrupted = dict(marker, **{key: value})
+            self.assertFalse(marker_matches(corrupted, 'enospc', '/bin/pwd', errno.ENOSPC))
+
+    def test_output_timeout_reaps_provider_and_cleans_fixture(self):
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                provider = root / 'pwd'
+                provider.write_text('#!/bin/sh\nexec /bin/sleep 60\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'pwd': {'path': str(provider)}},
+                                  os.defpath, next(output_cases.cases()), mode, root, None, timeout=1)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                self.assertTrue(record['cleanup'])
+                pid = record['kernel_fault']['pid']
+                deadline = time.monotonic() + 2
+                while True:
+                    try:
+                        os.kill(pid, 0)
+                    except ProcessLookupError:
+                        break
+                    self.assertLess(time.monotonic(), deadline, 'timed-out provider was not reaped')
+                    time.sleep(.02)
+                self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_touch_current_matrix_and_all_modes(self):
+        rows = list(touch_current.cases())
+        self.assertEqual(len(rows), 60)
+        self.assertEqual(len({r['id'] for r in rows}), 60)
+        for row in rows:
+            for mode in ('direct', 'string', 'file', 'stdin'):
+                with self.subTest(case=row['id'], mode=mode), tempfile.TemporaryDirectory() as root:
+                    record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                      os.defpath, row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS', record)
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+                    self.assertEqual(record['touch_current_exec']['probe_mode'], row['touch_current']['created_mode'])
+                    json.dumps(record)
+
+    def test_touch_current_corruption_is_rejected(self):
+        from smoke import capture as real_capture
+        for boundary in ('existing', 'create', 'no-create', 'fixed-create', 'reference-create'):
+            row = next(r for r in touch_current.cases()
+                       if r['touch_current']['boundary'] == boundary and r['touch_current']['access']
+                       and not r['touch_current']['modify'])
+            for fault in ('selected', 'unselected', 'inode', 'content', 'mode', 'nlink',
+                          'reference', 'target', 'stdout', 'stderr', 'status'):
+                def capture(binary, invocation, cwd, *args, **kw):
+                    status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                    path = cwd / 'first'
+                    if fault in ('selected', 'unselected'):
+                        info = path.stat()
+                        stamps = (touch_current.BASELINE[0], info.st_mtime_ns) if fault == 'selected' else (info.st_atime_ns, 0)
+                        os.utime(path, ns=stamps)
+                    elif fault == 'inode':
+                        path.rename(cwd / 'saved')
+                        path.write_bytes(touch_current.CONTENT)
+                    elif fault == 'content':
+                        path.write_bytes(b'changed')
+                    elif fault == 'mode':
+                        path.chmod(0o600)
+                    elif fault == 'nlink':
+                        os.link(path, cwd / 'extra')
+                    elif fault == 'reference':
+                        os.utime(cwd / 'reference', ns=(0, 0))
+                    elif fault == 'target':
+                        if boundary == 'no-create':
+                            (cwd / 'target').touch()
+                        else:
+                            (cwd / 'target').unlink()
+                    elif fault == 'status':
+                        status = 1
+                    else:
+                        output[fault] = b'unexpected'
+                    return status, output, errors
+                with self.subTest(boundary=boundary, fault=fault), tempfile.TemporaryDirectory() as root, \
+                        patch('host_filesystem.smoke.capture', side_effect=capture):
+                    record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                      os.defpath, row, 'direct', Path(root), None)
+                    self.assertEqual(record['verdict'], 'FAIL', record)
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_touch_current_markers_and_clock_bounds(self):
+        from smoke import capture as real_capture
+        row = next(touch_current.cases())
+        for fault in ('missing', 'malformed', 'phase', 'provider', 'euid', 'observed_mask', 'probe_mode'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                result = real_capture(binary, invocation, cwd, *args, **kw)
+                path = cwd / '.touch-current-exec.json'
+                marker = json.loads(path.read_text())
+                if fault == 'missing':
+                    path.unlink()
+                elif fault == 'malformed':
+                    path.write_text('{')
+                else:
+                    marker[fault] = 'wrong'
+                    path.write_text(json.dumps(marker))
+                return result
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+        for end in (dict(realtime_ns=0, monotonic_ns=2),
+                    dict(realtime_ns=3000000001, monotonic_ns=2)):
+            with tempfile.TemporaryDirectory() as root, \
+                    patch.object(touch_current, 'clock', side_effect=[dict(realtime_ns=1, monotonic_ns=1), end]):
+                record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertIn('touch clock interval moved or is invalid', record['errors'])
+                self.assertTrue(record['cleanup'])
+
+    def test_touch_current_unproved_setup_is_rejected(self):
+        row = next(touch_current.cases())
+        with tempfile.TemporaryDirectory() as root, \
+                patch.object(touch_current.os, 'utime'), \
+                patch('host_filesystem.smoke.capture') as capture:
+            record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                              os.defpath, row, 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            capture.assert_not_called()
+            self.assertTrue(record['cleanup'])
+        row['touch_current']['mask'] = 1
+        with tempfile.TemporaryDirectory() as root:
+            record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                              os.defpath, row, 'direct', Path(root), None)
+            self.assertEqual(record['verdict'], 'FAIL', record)
+            self.assertEqual(record['touch_current_exec']['phase'], 'setup-error')
+            self.assertTrue(record['cleanup'])
+
+    def test_touch_current_partial_setup_exec_and_timeout_cleanup(self):
+        row = next(touch_current.cases())
+        real = touch_current.setup
+        def fail(directory, row):
+            real(directory, row)
+            raise OSError('controlled setup failure')
+        with tempfile.TemporaryDirectory() as root, \
+                patch.object(touch_current, 'setup', side_effect=fail), \
+                patch('host_filesystem.smoke.capture') as capture:
+            record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                              os.defpath, row, 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            capture.assert_not_called()
+            self.assertTrue(record['cleanup'])
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(row)
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(
+            next(r for r in touch_current.cases() if r['touch_current']['boundary'] == 'create'))
+
+    def test_touch_permission_matrix_and_all_modes(self):
+        rows = list(touch_permissions.cases())
+        self.assertEqual(len(rows), 20)
+        self.assertEqual(sum(r['status'] == 0 for r in rows), 8)
+        for row in rows:
+            original = copy.deepcopy(row)
+            for mode in ('direct', 'string', 'file', 'stdin'):
+                with self.subTest(case=row['id'], mode=mode), tempfile.TemporaryDirectory() as root:
+                    record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                      os.defpath, row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS', record)
+                    self.assertEqual(record['touch_permission_armed']['errno'], errno.EACCES)
+                    self.assertEqual(record['touch_permission_environment']['write_errno'], errno.EACCES)
+                    self.assertEqual(record['touch_permission_observed']['armed_mode'], row['touch_permission']['mode'])
+                    json.dumps(record)
+                    self.assertEqual(row, original)
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_touch_permission_corruption_is_rejected(self):
+        from smoke import capture as real_capture
+        for boundary in ('search-existing', 'owner-no-write'):
+            row = next(r for r in touch_permissions.cases() if r['touch_permission']['boundary'] == boundary)
+            for fault in ('timestamp', 'identity', 'content', 'mode', 'nlink', 'guard', 'stdout', 'stderr', 'status'):
+                def capture(binary, invocation, cwd, *args, **kw):
+                    status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                    path = cwd / 'last'
+                    if fault == 'timestamp':
+                        os.utime(path, ns=touch_permissions.BASELINE)
+                    elif fault == 'identity':
+                        path.rename(cwd / 'saved')
+                        path.write_bytes(touch_permissions.CONTENT)
+                        path.chmod(0o400)
+                        os.utime(path, ns=row['touch_permission']['target_ns'])
+                    elif fault == 'content':
+                        path.chmod(0o600)
+                        path.write_bytes(b'changed')
+                        path.chmod(0o400)
+                        os.utime(path, ns=row['touch_permission']['target_ns'])
+                    elif fault == 'mode':
+                        path.chmod(0o600)
+                    elif fault == 'nlink':
+                        os.link(path, cwd / 'extra')
+                    elif fault == 'guard':
+                        (cwd / 'guard').chmod(0o700)
+                    elif fault == 'status':
+                        status = 0 if status else 1
+                    else:
+                        output[fault] = b'' if output[fault] else b'unexpected'
+                    return status, output, errors
+                with self.subTest(boundary=boundary, fault=fault), tempfile.TemporaryDirectory() as root, \
+                        patch('host_filesystem.smoke.capture', side_effect=capture):
+                    record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                      os.defpath, row, 'direct', Path(root), None)
+                    self.assertEqual(record['verdict'], 'FAIL', record)
+                    self.assertTrue(record['cleanup'], record)
+                    self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_touch_permission_unproved_denials_and_partial_setup(self):
+        row = next(r for r in touch_permissions.cases() if r['touch_permission']['boundary'] == 'create-denied')
+        real = touch_permissions.write_open
+        for error in (None, OSError(errno.EIO, 'controlled error')):
+            def probe(path, create=False):
+                if create:
+                    if error:
+                        raise error
+                    return None
+                return real(path, create)
+            with tempfile.TemporaryDirectory() as root, \
+                    patch.object(touch_permissions, 'write_open', side_effect=probe), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'), record)
+                capture.assert_not_called()
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+        real_arm = touch_permissions.arm
+        def fail(directory, row):
+            real_arm(directory, row)
+            raise OSError('controlled failure after arming')
+        with tempfile.TemporaryDirectory() as root, \
+                patch.object(touch_permissions, 'arm', side_effect=fail), \
+                patch('host_filesystem.smoke.capture') as capture:
+            record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                              os.defpath, row, 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            capture.assert_not_called()
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_touch_permission_failed_exec_timeout_and_safe_cleanup(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(touch_permissions.cases()))
+        row = next(r for r in touch_permissions.cases() if r['touch_permission']['boundary'] == 'no-create')
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(row)
+        with tempfile.TemporaryDirectory() as root, tempfile.TemporaryDirectory() as outside:
+            root, outside = Path(root), Path(outside)
+            outside.chmod(0o751)
+            (root / 'guard').symlink_to(outside)
+            touch_permissions.restore(root, row)
+            self.assertEqual(stat.S_IMODE(outside.stat().st_mode), 0o751)
+
+    def test_link_permission_matrix_and_all_modes(self):
+        rows = list(link_permissions.cases())
+        self.assertEqual(len(rows), 21)
+        self.assertEqual(len({r['id'] for r in rows}), 21)
+        self.assertEqual(sum(r['status'] == 0 for r in rows), 3)
+        for row in rows:
+            for mode in ('direct', 'string', 'file', 'stdin'):
+                with self.subTest(case=row['id'], mode=mode), tempfile.TemporaryDirectory() as root:
+                    record = run_case(Path('/bin/sh'), {'ln': {'path': '/bin/ln'}},
+                                      os.defpath, row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS', record)
+                    marker = record['link_permission_environment']
+                    self.assertEqual(marker['errno'], errno.EACCES)
+                    self.assertEqual(marker['mode'], row['link_permission']['mode'])
+                    self.assertEqual(len(marker['probes']), 1 if row['link_permission']['source'] else 2)
+                    json.dumps(record)
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_touch_permission_dispatch_marker_is_required(self):
+        from smoke import capture as real_capture
+        row = next(touch_permissions.cases())
+        for fault in ('missing', 'malformed', 'provider', 'identity', 'phase'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                result = real_capture(binary, invocation, cwd, *args, **kw)
+                marker = cwd / '.touch-exec.json'
+                value = json.loads(marker.read_text())
+                if fault == 'missing':
+                    marker.unlink()
+                elif fault == 'malformed':
+                    marker.write_text('{')
+                else:
+                    value[{'identity': 'euid'}.get(fault, fault)] = 'wrong'
+                    marker.write_text(json.dumps(value))
+                return result
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'touch': {'path': '/usr/bin/touch'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_link_permission_dispatch_marker_is_required(self):
+        from smoke import capture as real_capture
+        row = next(r for r in link_permissions.cases() if r['id'] == 'ln/link-permission-write-hard-file')
+        for fault in ('missing', 'malformed', 'provider', 'identity', 'phase'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                result = real_capture(binary, invocation, cwd, *args, **kw)
+                marker = cwd / '.link-exec.json'
+                value = json.loads(marker.read_text())
+                if fault == 'missing':
+                    marker.unlink()
+                elif fault == 'malformed':
+                    marker.write_text('{')
+                else:
+                    value[{'identity': 'euid'}.get(fault, fault)] = 'wrong'
+                    marker.write_text(json.dumps(value))
+                return result
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'ln': {'path': '/bin/ln'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_link_permission_oracle_rejects_corruption(self):
+        from smoke import capture as real_capture
+        row = next(r for r in link_permissions.cases() if r['id'] == 'ln/link-permission-write-hard-link')
+        original = copy.deepcopy(row)
+        for fault in ('removed', 'identity', 'content', 'mode', 'nlink', 'stdout', 'stderr', 'status'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                if fault in ('removed', 'identity'):
+                    (cwd / 'targets').chmod(0o700)
+                    (cwd / 'targets/first').rename(cwd / 'saved')
+                    if fault == 'identity':
+                        (cwd / 'targets/first').symlink_to('../referent')
+                    (cwd / 'targets').chmod(0o500)
+                elif fault == 'content':
+                    (cwd / 'referent').write_bytes(b'changed')
+                elif fault == 'mode':
+                    (cwd / 'targets').chmod(0o700)
+                elif fault == 'nlink':
+                    os.link(cwd / 'sources/first', cwd / 'extra')
+                elif fault == 'status':
+                    status = 0
+                else:
+                    output[fault] = b'unexpected' if fault == 'stdout' else b''
+                return status, output, errors
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'ln': {'path': '/bin/ln'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'], record)
+                self.assertEqual(list(Path(root).iterdir()), [])
+                self.assertEqual(row, original)
+
+    def test_link_permission_unproved_denial_prevents_dispatch(self):
+        for row in (r for r in link_permissions.cases() if r['id'] in (
+                'ln/link-permission-source-L', 'ln/link-permission-write-hard-file',
+                'ln/link-permission-search-symbolic-fifo')):
+            for error in (None, OSError(errno.EIO, 'controlled probe error')):
+                target = 'os.symlink' if row['link_permission']['symbolic'] else 'os.link'
+                real = os.symlink if row['link_permission']['symbolic'] else os.link
+                def probe(source, destination, *args, **kwargs):
+                    if Path(destination).name in ('.link-probe', '.create-probe'):
+                        if error:
+                            raise error
+                        return None
+                    return real(source, destination, *args, **kwargs)
+                with self.subTest(case=row['id'], error=error), tempfile.TemporaryDirectory() as root, \
+                        patch(target, side_effect=probe), patch('host_filesystem.smoke.capture') as capture:
+                    record = run_case(Path('/bin/sh'), {'ln': {'path': '/bin/ln'}},
+                                      os.defpath, row, 'direct', Path(root), None)
+                    self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'), record)
+                    capture.assert_not_called()
+                    self.assertTrue(record['cleanup'], record)
+                    self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_link_permission_unlink_and_partial_setup_failures(self):
+        row = next(r for r in link_permissions.cases() if r['id'] == 'ln/link-permission-write-hard-file')
+        real = Path.unlink
+        for error in (None, OSError(errno.EIO, 'controlled unlink error')):
+            def unlink(path, *args, **kwargs):
+                if path.name == '.unlink-probe' and stat.S_IMODE(path.parent.stat().st_mode) == 0o500:
+                    if error:
+                        raise error
+                    return None
+                return real(path, *args, **kwargs)
+            with tempfile.TemporaryDirectory() as root, patch.object(Path, 'unlink', unlink), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'ln': {'path': '/bin/ln'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'), record)
+                capture.assert_not_called()
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+        original = link_permissions.arm
+        def fail(directory, row):
+            original(directory, row)
+            raise OSError('controlled failure after arming')
+        with tempfile.TemporaryDirectory() as root, \
+                patch('host_filesystem.link_permissions.arm', side_effect=fail), \
+                patch('host_filesystem.smoke.capture') as capture:
+            record = run_case(Path('/bin/sh'), {'ln': {'path': '/bin/ln'}},
+                              os.defpath, row, 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            capture.assert_not_called()
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_link_permission_failure_timeout_and_symlink_cleanup(self):
+        for name in ('source-L', 'write-hard-fifo', 'search-symbolic-file'):
+            row = next(r for r in link_permissions.cases() if r['id'] == 'ln/link-permission-' + name)
+            self.check_fixture_exec_failure_and_timeout_clean_all_modes(row)
+        with tempfile.TemporaryDirectory() as root, tempfile.TemporaryDirectory() as outside:
+            root, outside = Path(root), Path(outside)
+            outside.chmod(0o751)
+            (root / 'targets').symlink_to(outside)
+            link_permissions.restore(root, row)
+            self.assertEqual(stat.S_IMODE(outside.stat().st_mode), 0o751)
+
+    def test_link_graph_matrix(self):
+        rows = list(link_graphs.cases())
+        self.assertEqual(len(rows), 29)
+        self.assertEqual(len({r['id'] for r in rows}), 29)
+        for row in rows:
+            self.assertEqual(row['ticket'], 'CSH-110')
+            self.assertEqual(row['stdout'], b'')
+            self.assertNotIn('gap', row)
+        lookup = {r['id']: r for r in rows}
+        self.assertEqual(lookup['ln/link-graph-sym-LP']['effects']['targets/sym']['same_lstat'], 'sources/sym')
+        self.assertEqual(lookup['ln/link-graph-sym-PL']['effects']['targets/sym']['same_lstat'], 'sources/first')
+        self.assertEqual(lookup['ln/link-graph-broken-L']['effects']['targets/broken'], {'type': 'absent'})
+        self.assertEqual(lookup['ln/link-graph-same-entry-symbolic']['effects']['targets/middle']['content'], b'keep\n')
+
+    def test_link_graph_oracle_rejects_corruption(self):
+        from smoke import capture as real_capture
+        row = next(r for r in link_graphs.cases() if r['id'] == 'ln/link-graph-collision-link-force')
+        original = copy.deepcopy(row)
+        for fault in ('copy', 'content', 'identity', 'mode', 'referent', 'alias', 'status', 'stdout', 'stderr'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                if fault == 'copy':
+                    (cwd / 'targets/middle').unlink()
+                    (cwd / 'targets/middle').write_bytes(b'middle\n')
+                    (cwd / 'targets/middle').chmod(0o600)
+                elif fault == 'content':
+                    (cwd / 'sources/middle').write_bytes(b'changed\n')
+                elif fault == 'identity':
+                    (cwd / 'referent').rename(cwd / 'saved')
+                    (cwd / 'referent').write_bytes(b'untouched\n')
+                    (cwd / 'referent').chmod(0o600)
+                elif fault == 'mode':
+                    (cwd / 'targets').chmod(0o755)
+                elif fault == 'referent':
+                    (cwd / 'referent').write_bytes(b'changed\n')
+                elif fault == 'alias':
+                    (cwd / 'target-alias').unlink()
+                    (cwd / 'target-alias').symlink_to('sources')
+                elif fault == 'status':
+                    status = 1
+                else:
+                    output[fault] = b'unexpected'
+                return status, output, errors
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'ln': {'path': '/bin/ln'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'], record)
+                self.assertEqual(list(Path(root).iterdir()), [])
+                self.assertEqual(row, original)
+
+    def test_link_graph_partial_setup_and_readback_prevent_dispatch(self):
+        row = next(link_graphs.cases())
+        real_symlink = Path.symlink_to
+        def partial(path, *args, **kw):
+            if path.name == 'target-alias':
+                raise OSError('controlled link fixture failure')
+            return real_symlink(path, *args, **kw)
+        real_effects = effect_errors
+        def mismatch(directory, case):
+            errors, observed = real_effects(directory, case)
+            return errors + ['controlled readback mismatch'], observed
+        for target, failure in [('pathlib.Path.symlink_to', partial),
+                                ('host_filesystem_cases.effect_errors', mismatch)]:
+            with self.subTest(target=target), tempfile.TemporaryDirectory() as root, \
+                    patch(target, failure), patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'ln': {'path': '/bin/ln'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+                capture.assert_not_called()
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_link_graph_reports_encode_setup_bytes(self):
+        row = next(link_graphs.cases())
+        for provider, verdict in [('/bin/ln', 'PASS'), ('/bin/true', 'FAIL')]:
+            with self.subTest(provider=provider), tempfile.TemporaryDirectory() as root:
+                record = run_case(Path('/bin/sh'), {'ln': {'path': provider}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], verdict, record)
+                encoded = json.loads(json.dumps(record))
+                self.assertEqual(encoded['link_graph_environment']['effects']['sources/first']['content'],
+                                 {'hex': b'first\n'.hex()})
+                self.assertTrue(encoded['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_link_graph_failure_timeout_cleanup(self):
+        row = next(r for r in link_graphs.cases() if r['id'] == 'ln/link-graph-collision-fifo-force')
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(row)
+
+    def test_removal_matrix_and_independent_effects(self):
+        rows = list(removal.cases())
+        self.assertEqual(len(rows), 19)
+        self.assertEqual(len({r['id'] for r in rows}), 19)
+        for row in rows:
+            self.assertEqual(row['stdout'], b'')
+            self.assertEqual(row['ticket'], 'CSH-109')
+        lookup = {r['id']: r for r in rows}
+        self.assertEqual(lookup['rmdir/removal-write-denied-2']['effects']['guard/child/child'], {'type': 'absent'})
+        self.assertEqual(lookup['rmdir/removal-write-denied-2']['effects']['guard/child']['type'], 'directory')
+        self.assertEqual(lookup['rmdir/removal-search-denied-2']['effects']['guard/child/child']['type'], 'directory')
+
+    def test_removal_oracle_rejects_corruption(self):
+        from smoke import capture as real_capture
+        row = next(r for r in removal.cases() if r['id'] == 'rmdir/removal-nonempty-file')
+        original = copy.deepcopy(row)
+        for fault in ('removed', 'identity', 'content', 'mode', 'stdout', 'stderr', 'status'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                if fault == 'removed':
+                    (cwd / 'after').mkdir()
+                elif fault == 'identity':
+                    (cwd / 'guard/keep').rename(cwd / 'saved')
+                    (cwd / 'guard/keep').write_bytes(b'preserve\n')
+                    (cwd / 'guard/keep').chmod(0o600)
+                elif fault == 'content':
+                    (cwd / 'guard/keep').write_bytes(b'changed\n')
+                elif fault == 'mode':
+                    (cwd / 'guard').chmod(0o755)
+                elif fault == 'status':
+                    status = 0
+                else:
+                    output[fault] = b'unexpected' if fault == 'stdout' else b''
+                return status, output, errors
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'rmdir': {'path': '/bin/rmdir'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'], record)
+                self.assertEqual(list(Path(root).iterdir()), [])
+                self.assertEqual(row, original)
+
+    def test_removal_partial_setup_and_unproved_denial_prevent_dispatch(self):
+        row = next(r for r in removal.cases() if r['removal_denial'] == 'search')
+        original = removal.setup
+        def fail(directory, case):
+            original(directory, case)
+            (directory / 'guard').chmod(0)
+            raise OSError('controlled partial removal setup')
+        for target, failure in [('setup', fail), ('arm', OSError('controlled probe failure'))]:
+            with self.subTest(target=target), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.removal.' + target, side_effect=failure), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'rmdir': {'path': '/bin/rmdir'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+                capture.assert_not_called()
+                self.assertTrue(record['cleanup'], record)
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_removal_probe_requires_eacces_and_restores_access(self):
+        row = next(r for r in removal.cases() if r['removal_denial'] == 'write')
+        for error in (None, OSError(errno.EIO, 'controlled probe error')):
+            with self.subTest(error=error), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                environment = removal.setup(root, row)
+                original = Path.rmdir
+                def probe(path):
+                    if path.name == '.removal-probe' and stat.S_IMODE(path.parent.stat().st_mode) == 0o500:
+                        if error:
+                            raise error
+                        return None
+                    return original(path)
+                with patch.object(Path, 'rmdir', probe), self.assertRaises(OSError):
+                    removal.arm(root, row, environment)
+                self.assertNotIn('denial', environment)
+                self.assertEqual(stat.S_IMODE((root / 'guard').stat().st_mode), 0o700)
+                self.assertFalse((root / 'guard/.removal-probe').exists())
+
+    def test_removal_failure_timeout_and_symlink_cleanup(self):
+        for denial in ('write', 'search'):
+            row = next(r for r in removal.cases() if r['removal_denial'] == denial)
+            self.check_fixture_exec_failure_and_timeout_clean_all_modes(row)
+        with tempfile.TemporaryDirectory() as root, tempfile.TemporaryDirectory() as outside:
+            root, outside = Path(root), Path(outside)
+            outside.chmod(0o751)
+            (root / 'guard').symlink_to(outside)
+            removal.restore(root, row)
+            self.assertEqual(stat.S_IMODE(outside.stat().st_mode), 0o751)
+
+    def test_parent_graph_matrix_and_preserved_objects(self):
+        rows = list(creation.parent_graph_cases())
+        self.assertEqual(len(rows), 60)
+        self.assertEqual(len({r['id'] for r in rows}), 60)
+        for mask in (0o027, 0o077, 0o777):
+            self.assertEqual(sum(r['creation_mask'] == mask for r in rows), 20)
+        for row in rows:
+            self.assertEqual(row['effects']['existing']['mode'], 0o751)
+            self.assertEqual(row['effects']['absent'], {'type': 'absent'})
+        restrictive = next(r for r in rows if r['id'] == 'mkdir/parent-graph-777-empty-shared')
+        self.assertEqual(restrictive['effects']['existing/new']['mode'], 0o300)
+        self.assertEqual(restrictive['effects']['existing/new/a/left']['mode'], 0)
+
+    def test_parent_graph_oracle_rejects_corruption(self):
+        from smoke import capture as real_capture
+        row = next(r for r in creation.parent_graph_cases()
+                   if r['id'] == 'mkdir/parent-graph-777-empty-shared')
+        original = copy.deepcopy(row)
+        for fault in ('parent', 'leaf', 'existing', 'identity', 'symlink', 'stdout', 'stderr', 'status', 'mask'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                if fault in ('parent', 'leaf', 'existing'):
+                    path = {'parent': 'existing/new', 'leaf': 'existing/new/a/right', 'existing': 'existing'}[fault]
+                    (cwd / path).chmod(0o755)
+                elif fault == 'identity':
+                    (cwd / 'existing').rename(cwd / 'saved')
+                    (cwd / 'existing').mkdir(mode=0o751)
+                    # Keep a second reference so the old inode cannot be reused.
+                    (cwd / 'saved').rename(cwd / 'existing/old')
+                    (cwd / 'existing/old/new').chmod(0o700)
+                    (cwd / 'existing/old/new/a').chmod(0o700)
+                    for name in ('left', 'right'):
+                        (cwd / ('existing/old/new/a/' + name)).chmod(0o700)
+                elif fault == 'symlink':
+                    (cwd / 'parent-alias').unlink()
+                    (cwd / 'parent-alias').symlink_to('tree')
+                elif fault == 'mask':
+                    (cwd / creation.MARKER).unlink()
+                elif fault == 'status':
+                    status = 1
+                else:
+                    output[fault] = b'unexpected'
+                return status, output, errors
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'mkdir': {'path': '/bin/mkdir'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'], record)
+                self.assertEqual(list(Path(root).iterdir()), [])
+                self.assertEqual(row, original)
+
+    def test_parent_graph_timeout_restores_restrictive_tree(self):
+        row = next(r for r in creation.parent_graph_cases()
+                   if r['id'] == 'mkdir/parent-graph-777-empty-shared')
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                provider = root / 'mkdir'
+                provider.write_text('#!' + sys.executable + ' -S\n'
+                    'import os,time\n'
+                    'for name in ("existing/new", "existing/new/a", "existing/new/a/left", "existing/new/a/right"):\n'
+                    ' os.mkdir(name); os.chmod(name, 0o700)\n'
+                    'for name in ("existing/new/a/left", "existing/new/a/right"):\n'
+                    ' os.chmod(name, 0)\n'
+                    'os.chmod("existing/new", 0o300); os.chmod("existing/new/a", 0o300)\n'
+                    'print("armed", flush=True)\ntime.sleep(60)\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'mkdir': {'path': str(provider)}},
+                                  str(root), row, mode, root, None, timeout=1)
+                self.assertEqual(record['captured']['stdout'], {'hex': b'armed\n'.hex()})
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertTrue(any('timeout' in e for e in record['errors']))
+                self.assertTrue(record['cleanup'], record)
+                self.assertEqual(list(root.iterdir()), [provider])
+                with self.assertRaises(ProcessLookupError):
+                    os.kill(record['creation_environment']['pid'], 0)
+
+    def test_parent_graph_partial_setup_does_not_dispatch(self):
+        original = creation.setup
+        def fail(directory, row):
+            original(directory, row)
+            (directory / 'existing/new').mkdir(mode=0)
+            raise OSError('controlled partial parent graph setup')
+        with tempfile.TemporaryDirectory() as root, \
+                patch('host_filesystem.creation.setup', side_effect=fail), \
+                patch('host_filesystem.smoke.capture') as capture:
+            record = run_case(Path('/bin/sh'), {'mkdir': {'path': '/bin/mkdir'}},
+                              os.defpath, next(creation.parent_graph_cases()), 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            capture.assert_not_called()
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_parent_graph_exec_failure_timeout_and_cleanup_symlink_boundary(self):
+        row = next(r for r in creation.parent_graph_cases()
+                   if r['id'] == 'mkdir/parent-graph-777-empty-shared')
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(row)
+        with tempfile.TemporaryDirectory() as root, tempfile.TemporaryDirectory() as outside:
+            root, outside = Path(root), Path(outside)
+            outside.chmod(0o751)
+            (outside / 'new').mkdir(mode=0o751)
+            (root / 'existing').symlink_to(outside)
+            creation.restore(root, row)
+            self.assertEqual(stat.S_IMODE(outside.stat().st_mode), 0o751)
+            self.assertEqual(stat.S_IMODE((outside / 'new').stat().st_mode), 0o751)
+
+    def test_omitted_who_matrix_and_independent_modes(self):
+        rows = list(creation.omitted_who_cases())
+        self.assertEqual(len(rows), 72)
+        for utility in ('mkdir', 'mkfifo'):
+            selected = [r for r in rows if r['utility'] == utility]
+            self.assertEqual(len(selected), 36)
+            for mask in (0o027, 0o077, 0o777):
+                self.assertEqual(len([r for r in selected if r['creation_mask'] == mask]), 12)
+        lookup = {r['id']: r for r in rows}
+        # '=' clears masked bits too; copying must not retain prior group r.
+        self.assertEqual(lookup['mkdir/omitted-who-077-copy-assign']['effects']['created']['mode'], 0o600)
+        self.assertEqual(lookup['mkfifo/omitted-who-777-copy-assign']['effects']['created']['mode'], 0)
+        self.assertEqual(lookup['mkdir/omitted-who-027-conditional-execute']['effects']['created']['mode'], 0o110)
+        self.assertEqual(lookup['mkfifo/omitted-who-027-conditional-execute']['effects']['created']['mode'], 0)
+
+    def test_omitted_who_rejects_wrong_mode_channels_status_and_unarmed_mask(self):
+        from smoke import capture as real_capture
+        row = next(r for r in creation.omitted_who_cases() if r['id'] == 'mkdir/omitted-who-777-empty-assign')
+        original = copy.deepcopy(row)
+        for fault in ('mode', 'stdout', 'stderr', 'status', 'mask'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                if fault == 'mode':
+                    (cwd / 'created').chmod(0o640)
+                elif fault == 'mask':
+                    marker = cwd / creation.MARKER
+                    data = json.loads(marker.read_text()); data['observed_mask'] = 0
+                    marker.write_text(json.dumps(data))
+                elif fault == 'status':
+                    status = 1
+                else:
+                    output[fault] = b'unexpected'
+                return status, output, errors
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'mkdir': {'path': '/bin/mkdir'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+                self.assertEqual(row, original)
+
+    def test_omitted_who_partial_setup_failure_prevents_execution(self):
+        row = next(creation.omitted_who_cases())
+        def fail(directory, row):
+            (directory / 'created').mkdir(mode=0)
+            raise OSError('controlled partial creation setup')
+        with tempfile.TemporaryDirectory() as root, \
+                patch('host_filesystem.creation.setup', side_effect=fail), \
+                patch('host_filesystem.smoke.capture') as capture:
+            record = run_case(Path('/bin/sh'), {'mkdir': {'path': '/bin/mkdir'}},
+                              os.defpath, row, 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            capture.assert_not_called()
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_omitted_who_exec_failure_and_timeout_clean_all_modes(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(creation.omitted_who_cases()))
+
+    def test_creation_cases_and_immutable_spec(self):
+        import shutil
+        rows = list(creation.cases())
+        self.assertEqual(len(rows), 26)
+        for row in rows:
+            original = copy.deepcopy(row)
+            provider = shutil.which(row['utility'], path=os.defpath)
+            with self.subTest(case=row['id']), tempfile.TemporaryDirectory() as root:
+                record = run_case(Path('/bin/sh'), {row['utility']: {'path': provider}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'PASS', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(record['creation_environment']['observed_mask'], row['creation_mask'])
+                self.assertEqual(row, original)
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_creation_marker_output_status_and_effect_corruption(self):
+        from smoke import capture as real_capture
+        row = next(r for r in creation.cases() if r.get('creation_parents'))
+        for fault in ('missing', 'malformed', 'list', 'phase', 'provider', 'requested_mask',
+                      'observed_mask', 'directory_mode', 'fifo_mode', 'uid', 'euid', 'pid',
+                      'stdout', 'stderr', 'status', 'effect', 'identity'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                marker = cwd / creation.MARKER
+                if fault == 'missing':
+                    marker.unlink()
+                elif fault == 'malformed':
+                    marker.write_text('{')
+                elif fault == 'list':
+                    marker.write_text('[]')
+                elif fault == 'effect':
+                    (cwd / 'existing/new').chmod(0o700)
+                elif fault == 'identity':
+                    (cwd / 'existing').rename(cwd / 'old-existing')
+                    (cwd / 'existing').mkdir(mode=0o751)
+                elif fault in ('stdout', 'stderr'):
+                    output[fault] = b'corrupt\n'
+                elif fault == 'status':
+                    status = 1
+                else:
+                    data = json.loads(marker.read_text())
+                    data[fault] = 'corrupt'
+                    marker.write_text(json.dumps(data))
+                return status, output, errors
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'mkdir': {'path': '/bin/mkdir'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'], record)
+
+    def test_creation_partial_setup_failure_never_dispatches(self):
+        row = next(r for r in creation.cases() if r.get('creation_parents'))
+        real_setup = creation.setup
+        def fail(directory, row):
+            real_setup(directory, row)
+            raise OSError('injected failure after private setup')
+        with tempfile.TemporaryDirectory() as root, \
+                patch('host_filesystem.creation.setup', side_effect=fail), \
+                patch('host_filesystem.smoke.capture') as capture:
+            record = run_case(Path('/bin/sh'), {'mkdir': {'path': '/bin/mkdir'}},
+                              os.defpath, row, 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            capture.assert_not_called()
+            self.assertTrue(record['cleanup'])
+
+    def test_creation_helper_failure_cannot_satisfy_expected_utility_error(self):
+        row = next(r for r in creation.cases() if r['status'] == 'nonzero')
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                provider = Path(root) / 'mkdir'
+                provider.write_text('#!/nonexistent-csh092-interpreter\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'mkdir': {'path': str(provider)}},
+                                  os.defpath, row, mode, Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertEqual(record['creation_environment']['phase'], 'exec-failure')
+                self.assertTrue(record['cleanup'])
+
+    def test_creation_wrong_probe_and_partial_helper_cleanup(self):
+        import subprocess
+        wrapper = str(Path(__file__).with_name('host_filesystem_creation_exec.py'))
+        for fault in ('wrong-mask', 'wrong-mode', 'fifo-failure'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root:
+                script = r'''import os, runpy, sys
+from unittest.mock import patch
+wrapper, fault = sys.argv[1:]
+sys.argv = [wrapper, '777', '/bin/true']
+real_umask, real_stat = os.umask, os.stat
+def umask(mask):
+ result = real_umask(mask)
+ return 0 if fault == 'wrong-mask' else result
+def stat(path, *a, **kw):
+ info = real_stat(path, *a, **kw)
+ if path == '.creation-probe-dir':
+  values = list(info); values[0] |= 0o777
+  return os.stat_result(values)
+ return info
+with patch('os.umask', side_effect=umask) if fault == 'wrong-mask' else patch('os.stat', side_effect=stat) if fault == 'wrong-mode' else patch('os.mkfifo', side_effect=OSError('injected')):
+ runpy.run_path(wrapper, run_name='__main__')
+'''
+                result = subprocess.run([sys.executable, '-c', script, wrapper, fault],
+                                        cwd=root, capture_output=True, timeout=5)
+                self.assertEqual(result.returncode, 125, result)
+                marker = json.loads((Path(root) / creation.MARKER).read_text())
+                self.assertEqual(marker['phase'], 'setup-failure')
+                creation.restore(Path(root), {'creation_mask': 0o777})
+
+    def test_creation_timeout_reaps_provider_and_restores_restrictive_directories(self):
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                provider = root / 'mkdir'
+                provider.write_text('#!/bin/sh\n/bin/mkdir created\nprintf "%s\\n" "$$"\nexec /bin/sleep 60\n')
+                provider.chmod(0o700)
+                row = next(creation.cases())
+                row['creation_mask'] = 0o777
+                record = run_case(Path('/bin/sh'), {'mkdir': {'path': str(provider)}},
+                                  os.defpath, row, mode, root, None, timeout=1)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                self.assertTrue(record['cleanup'])
+                pid = int(bytes.fromhex(record['actual']['stdout']['hex']))
+                deadline = time.monotonic() + 2
+                while True:
+                    try:
+                        os.kill(pid, 0)
+                    except ProcessLookupError:
+                        break
+                    self.assertLess(time.monotonic(), deadline, 'timed-out provider was not reaped')
+                    time.sleep(.02)
+                self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_cwd_namespace_cases_and_immutable_spec(self):
+        for row in cwd_cases.cases():
+            original = copy.deepcopy(row)
+            with self.subTest(case=row['id']), tempfile.TemporaryDirectory() as root:
+                record = run_case(Path('/bin/sh'), {'pwd': {'path': '/bin/pwd'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'PASS', record)
+                self.assertTrue(record['cleanup'])
+                marker = record['cwd_environment']
+                self.assertEqual(marker['before'], marker['after'])
+                self.assertEqual(marker['old_path_errno'], errno.ENOENT)
+                self.assertEqual(row, original)
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_cwd_marker_and_output_status_effect_corruption(self):
+        from smoke import capture as real_capture
+        row = next(cwd_cases.cases())
+        for fault in ('missing', 'malformed', 'list', 'phase', 'provider', 'action',
+                      'before', 'after', 'old_path_errno', 'getcwd_errno', 'getcwd',
+                      'stdout', 'stderr', 'status', 'effect'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                status, output, errors = real_capture(binary, invocation, cwd, *args, **kw)
+                marker = cwd / cwd_cases.MARKER
+                if fault == 'missing':
+                    marker.unlink()
+                elif fault == 'malformed':
+                    marker.write_text('{')
+                elif fault == 'list':
+                    marker.write_text('[]')
+                elif fault == 'effect':
+                    (cwd / 'cwd-renamed').rmdir()
+                elif fault in ('stdout', 'stderr'):
+                    output[fault] = b'corrupt\n'
+                elif fault == 'status':
+                    status = 1
+                else:
+                    data = json.loads(marker.read_text())
+                    data[fault] = 'corrupt'
+                    marker.write_text(json.dumps(data))
+                return status, output, errors
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'pwd': {'path': '/bin/pwd'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_cwd_setup_failure_does_not_dispatch(self):
+        real_mkdir = Path.mkdir
+        def partial_setup(path, *args, **kw):
+            if path.name == 'cwd-leaf':
+                path.parent.mkdir(exist_ok=True)
+                raise OSError('injected cwd setup failure')
+            return real_mkdir(path, *args, **kw)
+        with tempfile.TemporaryDirectory() as root, \
+                patch('pathlib.Path.mkdir', autospec=True, side_effect=partial_setup), \
+                patch('host_filesystem.smoke.capture') as capture:
+            record = run_case(Path('/bin/sh'), {'pwd': {'path': '/bin/pwd'}}, os.defpath,
+                              next(cwd_cases.cases()), 'direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            capture.assert_not_called()
+            self.assertTrue(record['cleanup'])
+
+    def test_cwd_exec_failure_cannot_satisfy_deleted_directory_error(self):
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            row = next(r for r in cwd_cases.cases() if r['cwd_action'] == 'delete-parent')
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                provider = Path(root) / 'pwd'
+                provider.write_text('#!/nonexistent-csh091-interpreter\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'pwd': {'path': str(provider)}},
+                                  os.defpath, row, mode, Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertEqual(record['cwd_environment']['phase'], 'exec-failure')
+                self.assertTrue(record['cleanup'])
+
+    def test_cwd_wrapper_wrong_probe_and_partial_mutation(self):
+        import subprocess
+        wrapper = str(Path(__file__).with_name('host_filesystem_cwd_exec.py'))
+        # Fault injection is confined to this helper regression subprocess. It
+        # never contributes provider evidence or changes the parent process cwd.
+        for fault in ('wrong-getcwd', 'getcwd-error', 'wrong-stat', 'remove-parent'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root:
+                (Path(root) / 'cwd-parent/cwd-leaf').mkdir(parents=True)
+                code = '''import os,runpy,sys
+from unittest.mock import patch
+wrapper,fault=sys.argv[1:]
+root=os.getcwd()
+real_stat=os.stat
+real_rmdir=os.rmdir
+real_getcwd=os.getcwd
+def stat(path,*a,**kw):
+ if path.endswith('/cwd-parent/cwd-leaf'): raise PermissionError(13,'injected')
+ return real_stat(path,*a,**kw)
+def rmdir(path,*a,**kw):
+ if path.endswith('/cwd-parent'): raise PermissionError(13,'injected')
+ return real_rmdir(path,*a,**kw)
+calls=0
+def getcwd():
+ global calls
+ calls+=1
+ if calls==1: return root
+ if fault=='wrong-getcwd': return root
+ raise PermissionError(13,'injected')
+sys.argv=[wrapper,'delete-parent','/bin/pwd','-P']
+target,value=('os.stat',stat) if fault=='wrong-stat' else ('os.rmdir',rmdir) if fault=='remove-parent' else ('os.getcwd',getcwd)
+with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__')
+'''
+                completed = subprocess.run([sys.executable, '-S', '-c', code, wrapper, fault],
+                                           cwd=root, capture_output=True, timeout=5)
+                self.assertEqual(completed.returncode, 125, completed.stderr)
+                marker = json.loads((Path(root) / cwd_cases.MARKER).read_text())
+                self.assertEqual(marker['phase'], 'setup-failure')
+
+    def test_cwd_timeout_reaps_provider_and_cleans_every_mode(self):
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            row = next(r for r in cwd_cases.cases() if r['cwd_action'] == 'delete-parent')
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                provider = root / 'pwd'
+                # /bin/sh can start in a deleted cwd on both supported hosts.
+                provider.write_text('#!/bin/sh\nprintf "%s\\n" "$$"\nexec /bin/sleep 60\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'pwd': {'path': str(provider)}},
+                                  os.defpath, row, mode, root, None, timeout=1)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                self.assertTrue(record['cleanup'])
+                pid = int(bytes.fromhex(record['actual']['stdout']['hex']))
+                deadline = time.monotonic() + 2
+                while True:
+                    try:
+                        os.kill(pid, 0)
+                    except ProcessLookupError:
+                        break
+                    self.assertLess(time.monotonic(), deadline, 'timed-out provider was not reaped')
+                    time.sleep(.02)
+                self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_path_limit_probe_keeps_spelling_and_counts_nul(self):
+        for row in path_limits.cases():
+            with self.subTest(case=row['id']), tempfile.TemporaryDirectory() as root:
+                environment = path_limits.setup(Path(root), row)
+                limit = environment['selected_limit']
+                self.assertEqual(limit, 256 if row['portable'] else os.pathconf(root, 'PC_PATH_MAX'))
+                for delta, measured in zip(row['deltas'], environment['measurements']):
+                    self.assertEqual(measured['bytes'], limit + delta)
+                    self.assertEqual(measured['bytes_with_nul'], limit + delta + 1)
+                    self.assertLessEqual(max(map(len, measured['operand'].split('/'))), 2)
+                    if measured['bytes'] >= environment['path_max']:
+                        self.assertEqual(measured['errno'], errno.ENAMETOOLONG)
+                    else:
+                        self.assertEqual(measured['errno'], errno.ENOENT if measured['missing'] else 0)
+
+    def test_path_limit_diagnostics_require_each_complete_operand(self):
+        row = next(r for r in path_limits.cases() if r.get('missing_middle'))
+        with tempfile.TemporaryDirectory() as root:
+            path_limits.setup(Path(root), row)
+            names = [name.encode() for name in row['diagnostic_operands']]
+            good = b''.join(b'pathchk: ' + name + b': pathname too long\n' for name in names)
+            self.assertTrue(stderr_matches(row, good))
+            for bad in (b'', good.splitlines(keepends=True)[0], good * 2,
+                        good.replace(names[1], b'other'), good + b'extra diagnostic\n',
+                        good.replace(b'pathname too long', b'permission denied'), good.rstrip(b'\n'),
+                        b'\n'.join(names) + b'\n'):
+                self.assertFalse(stderr_matches(row, bad))
+
+    def test_path_limit_setup_errors_clean_fixture_without_dispatch(self):
+        row = next(path_limits.cases())
+        real_stat = os.stat
+        def wrong_probe(path, *args, **kw):
+            if isinstance(path, str) and path.startswith('./'):
+                raise OSError(errno.EACCES, 'injected wrong boundary')
+            return real_stat(path, *args, **kw)
+        real_mkdir = Path.mkdir
+        def partial_setup(path, *args, **kw):
+            if path.name == 'aa':
+                raise OSError('injected mkdir failure')
+            return real_mkdir(path, *args, **kw)
+        for fault in ('indeterminate', 'too-large', 'probe', 'partial-setup'):
+            target, value = {
+                'indeterminate': ('host_filesystem_path_limits.os.pathconf', dict(return_value=-1)),
+                'too-large': ('host_filesystem_path_limits.os.pathconf', dict(return_value=999999)),
+                'probe': ('host_filesystem_path_limits.os.stat', dict(side_effect=wrong_probe)),
+                'partial-setup': ('pathlib.Path.mkdir', dict(autospec=True, side_effect=partial_setup)),
+            }[fault]
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch(target, **value), patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'pathchk': {'path': '/usr/bin/pathchk'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+                capture.assert_not_called()
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_path_limit_output_status_effect_failures_and_immutable_spec(self):
+        row = next(r for r in path_limits.cases() if r['deltas'] == [0])
+        original = copy.deepcopy(row)
+        for fault in ('none', 'stdout', 'status', 'diagnostic', 'effect'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                name = invocation['args'][-1].encode()
+                if fault == 'effect':
+                    (cwd / 'a').rmdir()
+                return (0 if fault == 'status' else 1), dict(
+                    stdout=b'wrong' if fault == 'stdout' else b'',
+                    stderr=b'' if fault == 'diagnostic' else b'pathchk: ' + name + b': too long\n'), []
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'pathchk': {'path': '/usr/bin/pathchk'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'PASS' if fault == 'none' else 'FAIL')
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(row, original)
+
+    def test_path_limit_timeout_reaps_child_and_cleans_every_mode(self):
+        row = next(path_limits.cases())
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                provider = root / 'pathchk'
+                provider.write_text('#!' + sys.executable + ' -S\nimport os,time\n'
+                                    'print(os.getpid(),flush=True)\ntime.sleep(60)\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'pathchk': {'path': str(provider)}},
+                                  str(root) + ':' + os.defpath, row, mode, root, None, timeout=1)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertTrue(any('timeout' in error for error in record['errors']))
+                pid = int(bytes.fromhex(record['actual']['stdout']['hex']))
+                # A non-optimizing /bin/sh may leave its killed child to the
+                # container init. Require disappearance within a separate bound,
+                # including zombies, rather than depending on scheduler order.
+                deadline = time.monotonic() + 2
+                while True:
+                    try:
+                        os.kill(pid, 0)
+                    except ProcessLookupError:
+                        break
+                    self.assertLess(time.monotonic(), deadline, 'timed-out child was not reaped')
+                    time.sleep(0.01)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_simple_terminal_prompt_accepts_provider_spelling_on_either_host(self):
+        row = next(r for r in terminal_cases() if r['response'] == 'n')
+        for mode in row['modes']:
+            prefix = b'/selected/rm' if mode == 'pty-direct' else b'rm'
+            apple = b'remove data? '
+            gnu = prefix + b": remove regular file 'data'? "
+            for output in (apple, gnu, gnu + b'junk', gnu.replace(b'data', b'other'), b''):
+                with self.subTest(mode=mode, output=output), tempfile.TemporaryDirectory() as root, \
+                        patch('host_filesystem.smoke.capture', return_value=(0, dict(output=output), [])):
+                    record = run_case(Path('/bin/sh'), {'rm': {'path': '/selected/rm'}}, os.defpath,
+                                      row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS' if output in (apple, gnu) else 'FAIL')
+                    self.assertTrue(record['cleanup'])
+
+    def test_nested_decline_requires_parent_prompt_and_diagnostic(self):
+        row = next(r for r in recursive.cases() if r['id'] == 'rm/recursive-declined-descent-parent-y')
+        descend = b"/bin/rm: descend into directory 'branch'? "
+        child = b"/bin/rm: descend into directory 'branch/sub'? "
+        parent = b"/bin/rm: remove directory 'branch'? "
+        diagnostic = b"/bin/rm: cannot remove 'branch': Directory not empty\n"
+        later = b"/bin/rm: remove regular file 'second'? "
+        good = descend + child + parent + diagnostic + later
+        self.assertTrue(decisions.output_matches(row, '/bin/rm', good))
+        for bad in (good.replace(parent, b''), good.replace(diagnostic, b''),
+                    good.replace(parent, child), good.replace(later, b''),
+                    good.replace(diagnostic, diagnostic.replace(b'branch', b'elsewhere')),
+                    good.replace(diagnostic, diagnostic.replace(b'branch', b'branch/sub')),
+                    good + parent, descend + child + diagnostic + parent + later):
+            self.assertFalse(decisions.output_matches(row, '/bin/rm', bad))
+
+    def test_nested_decline_rejects_wrong_effect_status_and_output_channel(self):
+        row = next(r for r in recursive.cases() if r['id'] == 'rm/recursive-nested-link-n')
+        transcript = (b'examine files in directory branch? '
+                      b'examine files in directory branch/sub? '
+                      b'remove branch/sub/link? remove branch/sub? remove branch? remove second? ')
+        for fault in ('none', 'retained-child', 'outside', 'continuation', 'status', 'stdout'):
+            def capture(binary, invocation, cwd, *args, **kw):
+                (cwd / '.prompt-environment.json').write_text(json.dumps(dict(
+                    phase='armed', provider='/bin/rm', stdin_tty=True, stderr_tty=True,
+                    stdout_tty=False, foreground=True)))
+                (cwd / '.prompt-stdout').write_bytes(b'wrong channel' if fault == 'stdout' else b'')
+                if fault != 'continuation':
+                    (cwd / 'second').unlink()
+                if fault == 'retained-child':
+                    (cwd / 'branch/sub/link').unlink()
+                if fault == 'outside':
+                    (cwd / 'outside/leaf').unlink()
+                return (1 if fault == 'status' else 0), dict(output=transcript), []
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'rm': {'path': '/bin/rm'}}, os.defpath,
+                                  row, 'pty-direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'PASS' if fault == 'none' else 'FAIL')
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_nested_partial_setup_failure_cleans_fixture(self):
+        row = next(r for r in recursive.cases() if r['id'] == 'rm/recursive-nested-link-n')
+        with tempfile.TemporaryDirectory() as root, \
+                patch.object(Path, 'symlink_to', side_effect=OSError('injected setup failure')), \
+                patch('host_filesystem.smoke.capture') as capture:
+            record = run_case(Path('/bin/sh'), {'rm': {'path': '/bin/rm'}}, os.defpath,
+                              row, 'pty-direct', Path(root), None)
+            self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+            capture.assert_not_called()
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_nested_timeout_after_decline_cleans_every_terminal_mode(self):
+        row = next(r for r in recursive.cases() if r['id'] == 'rm/recursive-declined-descent-parent-n')
+        for mode in decisions.MODES:
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                root = Path(root)
+                provider = root / 'slow-rm'
+                provider.write_text('#!' + sys.executable + ' -S\nimport os,sys,time\n'
+                                    'print(os.getpid(),flush=True)\n'
+                                    'for target in ("branch", "branch/sub"):\n'
+                                    ' sys.stderr.write(target+"? "); sys.stderr.flush()\n'
+                                    ' response=sys.stdin.readline()\n'
+                                    'sys.stderr.write("declined="+response); sys.stderr.flush()\n'
+                                    'time.sleep(60)\n')
+                provider.chmod(0o700)
+                record = run_case(Path('/bin/sh'), {'rm': {'path': str(provider)}}, os.defpath,
+                                  row, mode, root, None, timeout=1)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertIn(b'declined=n', bytes.fromhex(record['terminal_output']['hex']))
+                self.assertTrue(any('timeout' in e for e in record['errors']))
+                pid = int(bytes.fromhex(record['actual']['stdout']['hex']))
+                with self.assertRaises(ProcessLookupError):
+                    os.kill(pid, 0)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(root.iterdir()), [provider])
+
     def test_metadata_listing_rejects_corrupt_fields_and_extra_lines(self):
         row = next(r for r in metadata.cases() if r['id'] == 'ls/metadata-numeric-regular')
         with tempfile.TemporaryDirectory() as root:
@@ -89,8 +2232,18 @@ class FilesystemHarnessTests(unittest.TestCase):
                 self.assertEqual(record['verdict'], 'FAIL')
                 self.assertTrue(any('timeout' in e for e in record['errors']))
                 pid = int(bytes.fromhex(record['actual']['stdout']['hex']))
-                with self.assertRaises(ProcessLookupError):
-                    os.kill(pid, 0)
+                # A killed shell child can briefly remain a zombie while the
+                # container init reaps it. Still require actual PID disappearance
+                # within the same bounded reaping window used by other fixtures.
+                deadline = time.monotonic() + 2
+                while True:
+                    try:
+                        os.kill(pid, 0)
+                    except ProcessLookupError:
+                        break
+                    if time.monotonic() >= deadline:
+                        self.fail('metadata timeout child survived cleanup')
+                    time.sleep(0.01)
                 self.assertTrue(record['cleanup'])
                 self.assertEqual(list(root.iterdir()), [provider])
 
@@ -435,7 +2588,7 @@ class FilesystemHarnessTests(unittest.TestCase):
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -483,6 +2636,30 @@ class FilesystemHarnessTests(unittest.TestCase):
             self.assertEqual(row['next_owner'], utility_owner(row['utility']))
             self.assertEqual(row['status'], 'open')
             self.assertTrue(all(row[key] for key in ('reason', 'required_environment', 'remaining', 'implementation_owner')))
+        link = next(r for r in ledger['utilities'] if r['utility'] == 'readlink')
+        self.assertEqual(set(link['csh106_assertions']), {r['id'] for r in link_bytes.cases()})
+        self.assertTrue(set(link['csh106_assertions']) <= set(link['assertions']))
+        for utility in ('mkdir', 'mkfifo'):
+            entry = next(r for r in ledger['utilities'] if r['utility'] == utility)
+            self.assertEqual(set(entry['csh107_assertions']),
+                             {r['id'] for r in creation.omitted_who_cases() if r['utility'] == utility})
+            self.assertTrue(set(entry['csh107_assertions']) <= set(entry['assertions']))
+        entry = next(r for r in ledger['utilities'] if r['utility'] == 'mkdir')
+        self.assertEqual(set(entry['csh108_assertions']), {r['id'] for r in creation.parent_graph_cases()})
+        self.assertTrue(set(entry['csh108_assertions']) <= set(entry['assertions']))
+        entry = next(r for r in ledger['utilities'] if r['utility'] == 'rmdir')
+        self.assertEqual(set(entry['csh109_assertions']), {r['id'] for r in removal.cases()})
+        self.assertTrue(set(entry['csh109_assertions']) <= set(entry['assertions']))
+        entry = next(r for r in ledger['utilities'] if r['utility'] == 'ln')
+        self.assertEqual(set(entry['csh110_assertions']), {r['id'] for r in link_graphs.cases()})
+        self.assertTrue(set(entry['csh110_assertions']) <= set(entry['assertions']))
+        self.assertEqual(set(entry['csh111_assertions']), {r['id'] for r in link_permissions.cases()})
+        self.assertTrue(set(entry['csh111_assertions']) <= set(entry['assertions']))
+        entry = next(r for r in ledger['utilities'] if r['utility'] == 'touch')
+        self.assertEqual(set(entry['csh112_assertions']), {r['id'] for r in touch_permissions.cases()})
+        self.assertTrue(set(entry['csh112_assertions']) <= set(entry['assertions']))
+        self.assertEqual(set(entry['csh113_assertions']), {r['id'] for r in touch_current.cases()})
+        self.assertTrue(set(entry['csh113_assertions']) <= set(entry['assertions']))
         manifest = json.loads((root / 'host_contracts.json').read_text())
         conditions = {c for owner in manifest['owners'] if 'basename' in owner['utilities'] for c in owner['conditions']}
         self.assertEqual({r['id'] for r in ledger['conditions']}, conditions)
@@ -601,7 +2778,7 @@ class FilesystemHarnessTests(unittest.TestCase):
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

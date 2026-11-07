@@ -1,0 +1,16 @@
+{
+  "retrieved": "2026-10-13",
+  "sources": [
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html",
+      "sha256": "7ea788ea4ed4cc0f309bfc9681b650da0cbcec9d535604cb12bfd57fbddb9839",
+      "sections": [
+        "DESCRIPTION 2b-2e",
+        "DESCRIPTION 3-4",
+        "STDERR",
+        "EXIT STATUS"
+      ],
+      "retrieval": "Direct HTTPS via curl; web reader returned HTTP 403."
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "base_and_overlay_images": [
+    {
+      "id": "sha256:597465ed2d4eee74a4eba9b70fa1799a57efbbf1cb02ce7b84bb6e0e707f2bb4",
+      "tags": [
+        "cshell-test:csh-093"
+      ],
+      "created": "2026-10-17T18:13:57.327402797Z",
+      "architecture": "arm64",
+      "os": "linux"
+    },
+    {
+      "id": "sha256:7d4c0e88f7bec5c8e14e24543cc32c6fe8931c04b1be821c19e5ce473fa32a24",
+      "tags": [
+        "cshell-test:csh-094"
+      ],
+      "created": "2026-10-18T18:56:27.248304919Z",
+      "architecture": "arm64",
+      "os": "linux"
+    }
+  ],
+  "container": {
+    "image": "sha256:7d4c0e88f7bec5c8e14e24543cc32c6fe8931c04b1be821c19e5ce473fa32a24",
+    "user": "cshell",
+    "working_directory": "/work",
+    "command": [
+      "python3",
+      "/work/validate-csh094.py",
+      "linux"
+    ],
+    "init": true,
+    "privileged": false,
+    "mounts": [],
+    "exit_code": 0
+  },
+  "final_source_identity_sha256": "19e3d7f06c93c3f80f82cb7ea4ad4bf9662067b774b09379d3a2b7d0ccde5568"
+}
