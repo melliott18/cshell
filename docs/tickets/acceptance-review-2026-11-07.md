@@ -59,3 +59,13 @@ The implementation merge is `13f57750b1bbd77c97396a75721c1486983f8b53`. Every ac
 - [CSH-079](CSH-079-formatted-output-residuals.md): The checked criteria cover a bounded investigation and individual dispositions. The ticket explicitly retains Darwin libc-internal allocation, other locale/format/signal partitions and the unresolved original low-stack observation; it is not ready for whole-ticket closure.
 
 CSH-073 is reopened because its automatic issue closure did not satisfy its remaining acceptance criteria. The other two remain open. No acceptance is inferred from a checked box alone.
+
+## Subsequent 073/074/079 implementation review
+
+The [contract continuation](../evidence/host-contract-continuation-2026-11-07/README.md)
+repairs paste and patch behavior and adds interrupted-write and real Darwin
+libc allocation probes. CSH-073's retained capability prerequisite criterion is
+now satisfied; its complete-page criterion remains open. CSH-074 remains open
+for complete-page coverage. CSH-079 is blocked for acceptance by attested Darwin
+libc allocation crashes and the required disposable low-stack investigation.
+None of these three tickets is accepted by this continuation.

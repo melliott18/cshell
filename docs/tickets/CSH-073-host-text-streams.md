@@ -5,7 +5,7 @@
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: test/CSH-073-host-text-streams
+- Branch: test/CSH-073-host-contract-completion
 - Issue: [#145](https://github.com/melliott18/cshell/issues/145)
 
 ## Acceptance review (2026-11-07)
@@ -86,7 +86,7 @@ profiles and executable/environment identities, remains unchanged.
 - [ ] Map every applicable page section and common default to clause-derived
   assertions or an individually justified disposition; repair required-contract
   failures. Selected examples alone do not complete a utility contract.
-- [ ] Resolve each assigned retained condition with its required capability and
+- [x] Resolve each assigned retained condition with its required capability and
   strict evidence, or transfer that individual condition to a concrete open owner.
   Preserve vendor ownership, setup failures and failed assertions separately.
 - [x] Verify public cshell dispatch and direct exec access, exact output/status and
@@ -233,3 +233,17 @@ additional UE-state child after the owned attempt was stopped. That optional
 analysis needs a compatible Valgrind runtime; the required injected fault suite
 passes independently. OS cleanup of the four old UE children is unresolved;
 no reboot was performed. Complete utility-page qualification remains open.
+
+## Contract continuation (2026-11-07)
+
+Added 33 operand/format cases (132 assertions), repaired native serial-empty
+paste by selecting pinned GNU paste, and supplied lzip in Docker development
+provisioning. The repaired native capacity audit passes 924 assertions and all
+24 injected-fault assertions; the private image was detached and removed.
+
+The five retained capability prerequisites have supplied strict witnesses, so
+that acceptance criterion is checked. Whole-page qualification remains open;
+this does not qualify arbitrary errors, other locales or the remaining formats.
+The [continuation evidence and review](../evidence/host-contract-continuation-2026-11-07/README.md)
+retain the initial paste failures and native strings timeouts separately. The
+ticket remains in review and is not accepted.

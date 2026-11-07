@@ -156,3 +156,15 @@ extra newline; GNU ed adds a leading newline on stdout. Both fail the strict
 ed provider repair and full-page qualification; CSH-073 retains the shared
 `U-040/other-interruptions` condition and fixture. No passing sleep or cat signal
 case qualifies ed recovery. See [retained results](../evidence/csh-073/README.md).
+
+## Contract continuation (2026-11-07)
+
+Added 15 patch cases (60 assertions) for progress/prompt streams, locale-specific
+affirmative responses, filename precedence and repeated/interleaved output
+versions. The private provider repairs these paths, including empty intermediate
+output and ed scripts. Native ordinary qualification passes 833 assertions;
+all 136 patch assertions also pass ASan/UBSan.
+
+The [continuation evidence and review](../evidence/host-contract-continuation-2026-11-07/README.md)
+retain the original failures and exact validation boundaries. Complete-page
+coverage of the eight owned utilities remains open. This ticket is not accepted.

@@ -268,6 +268,8 @@
         "bytes": 14616
       },
       "cases": [
+        "comm/stdin-1",
+        "comm/stdin-2",
         "comm/columns-all",
         "comm/columns-1",
         "comm/columns-2",
@@ -332,7 +334,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "C-locale columns are covered; non-total locale collation/tie ordering, stdin operand and I/O interruption remain open."
+      "remaining_contracts": "C-locale columns and either stdin operand are covered; non-total locale collation/tie ordering and I/O interruption remain open."
     },
     {
       "utility": "csplit",
@@ -798,6 +800,8 @@
         "bytes": 19362
       },
       "cases": [
+        "join/stdin-1",
+        "join/stdin-2",
         "join/duplicate-cross-product",
         "join/unpaired-only",
         "join/empty-selected-field",
@@ -860,7 +864,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Default/unpaired/selected fields, duplicate-key cross products, -v and -e are covered. Stdin and non-C collation remain open."
+      "remaining_contracts": "Default/unpaired/selected fields, duplicate-key cross products, -v, -e and either stdin operand are covered. Non-C collation remains open."
     },
     {
       "utility": "od",
@@ -873,6 +877,12 @@
         "bytes": 41054
       },
       "cases": [
+        "od/unsigned-1",
+        "od/unsigned-2",
+        "od/unsigned-4",
+        "od/partial-element-zero-padding",
+        "od/signed-byte",
+        "od/no-repeat-suppression",
         "od/skip-decimal",
         "od/skip-octal",
         "od/skip-hex",
@@ -937,7 +947,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Byte values, explicit decimal/octal/hex skips, concatenated input offsets, EOF errors and sparse offset 2147483648 are covered. Other integer/float/character types, repeat suppression and partial-element padding remain open; XSI short forms unselected."
+      "remaining_contracts": "Unsigned 1/2/4-byte and signed-byte values, partial 4-byte zero padding, -v, explicit skips, concatenated input, EOF errors and sparse offsets are covered. Other integer/float/character types and repeat suppression remain open; XSI short forms unselected."
     },
     {
       "utility": "paste",
@@ -950,6 +960,12 @@
         "bytes": 14746
       },
       "cases": [
+        "paste/empty-first",
+        "paste/serial-empty-first",
+        "paste/empty-second",
+        "paste/serial-empty-second",
+        "paste/empty-both",
+        "paste/serial-empty-both",
         "paste/escaped-delimiters",
         "paste/parallel",
         "paste/serial-delimiters",
@@ -1010,7 +1026,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Parallel, serial, custom cycling, escaped delimiters and repeated stdin are covered. Empty-file combinations and further I/O faults remain open."
+      "remaining_contracts": "Parallel, serial, custom cycling, escaped delimiters, repeated stdin and empty-file combinations are covered. The native serial-empty failure requires selected GNU paste. Further I/O faults remain open."
     },
     {
       "utility": "pr",
@@ -1023,6 +1039,13 @@
         "bytes": 24811
       },
       "cases": [
+        "pr/columns-down",
+        "pr/columns-across",
+        "pr/merge-nine-files",
+        "pr/start-second-page",
+        "pr/short-page-suppresses-header",
+        "pr/custom-tabs-offset",
+        "pr/single-column-not-truncated",
         "pr/no-header",
         "pr/double-space",
         "pr/numbered",
@@ -1082,7 +1105,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Headerless, double-spaced and numbered lines covered; default page/header/date formatting, columns, merge, page ranges, tabs, widths and terminal behavior remain open. XSI-only features remain unselected."
+      "remaining_contracts": "Headerless, double-spaced, numbered lines, down/across columns, nine-file merge, starting page, short pages, custom tabs/offset and single-column widths are covered. Default header/date, additional widths and terminal behavior remain open. XSI-only features remain unselected."
     },
     {
       "utility": "sed",
@@ -1178,6 +1201,9 @@
         "bytes": 31084
       },
       "cases": [
+        "sort/same-input-output",
+        "sort/same-input-merge-output",
+        "sort/fold-key-unique",
         "sort/dictionary",
         "sort/numeric-field-reverse",
         "sort/large-record-order",
@@ -1245,7 +1271,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "C/numeric/reverse/unique/field/case/dictionary/check/merge/output and 200000-record ordering are covered. Non-C collation, further modifiers, temp-file/resource failures and same-input output remain open."
+      "remaining_contracts": "C/numeric/reverse/unique/field/case/dictionary/check/merge/output, 200000-record ordering and same-input output are covered. Non-C collation, further modifiers and temp-file/resource failures remain open."
     },
     {
       "utility": "split",
@@ -1258,6 +1284,9 @@
         "bytes": 14847
       },
       "cases": [
+        "split/default-thousand",
+        "split/kibibyte-units",
+        "split/empty-input",
         "split/mib-units",
         "split/lines",
         "split/bytes",
@@ -1319,7 +1348,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Line/byte/suffix/empty/exhaustion and 1 MiB units with exact trailing piece are covered. Default 1000, k units, NAME_MAX, I/O faults and signal cleanup remain open."
+      "remaining_contracts": "Line/byte/suffix/empty/exhaustion, default 1000 lines, k and m units with exact trailing pieces are covered. NAME_MAX, I/O faults and signal cleanup remain open."
     },
     {
       "utility": "strings",
@@ -1559,6 +1588,8 @@
         "bytes": 26943
       },
       "cases": [
+        "tr/octal-longest-sequence",
+        "tr/C-equivalence-class",
         "tr/octal-byte-range",
         "tr/repeat-array",
         "tr/character-complement-C",
@@ -1624,7 +1655,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "C translation/deletion/squeeze/complement/-C/classes/octal ranges/repeated-array syntax and 1 MiB transformation are covered. Equivalence classes, multibyte behavior, additional octal ambiguities and output errors remain open."
+      "remaining_contracts": "C translation/deletion/squeeze/complement/-C/classes/octal ranges/repeated arrays, C equivalence class, longest octal sequence and 1 MiB transformation are covered. Multibyte behavior, further octal ambiguities and output errors remain open."
     },
     {
       "utility": "tsort",
@@ -1709,6 +1740,8 @@
         "bytes": 12836
       },
       "cases": [
+        "unexpand/backspace-column",
+        "unexpand/tab-stops-exhausted",
         "unexpand/existing-tabs",
         "unexpand/leading",
         "unexpand/all",
@@ -1769,7 +1802,7 @@
           "reason": "The case list supplies bounded consequences of errors assertions only; remaining_contracts gives the utility-specific exclusions."
         }
       },
-      "remaining_contracts": "Leading/all blanks and explicit stops covered; backspace, preexisting tabs, multibyte widths and I/O faults remain open."
+      "remaining_contracts": "Leading/all blanks, explicit/exhausted stops, backspace and preexisting tabs are covered. Multibyte widths and I/O faults remain open."
     },
     {
       "utility": "uniq",

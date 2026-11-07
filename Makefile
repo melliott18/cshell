@@ -932,6 +932,20 @@ build/tests/host_echo_interrupt: tests/host_formatted_interrupt.c tools/host-pro
 
 test-host-formatted test-host-formatted-contracts test-host-formatted-sanitize: build/tests/host_printf_interrupt build/tests/host_echo_interrupt
 
+# Explicit Darwin audit: real libc allocator NULL returns, including known
+# platform failures. Kept separate from passing bounded formatted contracts.
+build/tests/host_formatted_libc_alloc.dylib: tests/host_formatted_libc_alloc.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -dynamiclib $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+build/tests/host_formatted_libc: tests/host_formatted_libc_main.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+.PHONY: test-host-formatted-libc-audit
+test-host-formatted-libc-audit: cshell build/tests/host_formatted_libc_alloc.dylib build/tests/host_formatted_libc
+	$(PYTHON) tests/host_formatted_libc.py --record build/tests/host-formatted-libc-audit.json
+
 # Strict declared text/byte subset; audit adds still-unqualified provider contracts.
 .PHONY: test-host-text test-host-text-audit test-host-text-harness
 test-host-text: cshell

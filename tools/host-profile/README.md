@@ -717,7 +717,12 @@ of one file; the local diff additionally backs up an existing `-o` output when
 the same upstream warning policy as M4. `build/host-patch-build.json` records
 archive/diff/binary hashes and requested/effective build flags. The suite now
 includes automated controlling-terminal editor and xargs prompt checks, and
-patch conditional-output and backup interactions.
+patch conditional-output and backup interactions. The private provider now
+selects POSIX defaults, separates filename prompts (stdout) from diagnostics
+and reverse confirmations (stderr), and uses the locale affirmative expression.
+Repeated and interleaved `-o` patches retain anonymous per-input intermediate
+versions, including empty versions and ed scripts. CSH-074's continuation
+checks these effects and preserves the original files.
 
 ## CSH-076 locale and catalog subset
 

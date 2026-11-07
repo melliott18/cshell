@@ -3,6 +3,7 @@
 Expectations are authored here, never collected from a reference utility.
 Source-including probes are distinct from the unmodified executable witnesses.
 """
+import hashlib
 import json
 import locale
 import os
@@ -121,7 +122,7 @@ def interrupt_cases(shell, prefix, helpers):
         for utility, args in [('printf', ['value']), ('printf', ['%s', 'value']),
                               ('printf', ['%b', 'value']), ('echo', ['value'])]:
             for mode in ('direct', 'exec'):
-                for disposition in ('control', 'caught', 'default'):
+                for disposition in ('control', 'caught', 'default', 'restart', 'partial'):
                     environment = dict(PATH=str(selected) + ':' + os.defpath, LC_ALL='C',
                                        CSH_FORMATTED_INTERRUPT=disposition)
                     with tempfile.TemporaryDirectory(dir=selected) as work:
@@ -133,18 +134,36 @@ def interrupt_cases(shell, prefix, helpers):
                             output, diagnostic = out.read(65537), err.read(65537)
                         path = Path(work) / 'interrupt.json'
                         measured = json.loads(path.read_text()) if path.exists() else None
+                        capture = Path(work) / 'interrupt-output'
+                        captured = capture.read_bytes() if capture.exists() else None
                     expected_out = b'value' + (b'\n' if utility == 'echo' else b'') if disposition == 'control' else b''
                     expected_err = (b'echo: write error\n' if utility == 'echo' else
-                                    b'printf: write or formatting error: Interrupted system call\n') if disposition == 'caught' else b''
-                    expected_status = {'control': 0, 'caught': 1, 'default': -signal.SIGALRM}[disposition]
+                                    b'printf: write or formatting error: Interrupted system call\n') if disposition in ('caught', 'partial') else b''
+                    expected_status = {'control': 0, 'caught': 1, 'default': -signal.SIGALRM,
+                                       'restart': 0, 'partial': 1}[disposition]
                     observed = measured is None if disposition == 'control' else bool(measured and measured['ready'] and measured['filled'] > 0)
                     if disposition == 'caught':
                         observed = bool(observed and measured.get('signals', 0) > 0 and
                                         measured.get('drained') == measured['filled'] and
+                                        measured.get('stream_error') == 1 and measured.get('provider_status') == 1 and
+                                        captured == b'p' * measured['filled'])
+                    if disposition == 'restart':
+                        observed = bool(observed and measured.get('signals', 0) > 0 and
+                                        measured.get('prefill_remaining') == 0 and measured.get('drain_error') == 0 and
+                                        measured.get('stream_error') == 0 and measured.get('provider_status') == 0 and
+                                        captured == b'value' + (b'\n' if utility == 'echo' else b'') and
+                                        measured.get('drained') == len(captured))
+                    if disposition == 'partial':
+                        observed = bool(observed and measured.get('signals', 0) > 0 and captured and
+                                        0 < len(captured) < measured.get('payload_size', 0) and
+                                        len(captured) == measured.get('drained') and
+                                        captured == (b'ab' * ((len(captured)+1)//2))[:len(captured)] and
                                         measured.get('stream_error') == 1 and measured.get('provider_status') == 1)
                     ok = (observed and not result['errors'] and result['reaped'] and result['pid_disappeared'] and
                           result['status'] == expected_status and output == expected_out and diagnostic == expected_err)
                     yield dict(name='CSH-079 interrupted ' + utility + ' ' + args[0] + ' ' + disposition,
                                mode=mode, verdict='PASS' if ok else 'FAIL', invocation=result, measured=measured,
                                expected=dict(status=expected_status, stdout_hex=expected_out.hex(), stderr_hex=expected_err.hex()),
-                               actual=dict(status=result['status'], stdout_hex=output.hex(), stderr_hex=diagnostic.hex()))
+                               actual=dict(status=result['status'], stdout_hex=output.hex(), stderr_hex=diagnostic.hex(),
+                                           captured_bytes=len(captured) if captured is not None else None,
+                                           captured_sha256=hashlib.sha256(captured).hexdigest() if captured is not None else None))

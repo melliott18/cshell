@@ -1,6 +1,6 @@
 # CSH-079: Qualify remaining formatted-output environments
 
-- Status: review
+- Status: blocked
 - Type: test
 - Kind: implementation
 - Parent: None
@@ -143,3 +143,22 @@ above. Current ownership checks and the retained-evidence audit pass.
 retain every failed, interrupted and successful attempt separately. All newly
 owned local containers were stopped and removed. This is a reviewable bounded
 implementation, with the individual unqualified contracts still open here.
+
+## Contract continuation and acceptance blocker (2026-11-07)
+
+Actual SA_RESTART and partial-write probes add 16 assertions. Native formatted
+contracts pass 704 checks; the 40 interruption checks also pass ASan/UBSan.
+
+The newly supplied Darwin libc allocator audit exposes a required-contract
+failure: three allocations originating in `__Balloc_D2A` cause SIGSEGV when
+returned ENOMEM during real `vprintf`. Direct and cshell exec paths both fail;
+all six children are reaped with verified PID disappearance. This is controlled
+allocator failure inside libc, not the previous API-return injection. The audit
+returns nonzero and is retained as failing evidence.
+
+Acceptance is blocked pending a repair or separately qualified replacement for
+that Darwin libc path, plus the resettable Darwin 23.6 environment needed for the
+historical low-stack investigation. Other locale/format remainders also remain
+owned here. The [continuation evidence and review](../evidence/host-contract-continuation-2026-11-07/README.md)
+provide the reproducer, traces, passing controls and remaining boundaries.
+This ticket is not accepted or closed.

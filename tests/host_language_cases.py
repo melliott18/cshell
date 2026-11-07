@@ -12,6 +12,8 @@ BASE = 'https://pubs.opengroup.org/onlinepubs/9799919799/utilities/'
 
 
 def cases():
+    from host_language_completion_cases import cases as completion_cases
+    yield from completion_cases()
     def case(utility, name, args=(), stdin=b'', out=b'', status=0, err=b'',
              clauses=(), **kw):
         return dict(id=utility + '/' + name, utility=utility, args=list(args),
@@ -103,7 +105,7 @@ def cases():
         yield case('patch',name,args,delta,input_files={'data':b'first\nold\n'},files={'data':b'first\nnew\n'},clauses=['OPTIONS','STDIN','INPUT FILES','OUTPUT FILES'])
     yield case('patch','reverse',['-s','-R','data'],normal,input_files={'data':b'first\nnew\n'},files={'data':b'first\nold\n'},clauses=['OPTIONS'])
     yield case('patch','input-output',['-s','-i','delta','-o','result','data'],input_files={'delta':normal,'data':b'first\nold\n'},files={'data':b'first\nold\n','result':b'first\nnew\n'},clauses=['OPTIONS','OUTPUT FILES'])
-    yield case('patch','reject',['-s','-r','reject','data'],normal,status=1,stdout_rule='nonempty',input_files={'data':b'first\nother\n'},files={'data':b'first\nother\n'},nonempty_files=['reject'],clauses=['EXIT STATUS','CONSEQUENCES OF ERRORS'])
+    yield case('patch','reject',['-s','-r','reject','data'],normal,status=1,err='nonempty',input_files={'data':b'first\nother\n'},files={'data':b'first\nother\n'},nonempty_files=['reject'],clauses=['STDOUT','STDERR','EXIT STATUS','CONSEQUENCES OF ERRORS'])
 
     helper=[sys.executable,str(Path(__file__).with_name('host_language_helper.py').resolve()),'argv']
     def vectors(*groups):

@@ -2056,7 +2056,17 @@
             "patch/backup-output-new",
             "patch/backup-overwrite",
             "patch/backup-first-patch-only",
-            "patch/operand-overrides-header"
+            "patch/operand-overrides-header",
+            "patch/progress-stream",
+            "patch/tty-reverse-lowercase",
+            "patch/tty-reverse-uppercase",
+            "patch/tty-reverse-decline",
+            "patch/output-multiple-versions",
+            "patch/tty-reverse-french",
+            "patch/tty-reverse-german",
+            "patch/output-interleaved-versions",
+            "patch/output-empty-intermediate",
+            "patch/output-ed-versions"
           ],
           "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
           "owner": "CSH-074"
@@ -2090,7 +2100,8 @@
           "witnesses": [
             "patch/normal",
             "patch/unified",
-            "patch/context"
+            "patch/context",
+            "patch/tty-filename"
           ],
           "reason": "Finite authored text files only; size, permissions, encoding and read-fault combinations remain unqualified.",
           "owner": "CSH-074"
@@ -2099,7 +2110,12 @@
           "section": "ENVIRONMENT VARIABLES",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_08",
           "disposition": "unqualified",
-          "witnesses": [],
+          "witnesses": [
+            "patch/tty-reverse-lowercase",
+            "patch/tty-reverse-uppercase",
+            "patch/tty-reverse-french",
+            "patch/tty-reverse-german"
+          ],
           "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Locale precedence, non-C collation/encoding, NLSPATH/catalogs and other listed variables remain unqualified.",
           "owner": "CSH-074"
         },
@@ -2121,7 +2137,18 @@
             "patch/context",
             "patch/reverse",
             "patch/input-output",
-            "patch/reject"
+            "patch/reject",
+            "patch/progress-stream",
+            "patch/tty-filename",
+            "patch/tty-reverse-lowercase",
+            "patch/tty-reverse-uppercase",
+            "patch/tty-reverse-decline",
+            "patch/output-multiple-versions",
+            "patch/tty-reverse-french",
+            "patch/tty-reverse-german",
+            "patch/output-interleaved-versions",
+            "patch/output-empty-intermediate",
+            "patch/output-ed-versions"
           ],
           "reason": "Listed byte-exact outputs only; output write failures and all formatting/locale combinations remain unqualified.",
           "owner": "CSH-074"
@@ -2131,7 +2158,19 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_11",
           "disposition": "partial",
           "witnesses": [
-            "patch/missing-input"
+            "patch/missing-input",
+            "patch/progress-stream",
+            "patch/tty-filename",
+            "patch/tty-reverse-lowercase",
+            "patch/tty-reverse-uppercase",
+            "patch/tty-reverse-decline",
+            "patch/output-multiple-versions",
+            "patch/reject",
+            "patch/tty-reverse-french",
+            "patch/tty-reverse-german",
+            "patch/output-interleaved-versions",
+            "patch/output-empty-intermediate",
+            "patch/output-ed-versions"
           ],
           "reason": "Diagnostic presence only where wording is unspecified; localization, warnings and all error paths remain unqualified.",
           "owner": "CSH-074"
@@ -2151,7 +2190,22 @@
             "patch/backup-output-new",
             "patch/backup-overwrite",
             "patch/backup-first-patch-only",
-            "patch/operand-overrides-header"
+            "patch/operand-overrides-header",
+            "patch/progress-stream",
+            "patch/tty-filename",
+            "patch/tty-reverse-lowercase",
+            "patch/tty-reverse-uppercase",
+            "patch/tty-reverse-decline",
+            "patch/old-header-first",
+            "patch/new-header-fallback",
+            "patch/index-header-fallback",
+            "patch/indented-normal",
+            "patch/output-multiple-versions",
+            "patch/tty-reverse-french",
+            "patch/tty-reverse-german",
+            "patch/output-interleaved-versions",
+            "patch/output-empty-intermediate",
+            "patch/output-ed-versions"
           ],
           "reason": "Listed edits/output effects only; permissions, storage exhaustion, temp-file creation failures and interrupted writes remain unqualified.",
           "owner": "CSH-074"
@@ -2169,7 +2223,11 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/patch.html#tag_20_92_13_01",
           "disposition": "partial",
           "witnesses": [
-            "patch/ed-format"
+            "patch/ed-format",
+            "patch/old-header-first",
+            "patch/new-header-fallback",
+            "patch/index-header-fallback",
+            "patch/indented-normal"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -2181,7 +2239,11 @@
           "witnesses": [
             "patch/strip-directory",
             "patch/two-files",
-            "patch/operand-overrides-header"
+            "patch/operand-overrides-header",
+            "patch/tty-filename",
+            "patch/old-header-first",
+            "patch/new-header-fallback",
+            "patch/index-header-fallback"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -2199,7 +2261,13 @@
             "patch/backup-output-new",
             "patch/backup-overwrite",
             "patch/backup-first-patch-only",
-            "patch/operand-overrides-header"
+            "patch/operand-overrides-header",
+            "patch/progress-stream",
+            "patch/tty-reverse-decline",
+            "patch/output-multiple-versions",
+            "patch/output-interleaved-versions",
+            "patch/output-empty-intermediate",
+            "patch/output-ed-versions"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -2232,6 +2300,21 @@
         }
       ],
       "selected_contracts": [
+        "patch/progress-stream",
+        "patch/tty-filename",
+        "patch/tty-reverse-lowercase",
+        "patch/tty-reverse-uppercase",
+        "patch/tty-reverse-french",
+        "patch/tty-reverse-german",
+        "patch/tty-reverse-decline",
+        "patch/old-header-first",
+        "patch/new-header-fallback",
+        "patch/index-header-fallback",
+        "patch/indented-normal",
+        "patch/output-multiple-versions",
+        "patch/output-interleaved-versions",
+        "patch/output-empty-intermediate",
+        "patch/output-ed-versions",
         "patch/normal",
         "patch/unified",
         "patch/context",

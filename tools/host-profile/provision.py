@@ -30,7 +30,7 @@ def test_provider(gnu_bin=None):
 
 def text_overrides(text_bin, system):
     manifest = json.loads((text_bin.parent / 'manifest.json').read_text())
-    expected = {'cat', 'head', 'cut', 'tsort', 'sed', 'ed', 'cmp'}
+    expected = {'cat', 'head', 'cut', 'tsort', 'paste', 'sed', 'ed', 'cmp'}
     if system == 'Linux':
         expected.add('tail')
     if set(manifest['executables']) != expected or manifest['recipe']['system'] != system:

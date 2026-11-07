@@ -1,6 +1,151 @@
 --- a/src/patch.c
 +++ b/src/patch.c
-@@ -1590,7 +1590,14 @@
+@@ -29,6 +29,7 @@
+ #include <xalloc.h>
+ #include <xstdopen.h>
+ #include <safe.h>
++#include <locale.h>
+ 
+ #ifndef __has_feature
+ # define __has_feature(a) false
+@@ -144,6 +145,11 @@
+ static intmax_t maxfuzz = 2;
+ 
+ static char serrbuf[BUFSIZ];
++struct output_version {
++  char *name;
++  FILE *data;
++  struct output_version *next;
++};
+ 
+ /* Apply a set of diffs as appropriate. */
+ 
+@@ -158,6 +164,8 @@
+     bool apply_empty_patch = false;
+     mode_t file_type;
+     bool have_git_diff = false;
++    struct output_version *versions = nullptr;
++    FILE *aggregate = nullptr;
+ 
+     exit_failure = EXIT_TROUBLE;
+     set_program_name (argv[0]);
+@@ -175,7 +183,9 @@
+       set_quoting_style (nullptr, i < 0 ? shell_quoting_style : i);
+     }
+ 
+-    posixly_correct = getenv ("POSIXLY_CORRECT") != 0;
++    /* This private executable selects the POSIX profile unconditionally. */
++    posixly_correct = true;
++    setlocale (LC_ALL, "");
+     patch_get = ((val = getenv ("PATCH_GET"))
+ 		 ? numeric_string (val, true, "PATCH_GET value")
+ 		 : 0);
+@@ -204,7 +214,7 @@
+ 
+     init_output (&outstate);
+     if (outfile)
+-      outstate.ofp = open_outfile (outfile);
++      aggregate = open_outfile (outfile);
+ 
+     /* Make sure we clean up in case of disaster.  */
+     init_signals ();
+@@ -237,6 +247,7 @@
+       intmax_t failed = 0;
+       bool mismatch = false;
+       char *outname = nullptr;
++      struct output_version *version = nullptr;
+ 
+       if (skip_rest_of_patch)
+ 	somefailed = true;
+@@ -354,14 +365,19 @@
+ 	  skip_reject_file = true;
+ 	  somefailed = true;
+ 	}
+-      if (!outfile)
+-	init_output (&outstate);
++      init_output (&outstate);
++      if (outfile && !skip_rest_of_patch) {
++        for (version = versions; version; version = version->next)
++          if (strcmp (version->name, inname) == 0) break;
++        outstate.ofp = tmpfile ();
++        if (!outstate.ofp) pfatal ("Cannot create intermediate output");
++      }
+       int ifd = -1;
+ 
+       if (diff_type == ED_DIFF) {
+ 	outstate.zero_output = false;
+ 	somefailed |= skip_rest_of_patch;
+-	do_ed_script (inname, &tmpout, outstate.ofp);
++	do_ed_script (inname, &tmpout, outstate.ofp, version ? version->data : nullptr);
+ 	if (! dry_run && ! outfile && ! skip_rest_of_patch)
+ 	  {
+ 	    if (fstat (outfd, &tmpoutst) != 0)
+@@ -395,7 +411,16 @@
+ 
+ 	/* find out where all the lines are */
+ 	if (!skip_rest_of_patch) {
+-	    if (S_ISREG (file_type) && instat.st_size != 0)
++            if (version) {
++              struct stat previous;
++              Fseeko (version->data, 0, SEEK_SET);
++              if (fstat (fileno (version->data), &previous) < 0)
++                read_fatal ();
++              instat.st_size = previous.st_size;
++              ifd = dup (fileno (version->data));
++              if (ifd < 0) read_fatal ();
++            }
++	    else if (S_ISREG (file_type) && instat.st_size != 0)
+ 	      {
+ 		int oflags = (O_RDONLY | binary_transput
+ 			      | (follow_symlinks ? 0 : O_NOFOLLOW));
+@@ -526,6 +551,31 @@
+ 		skip_rest_of_patch = true;
+ 	      }
+ 	  }
++      }
++
++      if (outfile) {
++        if (outfd >= 0 && close (outfd) < 0) write_fatal ();
++        if (outstate.ofp) {
++          if (!skip_rest_of_patch) {
++            Fflush (outstate.ofp);
++            Fseeko (outstate.ofp, 0, SEEK_SET);
++            char buffer[8192];
++            size_t amount;
++            while ((amount = fread (buffer, 1, sizeof buffer, outstate.ofp)))
++              Fwrite (buffer, 1, amount, aggregate);
++            if (ferror (outstate.ofp)) read_fatal ();
++            if (!version) {
++              version = xmalloc (sizeof *version);
++              version->name = xstrdup (inname);
++              version->data = nullptr;
++              version->next = versions;
++              versions = version;
++            }
++            if (version->data) Fclose (version->data);
++            version->data = outstate.ofp;
++          } else Fclose (outstate.ofp);
++          outstate.ofp = nullptr;
++        }
+       }
+ 
+       /* and put the output where desired */
+@@ -710,6 +760,14 @@
+     if (outstate.ofp)
+       Fclose (outstate.ofp);
+ 
++    if (aggregate) Fclose (aggregate);
++    while (versions) {
++      struct output_version *next = versions->next;
++      Fclose (versions->data);
++      free (versions->name);
++      free (versions);
++      versions = next;
++    }
+     defer_signals ();
+     cleanup_remove ();
+     undefer_signals ();
+@@ -1590,7 +1648,14 @@
  open_outfile (char *name)
  {
    if (strcmp (name, "-") != 0)
@@ -16,3 +161,192 @@
    else
      {
        int stdout_dup = dup (STDOUT_FILENO);
+--- a/src/pch.c
++++ b/src/pch.c
+@@ -281,7 +281,7 @@
+ 	    skip_rest_of_patch = true;
+ 	    return true;
+ 	}
+-	char *answer = ask ("File to patch: ");
++	char *answer = ask_filename ("File to patch: ");
+ 	idx_t answerlen = strlen (answer);
+ 	if (1 < answerlen && answer[answerlen - 1] == '\n')
+ 	  {
+@@ -1113,7 +1113,7 @@
+ skip_to (off_t file_pos, idx_t file_line)
+ {
+     FILE *i = pfp;
+-    FILE *o = stdout;
++    FILE *o = stderr;
+     int c;
+ 
+     assert(p_base <= file_pos);
+@@ -2305,7 +2305,7 @@
+ /* Apply an ed script by feeding ed itself. */
+ 
+ void
+-do_ed_script (char *input_name, struct outfile *output, FILE *ofp)
++do_ed_script (char *input_name, struct outfile *output, FILE *ofp, FILE *previous)
+ {
+     char const *output_name = output->name;
+     off_t beginning_of_this_line;
+@@ -2366,7 +2366,18 @@
+       pfatal ("Can't rewind to the beginning of file %s",
+ 	      quotearg (tmped.name));
+ 
+-    if (inerrno != ENOENT)
++    if (previous) {
++      FILE *copy = fopen (output_name, "wb");
++      if (!copy) pfatal ("Cannot open intermediate editor input");
++      Fseeko (previous, 0, SEEK_SET);
++      char buffer[8192];
++      size_t amount;
++      while ((amount = fread (buffer, 1, sizeof buffer, previous)))
++        Fwrite (buffer, 1, amount, copy);
++      if (ferror (previous)) read_fatal ();
++      Fclose (copy);
++    }
++    else if (inerrno != ENOENT)
+       copy_file (input_name, &instat, output, nullptr,
+ 		 output->exists ? 0 : O_EXCL, instat.st_mode, 0, true);
+     Fflush (stdout);
+--- a/src/pch.h
++++ b/src/pch.h
+@@ -48,7 +48,7 @@
+ char *pch_name (enum nametype) ATTRIBUTE_PURE;
+ bool pch_copy (void) ATTRIBUTE_PURE;
+ bool pch_rename (void) ATTRIBUTE_PURE;
+-void do_ed_script (char *, struct outfile *, FILE *);
++void do_ed_script (char *, struct outfile *, FILE *, FILE *);
+ void open_patch_file (char const *);
+ void re_patch (void);
+ void pch_normalize (enum diff);
+--- a/src/util.c
++++ b/src/util.c
+@@ -33,6 +33,8 @@
+ 
+ #include <signal.h>
+ #include <stdarg.h>
++#include <langinfo.h>
++#include <regex.h>
+ 
+ #include <tempname.h>
+ 
+@@ -1030,9 +1032,9 @@
+ ATTRIBUTE_FORMAT ((_GL_ATTRIBUTE_SPEC_PRINTF_STANDARD, 1, 0))
+ vsay (char const *format, va_list args)
+ {
+-  if (vfprintf (stdout, format, args) < 0)
++  if (vfprintf (stderr, format, args) < 0)
+     write_fatal ();
+-  Fflush (stdout);
++  Fflush (stderr);
+ }
+ 
+ void
+@@ -1046,18 +1048,14 @@
+ 
+ /* Get a response from the user, somehow or other. */
+ 
+-char *
+-ask (char const *format, ...)
++static char *
++ask_stream (FILE *stream, char const *format, va_list args)
+ {
+   static int ttyfd = -2;
+-  va_list args;
+-
+-  va_start (args, format);
+-  int nout = vfprintf (stdout, format, args);
+-  va_end (args);
++  int nout = vfprintf (stream, format, args);
+   if (nout < 0)
+     write_fatal ();
+-  Fflush (stdout);
++  Fflush (stream);
+ 
+   if (ttyfd == -2)
+     {
+@@ -1075,7 +1073,7 @@
+   if (ttyfd < 0)
+     {
+       /* No terminal at all -- default it.  */
+-      Fputc ('\n', stdout);
++      Fputc ('\n', stream);
+       patchbuf[0] = '\n';
+       patchbuf[1] = '\0';
+     }
+@@ -1089,7 +1087,7 @@
+ 	  if (r <= 0)
+ 	    {
+ 	      if (r == 0)
+-		Fputs ("EOF\n", stdout);
++		Fputs ("EOF\n", stream);
+ 	      else
+ 		{
+ 		  error (0, errno, "tty read failed");
+@@ -1110,6 +1108,40 @@
+   return patchbuf;
+ }
+ 
++/* Filename determination is the one POSIX prompt assigned to stdout. */
++char *
++ask_filename (char const *format, ...)
++{
++  va_list args;
++  va_start (args, format);
++  char *result = ask_stream (stdout, format, args);
++  va_end (args);
++  return result;
++}
++
++char *
++ask (char const *format, ...)
++{
++  va_list args;
++  va_start (args, format);
++  char *result = ask_stream (stderr, format, args);
++  va_end (args);
++  return result;
++}
++
++/* LC_MESSAGES defines affirmative responses; a byte comparison with 'y'
++   ignores both the C locale's uppercase form and other installed locales. */
++static bool
++is_affirmative (char const *answer)
++{
++  regex_t expression;
++  if (regcomp (&expression, nl_langinfo (YESEXPR), REG_EXTENDED | REG_NOSUB))
++    fatal ("Invalid locale affirmative expression");
++  bool result = regexec (&expression, answer, 0, nullptr, 0) == 0;
++  regfree (&expression);
++  return result;
++}
++
+ /* Return nonzero if it OK to reverse a patch.  */
+ 
+ bool
+@@ -1142,11 +1174,10 @@
+     }
+   else
+     {
+-      r = (*ask (reverse_flag ? "  Ignore -R? [n] " : "  Assume -R? [n] ")
+-	   == 'y');
++      r = is_affirmative (ask (reverse_flag ? "  Ignore -R? [n] " : "  Assume -R? [n] "));
+       if (! r)
+ 	{
+-	  if (*ask ("Apply anyway? [n] ") != 'y')
++	  if (! is_affirmative (ask ("Apply anyway? [n] ")))
+ 	    {
+ 	      if (verbosity != SILENT)
+ 		say ("Skipping patch.\n");
+--- a/src/util.h
++++ b/src/util.h
+@@ -62,6 +62,7 @@
+ 
+ bool ok_to_reverse (char const *, ...) ATTRIBUTE_FORMAT ((printf, 1, 2));
+ char *ask (char const *, ...) ATTRIBUTE_FORMAT ((printf, 1, 2));
++char *ask_filename (char const *, ...) ATTRIBUTE_FORMAT ((printf, 1, 2));
+ void say (char const *, ...) ATTRIBUTE_FORMAT ((printf, 1, 2));
+ 
+ _Noreturn void fatal (char const *, ...) ATTRIBUTE_FORMAT ((printf, 1, 2));

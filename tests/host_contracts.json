@@ -19,7 +19,7 @@
         "U-036/alternative-policies",
         "U-036/argument-limits"
       ],
-      "prerequisite": "CSH-079 supplies EUC-JP, denied catalog, numeric boundary, caught-EINTR/default-SIGALRM and libc API-error witnesses. Hosted Darwin 24.6.0 reproduces a low-stack SIGSEGV with verified cleanup. Original Darwin 23.6.0 stuck-exec diagnosis, internal libc allocation injection and further codesets/catalogs remain open; see docs/evidence/csh-079/README.md."
+      "prerequisite": "CSH-079 supplies EUC-JP, catalog, numeric, interrupted-output and real Darwin libc allocation probes. SA_RESTART and partial writes pass. Attested __Balloc_D2A allocation failures crash on Darwin 23.6.0 and remain unqualified. Original stuck-exec diagnosis still requires a disposable matching OS; further codesets/catalogs remain open. See docs/evidence/host-contract-continuation-2026-11-07/README.md."
     },
     {
       "ticket": "CSH-071",
@@ -269,14 +269,14 @@
     },
     "U-035/format-allocation-limits": {
       "ticket": "CSH-079",
-      "evidence": "docs/evidence/csh-079/README.md",
-      "boundary": "Source-including probe injects ENOMEM/EINTR/EOVERFLOW/zero-errno vprintf returns with no stream error; this validates adapter propagation, not libc-internal allocator failure. Real Darwin libc exhaustion remains open; earlier Linux RLIMIT_AS evidence stays separate.",
+      "evidence": "docs/evidence/host-contract-continuation-2026-11-07/README.md",
+      "boundary": "Real Darwin libc allocator interposition is supplied separately from API-return injection. Stdio-buffer allocation failure recovers, but three __Balloc_D2A allocation failures cause SIGSEGV in direct and exec paths; all owned PIDs disappear. This required path remains FAIL. Physical capacity and additional allocation sites remain open; Linux RLIMIT_AS evidence is separate.",
       "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
     },
     "U-035/full-format": {
       "ticket": "CSH-079",
-      "evidence": "docs/evidence/csh-079/README.md",
-      "boundary": "Exact rounding, range overflow/underflow with continued output, character constants and numbered precision added. Full-pipe actual caught EINTR/default SIGALRM probes have matching success controls; other interruption points, restart/partial transfer and conversion combinations stay open.",
+      "evidence": "docs/evidence/host-contract-continuation-2026-11-07/README.md",
+      "boundary": "Existing rounding/range/character/numbered witnesses plus full-pipe caught/default SIGALRM now include SA_RESTART and nonempty partial writes in literal, %s and %b printf and literal echo. Exact byte-prefix/status/diagnostic and cleanup checks pass. Other signal and conversion combinations remain open.",
       "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
     },
     "U-036/alternative-policies": {
