@@ -1,0 +1,4 @@
+python3 tools/host-profile/provision.py build/host-profile/bin
+usage: provision.py [-h] [--gnu-bin GNU_BIN] destination
+provision.py: error: Missing executable for find; see tools/host-profile/README.md
+make: *** [host-profile] Error 2
