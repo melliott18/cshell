@@ -1,11 +1,11 @@
 # CSH-087: Supply remaining filesystem environments after terminal qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-086
-- Branch: Assigned when work starts
+- Branch: `test/CSH-087-filesystem-environments`
 - Issue: [#185](https://github.com/melliott18/cshell/issues/185)
 
 ## Goal
@@ -56,19 +56,57 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
 Run `make test-host-inventory test-host-profile test-host-filesystem-allocation
 test-host-filesystem-provider-audit test-host-filesystem-residual
-test-host-filesystem-isolated test-host-filesystem-interactive` on native macOS and Linux as an unprivileged
+test-host-filesystem-isolated test-host-filesystem-interactive
+test-host-filesystem-decisions` on native macOS and Linux as an unprivileged
 fixture identity. Retain separate nonzero stock `make test-host-filesystem-audit`
 and stock `tests/host_filesystem.py --extended-only --provider-audit` records.
 Add bounded setup/failure/timeout cleanup regressions for new environments.
 Use only private disposable filesystems and credentials. Never fill the host
 volume or use protected mounts; `/dev/full` is not filesystem exhaustion.
 Privileged provisioning requires an isolated runner; prompts require owned PTYs.
+
+## Implementation and current dispositions
+
+The table above preserves the incoming scope. This implementation adds 22 cases /
+68 assertions: two-operand cp/mv decisions with every yes/no combination,
+continuation past a missing middle operand, one-child recursive cp overwrites,
+rm descent rejection and continuation, final directory yes/no decisions,
+recursive symlink non-traversal, last -f/-i precedence, and empty/nonempty
+same-device mv directory replacement.
+
+Twenty cases use the existing owned foreground PTY and separate stdout capture
+through direct exec and cshell string/file modes. The two directory replacement
+cases also run in stdin mode. Each answer waits for the target question. Full
+prompt/diagnostic order and independently authored source/destination bytes and
+removals are required; one-child graphs avoid an enumeration-order assumption.
+No provider build, runtime output/status adapter or allowance is introduced.
+
+Four harness regressions reject incomplete/reordered/duplicated prompts,
+missing/extra/unrelated diagnostics, stopped/reversed continuation and retained
+move sources. Partial recursive fixture setup must clean up. Timeout tests
+reach the second prompt wait after a first response, then require the owned PID
+to disappear and the private fixture to be removed in all three terminal modes.
+Existing descriptor/channel/marker and unavailable-terminal checks remain.
+
+Every unsupplied environment and all four retained conditions move to
+[CSH-088](CSH-088-filesystem-remaining-environments.md) ([#187](https://github.com/melliott18/cshell/issues/187)),
+with per-utility requirements, environments, reasons and vendor implementation
+ownership in the current ledger, section map and ownership manifest. This uses
+the explicit-disposition acceptance alternative. Arbitrary graphs, negative
+recursive-child responses, non-C prompts, EXDEV, ACL/privileged identities,
+mount/depth limits, quotas, actual filesystem exhaustion and libc-internal
+faults remain unqualified. Original CSH-064 and prior evidence are unchanged.
+
+This branch is stacked on CSH-086 published head
+`dfdb773581a765d8c79d02f234ade2263d80eaeb`, which is implemented but unmerged.
+Integration remains gated on that dependency. Native/Linux validation and
+source/provider identities are recorded in [CSH-087 evidence](../evidence/csh-087/README.md).

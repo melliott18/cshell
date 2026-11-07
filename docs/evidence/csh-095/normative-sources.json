@@ -1,0 +1,17 @@
+{
+  "retrieved": "2026-10-19",
+  "pages": [
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html",
+      "sha256": "c2e7590cab2534dbf4a0b3fbd8cc77312990c495c6a448243ca63c14074067bb",
+      "sections": [
+        "OPTIONS",
+        "EXTENDED DESCRIPTION",
+        "STDOUT",
+        "STDERR",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ]
+    }
+  ]
+}

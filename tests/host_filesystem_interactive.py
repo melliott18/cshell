@@ -2,6 +2,8 @@
 import os
 import re
 
+import host_filesystem_decisions as decisions
+
 from host_filesystem_cases import case
 
 SOURCE = b'new source bytes\n'
@@ -58,12 +60,16 @@ def prompt_outputs(row, provider):
 
 
 def steps(row):
+    if 'prompt_sequence' in row:
+        return decisions.steps(row)
     if row['response'] is None:
         return []
     return [{'expect': row.get('prompt_target', 'target')}, {'send': row['response'] + '\n'}]
 
 
 def output_matches(row, provider, output):
+    if 'prompt_sequence' in row:
+        return decisions.output_matches(row, provider, output)
     for prompt in prompt_outputs(row, provider):
         if row.get('terminal_diagnostic'):
             # Wording is unspecified; require a distinct diagnostic naming the

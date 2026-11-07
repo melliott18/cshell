@@ -71,3 +71,7 @@ The [CSH-012 requirement, defect, platform and documentation review](conformance
 
 - [Filesystem and pathname qualification](host-filesystem-evidence.md): CSH-072
   strict native/Linux subsets, provider repairs and individual remaining contracts.
+
+- [CSH-092 creation masks and final mode evidence](evidence/csh-092/README.md)
+
+[CSH-094 logical cwd fallback evidence](evidence/csh-094/README.md) records inherited-PWD probes, native/Linux results and remaining ownership.
