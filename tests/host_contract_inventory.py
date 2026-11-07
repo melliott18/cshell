@@ -30,6 +30,10 @@ def condition_owner(condition):
                 if condition in owner['conditions'])
 
 
+def condition_update(condition):
+    return load_contracts().get("condition_updates", {}).get(condition)
+
+
 def validate(contracts, root=ROOT):
     """Return actionable errors, including loss, duplication and closed owners."""
     errors = []

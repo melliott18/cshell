@@ -1416,3 +1416,43 @@ rows and unassigned conditional prerequisite reports. Regression checks exercise
 these failure cases and the runner's emitted ownership without invoking utilities.
 This is an accounting check, not a conformance suite. See the
 [current individual contracts](host-system-inventory.md#current-contract-ownership).
+
+## Formatted-output provider qualification
+
+`make test-host-formatted` runs the CSH-070 private printf/literal-echo selection
+and strict threshold-harness regressions. It is included in `test-host-profile`.
+See [the section map](host-formatted-output.md) for required locales/catalogs,
+resource bounds, selected stacks, before/after failure oracles and the retained
+Darwin low-stack cleanup failure. Output is `build/tests/host-formatted.json`;
+missing prerequisites or failed assertions are never converted to passing cases.
+
+`make test-host-formatted-contracts` selects ordinary format/catalog/policy
+assertions plus bounded I/O/allocation failures, without rerunning the existing
+stack/memory or exec-threshold probes. The JSON marks those scopes not run;
+it is not a substitute for the complete host-profile target. The full target
+includes the additional cases automatically.
+
+
+### CSH-079 formatted-output environment probes
+
+`make test-host-formatted` includes exact conversion/range cases, EUC-JP byte
+inputs, denied catalog fallback, vprintf API-return faults and actual caught
+EINTR/default SIGALRM on a full private pipe. `test-host-formatted-contracts`
+omits resource/exec-capacity searches. `test-host-formatted-sanitize` checks
+ordinary provider cases with ASan/UBSan; the source-including failure helpers
+have separate instrumentation evidence. See [CSH-079 evidence](evidence/csh-079/README.md)
+for each capability and its remaining limitations.
+
+The dedicated `Formatted-output environments` workflow checks macOS/Linux and
+runs `host_formatted_disposable.py --disposable-darwin` only on explicit
+workflow dispatch to a GitHub-hosted macOS runner. It checkpoints the low-stack experiment and stops at its first
+failure. Do not spoof runner variables or repeat that configuration on a
+personal host. Normal threshold calls reject Darwin stacks below 8 MiB before
+forking. Every launched threshold child is owned before exec and has bounded
+wait/kill/reap with explicit PID-disappearance evidence.
+
+Sanitizer Make builds pass `--instrumented` to the normal formatted-output
+runner so every clean child environment receives explicit ASan/UBSan controls.
+This preserves all normal resource/failure probes and is distinct from the
+`--sanitizer` selection of dedicated provider binaries. Neither result claims
+LeakSanitizer coverage.

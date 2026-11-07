@@ -1,0 +1,12 @@
+$quote "
+$set 1
+1 "caractère de format manquant"
+2 "utilisation incomplète de n$"
+3 "modificateur L incorrect pour %%%c"
+4 "caractère de format incorrect %c"
+5 "largeur ou précision de %b supérieure à INT_MAX"
+6 "%s : valeur numérique attendue"
+7 "%s : conversion incomplète"
+8 "usage : printf format [arguments ...]\n"
+10 "erreur d’écriture ou de formatage"
+11 "echo : erreur d’écriture\n"
