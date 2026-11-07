@@ -1903,3 +1903,18 @@ See [scope, bounds and reproduction](host-languages-evidence.md) and
 unqualified. SIGINT is required by default using the private ed provider;
 `--provider-regressions` selects the repaired M4 regressions, which are also
 required by the default suite. No known-gap allowances are used.
+
+## Locale and message catalog providers
+
+`make host-catalog-fixtures` supplies shared immutable locale/catalog generations
+and the verified `build/host-profile/fixtures.json` manifest for dependent tracks.
+`make host-locales` supplies only the locale capabilities without requiring the
+full host profile. See the [consumer interface](host-locale-catalogs.md#shared-interface-for-dependent-tracks).
+
+`make test-host-catalogs` verifies the CSH-076 bounded subset and is included in
+`test-host-profile`. Setup requires GNU gettext in the provisioning PATH; Linux
+needs the locales package's sources and charmaps. The runner uses private Linux
+locales and independently checks installed Darwin locale identities.
+`make test-host-catalog-contracts` runs the complete strict retained
+reproducers; the repaired selected providers have no failure exclusions. See the
+[clause map, bounds, providers and open contracts](host-locale-catalogs.md).

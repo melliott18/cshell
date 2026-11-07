@@ -88,3 +88,10 @@ strict selected profile and [CSH-081](tickets/CSH-081-host-terminal-residual-con
 ownership of unqualified full contracts and physical-terminal prerequisites.
 
 - [Host languages, editors and argument construction](host-languages-evidence.md): CSH-074 bounded assertions, clause dispositions, signal recovery and retained failures.
+
+## CSH-076 locale and catalog subset
+
+[Provider setup, independent assertions and exact unqualified contracts](host-locale-catalogs.md)
+cover gencat/gettext/iconv/locale/localedef/msgfmt/ngettext. `make test-host-profile`
+includes the bounded strict subset; `make test-host-catalog-contracts` also runs
+retained failing vendor reproducers. Full utility contracts remain open.

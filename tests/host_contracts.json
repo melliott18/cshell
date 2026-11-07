@@ -317,5 +317,13 @@
         "scope": "137 strict cases in five dispatch modes; 685 assertions; remaining full-page contracts stay open"
       }
     ]
+  },
+  "qualification_profiles": {
+    "CSH-076": {
+      "clauses": "tests/host_catalog_clauses.json",
+      "scope": "tests/host_catalog_scope.json",
+      "evidence": "docs/evidence/csh-076/README.md",
+      "status": "bounded subset; full contracts remain open"
+    }
   }
 }

@@ -526,7 +526,7 @@ build/host-ln: build/host-mkfifo
 	cp build/host-coreutils-build/src/ln $@
 
 host-profile: build/host-ed build/host-xargs build/host-m4 build/host-patch build/host-test build/host-chmod build/host-newgrp build/host-ln build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
-	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin $(if $(HOST_TEXT_PROVIDER_BIN),--text-bin "$(HOST_TEXT_PROVIDER_BIN)")
+	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin --cc="$(CC)" --cppflags="$(CPPFLAGS)" --cflags="$(CFLAGS)" --ldflags="$(LDFLAGS)" --ldlibs="$(LDLIBS)" $(if $(HOST_TEXT_PROVIDER_BIN),--text-bin "$(HOST_TEXT_PROVIDER_BIN)")
 
 build/host-chmod: tools/host-profile/chmod.c
 	@mkdir -p build
@@ -542,8 +542,8 @@ build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/pr
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_printf_faults.c $(LDLIBS)
 
-test-host-profile: test-host-filesystem-allocation test-host-inventory test-host-permissions cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile test-host-terminal-residuals test-host-terminal-effects test-host-terminal-profile test-host-terminal-harness build/tests/host_ed_faults
-	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+test-host-profile: test-host-catalogs test-host-filesystem-allocation test-host-inventory test-host-permissions cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile test-host-terminal-residuals test-host-terminal-effects test-host-terminal-profile test-host-terminal-harness build/tests/host_ed_faults
+	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --locale-path "$(abspath build/host-profile/locales)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 	$(PYTHON) tests/host_filesystem.py ./cshell --audit --provider-audit --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-profile.json $(HOST_FILESYSTEM_FLAGS) $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 	$(PYTHON) tests/host_text.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --boundaries $(HOST_TEXT_FLAGS) --record build/tests/host-text-results.json
 	$(PYTHON) -m unittest discover -s tests -p 'test_host_languages.py'
@@ -1034,3 +1034,37 @@ build/host-m4: tools/host-profile/build_m4.py $(wildcard tools/host-profile/vend
 # Pinned GPL-3.0-or-later patch preserves the first backup across repeated hunks.
 build/host-patch: tools/host-profile/build_patch.py $(wildcard tools/host-profile/vendor/patch/*)
 	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" $(PYTHON) tools/host-profile/build_patch.py
+
+# CSH-076: catalog/locale providers, independent consumers, bounded fixtures.
+.PHONY: test-host-catalogs test-host-catalog-harness
+build/tests/host_catalog_probe: tests/host_catalog_probe.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+test-host-catalog-harness: build/tests/catalog_adapter_fixture build/tests/locale_adapter_fixture
+	./build/tests/catalog_adapter_fixture
+	./build/tests/locale_adapter_fixture
+	$(PYTHON) -m unittest discover -s tests -p 'test_host_catalog*.py'
+
+test-host-catalogs: host-catalog-fixtures cshell host-profile build/tests/host_catalog_probe test-host-catalog-harness
+	$(PYTHON) tests/host_catalogs.py ./cshell build/tests/host_catalog_probe --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --locale-path "$(abspath build/host-profile/locales)" --record build/tests/host-catalog-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+.PHONY: host-locales test-host-catalog-contracts
+host-locales: build/tests/host_catalog_probe
+	$(PYTHON) tools/host-profile/provision_locales.py build/tests/host_catalog_probe build/host-profile/locales
+
+test-host-catalog-contracts: test-host-catalogs
+	$(PYTHON) tests/host_catalogs.py ./cshell build/tests/host_catalog_probe --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --locale-path "$(abspath build/host-profile/locales)" --scope all --record build/tests/host-catalog-contract-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+build/tests/catalog_adapter_fixture: tests/catalog_adapter_fixture.c tools/host-profile/catalog_adapter.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+# Reusable fixtures for other utility tracks; no shell build or full suite needed.
+.PHONY: host-catalog-fixtures
+host-catalog-fixtures: host-locales host-profile build/tests/host_catalog_probe
+	$(PYTHON) tools/host-profile/provision_catalogs.py build/tests/host_catalog_probe --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+build/tests/locale_adapter_fixture: tests/locale_adapter_fixture.c tools/host-profile/locale_adapter.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)

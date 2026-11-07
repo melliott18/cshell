@@ -7,13 +7,13 @@ cshell's builtin allocation. All tools are real exec-accessible programs;
 
 | Host | Selected replacements | Provisioning |
 | --- | --- | --- |
-| macOS | Standalone printf, test/bracket, chmod and newgrp adapters, and local readlink/realpath; Homebrew `gtest`, `g[` and `gfind`; GNU `gdd`; pinned local pax | `brew install coreutils findutils`; prefixed binaries must be on the provisioning process's PATH |
-| Debian/Ubuntu | Standalone printf, test/bracket, chmod and newgrp adapters, local readlink/realpath and pinned pax; BusyBox kill; GNU du in POSIX mode | `apt-get install build-essential python3 ed busybox locales acl file pax libbsd-dev ncurses-bin libncurses-dev bsdextrautils bc m4`; generate `fr_FR.UTF-8` |
+| macOS | Standalone printf, test/bracket, chmod and newgrp adapters, and local readlink/realpath; Homebrew `gtest`, `g[` and `gfind`; GNU `gdd`; pinned local pax | `brew install coreutils findutils gettext`; prefixed binaries must be on the provisioning process's PATH |
+| Debian/Ubuntu | Standalone printf, test/bracket, chmod and newgrp adapters, local readlink/realpath and pinned pax; BusyBox kill; GNU du in POSIX mode | `apt-get install build-essential python3 ed busybox locales acl file pax libbsd-dev ncurses-bin libncurses-dev bsdextrautils bc m4 gettext`; `host-locales` generates private locales |
 
 Other scoped commands use `os.defpath` without additional symlinks, preserving
 cshell's PATH-associated pwd builtin selection. In particular, echo remains the system
 executable, with its explicitly recorded Apple/GNU policy. The Dockerfile
-installs ed and BusyBox and generates the French locale. CI installs native
+installs ed, BusyBox, curl and trusted CA certificates and generates the French locale. CI installs native
 profile dependencies separately. macOS coreutils 9.3 and Debian coreutils 9.1 /
 BusyBox 1.35.0 are the recorded package versions; future versions must pass the
 same assertions, not acquire an automatic compatibility claim.
@@ -718,3 +718,22 @@ the same upstream warning policy as M4. `build/host-patch-build.json` records
 archive/diff/binary hashes and requested/effective build flags. The suite now
 includes automated controlling-terminal editor and xargs prompt checks, and
 patch conditional-output and backup interactions.
+
+## CSH-076 locale and catalog subset
+
+Dependent tracks can run `make host-locales` independently or
+`make host-catalog-fixtures` for verified catalogs and byte inputs too. The
+[shared interface](../../docs/host-locale-catalogs.md#shared-interface-for-dependent-tracks)
+documents `fixtures.json`, the Python loader and retained generation lifetimes.
+
+[Provider setup, independent assertions and exact unqualified contracts](../../docs/host-locale-catalogs.md)
+cover gencat/gettext/iconv/locale/localedef/msgfmt/ngettext. `make test-host-profile`
+includes the bounded strict subset; `make test-host-catalog-contracts` also runs
+all retained reproducers without exclusions. Full utility contracts remain open.
+
+CSH-076 now builds pinned standalone gencat providers and a private GNU libiconv
+CLI for code-name conversions. Their strict retained reproducers pass with no
+failure exclusions. First catalog setup downloads and checks the pinned GNU
+archive; builds are private and reused after verification. See
+[provider provenance and licenses](vendor/catalog-providers.md) for patches,
+compiler policy, source hashes, charmap fallback and redistribution notices.

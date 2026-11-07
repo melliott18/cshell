@@ -314,3 +314,10 @@ limits, ACLs, capacity exhaustion and libc-internal faults remain unqualified.
 CSH-071 adds [predicate, permission and identity qualification](host-permissions-identities.md),
 including `make test-host-permissions`, direct exec, public cshell dispatch,
 independent effects, and explicit unqualified vendor/session/platform branches.
+
+## CSH-076 locale and catalog subset
+
+[Provider setup, independent assertions and exact unqualified contracts](host-locale-catalogs.md)
+cover gencat/gettext/iconv/locale/localedef/msgfmt/ngettext. `make test-host-profile`
+includes the bounded strict subset; `make test-host-catalog-contracts` also runs
+retained failing vendor reproducers. Full utility contracts remain open.

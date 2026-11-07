@@ -1,0 +1,1 @@
+ERROR: request returned Internal Server Error for API route and version http://%2FUsers%2Fmitchell%2F.docker%2Frun%2Fdocker.sock/_ping, check if the server supports the requested API version

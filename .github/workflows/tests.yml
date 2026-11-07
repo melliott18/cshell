@@ -25,8 +25,10 @@ jobs:
         include:
           - os: ubuntu-24.04
             cc: gcc
+            timeout: 45
           - os: macos-15
             cc: clang
+            timeout: 75
     env:
       CC: ${{ matrix.cc }}
     steps:
@@ -38,9 +40,10 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential locales ed busybox acl file pax libbsd-dev ncurses-bin libncurses-dev bsdextrautils bc m4
+          sudo apt-get install -y build-essential locales ed busybox acl file pax libbsd-dev ncurses-bin libncurses-dev bsdextrautils bc m4 gettext curl ca-certificates
           sudo localedef -i en_US -f UTF-8 en_US.UTF-8
           sudo localedef -i fr_FR -f UTF-8 fr_FR.UTF-8
+          sudo localedef -i fr_FR -f ISO-8859-1 fr_FR.ISO8859-1
           sudo localedef -i de_DE -f UTF-8 de_DE.UTF-8
           sudo localedef -i zh_CN -f GB18030 zh_CN.GB18030
           sudo localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP
@@ -48,9 +51,12 @@ jobs:
       - name: Install macOS profile dependencies
         if: runner.os == 'macOS'
         run: |
-          for package in coreutils findutils; do
+          for package in coreutils findutils gettext; do
             brew list "$package" >/dev/null 2>&1 || brew install "$package"
           done
+          echo "$(brew --prefix gettext)/bin" >> "$GITHUB_PATH"
+      - name: Supply shared locales and catalogs for dependent tracks
+        run: make host-catalog-fixtures
       - name: Build
         run: make -j2
       - name: Test replacement APIs, cshell runtime, and selected behavior

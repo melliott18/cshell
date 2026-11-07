@@ -1,0 +1,31 @@
+{
+  "owner": "CSH-076",
+  "qualified_boundary": "Only the enumerated fixtures, modes, provider identities and supplied capabilities. No complete utility or full-system qualification.",
+  "excluded_cases": {
+    "Darwin": {},
+    "Linux": {}
+  },
+  "unqualified": {
+    "gencat": [
+      "Implementation limits and I/O or allocation exhaustion; diagnostic locales; further source grammar and failure-atomicity checks"
+    ],
+    "gettext": [
+      "Catalog search permutations beyond the supplied domains/locales; translated diagnostics; output failures and resource ceilings"
+    ],
+    "ngettext": [
+      "Additional plural expressions and integer boundaries; catalog search and diagnostic permutations; output failures and resource ceilings"
+    ],
+    "msgfmt": [
+      "Additional format checks, LC_CTYPE charset fallback, no-c-format precedence, diagnostic locales, output failures and resource ceilings"
+    ],
+    "iconv": [
+      "Charmap joins and their invalid-character policy; exhaustive advertised encodings; further interrupted I/O and resource ceilings"
+    ],
+    "locale": [
+      "Complete keyword/category value and quoting grammar, listing completeness against vendor databases, diagnostics and output failures"
+    ],
+    "localedef": [
+      "Darwin generated categories beyond LC_NUMERIC and charmaps; public-locale installation; -c warning retention, -u, all category grammar, limits and fault atomicity; category success reporting"
+    ]
+  }
+}
