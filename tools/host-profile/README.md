@@ -475,3 +475,14 @@ Run `make test-host-filesystem-omitted-who` for the 288 required assertions.
 CSH-107 supplies 72 mkdir/mkfifo cases / 288 assertions for symbolic creation modes with omitted who under independently proved child-only masks 027, 077 and 777. Authored literal modes cover masked addition/removal, copy addition/removal/assignment, conditional execute, empty assignment and multiple actions, alongside explicit-who controls. Exact channels/status, final type/mode and cleanup are required. The selected pinned GNU coreutils 9.7 creation utilities replace Apple providers that retain masked group bits during copy assignment.
 
 Further symbolic-mode and parent graphs, special-bit modes, transient permissions, ACL inheritance, other identities, path/depth limits and capacity exhaustion remain unqualified; FIFO transfer is outside creation. Apple stock failures are retained separately; no allowances are introduced.
+
+### CSH-110 selected ln
+
+The opt-in profile builds unmodified `ln` from the pinned GNU coreutils 9.7
+archive, with the existing configure options, and records its source archive,
+exact binary hash and `build/host-coreutils-build/ln.log`. Native Apple `ln -fs`
+replaces a same-entry source instead of preserving it and diagnosing the error;
+that failure remains required in the strict stock audit. The 29 link graph
+cases require all earlier assertions and introduce no selected-profile allowance.
+See [CSH-110 evidence](../../docs/evidence/csh-110/README.md). System executables
+are untouched; only the opt-in PATH selects this provider.

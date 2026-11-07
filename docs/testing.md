@@ -1637,3 +1637,36 @@ CSH-107 supplies 72 mkdir/mkfifo cases / 288 assertions for symbolic creation mo
 Further symbolic-mode and parent graphs, special-bit modes, transient permissions, ACL inheritance, other identities, path/depth limits and capacity exhaustion remain unqualified; FIFO transfer is outside creation. Apple stock failures are retained separately; no allowances are introduced.
 
 `make test-host-filesystem-parent-graphs` runs the 60 CSH-108 mkdir parent graphs in all four invocation modes (240 assertions). Final/intermediate modes, unchanged existing identities, child mask probes, channels, status and cleanup are mandatory. See [the evidence](evidence/csh-108/README.md).
+
+## CSH-109 directory removal environments
+
+`make test-host-filesystem-removal` runs 19 rmdir graphs in direct, string, file
+and stdin modes. Private owner-mode write/search denial requires an unprivileged
+identity and an independently observed EACCES before execution. Exact effects
+and preserved inode identities are checked before cleanup; denial is restored
+for inspection. Arbitrary graphs, mounts, ACLs, limits and races remain open.
+See [CSH-109 evidence](evidence/csh-109/README.md).
+
+## CSH-110 link destination environments
+
+`make test-host-filesystem-link-graphs` runs 29 authored `ln` cases through
+direct exec and all three cshell modes (116 assertions). The same assertions
+are required by the selected full profile and retained in the stock audit.
+The fixture records pre-exec object identities and readback, post-exec link
+counts and inode relationships, bytes, modes, channels/status and cleanup.
+Failure tests reject corrupted effects, incomplete setup and readback; failed
+exec and timeout checks require reaped children and removed fixtures.
+See [CSH-110 evidence](evidence/csh-110/README.md).
+
+## Link permission boundaries (CSH-111)
+
+`make test-host-filesystem-link-permissions` runs 21 private ln cases in direct
+execution and cshell string/file/stdin modes. Independent EACCES probes precede
+the selected provider. Exact inode/link-count/content effects, channels, status,
+exec records and cleanup are required. Run as an unprivileged identity. These
+fixtures do not qualify ACLs, other credentials, mounts or exhaustion.
+See [retained evidence](evidence/csh-111/README.md).
+
+`make test-host-filesystem-touch-permissions` checks CSH-112 ordinary owner-mode touch permissions, explicit timestamps and operand continuation in direct execution and all shell input modes. See [CSH-112 evidence](evidence/csh-112/README.md).
+
+`make test-host-filesystem-touch-current` checks CSH-113 touch creation modes and bounded current-time behavior in direct execution and all shell input modes. See [CSH-113 evidence](evidence/csh-113/README.md).

@@ -1,11 +1,11 @@
 # CSH-109: Supply remaining filesystem environments after parent graph qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-108
-- Branch: Assigned when work starts
+- Branch: test/CSH-109-filesystem-environments
 - Issue: [#229](https://github.com/melliott18/cshell/issues/229)
 
 ## Goal
@@ -41,7 +41,7 @@ section map is `tests/host_filesystem_contracts.json`.
 | [`readlink`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html) | CSH-106 supplies 1088 readlink cases / 4352 assertions: each non-NUL byte, authored valid and invalid UTF-8 sequences, embedded newlines and shell metacharacters, and mixed targets of 255/256/257/511/512/513/1023 bytes, in C and an installed UTF-8 locale, with and without -n. Authored output bytes are independent of the provider; pre-exec lstat/readlink probes establish stored bytes, and post-exec probes require unchanged inode, mode, size and contents. Exact channels/status and cleanup are mandatory. Arbitrary byte sequences and locale repertoires, libc-internal allocation failures, true filesystem limits, namespace races and other error environments remain unqualified. | Additional byte/repertoire fixtures, real filesystem limits and libc-internal fault controls. The finite non-NUL byte and sequence witnesses do not qualify arbitrary sequences, filesystem limits, races or libc internals. CSH-084 owner-mode EACCES remains bounded. |
 | [`realpath`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html) | Permission/namespace races, libc-internal allocation failures, double-leading-slash policy and exact resource boundaries remain unqualified. CSH-080 adds test-only provider call-site ENOMEM including dynamic links and relative/absolute missing-final fallback; it does not inject libc internals. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. | controlled namespace races/credentials, exact link/path limits and libc-internal faults. Call-site injection does not qualify libc internal recovery or races. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. |
 | [`rm`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html) | Recursive descriptor/depth exhaustion, disposable mount boundaries, further operand continuation, permissions, races and prompt locales/recursive graphs remain unqualified; yes/no controlling-PTY decisions are bounded witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. CSH-087 adds negative descent with operand continuation, affirmative leaf removal followed by yes/no final directory removal, recursive symlink non-traversal, and last -f/-i precedence. CSH-089 supplies declined regular/link children, nested descent refusals, final parent decisions including nonempty-parent errors and later-operand continuation on one-child chains. Branching and arbitrary prompt graphs remain open. | private mount/depth/credential profiles and automated recursive prompt/race controls. One-level continuation and yes/no PTY witnesses do not supply mount boundaries. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. CSH-089 extends one-child chains with declined children and nested decisions; arbitrary branching, non-C locales, mount and depth limits remain open. |
-| [`rmdir`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html) | Ancestor permissions, total depth/path boundaries and other filesystem errors remain unqualified. CSH-080 adds symlink rejection and continuation after a nonempty operand. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. | private credentials, bounded path/depth and filesystem failure profiles. Symlink/continuation cases do not establish permission or capacity behavior. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. |
+| [`rmdir`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html) | CSH-109 supplies 19 rmdir cases / 76 assertions for parent chains, explicit child-first and sibling-before-parent operands, shared parents, duplicate operands, nonempty file/link/FIFO ancestors and continuation after missing/file/symlink operands. Private owner-mode write/search denial is independently proved by rmdir returning EACCES before provider exec. Exact removed paths and preserved identities, modes, bytes and links, channels/status and cleanup are required. Arbitrary parent graphs, ACLs and other identities, mount boundaries, total depth/path limits, namespace races, other filesystem failures and diagnostic locales remain unqualified. | Private ACL/credential and mount environments, bounded total depth/path controls, race/fault and diagnostic-locale oracles. |
 | [`touch`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html) | CSH-101 supplies 96 touch cases / 384 assertions for explicit M/J/n transition clocks, minute/second standard and daylight offsets, 45-minute-10-second and 30-minute-15-second advances, and negative/next-day transition times. Independently authored UTC fields and exact target-inode probes supply the oracle for -d/-t and all four field selections. Skipped/repeated times, arbitrary rules and offsets, timezone databases, timestamp ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified. Earlier CSH-096/097/098/099/100 witnesses remain preserved. | additional explicit-rule, timezone-database, unsupported-range, current-clock, arbitrary namespace and permission/ACL environments. Authored transition clocks and sub-hour offsets do not qualify skipped/repeated times, arbitrary rules, timezone databases, ranges, live clocks, races or credentials. |
 
 ## Retained conditions
@@ -56,10 +56,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -68,7 +68,7 @@ test-host-filesystem-provider-audit test-host-filesystem-residual
 test-host-filesystem-isolated test-host-filesystem-interactive
 test-host-filesystem-decisions test-host-filesystem-metadata
 test-host-filesystem-recursive test-host-filesystem-path-limits test-host-filesystem-cwd
-test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times test-host-filesystem-magic-strings test-host-filesystem-magic-messages test-host-filesystem-magic-types test-host-filesystem-magic-defaults test-host-filesystem-link-bytes test-host-filesystem-omitted-who test-host-filesystem-parent-graphs` on native macOS and Linux as an unprivileged
+test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times test-host-filesystem-magic-strings test-host-filesystem-magic-messages test-host-filesystem-magic-types test-host-filesystem-magic-defaults test-host-filesystem-link-bytes test-host-filesystem-omitted-who test-host-filesystem-parent-graphs test-host-filesystem-removal` on native macOS and Linux as an unprivileged
 fixture identity. Retain separate nonzero stock `make test-host-filesystem-audit`
 and stock `tests/host_filesystem.py --extended-only --provider-audit` records.
 Add bounded setup/failure/timeout cleanup regressions for new environments.
@@ -82,3 +82,39 @@ Privileged provisioning requires an isolated runner; prompts require owned PTYs.
 CSH-108 supplies 60 mkdir -p cases / 240 assertions for shared parents, repeated operands, existing directory symlinks and continuation after regular-file or dangling-symlink prefix obstructions. Literal final and intermediate modes under independently proved child-only masks 027, 077 and 777 cover default, numeric, empty and copy-assignment modes. Existing directory, file and link identities/modes and contents are preserved; output, status, effects and cleanup are required.
 
 Further mode/parent graphs, special bits, transient permissions, ACL inheritance, other identities, path/depth limits, namespace races and capacity exhaustion remain unqualified. All 21 utility dispositions and four original U-040 conditions remain open.
+
+## Implementation scope
+
+CSH-109 supplies 19 rmdir cases / 76 assertions for parent chains, explicit child-first and sibling-before-parent operands, shared parents, duplicate operands, nonempty file/link/FIFO ancestors and continuation after missing/file/symlink operands. Private owner-mode write/search denial is independently proved by rmdir returning EACCES before provider exec. Exact removed paths and preserved identities, modes, bytes and links, channels/status and cleanup are required.
+
+Arbitrary parent graphs, ACLs and other identities, mount boundaries, total depth/path limits, namespace races, other filesystem failures and diagnostic locales remain unqualified. All 21 utility dispositions and four original U-040 conditions transfer to [CSH-110](CSH-110-filesystem-environment-residuals.md). Integration remains gated on CSH-108.
+
+## Validation record
+
+Implemented in a separate managed worktree on `test/CSH-109-filesystem-environments`,
+stacked on CSH-108 commit `39f81fc`. [Retained evidence](../evidence/csh-109/README.md)
+records the exact sources, provider/build identities, commands, channels/status,
+effects, setup errors and cleanup. Native macOS and unprivileged Debian/Linux
+Docker selected profiles pass 11811/11851 assertions, including all 76 new
+assertions on each platform. General host integration passes 1162 assertions
+with zero gaps on each. Ownership/filesystem harness tests pass 10/138 on each.
+
+Supplemental runtime/terminal checks pass 3950/33 cases; the general harness
+passes 93 tests (one Darwin-only skip on Linux), and format/compiled-database
+checks pass 14/5. These supplemental inputs and exact binaries/providers are
+unchanged by the final fixture-only ordering correction, as the verifier proves.
+Stock full/provider failures remain exactly 745/16 on macOS and 578/8 on Linux.
+No selected allowances, shell/vendor C changes, sanitizer run or separately
+hosted native-Linux run is claimed.
+
+The verifier requires unchanged CSH-108 expectations, all previous stock
+failures, exactly the new matrix, independent EACCES probes, preservation and
+cleanup, provider provenance and one final filesystem-validation source digest.
+Initial native missing-PID timeout-harness failures and unchanged passing reruns
+are retained. Specification review replaced two passing parent-first examples
+with valid sibling-before-parent operands; pre-correction results remain separate.
+
+All 21 utility dispositions and four original U-040 conditions transfer to
+[CSH-110](CSH-110-filesystem-environment-residuals.md) ([#231](https://github.com/melliott18/cshell/issues/231))
+under the explicit-disposition acceptance alternative. U-034/U-040 remain partial;
+review does not mark this ticket or its dependency integrated.
