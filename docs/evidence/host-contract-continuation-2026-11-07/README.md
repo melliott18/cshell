@@ -133,3 +133,7 @@ The [provider repair review](provider-repairs/README.md) resolves the selected
 awk/expr/ed multibyte failures and supplies an allocation-safe formatting
 replacement. Historical vendor failures remain in their original records.
 Full-page qualification and the disposable-Mac investigation remain open.
+
+The [additional coverage and CI repairs](coverage-ci/README.md) retain the next
+grammar/locale/format cases, pinned bc repair, vendor build corrections and
+Linux mv regression evidence.

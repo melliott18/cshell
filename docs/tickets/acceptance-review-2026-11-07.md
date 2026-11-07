@@ -79,3 +79,13 @@ comparison remains failing historical evidence. CSH-073 and CSH-074 are the only
 tickets still in review; their complete-page criteria remain unchecked. CSH-079
 remains blocked by the unavailable resettable Mac and retains its other declared
 partitions. No additional ticket satisfies all acceptance criteria.
+
+## Additional coverage and CI review
+
+The [additional coverage](../evidence/host-contract-continuation-2026-11-07/coverage-ci/README.md)
+adds strict grammar, character/column and formatting assertions, repairs GNU bc
+empty return, fixes vendor build flag propagation and Linux mv decline status.
+CSH-073/074 still own full-page/common-default remainders and CSH-079 still owns
+the unavailable disposable-Mac investigation and remaining partitions. The only
+tickets in review remain CSH-073 and CSH-074; neither meets all acceptance
+criteria. No new ticket is accepted.

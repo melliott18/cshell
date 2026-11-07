@@ -1,0 +1,530 @@
+[
+  {
+    "file": "awk-ordered-native.json.gz",
+    "source": "build/contract-fourth/awk-ordered-native.json",
+    "uncompressed_bytes": 69443,
+    "sha256": "6c826528743d701f93d2c6752143cb14698e37b9a972e0c62c43c555959094b8"
+  },
+  {
+    "file": "awk-ordered-native.log.gz",
+    "source": "build/contract-fourth/awk-ordered-native.log",
+    "uncompressed_bytes": 413,
+    "sha256": "141526e4cab30da65cb88f43757e9a7aaa70b28f87cd07ed2e88c338b7fd3b4e"
+  },
+  {
+    "file": "bc-build.log.gz",
+    "source": "build/contract-fourth/bc-build.log",
+    "uncompressed_bytes": 6323,
+    "sha256": "fadb8ba9f1f25051c60974fd49055f4b60dde22fd91c7edf5fc54e53ce03abca"
+  },
+  {
+    "file": "bc-configure.log.gz",
+    "source": "build/contract-fourth/bc-configure.log",
+    "uncompressed_bytes": 2881,
+    "sha256": "57e8dc4802d9baceb7e2e242b4d3851c71a76edab0cf7559ff131dc0f17cc8e4"
+  },
+  {
+    "file": "bc-native-build-final.log.gz",
+    "source": "build/contract-fourth/bc-native-build-final.log",
+    "uncompressed_bytes": 7651,
+    "sha256": "31247d6252a1d9a71ea2a8f24921ff95e8132e8b1f52e4afcb5feb2779a84ec5"
+  },
+  {
+    "file": "bc-native-build.json.gz",
+    "source": "build/contract-fourth/bc-native-build.json",
+    "uncompressed_bytes": 429,
+    "sha256": "c8503483c894f10e28f9e5e25313993f015a84c98278befcbb6cf6b1b89dc0f3"
+  },
+  {
+    "file": "bc-native-build.log.gz",
+    "source": "build/contract-fourth/bc-native-build.log",
+    "uncompressed_bytes": 12630,
+    "sha256": "ffae40d6bab4e68adb37a790a4828c0189010f7d867555468a07a4ee0d087937"
+  },
+  {
+    "file": "bc-sanitizer-native-build.json.gz",
+    "source": "build/contract-fourth/bc-sanitizer-native-build.json",
+    "uncompressed_bytes": 501,
+    "sha256": "3835826fc8bff841ca83b323cb0b9b23dc8651f8a24f8520e38cfc06a509ab2f"
+  },
+  {
+    "file": "bc-sanitizer-native-build.log.gz",
+    "source": "build/contract-fourth/bc-sanitizer-native-build.log",
+    "uncompressed_bytes": 7748,
+    "sha256": "77680c75afd9096d8dbfc5f52cc45e4b054dec7b35b112892f3c6f70ec84572d"
+  },
+  {
+    "file": "bc-sanitizer-native.json.gz",
+    "source": "build/contract-fourth/bc-sanitizer-native.json",
+    "uncompressed_bytes": 232842,
+    "sha256": "79db622ed0518b7f05c03500e38f13ca3d7a17ba102febdae722289eb40e00dd"
+  },
+  {
+    "file": "bc-sanitizer-native.log.gz",
+    "source": "build/contract-fourth/bc-sanitizer-native.log",
+    "uncompressed_bytes": 4277,
+    "sha256": "194d750fb610a460ec1e00372a8c0a1cd30888709d8ce67029edc094427abcd4"
+  },
+  {
+    "file": "ci-filesystem-linux-before.log.gz",
+    "source": "build/contract-fourth/ci-filesystem-linux-before.log",
+    "uncompressed_bytes": 1356726,
+    "sha256": "d94f3142a9736c50b855a756338b176fab8588af265980d0a8313c083af3b097"
+  },
+  {
+    "file": "ci-language-linux-after.log.gz",
+    "source": "build/contract-fourth/ci-language-linux-after.log",
+    "uncompressed_bytes": 744520,
+    "sha256": "f5fb62c11b7e9af3dc1210b290e04300c61fa76c7329f702ce4953b4ef69f245"
+  },
+  {
+    "file": "ci-language-linux-before.log.gz",
+    "source": "build/contract-fourth/ci-language-linux-before.log",
+    "uncompressed_bytes": 638794,
+    "sha256": "43d30388d799c4526e01355c5faa9247dea537780d137990ff5aeb6eb592b994"
+  },
+  {
+    "file": "ci-terminal-linux-before.log.gz",
+    "source": "build/contract-fourth/ci-terminal-linux-before.log",
+    "uncompressed_bytes": 583742,
+    "sha256": "0f1772d650d6afcc0f34e0d19d0b584db7555065aeeb517a1b67722b8b802462"
+  },
+  {
+    "file": "formatted-native-first.json.gz",
+    "source": "build/contract-fourth/formatted-native-first.json",
+    "uncompressed_bytes": 1112918,
+    "sha256": "0df95ebc162aa2fa46bc29b4faa5205a146801299b5e45c99e21f323263aba70"
+  },
+  {
+    "file": "formatted-native-first.log.gz",
+    "source": "build/contract-fourth/formatted-native-first.log",
+    "uncompressed_bytes": 84,
+    "sha256": "def616703368ac0b60b05a84e84b3a17336418a484219e1e2e3dae10252853f2"
+  },
+  {
+    "file": "formatted-sanitizer-native.json.gz",
+    "source": "build/contract-fourth/formatted-sanitizer-native.json",
+    "uncompressed_bytes": 800849,
+    "sha256": "04d9335e2062dd67d3f05dfefc22f0654efa42a127bf666c724f565d1e656d15"
+  },
+  {
+    "file": "formatted-sanitizer-native.log.gz",
+    "source": "build/contract-fourth/formatted-sanitizer-native.log",
+    "uncompressed_bytes": 84,
+    "sha256": "6d001494a26b48443eff99aa0458b9aa2f3930b43ccd4f8c0a06b55f743d1f40"
+  },
+  {
+    "file": "inventory.log.gz",
+    "source": "build/contract-fourth/inventory.log",
+    "uncompressed_bytes": 714,
+    "sha256": "b9d922d81f5d2f5bc5bf9054274e6edd53f6a208edaf14c6e27057433d3efe91"
+  },
+  {
+    "file": "language-first.json.gz",
+    "source": "build/contract-fourth/language-first.json",
+    "uncompressed_bytes": 37325,
+    "sha256": "43a05cf509a3a0e6fbed254b21a08ade63f9ac2c5efa719089e27be2bbf68fbe"
+  },
+  {
+    "file": "language-harness.log.gz",
+    "source": "build/contract-fourth/language-harness.log",
+    "uncompressed_bytes": 107,
+    "sha256": "19c29789159f19ead2ece685432e2403239bf9083688e9f2a8a78d4d6175efee"
+  },
+  {
+    "file": "language-native-direct.json.gz",
+    "source": "build/contract-fourth/language-native-direct.json",
+    "uncompressed_bytes": 37792,
+    "sha256": "8fd7f8d5904db8cf2dba06fab003cee696ca3b93cf9f1495d25b06f515cd2355"
+  },
+  {
+    "file": "languages-native-before-profile.json.gz",
+    "source": "build/contract-fourth/languages-native-before-profile.json",
+    "uncompressed_bytes": 1925586,
+    "sha256": "db7c2385ed97f8fce4ac15bed3e157235c1b7ae87d9b2dcf27980271920266bd"
+  },
+  {
+    "file": "languages-native-before-profile.log.gz",
+    "source": "build/contract-fourth/languages-native-before-profile.log",
+    "uncompressed_bytes": 39502,
+    "sha256": "ec69d0a8a3cfc14745bbec246449487634e823d870f0480b50a8d48a3e3e9e6d"
+  },
+  {
+    "file": "languages-native-final.json.gz",
+    "source": "build/contract-fourth/languages-native-final.json",
+    "uncompressed_bytes": 1928106,
+    "sha256": "e9fab4cd289e580edc50d23a7eefb8c1c11c9c7f9e2592c8cdc2627e5f5345a7"
+  },
+  {
+    "file": "languages-native-final.log.gz",
+    "source": "build/contract-fourth/languages-native-final.log",
+    "uncompressed_bytes": 39502,
+    "sha256": "ec69d0a8a3cfc14745bbec246449487634e823d870f0480b50a8d48a3e3e9e6d"
+  },
+  {
+    "file": "languages-native.json.gz",
+    "source": "build/contract-fourth/languages-native.json",
+    "uncompressed_bytes": 1924880,
+    "sha256": "c14fecc044840dbcc6b225c05fabfd39acea51c8d4c84de7ce9dd714b931a018"
+  },
+  {
+    "file": "languages-native.log.gz",
+    "source": "build/contract-fourth/languages-native.log",
+    "uncompressed_bytes": 39502,
+    "sha256": "ec69d0a8a3cfc14745bbec246449487634e823d870f0480b50a8d48a3e3e9e6d"
+  },
+  {
+    "file": "linux--tmp--awk-ordered-fourth.json.gz",
+    "source": "build/contract-fourth/linux/tmp--awk-ordered-fourth.json",
+    "uncompressed_bytes": 120498,
+    "sha256": "e2ae15e6cd697e8c72e380f11b6bc3d1690c761678cd44649cac0fda98f229dc"
+  },
+  {
+    "file": "linux--tmp--awk-ordered-fourth.log.gz",
+    "source": "build/contract-fourth/linux/tmp--awk-ordered-fourth.log",
+    "uncompressed_bytes": 413,
+    "sha256": "141526e4cab30da65cb88f43757e9a7aaa70b28f87cd07ed2e88c338b7fd3b4e"
+  },
+  {
+    "file": "linux--tmp--bc-sanitizer-fourth-build.log.gz",
+    "source": "build/contract-fourth/linux/tmp--bc-sanitizer-fourth-build.log",
+    "uncompressed_bytes": 8302,
+    "sha256": "aec4df905786a3947f810d10ebe3b5218b32da24afdf8803e529cdd3686b7abd"
+  },
+  {
+    "file": "linux--tmp--bc-sanitizer-fourth.json.gz",
+    "source": "build/contract-fourth/linux/tmp--bc-sanitizer-fourth.json",
+    "uncompressed_bytes": 266249,
+    "sha256": "7c519dc967efad3837e2a9bdee8fbd5d6af78dd65d814424fd34d72a716e4f3e"
+  },
+  {
+    "file": "linux--tmp--bc-sanitizer-fourth.log.gz",
+    "source": "build/contract-fourth/linux/tmp--bc-sanitizer-fourth.log",
+    "uncompressed_bytes": 4277,
+    "sha256": "194d750fb610a460ec1e00372a8c0a1cd30888709d8ce67029edc094427abcd4"
+  },
+  {
+    "file": "linux--tmp--bison-install-fourth.log.gz",
+    "source": "build/contract-fourth/linux/tmp--bison-install-fourth.log",
+    "uncompressed_bytes": 1152,
+    "sha256": "4567b90c34eb4fa8a28af19cb5f54ec037b665d6c04bbbbfe62c8bedb1187c91"
+  },
+  {
+    "file": "linux--tmp--csh-ci-build--build--host-coreutils-build--build.log.gz",
+    "source": "build/contract-fourth/linux/tmp--csh-ci-build--build--host-coreutils-build--build.log",
+    "uncompressed_bytes": 31310,
+    "sha256": "8859b71e4ad4e31f97032f14edfd37a84a1f11254d5c8a2876660472043d1c03"
+  },
+  {
+    "file": "linux--tmp--csh-ci-build--build--host-coreutils-build--configure.log.gz",
+    "source": "build/contract-fourth/linux/tmp--csh-ci-build--build--host-coreutils-build--configure.log",
+    "uncompressed_bytes": 46823,
+    "sha256": "9eaeedbb44f5db0ad4646616a4822622b20d073183ec7d07500b43720558b8ca"
+  },
+  {
+    "file": "linux--tmp--csh-ci-build--build--host-coreutils-build--creation.log.gz",
+    "source": "build/contract-fourth/linux/tmp--csh-ci-build--build--host-coreutils-build--creation.log",
+    "uncompressed_bytes": 4869,
+    "sha256": "6736aa4bd4b90bbf5dffca3f6641d59de42aca622b1e5e9cfcfcbcc0ba43cd91"
+  },
+  {
+    "file": "linux--tmp--csh-ci-build--build--host-coreutils-build--ln.log.gz",
+    "source": "build/contract-fourth/linux/tmp--csh-ci-build--build--host-coreutils-build--ln.log",
+    "uncompressed_bytes": 212,
+    "sha256": "28ef920ee37734ee778dbdd0d44f060e1401019fa6130cc0c8dc53a51559dfc0"
+  },
+  {
+    "file": "linux--tmp--csh-ci-build--build--host-file-build--build.log.gz",
+    "source": "build/contract-fourth/linux/tmp--csh-ci-build--build--host-file-build--build.log",
+    "uncompressed_bytes": 8619,
+    "sha256": "0b5bb4c9bcc419c8b93a4c521a3d5690340070758724fb411471f183e8226f5a"
+  },
+  {
+    "file": "linux--tmp--csh-ci-build--build--host-file-build--configure.log.gz",
+    "source": "build/contract-fourth/linux/tmp--csh-ci-build--build--host-file-build--configure.log",
+    "uncompressed_bytes": 7961,
+    "sha256": "a46834005ab7b28059e1613b08899142866020e9a8a4d7a568526b39190f95dc"
+  },
+  {
+    "file": "linux--tmp--format-sanitizer-fourth-build.log.gz",
+    "source": "build/contract-fourth/linux/tmp--format-sanitizer-fourth-build.log",
+    "uncompressed_bytes": 40193,
+    "sha256": "9591864cf2e989d11a548b2b167cc03d5443c9d64ed5754424813b1c2214b30a"
+  },
+  {
+    "file": "linux--tmp--formatted-fourth.log.gz",
+    "source": "build/contract-fourth/linux/tmp--formatted-fourth.log",
+    "uncompressed_bytes": 1854,
+    "sha256": "a475900c49ec726b2174994554e339eb322ff7963022bad9235976f74ed22626"
+  },
+  {
+    "file": "linux--tmp--formatted-sanitizer-fourth.json.gz",
+    "source": "build/contract-fourth/linux/tmp--formatted-sanitizer-fourth.json",
+    "uncompressed_bytes": 858952,
+    "sha256": "752940790f339c0db0f25b6c955bbf6da3390048346e02a7d9fcf8c717ece79a"
+  },
+  {
+    "file": "linux--tmp--formatted-sanitizer-fourth.log.gz",
+    "source": "build/contract-fourth/linux/tmp--formatted-sanitizer-fourth.log",
+    "uncompressed_bytes": 84,
+    "sha256": "6d001494a26b48443eff99aa0458b9aa2f3930b43ccd4f8c0a06b55f743d1f40"
+  },
+  {
+    "file": "linux--tmp--languages-fourth-final.json.gz",
+    "source": "build/contract-fourth/linux/tmp--languages-fourth-final.json",
+    "uncompressed_bytes": 1830602,
+    "sha256": "7dd98be793dd4d61258c09d06c5b1e21fe9ef1156a54e33c4b5d6f13278b5ba9"
+  },
+  {
+    "file": "linux--tmp--languages-fourth-final.log.gz",
+    "source": "build/contract-fourth/linux/tmp--languages-fourth-final.log",
+    "uncompressed_bytes": 39502,
+    "sha256": "ec69d0a8a3cfc14745bbec246449487634e823d870f0480b50a8d48a3e3e9e6d"
+  },
+  {
+    "file": "linux--tmp--languages-fourth.json.gz",
+    "source": "build/contract-fourth/linux/tmp--languages-fourth.json",
+    "uncompressed_bytes": 1829410,
+    "sha256": "13999419e5ba2a7477e57e9dc2da9fb850b7820dda574d6e12c46debc0224406"
+  },
+  {
+    "file": "linux--tmp--languages-fourth.log.gz",
+    "source": "build/contract-fourth/linux/tmp--languages-fourth.log",
+    "uncompressed_bytes": 40730,
+    "sha256": "6149b73b0f0b66c8e92de1ee813d14435e85b2ad1bebda13bf566766a1f9b056"
+  },
+  {
+    "file": "linux--tmp--lzip-install-fourth.log.gz",
+    "source": "build/contract-fourth/linux/tmp--lzip-install-fourth.log",
+    "uncompressed_bytes": 2302,
+    "sha256": "08fcc5e7e6c4a1cff18fe17ace7c2b3ab359f80f491e91ef135d2f7ca9575d2f"
+  },
+  {
+    "file": "linux--tmp--mv-decisions-fourth.json.gz",
+    "source": "build/contract-fourth/linux/tmp--mv-decisions-fourth.json",
+    "uncompressed_bytes": 434974,
+    "sha256": "a90a2809372e0b506f3aec724f9f942e9c750063f507259a636453470e4b2161"
+  },
+  {
+    "file": "linux--tmp--mv-decisions-fourth.log.gz",
+    "source": "build/contract-fourth/linux/tmp--mv-decisions-fourth.log",
+    "uncompressed_bytes": 3117,
+    "sha256": "71511a8497f6946f67a2c358e6f590632215ce91951c31526b8118e129119be5"
+  },
+  {
+    "file": "linux--tmp--mv-interactive-fourth.json.gz",
+    "source": "build/contract-fourth/linux/tmp--mv-interactive-fourth.json",
+    "uncompressed_bytes": 249237,
+    "sha256": "d88f49cb27cc201111a4f2e1c667a4abd7ec3668751c0997362db066410e3382"
+  },
+  {
+    "file": "linux--tmp--mv-interactive-fourth.log.gz",
+    "source": "build/contract-fourth/linux/tmp--mv-interactive-fourth.log",
+    "uncompressed_bytes": 1870,
+    "sha256": "8b574be4c42d854ea11b3d9df17d39e472bf46cf25680d0375391b5d9ddf7134"
+  },
+  {
+    "file": "linux--tmp--profile-fourth-final.log.gz",
+    "source": "build/contract-fourth/linux/tmp--profile-fourth-final.log",
+    "uncompressed_bytes": 9709,
+    "sha256": "f0e715f2c7f6ca1cfd3f1a739aae106b1a22660ef15354085e02165a719d7abb"
+  },
+  {
+    "file": "linux--tmp--profile-fourth.log.gz",
+    "source": "build/contract-fourth/linux/tmp--profile-fourth.log",
+    "uncompressed_bytes": 163325,
+    "sha256": "61406cdc998909316c1edb19c1d0197d4acb003a2a30a7105483c5862e2d261a"
+  },
+  {
+    "file": "linux--tmp--profile-metadata-fourth.log.gz",
+    "source": "build/contract-fourth/linux/tmp--profile-metadata-fourth.log",
+    "uncompressed_bytes": 129,
+    "sha256": "7456c583904fa155a94ccc2f0fa43e526acf86ee1cbc7bf47aab1887ba2c4d4b"
+  },
+  {
+    "file": "linux--tmp--text-build-fourth-retry.log.gz",
+    "source": "build/contract-fourth/linux/tmp--text-build-fourth-retry.log",
+    "uncompressed_bytes": 331,
+    "sha256": "94bf3e39c1ecd05082f13cbb77ad70cf167af1b53f9b19a44957aec8744f3c7e"
+  },
+  {
+    "file": "linux--tmp--text-build-fourth.log.gz",
+    "source": "build/contract-fourth/linux/tmp--text-build-fourth.log",
+    "uncompressed_bytes": 323,
+    "sha256": "412cdff08aa0cf181d071d35e23cc275dbf45c2788c833a16c6aade6e1286681"
+  },
+  {
+    "file": "linux--tmp--text-fourth.json.gz",
+    "source": "build/contract-fourth/linux/tmp--text-fourth.json",
+    "uncompressed_bytes": 1702073,
+    "sha256": "4cf6740c007561c043c44d8e10b27bc920cfaa6aa2b2b75058a2b1973dc765dd"
+  },
+  {
+    "file": "linux--tmp--text-fourth.log.gz",
+    "source": "build/contract-fourth/linux/tmp--text-fourth.log",
+    "uncompressed_bytes": 36581,
+    "sha256": "333b3a279b8567592e708643b6e01bfb218c89a1340492b61c303456d376ada2"
+  },
+  {
+    "file": "linux--tmp--vendor-flags-fourth.log.gz",
+    "source": "build/contract-fourth/linux/tmp--vendor-flags-fourth.log",
+    "uncompressed_bytes": 1374,
+    "sha256": "ca60abe0d1625b91d9c44ed71f443d622086597fec2b08047f49fd341ea00b27"
+  },
+  {
+    "file": "linux--tmp--vendor-force-fourth.log.gz",
+    "source": "build/contract-fourth/linux/tmp--vendor-force-fourth.log",
+    "uncompressed_bytes": 282,
+    "sha256": "df23902775df9f799dab8ad94f2c20b37ea1454ec22523805c1019028b164aec"
+  },
+  {
+    "file": "linux--work--build--fourth-bc-sanitizer--build--host-bc-build.json.gz",
+    "source": "build/contract-fourth/linux/work--build--fourth-bc-sanitizer--build--host-bc-build.json",
+    "uncompressed_bytes": 501,
+    "sha256": "b435e4bddabed567843218d150a680aec8bd40e36b95a78693d860f3c653b7eb"
+  },
+  {
+    "file": "linux--work--build--host-bc-build.json.gz",
+    "source": "build/contract-fourth/linux/work--build--host-bc-build.json",
+    "uncompressed_bytes": 429,
+    "sha256": "676e6e470922abbefeb5a72f56e41cde2000e1bd08337404832efe2acf807ceb"
+  },
+  {
+    "file": "linux--work--build--host-profile--manifest.json.gz",
+    "source": "build/contract-fourth/linux/work--build--host-profile--manifest.json",
+    "uncompressed_bytes": 44322,
+    "sha256": "c17eae89b76090d1d209b1a706a9f3dd803994775ef2c6646cef057c0c161203"
+  },
+  {
+    "file": "linux--work--build--tests--host-formatted-contracts.json.gz",
+    "source": "build/contract-fourth/linux/work--build--tests--host-formatted-contracts.json",
+    "uncompressed_bytes": 1162269,
+    "sha256": "abdb7fb41426f5de396ea01435548ad1c4eb6ed0dc77004532120eff982a1dfe"
+  },
+  {
+    "file": "linux--work--build--text-providers--manifest.json.gz",
+    "source": "build/contract-fourth/linux/work--build--text-providers--manifest.json",
+    "uncompressed_bytes": 6006,
+    "sha256": "f73721406e68ec537eaf75c32f9aacf88264c515ba8f75f54a3a8dc97670dca3"
+  },
+  {
+    "file": "mv-build-native.log.gz",
+    "source": "build/contract-fourth/mv-build-native.log",
+    "uncompressed_bytes": 1147,
+    "sha256": "ecf528219586637840c0e3792a565d882749d3a42522a24366aa87dc18c65ce8"
+  },
+  {
+    "file": "profile-native-final.log.gz",
+    "source": "build/contract-fourth/profile-native-final.log",
+    "uncompressed_bytes": 677,
+    "sha256": "b1205a839c53a1a0d11cbbc9719adda7be4997605ae3e0fa589a25a49f7784c9"
+  },
+  {
+    "file": "profile-native-manifest.json.gz",
+    "source": "build/contract-fourth/profile-native-manifest.json",
+    "uncompressed_bytes": 55331,
+    "sha256": "688d6d541b2f3583281222becc95716fec970c7c39b388c35eb6c742ff18b21b"
+  },
+  {
+    "file": "profile-native.log.gz",
+    "source": "build/contract-fourth/profile-native.log",
+    "uncompressed_bytes": 152235,
+    "sha256": "ee347cdd66421a2ef2ff58a1b393f66000fc57dbd29aceffd881601bd02caa84"
+  },
+  {
+    "file": "text-build-native.log.gz",
+    "source": "build/contract-fourth/text-build-native.log",
+    "uncompressed_bytes": 314,
+    "sha256": "7bdd22ebb2456b7be7bcafabe0f2b3e1726061efafce401391e3ae2fb3894d9d"
+  },
+  {
+    "file": "text-first.json.gz",
+    "source": "build/contract-fourth/text-first.json",
+    "uncompressed_bytes": 21607,
+    "sha256": "637176609c2346f608397aaf6adfbd50ea5d0f68a4ff2ae2f69607b6989afa8a"
+  },
+  {
+    "file": "text-gnu-first.json.gz",
+    "source": "build/contract-fourth/text-gnu-first.json",
+    "uncompressed_bytes": 23905,
+    "sha256": "4a52dccd60bfaa246f9c5eaa51119779c99d28ef1071f5fc30e1f1fc71bece21"
+  },
+  {
+    "file": "text-harness.log.gz",
+    "source": "build/contract-fourth/text-harness.log",
+    "uncompressed_bytes": 117,
+    "sha256": "96bc5a54ea7797f2b1e38e4529550c9783db55f7cce6916bab1bf19aa8947f2b"
+  },
+  {
+    "file": "text-native-before-profile.json.gz",
+    "source": "build/contract-fourth/text-native-before-profile.json",
+    "uncompressed_bytes": 1753669,
+    "sha256": "cecf43c8a8cf46b6d0ce1b44112b8963048ded62742566427f9c1c8928c16d00"
+  },
+  {
+    "file": "text-native-before-profile.log.gz",
+    "source": "build/contract-fourth/text-native-before-profile.log",
+    "uncompressed_bytes": 36581,
+    "sha256": "333b3a279b8567592e708643b6e01bfb218c89a1340492b61c303456d376ada2"
+  },
+  {
+    "file": "text-native-manifest.json.gz",
+    "source": "build/contract-fourth/text-native-manifest.json",
+    "uncompressed_bytes": 7203,
+    "sha256": "f9d4ca428e43c23e32d68eca6ca91ac6dae7cb94afedb921500127d8ffd0469a"
+  },
+  {
+    "file": "text-native.json.gz",
+    "source": "build/contract-fourth/text-native.json",
+    "uncompressed_bytes": 1797334,
+    "sha256": "e10e60a88fed3c705d147af3f7e58e6fefa9b9dcdd80e3bfeadec21903e9138d"
+  },
+  {
+    "file": "text-native.log.gz",
+    "source": "build/contract-fourth/text-native.log",
+    "uncompressed_bytes": 36581,
+    "sha256": "333b3a279b8567592e708643b6e01bfb218c89a1340492b61c303456d376ada2"
+  },
+  {
+    "file": "tickets-final.log.gz",
+    "source": "build/contract-fourth/tickets-final.log",
+    "uncompressed_bytes": 466,
+    "sha256": "5e98e7809075ebba893abf4711f116cdf49fed81baa3baeb0fff827498ce66dc"
+  },
+  {
+    "file": "tickets-live-final.log.gz",
+    "source": "build/contract-fourth/tickets-live-final.log",
+    "uncompressed_bytes": 274,
+    "sha256": "5fb756d2fb7cc172d68cc128d4a56e918911da4ac4c523f79c20417274421965"
+  },
+  {
+    "file": "tickets-live.log.gz",
+    "source": "build/contract-fourth/tickets-live.log",
+    "uncompressed_bytes": 274,
+    "sha256": "5fb756d2fb7cc172d68cc128d4a56e918911da4ac4c523f79c20417274421965"
+  },
+  {
+    "file": "tickets.log.gz",
+    "source": "build/contract-fourth/tickets.log",
+    "uncompressed_bytes": 466,
+    "sha256": "3be586c87ec776dd37bbbd984f1881c2d93061af5200cbacf440afdc4a1c248a"
+  },
+  {
+    "file": "vendor-build-Makefile.gz",
+    "source": "build/contract-fourth/vendor-build-Makefile",
+    "uncompressed_bytes": 75406,
+    "sha256": "9549a34099e4f3de4a5d265f3ef309d8339bb8d57d3aee8c2c5557b5eb5fdc18"
+  },
+  {
+    "file": "vendor-build-validation.json.gz",
+    "source": "build/contract-fourth/vendor-build-validation.json",
+    "uncompressed_bytes": 930,
+    "sha256": "a1aa8b642e20914fa2ec0a74cdbc88453e3e4290c846e96efa2939b9db755512"
+  },
+  {
+    "file": "ci-terminal-linux-after.log.gz",
+    "source": "build/contract-fourth/ci-terminal-linux-after.log",
+    "uncompressed_bytes": 606166,
+    "sha256": "04f8bbef8d5365b91e4f71424d43be4e745668d9468877172e89f93c791ae3be"
+  }
+]

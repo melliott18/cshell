@@ -29,8 +29,8 @@ def cases():
                input_files={'first': b'a=2\na\n', 'second': b'a+=3\na\n'}, clauses=['OPERANDS', 'STDIN'])
 
     awk = [
-        ('short-circuit', 'BEGIN {x=0; a=(0 && ++x); b=(1 || ++x); print x,a,b; print (1 ? ++x : ++x),x}', b'', b'0 0 1\n1 1\n'),
-        ('scalar-value-array-reference', 'function f(x,a) {x=9; a[1]=7; return x} BEGIN {x=3; print f(x,a),x,a[1]}', b'', b'9 3 7\n'),
+        ('short-circuit', 'BEGIN {x=0; a=(0 && ++x); b=(1 || ++x); print x,a,b; c=(1 ? ++x : ++x); print c,x}', b'', b'0 0 1\n1 1\n'),
+        ('scalar-value-array-reference', 'function f(x,a) {x=9; a[1]=7; return x} BEGIN {x=3; r=f(x,a); print r,x,a[1]}', b'', b'9 3 7\n'),
         ('field-growth', 'BEGIN {OFS=":"} {$4="z"; print NF,$0; NF=1; print $0}', b'a b\n', b'4:a:b::z\na\n'),
         ('paragraph-records', 'BEGIN {RS=""; FS=":"} {print NR,NF,$1,$2,$3}', b'\na:b\nc\n\nd:e\nf\n\n', b'1 3 a b c\n2 3 d e f\n'),
         ('getline-variable-counts', '{print NR,FNR,$0; r=getline x; print r,NR,FNR,x,$0}', b'one\ntwo\n', b'1 1 one\n1 2 2 two one\n'),

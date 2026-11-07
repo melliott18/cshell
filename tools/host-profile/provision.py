@@ -175,7 +175,10 @@ def provision(destination, gnu_bin=None, text_bin=None, catalog_bin=None, cc="cc
             path='/usr/bin/du', realpath=os.path.realpath('/usr/bin/du'),
             sha256=hashlib.sha256(Path('/usr/bin/du').read_bytes()).hexdigest(),
             environment={'POSIXLY_CORRECT': '1'})
-    for program, patch in (('cp', 'cp-decline-status.patch'), ('rm', 'rm-parent-prompt.patch')):
+    coreutils_patches = [('cp', 'cp-decline-status.patch'), ('rm', 'rm-parent-prompt.patch')]
+    if system == 'Linux':
+        coreutils_patches.append(('mv', 'cp-decline-status.patch'))
+    for program, patch in coreutils_patches:
         manifest['executables'][program]['source'] = dict(
             version='GNU coreutils 9.7', archive='tools/host-profile/vendor/coreutils/coreutils-9.7.tar.xz',
             archive_sha256=hashlib.sha256((ROOT / 'tools/host-profile/vendor/coreutils/coreutils-9.7.tar.xz').read_bytes()).hexdigest(),
