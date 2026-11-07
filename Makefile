@@ -519,7 +519,13 @@ build/host-mkdir: build/host-cp
 build/host-mkfifo: build/host-mkdir
 	cp build/host-coreutils-build/src/mkfifo $@
 
-host-profile: build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
+# CSH-110: pinned ln preserves a same-entry symbolic source under -fs.
+# Serialize after creation to avoid concurrent writes in the shared build tree.
+build/host-ln: build/host-mkfifo
+	$(MAKE) -C build/host-coreutils-build -j4 src/ln > build/host-coreutils-build/ln.log 2>&1 || { cat build/host-coreutils-build/ln.log; exit 1; }
+	cp build/host-coreutils-build/src/ln $@
+
+host-profile: build/host-ln build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
@@ -798,3 +804,31 @@ test-host-filesystem-link-bytes: cshell host-profile
 .PHONY: test-host-filesystem-omitted-who
 test-host-filesystem-omitted-who: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --omitted-who-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-omitted-who.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-108: bounded mkdir -p graphs and preserved existing objects.
+.PHONY: test-host-filesystem-parent-graphs
+test-host-filesystem-parent-graphs: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --parent-graphs-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-parent-graphs.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-109: rmdir parent graphs and independently proved ancestor denial.
+.PHONY: test-host-filesystem-removal
+test-host-filesystem-removal: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --removal-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-removal.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-110: ln destination graphs and collision continuation.
+.PHONY: test-host-filesystem-link-graphs
+test-host-filesystem-link-graphs: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --link-graphs-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-link-graphs.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-111: independently proved private ln permission boundaries.
+.PHONY: test-host-filesystem-link-permissions
+test-host-filesystem-link-permissions: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --link-permissions-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-link-permissions.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-touch-permissions
+test-host-filesystem-touch-permissions: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --touch-permissions-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-touch-permissions.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-touch-current
+test-host-filesystem-touch-current: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --touch-current-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-touch-current.json $(HOST_FILESYSTEM_FLAGS)
