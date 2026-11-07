@@ -1,0 +1,36 @@
+[
+  {
+    "argv": [
+      "make",
+      "test-runtime",
+      "test-runtime-pty",
+      "test-harness"
+    ],
+    "path": "/work/build/host-profile/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "status": 0,
+    "seconds": 22.898544967989437,
+    "log": "linux-supplement-0.log.gz"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "tests/host_file_format_checks.py",
+      "build/host-file"
+    ],
+    "path": "/work/build/host-profile/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "status": 0,
+    "seconds": 0.053015709010651335,
+    "log": "linux-supplement-1.log"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "tests/host_file_type_checks.py",
+      "build/host-file"
+    ],
+    "path": "/work/build/host-profile/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "status": 0,
+    "seconds": 0.03584866601158865,
+    "log": "linux-supplement-2.log"
+  }
+]

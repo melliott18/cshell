@@ -1,0 +1,525 @@
+{
+  "checked_at": "2026-10-03T18:52:05.443952+00:00",
+  "platform": "macOS-14.8.7-arm64-arm-64bit",
+  "python": "3.12.2",
+  "refs": {
+    "origin/main": "e0166e021da2277b4f87da22c41ff96c704a4b82",
+    "origin/test/CSH-079-formatted-output-environments": "c02e17fe744d5cbe9737d2575998609976b06da2",
+    "origin/fix/CSH-082-container-readiness": "43f26b3f5459cf4cec081d5dc9084179ff96db29",
+    "origin/test/CSH-078-host-service-utilities": "6c5218c54c9d29df80faf67640728b1a76c87622",
+    "origin/test/CSH-076-host-locale-catalogs": "321cadb7041eb37d24870a0642d3ab4af3a5f761",
+    "origin/test/CSH-072-host-filesystem-paths": "96b1a669c0d619912bd7d1a700ddd3875c7e5583",
+    "origin/test/CSH-074-host-languages-editors": "2f21c2821253234b3122267b44dba397b225df9e",
+    "origin/test/CSH-070-host-formatted-output": "00d2146696033260bf0723a0557fe7111e704e74",
+    "origin/test/CSH-077-host-terminal-utilities": "c1ff297eab6c5d0cccdf1354cd596d6a74b56c19",
+    "origin/test/CSH-071-host-permissions-identities": "ed3b7b23c9033b0e6654f7787d755ccad3a9a30f",
+    "origin/test/CSH-073-host-text-streams": "08e7dd79f063fdf74dfcd985777ff3fa3fbb3a70"
+  },
+  "registry_tip": "6a08044f17b9e88da6bdb94c876c461fd533103f",
+  "issues": [
+    {
+      "number": 176,
+      "title": "CSH-083: Prevent ticket identity collisions",
+      "state": "open",
+      "url": "https://github.com/melliott18/cshell/issues/176"
+    },
+    {
+      "number": 171,
+      "title": "Duplicate: Pipeline container preparation is tracked by CSH-082",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/171"
+    },
+    {
+      "number": 169,
+      "title": "CSH-082: Prepare application containers for Pipeline",
+      "state": "open",
+      "url": "https://github.com/melliott18/cshell/issues/169"
+    },
+    {
+      "number": 159,
+      "title": "CSH-081: Qualify residual terminal and session contracts",
+      "state": "open",
+      "url": "https://github.com/melliott18/cshell/issues/159"
+    },
+    {
+      "number": 158,
+      "title": "CSH-080: Qualify remaining filesystem provider and fault contracts",
+      "state": "open",
+      "url": "https://github.com/melliott18/cshell/issues/158"
+    },
+    {
+      "number": 157,
+      "title": "CSH-079: Qualify remaining formatted-output environments",
+      "state": "open",
+      "url": "https://github.com/melliott18/cshell/issues/157"
+    },
+    {
+      "number": 150,
+      "title": "CSH-078: Qualify host scheduling, mail and service utilities",
+      "state": "open",
+      "url": "https://github.com/melliott18/cshell/issues/150"
+    },
+    {
+      "number": 149,
+      "title": "CSH-077: Qualify host terminal and session utilities",
+      "state": "open",
+      "url": "https://github.com/melliott18/cshell/issues/149"
+    },
+    {
+      "number": 148,
+      "title": "CSH-076: Qualify host locale and message catalog utilities",
+      "state": "open",
+      "url": "https://github.com/melliott18/cshell/issues/148"
+    },
+    {
+      "number": 147,
+      "title": "CSH-075: Qualify host execution and process utilities",
+      "state": "open",
+      "url": "https://github.com/melliott18/cshell/issues/147"
+    },
+    {
+      "number": 146,
+      "title": "CSH-074: Qualify host languages, editors and argument construction",
+      "state": "open",
+      "url": "https://github.com/melliott18/cshell/issues/146"
+    },
+    {
+      "number": 145,
+      "title": "CSH-073: Qualify host text and byte stream utilities",
+      "state": "open",
+      "url": "https://github.com/melliott18/cshell/issues/145"
+    },
+    {
+      "number": 144,
+      "title": "CSH-072: Qualify host filesystem and pathname utilities",
+      "state": "open",
+      "url": "https://github.com/melliott18/cshell/issues/144"
+    },
+    {
+      "number": 143,
+      "title": "CSH-071: Qualify host predicates, permissions and identities",
+      "state": "open",
+      "url": "https://github.com/melliott18/cshell/issues/143"
+    },
+    {
+      "number": 142,
+      "title": "CSH-070: Qualify host printf and echo contracts",
+      "state": "open",
+      "url": "https://github.com/melliott18/cshell/issues/142"
+    },
+    {
+      "number": 138,
+      "title": "CSH-069: Disposition retained unexplained validation failures",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/138"
+    },
+    {
+      "number": 137,
+      "title": "CSH-068: Inventory the complete required host utility contract",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/137"
+    },
+    {
+      "number": 136,
+      "title": "CSH-067: Qualify remaining shell locale and pathname boundaries",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/136"
+    },
+    {
+      "number": 135,
+      "title": "CSH-066: Remove arbitrary shell nesting limits",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/135"
+    },
+    {
+      "number": 134,
+      "title": "CSH-065: Recover from interactive main-parser syntax errors",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/134"
+    },
+    {
+      "number": 127,
+      "title": "CSH-064: Supply external prerequisites for remaining host contracts",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/127"
+    },
+    {
+      "number": 122,
+      "title": "CSH-063: Qualify remaining supplied host platforms",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/122"
+    },
+    {
+      "number": 116,
+      "title": "CSH-062: Supply remaining controlled host platforms",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/116"
+    },
+    {
+      "number": 110,
+      "title": "CSH-061: Resolve remaining host environment contracts",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/110"
+    },
+    {
+      "number": 106,
+      "title": "CSH-060: Qualify remaining host environments and limits",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/106"
+    },
+    {
+      "number": 101,
+      "title": "CSH-059: Extend qualified host boundary capabilities",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/101"
+    },
+    {
+      "number": 100,
+      "title": "CSH-058: Complete signal inheritance and permission evidence",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/100"
+    },
+    {
+      "number": 99,
+      "title": "CSH-057: Verify remaining job lifecycle boundaries",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/99"
+    },
+    {
+      "number": 97,
+      "title": "CSH-056: Resolve residual host utility contracts",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/97"
+    },
+    {
+      "number": 92,
+      "title": "CSH-055: Complete residual execution contracts",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/92"
+    },
+    {
+      "number": 90,
+      "title": "CSH-054: Complete residual jobs and signal contracts",
+      "state": "open",
+      "url": "https://github.com/melliott18/cshell/issues/90"
+    },
+    {
+      "number": 86,
+      "title": "CSH-053: Preserve syntax-valued bytes inside multibyte source characters",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/86"
+    },
+    {
+      "number": 84,
+      "title": "CSH-052: Close host utility and intrinsic lookup evidence gaps",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/84"
+    },
+    {
+      "number": 83,
+      "title": "CSH-051: Close base shell-option evidence gaps",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/83"
+    },
+    {
+      "number": 82,
+      "title": "CSH-050: Close jobs, signal and trap evidence gaps",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/82"
+    },
+    {
+      "number": 81,
+      "title": "CSH-049: Close execution, redirection and control-flow evidence gaps",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/81"
+    },
+    {
+      "number": 80,
+      "title": "CSH-048: Close shell state and builtin integration evidence gaps",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/80"
+    },
+    {
+      "number": 79,
+      "title": "CSH-047: Close expansion, parameter and locale evidence gaps",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/79"
+    },
+    {
+      "number": 78,
+      "title": "CSH-046: Close invocation, lexical, grammar and alias evidence gaps",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/78"
+    },
+    {
+      "number": 77,
+      "title": "CSH-045: Diagnose intermittent macOS sanitizer jobs fixture timeout",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/77"
+    },
+    {
+      "number": 76,
+      "title": "CSH-044: Diagnose intermittent background-resume prompt stall",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/76"
+    },
+    {
+      "number": 74,
+      "title": "CSH-043: Define and verify redirection offset maximum",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/74"
+    },
+    {
+      "number": 73,
+      "title": "CSH-042: Complete locale-sensitive shell behavior",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/73"
+    },
+    {
+      "number": 64,
+      "title": "CSH-041: Resolve arithmetic-first command-substitution ambiguity",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/64"
+    },
+    {
+      "number": 48,
+      "title": "CSH-040: Make repeated macOS harness cleanup reliable",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/48"
+    },
+    {
+      "number": 41,
+      "title": "CSH-039: Switch cshell to the replacement runtime and delete the legacy code",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/41"
+    },
+    {
+      "number": 40,
+      "title": "CSH-038: Remove legacy constraints from the implementation roadmap",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/40"
+    },
+    {
+      "number": 38,
+      "title": "CSH-037: Audit integrated conformance and platform portability",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/38"
+    },
+    {
+      "number": 37,
+      "title": "CSH-036: Map POSIX requirements to implementation and test evidence",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/37"
+    },
+    {
+      "number": 36,
+      "title": "CSH-035: Complete traps and shell signal semantics",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/36"
+    },
+    {
+      "number": 35,
+      "title": "CSH-034: Implement process groups and terminal job control",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/35"
+    },
+    {
+      "number": 34,
+      "title": "CSH-033: Add a bounded pseudo-terminal test harness",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/34"
+    },
+    {
+      "number": 33,
+      "title": "CSH-032: Complete shell option behavior and interactions",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/33"
+    },
+    {
+      "number": 32,
+      "title": "CSH-031: Complete evaluation, lookup, and remaining utility builtins",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/32"
+    },
+    {
+      "number": 31,
+      "title": "CSH-030: Implement alias storage and token substitution",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/31"
+    },
+    {
+      "number": 30,
+      "title": "CSH-029: Implement state builtins and allocate the utility inventory",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/30"
+    },
+    {
+      "number": 29,
+      "title": "CSH-028: Execute control flow and shell functions",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/29"
+    },
+    {
+      "number": 28,
+      "title": "CSH-027: Parse compound commands and function definitions",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/28"
+    },
+    {
+      "number": 27,
+      "title": "CSH-026: Integrate substitutions and context-sensitive expansion",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/27"
+    },
+    {
+      "number": 26,
+      "title": "CSH-025: Complete field splitting and pathname expansion",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/26"
+    },
+    {
+      "number": 25,
+      "title": "CSH-024: Implement value expansions with quote provenance",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/25"
+    },
+    {
+      "number": 24,
+      "title": "CSH-023: Apply assignment prefixes by execution category",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/24"
+    },
+    {
+      "number": 23,
+      "title": "CSH-022: Define shell variable and parameter storage",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/23"
+    },
+    {
+      "number": 22,
+      "title": "CSH-021: Execute lists, groups, and background contexts",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/22"
+    },
+    {
+      "number": 21,
+      "title": "CSH-020: Execute pipelines with explicit child and descriptor ownership",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/21"
+    },
+    {
+      "number": 20,
+      "title": "CSH-019: Execute simple commands with ordered redirections",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/20"
+    },
+    {
+      "number": 19,
+      "title": "CSH-018: Integrate invocation modes with command and shell exit statuses",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/19"
+    },
+    {
+      "number": 18,
+      "title": "CSH-017: Build a bounded behavioral harness and continuous integration",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/18"
+    },
+    {
+      "number": 17,
+      "title": "CSH-016: Introduce input sources and shell invocation modes",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/17"
+    },
+    {
+      "number": 16,
+      "title": "CSH-015: Contain legacy child and pipe failures",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/16"
+    },
+    {
+      "number": 15,
+      "title": "CSH-014: Make legacy input and command storage safe",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/15"
+    },
+    {
+      "number": 14,
+      "title": "CSH-013: Document visual architecture and parallel implementation work",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/14"
+    },
+    {
+      "number": 13,
+      "title": "CSH-012: Audit POSIX conformance and portability",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/13"
+    },
+    {
+      "number": 12,
+      "title": "CSH-011: Implement signals, traps, and interactive job control",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/12"
+    },
+    {
+      "number": 11,
+      "title": "CSH-010: Complete required builtins, options, and aliases",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/11"
+    },
+    {
+      "number": 10,
+      "title": "CSH-009: Add compound commands and shell functions",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/10"
+    },
+    {
+      "number": 9,
+      "title": "CSH-008: Implement context-sensitive word expansion",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/9"
+    },
+    {
+      "number": 8,
+      "title": "CSH-007: Model variables, environments, and positional parameters",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/8"
+    },
+    {
+      "number": 7,
+      "title": "CSH-006: Execute syntax trees with explicit resource ownership",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/7"
+    },
+    {
+      "number": 6,
+      "title": "CSH-005: Parse commands into an owned syntax tree",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/6"
+    },
+    {
+      "number": 5,
+      "title": "CSH-004: Preserve shell tokens and quoting",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/5"
+    },
+    {
+      "number": 4,
+      "title": "CSH-003: Define invocation, input lifecycle, and behavioral testing",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/4"
+    },
+    {
+      "number": 3,
+      "title": "CSH-002: Contain memory and process defects in the legacy shell",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/3"
+    },
+    {
+      "number": 2,
+      "title": "CSH-001: Establish the cshell project foundation",
+      "state": "closed",
+      "url": "https://github.com/melliott18/cshell/issues/2"
+    }
+  ]
+}

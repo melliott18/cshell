@@ -1,0 +1,11 @@
+1
+Client:
+ Cloud integration: v1.0.35+desktop.5
+ Version:           24.0.6
+ API version:       1.43
+ Go version:        go1.20.7
+ Git commit:        ed223bc
+ Built:             Mon Sep  4 12:28:49 2023
+ OS/Arch:           darwin/arm64
+ Context:           desktop-linux
+request returned Internal Server Error for API route and version http://%2FUsers%2Fmitchell%2F.docker%2Frun%2Fdocker.sock/v1.24/version, check if the server supports the requested API version

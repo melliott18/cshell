@@ -1,0 +1,7 @@
+{
+  "pid": 42555,
+  "before": "42555     1 42555 UE   /Users/mitchell/.codex/worktrees/csh-077-terminal-utilities/cshell/build/tests/execute_faults --jobs-terminal\n",
+  "signal": "SIGKILL",
+  "signal_result": "sent",
+  "after": "42555     1 42555 UE   /Users/mitchell/.codex/worktrees/csh-077-terminal-utilities/cshell/build/tests/execute_faults --jobs-terminal\n"
+}

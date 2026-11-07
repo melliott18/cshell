@@ -1,0 +1,5 @@
+{
+  "runner_exit": 1,
+  "pipeline_rejected_failure": true,
+  "diagnostic": "Required JUnit report has no passing execution or contains failures: junit.xml"
+}

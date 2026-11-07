@@ -1,0 +1,176 @@
+{
+  "registry": {
+    "schema_version": 1,
+    "reservations": {
+      "CSH-001": 2,
+      "CSH-002": 3,
+      "CSH-003": 4,
+      "CSH-004": 5,
+      "CSH-005": 6,
+      "CSH-006": 7,
+      "CSH-007": 8,
+      "CSH-008": 9,
+      "CSH-009": 10,
+      "CSH-010": 11,
+      "CSH-011": 12,
+      "CSH-012": 13,
+      "CSH-013": 14,
+      "CSH-014": 15,
+      "CSH-015": 16,
+      "CSH-016": 17,
+      "CSH-017": 18,
+      "CSH-018": 19,
+      "CSH-019": 20,
+      "CSH-020": 21,
+      "CSH-021": 22,
+      "CSH-022": 23,
+      "CSH-023": 24,
+      "CSH-024": 25,
+      "CSH-025": 26,
+      "CSH-026": 27,
+      "CSH-027": 28,
+      "CSH-028": 29,
+      "CSH-029": 30,
+      "CSH-030": 31,
+      "CSH-031": 32,
+      "CSH-032": 33,
+      "CSH-033": 34,
+      "CSH-034": 35,
+      "CSH-035": 36,
+      "CSH-036": 37,
+      "CSH-037": 38,
+      "CSH-038": 40,
+      "CSH-039": 41,
+      "CSH-040": 48,
+      "CSH-041": 64,
+      "CSH-042": 73,
+      "CSH-043": 74,
+      "CSH-044": 76,
+      "CSH-045": 77,
+      "CSH-046": 78,
+      "CSH-047": 79,
+      "CSH-048": 80,
+      "CSH-049": 81,
+      "CSH-050": 82,
+      "CSH-051": 83,
+      "CSH-052": 84,
+      "CSH-053": 86,
+      "CSH-054": 90,
+      "CSH-055": 92,
+      "CSH-056": 97,
+      "CSH-057": 99,
+      "CSH-058": 100,
+      "CSH-059": 101,
+      "CSH-060": 106,
+      "CSH-061": 110,
+      "CSH-062": 116,
+      "CSH-063": 122,
+      "CSH-064": 127,
+      "CSH-065": 134,
+      "CSH-066": 135,
+      "CSH-067": 136,
+      "CSH-068": 137,
+      "CSH-069": 138,
+      "CSH-070": 142,
+      "CSH-071": 143,
+      "CSH-072": 144,
+      "CSH-073": 145,
+      "CSH-074": 146,
+      "CSH-075": 147,
+      "CSH-076": 148,
+      "CSH-077": 149,
+      "CSH-078": 150,
+      "CSH-079": 157,
+      "CSH-080": 158,
+      "CSH-081": 159,
+      "CSH-082": 169,
+      "CSH-083": 176
+    }
+  },
+  "findings": {
+    "worktree": {
+      "errors": [],
+      "warnings": [
+        "docs/tickets/CSH-044-intermittent-bg-prompt.md: historical shared branch identifies CSH-037",
+        "docs/tickets/CSH-045-jobs-fixture-timeout.md: historical shared branch identifies CSH-037"
+      ]
+    },
+    "origin/main": {
+      "errors": [],
+      "warnings": [
+        "docs/tickets/CSH-044-intermittent-bg-prompt.md: historical shared branch identifies CSH-037",
+        "docs/tickets/CSH-045-jobs-fixture-timeout.md: historical shared branch identifies CSH-037"
+      ]
+    },
+    "origin/test/CSH-079-formatted-output-environments": {
+      "errors": [],
+      "warnings": [
+        "docs/tickets/CSH-044-intermittent-bg-prompt.md: historical shared branch identifies CSH-037",
+        "docs/tickets/CSH-045-jobs-fixture-timeout.md: historical shared branch identifies CSH-037"
+      ]
+    },
+    "origin/fix/CSH-082-container-readiness": {
+      "errors": [],
+      "warnings": [
+        "docs/tickets/CSH-044-intermittent-bg-prompt.md: historical shared branch identifies CSH-037",
+        "docs/tickets/CSH-045-jobs-fixture-timeout.md: historical shared branch identifies CSH-037"
+      ]
+    },
+    "origin/test/CSH-078-host-service-utilities": {
+      "errors": [],
+      "warnings": [
+        "docs/tickets/CSH-044-intermittent-bg-prompt.md: historical shared branch identifies CSH-037",
+        "docs/tickets/CSH-045-jobs-fixture-timeout.md: historical shared branch identifies CSH-037"
+      ]
+    },
+    "origin/test/CSH-076-host-locale-catalogs": {
+      "errors": [],
+      "warnings": [
+        "docs/tickets/CSH-044-intermittent-bg-prompt.md: historical shared branch identifies CSH-037",
+        "docs/tickets/CSH-045-jobs-fixture-timeout.md: historical shared branch identifies CSH-037"
+      ]
+    },
+    "origin/test/CSH-072-host-filesystem-paths": {
+      "errors": [],
+      "warnings": [
+        "docs/tickets/CSH-044-intermittent-bg-prompt.md: historical shared branch identifies CSH-037",
+        "docs/tickets/CSH-045-jobs-fixture-timeout.md: historical shared branch identifies CSH-037"
+      ]
+    },
+    "origin/test/CSH-074-host-languages-editors": {
+      "errors": [],
+      "warnings": [
+        "docs/tickets/CSH-044-intermittent-bg-prompt.md: historical shared branch identifies CSH-037",
+        "docs/tickets/CSH-045-jobs-fixture-timeout.md: historical shared branch identifies CSH-037"
+      ]
+    },
+    "origin/test/CSH-070-host-formatted-output": {
+      "errors": [],
+      "warnings": [
+        "docs/tickets/CSH-044-intermittent-bg-prompt.md: historical shared branch identifies CSH-037",
+        "docs/tickets/CSH-045-jobs-fixture-timeout.md: historical shared branch identifies CSH-037"
+      ]
+    },
+    "origin/test/CSH-077-host-terminal-utilities": {
+      "errors": [],
+      "warnings": [
+        "docs/tickets/CSH-044-intermittent-bg-prompt.md: historical shared branch identifies CSH-037",
+        "docs/tickets/CSH-045-jobs-fixture-timeout.md: historical shared branch identifies CSH-037"
+      ]
+    },
+    "origin/test/CSH-071-host-permissions-identities": {
+      "errors": [],
+      "warnings": [
+        "docs/tickets/CSH-044-intermittent-bg-prompt.md: historical shared branch identifies CSH-037",
+        "docs/tickets/CSH-045-jobs-fixture-timeout.md: historical shared branch identifies CSH-037"
+      ]
+    },
+    "origin/test/CSH-073-host-text-streams": {
+      "errors": [],
+      "warnings": [
+        "docs/tickets/CSH-044-intermittent-bg-prompt.md: historical shared branch identifies CSH-037",
+        "docs/tickets/CSH-045-jobs-fixture-timeout.md: historical shared branch identifies CSH-037"
+      ]
+    }
+  }
+}

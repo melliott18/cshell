@@ -10,6 +10,21 @@ from host_utilities import known_gap, match, matches_case, sanitizer_diagnostic
 
 
 class HostEvidenceTests(unittest.TestCase):
+    def test_supplied_device_witness_rejects_regular_files(self):
+        from pathlib import Path
+        import tempfile
+        from host_environment_cases import setup_controlled
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            fixtures = root / 'nodes'
+            fixtures.mkdir()
+            (fixtures / 'block').write_bytes(b'not a device')
+            case = root / 'case'
+            case.mkdir()
+            with self.assertRaisesRegex(OSError, 'wrong type'):
+                setup_controlled(case, 'block', fixtures)
+            self.assertFalse((case / 'controlled').exists())
+
     def test_status_predicates_do_not_accept_process_signal_death(self):
         self.assertTrue(match('nonzero', 7))
         self.assertFalse(match('nonzero', 0))

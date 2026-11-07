@@ -1,0 +1,141 @@
+{
+  "date": "2026-10-08",
+  "platform": "macOS-14.8.7-arm64-arm-64bit",
+  "python": "3.12.2 (v3.12.2:6abddd9f6a, Feb  6 2024, 17:02:06) [Clang 13.0.0 (clang-1300.0.29.30)]",
+  "base_commit": "59032011fdf8060e8f7c6fc29bdac4ff25b95614",
+  "main_revision": "e0166e021da2277b4f87da22c41ff96c704a4b82",
+  "open_prs": [
+    {
+      "headRefName": "test/CSH-081-terminal-residuals",
+      "headRefOid": "edf72b6a94523a45e188b86fadc555206ad0f6f2",
+      "number": 180
+    },
+    {
+      "headRefName": "test/CSH-080-filesystem-contracts",
+      "headRefOid": "1ecae53480204bfb26251d35f621c0635698c62b",
+      "number": 179
+    },
+    {
+      "headRefName": "chore/CSH-083-ticket-allocation",
+      "headRefOid": "59032011fdf8060e8f7c6fc29bdac4ff25b95614",
+      "number": 177
+    },
+    {
+      "headRefName": "test/CSH-079-formatted-output-environments",
+      "headRefOid": "c02e17fe744d5cbe9737d2575998609976b06da2",
+      "number": 175
+    },
+    {
+      "headRefName": "fix/CSH-082-container-readiness",
+      "headRefOid": "bd158963d8dcf4211581c61a34d859283eada320",
+      "number": 170
+    },
+    {
+      "headRefName": "test/CSH-078-host-service-utilities",
+      "headRefOid": "6c5218c54c9d29df80faf67640728b1a76c87622",
+      "number": 168
+    },
+    {
+      "headRefName": "test/CSH-076-host-locale-catalogs",
+      "headRefOid": "321cadb7041eb37d24870a0642d3ab4af3a5f761",
+      "number": 166
+    },
+    {
+      "headRefName": "test/CSH-072-host-filesystem-paths",
+      "headRefOid": "96b1a669c0d619912bd7d1a700ddd3875c7e5583",
+      "number": 165
+    },
+    {
+      "headRefName": "test/CSH-074-host-languages-editors",
+      "headRefOid": "2f21c2821253234b3122267b44dba397b225df9e",
+      "number": 164
+    },
+    {
+      "headRefName": "test/CSH-070-host-formatted-output",
+      "headRefOid": "00d2146696033260bf0723a0557fe7111e704e74",
+      "number": 163
+    },
+    {
+      "headRefName": "test/CSH-077-host-terminal-utilities",
+      "headRefOid": "c1ff297eab6c5d0cccdf1354cd596d6a74b56c19",
+      "number": 162
+    },
+    {
+      "headRefName": "test/CSH-071-host-permissions-identities",
+      "headRefOid": "ed3b7b23c9033b0e6654f7787d755ccad3a9a30f",
+      "number": 161
+    },
+    {
+      "headRefName": "test/CSH-073-host-text-streams",
+      "headRefOid": "08e7dd79f063fdf74dfcd985777ff3fa3fbb3a70",
+      "number": 160
+    }
+  ],
+  "registry_tip": "ea845186d645b3314bc01ba578102ce13975fbe3",
+  "source_sha256": {
+    "tools/tickets.py": "048fd9dfb9b70e1862321c7a8276940b9a6e687030e71577bb350bec23979537",
+    "tests/test_ticket_registry.py": "58312fe0285f90d78faf59c3017e04f8f501a453c265565a8c67444097332136"
+  },
+  "results": [
+    {
+      "command": [
+        "make",
+        "test-tickets"
+      ],
+      "status": 0,
+      "log": "check-1.log"
+    },
+    {
+      "command": [
+        "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+        "-Werror",
+        "-m",
+        "py_compile",
+        "tools/tickets.py",
+        "tests/test_ticket_registry.py"
+      ],
+      "status": 0,
+      "log": "check-2.log"
+    },
+    {
+      "command": [
+        "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+        "tools/tickets.py",
+        "check",
+        "--live",
+        "--record",
+        "docs/evidence/csh-083/continued-verification/live-audit.json",
+        "--ref",
+        "e0166e021da2277b4f87da22c41ff96c704a4b82",
+        "--ref",
+        "edf72b6a94523a45e188b86fadc555206ad0f6f2",
+        "--ref",
+        "1ecae53480204bfb26251d35f621c0635698c62b",
+        "--ref",
+        "59032011fdf8060e8f7c6fc29bdac4ff25b95614",
+        "--ref",
+        "c02e17fe744d5cbe9737d2575998609976b06da2",
+        "--ref",
+        "bd158963d8dcf4211581c61a34d859283eada320",
+        "--ref",
+        "6c5218c54c9d29df80faf67640728b1a76c87622",
+        "--ref",
+        "321cadb7041eb37d24870a0642d3ab4af3a5f761",
+        "--ref",
+        "96b1a669c0d619912bd7d1a700ddd3875c7e5583",
+        "--ref",
+        "2f21c2821253234b3122267b44dba397b225df9e",
+        "--ref",
+        "00d2146696033260bf0723a0557fe7111e704e74",
+        "--ref",
+        "c1ff297eab6c5d0cccdf1354cd596d6a74b56c19",
+        "--ref",
+        "ed3b7b23c9033b0e6654f7787d755ccad3a9a30f",
+        "--ref",
+        "08e7dd79f063fdf74dfcd985777ff3fa3fbb3a70"
+      ],
+      "status": 0,
+      "log": "check-3.log"
+    }
+  ]
+}

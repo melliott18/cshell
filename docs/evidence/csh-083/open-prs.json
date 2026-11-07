@@ -1,0 +1,62 @@
+[
+  {
+    "headRefName": "test/CSH-079-formatted-output-environments",
+    "number": 175,
+    "title": "test(CSH-079): qualify formatted-output environments and bound exec probes",
+    "url": "https://github.com/melliott18/cshell/pull/175"
+  },
+  {
+    "headRefName": "fix/CSH-082-container-readiness",
+    "number": 170,
+    "title": "fix: prepare cshell containers for Pipeline (CSH-082)",
+    "url": "https://github.com/melliott18/cshell/pull/170"
+  },
+  {
+    "headRefName": "test/CSH-078-host-service-utilities",
+    "number": 168,
+    "title": "fix(CSH-078): repair and qualify disposable service utilities",
+    "url": "https://github.com/melliott18/cshell/pull/168"
+  },
+  {
+    "headRefName": "test/CSH-076-host-locale-catalogs",
+    "number": 166,
+    "title": "fix(CSH-076): supply shared locales and repair catalog providers",
+    "url": "https://github.com/melliott18/cshell/pull/166"
+  },
+  {
+    "headRefName": "test/CSH-072-host-filesystem-paths",
+    "number": 165,
+    "title": "CSH-072: Qualify filesystem utilities and repair pathname providers",
+    "url": "https://github.com/melliott18/cshell/pull/165"
+  },
+  {
+    "headRefName": "test/CSH-074-host-languages-editors",
+    "number": 164,
+    "title": "test(CSH-074): qualify host language contracts with private providers",
+    "url": "https://github.com/melliott18/cshell/pull/164"
+  },
+  {
+    "headRefName": "test/CSH-070-host-formatted-output",
+    "number": 163,
+    "title": "test(CSH-070): qualify formatted-output providers",
+    "url": "https://github.com/melliott18/cshell/pull/163"
+  },
+  {
+    "headRefName": "test/CSH-077-host-terminal-utilities",
+    "number": 162,
+    "title": "test(CSH-077): qualify controlled terminal and session subsets",
+    "url": "https://github.com/melliott18/cshell/pull/162"
+  },
+  {
+    "headRefName": "test/CSH-071-host-permissions-identities",
+    "number": 161,
+    "title": "fix(CSH-071): qualify permissions and repair chmod/newgrp boundaries",
+    "url": "https://github.com/melliott18/cshell/pull/161"
+  },
+  {
+    "headRefName": "test/CSH-073-host-text-streams",
+    "number": 160,
+    "title": "test: qualify CSH-073 text utilities and repair provider faults",
+    "url": "https://github.com/melliott18/cshell/pull/160"
+  }
+]

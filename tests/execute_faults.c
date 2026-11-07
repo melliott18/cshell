@@ -13,6 +13,9 @@
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef __APPLE__
+#include <mach/mach.h>
+#endif
 
 static void *allocations[4096];
 static size_t live, allocation_calls, fail_allocation;
@@ -183,6 +186,15 @@ pid_t csh_execute_fault_fork(void)
         }
     }
     if (child == 0 && launch_signal) {
+#ifdef __APPLE__
+        /* Deliberate fatal-signal tests must not inherit a launcher crash
+         * exception port whose server cannot service this post-fork child.
+         * Signal dispositions and wait status remain the kernel defaults. */
+        if (launch_signal == SIGQUIT)
+            assert(task_set_exception_ports(mach_task_self(),
+                EXC_MASK_CRASH | EXC_MASK_CORPSE_NOTIFY, MACH_PORT_NULL,
+                EXCEPTION_DEFAULT, THREAD_STATE_NONE) == KERN_SUCCESS);
+#endif
         char byte;
         ssize_t count;
         /* Stay before the child's disposition reset until the parent has

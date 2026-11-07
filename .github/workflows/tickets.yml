@@ -1,0 +1,31 @@
+name: Ticket integrity
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: read
+
+concurrency:
+  group: ticket-integrity-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tickets:
+    name: Ticket integrity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Test concurrent allocation and offline ticket identity
+        run: make test-tickets
+      - name: Compare with shared reservations and GitHub issues
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/tickets.py --repo "$GITHUB_REPOSITORY" check --live

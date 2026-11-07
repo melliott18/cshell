@@ -1,0 +1,8 @@
+Suite: job terminal failure cleanup [module] candidate=/Users/mitchell/.codex/worktrees/csh-076-locale-catalogs/cshell/build/tests/execute_faults
+FAIL: process group and terminal handoff restoration failures
+  PTY timeout after 5s waiting for process exit; no step completed; session cleanup requested
+  PTY cleanup failed: Command '['/bin/ps', '-axo', 'pid=,stat=']' timed out after 0.04516504192724824 seconds
+  PTY cleanup could not kill group 3514: [Errno 1] Operation not permitted
+  status: expected 0, got -9
+  output: expected b'terminal job failure cleanup passed\n' (36 bytes), got b'' (0 captured bytes)
+Result: 0 passed, 1 failed, 0 skipped

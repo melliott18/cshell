@@ -1,11 +1,11 @@
 # CSH-071: Qualify host predicates, permissions and identities
 
-- Status: ready
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: Assigned when work starts
+- Branch: test/CSH-071-host-permissions-identities
 - Issue: [#143](https://github.com/melliott18/cshell/issues/143)
 
 ## Goal
@@ -74,7 +74,7 @@ Conditional prerequisite reports also owned here: `U-037/controlled-environment`
   Preserve vendor ownership, setup failures and failed assertions separately.
 - [ ] Verify public cshell dispatch and direct exec access, exact output/status and
   relevant effects, with zero gap allowances for every declared qualified subset.
-- [ ] Update the inventory, current ownership manifest and clause maps with the
+- [x] Update the inventory, current ownership manifest and clause maps with the
   exact qualification boundary; keep stock-host, qualified subset and full-system
   claims separate.
 
@@ -88,8 +88,86 @@ capabilities, limits and failures. If the needed capability is absent, report it
 as unqualified; do not call an unavailable or failed profile passing. Use owned
 processes and disposable files/services and verify cleanup after failure/timeout.
 
-## Implementation notes/evidence
+## Initial implementation snapshot
 
-Work has not started. CSH-068 transfers ownership only; it supplies no new vendor
-implementation, service, privileged host or physical terminal. CSH-064 remains
-done for its bounded capability work and repaired probe cleanup.
+Implemented the bounded [predicate, permission and identity suite](../host-permissions-identities.md)
+and [retained evidence](../evidence/csh-071/README.md) on the branch above in a
+separate managed worktree. The suite inventories all eight providers, tests direct
+exec and all three public cshell input modes, and independently observes modes,
+ownership, credentials, actual permission operations and session state.
+
+The opt-in profile now supplies an Issue 8 test/bracket adapter for locale-aware
+`<` and `>`; other primaries continue to use the inventoried GNU provider.
+`make test-host-permissions` is part of `make test-host-profile`. Linux controlled
+credential tests are wired into the existing CI profile. Clause maps and the
+current manifest record partial qualification; no residual is marked resolved.
+
+Controlled Debian passes 1,072 new and 2,281 existing host assertions. The final
+native selected run has 968 passes and 12 process timeout/cleanup failures and is
+not qualified. Strict extra reproducers retain GNU chmod original-X failures and
+newgrp numeric-group/failure-before-shell failures. The adapter passes 44 focused
+ASan/UBSan assertions; final Linux harness controls pass. See the evidence ledger
+for exact snapshots, commands, packages, effects, failed attempts and integration
+results.
+
+Status remains **in-progress**. The user confirmed that no disposable privileged
+Darwin environment is available. Full page contracts, all original residual
+conditions, and the new vendor failures retain this concrete open owner; no
+completion is inferred from selected passing assertions. CSH-064 remains done
+for its original bounded capability work and cleanup repair.
+
+## Predicate, ACL, credential and ownership follow-up
+
+[Follow-up evidence](../evidence/csh-071-acl-qualification/README.md) qualifies the
+changed adapter's effective-ID r/w/x checks. Native owner ACL ordering/inheritance
+and independent operations pass 496 assertions, also under ASan/UBSan. A fresh
+native profile passes 980 permission assertions and 1,162 existing host assertions.
+Hosted Linux passes all 2,260 strict unequal-ID ACL/host assertions, 22 focused
+credential/non-owner assertions and 16 ordinary ownership assertions. No failed
+grant/denial is allowed in these declared subsets.
+
+The CI workflow supplies a traversable disposable source tree and existing
+accounts rather than modifying any account database. Its privileged Darwin job
+remains queued, so that boundary is still unqualified. Earlier local Docker and
+process-cleanup failures and vendor profiles remain unchanged in the original
+evidence directory. The full ticket remains open for its individually recorded
+page, alternate namespace/filesystem, fakeowner and session/vendor obligations.
+
+## Reproduced failure resolutions
+
+[Resolution evidence](../evidence/csh-071-resolutions/README.md) records the
+selected chmod replacement (124 checks on native and Linux; native ASan/UBSan),
+newgrp numeric/unknown-name dispatch repairs (24 Linux session checks, also with
+adapter ASan/UBSan), and all 2,281 strict host assertions passing in the original
+remapped namespace with parent-supplied stat-only device nodes. The namespace's
+own mknod denial remains measured and is not relabeled as success.
+
+The hosted Darwin controlled run failed its Python account-membership oracle;
+the child now reads libc process groups separately. Its corrected hosted rerun
+is queued, so privileged Darwin is not yet qualified. Native runtime passes
+3,950 checks; Linux runtime/PTY passes 4,015 summarized assertions. A fresh native
+permission profile has 979 passes and one timeout/reaping failure, retained as
+failed. Fakeowner implementation repairs, authentication/login-service fixtures,
+and the remaining individually listed full-page obligations stay open here.
+
+## Named-group timeout triage
+
+[Chgrp triage](../evidence/csh-071-chgrp-timeout/README.md) reruns the same cshell
+and chgrp binaries: all 400 named/numeric assertions pass across direct, string,
+file and stdin modes, followed by 980 passing native permission assertions.
+The original five-second stall is not reproduced or relabeled as fixed.
+A deterministic harness regression identifies and repairs the shared cleanup/
+reap budget; final pipe cleanup now has a separate one-second leader wait.
+Permission evidence includes PID, timing, reap state and a bounded timeout
+process snapshot. Native and Linux each pass 88 harness and six permission-
+harness tests. The original failed run remains immutable.
+
+[Observer follow-up](../evidence/csh-071-chgrp-observer/README.md) adds 2,000
+passing named/numeric replays, including `/bin/sh` controls, with the same
+executables. Short delays occur outside cshell too; no natural five-second
+stall or usable stack was captured. Timeout evidence now retains the owned
+process group as well as its leader, verified with a real hung parent/child
+regression on macOS and Linux. Each platform passes 31 pipe harness tests;
+the six native permission-harness tests also pass. A deliberate sleep control
+confirms local stack sampling works without another macOS environment. The
+original stall remains unresolved pending a captured recurrence.

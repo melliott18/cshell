@@ -1,0 +1,2 @@
+gettext: option -d requires an argument
+PASS: native catalog adapter escapes and option/operand boundaries

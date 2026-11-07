@@ -6,6 +6,8 @@ LDLIBS ?=
 PYTHON ?= python3
 DOCKER ?= docker
 DOCKER_IMAGE ?= cshell-test:local
+RUNTIME_IMAGE ?= cshell:local
+PIPELINE_IMAGE ?= cshell-pipeline-test:local
 TEST_BINARY ?= ./cshell
 TEST_SUITE ?= build/tests/runtime.json
 # Clear TEST_TARGET when testing an already available executable, e.g. /bin/sh.
@@ -333,7 +335,7 @@ test-harness:
 	$(PYTHON) -m unittest discover -s tests -p 'test_*harness.py' -v
 
 docker-build:
-	$(DOCKER) build --tag "$(DOCKER_IMAGE)" --build-arg "TEST_TARGET=$(TEST_TARGET)" .
+	$(DOCKER) build --target development --tag "$(DOCKER_IMAGE)" --build-arg "TEST_TARGET=$(TEST_TARGET)" .
 
 docker-test: docker-build
 	$(DOCKER) run --rm --init "$(DOCKER_IMAGE)" make test \
@@ -481,15 +483,83 @@ build/host-printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/printf.c $(LDLIBS)
 
-host-profile: build/host-printf
-	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
+build/host-paths: tools/host-profile/paths.c
+	@mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+# Upstream pax uses feature probes and BSD extensions. Keep its own warning
+# policy while preserving caller optimisation, debug and sanitizer flags.
+HOST_PAX_SOURCES = $(wildcard tools/host-profile/vendor/pax/* tools/host-profile/vendor/pax/.linked/*)
+build/host-pax: $(HOST_PAX_SOURCES)
+	@mkdir -p build/host-pax-build
+	cd build/host-pax-build && CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(filter-out -Werror -Wpedantic -Wshadow,$(CFLAGS))" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" sh ../../tools/host-profile/vendor/pax/Build.sh > build.log 2>&1 || { cat build/host-pax-build/build.log; exit 1; }
+	cp build/host-pax-build/pax $@
+
+build/host-du: tools/host-profile/du.c
+	@mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+# GNU cp's decline result is repaired in source, never translated by a wrapper.
+HOST_CP_SOURCES = tools/host-profile/build-cp.sh $(wildcard tools/host-profile/vendor/coreutils/*)
+build/host-cp: $(HOST_CP_SOURCES)
+	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(filter-out -Werror -Wpedantic -Wshadow,$(CFLAGS))" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" sh tools/host-profile/build-cp.sh
+
+# The shared source build produces both programs before either is provisioned.
+build/host-rm: build/host-cp
+	cp build/host-coreutils-build/src/rm $@
+
+# GNU touch plus IANA tzcode supplies Issue 8 signed/next-day TZ transitions.
+build/host-touch: build/host-cp tools/host-profile/build-touch.sh $(wildcard tools/host-profile/vendor/tzcode/*)
+	@mkdir -p build/host-tzcode
+	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(filter-out -Werror -Wpedantic -Wshadow,$(CFLAGS))" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" sh tools/host-profile/build-touch.sh > build/host-tzcode/build.log 2>&1 || { tail -80 build/host-tzcode/build.log; exit 1; }
+
+# CSH-107: selected GNU creation utilities honor omitted-who copy assignment.
+build/host-mkdir: build/host-cp
+	$(MAKE) -C build/host-coreutils-build -j4 src/mkdir src/mkfifo > build/host-coreutils-build/creation.log 2>&1 || { cat build/host-coreutils-build/creation.log; exit 1; }
+	cp build/host-coreutils-build/src/mkdir $@
+
+build/host-mkfifo: build/host-mkdir
+	cp build/host-coreutils-build/src/mkfifo $@
+
+# CSH-110: pinned ln preserves a same-entry symbolic source under -fs.
+# Serialize after creation to avoid concurrent writes in the shared build tree.
+build/host-ln: build/host-mkfifo
+	$(MAKE) -C build/host-coreutils-build -j4 src/ln > build/host-coreutils-build/ln.log 2>&1 || { cat build/host-coreutils-build/ln.log; exit 1; }
+	cp build/host-coreutils-build/src/ln $@
+
+host-profile: build/host-uudecode build/host-ed build/host-xargs build/host-m4 build/host-patch build/host-test build/host-chmod build/host-newgrp build/host-ln build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
+	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin --cc="$(CC)" --cppflags="$(CPPFLAGS)" --cflags="$(CFLAGS)" --ldflags="$(LDFLAGS)" --ldlibs="$(LDLIBS)" $(if $(HOST_TEXT_PROVIDER_BIN),--text-bin "$(HOST_TEXT_PROVIDER_BIN)")
+
+build/host-chmod: tools/host-profile/chmod.c
+	@mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS) $(if $(filter Linux,$(shell uname -s)),-lbsd)
+
+build/host-newgrp-provider.h: host-test-provider-check tools/host-profile/provision.py
+	$(PYTHON) tools/host-profile/provision.py $@ --newgrp-header
+
+build/host-newgrp: tools/host-profile/newgrp.c build/host-newgrp-provider.h
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -Ibuild -o $@ $< $(LDLIBS)
+
+HOST_UUDECODE_LIBS = -lresolv
+ifeq ($(shell uname -s),Linux)
+HOST_UUDECODE_LIBS += -lbsd
+endif
+
+build/host-uudecode: tools/host-profile/uudecode.c tools/host-profile/vendor/uudecode.c
+	@mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/uudecode.c $(HOST_UUDECODE_LIBS) $(LDLIBS)
+
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_printf_faults.c $(LDLIBS)
 
-test-host-profile: test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
-	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+test-host-profile: test-host-service-codecs test-host-catalogs test-host-filesystem-allocation test-host-inventory test-host-permissions cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile test-host-terminal-residuals test-host-terminal-effects test-host-terminal-profile test-host-terminal-harness build/tests/host_ed_faults
+	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --locale-path "$(abspath build/host-profile/locales)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+	$(PYTHON) tests/host_filesystem.py ./cshell --audit --provider-audit --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-profile.json $(HOST_FILESYSTEM_FLAGS) $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+	$(PYTHON) tests/host_text.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --boundaries $(HOST_TEXT_FLAGS) --record build/tests/host-text-results.json
+	$(PYTHON) -m unittest discover -s tests -p 'test_host_languages.py'
+	$(PYTHON) tests/host_languages.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --ed-faults build/tests/host_ed_faults --record build/tests/host-languages-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 
 # Public entry point with only the command input read syscall instrumented.
 build/tests/command-read-input.o: src/input.c tests/command_read_faults.h $(INPUT_HEADERS)
@@ -640,6 +710,178 @@ test-locale-pathname: cshell build/tests/locale_probe build/tests/pathname_runti
 test-host-inventory:
 	$(PYTHON) tests/host_contract_inventory.py
 	$(PYTHON) tests/test_host_contract_inventory.py
+	$(PYTHON) tests/test_host_filesystem.py
+	$(PYTHON) tests/host_text_contracts.py
+
+# CSH-072: independent direct-exec and public-runtime filesystem witnesses.
+.PHONY: test-host-filesystem test-host-filesystem-audit
+test-host-filesystem: cshell
+	$(PYTHON) -m unittest discover -s tests -p 'test_host_filesystem.py'
+	$(PYTHON) tests/host_filesystem.py ./cshell --record build/tests/host-filesystem.json $(HOST_FILESYSTEM_FLAGS)
+
+test-host-filesystem-audit: cshell
+	$(PYTHON) tests/host_filesystem.py ./cshell --audit --record build/tests/host-filesystem-audit.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-provider-audit
+test-host-filesystem-provider-audit: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --extended-only --provider-audit --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-provider-audit.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-080 call-site ENOMEM evidence for the local pathname providers.
+build/tests/host_paths_faults: tests/host_paths_faults.c tools/host-profile/paths.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_paths_faults.c $(LDLIBS)
+
+.PHONY: test-host-filesystem-allocation
+test-host-filesystem-allocation: cshell build/tests/host_paths_faults
+	$(PYTHON) tests/host_filesystem_allocation.py ./cshell build/tests/host_paths_faults --record build/tests/host-filesystem-allocation.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+# CSH-084: independently armed private permission and residual oracles.
+.PHONY: test-host-filesystem-residual
+test-host-filesystem-residual: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --residual-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-residual.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-085: independently measured private graphs and timestamp capabilities.
+.PHONY: test-host-filesystem-isolated
+test-host-filesystem-isolated: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --isolated-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-isolated.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-086: owned terminals and independent overwrite decision effects.
+.PHONY: test-host-filesystem-interactive
+test-host-filesystem-interactive: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --interactive-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-interactive.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-087: independent operand and recursive decision effects.
+.PHONY: test-host-filesystem-decisions
+test-host-filesystem-decisions: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --decisions-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-decisions.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-088: pre-exec metadata and exact timestamp oracles.
+.PHONY: test-host-filesystem-metadata
+test-host-filesystem-metadata: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --metadata-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-metadata.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-089: declined children and bounded nested recursive decisions.
+.PHONY: test-host-filesystem-recursive
+test-host-filesystem-recursive: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --recursive-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-recursive.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-090: independently measured total pathname byte boundaries.
+.PHONY: test-host-filesystem-path-limits
+test-host-filesystem-path-limits: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --path-limits-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-path-limits.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-091: physical cwd resolution after private rename/removal.
+.PHONY: test-host-filesystem-cwd
+test-host-filesystem-cwd: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --cwd-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-cwd.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-092: child-only umask and final symbolic creation-mode witnesses.
+.PHONY: test-host-filesystem-creation
+test-host-filesystem-creation: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --creation-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-creation.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-093: independently armed external pathname utility output errors.
+.PHONY: test-host-filesystem-output
+test-host-filesystem-output: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --output-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-output.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-094: inherited-PWD logical fallback after private rename/removal.
+.PHONY: test-host-filesystem-cwd-logical
+test-host-filesystem-cwd-logical: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --cwd-logical-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-cwd-logical.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-095: authored numeric magic boundaries and first-match precedence.
+.PHONY: test-host-filesystem-magic
+test-host-filesystem-magic: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --magic-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-magic.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-096: independently measured calendar timestamps and field selection.
+.PHONY: test-host-filesystem-calendar
+test-host-filesystem-calendar: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --calendar-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-calendar.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-097: reference timestamps, alias graphs and no-create continuation.
+.PHONY: test-host-filesystem-reference
+test-host-filesystem-reference: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --reference-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-reference.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-098: date syntax, exact fractional seconds and fixed timezone interpretation.
+.PHONY: test-host-filesystem-datetime
+test-host-filesystem-datetime: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --datetime-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-datetime.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-099: explicit daylight-saving rules with independently authored UTC fields.
+.PHONY: test-host-filesystem-timezone
+test-host-filesystem-timezone: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --timezone-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-timezone.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-100: Julian and zero-based day rules across leap/common years.
+.PHONY: test-host-filesystem-day-rules
+test-host-filesystem-day-rules: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --day-rules-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-day-rules.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-101: nondefault transition clocks and sub-hour daylight offsets.
+.PHONY: test-host-filesystem-transition-times
+test-host-filesystem-transition-times: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --transition-times-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-transition-times.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-102: authored string escapes, numeric offsets and EOF boundaries.
+.PHONY: test-host-filesystem-magic-strings
+test-host-filesystem-magic-strings: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --magic-strings-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-magic-strings.json $(HOST_FILESYSTEM_FLAGS)
+
+# Pinned file/libmagic with bounded message-format and one-byte input repairs.
+build/host-file: tools/host-profile/build-file.sh $(wildcard tools/host-profile/vendor/file/*)
+	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(filter-out -Werror -Wpedantic -Wshadow,$(CFLAGS))" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" sh tools/host-profile/build-file.sh
+
+.PHONY: test-host-filesystem-magic-messages
+test-host-filesystem-magic-messages: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --magic-messages-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-magic-messages.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-magic-types
+test-host-filesystem-magic-types: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --magic-types-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-magic-types.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-magic-defaults
+test-host-filesystem-magic-defaults: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --magic-defaults-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-magic-defaults.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-link-bytes
+test-host-filesystem-link-bytes: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --link-bytes-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-link-bytes.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-107: omitted-who symbolic creation modes under independently proved masks.
+.PHONY: test-host-filesystem-omitted-who
+test-host-filesystem-omitted-who: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --omitted-who-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-omitted-who.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-108: bounded mkdir -p graphs and preserved existing objects.
+.PHONY: test-host-filesystem-parent-graphs
+test-host-filesystem-parent-graphs: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --parent-graphs-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-parent-graphs.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-109: rmdir parent graphs and independently proved ancestor denial.
+.PHONY: test-host-filesystem-removal
+test-host-filesystem-removal: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --removal-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-removal.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-110: ln destination graphs and collision continuation.
+.PHONY: test-host-filesystem-link-graphs
+test-host-filesystem-link-graphs: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --link-graphs-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-link-graphs.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-111: independently proved private ln permission boundaries.
+.PHONY: test-host-filesystem-link-permissions
+test-host-filesystem-link-permissions: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --link-permissions-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-link-permissions.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-touch-permissions
+test-host-filesystem-touch-permissions: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --touch-permissions-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-touch-permissions.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-touch-current
+test-host-filesystem-touch-current: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --touch-current-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-touch-current.json $(HOST_FILESYSTEM_FLAGS)
 
 # CSH-070 uses private catalogs and a separately selected literal echo policy.
 .PHONY: test-host-formatted
@@ -689,3 +931,183 @@ build/tests/host_echo_interrupt: tests/host_formatted_interrupt.c tools/host-pro
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -DHOST_FORMATTED_ECHO -o $@ $< $(LDLIBS)
 
 test-host-formatted test-host-formatted-contracts test-host-formatted-sanitize: build/tests/host_printf_interrupt build/tests/host_echo_interrupt
+
+# Strict declared text/byte subset; audit adds still-unqualified provider contracts.
+.PHONY: test-host-text test-host-text-audit test-host-text-harness
+test-host-text: cshell
+	$(PYTHON) tests/host_text.py ./cshell --boundaries $(HOST_TEXT_FLAGS) --record build/tests/host-text-results.json
+
+test-host-text-audit: cshell
+	$(PYTHON) tests/host_text.py ./cshell --boundaries --audit $(HOST_TEXT_FLAGS) --record build/tests/host-text-audit.json
+
+test-host-text-harness:
+	$(PYTHON) -m unittest discover -s tests -p 'test_host_text.py'
+
+# Explicit opt-in network fetch/build; never changes the system PATH.
+.PHONY: host-text-providers test-host-text-repaired
+host-text-providers:
+	$(PYTHON) tools/host-profile/text/build.py
+
+test-host-text-repaired: cshell host-text-providers
+	$(MAKE) host-profile HOST_TEXT_PROVIDER_BIN="$(abspath build/text-providers/bin)"
+	$(PYTHON) tests/host_text.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --boundaries --audit $(HOST_TEXT_FLAGS) --record build/tests/host-text-repaired.json
+
+# Test-only provider interposition. Loader settings apply only after shell exec.
+.PHONY: test-host-text-faults test-host-text-native-capacity
+build/tests/host_text_faults.so: tests/host_text_faults.c
+	@mkdir -p $(@D)
+	$(CC) -std=c99 -Wall -Wextra -O2 -fPIC $(if $(filter Darwin,$(shell uname -s)),-dynamiclib,-shared) -o $@ $< $(if $(filter Linux,$(shell uname -s)),-ldl,)
+
+test-host-text-faults: cshell build/tests/host_text_faults.so
+	$(PYTHON) tests/host_text_faults.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --library build/tests/host_text_faults.so --record build/tests/host-text-faults.json
+
+test-host-text-native-capacity: cshell
+	$(PYTHON) tests/host_text_capacity.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --audit --record build/tests/host-text-native-capacity.json
+
+.PHONY: test-host-permissions
+test-host-permissions: cshell host-profile test-host-permissions-harness
+	$(PYTHON) tests/host_permissions.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-permissions-results.json $(HOST_PERMISSIONS_FLAGS) $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+.PHONY: host-test-provider-check
+build/host-test-provider.h: host-test-provider-check tools/host-profile/provision.py
+	$(PYTHON) tools/host-profile/provision.py $@ --test-header
+
+build/host-test: tools/host-profile/test.c build/host-test-provider.h
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Ibuild $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+.PHONY: test-host-permissions-harness
+test-host-permissions-harness:
+	$(PYTHON) tests/test_host_permissions.py
+
+.PHONY: test-host-terminal
+test-host-terminal: cshell build/tests/host_session_records
+	$(PYTHON) tests/host_terminal.py ./cshell --record build/tests/host-terminal-results.json $(HOST_TERMINAL_FLAGS)
+
+build/tests/host_session_records: tests/host_session_records.c
+	mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+HOST_TERMINAL_ADAPTERS = $(addprefix build/host-terminal-,stty tput tty mesg who)
+$(HOST_TERMINAL_ADAPTERS): build/host-terminal-%: tools/host-profile/terminal.c
+	mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -DTERMINAL_UTILITY='"$*"' -DTERMINAL_PROVIDER='"$(if $(filter stty,$*),/bin,/usr/bin)/$*"' $(if $(filter tput,$*),-DTERMINAL_TPUT) -o $@ $< $(LDLIBS) $(if $(filter tput,$*),-lncurses)
+
+build/host-write: tools/host-profile/vendor/write.c
+	mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -D_DEFAULT_SOURCE -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -o $@ $< $(LDLIBS)
+
+build/host-terminal-tabs: tools/host-profile/tabs.c
+	mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS) -lncurses
+
+host-profile: $(HOST_TERMINAL_ADAPTERS) build/host-terminal-tabs build/host-write
+.PHONY: test-host-terminal-profile
+test-host-terminal-profile: cshell build/tests/host_session_records host-profile
+	$(PYTHON) tests/host_terminal.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-terminal-profile-results.json $(HOST_TERMINAL_FLAGS)
+
+.PHONY: test-host-terminal-harness
+test-host-terminal-harness: cshell
+	$(PYTHON) tests/test_host_terminal.py
+
+.PHONY: test-host-terminal-effects
+test-host-terminal-effects: cshell build/tests/host_session_records host-profile
+	$(PYTHON) tests/host_terminal_effects.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-terminal-effects.json
+
+.PHONY: test-host-terminal-residuals
+test-host-terminal-residuals: cshell build/tests/host_session_records host-profile
+	$(PYTHON) tests/host_terminal_residuals.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-terminal-residuals.json $(HOST_TERMINAL_FLAGS)
+
+.PHONY: test-host-languages
+test-host-languages: cshell host-profile build/tests/host_ed_faults
+	$(PYTHON) -m unittest discover -s tests -p 'test_host_languages.py'
+	$(PYTHON) tests/host_languages.py ./cshell --path "$(if $(CSH_TEST_PATH),$(CSH_TEST_PATH),$(abspath build/host-profile/bin):$(shell getconf PATH))" --ed-faults build/tests/host_ed_faults --record build/tests/host-languages-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+# Standalone GPL-2.0-or-later host executable, never linked into cshell.
+HOST_ED_SOURCES = $(wildcard tools/host-profile/vendor/ed/*.c)
+HOST_ED_HEADERS = $(wildcard tools/host-profile/vendor/ed/*.h)
+build/host-ed: $(HOST_ED_SOURCES) $(HOST_ED_HEADERS)
+	mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE -D_DEFAULT_SOURCE -DPROGVERSION='"1.22.6-cshell.1"' $(LDFLAGS) -o $@ $(HOST_ED_SOURCES) $(LDLIBS)
+
+build/tests/host_ed_faults: $(HOST_ED_SOURCES) $(HOST_ED_HEADERS) tests/host_ed_faults.c tests/host_ed_faults.h
+	mkdir -p build/tests
+	$(CC) $(CPPFLAGS) $(CFLAGS) -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE -D_DEFAULT_SOURCE -DPROGVERSION='"1.22.6-cshell.1-faults"' -include tests/host_ed_faults.h $(LDFLAGS) -o $@ $(HOST_ED_SOURCES) tests/host_ed_faults.c $(LDLIBS)
+
+HOST_XARGS_SOURCES = $(wildcard tools/host-profile/vendor/xargs/*.c)
+HOST_XARGS_HEADERS = $(wildcard tools/host-profile/vendor/xargs/*.h)
+build/host-xargs: $(HOST_XARGS_SOURCES) $(HOST_XARGS_HEADERS)
+	mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE -D_DEFAULT_SOURCE $(LDFLAGS) -o $@ $(HOST_XARGS_SOURCES) $(LDLIBS)
+
+# M4 includes gnulib portability sources and retains its upstream build system.
+build/host-m4: tools/host-profile/build_m4.py $(wildcard tools/host-profile/vendor/m4/*)
+	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" $(PYTHON) tools/host-profile/build_m4.py
+
+# Pinned GPL-3.0-or-later patch preserves the first backup across repeated hunks.
+build/host-patch: tools/host-profile/build_patch.py $(wildcard tools/host-profile/vendor/patch/*)
+	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" $(PYTHON) tools/host-profile/build_patch.py
+
+# CSH-076: catalog/locale providers, independent consumers, bounded fixtures.
+.PHONY: test-host-catalogs test-host-catalog-harness
+build/tests/host_catalog_probe: tests/host_catalog_probe.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+test-host-catalog-harness: build/tests/catalog_adapter_fixture build/tests/locale_adapter_fixture
+	./build/tests/catalog_adapter_fixture
+	./build/tests/locale_adapter_fixture
+	$(PYTHON) -m unittest discover -s tests -p 'test_host_catalog*.py'
+
+test-host-catalogs: host-catalog-fixtures cshell host-profile build/tests/host_catalog_probe test-host-catalog-harness
+	$(PYTHON) tests/host_catalogs.py ./cshell build/tests/host_catalog_probe --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --locale-path "$(abspath build/host-profile/locales)" --record build/tests/host-catalog-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+.PHONY: host-locales test-host-catalog-contracts
+host-locales: build/tests/host_catalog_probe
+	$(PYTHON) tools/host-profile/provision_locales.py build/tests/host_catalog_probe build/host-profile/locales
+
+test-host-catalog-contracts: test-host-catalogs
+	$(PYTHON) tests/host_catalogs.py ./cshell build/tests/host_catalog_probe --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --locale-path "$(abspath build/host-profile/locales)" --scope all --record build/tests/host-catalog-contract-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+build/tests/catalog_adapter_fixture: tests/catalog_adapter_fixture.c tools/host-profile/catalog_adapter.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+# Reusable fixtures for other utility tracks; no shell build or full suite needed.
+.PHONY: host-catalog-fixtures
+host-catalog-fixtures: host-locales host-profile build/tests/host_catalog_probe
+	$(PYTHON) tools/host-profile/provision_catalogs.py build/tests/host_catalog_probe --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+build/tests/locale_adapter_fixture: tests/locale_adapter_fixture.c tools/host-profile/locale_adapter.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CSHELL_CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+
+# Service effects are available only in the dedicated disposable image. Native
+# qualification invokes only codecs and read-only date formats.
+.PHONY: test-host-service-codecs test-host-service-harness docker-test-host-services
+test-host-service-codecs: cshell host-profile
+	$(PYTHON) tests/host_services.py ./cshell --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-service-codecs.json
+
+test-host-service-harness:
+	$(PYTHON) -m unittest discover -s tests -p 'test_host_service*.py'
+
+docker-test-host-services:
+	docker build -f tools/host-services/Dockerfile -t cshell-services:local .
+	$(PYTHON) tools/host-services/run.py
+
+
+.PHONY: docker-runtime docker-runtime-test docker-pipeline-build
+docker-runtime:
+	$(DOCKER) build --target runtime --tag "$(RUNTIME_IMAGE)" .
+
+docker-runtime-test: docker-runtime
+	$(PYTHON) tests/container_runtime.py --docker "$(DOCKER)" --image "$(RUNTIME_IMAGE)"
+
+docker-pipeline-build:
+	$(DOCKER) build --target test --tag "$(PIPELINE_IMAGE)" .
+
+
+.PHONY: test-tickets
+test-tickets:
+	$(PYTHON) tests/test_ticket_registry.py
+	$(PYTHON) tools/tickets.py check

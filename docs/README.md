@@ -69,4 +69,33 @@ The [CSH-012 requirement, defect, platform and documentation review](conformance
 - [Shell locale and pathname qualification](locale-pathname-qualification.md):
   CSH-067 clauses, exact witnesses, supplied definitions and external prerequisites.
 
+- [Filesystem and pathname qualification](host-filesystem-evidence.md): CSH-072
+  strict native/Linux subsets, provider repairs and individual remaining contracts.
+
+- [CSH-092 creation masks and final mode evidence](evidence/csh-092/README.md)
+
+[CSH-094 logical cwd fallback evidence](evidence/csh-094/README.md) records inherited-PWD probes, native/Linux results and remaining ownership.
 - [Selected formatted-output contracts](host-formatted-output.md): CSH-070 policies, section accounting and resource evidence.
+
+- [Text and byte stream qualification](host-text-contracts.md): CSH-073 assertions, per-page section ledger, sparse offsets, signal/capacity probes and strict vendor audit.
+
+CSH-071 adds [predicate, permission and identity qualification](host-permissions-identities.md),
+including `make test-host-permissions`, direct exec, public cshell dispatch,
+independent effects, and explicit unqualified vendor/session/platform branches.
+
+[CSH-077 terminal/session section map](host-terminal-contracts.md) records the
+strict selected profile and [CSH-081](tickets/CSH-081-host-terminal-residual-contracts.md)
+ownership of unqualified full contracts and physical-terminal prerequisites.
+
+- [Host languages, editors and argument construction](host-languages-evidence.md): CSH-074 bounded assertions, clause dispositions, signal recovery and retained failures.
+
+## CSH-076 locale and catalog subset
+
+[Provider setup, independent assertions and exact unqualified contracts](host-locale-catalogs.md)
+cover gencat/gettext/iconv/locale/localedef/msgfmt/ngettext. `make test-host-profile`
+includes the bounded strict subset; `make test-host-catalog-contracts` also runs
+retained failing vendor reproducers. Full utility contracts remain open.
+
+- [Disposable host service profile](host-service-profile.md): native codecs and isolated scheduler, mail, logging, print and clock witnesses.
+
+- [Application containers and Pipeline](containers.md): image targets, reports, runtime checks, and registration handoff.

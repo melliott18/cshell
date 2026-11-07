@@ -492,25 +492,39 @@ process group. Pipe cleanup kills that group after success or failure, including
 descendants left behind by a candidate that exits early. PTY cleanup covers all
 process groups still in the candidate's session, including stopped foreground
 jobs, background groups, and descendants left after the leader exits. Terminal
-descriptors are closed on success and failure. Final pipe cleanup has its own
-one-second budget. PTY cleanup allows five
-seconds for session enumeration/killing, then a separate one second to reap the
+descriptors are closed on success and failure. Final pipe cleanup and PTY
+cleanup allow five seconds for group/session enumeration and killing, then a
+separate one second to reap the
 leader, even after snapshot failure. These budgets are separate from the case
 timeout; failure to enumerate, kill or reap fails the case. PTY cleanup also
 verifies that no live session members remain. CSH-054 adds controlled slow and
 failed snapshot regressions, and uses a wakeup pipe in the Python terminal
 signal helper so a buffered read cannot delay its signal observation.
 
-PTY session discovery uses `/proc` on Linux and `/bin/ps` plus process-session
-queries on macOS. Both transports share the group-kill check: macOS can return
+PTY session discovery uses `/proc` on Linux and bounded `libproc` metadata
+plus process-session queries on macOS. The Darwin helper enumerates PIDs with
+`proc_listpids`, checks session ownership before reading short BSD status, and
+revalidates membership. It does not spawn a system-wide `/bin/ps` subprocess.
+Full PID buffers are retried within the deadline and 1 MiB bound; malformed or
+denied metadata remains a failure. Only disappeared processes and zombies are
+excluded. Both transports share the group-kill check: macOS can return
 `EPERM` when a group contains only zombies, so that error is accepted only after
 a fresh, bounded session snapshot proves there are no live members of the target
 group. The pipe post-exit check allows up to one second for this snapshot. Other
 permission errors, a live group, or a failed snapshot remain failures, including
 after an otherwise successful exit. The macOS snapshot facilities must therefore
 also be available when pipe cleanup encounters `EPERM`. See
-[CSH-040](tickets/CSH-040-macos-harness-cleanup.md) for deterministic regression
-evidence.
+[CSH-040](tickets/CSH-040-macos-harness-cleanup.md) for the original regression
+evidence and [CSH-072 cleanup follow-up](evidence/csh-072/cleanup/README.md) for
+the libproc implementation and native live/zombie checks.
+
+Permission-test records additionally retain the leader PID, spawn/elapsed/cleanup
+times and whether it was reaped. On a case timeout they attempt a 0.5-second
+`ps` snapshot of that leader's state, wait channel and executable; snapshot
+errors are retained separately from the candidate's streams. The five-second
+permission-case deadline remains unchanged. The [CSH-071 chgrp triage](
+evidence/csh-071-chgrp-timeout/README.md) records an unreproduced original stall
+and the independent fix preventing group cleanup from exhausting the reap budget.
 
 The candidate also receives POSIX resource limits: CPU time is limited to at most
 the effective timeout rounded up plus one second, each file is limited to the larger
@@ -589,12 +603,12 @@ exits.
 Equivalent default Docker commands, which do not require host Make:
 
 ```sh
-docker build --tag cshell-test:local .
+docker build --target development --tag cshell-test:local .
 docker run --rm --init cshell-test:local
 docker run --rm --init cshell-test:local make test-pty
 ```
 
-For a clean refresh of the toolchain, use `docker build --pull --no-cache --tag
+For a clean refresh of the toolchain, use `docker build --target development --pull --no-cache --tag
 cshell-test:local .`, then run the image. If Docker cannot connect to the daemon,
 start Docker Desktop or the configured engine and check `docker info`. Build and
 test failures propagate through `make docker-test` as a nonzero exit status.
@@ -1321,7 +1335,7 @@ groups, with read/write/execute, inheritance, precedence and mask controls.
 explicitly supplied disposable filesystem. Failed setup records are failures,
 including the actual command/status/diagnostic, and do not erase the run record.
 
-Use `docker build --build-arg BASE_IMAGE=debian:trixie-slim` for the updated
+Use `docker build --target development --build-arg BASE_IMAGE=debian:trixie-slim` for the updated
 vendor scope; the default base remains Debian 12. [CSH-062 evidence](evidence/csh-062/README.md)
 contains complete native, overlay, ext4-volume, unsupported-tmpfs, BusyBox and
 sanitizer commands/results. [CSH-063](tickets/CSH-063-host-platform-residual-qualification.md)
@@ -1417,6 +1431,332 @@ these failure cases and the runner's emitted ownership without invoking utilitie
 This is an accounting check, not a conformance suite. See the
 [current individual contracts](host-system-inventory.md#current-contract-ownership).
 
+## CSH-072 filesystem providers
+
+`make test-host-filesystem` runs isolated direct-exec and public-runtime cases.
+`make test-host-filesystem-audit` additionally requires the new pathname contracts
+and retains stock-provider failures. `make test-host-profile` includes the strict
+audit using its repaired selected providers. See the [assertion and boundary
+map](host-filesystem-evidence.md) and [retained evidence](evidence/csh-072/README.md).
+Linux setup additionally requires `file` and `pax`; Docker and CI provision both.
+
+## CSH-080 filesystem contracts
+
+`make test-host-profile` includes CSH-080 ordinary filesystem witnesses and
+`make test-host-filesystem-allocation`. The latter injects checked call-site
+ENOMEM into a test-only build of the local pathname providers. Use
+`python3 tests/host_filesystem.py ./cshell --remaining-only --path "$PWD/build/host-profile/bin:$(getconf PATH)" --record build/tests/remaining.json`
+for the 60 new ordinary cases. Selected profiles allow no gaps.
+`make test-host-filesystem-audit` uses stock providers and must preserve its
+nonzero result; `make test-host-filesystem-provider-audit` verifies the selected
+traversal/archive/kernel-I/O subset. For the corresponding strict stock subset,
+run `tests/host_filesystem.py` with `--extended-only --provider-audit` and no PATH
+override. These are distinct from test-only allocation controls and unavailable
+privileged filesystem environments. See [evidence](evidence/csh-080/README.md).
+
+### CSH-084 private filesystem residual environments
+
+`make test-host-filesystem-residual` requires the selected host profile and an
+unprivileged fixture identity. It runs private search-denial, authored magic,
+opaque symlink-byte and stdout-fault cases in direct/string/file/stdin modes.
+`make test-host-profile` includes them; `make test-host-inventory` runs their
+setup/error/timeout regressions. Root or ineffective permission bits fail setup.
+See [the exact scope and cleanup contract](host-filesystem-evidence.md#csh-084-residual-environments).
+
+### Private filesystem graphs and subsecond timestamps (CSH-085)
+
+`make test-host-filesystem-isolated` selects the 28 private graph, numeric magic
+and timestamp cases also required by `make test-host-profile`. It records
+`build/tests/host-filesystem-isolated.json`, including pre-exec allocation/inode
+measurements or timestamp capability probes, exact results and cleanup. Run as
+an unprivileged identity on native macOS and Linux. No mounts or elevated
+provisioning are needed. Setup failures and timeouts fail the run; the test does
+not fill any filesystem. `make test-host-inventory` includes malformed-output,
+partial-setup, timestamp precision and timeout cleanup harness regressions.
+
+## CSH-086 owned-terminal overwrite decisions
+
+`make test-host-filesystem-interactive` runs 39 CSH-086 owned-PTY assertions
+for cp/mv decisions and option precedence, also required by `test-host-profile`.
+The profile now builds a pinned, locally repaired GNU cp offline from a vendored
+archive; initial profile builds take longer. [CSH-086 evidence](evidence/csh-086/README.md)
+records native/Linux commands, stock failures and terminal cleanup regressions.
+
+## CSH-087 operand and recursive decisions
+
+`make test-host-filesystem-decisions` runs 22 cases / 68 assertions, also included
+in `make test-host-profile`. Twenty cases use owned PTYs with separately
+captured stdout: cp/mv two-operand yes/no combinations and continuation past a
+missing middle operand, cp recursive overwrites, rm descent/final-removal
+choices, symlink non-traversal and last -f/-i precedence. Two same-device mv
+directory replacement cases run in direct/string/file/stdin modes.
+
+Every terminal response waits for its target and question mark. The complete
+stderr transcript must match the authored order, and source/destination bytes
+and removals must match independent effects. Single-child trees avoid assuming
+filesystem enumeration order. `make test-host-inventory` includes transcript,
+continuation-effect, partial-setup and mid-interaction timeout regressions.
+See [CSH-087 evidence](evidence/csh-087/README.md); other environments remain
+individually assigned to [CSH-088](tickets/CSH-088-filesystem-remaining-environments.md).
+
+## CSH-088 measured filesystem metadata
+
+Run `make test-host-filesystem-metadata` for 16 cases / 64 assertions using
+private metadata and exact timestamp environments. The full selected host
+profile and stock filesystem audit include these cases automatically.
+`make test-host-inventory` also checks the oracles, timestamp readback failures,
+partial setup and process/fixture cleanup after timeouts in all four modes.
+See [CSH-088 evidence](evidence/csh-088/README.md) for commands and limits.
+
+## CSH-089 declined children and nested recursive decisions
+
+`make test-host-filesystem-recursive` adds ten cases / 30 U-034/U-040
+assertions using direct provider exec and cshell command-string/script-file
+modes on owned C-locale PTYs. Authored one-child chains cover declined regular
+files and symlinks, declined nested descent, separate final parent decisions,
+a nonempty-parent error after accepting removal of a still nonempty parent, and continuation
+to a later operand. Exact transcripts, empty stdout, exit status, retained bytes,
+link text and removed entries are checked independently. Five harness regressions
+check bad transcripts/effects/status/channels, partial setup, timeout cleanup and provider-specific simple-prompt spelling.
+
+The selected profile builds GNU rm 9.7 with a local source patch retaining the
+mandatory final `-i` prompt after a declined nested descent (rm DESCRIPTION
+2b-2e). Unpatched GNU skips the parent decision in that case. The patch changes
+only the marked-ancestor shortcut under explicit `-i`; ordinary non-interactive
+behavior remains unchanged. Original stock failures remain separate failures;
+no output or status is translated and no selected allowance is added.
+
+[CSH-089 evidence](evidence/csh-089/README.md) records native and Linux results.
+[CSH-090](tickets/CSH-090-filesystem-environment-residuals.md) owns every remaining
+utility environment and all four retained conditions. These cases do not
+qualify arbitrary branching, depth/path exhaustion, mounts, races, non-C prompts,
+ACLs, quotas, real filesystem exhaustion, libc-internal faults or whole utilities.
+
+## CSH-090 total pathname byte boundaries
+
+`make test-host-filesystem-path-limits` runs 32 assertions through direct exec and
+all three cshell input modes. The full selected host profile also requires them.
+Private `./` spellings separate total bytes from component lengths. Setup checks
+`pathconf` and passes the original string to `stat` relative to a directory fd,
+without pathlib normalization. Indeterminate or excessive limits (outside
+256..8192), unexpected errno and incomplete setup are failures. The portable
+256-byte bound includes the terminating NUL, independently of the host limit.
+No tree-depth, quota, capacity or allocator qualification is claimed. Harness
+regressions require bounded setup/error/timeout cleanup.
+
+### Physical cwd namespace witnesses (CSH-091)
+
+`make test-host-filesystem-cwd` qualifies external `pwd -P` and `pwd -L -P`
+after private leaf/parent renames and removals, using direct exec and all three
+cshell input modes. A child-only helper checks cwd inode identity and getcwd
+resolution/ENOENT before exec; setup and exec failures cannot satisfy utility
+error assertions. Exact stdout, diagnostics, status, effects and cleanup are
+required. Six harness regressions cover corrupted markers/output/effects,
+partial setup, wrong probes, exec failures and bounded timeout cleanup.
+No mounts, host volume exhaustion, PWD edits or provider patches are involved.
+Permission, total path limits, logical-mode namespace changes and libc/stdio
+failures remain open under CSH-092.
+
+## Creation mask and final mode evidence (CSH-092)
+
+Run `make test-host-filesystem-creation` as an unprivileged identity. The 26
+cases / 104 assertions use private directory/FIFO probes to establish child masks
+027, 077 and 777, then exec the actual mkdir/mkfifo provider. All four input modes
+check final modes, types, channels, statuses and effects. Restrictive directories
+are restored top-down after assertions and on failure/timeout before cleanup.
+`make test-host-inventory` also checks helper, marker and cleanup regressions.
+See [the evidence record](evidence/csh-092/README.md) for limits and provenance.
+
+### Pathname utility output errors (CSH-093)
+
+Run `make test-host-filesystem-output` for 32 macOS / 56 Linux assertions.
+The child helper independently proves EBADF, EPIPE or Linux virtual-device
+ENOSPC before exec. This is not disk exhaustion or libc fault injection.
+PWD is unset; external pwd is tested in direct/string/file/stdin modes.
+The full host profile includes these cases and fails on setup or cleanup errors.
+See [evidence](evidence/csh-093/README.md) for scope and retained gaps.
+
+### Logical pwd fallback after namespace changes (CSH-094)
+
+`make test-host-filesystem-cwd-logical` runs 12 cases / 48 assertions with
+no options, `-L`, and `-P -L`, after leaf/parent rename/removal. The child-only
+helper observes inherited PWD without assigning or unsetting it. Direct exec
+inherits no PWD; cshell modes inherit the fixture root established at startup.
+The helper requires that root to be distinct from the cwd inode, proves unchanged
+cwd identity, old-path ENOENT and exact getcwd/ENOENT, then execs the inventoried
+external pwd. It records PWD before and after mutation. Missing/corrupt probes,
+setup/exec failure, wrong channels/status/effects and timeouts fail independently.
+The complete selected profile and CI require these cases with zero allowances.
+See [CSH-094 evidence](evidence/csh-094/README.md); valid logical symlink paths,
+permission/path/resource boundaries and arbitrary races remain open.
+
+### Authored numeric magic boundaries (CSH-095)
+
+`make test-host-filesystem-magic` runs 46 cases / 184 assertions, also mandatory
+in `make test-host-profile`. Native signed byte/short samples exercise minima,
+maxima, comparisons across zero, negative-value masks/bit tests, hexadecimal and
+octal constants, exact/truncated fields, and first-match continuation order.
+Python packs native C values; ctypes independently checks widths. The record
+retains byte order, widths, exact bytes, literal message oracles and unchanged
+input effects. Failed setup, exec, channels/status/effects and bounded timeout
+cleanup have harness regressions. No provider/source/build flags change.
+See [CSH-095 evidence](evidence/csh-095/README.md) for native/Linux results and
+retained stock failures. Other types/ranges, multiple-database precedence and
+all four original U-040 conditions remain open under CSH-096.
+
+### Calendar timestamp qualification (CSH-096)
+
+`make test-host-filesystem-calendar` runs 40 cases / 160 strict assertions against
+the inventoried external touch provider directly and via cshell string/file/stdin.
+The full selected profile includes these cases. Integer UTC calendar arithmetic
+supplies exact expectations; target and unequal fractional baseline timestamps
+must survive independent utime/stat probes before exec. The cases require empty
+channels, status zero, exact selected and preserved timestamps, and unchanged
+file content. Setup failure is a failure, never a skip.
+
+This covers authored representable dates, not complete timestamp ranges,
+unsupported-range errors, current clocks, DST or privileged filesystem behavior.
+See [CSH-096 evidence](evidence/csh-096/README.md) and
+[CSH-106 residual ownership](tickets/CSH-106-filesystem-environment-residuals.md).
+
+### Reference timestamps and alias graphs (CSH-097)
+
+`make test-host-filesystem-reference` runs 28 cases / 112 assertions through
+direct exec and cshell string/file/stdin dispatch. The full selected profile
+includes every case. Independent timestamp probes and stat/lstat measurements
+prove the private graph before execution. All metadata is captured before
+content reads can alter a hard-linked inode’s atime. Exact field selection,
+unchanged reference files and links, and no-create continuation are required.
+Four harness regressions cover corrupt effects/channels, setup failures and
+failed-exec/timeout cleanup in all modes. Arbitrary graphs, live clocks,
+unsupported timestamps, races and permission/ACL errors remain open.
+
+See [CSH-097 evidence](evidence/csh-097/README.md) and
+[CSH-106 residual ownership](tickets/CSH-106-filesystem-environment-residuals.md).
+
+### Date forms and fixed timezones (CSH-098)
+
+`make test-host-filesystem-datetime` runs 64 cases / 256 assertions for touch
+fractional seconds, date separators, fixed POSIX TZ offsets and explicit UTC.
+All are also mandatory in the full selected host profile. Python authors UTC
+fields and integer fractions independently of provider parsing; setup probes
+exact target timestamps then restores distinct fractional baselines. No DST
+or timezone database is needed. Harness regressions reject changed fields,
+content, identity/mode, channels/status, failed/rounded setup and failed-exec
+or timeout cleanup. Native and Linux commands and records are retained in
+[CSH-098 evidence](evidence/csh-098/README.md). Remaining ownership is [CSH-106](tickets/CSH-106-filesystem-environment-residuals.md).
+
+### Explicit daylight-saving rules (CSH-099)
+
+`make test-host-filesystem-timezone` runs 104 cases / 416 assertions through
+direct exec and cshell string/file/stdin modes. Independently authored UTC
+fields cover seasonal offsets, unique local times around northern/southern
+M-rule transitions, both -d/-t forms and Z overriding daylight time.
+The shared exact-inode timestamp setup rejects rounding and failed setup before
+exec; channels, status, selected/unselected timestamps, content and identity
+are mandatory. Setup, mutation, failed-exec and timeout cleanup regressions
+run in `test-host-inventory`. No timezone database or mktime supplies an oracle.
+See [CSH-099 evidence](evidence/csh-099/README.md) and [CSH-107 remaining ownership](tickets/CSH-107-filesystem-environment-residuals.md).
+
+## CSH-100 Julian and numbered day rules
+
+`make test-host-filesystem-day-rules` runs 128 cases through direct exec and all
+three cshell modes (512 assertions). The full selected filesystem profile also
+includes these cases. The shared exact timestamp probe must succeed before exec;
+setup failures, provider failures and cleanup are recorded separately.
+
+## Explicit transition clocks and sub-hour daylight offsets (CSH-101)
+
+`make test-host-filesystem-transition-times` runs 96 cases / 384 assertions with
+zero selected-profile allowances. It covers nondefault M/J/n transition clocks,
+offsets with minutes and seconds, and signed/next-day transitions using unique
+local times. Each -d/-t input runs all four timestamp selections and invocation
+modes. Independent UTC fields supply integer Epoch timestamps; exact inode
+probes must succeed before execution. Harness regressions reject incorrect
+fields, contents, identity, channels and status, failed/rounded setup, and
+failed-exec/timeout cleanup. No privileged environment or injected fault is used.
+See [evidence](evidence/csh-101/README.md) and
+[remaining ownership](tickets/CSH-107-filesystem-environment-residuals.md).
+
+## String-magic byte and offset boundaries (CSH-102)
+
+`make test-host-filesystem-magic-strings` runs 91 cases / 364 assertions through
+direct exec and cshell string/file/stdin modes. Authored escape spellings and
+literal sample bytes are independent. An always-matching top-level rule makes
+nonmatching continuation output exact without relying on default classification.
+Pre-exec readback arms each fixture; status, both channels and immutable input
+contents are checked. Harness regressions reject wrong output/status, modified
+inputs and failed setup, and exercise failed-exec/timeout cleanup in every mode.
+See [CSH-102 evidence](evidence/csh-102/README.md) and
+[remaining ownership](tickets/CSH-107-filesystem-environment-residuals.md).
+
+## CSH-103 magic-message qualification
+
+CSH-103 supplies 108 file magic-message cases / 432 assertions for native signed byte/short and string printf-style descriptions at top level and in continuations. Literal expected bytes cover signs, width, precision, zero padding, decimal/octal/hexadecimal output, alternate forms, characters and literal percent signs. Exact channels/status, pre-exec readback and unchanged sample/database contents supply the oracle. The pinned file 5.46 provider repairs one-byte magic dispatch, bounded format validation and textual rule order; original stock failures remain separately retained. Other types/widths, unsigned ranges, multiple databases, arbitrary formats/encodings/locales and utility resource failures remain unqualified.
+
+Run `make test-host-filesystem-magic-messages` for the focused assertions.
+All 21 residual utility contracts and four original U-040 conditions remain open in
+[CSH-106](tickets/CSH-106-filesystem-environment-residuals.md).
+See [CSH-103 evidence](evidence/csh-103/README.md) for provider provenance, strict results and stock failures.
+
+`make test-host-filesystem-magic-types` selects the 360 CSH-104 portable numeric
+magic cases in direct exec and all three cshell modes (1440 assertions). The
+full selected profile also requires them. Native ABI widths, signed/unsigned
+boundaries, masks, comparisons and truncated-field rejection have independent
+oracles. Stock failures and selected provider repairs are retained separately.
+
+### Default numeric magic and aliases (CSH-105)
+
+`make test-host-filesystem-magic-defaults` requires the opt-in provider and runs all 280 authored cases through direct execution and cshell string/file/stdin modes (1120 assertions on the qualified LP64 hosts). Defaults d/u use the selected native int width; byte/short/long use their POSIX C-type aliases. Every truncated length and both top-level/continuation placement are checked. `python3 tests/host_file_type_checks.py build/host-file` separately protects the vendor compiled-database encoding. See [evidence](evidence/csh-105/README.md) for native/Linux and focused sanitizer validation.
+
+## CSH-106 readlink byte qualification
+
+Run `make test-host-filesystem-link-bytes` for the required opaque link byte suite.
+CSH-106 supplies 1088 readlink cases / 4352 assertions: each non-NUL byte, authored valid and invalid UTF-8 sequences, embedded newlines and shell metacharacters, and mixed targets of 255/256/257/511/512/513/1023 bytes, in C and an installed UTF-8 locale, with and without -n. Authored output bytes are independent of the provider; pre-exec lstat/readlink probes establish stored bytes, and post-exec probes require unchanged inode, mode, size and contents. Exact channels/status and cleanup are mandatory.
+
+Arbitrary byte sequences and locale repertoires, libc-internal allocation failures, true filesystem limits, namespace races and other error environments remain unqualified. No provider code changed.
+
+## CSH-107 omitted-who creation modes
+
+Run `make test-host-filesystem-omitted-who` for the 288 required assertions.
+CSH-107 supplies 72 mkdir/mkfifo cases / 288 assertions for symbolic creation modes with omitted who under independently proved child-only masks 027, 077 and 777. Authored literal modes cover masked addition/removal, copy addition/removal/assignment, conditional execute, empty assignment and multiple actions, alongside explicit-who controls. Exact channels/status, final type/mode and cleanup are required. The selected pinned GNU coreutils 9.7 creation utilities replace Apple providers that retain masked group bits during copy assignment.
+
+Further symbolic-mode and parent graphs, special-bit modes, transient permissions, ACL inheritance, other identities, path/depth limits and capacity exhaustion remain unqualified; FIFO transfer is outside creation. Apple stock failures are retained separately; no allowances are introduced.
+
+`make test-host-filesystem-parent-graphs` runs the 60 CSH-108 mkdir parent graphs in all four invocation modes (240 assertions). Final/intermediate modes, unchanged existing identities, child mask probes, channels, status and cleanup are mandatory. See [the evidence](evidence/csh-108/README.md).
+
+## CSH-109 directory removal environments
+
+`make test-host-filesystem-removal` runs 19 rmdir graphs in direct, string, file
+and stdin modes. Private owner-mode write/search denial requires an unprivileged
+identity and an independently observed EACCES before execution. Exact effects
+and preserved inode identities are checked before cleanup; denial is restored
+for inspection. Arbitrary graphs, mounts, ACLs, limits and races remain open.
+See [CSH-109 evidence](evidence/csh-109/README.md).
+
+## CSH-110 link destination environments
+
+`make test-host-filesystem-link-graphs` runs 29 authored `ln` cases through
+direct exec and all three cshell modes (116 assertions). The same assertions
+are required by the selected full profile and retained in the stock audit.
+The fixture records pre-exec object identities and readback, post-exec link
+counts and inode relationships, bytes, modes, channels/status and cleanup.
+Failure tests reject corrupted effects, incomplete setup and readback; failed
+exec and timeout checks require reaped children and removed fixtures.
+See [CSH-110 evidence](evidence/csh-110/README.md).
+
+## Link permission boundaries (CSH-111)
+
+`make test-host-filesystem-link-permissions` runs 21 private ln cases in direct
+execution and cshell string/file/stdin modes. Independent EACCES probes precede
+the selected provider. Exact inode/link-count/content effects, channels, status,
+exec records and cleanup are required. Run as an unprivileged identity. These
+fixtures do not qualify ACLs, other credentials, mounts or exhaustion.
+See [retained evidence](evidence/csh-111/README.md).
+
+`make test-host-filesystem-touch-permissions` checks CSH-112 ordinary owner-mode touch permissions, explicit timestamps and operand continuation in direct execution and all shell input modes. See [CSH-112 evidence](evidence/csh-112/README.md).
+
+`make test-host-filesystem-touch-current` checks CSH-113 touch creation modes and bounded current-time behavior in direct execution and all shell input modes. See [CSH-113 evidence](evidence/csh-113/README.md).
 ## Formatted-output provider qualification
 
 `make test-host-formatted` runs the CSH-070 private printf/literal-echo selection
@@ -1456,3 +1796,149 @@ runner so every clean child environment receives explicit ASan/UBSan controls.
 This preserves all normal resource/failure probes and is distinct from the
 `--sanitizer` selection of dedicated provider binaries. Neither result claims
 LeakSanitizer coverage.
+
+
+## Host text and byte stream contracts (CSH-073)
+
+`make test-host-text` checks the declared stock-PATH subset through direct exec
+and all three public cshell invocation modes. `make test-host-profile` includes
+the same cases with the opt-in PATH. `make test-host-text-audit` additionally
+executes strict still-unqualified provider contracts and currently returns
+failure on the recorded macOS and Debian providers. No failed audit assertion
+is treated as a passing subset result or a known-gap allowance.
+
+JSON is written to `build/tests/host-text-results.json` or
+`build/tests/host-text-audit.json`, including per-case expected/actual bytes,
+status, effects, setup failures, cleanup, source hashes and provider identities.
+`HOST_TEXT_FLAGS='--capacity-root /capacity'` selects an explicitly supplied
+small disposable filesystem; use a dedicated Docker tmpfs, never a working
+filesystem. Missing native blocked-write/capacity capabilities are individually
+unavailable, not passing tests. `make test-host-text-harness` checks independent
+CRC answers, rejection of wrong output/effects, timeout cleanup, and section
+accounting mutations. `make test-host-inventory` also validates the new ledger.
+See [qualification scope and reproduction](host-text-contracts.md).
+
+
+The CSH-073 transformation/offset/large-input extension runs in the same
+`test-host-text` and `test-host-profile` targets. Reports now include separate
+`qualification_groups` totals. File recipes permit exact multi-MiB comparisons
+without unbounded capture; negative controls reject changed, short and extra
+bytes. `Host text qualification` CI retains native and Docker JSON artifacts
+and separate strict-audit statuses, even if other shell jobs fail.
+
+
+For CSH-073's repaired provider selection, `make test-host-text-repaired`
+explicitly downloads checksum-pinned sources, builds into `build/text-providers`,
+verifies the executables while provisioning the existing opt-in host profile,
+and runs the strict audit. See [provider setup and remaining environment needs](../tools/host-profile/text/README.md).
+`make test-host-text-audit` retains stock-provider failures. Neither target
+installs over system tools. Repaired CI also tests public runtime and PTY
+fixtures with the selected PATH; disposable Debian capacity is recorded separately.
+
+
+CSH-073 native capability and fault targets require the repaired profile above.
+`make test-host-text-native-capacity` uses an owned macOS disk image and verifies
+attachment, ENOSPC, detachment and removal. Blocked writers are observed with
+`sample` on Darwin or `/proc/PID/wchan` on Linux before TERM delivery.
+`make test-host-text-faults` requires injection attestation and exact outputs for
+24 source-provider faults; it never injects faults into the shell itself.
+The deliberate SIGQUIT child in the native jobs fault module clears inherited
+Mach crash/corpse exception ports before signal delivery, preserving the default
+signal status while avoiding a launcher crash-reporting dependency.
+
+CSH-071 adds [predicate, permission and identity qualification](host-permissions-identities.md),
+including `make test-host-permissions`, direct exec, public cshell dispatch,
+independent effects, and explicit unqualified vendor/session/platform branches.
+
+## Terminal and session providers (CSH-077)
+
+`make test-host-terminal` tests stock providers; known contract failures stay
+strict. `make test-host-terminal-profile` tests the opt-in repaired subset.
+`make test-host-profile` includes the latter, `test-host-terminal-effects`
+(90 real-byte, descriptor-priority and private-record assertions), and
+`test-host-terminal-harness`.
+The [section map](host-terminal-contracts.md) defines all 133 cases, five paths,
+bounds, independent oracles and remaining CSH-081 contracts. No real login
+records or recipient terminals are changed. Linux requires `ncurses-bin` and
+`bsdextrautils` (included in Docker/CI); native macOS uses system tic/write.
+Use `HOST_TERMINAL_FLAGS=--case=tty/` only for diagnosis.
+
+The Linux registered-session subset is opt-in and requires a private mount
+namespace. The [isolating command and scope](host-terminal-contracts.md#controlled-data-and-session-extension)
+cover 47 strict session assertions with dropped credentials, including EOT,
+sender alerts, canonical editing and synchronized SIGINT. The [repair evidence](evidence/csh-077-repairs/README.md)
+retains current normal and sanitizer results separately; earlier extension
+evidence remains unchanged. No physical hardware was supplied.
+
+### CSH-081 terminal residuals
+
+`make test-host-terminal-residuals` runs 137 strict residual cases through direct
+exec, command strings, files, stdin and explicit exec. It is also required by
+`make test-host-profile` and the terminal CI workflow, including ASan/UBSan.
+It checks independent PTY termios and tab-stop models, error statuses, timezone
+fields, locale precedence and inherited unused-input offsets. The continuation
+adds three-phase tput initialization/reset policy, base stty report values checked
+against the kernel, and private who idle-time records. See the
+[section map](host-terminal-contracts.md#csh-081-residual-implementation) for the
+exact boundary; there are no gap allowances or hidden skips.
+
+The isolated Linux session runner now has 140 strict assertions, including
+synchronized SIGINT/SIGTERM/SIGHUP/SIGQUIT/SIGPIPE through every path, UTF-8
+conversion, IEXTEN, distinct registered users, cross-owner permission cases and
+recipient closure during data/EOT output. It still requires root in a private mount namespace
+and uses only its own PTYs and private login records. The syscall/command/PTY
+captures and provider hashes are retained on failure. Physical serial devices
+and privileged Darwin sessions were not supplied and remain unqualified.
+
+## Host languages, editors and argument construction
+
+`make test-host-languages` runs the CSH-074 harness controls and 705 strict
+assertions against eight providers selected from the private host profile. Set
+`CSH_TEST_PATH` to select a different profile. `make test-host-profile` includes
+the selected-profile run after the existing host utility assertions. Linux CI
+and Docker supply bc/m4; the private profile builds ed, xargs and M4 offline. No developer-host package installation occurs.
+
+See [scope, bounds and reproduction](host-languages-evidence.md) and
+[all-attempt evidence](evidence/csh-074/README.md). Full pages remain
+unqualified. SIGINT is required by default using the private ed provider;
+`--provider-regressions` selects the repaired M4 regressions, which are also
+required by the default suite. No known-gap allowances are used.
+
+## Locale and message catalog providers
+
+`make host-catalog-fixtures` supplies shared immutable locale/catalog generations
+and the verified `build/host-profile/fixtures.json` manifest for dependent tracks.
+`make host-locales` supplies only the locale capabilities without requiring the
+full host profile. See the [consumer interface](host-locale-catalogs.md#shared-interface-for-dependent-tracks).
+
+`make test-host-catalogs` verifies the CSH-076 bounded subset and is included in
+`test-host-profile`. Setup requires GNU gettext in the provisioning PATH; Linux
+needs the locales package's sources and charmaps. The runner uses private Linux
+locales and independently checks installed Darwin locale identities.
+`make test-host-catalog-contracts` runs the complete strict retained
+reproducers; the repaired selected providers have no failure exclusions. See the
+[clause map, bounds, providers and open contracts](host-locale-catalogs.md).
+
+
+## Disposable host services (CSH-078)
+
+`make test-host-profile` includes `test-host-service-codecs`, which runs only
+safe codecs and read-only date formats natively. Linux requires `sharutils`;
+macOS builds the opt-in `uudecode` provider. `make test-host-service-harness`
+checks false successes, missing providers, timeout/descendant ownership and
+output bounds without any host service effects.
+
+`make docker-test-host-services` builds a separate service image and runs with
+no network, no host mounts, no clock-setting capability, and an outer deadline.
+The launcher saves image/package/executable identities, all assertions and
+cleanup results under `build/tests/host-services/`, including failed runs, then
+removes the container. CI retains that directory as an artifact. Do not invoke
+`--services` on the developer host; it fails its environment guard.
+See the [profile and clause boundaries](host-service-profile.md) and
+[native/Linux evidence](evidence/csh-078/README.md). Full utility contracts
+remain open under CSH-078; the CUPS byte sink is not a physical printer.
+
+## Application images
+
+See [Containers and Pipeline](containers.md) for the named test/runtime targets,
+JUnit stage reports, restricted test-container command, and runtime-image checks.

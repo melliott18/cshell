@@ -1,0 +1,107 @@
+[
+  {
+    "file": "native-stock.json.gz",
+    "sha256": "afd2760efd7edac31f6aa15ca7150b8e97bd4efcb6026aab3a26475699756226",
+    "bytes": 1430354
+  },
+  {
+    "file": "docker-guard-failure.json.gz",
+    "sha256": "ca299fe517f4c63be79041c2505afee928008d54a2a004b4baf4414e1f375ab1",
+    "bytes": 22015
+  },
+  {
+    "file": "docker-interrupted-fixture.json.gz",
+    "sha256": "46e77e24cc497cf31ea7993c392474a3b9e9b5deaafc2de3a5db24e6ccd42487",
+    "bytes": 1750189
+  },
+  {
+    "file": "docker-provider-and-fixture-failures.json.gz",
+    "sha256": "3136306e4940989ff7d2f310a3b51cc402df2bbc6eb3afe3d7452637d310a2b9",
+    "bytes": 1991077
+  },
+  {
+    "file": "docker-selected.json.gz",
+    "sha256": "8efb6eb6986ad23bd97e6afc04ce04a69cce1baf5f9540c326e18ce73dfc06c6",
+    "bytes": 2036539
+  },
+  {
+    "file": "docker-selected-launcher.json.gz",
+    "sha256": "8763c686a75b845dfe2b06eb0de137eebf34771714774b8bd82d6b4ad8dd09f6",
+    "bytes": 4794
+  },
+  {
+    "file": "docker-selected.log.gz",
+    "sha256": "50a0176986419c96af0284bad71baa8b456919ee15b7cdce858e2687dd57b6d2",
+    "bytes": 184
+  },
+  {
+    "file": "native-codecs.json.gz",
+    "sha256": "27b09e030154d1d930a265475aa86a6ac4b96d19192a43ea42ea6d8518972ceb",
+    "bytes": 1640526
+  },
+  {
+    "file": "native-profile-initial.json.gz",
+    "sha256": "4e41d7bc5b9c821ce0b9e10016f2b13ca09e890f2d8adfaf50ec59c91f78f586",
+    "bytes": 4692755
+  },
+  {
+    "file": "native-profile.json.gz",
+    "sha256": "4495966ecff89724464c342b9907f04672ee099ec32f979d33c5ffb5afd54557",
+    "bytes": 4692739
+  },
+  {
+    "file": "native-regression.log.gz",
+    "sha256": "b3ee155c463ea642716607f1ce2419de14572265cc85f8c841d5ecc02a33b7f3",
+    "bytes": 330446
+  },
+  {
+    "file": "native-sanitized-codecs.json.gz",
+    "sha256": "904afad3c575c80fae83c1023aa2dd631083feb2cd5e0473d3a26ae95c5c7ad8",
+    "bytes": 1640830
+  },
+  {
+    "file": "native-sanitized-codecs.log.gz",
+    "sha256": "1c72aafcb006f025ceea916f15f38566d9450af04ee8b396939da368287d40f3",
+    "bytes": 61
+  },
+  {
+    "file": "docker-interrupted-fixture.log.gz",
+    "sha256": "25e805f65e264225e45aead484a0e2c01a80b2bcd6c3882afb0818d689280e33",
+    "bytes": 1444
+  },
+  {
+    "file": "docker-provider-and-fixture-failures.log.gz",
+    "sha256": "1a734997f5ef39299986fff086d9131bfb9bd3684a378def190201f3dd2eb653",
+    "bytes": 1619
+  },
+  {
+    "file": "native-profile-initial.log.gz",
+    "sha256": "ca5d18f804dc707c4aff389a08d37e6f87f2186f6f99afdca04b74ba3d916939",
+    "bytes": 98848
+  },
+  {
+    "file": "docker-final-launcher.json.gz",
+    "sha256": "969220cb57e2b8efb54e2b80f5852751591091661d2dc094aa0d3d68c4b58658",
+    "bytes": 4778
+  },
+  {
+    "file": "docker-final-build-run.log.gz",
+    "sha256": "98d48b733e35e3d218d2be8fcd5c8a7b7d0391f93d9c570dc5b1816fbc29eeef",
+    "bytes": 8135
+  },
+  {
+    "file": "docker-final-output.log.gz",
+    "sha256": "57eca534ce01db2cac9065c47b3b8d0f511d8cbece5564c0b6f543b8c5921af8",
+    "bytes": 36
+  },
+  {
+    "file": "final-unit-checks.log.gz",
+    "sha256": "379e88003fb7d83043204c85a2f1705b06418d890d7baee751cf3d4e1e8c6868",
+    "bytes": 462
+  },
+  {
+    "file": "final-cleanup.json.gz",
+    "sha256": "8aa7cf064461ce3cb8716bd8c3af0e8e7352185fd5fce7466fc61c29716d82f0",
+    "bytes": 1167
+  }
+]

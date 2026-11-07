@@ -1,0 +1,113 @@
+{
+  "date": "2026-10-06",
+  "host": "macOS-14.8.7-arm64-arm-64bit",
+  "tested_commit": "37762a31cfe641be871379b101e5364531f66932",
+  "main_commit": "e0166e021da2277b4f87da22c41ff96c704a4b82",
+  "original_implementation": "43f26b3f5459cf4cec081d5dc9084179ff96db29",
+  "branch": "fix/CSH-082-container-readiness-refresh",
+  "docker_server": {
+    "Platform": {
+      "Name": "Docker Desktop 4.25.2 (129061)"
+    },
+    "Components": [
+      {
+        "Name": "Engine",
+        "Version": "24.0.6",
+        "Details": {
+          "ApiVersion": "1.43",
+          "Arch": "arm64",
+          "BuildTime": "Mon Sep  4 12:31:36 2023",
+          "Experimental": "false",
+          "GitCommit": "1a79695",
+          "GoVersion": "go1.20.7",
+          "KernelVersion": "6.4.16-linuxkit",
+          "MinAPIVersion": "1.12",
+          "Os": "linux"
+        }
+      },
+      {
+        "Name": "containerd",
+        "Version": "1.6.22",
+        "Details": {
+          "GitCommit": "8165feabfdfe38c65b599c4993d227328c231fca"
+        }
+      },
+      {
+        "Name": "runc",
+        "Version": "1.1.8",
+        "Details": {
+          "GitCommit": "v1.1.8-0-g82f18fe"
+        }
+      },
+      {
+        "Name": "docker-init",
+        "Version": "0.19.0",
+        "Details": {
+          "GitCommit": "de40ad0"
+        }
+      }
+    ],
+    "Version": "24.0.6",
+    "ApiVersion": "1.43",
+    "MinAPIVersion": "1.12",
+    "GitCommit": "1a79695",
+    "GoVersion": "go1.20.7",
+    "Os": "linux",
+    "Arch": "arm64",
+    "KernelVersion": "6.4.16-linuxkit",
+    "BuildTime": "2023-09-04T12:31:36.000000000+00:00"
+  },
+  "images": [
+    {
+      "tags": [
+        "cshell:csh-082-refresh"
+      ],
+      "id": "sha256:a4ac8acddff63275716321829cd8b7b09ef5d2c625c51c472bbb4718a0d16aeb",
+      "os": "linux",
+      "architecture": "arm64"
+    },
+    {
+      "tags": [
+        "cshell-pipeline-test:csh-082-refresh"
+      ],
+      "id": "sha256:ce6ee65624b21f198c4b5723d21419bbee955597ac76d26bc339444ad94969eb",
+      "os": "linux",
+      "architecture": "arm64"
+    },
+    {
+      "tags": [
+        "cshell-development:csh-082-refresh"
+      ],
+      "id": "sha256:b0769d6608698a762ea4eb1c98639b0329eed1e940054220619ac75fc6bd5419",
+      "os": "linux",
+      "architecture": "arm64"
+    }
+  ],
+  "test_container": {
+    "user": "10001:10001",
+    "NetworkMode": "none",
+    "Memory": 1073741824,
+    "NanoCpus": 2000000000,
+    "PidsLimit": 256,
+    "CapDrop": [
+      "ALL"
+    ],
+    "SecurityOpt": [
+      "no-new-privileges"
+    ]
+  },
+  "test_and_runtime_binary_sha256": "01db4d7d05f8d91402df59d7bb90debaf3c03b7fdd88f5066316a0b16574175d",
+  "native_harness_tests": 98,
+  "runtime_container_tests": 9,
+  "development_runtime_pty_cases": 33,
+  "restricted_test_exit_code": 0,
+  "junit": {
+    "name": "cshell container suites",
+    "tests": "3",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "118.612500"
+  },
+  "restricted_test_command": "docker run --name cshell-csh082-refresh-test --user 10001:10001 --network none --memory 1g --cpus 2 --pids-limit 256 --cap-drop ALL --security-opt no-new-privileges cshell-pipeline-test:csh-082-refresh"
+}

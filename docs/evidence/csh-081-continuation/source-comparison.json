@@ -1,0 +1,132 @@
+{
+  "linux-normal-host-terminal-residuals.json.gz": {
+    "source_sha256": "5507eb3605623107472bb3c3a1b6fd49ac1febab1383d9f9df89cd634530093d",
+    "totals": {
+      "passed": 685,
+      "failed": 0
+    },
+    "fixture_directory_removed": true
+  },
+  "native-normal-host-terminal-effects.json.gz": {
+    "source_sha256": "5507eb3605623107472bb3c3a1b6fd49ac1febab1383d9f9df89cd634530093d",
+    "totals": {
+      "passed": 90,
+      "failed": 0
+    },
+    "fixture_directory_removed": true
+  },
+  "linux-normal-host-profile-results.json.gz": {
+    "source_sha256": "5507eb3605623107472bb3c3a1b6fd49ac1febab1383d9f9df89cd634530093d",
+    "totals": {
+      "passed": 1162,
+      "failed": 0,
+      "gaps": 0
+    },
+    "fixture_directory_removed": null
+  },
+  "linux-sanitized-host-terminal-residuals.json.gz": {
+    "source_sha256": "5507eb3605623107472bb3c3a1b6fd49ac1febab1383d9f9df89cd634530093d",
+    "totals": {
+      "passed": 685,
+      "failed": 0
+    },
+    "fixture_directory_removed": true
+  },
+  "native-sanitized-host-terminal-residuals.json.gz": {
+    "source_sha256": "5507eb3605623107472bb3c3a1b6fd49ac1febab1383d9f9df89cd634530093d",
+    "totals": {
+      "passed": 685,
+      "failed": 0
+    },
+    "fixture_directory_removed": true
+  },
+  "native-normal-host-profile-results.json.gz": {
+    "source_sha256": "5507eb3605623107472bb3c3a1b6fd49ac1febab1383d9f9df89cd634530093d",
+    "totals": {
+      "passed": 1162,
+      "failed": 0,
+      "gaps": 0
+    },
+    "fixture_directory_removed": null
+  },
+  "linux-normal-host-terminal-effects.json.gz": {
+    "source_sha256": "5507eb3605623107472bb3c3a1b6fd49ac1febab1383d9f9df89cd634530093d",
+    "totals": {
+      "passed": 90,
+      "failed": 0
+    },
+    "fixture_directory_removed": true
+  },
+  "linux-normal-host-terminal-profile-results.json.gz": {
+    "source_sha256": "5507eb3605623107472bb3c3a1b6fd49ac1febab1383d9f9df89cd634530093d",
+    "totals": {
+      "passed": 665,
+      "failed": 0
+    },
+    "fixture_directory_removed": true
+  },
+  "linux-sanitized-linux-sessions-sanitized.json.gz": {
+    "source_sha256": "5507eb3605623107472bb3c3a1b6fd49ac1febab1383d9f9df89cd634530093d",
+    "totals": {
+      "passed": 140,
+      "failed": 0
+    },
+    "fixture_directory_removed": true
+  },
+  "linux-sanitized-host-terminal-profile-results.json.gz": {
+    "source_sha256": "5507eb3605623107472bb3c3a1b6fd49ac1febab1383d9f9df89cd634530093d",
+    "totals": {
+      "passed": 665,
+      "failed": 0
+    },
+    "fixture_directory_removed": true
+  },
+  "native-normal-host-terminal-residuals.json.gz": {
+    "source_sha256": "5507eb3605623107472bb3c3a1b6fd49ac1febab1383d9f9df89cd634530093d",
+    "totals": {
+      "passed": 685,
+      "failed": 0
+    },
+    "fixture_directory_removed": true
+  },
+  "native-sanitized-host-terminal-profile-results.json.gz": {
+    "source_sha256": "5507eb3605623107472bb3c3a1b6fd49ac1febab1383d9f9df89cd634530093d",
+    "totals": {
+      "passed": 665,
+      "failed": 0
+    },
+    "fixture_directory_removed": true
+  },
+  "native-normal-host-terminal-profile-results.json.gz": {
+    "source_sha256": "5507eb3605623107472bb3c3a1b6fd49ac1febab1383d9f9df89cd634530093d",
+    "totals": {
+      "passed": 665,
+      "failed": 0
+    },
+    "fixture_directory_removed": true
+  },
+  "linux-normal-sessions.json.gz": {
+    "source_sha256": "5507eb3605623107472bb3c3a1b6fd49ac1febab1383d9f9df89cd634530093d",
+    "totals": {
+      "passed": 140,
+      "failed": 0
+    },
+    "fixture_directory_removed": true
+  },
+  "native-sanitized-host-terminal-effects.json.gz": {
+    "source_sha256": "5507eb3605623107472bb3c3a1b6fd49ac1febab1383d9f9df89cd634530093d",
+    "totals": {
+      "passed": 90,
+      "failed": 0
+    },
+    "fixture_directory_removed": true
+  },
+  "linux-sanitized-host-terminal-effects.json.gz": {
+    "source_sha256": "5507eb3605623107472bb3c3a1b6fd49ac1febab1383d9f9df89cd634530093d",
+    "totals": {
+      "passed": 90,
+      "failed": 0
+    },
+    "fixture_directory_removed": true
+  }
+}

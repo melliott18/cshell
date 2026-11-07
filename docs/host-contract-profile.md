@@ -213,6 +213,15 @@ process-group cleanup and descendant reaping through the actual nested path.
 The ticket records acceptance; this repair is independent of the external
 capabilities required for vendor requalification.
 
+## CSH-072 filesystem profile
+
+The [filesystem clause map](host-filesystem-evidence.md) adds 21 selected providers,
+independent metadata/archive oracles, bounded write failure, larger/deeper trees
+and terminal rm decisions. The opt-in PATH builds local readlink/realpath providers
+to repair the recorded Issue-8 gaps; stock failures remain separate.
+[CSH-080](tickets/CSH-080-filesystem-remaining-contracts.md) owns each unqualified
+page contract and the four original filesystem conditions. No utility family or
+full-system requirement is promoted.
 ## CSH-070 formatted-output profile
 
 `make test-host-formatted` builds a catalog-capable printf and separately
@@ -230,3 +239,36 @@ apply only to the opt-in provider. [CSH-079](tickets/CSH-079-formatted-output-re
 owns the six retained conditions and conditional allocation-helper prerequisite;
 the original historical limitation reasons remain unchanged. Darwin 1 MiB stack
 exec searches failed cleanup and are excluded from the selected profile.
+
+
+## CSH-073 text stream subset
+
+The [text/byte clause map](host-text-contracts.md) and
+[section ledger](../tests/host_text_contracts.json) add bounded assertions for all 25 CSH-073 utilities,
+sparse offsets, owned signal fixtures and explicitly supplied Linux ENOSPC.
+The strict provider audit retains failed contracts separately; no full utility
+page or common-default family is promoted. CSH-073 remains open for the listed
+residuals, with CSH-074 sharing the ed signal requirement.
+
+CSH-071 adds [predicate, permission and identity qualification](host-permissions-identities.md),
+including `make test-host-permissions`, direct exec, public cshell dispatch,
+independent effects, and explicit unqualified vendor/session/platform branches.
+
+## CSH-074 language/editor/argument subset
+
+[Host language evidence](host-languages-evidence.md) adds 334 strict bounded
+assertions and [per-heading dispositions](../tests/host_language_contracts.json)
+for awk, bc, ed, expr, grep, m4, patch and xargs. SIGHUP buffer recovery and HOME
+fallback supply part of `U-040/ed-buffer-temp-signal`; temp-store failures,
+capacity and SIGINT streams remain open under CSH-074. CSH-073's shared
+interruption condition retains its other utility and timing obligations.
+The [run evidence](evidence/csh-074/README.md) preserves failed stock/provider
+attempts and existing harness cleanup failures separately from passing subsets.
+No full-page or full-system promotion follows from these witnesses.
+
+## CSH-076 locale and catalog subset
+
+[Provider setup, independent assertions and exact unqualified contracts](host-locale-catalogs.md)
+cover gencat/gettext/iconv/locale/localedef/msgfmt/ngettext. `make test-host-profile`
+includes the bounded strict subset; `make test-host-catalog-contracts` also runs
+retained failing vendor reproducers. Full utility contracts remain open.

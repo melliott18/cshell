@@ -34,6 +34,10 @@ def source_identity():
     """Hash the actual build/test inputs, including uncommitted worktree edits."""
     root = Path(__file__).resolve().parent.parent
     paths = [root / 'Makefile', root / 'Dockerfile']
+    for header_name in ('host-test-provider.h', 'host-newgrp-provider.h'):
+        header = root / 'build' / header_name
+        if header.is_file():
+            paths.append(header)
     for directory in ('src', 'include', 'tests', 'tools'):
         paths.extend(p for p in (root / directory).rglob('*')
                      if p.is_file() and '__pycache__' not in p.parts and p.suffix != '.pyc')
@@ -42,13 +46,21 @@ def source_identity():
     return dict(sha256=digest, files=hashes)
 
 
-def inventory(search_path=os.defpath):
+def inventory(search_path=os.defpath, names=HOSTS):
     result = {}
-    for name in HOSTS:
+    for name in names:
         path = shutil.which(name, path=search_path)
         entry = {'path': path, 'realpath': os.path.realpath(path) if path else None}
         if path:
             entry['sha256'] = sha(path)
+            adapter = Path(entry['realpath']).name
+            if adapter in ('host-test', 'host-newgrp'):
+                header = Path(entry['realpath']).with_name(adapter + '-provider.h')
+                macro = 'CSH_TEST_PROVIDER' if adapter == 'host-test' else 'CSH_NEWGRP_PROVIDER'
+                backend = json.loads(header.read_text().removeprefix('#define ' + macro + ' ').strip())
+                if os.path.realpath(backend) == entry['realpath']:
+                    raise ValueError('adapter cannot delegate to itself')
+                entry['backend'] = inventory(search_path, names=(backend,))[backend]
             if platform.system() == 'Linux':
                 # Package identity is safer than passing --version to tools that
                 # interpret it as an operand (notably test, echo and ed).
@@ -174,6 +186,7 @@ def main():
     parser.add_argument('--path', default=os.environ.get('CSH_TEST_PATH', os.defpath),
                         help='Explicit utility search path, also used inside the shell')
     parser.add_argument('--strict-gaps', action='store_true')
+    parser.add_argument('--locale-path', type=Path, help='Private Linux locale directory from host-locales')
     parser.add_argument('--boundaries', action='store_true')
     parser.add_argument('--printf-faults', type=Path,
                         help='Test-only instrumented copy of the profile printf source')
@@ -185,13 +198,19 @@ def main():
                         default='darwin' if platform.system() == 'Darwin' else 'gnu')
     parser.add_argument('--block-device', type=Path,
                         help='Stat-only positive predicate witness; never opened')
+    parser.add_argument('--device-fixtures', type=Path,
+                        help='Private precreated block/character nodes for controlled stat-only cases')
     parser.add_argument('--sanitizer', action='store_true',
                         help='Set ASan/UBSan in the actual case environment; disable Linux leak scanning')
     args = parser.parse_args()
+    if args.locale_path and platform.system() == 'Linux':
+        os.environ['LOCPATH'] = str(args.locale_path.resolve())
     if args.controlled_identities and (not args.boundaries or platform.system() != 'Linux' or os.geteuid() != 0):
         parser.error('--controlled-identities requires --boundaries and Linux root')
     if args.unequal_acl and not args.controlled_identities:
         parser.error('--unequal-acl requires --controlled-identities')
+    if args.device_fixtures and not args.controlled_identities:
+        parser.error('--device-fixtures requires --controlled-identities')
     fixture_root = args.fixture_root.resolve() if args.fixture_root else Path(tempfile.gettempdir())
     if not fixture_root.is_dir():
         parser.error('--fixture-root must be an existing directory')
@@ -310,7 +329,7 @@ def main():
                 try:
                     try:
                         connection = setup(directory, case.get('input_files'))
-                        controlled = (setup_controlled(directory, case['controlled_fixture'])
+                        controlled = (setup_controlled(directory, case['controlled_fixture'], args.device_fixtures)
                                       if case.get('controlled_fixture') else None)
                     except (OSError, subprocess.SubprocessError) as error:
                         # Unsupported ACL/filesystem operations are failed setup,
@@ -322,6 +341,8 @@ def main():
                         print('FAIL: host: ' + name + ' (fixture setup)', flush=True)
                         continue
                     fixture = {'args': [], 'stdin': '', 'env': {'PATH': args.path}}
+                    if args.locale_path and platform.system() == 'Linux':
+                        fixture['env']['LOCPATH'] = str(args.locale_path.resolve())
                     fixture['env'].update(case.get('env', {}))
                     if args.sanitizer:
                         fixture['env'].update({'ASAN_OPTIONS': 'halt_on_error=1' +
@@ -411,6 +432,7 @@ def main():
                                 if args.printf_faults else None),
               'limits': {'timeout_seconds': 5, 'combined_output_bytes': 65536,
                          'child_resources': 'smoke.child_limits'},
+              'locale_path': str(args.locale_path) if args.locale_path else None,
               'setup': 'tests/host_utilities.py:setup', 'totals': totals, 'cases': records}
     if platform.system() == 'Linux' and shutil.which('dpkg-query'):
         result['package_versions'] = subprocess.check_output(

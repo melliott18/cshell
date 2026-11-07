@@ -1,0 +1,18 @@
+{
+  "retrieved": "2026-10-15",
+  "sources": [
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html",
+      "sha256": "6c0724e219d469ac68640fc07c825a95e090931483b9cee2d089dec136efd7f6",
+      "method": "direct HTTPS; web reader returned 403",
+      "sections": [
+        "DESCRIPTION",
+        "OPTIONS",
+        "STDOUT",
+        "STDERR",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "nobody_uid": 65534,
+  "nobody_gid": 65534,
+  "tty_gid": 5,
+  "records": {
+    "linux-sanitized-host-registered-sessions-sanitized.json.gz": {
+      "totals": {
+        "passed": 105,
+        "failed": 0
+      },
+      "sanitizer_diagnostics": [],
+      "wrong_group_rows": [
+        {
+          "mode": "direct",
+          "recorded_gid": 5
+        },
+        {
+          "mode": "command",
+          "recorded_gid": 5
+        },
+        {
+          "mode": "file",
+          "recorded_gid": 5
+        },
+        {
+          "mode": "stdin",
+          "recorded_gid": 5
+        },
+        {
+          "mode": "exec",
+          "recorded_gid": 5
+        }
+      ]
+    },
+    "linux-normal-host-registered-sessions.json.gz": {
+      "totals": {
+        "passed": 105,
+        "failed": 0
+      },
+      "sanitizer_diagnostics": [],
+      "wrong_group_rows": [
+        {
+          "mode": "direct",
+          "recorded_gid": 5
+        },
+        {
+          "mode": "command",
+          "recorded_gid": 5
+        },
+        {
+          "mode": "file",
+          "recorded_gid": 5
+        },
+        {
+          "mode": "stdin",
+          "recorded_gid": 5
+        },
+        {
+          "mode": "exec",
+          "recorded_gid": 5
+        }
+      ]
+    },
+    "csh081-sessions-metadata-sanitized.json.gz": {
+      "totals": {
+        "passed": 105,
+        "failed": 0
+      },
+      "sanitizer_diagnostics": [],
+      "wrong_group_rows": [
+        {
+          "mode": "direct",
+          "recorded_gid": 65534
+        },
+        {
+          "mode": "command",
+          "recorded_gid": 65534
+        },
+        {
+          "mode": "file",
+          "recorded_gid": 65534
+        },
+        {
+          "mode": "stdin",
+          "recorded_gid": 65534
+        },
+        {
+          "mode": "exec",
+          "recorded_gid": 65534
+        }
+      ]
+    },
+    "csh081-sessions-metadata-normal.json.gz": {
+      "totals": {
+        "passed": 105,
+        "failed": 0
+      },
+      "sanitizer_diagnostics": [],
+      "wrong_group_rows": [
+        {
+          "mode": "direct",
+          "recorded_gid": 65534
+        },
+        {
+          "mode": "command",
+          "recorded_gid": 65534
+        },
+        {
+          "mode": "file",
+          "recorded_gid": 65534
+        },
+        {
+          "mode": "stdin",
+          "recorded_gid": 65534
+        },
+        {
+          "mode": "exec",
+          "recorded_gid": 65534
+        }
+      ]
+    }
+  }
+}

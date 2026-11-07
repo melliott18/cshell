@@ -7,7 +7,8 @@ POSIX language, not the C shell (`csh`) language.
 
 The current target is the [base shell profile](docs/posix.md#selected-profile).
 Native macOS and Linux and the documented Docker image are tested; this
-repository has no installation target yet. Build locally and run `./cshell`.
+repository has no native installation target yet. Build locally and run `./cshell`,
+or use the [application container and Pipeline guide](docs/containers.md).
 
 ## Build and run
 
@@ -42,9 +43,24 @@ make clean     # Remove the executable and generated build files
 make CC=clang  # Select a compiler
 ```
 
+## Application container
+
+```sh
+make docker-runtime
+docker run --rm -it cshell:local
+docker run --rm cshell:local -c 'printf "hello world\n"'
+make docker-runtime-test
+```
+
+The Dockerfile provides separate `test` and `runtime` targets for Pipeline. The
+[test contract](docs/containers.md#pipeline-test-contract) documents JUnit reports,
+resource limits, and application registration. Packaging prepares development
+testing; it does not establish production or POSIX qualification.
+
 ## Test
 
 ```sh
+make test-tickets  # Ticket allocation races and identity consistency
 make test          # Module API and selected behavioral fixtures; Python 3.9+
 make test-syntax   # Clause-mapped invocation, descriptor, syntax and alias checks
 make test-input    # Replacement input/invocation API checks only
@@ -57,10 +73,38 @@ make test-expand   # Replacement value/field expansion, arithmetic, and quote AP
 make test-substitution # Integrated expansion, child ownership, and capture failures
 make test-fields   # IFS splitting, pathname expansion, and cleanup checks
 make test-options  # Invocation/set, option effects, and environment interactions
+make test-host-terminal-residuals # Strict residual terminal/locale/error witnesses
 make test-host-inventory # Complete utility and residual ownership consistency
 make test-host-utilities # Stock-host integration, identities and known gaps
+make test-host-filesystem # Bounded filesystem/pathname provider witnesses
+make test-host-filesystem-audit # Strict stock Issue-8 pathname audit
+make test-host-filesystem-residual # Private permission, magic, byte and stdout-fault checks
+make test-host-filesystem-isolated # Private allocation graphs, numeric magic and subsecond dates
+make test-host-filesystem-recursive # Declined children and nested rm decisions
+make test-host-filesystem-metadata # Measured metadata and exact timestamp checks
+make test-host-filesystem-path-limits # Measured total pathname byte boundaries
+make test-host-filesystem-creation # Child masks and final directory/FIFO modes
+make test-host-filesystem-cwd-logical # Inherited-PWD fallback after cwd rename/removal
 make test-host-formatted # Catalogs, format/resource regressions and exec thresholds
+
+make test-host-permissions # Predicate, mode, ownership and identity assertions
+
+make test-host-terminal # Stock terminal-provider checks (strict failures retained)
+make test-host-terminal-profile # Qualified bounded PTY/session-record checks
 make test-host-profile   # Opt-in qualified utilities, strict gaps and boundaries
+make test-host-filesystem-removal # rmdir parent graphs, permissions and continuation
+
+make test-host-text      # Strict bounded text/byte utility subset
+make test-host-text-audit # Required-contract audit (retains current provider failures)
+
+make test-host-languages # Bounded host language/editor/xargs contracts
+
+make host-catalog-fixtures # Shared verified locales/catalogs; no shell build
+make host-locales       # Locale-only setup for dependent tracks
+make test-host-catalogs  # Bounded locale/catalog subset; private Linux locales
+make test-host-catalog-contracts # Strict complete retained case set (no failure exclusions)
+make test-host-service-harness # Service fixture timeout/failure cleanup
+make docker-test-host-services # Disposable scheduler/mail/log/print service witnesses
 make test-evaluation # Evaluation, lookup, aliases, and remaining utilities
 make test-builtins # Replacement state builtins and executor integration
 make test-state-builtins # Clause-mapped runtime state and utility evidence
@@ -171,3 +215,7 @@ Originally authored by Mitchell Elliott.
 The [CSH-012 requirement, defect, platform and documentation review](docs/conformance-acceptance-review.md) records the current acceptance decisions and open limitations.
 
 [CSH-012 audit closure](docs/conformance-closure.md) records complete requirement accounting and scoped defect dispositions; known implementation gaps remain open.
+
+`make test-host-filesystem-touch-permissions` checks CSH-112 ordinary owner-mode touch permissions, explicit timestamps and operand continuation in direct execution and all shell input modes. See [CSH-112 evidence](docs/evidence/csh-112/README.md).
+
+`make test-host-filesystem-touch-current` checks CSH-113 touch creation modes and bounded current-time behavior in direct execution and all shell input modes. See [CSH-113 evidence](docs/evidence/csh-113/README.md).

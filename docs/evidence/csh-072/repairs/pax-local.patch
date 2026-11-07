@@ -1,0 +1,43 @@
+--- upstream/buf_subs.c
++++ selected/buf_subs.c
+@@ -480,10 +480,16 @@
+ 			}
+ 			bufbt += n;
+ 		}
+-	} else if (bufpt > buf) {
+-		memset(bufpt, 0, bufend - bufpt);
+-		bufpt = bufend;
+-		(void)buf_flush(blksz);
++	} else {
++		/* A block-aligned short write can leave buffered archive data.
++		 * Drain it or retain buf_flush's error; never report success
++		 * while the final archive record is incomplete. */
++		while (bufpt > buf) {
++			memset(bufpt, 0, bufend - bufpt);
++			bufpt = bufend;
++			if (buf_flush(blksz) < 0)
++				break;
++		}
+ 	}
+ }
+ 
+@@ -982,7 +988,7 @@
+ 			wrcnt += cnt;
+ 			bufpt = buf + cnt;
+ 			cnt = bufcnt - cnt;
+-			memcpy(buf, bufpt, cnt);
++			memmove(buf, bufpt, cnt);
+ 			bufpt = buf + cnt;
+ 			if (!frmt->blkalgn || ((cnt % frmt->blkalgn) == 0))
+ 				return(totcnt);
+--- upstream/tar.c
++++ selected/tar.c
+@@ -1141,7 +1141,7 @@
+ 			goto out;
+ 	}
+ 	if (ull_oct(t_mtime < 0 ? 0 : t_mtime, hd->mtime, sizeof(hd->mtime), 3) ||
+-	    ul_oct(arcn->sb.st_mode, hd->mode, sizeof(hd->mode), 3))
++	    ul_oct(arcn->sb.st_mode & 07777, hd->mode, sizeof(hd->mode), 3))
+ 		goto out;
+ 	if (!(anonarch & ANON_NUMID)) {
+ 		if ((name = name_uid(t_uid, 0)) != NULL)

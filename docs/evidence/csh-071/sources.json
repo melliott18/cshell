@@ -1,0 +1,47 @@
+{
+  "retrieved_utc": "2026-09-29T20:48:59.760744+00:00",
+  "pages": [
+    {
+      "utility": "chgrp",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/chgrp.html",
+      "sha256": "e69f5e23d19d1bc68c160064cb3d97359016e7999cc1c660d23ef1c2ef9f00dc",
+      "bytes": 13025
+    },
+    {
+      "utility": "chmod",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/chmod.html",
+      "sha256": "29ea831c77491fb8b1f4e84320a273d5f16411a960bb18436459afe25cb4b7b7",
+      "bytes": 28306
+    },
+    {
+      "utility": "chown",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/chown.html",
+      "sha256": "aaadc605c8f8657f517ca7f87efe45b2cabd1a40eeab79ba07b83228e0d59aa0",
+      "bytes": 15965
+    },
+    {
+      "utility": "id",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/id.html",
+      "sha256": "77958ea32a3a05a674fa2e234262024db587eebb2875af263ae19bc1431c4bd8",
+      "bytes": 14228
+    },
+    {
+      "utility": "logname",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/logname.html",
+      "sha256": "23dc1c19737ec581b47f6f23c47ccac500ec17cb3f5d7bfc605f4bcc7bf8df08",
+      "bytes": 8250
+    },
+    {
+      "utility": "newgrp",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/newgrp.html",
+      "sha256": "ab27e6d5f656913c1bc1686121dfc24ab493a74606e914c7b3c2214d0a6cc560",
+      "bytes": 16028
+    },
+    {
+      "utility": "test",
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/test.html",
+      "sha256": "bc67634d25dde24c8e020a749f24e15d59c4bf6d3669a930b7e3133fce5272d8",
+      "bytes": 32085
+    }
+  ]
+}

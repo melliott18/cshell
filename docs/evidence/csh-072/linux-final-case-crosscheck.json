@@ -1,0 +1,2424 @@
+{
+  "purpose": "Crosscheck final 402-case scope against retained passing 410-case run; not a rerun",
+  "changed_sources": [
+    "tests/host_filesystem_cases.py",
+    "tests/host_filesystem_contracts.json",
+    "tools/host-profile/README.md"
+  ],
+  "all_expectations_equal": true,
+  "all_passed": true,
+  "cases": [
+    {
+      "id": "basename/path-6-620a",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/path-6-620a",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/path-6-620a",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/path-6-620a",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/path-1-2f0a",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/path-1-2f0a",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/path-1-2f0a",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/path-1-2f0a",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/path-5-706c61696e0a",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/path-5-706c61696e0a",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/path-5-706c61696e0a",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/path-5-706c61696e0a",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/path-4-620a",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/path-4-620a",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/path-4-620a",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/path-4-620a",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/suffix",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/suffix",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/suffix",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/suffix",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/entire-suffix",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/entire-suffix",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/entire-suffix",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/entire-suffix",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/nonmatching-suffix",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/nonmatching-suffix",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/nonmatching-suffix",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "basename/nonmatching-suffix",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dirname/0",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dirname/0",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dirname/0",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dirname/0",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dirname/1",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dirname/1",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dirname/1",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dirname/1",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dirname/2",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dirname/2",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dirname/2",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dirname/2",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dirname/3",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dirname/3",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dirname/3",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dirname/3",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/bytes",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/bytes",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/bytes",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/bytes",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/preserve",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/preserve",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/preserve",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/preserve",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/recursive-physical",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/recursive-physical",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/recursive-physical",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/recursive-physical",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/symlink-follow",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/symlink-follow",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/symlink-follow",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/symlink-follow",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/same-file",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/same-file",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/same-file",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/same-file",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/copy",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/copy",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/copy",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/copy",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/skip",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/skip",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/skip",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/skip",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/swab",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/swab",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/swab",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/swab",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/file-size-fault",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/file-size-fault",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/file-size-fault",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/file-size-fault",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "df/portable-k",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "df/portable-k",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "df/portable-k",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "df/portable-k",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "du/file-k",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "du/file-k",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "du/file-k",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "du/file-k",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "file/empty",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "file/empty",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "file/empty",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "file/empty",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "file/directory",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "file/directory",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "file/directory",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "file/directory",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/regular",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/regular",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/regular",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/regular",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/link",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/link",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/link",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/link",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/prune",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/prune",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/prune",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/prune",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/depth",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/depth",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/depth",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/depth",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/deep-utf8",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/deep-utf8",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/deep-utf8",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/deep-utf8",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ln/hard",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ln/hard",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ln/hard",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ln/hard",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ln/symbolic",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ln/symbolic",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ln/symbolic",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ln/symbolic",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ln/replace",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ln/replace",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ln/replace",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ln/replace",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ls/512-c-order",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ls/512-c-order",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ls/512-c-order",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ls/512-c-order",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ls/hidden",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ls/hidden",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ls/hidden",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ls/hidden",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkdir/parents",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkdir/parents",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkdir/parents",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkdir/parents",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkdir/mode",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkdir/mode",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkdir/mode",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkdir/mode",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkdir/existing-parents",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkdir/existing-parents",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkdir/existing-parents",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkdir/existing-parents",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkdir/existing-error",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkdir/existing-error",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkdir/existing-error",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkdir/existing-error",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkfifo/mode",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkfifo/mode",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkfifo/mode",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mkfifo/mode",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mv/rename",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mv/rename",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mv/rename",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mv/rename",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mv/replace",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mv/replace",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mv/replace",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mv/replace",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mv/symlink",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mv/symlink",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mv/symlink",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mv/symlink",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pathchk/portable",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pathchk/portable",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pathchk/portable",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pathchk/portable",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pathchk/portable-too-long",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pathchk/portable-too-long",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pathchk/portable-too-long",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pathchk/portable-too-long",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pathchk/nonportable-byte",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pathchk/nonportable-byte",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pathchk/nonportable-byte",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pathchk/nonportable-byte",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pathchk/name-max",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pathchk/name-max",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pathchk/name-max",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pathchk/name-max",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pax/copy-tree",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pax/copy-tree",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pax/copy-tree",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pax/copy-tree",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pax/archive-write",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pax/archive-write",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pax/archive-write",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pax/archive-write",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pax/archive-read",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pax/archive-read",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pax/archive-read",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pax/archive-read",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pwd/physical",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pwd/physical",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pwd/physical",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pwd/physical",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pwd/physical-name-boundary",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pwd/physical-name-boundary",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pwd/physical-name-boundary",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pwd/physical-name-boundary",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/link",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/link",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/link",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/link",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/no-newline",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/no-newline",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/no-newline",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/no-newline",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/existing",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/existing",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/existing",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/existing",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/file",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/file",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/file",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/file",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/symlink",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/symlink",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/symlink",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/symlink",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/recursive",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/recursive",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/recursive",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/recursive",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/force-missing",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/force-missing",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/force-missing",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/force-missing",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rmdir/empty",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rmdir/empty",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rmdir/empty",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rmdir/empty",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rmdir/nonempty",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rmdir/nonempty",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rmdir/nonempty",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rmdir/nonempty",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rmdir/parents",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rmdir/parents",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rmdir/parents",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rmdir/parents",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "touch/reference",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "touch/reference",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "touch/reference",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "touch/reference",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "touch/no-create",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "touch/no-create",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "touch/no-create",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "touch/no-create",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "touch/timestamp",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "touch/timestamp",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "touch/timestamp",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "touch/timestamp",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/missing",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/missing",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/missing",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "cp/missing",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/missing",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/missing",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/missing",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "dd/missing",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "df/missing",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "df/missing",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "df/missing",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "df/missing",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "du/missing",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "du/missing",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "du/missing",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "du/missing",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/missing",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/missing",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/missing",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "find/missing",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ln/missing",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ln/missing",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ln/missing",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ln/missing",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ls/missing",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ls/missing",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ls/missing",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "ls/missing",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mv/missing",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mv/missing",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mv/missing",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "mv/missing",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pax/missing",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pax/missing",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pax/missing",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "pax/missing",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/missing",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/missing",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/missing",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/missing",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rmdir/missing",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rmdir/missing",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rmdir/missing",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rmdir/missing",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/terminal-y",
+      "mode": "pty-direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/terminal-y",
+      "mode": "pty-string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/terminal-y",
+      "mode": "pty-file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/terminal-n",
+      "mode": "pty-direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/terminal-n",
+      "mode": "pty-string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "rm/terminal-n",
+      "mode": "pty-file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/nonlink-diagnostic",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/nonlink-diagnostic",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/nonlink-diagnostic",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/nonlink-diagnostic",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-E",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-E",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-E",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-E",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/existing-e",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/existing-e",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/existing-e",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/existing-e",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-e-error",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-e-error",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-e-error",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-e-error",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-prefix-error",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-prefix-error",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-prefix-error",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-prefix-error",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-dotdot-error",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-dotdot-error",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-dotdot-error",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-dotdot-error",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-trailing-slash",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-trailing-slash",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-trailing-slash",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/missing-trailing-slash",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/regular-trailing-slash-error",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/regular-trailing-slash-error",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/regular-trailing-slash-error",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/regular-trailing-slash-error",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/regular-dotdot-error",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/regular-dotdot-error",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/regular-dotdot-error",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/regular-dotdot-error",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/regular-prefix-error",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/regular-prefix-error",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/regular-prefix-error",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/regular-prefix-error",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/dangling-E",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/dangling-E",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/dangling-E",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/dangling-E",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/dangling-prefix-error",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/dangling-prefix-error",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/dangling-prefix-error",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/dangling-prefix-error",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/symlink-dotdot",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/symlink-dotdot",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/symlink-dotdot",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/symlink-dotdot",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/last-E",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/last-E",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/last-E",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/last-E",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/last-e",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/last-e",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/last-e",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/last-e",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/loop-error",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/loop-error",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/loop-error",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/loop-error",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/empty-error",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/empty-error",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/empty-error",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/empty-error",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/missing-diagnostic",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/missing-diagnostic",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/missing-diagnostic",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/missing-diagnostic",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/long-bytes",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/long-bytes",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/long-bytes",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/long-bytes",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/dash-operand",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/dash-operand",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/dash-operand",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/dash-operand",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/stdout-error",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/stdout-error",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/stdout-error",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/stdout-error",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/invalid-option",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/invalid-option",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/invalid-option",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "readlink/invalid-option",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/stdout-error",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/stdout-error",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/stdout-error",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/stdout-error",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/invalid-option",
+      "mode": "direct",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/invalid-option",
+      "mode": "string",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/invalid-option",
+      "mode": "file",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "realpath/invalid-option",
+      "mode": "stdin",
+      "expectation_equal": true,
+      "verdict": "PASS"
+    }
+  ]
+}

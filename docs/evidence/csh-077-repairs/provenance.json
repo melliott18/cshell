@@ -1,0 +1,8 @@
+{
+  "upstream_url": "https://github.com/freebsd/freebsd-src/blob/a179e72489f8601f37b9039c86d3f224c73b3d51/usr.bin/write/write.c",
+  "upstream_sha256": "c96191a56fe1306d0df87fb38324936282f959561b39c384fb9c264399a2b33f",
+  "adapted_sha256": "4aa37b7fbd5db94ad44cda020bae4015206bd0f656c5f93abc0d1d69ea7ca29a",
+  "implementation_commit": "ae9a815fbbde0d6a07e7a0cf079fe479f3cee965",
+  "initial_adapted_sha256": "f9425c69f67cfb48b6f98a17df29d10ca8f2cb5fd6d2286ea05a8a0380c43cf9",
+  "fortify_fix_commit": "a51f0987a633f540367eed7468d8a78e2dae65e8"
+}

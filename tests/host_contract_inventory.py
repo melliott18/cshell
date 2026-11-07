@@ -54,6 +54,13 @@ def validate(contracts, root=ROOT):
         tickets.append(ticket)
         utilities.extend(owner['utilities'])
         conditions.extend(owner['conditions'])
+        qualification = owner.get('qualification')
+        if qualification:
+            for key in ('clause_map', 'runner'):
+                if not (root / qualification[key]).is_file():
+                    errors.append(f'{ticket}: missing qualification {key}')
+            if qualification['status'] != 'partial':
+                errors.append(f'{ticket}: open contracts cannot claim complete qualification')
         path = root / owner['path']
         if not path.is_file():
             errors.append(f'{ticket}: missing ticket {path}')
@@ -69,6 +76,28 @@ def validate(contracts, root=ROOT):
                 errors.append(f'{name}: inventory owner differs from {ticket}')
             if f'| [`{name}`](' not in body:
                 errors.append(f'{ticket}: missing utility row {name}')
+        if owner.get('qualification_map'):
+            qualification = json.loads((root / owner['qualification_map']).read_text())
+            if qualification.get('owner') != ticket or qualification.get('full_contract_qualified') is not False:
+                errors.append(f'{ticket}: incorrect bounded qualification boundary')
+            rows = qualification['utilities']
+            if sorted(r['utility'] for r in rows) != sorted(owner['utilities']):
+                errors.append(f'{ticket}: section map differs from current utility ownership')
+            sections = {'SYNOPSIS', 'DESCRIPTION', 'OPTIONS', 'OPERANDS', 'STDIN', 'INPUT FILES',
+                        'ENVIRONMENT VARIABLES', 'ASYNCHRONOUS EVENTS', 'STDOUT', 'STDERR',
+                        'OUTPUT FILES', 'EXTENDED DESCRIPTION', 'EXIT STATUS', 'CONSEQUENCES OF ERRORS'}
+            residual_ids = []
+            for row in rows:
+                if set(row['sections']) != sections or not all(row['sections'].values()):
+                    errors.append(f"{ticket}/{row['utility']}: missing page-section disposition")
+                if not row['case_prefixes'] or not row['residuals']:
+                    errors.append(f"{ticket}/{row['utility']}: missing witnesses or residual boundaries")
+                for residual in row['residuals']:
+                    residual_ids.append(residual['id'])
+                    if residual['owner'] != ticket or residual['status'] != 'unqualified' or not residual['reason']:
+                        errors.append(f"{ticket}: lost residual owner/disposition {residual['id']}")
+            if len(residual_ids) != len(set(residual_ids)):
+                errors.append(f'{ticket}: duplicate current residual ID')
         for condition in owner['conditions']:
             if f'`{condition}`' not in body:
                 errors.append(f'{ticket}: missing retained condition {condition}')
@@ -105,6 +134,12 @@ def validate(contracts, root=ROOT):
         pair = current.get(row['condition'])
         if pair is None or pair[1] != row['reason'] or not row['source'].endswith('/' + pair[0] + '.html'):
             errors.append(f"retained residual changed: {row['condition']}")
+    for ticket, profile in contracts.get('qualification_profiles', {}).items():
+        if ticket not in tickets:
+            errors.append(f'{ticket}: unknown qualification owner')
+        for key in ('clauses', 'scope', 'evidence'):
+            if not (root / profile[key]).is_file():
+                errors.append(f'{ticket}: missing qualification {key}: {profile[key]}')
     return errors
 
 

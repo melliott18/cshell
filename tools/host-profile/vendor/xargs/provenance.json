@@ -1,0 +1,20 @@
+{
+  "upstream": "FreeBSD xargs",
+  "revision": "16a79708d089423ec0c3d32f25e7ca97ae58e97b",
+  "url": "https://raw.githubusercontent.com/freebsd/freebsd-src/16a79708d089423ec0c3d32f25e7ca97ae58e97b/usr.bin/xargs/",
+  "upstream_sha256": {
+    "xargs.c": "9c1a7745f99546d9ee5a7e19938ef8e5c8caa611beb408209cb8b2bc2a00a450",
+    "strnsubst.c": "7eff841c200eb38152034e21f88b47da81230bcbc12fde5a266515aedac8fa02",
+    "pathnames.h": "109c6afeff93d48320e419b88f14c029020854cf5a147a240e2860caddf515a8"
+  },
+  "local_changes": [
+    "Portable limits.h, checked strtonum compatibility and getline in place of fgetln.",
+    "POSIX.1-2024: preserve empty NUL-delimited arguments; invoke once for empty input unless -r, -I or -L.",
+    "Allow -x without -n; trigger line limits only for -L; clamp requested -s to supported maximum.",
+    "Portable strlcpy/strlcat and stdint include; cap process limit without signed comparison.",
+    "Use fork and close-on-exec errno pipe instead of vfork shared globals; preserve 126/127 on Darwin.",
+    "Do not append an empty invocation after a previously executed batch at logical EOF.",
+    "Parse arbitrarily large positive -s requests with saturation; enforce strictly less than the supplied byte limit, counting each terminator.",
+    "Use memmove when carrying a partial argument to an overlapping buffer and free every replacement argv entry."
+  ]
+}

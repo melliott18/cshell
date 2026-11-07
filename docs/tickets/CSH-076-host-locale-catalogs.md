@@ -1,11 +1,11 @@
 # CSH-076: Qualify host locale and message catalog utilities
 
-- Status: ready
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
-- Branch: Assigned when work starts
+- Branch: test/CSH-076-host-locale-catalogs
 - Issue: [#148](https://github.com/melliott18/cshell/issues/148)
 
 ## Goal
@@ -52,17 +52,17 @@ Conditional prerequisite reports also owned here: `U-035/German-locale`, `U-040/
 
 ## Acceptance criteria
 
-- [ ] Select each required exec-accessible provider, supply missing packages/services,
+- [x] Select each required exec-accessible provider, supply missing packages/services,
   and retain exact PATH, realpath, executable hash, package and environment identity.
 - [ ] Map every applicable page section and common default to clause-derived
   assertions or an individually justified disposition; repair required-contract
   failures. Selected examples alone do not complete a utility contract.
-- [ ] Resolve each assigned retained condition with its required capability and
+- [x] Resolve each assigned retained condition with its required capability and
   strict evidence, or transfer that individual condition to a concrete open owner.
   Preserve vendor ownership, setup failures and failed assertions separately.
-- [ ] Verify public cshell dispatch and direct exec access, exact output/status and
+- [x] Verify public cshell dispatch and direct exec access, exact output/status and
   relevant effects, with zero gap allowances for every declared qualified subset.
-- [ ] Update the inventory, current ownership manifest and clause maps with the
+- [x] Update the inventory, current ownership manifest and clause maps with the
   exact qualification boundary; keep stock-host, qualified subset and full-system
   claims separate.
 
@@ -78,6 +78,45 @@ processes and disposable files/services and verify cleanup after failure/timeout
 
 ## Implementation notes/evidence
 
-Work has not started. CSH-068 transfers ownership only; it supplies no new vendor
-implementation, service, privileged host or physical terminal. CSH-064 remains
-done for its bounded capability work and repaired probe cleanup.
+The [shared profile](../host-locale-catalogs.md) supplies reusable locales,
+verified catalogs and encoding inputs through `make host-catalog-fixtures`.
+Consumers hold the generation-specific `fixtures.json` record via `load_fixtures`;
+reprovisioning preserves earlier generations. Locale-only consumers can run
+`make host-locales` without the remaining profile dependencies.
+
+All retained provider failures are repaired in the selected profile: native
+gencat stream operands/unknown escapes, glibc set deletion, locale environment
+reporting and iconv invalid-character diagnostics/status. The expanded strict
+subset passes 485 native and 500 Linux cases, with no failure exclusions.
+Added checks cover empty-message replacement, per-source default sets, set
+recreation, closed stdout, conversion boundaries and stateful encodings.
+The existing host profile passes 1,162 cases with zero gaps on both platforms.
+Native provider ASan/UBSan qualification passes 485 cases; a clean Linux
+ASan/UBSan build passes 500. The native selected-PATH runtime and PTY suites
+pass 3,950 and 65 cases respectively. Evidence retains
+actual source hashes and distinguishes final validation from intermediate runs.
+
+Standalone gencat provider sources, original hashes, patches and licenses are
+recorded in [provider provenance](../../tools/host-profile/vendor/catalog-providers.md).
+GNU libiconv 1.19 is downloaded with a pinned checksum and built privately on
+first setup; subsequent setups reuse verified generations. No system program
+or library is replaced. System iconv is retained only for the unqualified
+charmap-file conversion path.
+
+The macOS CI cancellation was traced to its 45-minute job budget while runtime
+assertions continued passing. The job budget is now 75 minutes; per-case bounds
+are unchanged. A new completed hosted run is required to close that CI gap.
+
+Full utility contracts remain open in the [clause map](../../tests/host_catalog_clauses.json)
+and [scope manifest](../../tests/host_catalog_scope.json). Remaining work includes
+additional catalog search/plural/format grammar, charmap conversion, signal and
+resource failures, native generated categories beyond LC_NUMERIC, category-success
+reporting and public locale installation. The latter requires a disposable
+privileged environment. Private native numeric generation works without
+administrative access through PATH_LOCALE. System-wide installation has not been
+attempted on the developer host. The four shared locale prerequisites are supplied;
+per-utility behavior owned by other tickets is not reassigned here.
+
+[Retained native/Linux evidence](../evidence/csh-076/README.md) records these
+boundaries and historical attempts. CSH-076 remains in progress until the full
+acceptance criteria are met; a passing retained subset does not close the ticket.

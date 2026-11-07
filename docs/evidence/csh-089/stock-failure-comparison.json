@@ -1,0 +1,51 @@
+{
+  "native": {
+    "host-filesystem-audit": {
+      "retained_failures": 73,
+      "new_failures": [],
+      "lost_failures": []
+    },
+    "host-filesystem-stock-provider-audit": {
+      "retained_failures": 16,
+      "new_failures": [],
+      "lost_failures": []
+    }
+  },
+  "linux": {
+    "host-filesystem-audit": {
+      "retained_failures": 36,
+      "new_failures": [
+        [
+          "rm/recursive-declined-descent-parent-n",
+          "pty-direct"
+        ],
+        [
+          "rm/recursive-declined-descent-parent-n",
+          "pty-file"
+        ],
+        [
+          "rm/recursive-declined-descent-parent-n",
+          "pty-string"
+        ],
+        [
+          "rm/recursive-declined-descent-parent-y",
+          "pty-direct"
+        ],
+        [
+          "rm/recursive-declined-descent-parent-y",
+          "pty-file"
+        ],
+        [
+          "rm/recursive-declined-descent-parent-y",
+          "pty-string"
+        ]
+      ],
+      "lost_failures": []
+    },
+    "host-filesystem-stock-provider-audit": {
+      "retained_failures": 8,
+      "new_failures": [],
+      "lost_failures": []
+    }
+  }
+}

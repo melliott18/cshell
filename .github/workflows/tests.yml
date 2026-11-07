@@ -5,6 +5,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -12,17 +16,19 @@ jobs:
   native:
     name: Native (${{ matrix.os }}, ${{ matrix.cc }})
     runs-on: ${{ matrix.os }}
-    # CSH-057: hosted normal + sanitizer suites can still be progressing at
-    # 45 minutes. Keep every case deadline while bounding the full job at 60.
-    timeout-minutes: 60
+    # Native macOS continued making progress in sanitizer runtime tests at
+    # 45 minutes. Preserve per-case deadlines and budget the complete job.
+    timeout-minutes: ${{ matrix.timeout }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: ubuntu-24.04
             cc: gcc
+            timeout: 60
           - os: macos-15
             cc: clang
+            timeout: 90
     env:
       CC: ${{ matrix.cc }}
     steps:
@@ -34,16 +40,23 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential locales ed busybox acl
+          sudo apt-get install -y build-essential locales ed busybox acl sharutils file pax libbsd-dev ncurses-bin libncurses-dev bsdextrautils bc m4 gettext curl ca-certificates
           sudo localedef -i en_US -f UTF-8 en_US.UTF-8
           sudo localedef -i fr_FR -f UTF-8 fr_FR.UTF-8
+          sudo localedef -i fr_FR -f ISO-8859-1 fr_FR.ISO8859-1
           sudo localedef -i de_DE -f UTF-8 de_DE.UTF-8
           sudo localedef -i zh_CN -f GB18030 zh_CN.GB18030
           sudo localedef -i ja_JP -f EUC-JP ja_JP.EUC-JP
           sudo localedef -i tests/locales/csh_067 -f UTF-8 csh_067.UTF-8
       - name: Install macOS profile dependencies
         if: runner.os == 'macOS'
-        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+        run: |
+          for package in coreutils findutils gettext; do
+            brew list "$package" >/dev/null 2>&1 || brew install "$package"
+          done
+          echo "$(brew --prefix gettext)/bin" >> "$GITHUB_PATH"
+      - name: Supply shared locales and catalogs for dependent tracks
+        run: make host-catalog-fixtures
       - name: Build
         run: make -j2
       - name: Test replacement APIs, cshell runtime, and selected behavior
@@ -75,6 +88,53 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
+  host-languages:
+    name: Host language contracts (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Supply Linux profile and locale
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential locales ed busybox bc m4 acl sharutils file pax libbsd-dev ncurses-bin libncurses-dev bsdextrautils gettext curl ca-certificates
+          sudo localedef -i en_US -f UTF-8 en_US.UTF-8
+      - name: Supply macOS profile
+        if: runner.os == 'macOS'
+        run: |
+          for package in coreutils findutils gettext; do
+            brew list "$package" >/dev/null 2>&1 || brew install "$package"
+          done
+          echo "$(brew --prefix gettext)/bin" >> "$GITHUB_PATH"
+      - name: Qualify native language contracts
+        run: |
+          make -j2 test-host-languages
+          cp build/tests/host-languages-results.json "$RUNNER_TEMP/csh074-native.json"
+      - name: Qualify language contracts with sanitizers
+        env:
+          ASAN_OPTIONS: halt_on_error=1:detect_leaks=0
+          MallocNanoZone: '0'
+          UBSAN_OPTIONS: halt_on_error=1
+        run: |
+          make clean
+          make -j2 test-host-languages CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address,undefined'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: csh074-${{ matrix.os }}
+          path: |
+            ${{ runner.temp }}/csh074-native.json
+            build/tests/host-languages-results.json
+            build/host-profile/manifest.json
+
   docker:
     name: Docker (Linux)
     runs-on: ubuntu-24.04
@@ -96,7 +156,7 @@ jobs:
           docker run --rm --init --user 0 cshell-test:local sh -c
           'mknod /tmp/csh060-block b 7 255 &&
           runuser -u cshell -- make test-host-profile HOST_PROFILE_FLAGS="--block-device /tmp/csh060-block" &&
-          make test-host-profile HOST_PROFILE_FLAGS="--controlled-identities" &&
+          make test-host-profile HOST_PROFILE_FLAGS="--controlled-identities" HOST_PERMISSIONS_FLAGS="--controlled-identities" &&
           mkdir -p build/busybox-echo && ln -s /bin/busybox build/busybox-echo/echo &&
           python3 tests/host_utilities.py ./cshell build/tests/host_utility_helper
           --path "/work/build/busybox-echo:/work/build/host-profile/bin:$(getconf PATH)"
@@ -121,3 +181,53 @@ jobs:
           cshell-test:local sh -c "make clean && make -j2 test test-pty test-host-profile
           CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer'
           LDFLAGS='-fsanitize=address,undefined'"
+
+  host-services:
+    name: Disposable host services (Linux)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check service harness failure handling
+        run: make test-host-service-harness
+      - name: Qualify isolated service effects
+        run: make docker-test-host-services
+      - name: Retain strict results and cleanup evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: host-services
+          path: build/tests/host-services/
+
+  container-runtime:
+    name: Application container
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build and check runtime under container restrictions
+        run: make docker-runtime-test
+      - name: Build Pipeline test image
+        run: make docker-pipeline-build
+      - name: Run application-owned tests under Pipeline restrictions
+        run: >-
+          docker run --name cshell-pipeline-check
+          --user 10001:10001 --network none --memory 1g --cpus 2 --pids-limit 256
+          --cap-drop ALL --security-opt no-new-privileges cshell-pipeline-test:local
+      - name: Collect application test reports
+        if: always()
+        run: |
+          if docker container inspect cshell-pipeline-check >/dev/null 2>&1; then
+            docker cp cshell-pipeline-check:/work/test-results ./container-test-results
+            cat container-test-results/junit.xml
+            tail -n 50 container-test-results/*.log
+          fi
+      - name: Retain application test reports
+        if: always() && hashFiles('container-test-results/**') != ''
+        uses: actions/upload-artifact@v7
+        with:
+          name: cshell-container-test-results
+          path: container-test-results/
+      - name: Remove application test container
+        if: always()
+        run: docker rm -f cshell-pipeline-check 2>/dev/null || true
