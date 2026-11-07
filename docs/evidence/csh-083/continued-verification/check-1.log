@@ -1,0 +1,10 @@
+python3 tests/test_ticket_registry.py
+........................
+----------------------------------------------------------------------
+Ran 24 tests in 3.724s
+
+OK
+python3 tools/tickets.py check
+WARN worktree: docs/tickets/CSH-044-intermittent-bg-prompt.md: historical shared branch identifies CSH-037
+WARN worktree: docs/tickets/CSH-045-jobs-fixture-timeout.md: historical shared branch identifies CSH-037
+PASS: ticket identities; 83 shared reservations; 1 snapshots

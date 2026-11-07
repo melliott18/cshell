@@ -1105,3 +1105,9 @@ docker-runtime-test: docker-runtime
 
 docker-pipeline-build:
 	$(DOCKER) build --target test --tag "$(PIPELINE_IMAGE)" .
+
+
+.PHONY: test-tickets
+test-tickets:
+	$(PYTHON) tests/test_ticket_registry.py
+	$(PYTHON) tools/tickets.py check

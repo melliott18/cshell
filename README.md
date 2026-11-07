@@ -60,6 +60,7 @@ testing; it does not establish production or POSIX qualification.
 ## Test
 
 ```sh
+make test-tickets  # Ticket allocation races and identity consistency
 make test          # Module API and selected behavioral fixtures; Python 3.9+
 make test-syntax   # Clause-mapped invocation, descriptor, syntax and alias checks
 make test-input    # Replacement input/invocation API checks only
