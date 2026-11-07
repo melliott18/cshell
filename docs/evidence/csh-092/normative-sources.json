@@ -1,0 +1,41 @@
+{
+  "retrieved": "2026-10-16",
+  "sources": [
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html",
+      "sha256": "7d37d11b3829422919fbc928cf3e4e0e2c9ba3d0eaba2e2e36362e80f4086576",
+      "method": "direct HTTPS; web reader returned 403",
+      "sections": [
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDOUT",
+        "STDERR",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ]
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html",
+      "sha256": "508f579e25f7ac32d94c2f57aef1a12448e4984fc60d467120cb2bb66157c3ed",
+      "method": "direct HTTPS; web reader returned 403",
+      "sections": [
+        "DESCRIPTION",
+        "OPTIONS",
+        "OPERANDS",
+        "STDOUT",
+        "STDERR",
+        "EXIT STATUS",
+        "CONSEQUENCES OF ERRORS"
+      ]
+    },
+    {
+      "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/chmod.html",
+      "sha256": "29ea831c77491fb8b1f4e84320a273d5f16411a960bb18436459afe25cb4b7b7",
+      "method": "direct HTTPS; web reader returned 403",
+      "sections": [
+        "EXTENDED DESCRIPTION"
+      ]
+    }
+  ]
+}
