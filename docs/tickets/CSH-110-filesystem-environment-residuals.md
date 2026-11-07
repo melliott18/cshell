@@ -1,11 +1,11 @@
 # CSH-110: Supply remaining filesystem environments after removal graph qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-109
-- Branch: Assigned when work starts
+- Branch: test/CSH-110-filesystem-environments
 - Issue: [#231](https://github.com/melliott18/cshell/issues/231)
 
 ## Goal
@@ -30,7 +30,7 @@ section map is `tests/host_filesystem_contracts.json`.
 | [`du`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html) | Recursive allocation totals, -a/-s, operand -H, nested -L, last-option precedence and a same-directory hard-link pair now have bounded private-graph witnesses. Cross-device -x, unreadable subtrees, shared extents, arbitrary graphs and overflow remain unqualified. | disposable cross-device/denied/shared-extent filesystems and bounded overflow controls. Pre-exec lstat block/inode measurements supply only the authored graph. They do not measure shared physical extents, mount boundaries, inaccessible traversal or overflow. |
 | [`file`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html) | CSH-105 supplies 280 file cases / 1120 assertions for default d/u (the selected provider uses native int/unsigned int) and byte/short/long aliases, at top level and in continuations. Native ABI widths and independent integer bytes cover signed extrema, unsigned high-bit comparisons, masks, bit tests, every truncated length and trailing bytes. The selected provider repairs textual long to mean native dL while retaining the vendor compiled-database encoding. Exact channels/status and unchanged inputs are required. Further numeric/message combinations, cross-database -m/-M/-d precedence, default classification, encodings/locales and utility resource failures remain unqualified. | multi-database, further numeric/message, encoding/locale and resource environments. The authored native numeric bytes qualify only the declared type/predicate/placement combinations; they do not supply other databases, formats, locales or resource boundaries. |
 | [`find`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html) | Strict -newer comparisons at equal and adjacent representable nanoseconds and -H/-L reference-symlink following now have measured private witnesses. Other expressions/actions, wall-clock age boundaries, descriptor/depth exhaustion and non-UTF-8 matching remain unqualified. CSH-080 expression and batched-exec witnesses and CSH-084 ordinary owner-mode EACCES remain bounded. | per-child descriptor limits, deeper trees, timestamps and non-UTF-8 matching oracles. Bounded expression cases do not establish exhaustion or arbitrary locale matching. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. CSH-088 supplies only authored metadata and exactly read-back timestamps, not arbitrary graphs, ACLs, live clocks, capacity or locale boundaries. |
-| [`ln`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html) | remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. ln -i is a vendor extension absent from the selected POSIX base synopsis/options, not an open base requirement. | disposable cross-device/credential/link-limit profiles. Hard-link and continuation witnesses do not supply these environments. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. |
+| [`ln`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html) | CSH-110 supplies 29 ln cases / 116 assertions for directory and directory-symlink destinations, literal symbolic-link contents, explicit -L/-P precedence for valid/dangling source links, physical links to directory symlinks, and continuation past missing sources and existing file/link/dangling/FIFO/directory destinations. Forced replacement and same-entry refusal require exact inode relationships, link counts, preserved identities/modes/bytes, channels, status and cleanup. The selected unmodified GNU coreutils 9.7 ln preserves same-entry symbolic sources that Apple ln -fs incorrectly replaces; stock failures remain failures. Further graphs and default-policy alternatives, cross-device and permission/ACL errors, other identities, hard-link count limits, namespace races, filesystem failures, diagnostic locales and resource exhaustion remain unqualified. Directory hard-link behavior and destinations created earlier in the same invocation are not assigned a portable oracle. | additional graph/default-policy, cross-device/credential/ACL/link-limit, race/fault and diagnostic-locale profiles. Private graphs do not supply cross-device operations, other identities, ACLs, races, filesystem limits or arbitrary locales. |
 | [`ls`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html) | Long numeric listings for regular files, hard links, directories, FIFOs and symlinks, plus C-locale size/mtime/atime sorting with ties and reversal now have measured private witnesses. Name-based owner/group rendering, recent timestamps, block units, remaining sorting switches, recursive graphs, terminal formatting, non-C collation and I/O exhaustion remain unqualified. CSH-084 ordinary owner-mode EACCES remains bounded. | authored metadata/time/block graphs, owned PTYs, non-C collation and I/O limits. The bounded C ordering switches do not qualify metadata formats or non-C ordering. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. CSH-088 supplies only authored metadata and exactly read-back timestamps, not arbitrary graphs, ACLs, live clocks, capacity or locale boundaries. |
 | [`mkdir`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html) | CSH-107 supplies 72 mkdir/mkfifo cases / 288 assertions for symbolic creation modes with omitted who under independently proved child-only masks 027, 077 and 777. Authored literal modes cover masked addition/removal, copy addition/removal/assignment, conditional execute, empty assignment and multiple actions, alongside explicit-who controls. Exact channels/status, final type/mode and cleanup are required. The selected pinned GNU coreutils 9.7 creation utilities replace Apple providers that retain masked group bits during copy assignment. Further symbolic-mode and parent graphs, special-bit modes, transient permissions, ACL inheritance, other identities, path/depth limits and capacity exhaustion remain unqualified; FIFO transfer is outside creation. CSH-108 supplies 60 mkdir -p cases / 240 assertions for shared parents, repeated operands, existing directory symlinks and continuation after regular-file or dangling-symlink prefix obstructions. Literal final and intermediate modes under independently proved child-only masks 027, 077 and 777 cover default, numeric, empty and copy-assignment modes. Existing directory, file and link identities/modes and contents are preserved; output, status, effects and cleanup are required. Further mode/parent graphs, special bits, transient permissions, ACL inheritance, other identities, path/depth limits, namespace races and capacity exhaustion remain unqualified. | additional symbolic-mode/parent graphs, transient permission observation, private ACL/credential and bounded capacity/path-limit profiles. Final modes on private objects under measured child masks do not observe transient permissions, arbitrary graphs, ACLs, other credentials or filesystem limits. Further mode/parent graphs, special bits, transient permissions, ACL inheritance, other identities, path/depth limits, namespace races and capacity exhaustion remain unqualified. |
 | [`mkfifo`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html) | CSH-107 supplies 72 mkdir/mkfifo cases / 288 assertions for symbolic creation modes with omitted who under independently proved child-only masks 027, 077 and 777. Authored literal modes cover masked addition/removal, copy addition/removal/assignment, conditional execute, empty assignment and multiple actions, alongside explicit-who controls. Exact channels/status, final type/mode and cleanup are required. The selected pinned GNU coreutils 9.7 creation utilities replace Apple providers that retain masked group bits during copy assignment. Further symbolic-mode and parent graphs, special-bit modes, transient permissions, ACL inheritance, other identities, path/depth limits and capacity exhaustion remain unqualified; FIFO transfer is outside creation. | additional symbolic-mode/parent graphs, transient permission observation, private ACL/credential and bounded capacity/path-limit profiles. Final modes on private objects under measured child masks do not observe transient permissions, arbitrary graphs, ACLs, other credentials or filesystem limits. |
@@ -56,10 +56,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -68,7 +68,7 @@ test-host-filesystem-provider-audit test-host-filesystem-residual
 test-host-filesystem-isolated test-host-filesystem-interactive
 test-host-filesystem-decisions test-host-filesystem-metadata
 test-host-filesystem-recursive test-host-filesystem-path-limits test-host-filesystem-cwd
-test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times test-host-filesystem-magic-strings test-host-filesystem-magic-messages test-host-filesystem-magic-types test-host-filesystem-magic-defaults test-host-filesystem-link-bytes test-host-filesystem-omitted-who test-host-filesystem-parent-graphs test-host-filesystem-removal` on native macOS and Linux as an unprivileged
+test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times test-host-filesystem-magic-strings test-host-filesystem-magic-messages test-host-filesystem-magic-types test-host-filesystem-magic-defaults test-host-filesystem-link-bytes test-host-filesystem-omitted-who test-host-filesystem-parent-graphs test-host-filesystem-removal test-host-filesystem-link-graphs` on native macOS and Linux as an unprivileged
 fixture identity. Retain separate nonzero stock `make test-host-filesystem-audit`
 and stock `tests/host_filesystem.py --extended-only --provider-audit` records.
 Add bounded setup/failure/timeout cleanup regressions for new environments.
@@ -82,3 +82,39 @@ Privileged provisioning requires an isolated runner; prompts require owned PTYs.
 CSH-109 supplies 19 rmdir cases / 76 assertions for parent chains, explicit child-first and sibling-before-parent operands, shared parents, duplicate operands, nonempty file/link/FIFO ancestors and continuation after missing/file/symlink operands. Private owner-mode write/search denial is independently proved by rmdir returning EACCES before provider exec. Exact removed paths and preserved identities, modes, bytes and links, channels/status and cleanup are required.
 
 Arbitrary parent graphs, ACLs and other identities, mount boundaries, total depth/path limits, namespace races, other filesystem failures and diagnostic locales remain unqualified. All 21 utility dispositions and four original U-040 conditions remain open. Utility/libc/platform vendors retain implementation ownership.
+
+## Implementation scope
+
+CSH-110 supplies 29 ln cases / 116 assertions for directory and directory-symlink destinations, literal symbolic-link contents, explicit -L/-P precedence for valid/dangling source links, physical links to directory symlinks, and continuation past missing sources and existing file/link/dangling/FIFO/directory destinations. Forced replacement and same-entry refusal require exact inode relationships, link counts, preserved identities/modes/bytes, channels, status and cleanup. The selected unmodified GNU coreutils 9.7 ln preserves same-entry symbolic sources that Apple ln -fs incorrectly replaces; stock failures remain failures.
+
+Further graphs and default-policy alternatives, cross-device and permission/ACL errors, other identities, hard-link count limits, namespace races, filesystem failures, diagnostic locales and resource exhaustion remain unqualified. Directory hard-link behavior and destinations created earlier in the same invocation are not assigned a portable oracle. All 21 utility dispositions and four original U-040 conditions remain individually open under [CSH-111](CSH-111-filesystem-environment-residuals.md).
+
+## Implementation and validation
+
+Implemented in a separate managed worktree on `test/CSH-110-filesystem-environments`,
+stacked on CSH-109 commit `79bf2f4`. Integration remains gated on that dependency.
+[Retained evidence](../evidence/csh-110/README.md) contains native macOS and
+unprivileged Debian Linux/Docker results, exact provider/source identities,
+independent graph observations, output/status/effects and cleanup.
+
+`python3 docs/evidence/csh-110/validate.py native` and its Linux equivalent pass
+all required selected targets: 11927/11967 full filesystem assertions, 116 new
+focused assertions each, 1162 general host assertions with zero gaps, and
+10 ownership plus 143 filesystem harness tests on each platform. Strict stock
+full/provider audits retain all earlier failures: native 749/16 (four new Apple
+ln failures) and Linux 578/8. Expectations and selected allowances are unchanged.
+
+`python3 docs/evidence/csh-110/supplement.py native` and its Linux equivalent
+pass 3950 runtime and 33 terminal cases, the 93-test general harness (one
+Darwin-only skip on Linux), 14 format and five compiled-database checks.
+`python3 docs/evidence/csh-110/verify.py` passes the exact predecessor/new-case,
+stock-failure, provider/archive/source digest, effect and cleanup comparisons.
+No C source changed; no new sanitizer or separately hosted native-Linux run is
+claimed. The initial report-serialization defect and interrupted native attempt
+are retained separately; both complete platform runs were restarted after the
+fix and its JSON regression test, without relaxing utility expectations.
+
+All 21 remaining utility dispositions and four original U-040 conditions belong
+to [CSH-111 / #233](CSH-111-filesystem-environment-residuals.md). U-034/U-040 and
+whole-utility contracts remain partial. This ticket is ready for review and is
+not yet integrated into `main`.
