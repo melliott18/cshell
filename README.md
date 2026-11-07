@@ -67,7 +67,9 @@ make test-host-filesystem-recursive # Declined children and nested rm decisions
 make test-host-filesystem-metadata # Measured metadata and exact timestamp checks
 make test-host-filesystem-path-limits # Measured total pathname byte boundaries
 make test-host-filesystem-creation # Child masks and final directory/FIFO modes
+make test-host-filesystem-cwd-logical # Inherited-PWD fallback after cwd rename/removal
 make test-host-profile   # Opt-in qualified utilities, strict gaps and boundaries
+make test-host-filesystem-removal # rmdir parent graphs, permissions and continuation
 make test-evaluation # Evaluation, lookup, aliases, and remaining utilities
 make test-builtins # Replacement state builtins and executor integration
 make test-state-builtins # Clause-mapped runtime state and utility evidence
@@ -178,3 +180,7 @@ Originally authored by Mitchell Elliott.
 The [CSH-012 requirement, defect, platform and documentation review](docs/conformance-acceptance-review.md) records the current acceptance decisions and open limitations.
 
 [CSH-012 audit closure](docs/conformance-closure.md) records complete requirement accounting and scoped defect dispositions; known implementation gaps remain open.
+
+`make test-host-filesystem-touch-permissions` checks CSH-112 ordinary owner-mode touch permissions, explicit timestamps and operand continuation in direct execution and all shell input modes. See [CSH-112 evidence](docs/evidence/csh-112/README.md).
+
+`make test-host-filesystem-touch-current` checks CSH-113 touch creation modes and bounded current-time behavior in direct execution and all shell input modes. See [CSH-113 evidence](docs/evidence/csh-113/README.md).

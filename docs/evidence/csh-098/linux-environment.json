@@ -1,0 +1,13 @@
+{
+  "base_image_id": "sha256:ff3a8a683499c7a645ea3fa55f73bdf0d8e709c3e352cb44c4b1651794a1c78f",
+  "container_image_id": "sha256:915d00725a53841a0b1750b4615082974e0a554e1b6d8322fc3a84c0f5c8c46a",
+  "init": true,
+  "user": "cshell",
+  "mounts": [],
+  "overlay": [
+    "Makefile",
+    "tests/",
+    "tools/",
+    "docs/"
+  ]
+}
