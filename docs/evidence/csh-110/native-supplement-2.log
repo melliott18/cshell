@@ -1,0 +1,78 @@
+{
+  "binary": "/Users/mitchell/.codex/worktrees/csh-110-filesystem-environments/cshell/build/host-file",
+  "sha256": "2882f244c42cead3bc47e7febfb9eb8bc3dd846e76e8b508e6040d4183815401",
+  "c_long_bytes": 8,
+  "cases": [
+    {
+      "name": ".tmp",
+      "args": [
+        "-C",
+        "-m",
+        "magic"
+      ],
+      "status": 0,
+      "stdout_hex": "",
+      "stderr_hex": "",
+      "errors": [],
+      "passed": true,
+      "cleanup": true
+    },
+    {
+      "name": ".tmp",
+      "args": [
+        "-m",
+        "text",
+        "sample"
+      ],
+      "status": 0,
+      "stdout_hex": "73616d706c653a20666978747572650a",
+      "stderr_hex": "",
+      "errors": [],
+      "passed": true,
+      "cleanup": true
+    },
+    {
+      "name": ".tmp",
+      "args": [
+        "-m",
+        "magic.mgc",
+        "sample"
+      ],
+      "status": 0,
+      "stdout_hex": "73616d706c653a2066697874757265206d6174636865640a",
+      "stderr_hex": "",
+      "errors": [],
+      "passed": true,
+      "cleanup": true
+    },
+    {
+      "name": ".tmp",
+      "args": [
+        "-m",
+        "text",
+        "sample"
+      ],
+      "status": 0,
+      "stdout_hex": "73616d706c653a2066697874757265206d6174636865640a",
+      "stderr_hex": "",
+      "errors": [],
+      "passed": true,
+      "cleanup": true
+    },
+    {
+      "name": ".tmp",
+      "args": [
+        "-m",
+        "magic.mgc",
+        "sample"
+      ],
+      "status": 0,
+      "stdout_hex": "73616d706c653a2066697874757265206d6174636865640a",
+      "stderr_hex": "",
+      "errors": [],
+      "passed": true,
+      "cleanup": true
+    }
+  ],
+  "passed": 5
+}
