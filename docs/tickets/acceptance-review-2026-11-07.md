@@ -89,3 +89,19 @@ CSH-073/074 still own full-page/common-default remainders and CSH-079 still owns
 the unavailable disposable-Mac investigation and remaining partitions. The only
 tickets in review remain CSH-073 and CSH-074; neither meets all acceptance
 criteria. No new ticket is accepted.
+
+## CSH-114 integration acceptance
+
+Accepted CSH-114 after [PR #243](https://github.com/melliott18/cshell/pull/243)
+merged as `a44c1047fed654dc78bf2fdf9d81e8e80f58b930`. The earlier open-ticket
+review missed the isolated implementation `52ccffa`; main still had only its
+backlog document. The implementation and original full evidence are now included.
+
+The [integration review](../evidence/csh-114/integration/README.md) verifies the
+original evidence, preserved source and oracle boundaries, and fresh macOS/Linux
+results: 112 assertions and 166 harness tests per platform. Ownership, ticket
+tests and live registry checks pass. CSH-115 / issue #242 is now the registered
+open owner of all 21 remaining utility dispositions and four retained conditions.
+Closure uses CSH-114's explicit individual-disposition acceptance criterion; it
+does not promote remaining contracts to qualified. Broader hosted CI was still
+running or queued at acceptance; ticket-integrity CI passed.

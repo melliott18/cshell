@@ -1181,3 +1181,7 @@ test-host-formatted-allocator: cshell build/tests/host_formatted_alloc build/tes
 # GNU bc with the POSIX empty return production retained in generated sources.
 build/host-bc: tools/host-profile/build_bc.py $(wildcard tools/host-profile/vendor/bc/*)
 	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" $(PYTHON) tools/host-profile/build_bc.py
+
+.PHONY: test-host-filesystem-touch-objects
+test-host-filesystem-touch-objects: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --touch-objects-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-touch-objects.json $(HOST_FILESYSTEM_FLAGS)

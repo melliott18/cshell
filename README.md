@@ -219,3 +219,5 @@ The [CSH-012 requirement, defect, platform and documentation review](docs/confor
 `make test-host-filesystem-touch-permissions` checks CSH-112 ordinary owner-mode touch permissions, explicit timestamps and operand continuation in direct execution and all shell input modes. See [CSH-112 evidence](docs/evidence/csh-112/README.md).
 
 `make test-host-filesystem-touch-current` checks CSH-113 touch creation modes and bounded current-time behavior in direct execution and all shell input modes. See [CSH-113 evidence](docs/evidence/csh-113/README.md).
+
+`make test-host-filesystem-touch-objects` checks CSH-114 directory/FIFO timestamps and namespace-error continuation in direct execution and all shell input modes. See [CSH-114 evidence](docs/evidence/csh-114/README.md).
