@@ -1,0 +1,12 @@
+[
+  {
+    "argv": [
+      "make",
+      "test-host-inventory"
+    ],
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 106.93264208300388,
+    "log": "native-refresh-inventory.log.gz"
+  }
+]
