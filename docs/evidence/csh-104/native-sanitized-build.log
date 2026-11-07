@@ -1,0 +1,31 @@
+/Applications/Xcode.app/Contents/Developer/usr/bin/make  all-recursive
+Making all in src
+/Applications/Xcode.app/Contents/Developer/usr/bin/make  all-am
+  CC       apprentice.lo
+  CC       softmagic.lo
+  CC       funcs.lo
+/Users/mitchell/.codex/worktrees/csh-104/cshell/build/host-file-src/src/apprentice.c:2607:16: warning: variable 'h' set but not used [-Wunused-but-set-variable]
+        int quad = 0, h;
+                      ^
+1 warning generated.
+  CCLD     libmagic.la
+  CCLD     file
+Making all in magic
+../src/file -C -m magic
+Making all in tests
+make[2]: Nothing to be done for `all'.
+Making all in doc
+sed -e s@__CSECTION__@1@g \
+	    -e s@__FSECTION__@4@g \
+	    -e s@__VERSION__@5.46@g \
+	    -e s@__MAGIC__@/usr/local/share/misc/magic@g /Users/mitchell/.codex/worktrees/csh-104/cshell/build/host-file-src/doc/file.man > file.1
+sed -e s@__CSECTION__@1@g \
+	    -e s@__FSECTION__@4@g \
+	    -e s@__VERSION__@5.46@g \
+	    -e s@__MAGIC__@/usr/local/share/misc/magic@g /Users/mitchell/.codex/worktrees/csh-104/cshell/build/host-file-src/doc/magic.man > magic.4
+sed -e s@__CSECTION__@1@g \
+	    -e s@__FSECTION__@4@g \
+	    -e s@__VERSION__@5.46@g \
+	    -e s@__MAGIC__@/usr/local/share/misc/magic@g /Users/mitchell/.codex/worktrees/csh-104/cshell/build/host-file-src/doc/libmagic.man > libmagic.3
+Making all in python
+make[2]: Nothing to be done for `all'.

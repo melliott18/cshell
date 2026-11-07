@@ -1,11 +1,11 @@
 # CSH-091: Supply remaining filesystem environments after pathname boundary qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-090
-- Branch: Assigned when work starts
+- Branch: `test/CSH-091-filesystem-environments`
 - Issue: [#193](https://github.com/melliott18/cshell/issues/193)
 
 ## Goal
@@ -56,10 +56,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -67,7 +67,7 @@ Run `make test-host-inventory test-host-profile test-host-filesystem-allocation
 test-host-filesystem-provider-audit test-host-filesystem-residual
 test-host-filesystem-isolated test-host-filesystem-interactive
 test-host-filesystem-decisions test-host-filesystem-metadata
-test-host-filesystem-recursive test-host-filesystem-path-limits` on native macOS and Linux as an unprivileged
+test-host-filesystem-recursive test-host-filesystem-path-limits test-host-filesystem-cwd` on native macOS and Linux as an unprivileged
 fixture identity. Retain separate nonzero stock `make test-host-filesystem-audit`
 and stock `tests/host_filesystem.py --extended-only --provider-audit` records.
 Add bounded setup/failure/timeout cleanup regressions for new environments.
@@ -94,3 +94,37 @@ This does not qualify arbitrary graphs, recursion limits or whole utilities.
 CSH-090 adds bounded total pathname byte witnesses for pathchk; all other
 individual unsupplied environments above and the four retained conditions remain
 open here. Utility/libc/platform vendors retain implementation ownership.
+
+## Implementation and current dispositions
+
+CSH-091 adds eight cases / 32 assertions for external physical pwd after private
+leaf/parent renames and removals. A child-only helper establishes cwd inode
+identity, old-path ENOENT, and exact getcwd resolution or ENOENT before exec.
+Both option forms end in -P. Direct exec and all three cshell input modes require
+exact stdout, diagnostic/status class, namespace effects and successful cleanup.
+These do not qualify the pwd builtin or logical-mode namespace changes. Six
+harness regressions reject setup, probe, marker, exec and assertion corruption,
+and verify bounded timeout cleanup in every input mode.
+
+The incoming table above remains the historical scope. The current section map,
+residual ledger and ownership manifest record the bounded witnesses and assign
+every unsupplied environment and all four retained conditions to
+[CSH-092](CSH-092-filesystem-environment-residuals.md)
+([#195](https://github.com/melliott18/cshell/issues/195)). Utility/libc/platform
+vendors retain implementation ownership. This uses the explicit-disposition
+acceptance alternative; no whole utility, arbitrary race, permission, total
+path-limit, allocation or stdio-error contract is closed.
+
+The branch is stacked on published CSH-090 commit `5873782cbcfdf24fddd9778128aaf8585dd8ab83`; integration remains
+gated on that unmerged dependency. See [CSH-091 evidence](../evidence/csh-091/README.md)
+for native/Linux commands, results, provider/build provenance and separate stock
+failures. No provider source or build flag changes are introduced.
+
+The complete required command set plus `make test-host-filesystem-cwd` passes
+on macOS UID 501 and Debian Linux Docker UID 10001: 1291/1307 selected filesystem
+assertions, 1162 host integration assertions, 10 ownership tests and 60 harness
+tests. The focused target passes 32 assertions on each platform. Separate stock
+audits retain exactly CSH-090's failure sets: 73/42 full-audit failures and 16/8
+provider-audit failures. All filesystem cases clean up successfully. The final
+JSON records share the same actual source hash and retain exact provider
+provenance. All four retained conditions remain open under CSH-092.
