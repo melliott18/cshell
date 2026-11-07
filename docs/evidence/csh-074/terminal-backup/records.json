@@ -1,0 +1,92 @@
+[
+  {
+    "file": "linux-ordinary.json.gz",
+    "uncompressed_bytes": 1269807,
+    "sha256": "cd8a69d00fc05cd89dbd47baf37ba167f3c866cd99fed38bd739e53c9944ab9e"
+  },
+  {
+    "file": "linux-profile.json.gz",
+    "uncompressed_bytes": 4608526,
+    "sha256": "4186e3e39f1a9c89235d8ef4d9fff24c4bb9e7519610e530eda2bbfe3876e46d"
+  },
+  {
+    "file": "linux-profile.log.gz",
+    "uncompressed_bytes": 194217,
+    "sha256": "00bd4eba600af635179180e07e2ad6e6e746707862db4ef0bac5478d606d0df1"
+  },
+  {
+    "file": "linux-sanitizer.json.gz",
+    "uncompressed_bytes": 1352051,
+    "sha256": "f2e4ceb6a6653fafa43a25b4570926c0a9bdb418cba9a83c2d4d130a91c5d8fd"
+  },
+  {
+    "file": "linux-sanitizer.log.gz",
+    "uncompressed_bytes": 99762,
+    "sha256": "0dfb7ae0d5cf1cc07a0081a404a92411c053d8ca9a9bbda5c82166e6d88fd5ef"
+  },
+  {
+    "file": "native-ordinary.json.gz",
+    "uncompressed_bytes": 1387969,
+    "sha256": "2c98650db8d7464424199580a86cc24c84af84b66089c6736846d325f2c50cce"
+  },
+  {
+    "file": "native-profile.json.gz",
+    "uncompressed_bytes": 4699441,
+    "sha256": "03b49614160bee319fa37642a16710b523f47c4b5095f0664d43b6f6ad48c2ba"
+  },
+  {
+    "file": "native-profile.log.gz",
+    "uncompressed_bytes": 124005,
+    "sha256": "508232832c8d096eca63ecdd2e7d5730526e456a6b88fc3b68649a9db7bf5604"
+  },
+  {
+    "file": "native-runtime.log.gz",
+    "uncompressed_bytes": 225072,
+    "sha256": "e19606fa60b1c4dfa581ab69906e3f3764da17b345a165e7c8a5876130d1215f"
+  },
+  {
+    "file": "native-sanitizer.json.gz",
+    "uncompressed_bytes": 1458618,
+    "sha256": "4145a09414ab4e464bbc564d57c2b379b9a618d99a680b43cc37f3e76527c305"
+  },
+  {
+    "file": "native-sanitizer.log.gz",
+    "uncompressed_bytes": 161869,
+    "sha256": "64f74c3110b135bc42461c047f6741036ded0009574a495dc94f2f3c1e21c6aa"
+  },
+  {
+    "file": "patch-followup-attempt-1.json.gz",
+    "uncompressed_bytes": 79825,
+    "sha256": "3d1f1abf491f9d584d7c3c32619db6bb2a4e35d57c55ee8aa81f552ac8986fa7"
+  },
+  {
+    "file": "patch-private-attempt-1.json.gz",
+    "uncompressed_bytes": 172058,
+    "sha256": "98afff1cf95f617e83630cb527ab49c6d70762ccc1a9477819f33c3d23e1dcbb"
+  },
+  {
+    "file": "terminal-attempt-1.json.gz",
+    "uncompressed_bytes": 133217,
+    "sha256": "5884c2aa76bd0779093d87f59eb10f6f492d156985386e9861ff6ff50d0625ca"
+  },
+  {
+    "file": "terminal-controls-final.log.gz",
+    "uncompressed_bytes": 106,
+    "sha256": "cef12bdb7a73e7c98486b5a78d5bcdc926978988e3d05434b284372abdb68bec"
+  },
+  {
+    "file": "terminal-fault-child.sample.txt.gz",
+    "uncompressed_bytes": 8246,
+    "sha256": "6eb04440d42cb0ed02e87621ba03878e7696f769956689e34b2f93558d929659"
+  },
+  {
+    "file": "terminal-fault-long.log.gz",
+    "uncompressed_bytes": 485,
+    "sha256": "a2bdd44c0ff4fbc2920a0f1267793975fc950abf64af3fb2fd3b53768edaf972"
+  },
+  {
+    "file": "terminal-fault-recheck.log.gz",
+    "uncompressed_bytes": 654,
+    "sha256": "425990e81e6b0755b80404514df902a3e534ca002febd95db5f3323e2c84d475"
+  }
+]

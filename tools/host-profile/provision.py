@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'tests'))
 from host_utility_cases import HOSTS
 from host_filesystem_cases import UTILITIES
+from host_language_cases import UTILITIES as LANGUAGE_UTILITIES
 
 
 def test_provider(gnu_bin=None):
@@ -40,8 +41,12 @@ def text_overrides(text_bin, system):
 
 
 def provision(destination, gnu_bin=None, text_bin=None):
-    selected = {name: shutil.which(name, path=os.defpath) for name in dict.fromkeys(HOSTS + UTILITIES)}
-    overrides = {'write': str(ROOT / 'build/host-write'),
+    selected = {name: shutil.which(name, path=os.defpath) for name in dict.fromkeys(HOSTS + UTILITIES + LANGUAGE_UTILITIES)}
+    overrides = {'ed': str(ROOT / 'build/host-ed'),
+                 'xargs': str(ROOT / 'build/host-xargs'),
+                 'm4': str(ROOT / 'build/host-m4'),
+                 'patch': str(ROOT / 'build/host-patch'),
+                 'write': str(ROOT / 'build/host-write'),
                  'chmod': str(ROOT / 'build/host-chmod'),
                  'newgrp': str(ROOT / 'build/host-newgrp'),
                  'test': str(ROOT / 'build/host-test'), '[': str(ROOT / 'build/host-test'),

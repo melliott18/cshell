@@ -86,3 +86,5 @@ independent effects, and explicit unqualified vendor/session/platform branches.
 [CSH-077 terminal/session section map](host-terminal-contracts.md) records the
 strict selected profile and [CSH-081](tickets/CSH-081-host-terminal-residual-contracts.md)
 ownership of unqualified full contracts and physical-terminal prerequisites.
+
+- [Host languages, editors and argument construction](host-languages-evidence.md): CSH-074 bounded assertions, clause dispositions, signal recovery and retained failures.

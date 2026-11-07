@@ -1,0 +1,56 @@
+--- a/src/input.c
++++ b/src/input.c
+@@ -413,12 +413,29 @@
+       return false;
+     }
+ 
+-  current_input = wrapup_stack;
++  /* CSH-074: POSIX processes wrap text in registration order.  Copy the
++     pending stack in reverse order onto a fresh obstack, preserving the
++     LIFO allocation order required by pop_input's obstack_free. */
++  current_input = (struct obstack *) xmalloc (sizeof (struct obstack));
++  obstack_init (current_input);
++  isp = NULL;
++  while (wsp)
++    {
++      input_block *copy = (input_block *) obstack_alloc (current_input,
++                                                        sizeof *copy);
++      size_t len = wsp->u.u_s.end - wsp->u.u_s.string;
++      *copy = *wsp;
++      copy->prev = isp;
++      copy->u.u_s.string = (char *) obstack_copy0 (current_input,
++                                                  wsp->u.u_s.string, len);
++      copy->u.u_s.end = copy->u.u_s.string + len;
++      isp = copy;
++      wsp = wsp->prev;
++    }
++  obstack_free (wrapup_stack, NULL);
++  free (wrapup_stack);
+   wrapup_stack = (struct obstack *) xmalloc (sizeof (struct obstack));
+   obstack_init (wrapup_stack);
+-
+-  isp = wsp;
+-  wsp = NULL;
+   input_change = true;
+ 
+   return true;
+--- a/src/builtin.c
++++ b/src/builtin.c
+@@ -436,6 +436,8 @@
+       *valuep = strtol (arg, &endp, 10);
+       if (*endp != '\0')
+         {
++          /* CSH-074: invalid numeric arguments are errors, not warnings. */
++          retcode = EXIT_FAILURE;
+           M4ERROR ((warning_status, 0,
+                     _("non-numeric argument to builtin `%s'"),
+                     TOKEN_DATA_TEXT (macro)));
+@@ -1479,6 +1481,8 @@
+   fd = mkstemp (name);
+   if (fd < 0)
+     {
++      /* CSH-074: continue processing with a nonzero final status. */
++      retcode = EXIT_FAILURE;
+       M4ERROR ((0, errno, _("%s: cannot create tempfile `%s'"), me, pattern));
+       obstack_free (obs, obstack_finish (obs));
+     }
