@@ -1,0 +1,11 @@
+{
+  "base_image_id": "sha256:562a74930f888882451d9c767df925e5f7aabbb6fc8fe254ccc1be75d4b0bc6e",
+  "container_image_id": "sha256:ff3a8a683499c7a645ea3fa55f73bdf0d8e709c3e352cb44c4b1651794a1c78f",
+  "init": true,
+  "user": "cshell",
+  "mounts": [],
+  "final_overlay": [
+    "tests/host_filesystem.py"
+  ],
+  "note": "Initial all-pass runs retained; corrected report ticket/predecessor metadata before repeating all required targets. Final build/test source digest is verified against native and retained Linux reports."
+}

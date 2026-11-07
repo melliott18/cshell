@@ -1,2 +1,4 @@
 # Unified patches encode blank context lines with one leading space.
 tools/host-profile/vendor/coreutils/cp-decline-status.patch whitespace=-blank-at-eol,-blank-at-eof
+# Patch context retains the upstream tab indentation and blank lines.
+tools/host-profile/vendor/file/message-formats.patch whitespace=-space-before-tab,-blank-at-eol,-blank-at-eof

@@ -1,11 +1,11 @@
 # CSH-095: Supply remaining filesystem environments after logical cwd fallback qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-094
-- Branch: Assigned when work starts
+- Branch: `test/CSH-095-filesystem-environments`
 - Issue: [#201](https://github.com/melliott18/cshell/issues/201)
 
 ## Goal
@@ -56,10 +56,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -103,3 +103,28 @@ CSH-092 supplies 104 final creation-mode assertions for mkdir and mkfifo under i
 CSH-093 supplies 32 external pwd output-error assertions on macOS and 56 pathname utility assertions on Linux: closed stdout EBADF and readerless-pipe EPIPE for pwd -P, -L, -L -P and -P -L, plus Linux virtual-device ENOSPC for those forms and basename/dirname. PWD is unset, so logical forms fall back to the physical cwd. Child-only kernel probes precede exact provider exec. These cases do not supply libc-internal faults, actual filesystem exhaustion, logical namespace changes or arbitrary output failures. All four original U-040 conditions remain open.
 
 CSH-094 supplies 48 external pwd assertions after leaf/parent rename/removal, with default options, -L and -P -L. The helper observes unchanged inherited PWD: absent for direct exec or naming the fixture root for shell modes, independently distinct from the cwd inode. It never sets or unsets PWD. Physical resolution or ENOENT is measured before exact provider exec. Valid logical symlink paths, arbitrary namespace races, inaccessible ancestors, path limits and allocation failures remain unqualified. All four original U-040 conditions remain open.
+
+## Implementation and current dispositions
+
+CSH-095 supplies 46 authored file magic cases / 184 assertions for native signed byte/short minima and maxima, comparisons across zero, masks and bit tests on negative values, hexadecimal/octal short constants, complete/truncated numeric fields and first-match/continuation order within one database. Exact sample bytes, native ABI widths, channels, status and unchanged input effects are retained. Other types/widths, unsigned ranges, cross-database -m/-M/-d precedence, default classification, encodings and locales remain unqualified.
+
+The incoming table retains the historical scope. Every unsupplied contract and
+all four original conditions have an explicit environment, reason and next owner
+in [CSH-096](CSH-096-filesystem-environment-residuals.md) ([#203](https://github.com/melliott18/cshell/issues/203)),
+the section map and the ownership manifest. Utility/libc/platform vendors retain
+implementation ownership. This uses the explicit-disposition acceptance
+alternative; no whole utility or U-034/U-040 completion is claimed.
+
+This branch is stacked on published CSH-094 commit
+`50ceaacb724d345a5ac7cdc4d012d929c11a73e4`; integration remains gated on that
+unmerged dependency. See [CSH-095 evidence](../evidence/csh-095/README.md) for
+independent oracles, native/Linux results, provenance and retained stock failures.
+
+All required targets and `make test-host-filesystem-magic` pass on native macOS
+UID 501 and Debian Docker UID 10001: 1659/1699 selected filesystem assertions,
+1162 host integration assertions, 10 ownership tests and 80 harness tests.
+The 184 new magic assertions pass on each platform. Separate stock audits
+retain exactly the previous failure IDs/modes (73/42 full-audit failures and
+16/8 provider-audit failures). Every filesystem case records successful cleanup,
+and the final source identities match across platforms. No sanitizer or
+hosted-CI qualification is claimed.

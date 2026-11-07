@@ -1,0 +1,7 @@
+ARG BASE_IMAGE=cshell-test:csh-101
+FROM ${BASE_IMAGE}
+COPY --chown=cshell:cshell Makefile /work/
+COPY --chown=cshell:cshell tests/ /work/tests/
+COPY --chown=cshell:cshell docs/ /work/docs/
+COPY --chown=cshell:cshell tools/host-profile/README.md /work/tools/host-profile/README.md
+USER cshell
