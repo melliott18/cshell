@@ -17,7 +17,11 @@ from host_filesystem_cases import UTILITIES
 
 def provision(destination, gnu_bin=None):
     selected = {name: shutil.which(name, path=os.defpath) for name in dict.fromkeys(HOSTS + UTILITIES)}
-    overrides = {'printf': str(ROOT / 'build/host-printf'),
+    overrides = {'ln': str(ROOT / 'build/host-ln'),
+                 'mkdir': str(ROOT / 'build/host-mkdir'),
+                 'mkfifo': str(ROOT / 'build/host-mkfifo'),
+                 'file': str(ROOT / 'build/host-file'),
+                 'printf': str(ROOT / 'build/host-printf'),
                  'pax': str(ROOT / 'build/host-pax'),
                  'cp': str(ROOT / 'build/host-cp'),
                  'rm': str(ROOT / 'build/host-rm'),
@@ -68,6 +72,22 @@ def provision(destination, gnu_bin=None):
             archive_sha256=hashlib.sha256((ROOT / 'tools/host-profile/vendor/coreutils/coreutils-9.7.tar.xz').read_bytes()).hexdigest(),
             patch_sha256=hashlib.sha256((ROOT / 'tools/host-profile/vendor/coreutils' / patch).read_bytes()).hexdigest(),
             configure=['--disable-nls', '--disable-acl', '--without-selinux', '--without-libgmp'])
+    for program in ('mkdir', 'mkfifo'):
+        manifest['executables'][program]['source'] = dict(
+            version='GNU coreutils 9.7',
+            archive=manifest['executables']['cp']['source']['archive'],
+            archive_sha256=manifest['executables']['cp']['source']['archive_sha256'],
+            configure=manifest['executables']['cp']['source']['configure'],
+            build_targets=['src/mkdir', 'src/mkfifo'],
+            log='build/host-coreutils-build/creation.log',
+            scope='unmodified creation utilities from the shared pinned source build')
+    manifest['executables']['ln']['source'] = dict(
+        version='GNU coreutils 9.7',
+        archive=manifest['executables']['cp']['source']['archive'],
+        archive_sha256=manifest['executables']['cp']['source']['archive_sha256'],
+        configure=manifest['executables']['cp']['source']['configure'],
+        build_targets=['src/ln'], log='build/host-coreutils-build/ln.log',
+        scope='unmodified ln from the shared pinned source build')
     manifest['executables']['touch']['source'] = dict(
         version='GNU coreutils 9.7 + IANA tzcode 2025b',
         coreutils_archive_sha256=manifest['executables']['cp']['source']['archive_sha256'],
@@ -76,6 +96,15 @@ def provision(destination, gnu_bin=None):
         build_script_sha256=hashlib.sha256((ROOT / 'tools/host-profile/build-touch.sh').read_bytes()).hexdigest(),
         tzcode_flags=['-DHAVE_TZNAME=1', '-DUSG_COMPAT=1', '-DNETBSD_INSPIRED=0'],
         configure=manifest['executables']['cp']['source']['configure'])
+    manifest['executables']['file']['source'] = dict(
+        version='file 5.46 + CSH-103/104 message and numeric type repairs',
+        archive='tools/host-profile/vendor/file/file-5.46.tar.gz',
+        archive_sha256=hashlib.sha256((ROOT / 'tools/host-profile/vendor/file/file-5.46.tar.gz').read_bytes()).hexdigest(),
+        patch_sha256=hashlib.sha256((ROOT / 'tools/host-profile/vendor/file/message-formats.patch').read_bytes()).hexdigest(),
+        build_script_sha256=hashlib.sha256((ROOT / 'tools/host-profile/build-file.sh').read_bytes()).hexdigest(),
+        magic_database_sha256=hashlib.sha256((ROOT / 'build/host-file-install/share/misc/magic.mgc').read_bytes()).hexdigest(),
+        configure=['--disable-shared', '--enable-static', '--disable-zlib', '--disable-bzlib',
+                   '--disable-xzlib', '--disable-zstdlib', '--disable-lzlib'])
     (destination.parent / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
     print(destination)
 
