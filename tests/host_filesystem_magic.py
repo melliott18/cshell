@@ -80,8 +80,10 @@ def cases():
 def setup(directory, row):
     if 'magic_environment' not in row:
         return None
-    sizes = dict(byte=ctypes.sizeof(ctypes.c_byte), short=ctypes.sizeof(ctypes.c_short))
-    if sizes != dict(byte=struct.calcsize('@b'), short=struct.calcsize('@h')):
+    sizes = dict(byte=ctypes.sizeof(ctypes.c_byte), short=ctypes.sizeof(ctypes.c_short),
+                 int=ctypes.sizeof(ctypes.c_int), long=ctypes.sizeof(ctypes.c_long))
+    if sizes != dict(byte=struct.calcsize('@b'), short=struct.calcsize('@h'),
+                     int=struct.calcsize('@i'), long=struct.calcsize('@l')):
         raise OSError('Python packing does not match host C integer widths')
     for name, data in row['files'].items():
         if (directory / name).read_bytes() != data:

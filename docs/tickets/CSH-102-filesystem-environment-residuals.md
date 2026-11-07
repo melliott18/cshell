@@ -1,12 +1,13 @@
 # CSH-102: Supply remaining filesystem environments after explicit transition-clock qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-101
-- Branch: Assigned when work starts
+- Branch: test/CSH-102-filesystem-environments
 - Issue: [#215](https://github.com/melliott18/cshell/issues/215)
+- Pull request: [#218](https://github.com/melliott18/cshell/pull/218)
 
 ## Goal
 
@@ -28,7 +29,7 @@ section map is `tests/host_filesystem_contracts.json`.
 | [`dd`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dd.html) | Additional block/unblock and noerror combinations, short/interrupted device I/O and signal statistics remain unqualified. CSH-080 adds ordinary block/unblock, C-locale case conversion, sync, block+sync, odd swab, seek/truncate/notrunc and skip/count. Darwin stock sync input counts fail; the selected GNU dd is required. EBCDIC/ascii/ibm are XSI-shaded, outside the selected base profile. | scoped short-read/EINTR/EIO controls and active-operation signal delivery. Regular-file conversions do not exercise interrupted or failing input recovery. |
 | [`df`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html) | Unspecified/default and 512-byte formats, all-filesystem enumeration, quotas, privilege-dependent availability and live capacity boundaries need a disposable filesystem oracle. | private bounded filesystem with independently measured allocation/quota and credentials. The host volume changes concurrently and must not be filled for an oracle. |
 | [`du`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html) | Recursive allocation totals, -a/-s, operand -H, nested -L, last-option precedence and a same-directory hard-link pair now have bounded private-graph witnesses. Cross-device -x, unreadable subtrees, shared extents, arbitrary graphs and overflow remain unqualified. | disposable cross-device/denied/shared-extent filesystems and bounded overflow controls. Pre-exec lstat block/inode measurements supply only the authored graph. They do not measure shared physical extents, mount boundaries, inaccessible traversal or overflow. |
-| [`file`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html) | CSH-095 supplies 46 authored file magic cases / 184 assertions for native signed byte/short minima and maxima, comparisons across zero, masks and bit tests on negative values, hexadecimal/octal short constants, complete/truncated numeric fields and first-match/continuation order within one database. Exact sample bytes, native ABI widths, channels, status and unchanged input effects are retained. Other types/widths, unsigned ranges, cross-database -m/-M/-d precedence, default classification, encodings and locales remain unqualified. | additional numeric-type/width and unsigned-range samples, ordered multi-database/default-test oracles, independent encodings and diagnostic locales. Signed byte/short boundaries and first-match ordering within one authored database do not supply other types, unsigned ranges, multiple databases, defaults or locales. |
+| [`file`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html) | CSH-095 supplies 46 authored file magic cases / 184 assertions for native signed byte/short minima and maxima, comparisons across zero, masks and bit tests on negative values, hexadecimal/octal short constants, complete/truncated numeric fields and first-match/continuation order within one database. Exact sample bytes, native ABI widths, channels, status and unchanged input effects are retained. Other types/widths, unsigned ranges, cross-database -m/-M/-d precedence, default classification, encodings and locales remain unqualified. CSH-102 supplies 91 file string-magic cases / 364 assertions for required backslash and control-character escapes, one/two/three-digit octal escapes including NUL and byte 255, decimal/octal/hexadecimal offsets, exact/trailing/mismatched/truncated fields and at/past-EOF boundaries. Independently authored bytes, exact channels/status and unchanged sample/database contents supply the oracle. Other types/widths, unsigned ranges, multiple databases, default classification, arbitrary encodings/locales and utility resource failures remain unqualified. | additional numeric, multi-database, encoding/locale and resource environments. Authored string bytes and EOF boundaries do not supply these contracts. |
 | [`find`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html) | Strict -newer comparisons at equal and adjacent representable nanoseconds and -H/-L reference-symlink following now have measured private witnesses. Other expressions/actions, wall-clock age boundaries, descriptor/depth exhaustion and non-UTF-8 matching remain unqualified. CSH-080 expression and batched-exec witnesses and CSH-084 ordinary owner-mode EACCES remain bounded. | per-child descriptor limits, deeper trees, timestamps and non-UTF-8 matching oracles. Bounded expression cases do not establish exhaustion or arbitrary locale matching. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. CSH-088 supplies only authored metadata and exactly read-back timestamps, not arbitrary graphs, ACLs, live clocks, capacity or locale boundaries. |
 | [`ln`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html) | remaining directory/symlink combinations, cross-device and permission errors, hard-link count limits and filesystem failures remain unqualified. Selected -L/-P precedence, symlink-inode hard links and existing-target preservation have witnesses. CSH-084 now supplies ordinary owner-mode EACCES at a private unsearchable prefix; other permission/credential and listed contracts remain open. ln -i is a vendor extension absent from the selected POSIX base synopsis/options, not an open base requirement. | disposable cross-device/credential/link-limit profiles. Hard-link and continuation witnesses do not supply these environments. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. |
 | [`ls`](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html) | Long numeric listings for regular files, hard links, directories, FIFOs and symlinks, plus C-locale size/mtime/atime sorting with ties and reversal now have measured private witnesses. Name-based owner/group rendering, recent timestamps, block units, remaining sorting switches, recursive graphs, terminal formatting, non-C collation and I/O exhaustion remain unqualified. CSH-084 ordinary owner-mode EACCES remains bounded. | authored metadata/time/block graphs, owned PTYs, non-C collation and I/O limits. The bounded C ordering switches do not qualify metadata formats or non-C ordering. The bounded search-denial witness does not supply privileged identities, ACLs, races or other filesystem errors. CSH-088 supplies only authored metadata and exactly read-back timestamps, not arbitrary graphs, ACLs, live clocks, capacity or locale boundaries. |
@@ -56,10 +57,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -68,7 +69,7 @@ test-host-filesystem-provider-audit test-host-filesystem-residual
 test-host-filesystem-isolated test-host-filesystem-interactive
 test-host-filesystem-decisions test-host-filesystem-metadata
 test-host-filesystem-recursive test-host-filesystem-path-limits test-host-filesystem-cwd
-test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times` on native macOS and Linux as an unprivileged
+test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times test-host-filesystem-magic-strings` on native macOS and Linux as an unprivileged
 fixture identity. Retain separate nonzero stock `make test-host-filesystem-audit`
 and stock `tests/host_filesystem.py --extended-only --provider-audit` records.
 Add bounded setup/failure/timeout cleanup regressions for new environments.
@@ -119,3 +120,34 @@ CSH-100 supplies 128 touch cases / 512 assertions for explicit POSIX Jn and zero
 CSH-101 supplies 96 touch cases / 384 assertions for explicit M/J/n transition clocks, minute/second standard and daylight offsets, 45-minute-10-second and 30-minute-15-second advances, and negative/next-day transition times. Independently authored UTC fields and exact target-inode probes supply the oracle for -d/-t and all four field selections. Skipped/repeated times, arbitrary rules and offsets, timezone databases, timestamp ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified. All four original U-040 conditions remain open.
 
 The selected touch provider is GNU coreutils 9.7 linked with pinned IANA tzcode 2025b. Both Apple touch and the installed GNU touch using Darwin conversion return wrong timestamps for the authored previous-day start and next-day end boundaries (64 stock assertions). Preserve these failures separately and require all 384 new assertions without allowances for the selected provider. The replacement does not qualify arbitrary timezone rules or databases.
+
+## Implementation scope
+
+CSH-102 supplies 91 file string-magic cases / 364 assertions for required backslash and control-character escapes, one/two/three-digit octal escapes including NUL and byte 255, decimal/octal/hexadecimal offsets, exact/trailing/mismatched/truncated fields and at/past-EOF boundaries. Independently authored bytes, exact channels/status and unchanged sample/database contents supply the oracle. Other types/widths, unsigned ranges, multiple databases, default classification, arbitrary encodings/locales and utility resource failures remain unqualified.
+
+All 21 remaining utility dispositions and the four original U-040 conditions transfer to
+[CSH-103](CSH-103-filesystem-environment-residuals.md). Utility/libc/platform vendors retain
+implementation ownership. Integration remains gated on CSH-101.
+
+## Validation record
+
+Implemented in a separate managed worktree on `test/CSH-102-filesystem-environments`,
+based on CSH-101 commit `b71283d`. [Retained evidence](../evidence/csh-102/README.md)
+contains commands, output/status/effects, setup and cleanup, exact provider/build
+identities, separate stock failures and development/setup diagnostics.
+
+Native macOS and unprivileged Linux/Docker pass every required selected target,
+including all 364 new assertions and 3863/3903 full filesystem assertions. Both
+general host profiles pass 1162 assertions with zero gaps; all 10 ownership and
+108 filesystem harness tests pass. Both platforms pass 3950 runtime cases, 33
+terminal cases and the 93-test harness suite (one Darwin-only test skipped on Linux).
+The verifier confirms unchanged prior expected values and stock failure IDs, exact
+new assertions, clean teardown and one current build/test source identity across
+platforms. No selected-profile allowances, whole-utility qualification, hosted-CI
+or sanitizer result is claimed.
+
+The explicit-disposition alternative applies to every unsupplied environment:
+[CSH-103](CSH-103-filesystem-environment-residuals.md)
+([#217](https://github.com/melliott18/cshell/issues/217)) retains all 21 utility
+rows and four original open conditions. U-034/U-040 remain partial. Integration
+is still gated on CSH-101.

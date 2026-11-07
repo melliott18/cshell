@@ -418,26 +418,26 @@ unselected fields and target identity/mode/content. Integer authored UTC fields
 and fractions supply expectations; exact inode readback precedes execution.
 No provider or allowance changes are made. DST, zoneinfo, arbitrary timestamp
 precision/ranges, live clocks and other unsupplied environments remain under
-[CSH-102](../../docs/tickets/CSH-102-filesystem-environment-residuals.md).
+[CSH-105](../../docs/tickets/CSH-105-filesystem-environment-residuals.md).
 
 CSH-099 adds `make test-host-filesystem-timezone`: 104 cases / 416 assertions
 for explicit POSIX daylight rules around unique local transition times.
 It requires the unchanged selected touch provider and zero allowances.
-Skipped/repeated times, other rules and timezone databases remain under CSH-102.
+Skipped/repeated times, other rules and timezone databases remain under CSH-105.
 
 ## CSH-100 Julian and numbered day rules
 
 CSH-100 supplies 128 touch cases / 512 assertions for explicit POSIX Jn and zero-based n daylight-saving rules across common and leap years, including default 02:00 transitions and unique times before/after the authored changes. Independently authored UTC fields and exact target-inode timestamp probes supply the oracle for -d/-t and all four field selections. Skipped/repeated times, arbitrary rule values and transition times, timezone databases, timestamp ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified.
 
 See [retained evidence](../../docs/evidence/csh-100/README.md). All remaining contracts and four original U-040 conditions
-remain open under CSH-102; no whole-utility qualification is claimed.
+remain open under CSH-105; no whole-utility qualification is claimed.
 
 ## CSH-101 explicit transition clocks and offsets
 
 CSH-101 supplies 96 touch cases / 384 assertions for explicit M/J/n transition clocks, minute/second standard and daylight offsets, 45-minute-10-second and 30-minute-15-second advances, and negative/next-day transition times. Independently authored UTC fields and exact target-inode probes supply the oracle for -d/-t and all four field selections. Skipped/repeated times, arbitrary rules and offsets, timezone databases, timestamp ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified.
 
 See [retained evidence](../../docs/evidence/csh-101/README.md). All remaining contracts and
-four original U-040 conditions remain open under CSH-102.
+four original U-040 conditions remain open under CSH-105.
 
 The CSH-101 profile selects GNU touch 9.7 linked with pinned IANA tzcode 2025b
 on both platforms. Apple touch and the installed GNU touch on macOS return
@@ -445,3 +445,44 @@ incorrect timestamps for the authored negative and next-day transition rules;
 those 64 stock assertions remain failures. See [provider provenance](vendor/tzcode/README.md).
 The replacement changes only the opt-in profile; no system utility, timezone
 file or shell runtime is modified. All older filesystem assertions remain required.
+
+## CSH-102 string-magic qualification
+
+CSH-102 supplies 91 file string-magic cases / 364 assertions for required backslash and control-character escapes, one/two/three-digit octal escapes including NUL and byte 255, decimal/octal/hexadecimal offsets, exact/trailing/mismatched/truncated fields and at/past-EOF boundaries. Independently authored bytes, exact channels/status and unchanged sample/database contents supply the oracle. Other types/widths, unsigned ranges, multiple databases, default classification, arbitrary encodings/locales and utility resource failures remain unqualified.
+
+The selected file provider remains the inventoried host executable; no provider
+replacement or output translation is introduced. See
+[CSH-102 evidence](../../docs/evidence/csh-102/README.md).
+
+## CSH-103 magic-message qualification
+
+CSH-103 supplies 108 file magic-message cases / 432 assertions for native signed byte/short and string printf-style descriptions at top level and in continuations. Literal expected bytes cover signs, width, precision, zero padding, decimal/octal/hexadecimal output, alternate forms, characters and literal percent signs. Exact channels/status, pre-exec readback and unchanged sample/database contents supply the oracle. The pinned file 5.46 provider repairs one-byte magic dispatch, bounded format validation and textual rule order; original stock failures remain separately retained. Other types/widths, unsigned ranges, multiple databases, arbitrary formats/encodings/locales and utility resource failures remain unqualified.
+
+All 21 residual utility contracts and four original U-040 conditions remain open in
+[CSH-105](../../docs/tickets/CSH-105-filesystem-environment-residuals.md).
+See [CSH-103 evidence](../../docs/evidence/csh-103/README.md) for provider provenance, strict results and stock failures.
+
+## CSH-106 readlink byte qualification
+
+Run `make test-host-filesystem-link-bytes` for the required opaque link byte suite.
+CSH-106 supplies 1088 readlink cases / 4352 assertions: each non-NUL byte, authored valid and invalid UTF-8 sequences, embedded newlines and shell metacharacters, and mixed targets of 255/256/257/511/512/513/1023 bytes, in C and an installed UTF-8 locale, with and without -n. Authored output bytes are independent of the provider; pre-exec lstat/readlink probes establish stored bytes, and post-exec probes require unchanged inode, mode, size and contents. Exact channels/status and cleanup are mandatory.
+
+Arbitrary byte sequences and locale repertoires, libc-internal allocation failures, true filesystem limits, namespace races and other error environments remain unqualified. No provider code changed.
+
+## CSH-107 omitted-who creation modes
+
+Run `make test-host-filesystem-omitted-who` for the 288 required assertions.
+CSH-107 supplies 72 mkdir/mkfifo cases / 288 assertions for symbolic creation modes with omitted who under independently proved child-only masks 027, 077 and 777. Authored literal modes cover masked addition/removal, copy addition/removal/assignment, conditional execute, empty assignment and multiple actions, alongside explicit-who controls. Exact channels/status, final type/mode and cleanup are required. The selected pinned GNU coreutils 9.7 creation utilities replace Apple providers that retain masked group bits during copy assignment.
+
+Further symbolic-mode and parent graphs, special-bit modes, transient permissions, ACL inheritance, other identities, path/depth limits and capacity exhaustion remain unqualified; FIFO transfer is outside creation. Apple stock failures are retained separately; no allowances are introduced.
+
+### CSH-110 selected ln
+
+The opt-in profile builds unmodified `ln` from the pinned GNU coreutils 9.7
+archive, with the existing configure options, and records its source archive,
+exact binary hash and `build/host-coreutils-build/ln.log`. Native Apple `ln -fs`
+replaces a same-entry source instead of preserving it and diagnosing the error;
+that failure remains required in the strict stock audit. The 29 link graph
+cases require all earlier assertions and introduce no selected-profile allowance.
+See [CSH-110 evidence](../../docs/evidence/csh-110/README.md). System executables
+are untouched; only the opt-in PATH selects this provider.
