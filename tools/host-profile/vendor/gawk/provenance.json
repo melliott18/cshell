@@ -1,0 +1,10 @@
+{
+  "version": "GNU Awk 5.3.2",
+  "url": "https://ftp.gnu.org/gnu/gawk/gawk-5.3.2.tar.xz",
+  "archive_sha256": "f8c3486509de705192138b00ef2c00bbbdd0e84c30d5c07d23fc73a9dc4cc9cc",
+  "license": "GPL-3.0-or-later; COPYING and complete source archive retained",
+  "local_changes": [
+    "main.c: select POSIX mode independently of ambient POSIXLY_CORRECT, including LC_NUMERIC and character-oriented string/regex behavior.",
+    "builtin.c: POSIX system() returns the command exit status rather than the raw wait status."
+  ]
+}

@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include "../tools/host-profile/format.h"
 
 static int fail_call(const char *kind, const char *site)
 {
@@ -29,7 +30,7 @@ static void *fault_realloc(void *pointer, size_t size, const char *site)
     return fail_call("realloc", site) ? NULL : realloc(pointer, size);
 }
 
-/* Inject the documented libc API failure result, without claiming an
+/* Inject the documented formatting API failure result, without claiming an
  * internal libc allocation failed. In particular ferror(stdout) stays clear. */
 static int fault_vprintf(const char *format, va_list arguments)
 {
@@ -39,13 +40,13 @@ static int fault_vprintf(const char *format, va_list arguments)
         else if (!strcmp(error, "EINTR")) errno = EINTR;
         else if (!strcmp(error, "EOVERFLOW")) errno = EOVERFLOW;
         else if (!strcmp(error, "zero")) errno = 0;
-        else return vprintf(format, arguments);
+        else return csh_vprintf(format, arguments);
         return -1;
     }
-    return vprintf(format, arguments);
+    return csh_vprintf(format, arguments);
 }
 
-#define vprintf fault_vprintf
+#define HOST_VPRINTF fault_vprintf
 #define strdup(text) fault_strdup((text), __func__)
 #define realloc(pointer, size) fault_realloc((pointer), (size), __func__)
 #include "../tools/host-profile/printf.c"

@@ -13,11 +13,15 @@ VENDOR = Path(__file__).resolve().parent / 'vendor/m4'
 
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--build-root', type=Path, default=ROOT)
+    root = parser.parse_args().build_root.resolve()
     archive = VENDOR / 'm4-1.4.20.tar.gz'
     provenance = json.loads((VENDOR / 'provenance.json').read_text())
     if hashlib.sha256(archive.read_bytes()).hexdigest() != provenance['archive_sha256']:
         raise SystemExit('M4 source archive does not match pinned provenance')
-    destination = ROOT / 'build/host-m4-source'
+    destination = root / 'build/host-m4-source'
     if destination.exists():
         shutil.rmtree(destination)
     destination.mkdir(parents=True)
@@ -35,19 +39,19 @@ def main():
     # Avoid passing a parent make jobserver into subprocesses without its fds.
     environment.pop('MAKEFLAGS', None)
     environment.pop('MFLAGS', None)
-    subprocess.run(['./configure', '--disable-nls', '--disable-dependency-tracking'],
+    subprocess.run(['./configure', '--disable-nls', '--disable-dependency-tracking', '--with-included-regex'],
                    cwd=source, env=environment, check=True)
     for component in ('lib', 'src'):
         subprocess.run(['make', '-j2', '-C', component], cwd=source,
                        env=environment, check=True)
-    executable = ROOT / 'build/host-m4'
+    executable = root / 'build/host-m4'
     shutil.copy2(source / 'src/m4', executable)
-    identity = dict(archive_sha256=provenance['archive_sha256'],
+    identity = dict(gnulib_sha256=hashlib.sha256((source/'lib/libm4.a').read_bytes()).hexdigest(), included_regex=True, archive_sha256=provenance['archive_sha256'],
                     patch_sha256=hashlib.sha256((VENDOR/'cshell.patch').read_bytes()).hexdigest(),
                     requested_cflags=requested_flags, cflags=environment['CFLAGS'],
                     cc=environment.get('CC'), ldflags=environment.get('LDFLAGS'),
                     binary_sha256=hashlib.sha256(executable.read_bytes()).hexdigest())
-    (ROOT/'build/host-m4-build.json').write_text(json.dumps(identity,indent=2)+'\n')
+    (root/'build/host-m4-build.json').write_text(json.dumps(identity,indent=2)+'\n')
 
 
 if __name__ == '__main__':

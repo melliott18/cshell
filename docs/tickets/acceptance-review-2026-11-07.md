@@ -69,3 +69,13 @@ now satisfied; its complete-page criterion remains open. CSH-074 remains open
 for complete-page coverage. CSH-079 is blocked for acceptance by attested Darwin
 libc allocation crashes and the required disposable low-stack investigation.
 None of these three tickets is accepted by this continuation.
+
+## Provider repair review
+
+The [provider repairs](../evidence/host-contract-continuation-2026-11-07/provider-repairs/README.md)
+resolve the demonstrated awk/expr/ed multibyte failures and qualify the selected
+GNU formatter against the observed Darwin allocation failures. The native-libc
+comparison remains failing historical evidence. CSH-073 and CSH-074 are the only
+tickets still in review; their complete-page criteria remain unchecked. CSH-079
+remains blocked by the unavailable resettable Mac and retains its other declared
+partitions. No additional ticket satisfies all acceptance criteria.

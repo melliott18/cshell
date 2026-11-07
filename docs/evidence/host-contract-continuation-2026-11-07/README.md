@@ -126,3 +126,10 @@ The [follow-up](streaming-multibyte/README.md) adds live-stream checks, repairs 
 character operations and substring overflow, strengthens interrupted-write
 attestation, and retains newly demonstrated awk/expr/ed failures. None of the
 three tickets is accepted.
+
+## Subsequent provider repairs
+
+The [provider repair review](provider-repairs/README.md) resolves the selected
+awk/expr/ed multibyte failures and supplies an allocation-safe formatting
+replacement. Historical vendor failures remain in their original records.
+Full-page qualification and the disposable-Mac investigation remain open.

@@ -19,5 +19,5 @@ static int scoped_vprintf(const char *format, va_list arguments)
     return result;
 }
 
-#define vprintf scoped_vprintf
+#define HOST_VPRINTF scoped_vprintf
 #include "../tools/host-profile/printf.c"

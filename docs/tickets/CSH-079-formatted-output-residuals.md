@@ -12,7 +12,7 @@
 
 ## Acceptance review (2026-11-07)
 
-Not accepted. The checked criteria cover a bounded investigation and individual dispositions. The ticket explicitly retains Darwin libc-internal allocation, other locale/format/signal partitions and the unresolved original low-stack observation; it is not ready for whole-ticket closure. See the [acceptance review](acceptance-review-2026-11-07.md) for validation and limitations.
+Not accepted. The selected GNU formatter now has passing controlled Darwin allocation coverage; the original stock-libc failures remain vendor evidence. Other locale/format/signal partitions and the unresolved original low-stack observation still prevent whole-ticket closure. See the [acceptance review](acceptance-review-2026-11-07.md) for validation and limitations.
 
 ## Goal
 
@@ -32,7 +32,7 @@ is qualified by the selected profile's passing examples.
 | --- | --- |
 | `U-035/locale-catalogs` | French/German catgets catalogs supplied and strict diagnostic expectations added. Further catalog encodings, installation/search patterns and malformed/unreadable catalogs require supplied fixtures. NLSPATH is an explicitly selected extension, not a base-profile requirement. |
 | `U-035/other-locales` | French/German LANG/category/LC_ALL precedence, decimal comma and UTF-8 character/byte semantics supplied. Other independently specified locales and stateful encodings remain unqualified. |
-| `U-035/format-allocation-limits` | Linux 16 MiB RLIMIT_AS induces libc formatting ENOMEM; 64 KiB post-startup stack exercises a 256 KiB format. Darwin libc allocation failure and other libc allocation sites/limits require controlled instrumentation. |
+| `U-035/format-allocation-limits` | Linux 16 MiB RLIMIT_AS induces libc formatting ENOMEM; 64 KiB post-startup stack exercises a 256 KiB format. The selected GNU formatter now has controlled Darwin allocation instrumentation and passing recovery/error assertions. Other allocation sites, physical capacity and formats remain unqualified. |
 | `U-035/full-format` | New flag/precision/base, numbered/binary/reuse and diagnostic-continuation combinations supplied, including repairs for quoted float and trailing character constants. Further valid combinations, precision/range edges, asynchronous/default signal and interrupted output behavior remain unqualified. |
 | `U-036/alternative-policies` | Newly built literal policy has exact byte/status/catalog expectations and identity. Other vendor/build policies need separately declared oracles and identities; no universal policy claim. |
 | `U-036/argument-limits` | Adjacent success/E2BIG searches for fixed single and 1024-byte aggregate operands, two environment sizes and recorded stacks. Darwin 1 MiB stack searches left stuck exec processes despite SIGKILL; reproduce only in a disposable OS with reset capability. Other layouts, stacks, environments and kernel versions remain unqualified. |
@@ -175,3 +175,19 @@ crashes and the other retained obligations remain unresolved. The low-stack
 checkbox is unchecked because a blocker disposition is not completed reproduction.
 
 See the [follow-up evidence and acceptance review](../evidence/host-contract-continuation-2026-11-07/streaming-multibyte/README.md) for commands, identities, failures and remaining work.
+
+## Selected formatter repair (2026-11-07)
+
+The FreeBSD command parser now uses pinned GNU vasnprintf for checked floating
+conversion, with exact-byte writes and propagated allocation/write errors. All
+176 Darwin allocation assertions pass across fixed/scientific/general/hex and
+the declared L extension. The original native-libc comparison still retains six
+crashes; this replaces that selected implementation path rather than repairing
+stock libc. The parser preserves the L conversion character and diagnoses a
+truncated modifier. A Linux UBSan finding in GNU zero conversion is repaired
+by skipping a zero-limb null memcpy.
+
+The user has no disposable resettable Mac available. The historical low-stack
+reproduction remains unchecked, and the ticket remains blocked and unaccepted.
+See the [provider repair review](../evidence/host-contract-continuation-2026-11-07/provider-repairs/README.md)
+for final cross-platform checks and remaining obligations.

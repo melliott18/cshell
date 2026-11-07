@@ -180,3 +180,14 @@ ASan/UBSan and in Debian. The separate multibyte audit retains 16 native failure
 full-page coverage remain open; this ticket is not accepted.
 
 See the [follow-up evidence and acceptance review](../evidence/host-contract-continuation-2026-11-07/streaming-multibyte/README.md) for commands, identities, failures and remaining work.
+
+## Language provider repairs (2026-11-07)
+
+Pinned GNU Awk in POSIX mode, GNU coreutils expr, and GNU-regex ed repair all
+previously retained multibyte failures. The Awk adapter also returns command exit
+status from system() instead of raw wait bits. All old multibyte cases are now
+required in the ordinary repaired profile; fifteen additional locale, regex and
+status cases bring the native and Debian suites to 981 passing assertions.
+Full-page/common-default coverage remains incomplete, so this ticket is not
+accepted. See the [provider repair review](../evidence/host-contract-continuation-2026-11-07/provider-repairs/README.md)
+for source identities, sanitizer results, retained failures and remaining scope.

@@ -176,7 +176,7 @@ def main():
     parser.add_argument('--provider-regressions','--remaining-contracts',action='store_true',
                         help='Select repaired-provider regression cases only')
     parser.add_argument('--multibyte-audit',action='store_true',
-                        help='Audit UTF-8 contracts, including known provider failures')
+                        help='Select the required multibyte/locale contracts; stock failures are never allowed')
     parser.add_argument('--ed-faults',type=Path,help='Separately instrumented ed provider')
     parser.add_argument('--case',action='append',help='Select IDs by shell-style pattern; repeatable')
     parser.add_argument('--record',type=Path,required=True)
@@ -234,12 +234,15 @@ def main():
                 limits={'case_seconds':5,'signal_seconds':7,'cleanup_seconds':1,'terminal_cleanup_seconds':5,'output_bytes':65536,
                         'child_resources':'smoke.child_limits; 1 MiB files, 64 descriptors, no core dumps'},
                 selection=args.case,multibyte_audit=args.multibyte_audit,ed_faults=({"path":str(args.ed_faults.resolve()),"sha256":sha(args.ed_faults)} if args.ed_faults else None),extended_sigint=not args.multibyte_audit,sanitizer=args.sanitizer,totals=counts,cases=records)
-    for utility in ('m4', 'patch'):
+    for utility in ('awk', 'm4', 'patch'):
         build_record=Path(__file__).resolve().parents[1]/('build/host-'+utility+'-build.json')
         if build_record.is_file() and tools[utility]['path']:
             identity=json.loads(build_record.read_text())
             if identity['binary_sha256']==sha(Path(tools[utility]['path'])):
                 result[utility+'_build']=identity
+    expr_version = subprocess.run([tools['expr']['path'], '--version'], capture_output=True, text=True, timeout=10) if tools['expr']['path'] else None
+    if expr_version and expr_version.stdout.startswith('expr (GNU coreutils)'):
+        result['expr_version'] = expr_version.stdout.splitlines()[0]
     command=(['dpkg-query','-W','-f=${Package} ${Version}\n'] if platform.system()=='Linux'
              else ['sw_vers'])
     identity=subprocess.run(command,capture_output=True,text=True,timeout=10)

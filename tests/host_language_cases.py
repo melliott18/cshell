@@ -137,4 +137,4 @@ def cases():
     yield from patch_cases()
 
     from host_language_multibyte_cases import cases as multibyte_cases
-    yield from (row for row in multibyte_cases() if row['utility'] == 'm4')
+    yield from multibyte_cases()

@@ -12,6 +12,16 @@ from host_formatted_failures import run_owned
 
 
 class ThresholdFailures(unittest.TestCase):
+    def test_formatter_allocation_origin_is_required(self):
+        from host_formatted_libc import allocation_attested
+        helper = Path('/private/selected-formatter')
+        event = dict(ordinal=1, failed=False, image=str(helper), symbol='vasnprintf')
+        self.assertTrue(allocation_attested([event], 0, helper, True))
+        self.assertFalse(allocation_attested([dict(event, image='/usr/lib/system/libsystem_c.dylib')], 0, helper, True))
+        self.assertTrue(allocation_attested([dict(event, failed=True)], 1, helper, True))
+        self.assertFalse(allocation_attested([dict(event, failed=True, image='/unrelated')], 1, helper, True))
+        self.assertFalse(allocation_attested([event], 1, helper, True))
+
     def test_restart_requires_interrupted_write_and_exact_payload(self):
         from host_formatted_environments import restarted_write
         measured = dict(signals=1, interrupted_symbol='write', prefill_remaining=0,

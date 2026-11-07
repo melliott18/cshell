@@ -17,6 +17,7 @@ from host_formatted_failures import invocation, run_owned
 
 def conversion_cases():
     for name, argv, output in [
+        ('selected long-double extension', ['%.2Lf:%+.1Le:%#.3Lg', '1.25', '2', '1'], b'1.25:+2.0e+00:1.00'),
         ('exact binary float rounding', ['%.0f:%.0f:%.2f:%.2f', '2.5', '3.5', '1.125', '1.375'], b'2:4:1.12:1.38'),
         ('negative zero optional float', ['%+.1f:%+.1f', '-0', '0'], b'-0.0:+0.0'),
         ('integer precision exceeds width', ['[%+3.6d][%#3.6o][%#3.6X]', '-12', '8', '31'], b'[-000012][000010][0X00001F]'),
@@ -26,6 +27,10 @@ def conversion_cases():
     ]:
         yield dict(name='CSH-079 ' + name, utility='printf', argv=argv,
                    stdout=output, stderr=b'', status=0, env={})
+    for invalid in ('%L', '%10.2L'):
+        yield dict(name='CSH-079 truncated long-double extension '+invalid,
+                   utility='printf', argv=[invalid], stdout=b'',
+                   stderr=b'{program}: missing format character\n', status=1, env={})
     # intmax_t in the selected native/Debian providers is signed 64-bit.
     # POSIX requires a range diagnostic and continued accumulated-value output;
     # exact English strerror wording is a declared Darwin/glibc policy.

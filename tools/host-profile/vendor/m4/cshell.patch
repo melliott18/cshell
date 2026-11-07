@@ -203,3 +203,16 @@
    if (strchr (to, '-') != NULL)
      {
        to = expand_ranges (to, obs);
+--- a/lib/vasnprintf.c
++++ b/lib/vasnprintf.c
+@@ -872,7 +872,9 @@
+       /* m<n: trivial case.  q=0, r := copy of a.  */
+       r_ptr = roomptr;
+       r_len = a_len;
+-      memcpy (r_ptr, a_ptr, a_len * sizeof (mp_limb_t));
++      /* A zero big integer has no limbs and may use a null pointer. */
++      if (a_len > 0)
++        memcpy (r_ptr, a_ptr, a_len * sizeof (mp_limb_t));
+       q_ptr = roomptr + a_len;
+       q_len = 0;
+     }

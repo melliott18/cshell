@@ -19,7 +19,7 @@
         "U-036/alternative-policies",
         "U-036/argument-limits"
       ],
-      "prerequisite": "CSH-079 supplies EUC-JP, catalog, numeric, interrupted-output and real Darwin libc allocation probes. SA_RESTART and partial writes pass. Attested __Balloc_D2A allocation failures crash on Darwin 23.6.0 and remain unqualified. Original stuck-exec diagnosis still requires a disposable matching OS; further codesets/catalogs remain open. See docs/evidence/host-contract-continuation-2026-11-07/README.md."
+      "prerequisite": "The selected printf now uses pinned GNU vasnprintf: Darwin controlled allocation returns for fixed/scientific/general/hex and the declared long-double extension pass. Native libc __Balloc_D2A crashes remain historical vendor failures, not a qualified stock-libc path. The original stuck-exec investigation still needs a disposable matching OS; other codesets/catalogs and format partitions remain open. See docs/evidence/host-contract-continuation-2026-11-07/provider-repairs/README.md."
     },
     {
       "ticket": "CSH-071",
@@ -155,9 +155,10 @@
       "qualification": {
         "clause_map": "tests/host_language_contracts.json",
         "evidence": "docs/evidence/csh-074/README.md",
-        "scope": "Bounded language/editing/regex/patch/argv contracts, private ed/xargs/M4 repairs, SIGINT/SIGHUP recovery and controlled backing-store failures; complete normative pages remain open.",
+        "scope": "Bounded language/editing/regex/patch/argv contracts, pinned POSIX GNU Awk, GNU expr, GNU-regex ed, private xargs/M4/patch, signal recovery and controlled backing-store failures; complete normative pages remain open.",
         "status": "partial",
-        "runner": "tests/host_languages.py"
+        "runner": "tests/host_languages.py",
+        "additional_evidence": "docs/evidence/host-contract-continuation-2026-11-07/provider-repairs/README.md"
       }
     },
     {
@@ -269,9 +270,9 @@
     },
     "U-035/format-allocation-limits": {
       "ticket": "CSH-079",
-      "evidence": "docs/evidence/host-contract-continuation-2026-11-07/README.md",
-      "boundary": "Real Darwin libc allocator interposition is supplied separately from API-return injection. Stdio-buffer allocation failure recovers, but three __Balloc_D2A allocation failures cause SIGSEGV in direct and exec paths; all owned PIDs disappear. This required path remains FAIL. Physical capacity and additional allocation sites remain open; Linux RLIMIT_AS evidence is separate.",
-      "additional_evidence": "docs/evidence/csh-070-contracts/README.md"
+      "evidence": "docs/evidence/host-contract-continuation-2026-11-07/provider-repairs/README.md",
+      "boundary": "The selected GNU vasnprintf formatter passes controlled Darwin malloc/calloc/realloc failures across fixed/scientific/general/hex and declared long-double formats, with exact success or ENOMEM and owned PID disappearance. The original native-libc crashes remain vendor evidence. This qualifies the tested selected-provider paths, not physical RAM exhaustion, all allocation sites or arbitrary formats. Linux RLIMIT_AS remains separate.",
+      "additional_evidence": "docs/evidence/host-contract-continuation-2026-11-07/README.md"
     },
     "U-035/full-format": {
       "ticket": "CSH-079",

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "scope": "Bounded operation contracts in C and selected UTF-8 cases; complete normative pages remain open. The separate multibyte audit retains required provider failures.",
+  "scope": "Bounded operation contracts in C, en_US.UTF-8 and selected fr_FR.UTF-8 cases. The multibyte selection is part of the required repaired profile; historical stock failures remain retained. Complete normative pages remain open.",
   "owner": "CSH-074",
   "pages": [
     {
@@ -62,7 +62,8 @@
           "disposition": "partial",
           "witnesses": [
             "awk/records-fields",
-            "awk/variables"
+            "awk/variables",
+            "awk/multibyte-field-separator"
           ],
           "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
           "owner": "CSH-074"
@@ -84,7 +85,8 @@
           "disposition": "partial",
           "witnesses": [
             "awk/range-reset",
-            "awk/record-separator"
+            "awk/record-separator",
+            "awk/multibyte-decimal-comma-input"
           ],
           "reason": "Finite C-locale input streams only; terminal interaction, read faults and interrupted input remain unqualified.",
           "owner": "CSH-074"
@@ -104,9 +106,19 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_08",
           "disposition": "partial",
           "witnesses": [
-            "awk/environment"
+            "awk/environment",
+            "awk/multibyte-length-substr-index",
+            "awk/multibyte-match-positions",
+            "awk/multibyte-global-dot",
+            "awk/multibyte-combining-positions",
+            "awk/multibyte-field-separator",
+            "awk/multibyte-split-ere",
+            "awk/multibyte-global-replacement",
+            "awk/multibyte-decimal-comma-input",
+            "awk/multibyte-decimal-comma-source",
+            "awk/multibyte-system-exit-status"
           ],
-          "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Locale precedence, non-C collation/encoding, NLSPATH/catalogs and other listed variables remain unqualified.",
+          "reason": "Explicit C and en_US.UTF-8 character/regex contracts are supplied with private HOME/TMPDIR. Awk also checks French numeric input and dot-based program literals. Other encodings, environment precedence and further per-page contracts remain unqualified.",
           "owner": "CSH-074"
         },
         {
@@ -198,7 +210,8 @@
             "awk/file-counters",
             "awk/field-rebuild",
             "awk/record-separator",
-            "awk/environment"
+            "awk/environment",
+            "awk/multibyte-field-separator"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -209,7 +222,11 @@
           "disposition": "partial",
           "witnesses": [
             "awk/ere-range",
-            "awk/match-state"
+            "awk/match-state",
+            "awk/multibyte-match-positions",
+            "awk/multibyte-global-dot",
+            "awk/multibyte-split-ere",
+            "awk/multibyte-global-replacement"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -274,7 +291,9 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_10",
           "disposition": "partial",
           "witnesses": [
-            "awk/format-math"
+            "awk/format-math",
+            "awk/multibyte-decimal-comma-input",
+            "awk/multibyte-decimal-comma-source"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -307,7 +326,13 @@
           "witnesses": [
             "awk/strings",
             "awk/match-state",
-            "awk/remaining-functions"
+            "awk/remaining-functions",
+            "awk/multibyte-length-substr-index",
+            "awk/multibyte-match-positions",
+            "awk/multibyte-global-dot",
+            "awk/multibyte-combining-positions",
+            "awk/multibyte-split-ere",
+            "awk/multibyte-global-replacement"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -318,7 +343,8 @@
           "disposition": "partial",
           "witnesses": [
             "awk/getline-output",
-            "awk/pipe-system-status"
+            "awk/pipe-system-status",
+            "awk/multibyte-system-exit-status"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -351,7 +377,8 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html#tag_20_06_13_17",
           "disposition": "partial",
           "witnesses": [
-            "awk/lexical-escapes"
+            "awk/lexical-escapes",
+            "awk/multibyte-decimal-comma-source"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -412,7 +439,17 @@
         "awk/remaining-functions",
         "awk/array-parameter",
         "awk/environment",
-        "awk/pipe-system-status"
+        "awk/pipe-system-status",
+        "awk/multibyte-length-substr-index",
+        "awk/multibyte-match-positions",
+        "awk/multibyte-global-dot",
+        "awk/multibyte-combining-positions",
+        "awk/multibyte-field-separator",
+        "awk/multibyte-split-ere",
+        "awk/multibyte-global-replacement",
+        "awk/multibyte-decimal-comma-input",
+        "awk/multibyte-decimal-comma-source",
+        "awk/multibyte-system-exit-status"
       ],
       "open_contracts": []
     },
@@ -507,7 +544,9 @@
           "section": "ENVIRONMENT VARIABLES",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_08",
           "disposition": "unqualified",
-          "witnesses": [],
+          "witnesses": [
+            "bc/multibyte-literal-string"
+          ],
           "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Locale precedence, non-C collation/encoding, NLSPATH/catalogs and other listed variables remain unqualified.",
           "owner": "CSH-074"
         },
@@ -579,7 +618,8 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html#tag_20_09_13_02",
           "disposition": "partial",
           "witnesses": [
-            "bc/lexical-continuation"
+            "bc/lexical-continuation",
+            "bc/multibyte-literal-string"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -646,7 +686,8 @@
         "bc/assignment-increment",
         "bc/condition-while-break",
         "bc/array-parameter",
-        "bc/automatic-locals"
+        "bc/automatic-locals",
+        "bc/multibyte-literal-string"
       ],
       "open_contracts": []
     },
@@ -747,8 +788,14 @@
           "section": "ENVIRONMENT VARIABLES",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html#tag_20_38_08",
           "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Locale precedence, non-C collation/encoding, NLSPATH/catalogs and other listed variables remain unqualified.",
+          "witnesses": [
+            "ed/multibyte-substitute-dot",
+            "ed/multibyte-backreference",
+            "ed/multibyte-backreference-lines",
+            "ed/multibyte-nested-captures",
+            "ed/multibyte-numbered-occurrence"
+          ],
+          "reason": "Explicit C and en_US.UTF-8 character/regex contracts are supplied with private HOME/TMPDIR. Awk also checks French numeric input and dot-based program literals. Other encodings, environment precedence and further per-page contracts remain unqualified.",
           "owner": "CSH-074"
         },
         {
@@ -825,7 +872,12 @@
           "disposition": "partial",
           "witnesses": [
             "ed/global-bre",
-            "ed/substitute-backref"
+            "ed/substitute-backref",
+            "ed/multibyte-substitute-dot",
+            "ed/multibyte-backreference",
+            "ed/multibyte-backreference-lines",
+            "ed/multibyte-nested-captures",
+            "ed/multibyte-numbered-occurrence"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -1077,7 +1129,12 @@
           "witnesses": [
             "ed/substitute-write",
             "ed/substitute-backref",
-            "ed/substitute-occurrence"
+            "ed/substitute-occurrence",
+            "ed/multibyte-substitute-dot",
+            "ed/multibyte-backreference",
+            "ed/multibyte-backreference-lines",
+            "ed/multibyte-nested-captures",
+            "ed/multibyte-numbered-occurrence"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -1228,7 +1285,12 @@
         "ed/tty-warning-rearmed",
         "ed/tty-help-toggle",
         "ed/tty-eof-warning",
-        "ed/tty-quit-signal-ignored"
+        "ed/tty-quit-signal-ignored",
+        "ed/multibyte-substitute-dot",
+        "ed/multibyte-backreference",
+        "ed/multibyte-backreference-lines",
+        "ed/multibyte-nested-captures",
+        "ed/multibyte-numbered-occurrence"
       ],
       "open_contracts": []
     },
@@ -1323,8 +1385,16 @@
           "section": "ENVIRONMENT VARIABLES",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html#tag_20_42_08",
           "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Locale precedence, non-C collation/encoding, NLSPATH/catalogs and other listed variables remain unqualified.",
+          "witnesses": [
+            "expr/multibyte-match-length",
+            "expr/multibyte-capture",
+            "expr/multibyte-combining-match-length",
+            "expr/multibyte-backreference",
+            "expr/multibyte-empty-capture",
+            "expr/multibyte-longest-capture",
+            "expr/multibyte-interval-match-length"
+          ],
+          "reason": "Explicit C and en_US.UTF-8 character/regex contracts are supplied with private HOME/TMPDIR. Awk also checks French numeric input and dot-based program literals. Other encodings, environment precedence and further per-page contracts remain unqualified.",
           "owner": "CSH-074"
         },
         {
@@ -1404,7 +1474,14 @@
           "disposition": "partial",
           "witnesses": [
             "expr/anchored-match",
-            "expr/match-interval"
+            "expr/match-interval",
+            "expr/multibyte-match-length",
+            "expr/multibyte-capture",
+            "expr/multibyte-combining-match-length",
+            "expr/multibyte-backreference",
+            "expr/multibyte-empty-capture",
+            "expr/multibyte-longest-capture",
+            "expr/multibyte-interval-match-length"
           ],
           "reason": "The listed operation contracts have independent literal oracles. Coverage of this heading is limited to those operations; additional combinations, locale and resource behavior remain open.",
           "owner": "CSH-074"
@@ -1440,7 +1517,8 @@
             "expr/match-length",
             "expr/match-capture",
             "expr/match-empty",
-            "expr/invalid"
+            "expr/invalid",
+            "expr/multibyte-empty-capture"
           ],
           "reason": "Listed success/error values only; all remaining error and asynchronous outcomes remain unqualified.",
           "owner": "CSH-074"
@@ -1477,7 +1555,14 @@
         "expr/anchored-match",
         "expr/match-interval",
         "expr/nested-groups",
-        "expr/operand-terminator"
+        "expr/operand-terminator",
+        "expr/multibyte-match-length",
+        "expr/multibyte-capture",
+        "expr/multibyte-combining-match-length",
+        "expr/multibyte-backreference",
+        "expr/multibyte-empty-capture",
+        "expr/multibyte-longest-capture",
+        "expr/multibyte-interval-match-length"
       ],
       "open_contracts": []
     },
@@ -1544,7 +1629,9 @@
             "grep/bracket-classes",
             "grep/bracket-literals",
             "grep/longest-subexpression",
-            "grep/utf8-character"
+            "grep/utf8-character",
+            "grep/multibyte-ere-interval",
+            "grep/multibyte-case-fold"
           ],
           "reason": "General processing is witnessed below; the complete utility language/algorithm remains unqualified.",
           "owner": "CSH-074"
@@ -1571,7 +1658,9 @@
             "grep/bracket-classes",
             "grep/bracket-literals",
             "grep/longest-subexpression",
-            "grep/empty-pattern-file"
+            "grep/empty-pattern-file",
+            "grep/multibyte-ere-interval",
+            "grep/multibyte-case-fold"
           ],
           "reason": "Listed cases cover selected options; remaining flags, interactions, repetition and utility syntax guidelines remain unqualified.",
           "owner": "CSH-074"
@@ -1624,7 +1713,9 @@
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html#tag_20_55_08",
           "disposition": "partial",
           "witnesses": [
-            "grep/utf8-character"
+            "grep/utf8-character",
+            "grep/multibyte-ere-interval",
+            "grep/multibyte-case-fold"
           ],
           "reason": "C-locale cases plus one en_US.UTF-8 multibyte dot witness; missing locale fails. Locale precedence, other collation/encoding and message catalogs remain open.",
           "owner": "CSH-074"
@@ -1748,7 +1839,9 @@
         "grep/empty-pattern",
         "grep/empty-pattern-file",
         "grep/stdin-operand",
-        "grep/utf8-character"
+        "grep/utf8-character",
+        "grep/multibyte-ere-interval",
+        "grep/multibyte-case-fold"
       ],
       "open_contracts": []
     },
@@ -2021,8 +2114,8 @@
         "m4/multibyte-substring-large-count",
         "m4/multibyte-transliteration",
         "m4/multibyte-transliteration-wide",
-        "m4/multibyte-transliteration-delete",
         "m4/multibyte-transliteration-edge-hyphen",
+        "m4/multibyte-transliteration-delete",
         "m4/multibyte-substring-large-count-C"
       ],
       "open_contracts": []
@@ -2429,7 +2522,8 @@
             "xargs/size-batches",
             "xargs/minimum-command-size",
             "xargs/blank-only-input",
-            "xargs/carry-partial-argument"
+            "xargs/carry-partial-argument",
+            "xargs/multibyte-quoted-arguments"
           ],
           "reason": "General processing is witnessed below; the complete utility language/algorithm remains unqualified.",
           "owner": "CSH-074"
@@ -2489,7 +2583,8 @@
             "xargs/empty-quotes",
             "xargs/single-empty-nul",
             "xargs/blank-only-input",
-            "xargs/blank-only-suppressed"
+            "xargs/blank-only-suppressed",
+            "xargs/multibyte-quoted-arguments"
           ],
           "reason": "Finite C-locale input streams only; terminal interaction, read faults and interrupted input remain unqualified.",
           "owner": "CSH-074"
@@ -2516,7 +2611,8 @@
             "xargs/tty-prompt-yes",
             "xargs/tty-prompt-uppercase-yes",
             "xargs/tty-prompt-no",
-            "xargs/tty-prompt-empty"
+            "xargs/tty-prompt-empty",
+            "xargs/multibyte-quoted-arguments"
           ],
           "reason": "Controlling-terminal cases witness the listed C-locale interactions; other clause conditions remain unqualified.",
           "owner": "CSH-074"
@@ -2653,7 +2749,8 @@
         "xargs/tty-prompt-uppercase-yes",
         "xargs/tty-prompt-no",
         "xargs/tty-prompt-empty",
-        "xargs/tty-prompt-each-batch"
+        "xargs/tty-prompt-each-batch",
+        "xargs/multibyte-quoted-arguments"
       ],
       "open_contracts": []
     }
@@ -2950,6 +3047,150 @@
         "ENVIRONMENT VARIABLES"
       ],
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html"
+    },
+    {
+      "id": "awk/multibyte-combining-positions",
+      "utility": "awk",
+      "clauses": [
+        "String Functions",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html"
+    },
+    {
+      "id": "awk/multibyte-field-separator",
+      "utility": "awk",
+      "clauses": [
+        "OPTIONS",
+        "Variables and Special Variables",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html"
+    },
+    {
+      "id": "awk/multibyte-split-ere",
+      "utility": "awk",
+      "clauses": [
+        "String Functions",
+        "Regular Expressions",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html"
+    },
+    {
+      "id": "awk/multibyte-global-replacement",
+      "utility": "awk",
+      "clauses": [
+        "String Functions",
+        "Regular Expressions",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html"
+    },
+    {
+      "id": "awk/multibyte-decimal-comma-input",
+      "utility": "awk",
+      "clauses": [
+        "STDIN",
+        "Output Statements",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html"
+    },
+    {
+      "id": "awk/multibyte-decimal-comma-source",
+      "utility": "awk",
+      "clauses": [
+        "Lexical Conventions",
+        "Output Statements",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html"
+    },
+    {
+      "id": "awk/multibyte-system-exit-status",
+      "utility": "awk",
+      "clauses": [
+        "Input/Output and General Functions",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html"
+    },
+    {
+      "id": "expr/multibyte-combining-match-length",
+      "utility": "expr",
+      "clauses": [
+        "Matching Expression",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html"
+    },
+    {
+      "id": "expr/multibyte-backreference",
+      "utility": "expr",
+      "clauses": [
+        "Matching Expression",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html"
+    },
+    {
+      "id": "expr/multibyte-empty-capture",
+      "utility": "expr",
+      "clauses": [
+        "Matching Expression",
+        "EXIT STATUS",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html"
+    },
+    {
+      "id": "expr/multibyte-longest-capture",
+      "utility": "expr",
+      "clauses": [
+        "Matching Expression",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html"
+    },
+    {
+      "id": "expr/multibyte-interval-match-length",
+      "utility": "expr",
+      "clauses": [
+        "Matching Expression",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html"
+    },
+    {
+      "id": "ed/multibyte-backreference-lines",
+      "utility": "ed",
+      "clauses": [
+        "Regular Expressions in ed",
+        "Substitute Command",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html"
+    },
+    {
+      "id": "ed/multibyte-nested-captures",
+      "utility": "ed",
+      "clauses": [
+        "Regular Expressions in ed",
+        "Substitute Command",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html"
+    },
+    {
+      "id": "ed/multibyte-numbered-occurrence",
+      "utility": "ed",
+      "clauses": [
+        "Regular Expressions in ed",
+        "Substitute Command",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html"
     }
   ]
 }

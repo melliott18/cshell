@@ -120,6 +120,11 @@ jobs:
         run: |
           make -j2 test-host-languages
           cp build/tests/host-languages-results.json "$RUNNER_TEMP/csh074-native.json"
+      - name: Qualify Darwin formatter allocation recovery
+        if: runner.os == 'macOS'
+        run: |
+          make test-host-formatted-allocator
+          cp build/tests/host-formatted-allocator.json "$RUNNER_TEMP/csh079-formatter-allocator.json"
       - name: Qualify language contracts with sanitizers
         env:
           ASAN_OPTIONS: halt_on_error=1:detect_leaks=0
@@ -134,6 +139,7 @@ jobs:
           name: csh074-${{ matrix.os }}
           path: |
             ${{ runner.temp }}/csh074-native.json
+            ${{ runner.temp }}/csh079-formatter-allocator.json
             build/tests/host-languages-results.json
             build/host-profile/manifest.json
 

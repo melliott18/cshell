@@ -51,7 +51,8 @@ def provision(destination, gnu_bin=None, text_bin=None, catalog_bin=None, cc="cc
         if record.exists():
             record.unlink()
     selected = {name: shutil.which(name, path=os.defpath) for name in dict.fromkeys(HOSTS + UTILITIES + LANGUAGE_UTILITIES)}
-    overrides = {'uudecode': str(ROOT / 'build/host-uudecode'),
+    overrides = {'awk': str(ROOT / 'build/host-awk'),
+                 'uudecode': str(ROOT / 'build/host-uudecode'),
                  'ed': str(ROOT / 'build/host-ed'),
                  'xargs': str(ROOT / 'build/host-xargs'),
                  'm4': str(ROOT / 'build/host-m4'),
@@ -78,7 +79,7 @@ def provision(destination, gnu_bin=None, text_bin=None, catalog_bin=None, cc="cc
         # Homebrew's prefixed names do not change the system PATH or echo policy.
         search = str(gnu_bin) if gnu_bin else os.environ.get('PATH', os.defpath)
         overrides.update({name: shutil.which('g' + name, path=search)
-                         for name in ('find', 'dd')})
+                         for name in ('find', 'dd', 'expr')})
     elif system == 'Linux':
         overrides['kill'] = shutil.which('busybox', path=os.defpath)
         overrides['du'] = str(ROOT / 'build/host-du')
@@ -88,6 +89,8 @@ def provision(destination, gnu_bin=None, text_bin=None, catalog_bin=None, cc="cc
         raise ValueError('Only Darwin and Linux profiles are defined')
     if text_bin:
         overrides.update(text_overrides(text_bin, system))
+        # Keep the shared GNU-regex ed repair even with optional text overrides.
+        overrides['ed'] = str(ROOT / 'build/host-ed')
     # Catalog programs are selected explicitly; no host install is performed.
     search = str(catalog_bin) if catalog_bin else os.environ.get('PATH', os.defpath)
     catalog_providers = {name: shutil.which(name, path=search)

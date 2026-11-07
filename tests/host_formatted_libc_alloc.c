@@ -1,5 +1,5 @@
-/* Darwin-only test interposition at real libc allocation call sites.
- * The printf provider arms this library only around its real vprintf call.
+/* Darwin-only test interposition at real allocator call sites.
+ * The helper arms this library only around the selected formatter call.
  * Never link this library into a production provider. */
 #ifndef __APPLE__
 #error This fixture requires Darwin dyld interposition

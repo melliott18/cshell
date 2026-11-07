@@ -354,10 +354,18 @@ printf_doformat(char *fmt, int *rval)
 	if (*fmt == 'L') {
 		mod_ldbl = 1;
 		fmt++;
+		if (!*fmt) {
+			warnx("%s", host_message(1, "missing format character"));
+			return (NULL);
+		}
 		if (!strchr("aAeEfFgG", *fmt)) {
 			warnx(host_message(3, "bad modifier L for %%%c"), *fmt);
 			return (NULL);
 		}
+		/* The separate conversion buffer already contains L; retain the
+		 * following conversion character as well. */
+		*dptr++ = *fmt;
+		*dptr = '\0';
 	} else {
 		mod_ldbl = 0;
 	}

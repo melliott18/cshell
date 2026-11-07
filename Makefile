@@ -20,6 +20,25 @@ PTY_TEST_SUITE ?= build/tests/runtime-pty.json
 PTY_TEST_TARGET ?= cshell
 PTY_TEST_CASE ?=
 
+# Reuse the configured, pinned gnulib regex library shipped with M4.
+HOST_GNULIB_DIR = build/host-m4-source/m4-1.4.20/lib
+HOST_GNULIB_CPPFLAGS = -I$(HOST_GNULIB_DIR) -include $(HOST_GNULIB_DIR)/config.h
+HOST_GNULIB_LIB = $(HOST_GNULIB_DIR)/libm4.a
+
+HOST_FORMAT_SOURCES = tools/host-profile/format.c tools/host-profile/format.h
+HOST_FORMAT_PLAIN_DIR = build/host-format-plain/build/host-m4-source/m4-1.4.20/lib
+HOST_FORMAT_SAN_DIR = build/host-format-sanitizer/build/host-m4-source/m4-1.4.20/lib
+HOST_SAN_FLAGS = -std=c99 -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer
+# Resource probes always use an uninstrumented formatter, including when the
+# main profile uses ASan; startup mappings change their measured limits.
+ifneq ($(findstring -fsanitize,$(CFLAGS) $(LDFLAGS)),)
+HOST_RESOURCE_FORMAT_OBJECT = build/host-format-plain.o
+HOST_RESOURCE_FORMAT_LIB = $(HOST_FORMAT_PLAIN_DIR)/libm4.a
+else
+HOST_RESOURCE_FORMAT_OBJECT = build/host-format.o
+HOST_RESOURCE_FORMAT_LIB = $(HOST_GNULIB_LIB)
+endif
+
 CSHELL_CPPFLAGS = -pthread -D_POSIX_C_SOURCE=200809L -Iinclude
 OBJECTS = build/main.o $(EXECUTE_OBJECTS) build/invocation.o
 INPUT_OBJECTS = build/input.o build/invocation.o
@@ -479,9 +498,9 @@ test-host-utilities: cshell build/tests/host_utility_helper
 
 # Opt-in host qualification. Stock-host evidence remains test-host-utilities.
 .PHONY: host-profile test-host-profile
-build/host-printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.c
+build/host-printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.c build/host-format.o
 	mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/printf.c $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/printf.c build/host-format.o $(HOST_GNULIB_LIB) -lm $(LDLIBS)
 
 build/host-paths: tools/host-profile/paths.c
 	@mkdir -p build
@@ -527,7 +546,7 @@ build/host-ln: build/host-mkfifo
 	$(MAKE) -C build/host-coreutils-build -j4 src/ln > build/host-coreutils-build/ln.log 2>&1 || { cat build/host-coreutils-build/ln.log; exit 1; }
 	cp build/host-coreutils-build/src/ln $@
 
-host-profile: build/host-uudecode build/host-ed build/host-xargs build/host-m4 build/host-patch build/host-test build/host-chmod build/host-newgrp build/host-ln build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
+host-profile: build/host-awk build/host-uudecode build/host-ed build/host-xargs build/host-m4 build/host-patch build/host-test build/host-chmod build/host-newgrp build/host-ln build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin --cc="$(CC)" --cppflags="$(CPPFLAGS)" --cflags="$(CFLAGS)" --ldflags="$(LDFLAGS)" --ldlibs="$(LDLIBS)" $(if $(HOST_TEXT_PROVIDER_BIN),--text-bin "$(HOST_TEXT_PROVIDER_BIN)")
 
 build/host-chmod: tools/host-profile/chmod.c
@@ -550,9 +569,9 @@ build/host-uudecode: tools/host-profile/uudecode.c tools/host-profile/vendor/uud
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tools/host-profile/uudecode.c $(HOST_UUDECODE_LIBS) $(LDLIBS)
 
 
-build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
+build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c build/host-format.o
 	@mkdir -p $(@D)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_printf_faults.c $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_printf_faults.c build/host-format.o $(HOST_GNULIB_LIB) -lm $(LDLIBS)
 
 test-host-profile: test-host-service-codecs test-host-catalogs test-host-filesystem-allocation test-host-inventory test-host-permissions cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile test-host-terminal-residuals test-host-terminal-effects test-host-terminal-profile test-host-terminal-harness build/tests/host_ed_faults
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --locale-path "$(abspath build/host-profile/locales)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
@@ -894,9 +913,9 @@ build/host-profile/catalogs/%.cat: tools/host-profile/catalogs/%.msg
 	rm -f $@.tmp
 	LC_ALL=en_US.UTF-8 gencat $@.tmp $< && mv $@.tmp $@
 
-build/tests/host_printf_resources: tests/host_printf_resources.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
+build/tests/host_printf_resources: tests/host_printf_resources.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c $(HOST_RESOURCE_FORMAT_OBJECT)
 	@mkdir -p $(@D)
-	$(CC) $(CPPFLAGS) $(filter-out -fsanitize=%,$(CFLAGS)) $(filter-out -fsanitize=%,$(LDFLAGS)) -o $@ $< $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(filter-out -fsanitize=%,$(CFLAGS)) $(filter-out -fsanitize=%,$(LDFLAGS)) -o $@ $< $(HOST_RESOURCE_FORMAT_OBJECT) $(HOST_RESOURCE_FORMAT_LIB) -lm $(LDLIBS)
 
 test-host-formatted: cshell host-profile build/host-echo-literal build/tests/host_printf_resources build/host-profile/catalogs/fr.cat build/host-profile/catalogs/de.cat build/host-profile/catalogs/incomplete.cat build/tests/host_printf_faults
 	$(PYTHON) tests/test_host_formatted.py
@@ -905,9 +924,9 @@ test-host-formatted: cshell host-profile build/host-echo-literal build/tests/hos
 test-host-profile: test-host-formatted
 
 .PHONY: test-host-formatted-sanitize
-build/host-formatted-sanitizer/printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.c
+build/host-formatted-sanitizer/printf: tools/host-profile/printf.c tools/host-profile/vendor/printf.c build/host-format-sanitizer.o
 	@mkdir -p $(@D)
-	$(CC) $(CPPFLAGS) -std=c99 -Wall -Wextra -Wpedantic -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -o $@ $< $(LDLIBS)
+	$(CC) $(CPPFLAGS) -std=c99 -Wall -Wextra -Wpedantic -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer -o $@ $< build/host-format-sanitizer.o $(HOST_FORMAT_SAN_DIR)/libm4.a -lm $(LDLIBS)
 
 build/host-formatted-sanitizer/echo: tools/host-profile/echo.c
 	@mkdir -p $(@D)
@@ -922,9 +941,9 @@ test-host-formatted-contracts: cshell build/host-printf build/host-echo-literal 
 	$(PYTHON) tests/host_formatted.py --scope contracts --record build/tests/host-formatted-contracts.json $(if $(findstring -fsanitize,$(CFLAGS) $(LDFLAGS)),--instrumented)
 
 # Actual interrupted stdio on a private full pipe, normal and test-only copies.
-build/tests/host_printf_interrupt: tests/host_formatted_interrupt.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
+build/tests/host_printf_interrupt: tests/host_formatted_interrupt.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c build/host-format.o
 	@mkdir -p $(@D)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/host-format.o $(HOST_GNULIB_LIB) -lm $(LDLIBS)
 
 build/tests/host_echo_interrupt: tests/host_formatted_interrupt.c tools/host-profile/echo.c
 	@mkdir -p $(@D)
@@ -938,7 +957,7 @@ build/tests/host_formatted_libc_alloc.dylib: tests/host_formatted_libc_alloc.c
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -dynamiclib $(LDFLAGS) -o $@ $< $(LDLIBS)
 
-build/tests/host_formatted_libc: tests/host_formatted_libc_main.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
+build/tests/host_formatted_libc: tests/host_formatted_libc_main.c tools/host-profile/printf.c tools/host-profile/format.h tools/host-profile/vendor/printf.c
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
 
@@ -1036,16 +1055,16 @@ test-host-languages: cshell host-profile build/tests/host_ed_faults
 	$(PYTHON) -m unittest discover -s tests -p 'test_host_languages.py'
 	$(PYTHON) tests/host_languages.py ./cshell --path "$(if $(CSH_TEST_PATH),$(CSH_TEST_PATH),$(abspath build/host-profile/bin):$(shell getconf PATH))" --ed-faults build/tests/host_ed_faults --record build/tests/host-languages-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 
-# Standalone GPL-2.0-or-later host executable, never linked into cshell.
+# Standalone GPL-2.0-or-later ed and LGPL gnulib, never linked into cshell.
 HOST_ED_SOURCES = $(wildcard tools/host-profile/vendor/ed/*.c)
 HOST_ED_HEADERS = $(wildcard tools/host-profile/vendor/ed/*.h)
-build/host-ed: $(HOST_ED_SOURCES) $(HOST_ED_HEADERS)
+build/host-ed: $(HOST_ED_SOURCES) $(HOST_ED_HEADERS) build/host-m4
 	mkdir -p build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE -D_DEFAULT_SOURCE -DPROGVERSION='"1.22.6-cshell.1"' $(LDFLAGS) -o $@ $(HOST_ED_SOURCES) $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(HOST_GNULIB_CPPFLAGS) -DPROGVERSION='"1.22.6-cshell.2"' $(LDFLAGS) -o $@ $(HOST_ED_SOURCES) $(HOST_GNULIB_LIB) $(LDLIBS)
 
-build/tests/host_ed_faults: $(HOST_ED_SOURCES) $(HOST_ED_HEADERS) tests/host_ed_faults.c tests/host_ed_faults.h
+build/tests/host_ed_faults: build/host-m4 $(HOST_ED_SOURCES) $(HOST_ED_HEADERS) tests/host_ed_faults.c tests/host_ed_faults.h
 	mkdir -p build/tests
-	$(CC) $(CPPFLAGS) $(CFLAGS) -D_POSIX_C_SOURCE=200809L -D_DARWIN_C_SOURCE -D_DEFAULT_SOURCE -DPROGVERSION='"1.22.6-cshell.1-faults"' -include tests/host_ed_faults.h $(LDFLAGS) -o $@ $(HOST_ED_SOURCES) tests/host_ed_faults.c $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(HOST_GNULIB_CPPFLAGS) -DPROGVERSION='"1.22.6-cshell.2-faults"' -include tests/host_ed_faults.h $(LDFLAGS) -o $@ $(HOST_ED_SOURCES) tests/host_ed_faults.c $(HOST_GNULIB_LIB) $(LDLIBS)
 
 HOST_XARGS_SOURCES = $(wildcard tools/host-profile/vendor/xargs/*.c)
 HOST_XARGS_HEADERS = $(wildcard tools/host-profile/vendor/xargs/*.h)
@@ -1125,3 +1144,31 @@ docker-pipeline-build:
 test-tickets:
 	$(PYTHON) tests/test_ticket_registry.py
 	$(PYTHON) tools/tickets.py check
+
+# Pinned GNU Awk with explicit POSIX mode and multibyte semantics.
+build/host-awk: tools/host-profile/build_awk.py $(wildcard tools/host-profile/vendor/gawk/*)
+	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" $(PYTHON) tools/host-profile/build_awk.py
+
+# Standalone checked formatter from the already pinned GNU portability archive.
+build/host-format.o: $(HOST_FORMAT_SOURCES) build/host-m4
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(HOST_GNULIB_CPPFLAGS) -c tools/host-profile/format.c -o $@
+
+build/host-format-plain/build/host-m4: tools/host-profile/build_m4.py $(wildcard tools/host-profile/vendor/m4/*)
+	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(filter-out -fsanitize=%,$(CFLAGS))" LDFLAGS="$(filter-out -fsanitize=%,$(LDFLAGS))" LIBS="$(LDLIBS)" $(PYTHON) tools/host-profile/build_m4.py --build-root build/host-format-plain
+
+build/host-format-plain.o: $(HOST_FORMAT_SOURCES) build/host-format-plain/build/host-m4
+	$(CC) $(CPPFLAGS) $(filter-out -fsanitize=%,$(CFLAGS)) -I$(HOST_FORMAT_PLAIN_DIR) -include $(HOST_FORMAT_PLAIN_DIR)/config.h -c tools/host-profile/format.c -o $@
+
+build/host-format-sanitizer/build/host-m4: tools/host-profile/build_m4.py $(wildcard tools/host-profile/vendor/m4/*)
+	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(HOST_SAN_FLAGS)" LDFLAGS="-fsanitize=address,undefined" LIBS="$(LDLIBS)" $(PYTHON) tools/host-profile/build_m4.py --build-root build/host-format-sanitizer
+
+build/host-format-sanitizer.o: $(HOST_FORMAT_SOURCES) build/host-format-sanitizer/build/host-m4
+	$(CC) $(CPPFLAGS) $(HOST_SAN_FLAGS) -I$(HOST_FORMAT_SAN_DIR) -include $(HOST_FORMAT_SAN_DIR)/config.h -c tools/host-profile/format.c -o $@
+
+build/tests/host_formatted_alloc: tests/host_formatted_alloc_main.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c build/host-format.o
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< build/host-format.o $(HOST_GNULIB_LIB) -lm $(LDLIBS)
+
+.PHONY: test-host-formatted-allocator
+test-host-formatted-allocator: cshell build/tests/host_formatted_alloc build/tests/host_formatted_libc_alloc.dylib
+	$(PYTHON) tests/host_formatted_libc.py --provider --record build/tests/host-formatted-allocator.json
