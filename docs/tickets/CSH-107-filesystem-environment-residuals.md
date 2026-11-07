@@ -1,11 +1,11 @@
 # CSH-107: Supply remaining filesystem environments after opaque link byte qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-106
-- Branch: Assigned when work starts
+- Branch: test/CSH-107-filesystem-environments
 - Issue: [#225](https://github.com/melliott18/cshell/issues/225)
 
 ## Goal
@@ -56,10 +56,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -68,7 +68,7 @@ test-host-filesystem-provider-audit test-host-filesystem-residual
 test-host-filesystem-isolated test-host-filesystem-interactive
 test-host-filesystem-decisions test-host-filesystem-metadata
 test-host-filesystem-recursive test-host-filesystem-path-limits test-host-filesystem-cwd
-test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times test-host-filesystem-magic-strings test-host-filesystem-magic-messages test-host-filesystem-magic-types test-host-filesystem-magic-defaults test-host-filesystem-link-bytes` on native macOS and Linux as an unprivileged
+test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times test-host-filesystem-magic-strings test-host-filesystem-magic-messages test-host-filesystem-magic-types test-host-filesystem-magic-defaults test-host-filesystem-link-bytes test-host-filesystem-omitted-who` on native macOS and Linux as an unprivileged
 fixture identity. Retain separate nonzero stock `make test-host-filesystem-audit`
 and stock `tests/host_filesystem.py --extended-only --provider-audit` records.
 Add bounded setup/failure/timeout cleanup regressions for new environments.
@@ -88,3 +88,37 @@ target must produce `absent/\n\r\n\n\n` without `-n`; stock output is the target
 alone. Both C/UTF-8 locales and all four modes fail (eight assertions).
 The selected host-paths provider passes; Linux stock also passes. This adds
 eight native stock failures while retaining all previous ones, with no allowance.
+
+## Implementation scope
+
+CSH-107 supplies 72 mkdir/mkfifo cases / 288 assertions for symbolic creation modes with omitted who under independently proved child-only masks 027, 077 and 777. Authored literal modes cover masked addition/removal, copy addition/removal/assignment, conditional execute, empty assignment and multiple actions, alongside explicit-who controls. Exact channels/status, final type/mode and cleanup are required. The selected pinned GNU coreutils 9.7 creation utilities replace Apple providers that retain masked group bits during copy assignment.
+
+Further symbolic-mode and parent graphs, special-bit modes, transient permissions, ACL inheritance, other identities, path/depth limits and capacity exhaustion remain unqualified; FIFO transfer is outside creation. All 21 utility dispositions and four original U-040 conditions transfer individually to [CSH-108](CSH-108-filesystem-environment-residuals.md). Integration remains gated on CSH-106.
+
+## Validation record
+
+Implemented in a separate managed worktree on `test/CSH-107-filesystem-environments`,
+stacked on CSH-106 commit `9440db6`. [Retained evidence](../evidence/csh-107/README.md)
+records exact provider/source hashes, commands, output, status, effects, setup
+and cleanup. Native macOS and unprivileged Debian/Linux Docker selected profiles
+pass 11495/11535 assertions, including all 288 new assertions. Both general
+host profiles pass 1162 assertions with zero gaps. Both pass 10 ownership and
+128 filesystem harness tests, 3950 runtime cases, 33 terminal cases and the
+93-test harness suite (one Darwin-only skip on Linux). Regular format/compiled
+database regressions pass 14/5 checks on both platforms.
+
+The verifier confirms unchanged CSH-106 expectations, every previous stock
+failure, exact new modes and child-mask observations, cleanup and one final
+source digest. Stock full/provider failures remain separately retained:
+705/16 on macOS and 578/8 on Linux. The 16 additional native failures are the
+copy-assignment cases for both utilities under masks 077/777 in all four modes.
+The selected profile requires pinned GNU coreutils 9.7 mkdir/mkfifo with zero
+allowances. No shell or vendor C source changed; no sanitizer or separately
+hosted native-Linux run is claimed. The initial provisioning failure is retained
+as development evidence; the subsequent complete build and matrix passed.
+
+Every unsupplied utility environment and all four original U-040 conditions
+transfer individually to [CSH-108](CSH-108-filesystem-environment-residuals.md)
+([#227](https://github.com/melliott18/cshell/issues/227)) under the explicit-disposition
+acceptance alternative. U-034/U-040 remain partial. Integration remains gated
+on CSH-106; review does not mark either ticket integrated.

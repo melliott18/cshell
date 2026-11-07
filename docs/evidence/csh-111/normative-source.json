@@ -1,0 +1,12 @@
+{
+  "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html",
+  "sha256": "c4e793bb510483faef398e4c16fb7adc2d60b99c712ea7e6b5f2751a4c6c453c",
+  "bytes": 20048,
+  "sections": [
+    "DESCRIPTION",
+    "OPTIONS",
+    "OPERANDS",
+    "EXIT STATUS",
+    "CONSEQUENCES OF ERRORS"
+  ]
+}
