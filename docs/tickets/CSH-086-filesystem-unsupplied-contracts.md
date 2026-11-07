@@ -1,11 +1,11 @@
 # CSH-086: Qualify unsupplied filesystem environments and utility contracts
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-085
-- Branch: Assigned when work starts
+- Branch: test/CSH-086-filesystem-unsupplied-contracts
 - Issue: [#183](https://github.com/melliott18/cshell/issues/183)
 
 ## Goal
@@ -14,7 +14,7 @@ Own the individually open contracts after CSH-085. Preserve the existing
 CSH-072/080/084/085 assertions, exact selected-provider provenance and stock
 failures. Utility/libc/platform vendors retain implementation ownership.
 
-## Individual open dispositions
+## Original CSH-085 handoff dispositions
 
 Every utility includes U-034 direct exec and U-040 common defaults. The current
 machine-readable ledger is `tests/host_filesystem_residuals.json`; the normative
@@ -56,10 +56,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -72,3 +72,42 @@ Add bounded setup/failure/timeout cleanup regressions for new environments.
 Use only private disposable filesystems and credentials. Never fill the host
 volume or use protected mounts; `/dev/full` is not filesystem exhaustion.
 Privileged provisioning requires an isolated runner; prompts require owned PTYs.
+
+## Implementation and current dispositions
+
+The original table above preserves the incoming scope. CSH-086 adds 13 cases /
+39 assertions for C-locale cp/mv overwrite decisions and option precedence on
+owned foreground PTYs. Independently authored bytes check both source and
+destination. A test-only exec helper separates stdout from terminal stderr;
+a marker proves terminal ownership and descriptor setup before provider exec.
+Direct exec and cshell string/file dispatch are tested; these interactions do
+not claim shell stdin-script mode coverage.
+
+Stock Apple cp and native GNU cp 9.3 return 1 after a declined overwrite.
+The selected profile builds pinned GNU coreutils 9.7 with a source-level repair
+that treats a declined copy as successful while retaining real error results.
+The yes/no-plus-missing-operand assertions and inherited copy-error assertions
+require those real failures. No status/output translator or allowance is used.
+The build records source archive, patch and executable identities and retains
+all prior selected-provider tests. GNU NLS, ACL and SELinux support is disabled
+in this bounded build; these environments remain open.
+
+Five added harness tests reject wrong effects/status/output channels, omitted
+or unrelated diagnostics, missing terminal markers, unavailable terminals,
+partial fixture setup and timeout leaks in all three terminal invocation modes.
+`ln -i` is absent from the POSIX base synopsis/options and is corrected from an
+open base requirement to a vendor extension. No implementation is claimed for it.
+
+Every unsupplied environment and the four original conditions retain individual
+requirements, reasons and vendor implementation ownership in the current
+[ledger](../../tests/host_filesystem_residuals.json),
+[section map](../../tests/host_filesystem_contracts.json) and
+[CSH-087](CSH-087-filesystem-environment-followup.md) ([#185](https://github.com/melliott18/cshell/issues/185)).
+This uses the ticket's explicit-disposition alternative. No complete utility,
+privileged filesystem, real capacity exhaustion, locale repertoire or
+libc-internal failure environment is qualified. Historical evidence is unchanged.
+
+CSH-085 is implemented but unmerged. This branch is stacked on its published
+head `483bd693989bd78c95b1bbb455f173d448a9cfee` and remains in review until
+integration. Native/Linux commands and results are recorded in
+[CSH-086 evidence](../evidence/csh-086/README.md).
