@@ -1,0 +1,244 @@
+[
+  {
+    "name": "extract",
+    "argv": [
+      "tar",
+      "-xzf",
+      "/work/tools/host-profile/vendor/file/file-5.46.tar.gz",
+      "-C",
+      "/work/build/file-unpatched-src",
+      "--strip-components=1"
+    ],
+    "cwd": "/work",
+    "env": null,
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 0.02934604200004287,
+    "log": "linux-extract.log"
+  },
+  {
+    "name": "unpatched-configure",
+    "argv": [
+      "/work/build/file-unpatched-src/configure",
+      "--disable-shared",
+      "--enable-static",
+      "--disable-zlib",
+      "--disable-bzlib",
+      "--disable-xzlib",
+      "--disable-zstdlib",
+      "--disable-lzlib"
+    ],
+    "cwd": "/work/build/file-unpatched-build",
+    "env": null,
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 3.4348257930000727,
+    "log": "linux-unpatched-configure.log"
+  },
+  {
+    "name": "unpatched-build",
+    "argv": [
+      "make",
+      "-j4"
+    ],
+    "cwd": "/work/build/file-unpatched-build",
+    "env": null,
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 1.2214853330000324,
+    "log": "linux-unpatched-build.log"
+  },
+  {
+    "name": "unpatched-magic-types",
+    "argv": [
+      "/usr/bin/python3",
+      "tests/host_filesystem.py",
+      "./cshell",
+      "--magic-types-only",
+      "--path",
+      "/work/build/csh104-provider-checks/unpatched:/work/build/host-profile/bin:/bin:/usr/bin",
+      "--record",
+      "/work/build/csh104-provider-checks/linux-unpatched-magic-types.json"
+    ],
+    "cwd": "/work",
+    "env": null,
+    "status": 1,
+    "expected_status": 1,
+    "seconds": 4.576242836000006,
+    "log": "linux-unpatched-magic-types.log"
+  },
+  {
+    "name": "unpatched-magic-messages",
+    "argv": [
+      "/usr/bin/python3",
+      "tests/host_filesystem.py",
+      "./cshell",
+      "--magic-messages-only",
+      "--path",
+      "/work/build/csh104-provider-checks/unpatched:/work/build/host-profile/bin:/bin:/usr/bin",
+      "--record",
+      "/work/build/csh104-provider-checks/linux-unpatched-magic-messages.json"
+    ],
+    "cwd": "/work",
+    "env": null,
+    "status": 1,
+    "expected_status": 1,
+    "seconds": 1.507750250000072,
+    "log": "linux-unpatched-magic-messages.log"
+  },
+  {
+    "name": "unpatched-magic",
+    "argv": [
+      "/usr/bin/python3",
+      "tests/host_filesystem.py",
+      "./cshell",
+      "--magic-only",
+      "--path",
+      "/work/build/csh104-provider-checks/unpatched:/work/build/host-profile/bin:/bin:/usr/bin",
+      "--record",
+      "/work/build/csh104-provider-checks/linux-unpatched-magic.json"
+    ],
+    "cwd": "/work",
+    "env": null,
+    "status": 1,
+    "expected_status": 1,
+    "seconds": 0.7070525419999285,
+    "log": "linux-unpatched-magic.log"
+  },
+  {
+    "name": "sanitized-configure",
+    "argv": [
+      "/work/build/host-file-src/configure",
+      "--disable-shared",
+      "--enable-static",
+      "--disable-zlib",
+      "--disable-bzlib",
+      "--disable-xzlib",
+      "--disable-zstdlib",
+      "--disable-lzlib"
+    ],
+    "cwd": "/work/build/file-sanitized-build",
+    "env": {
+      "CFLAGS": "-g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+      "LDFLAGS": "-fsanitize=address,undefined",
+      "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "HOME": "/home/cshell"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 6.907556044999978,
+    "log": "linux-sanitized-configure.log"
+  },
+  {
+    "name": "sanitized-build",
+    "argv": [
+      "make",
+      "-j4"
+    ],
+    "cwd": "/work/build/file-sanitized-build",
+    "env": {
+      "CFLAGS": "-g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer",
+      "LDFLAGS": "-fsanitize=address,undefined",
+      "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "HOME": "/home/cshell"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 3.0331412510000746,
+    "log": "linux-sanitized-build.log"
+  },
+  {
+    "name": "sanitized-magic-types",
+    "argv": [
+      "/usr/bin/python3",
+      "tests/host_filesystem.py",
+      "./cshell",
+      "--magic-types-only",
+      "--path",
+      "/work/build/csh104-provider-checks/sanitized:/work/build/host-profile/bin:/bin:/usr/bin",
+      "--record",
+      "/work/build/csh104-provider-checks/linux-sanitized-magic-types.json",
+      "--sanitizer"
+    ],
+    "cwd": "/work",
+    "env": null,
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 12.179279047000023,
+    "log": "linux-sanitized-magic-types.log"
+  },
+  {
+    "name": "sanitized-magic-messages",
+    "argv": [
+      "/usr/bin/python3",
+      "tests/host_filesystem.py",
+      "./cshell",
+      "--magic-messages-only",
+      "--path",
+      "/work/build/csh104-provider-checks/sanitized:/work/build/host-profile/bin:/bin:/usr/bin",
+      "--record",
+      "/work/build/csh104-provider-checks/linux-sanitized-magic-messages.json",
+      "--sanitizer"
+    ],
+    "cwd": "/work",
+    "env": null,
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 3.9234687109999413,
+    "log": "linux-sanitized-magic-messages.log"
+  },
+  {
+    "name": "sanitized-magic",
+    "argv": [
+      "/usr/bin/python3",
+      "tests/host_filesystem.py",
+      "./cshell",
+      "--magic-only",
+      "--path",
+      "/work/build/csh104-provider-checks/sanitized:/work/build/host-profile/bin:/bin:/usr/bin",
+      "--record",
+      "/work/build/csh104-provider-checks/linux-sanitized-magic.json",
+      "--sanitizer"
+    ],
+    "cwd": "/work",
+    "env": null,
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 1.70171166800003,
+    "log": "linux-sanitized-magic.log"
+  },
+  {
+    "name": "sanitized-magic-strings",
+    "argv": [
+      "/usr/bin/python3",
+      "tests/host_filesystem.py",
+      "./cshell",
+      "--magic-strings-only",
+      "--path",
+      "/work/build/csh104-provider-checks/sanitized:/work/build/host-profile/bin:/bin:/usr/bin",
+      "--record",
+      "/work/build/csh104-provider-checks/linux-sanitized-magic-strings.json",
+      "--sanitizer"
+    ],
+    "cwd": "/work",
+    "env": null,
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 3.1496077520000654,
+    "log": "linux-sanitized-magic-strings.log"
+  },
+  {
+    "name": "sanitized-format-checks",
+    "argv": [
+      "/usr/bin/python3",
+      "tests/host_file_format_checks.py",
+      "/work/build/file-sanitized-build/src/file"
+    ],
+    "cwd": "/work",
+    "env": null,
+    "status": 0,
+    "expected_status": 0,
+    "seconds": 12.61594779799998,
+    "log": "linux-sanitized-format-checks.log"
+  }
+]

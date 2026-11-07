@@ -1,0 +1,13 @@
+{
+  "platform": "Debian GNU/Linux 12 arm64 Docker",
+  "uid": 10001,
+  "gid": 10001,
+  "base_commit": "4bd700f",
+  "image": "sha256:f4ef851f3f1932e2f55d9f25cfb6455a38773e86021cd26c370843e9f7caf839",
+  "container": "f47d0274bf96cee9cb3770ea73387badba7cd7ed0d599c72c1c85812aeaa3aa6",
+  "init": true,
+  "host_mounts": [],
+  "build_cache_image": "sha256:181ea51c486703b4d173619e79a4a82bcaf32853b59f1f68af4d8eebf9eb71b6",
+  "exit_code": 0,
+  "compiler": "cc (Debian 12.2.0-14+deb12u1) 12.2.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n"
+}
