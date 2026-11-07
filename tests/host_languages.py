@@ -175,6 +175,8 @@ def main():
     parser.add_argument('--sanitizer',action='store_true')
     parser.add_argument('--provider-regressions','--remaining-contracts',action='store_true',
                         help='Select repaired-provider regression cases only')
+    parser.add_argument('--multibyte-audit',action='store_true',
+                        help='Audit UTF-8 contracts, including known provider failures')
     parser.add_argument('--ed-faults',type=Path,help='Separately instrumented ed provider')
     parser.add_argument('--case',action='append',help='Select IDs by shell-style pattern; repeatable')
     parser.add_argument('--record',type=Path,required=True)
@@ -185,7 +187,9 @@ def main():
     tools=inventory(args.path,UTILITIES)
     records=[]
     selected = lambda name: not args.case or any(fnmatch.fnmatchcase(name, p) for p in args.case)
-    if args.provider_regressions:
+    if args.multibyte_audit:
+        from host_language_multibyte_cases import cases as selected_cases
+    elif args.provider_regressions:
         from host_language_provider_cases import cases as selected_cases
     else:
         selected_cases = cases
@@ -203,7 +207,7 @@ def main():
             print(record['verdict']+': '+record['id']+' ('+mode+')',flush=True)
             if record['verdict']=='FAIL':
                 print(json.dumps(record.get('actual',record)),flush=True)
-    if not args.provider_regressions:
+    if not args.provider_regressions and not args.multibyte_audit:
         for action in ('hup','hup-home','int'):
             if not selected('ed/signal-'+action):
                 continue
@@ -229,7 +233,7 @@ def main():
                     'bounded operation contracts; full pages unqualified'),
                 limits={'case_seconds':5,'signal_seconds':7,'cleanup_seconds':1,'terminal_cleanup_seconds':5,'output_bytes':65536,
                         'child_resources':'smoke.child_limits; 1 MiB files, 64 descriptors, no core dumps'},
-                selection=args.case,ed_faults=({"path":str(args.ed_faults.resolve()),"sha256":sha(args.ed_faults)} if args.ed_faults else None),extended_sigint=True,sanitizer=args.sanitizer,totals=counts,cases=records)
+                selection=args.case,multibyte_audit=args.multibyte_audit,ed_faults=({"path":str(args.ed_faults.resolve()),"sha256":sha(args.ed_faults)} if args.ed_faults else None),extended_sigint=not args.multibyte_audit,sanitizer=args.sanitizer,totals=counts,cases=records)
     for utility in ('m4', 'patch'):
         build_record=Path(__file__).resolve().parents[1]/('build/host-'+utility+'-build.json')
         if build_record.is_file() and tools[utility]['path']:

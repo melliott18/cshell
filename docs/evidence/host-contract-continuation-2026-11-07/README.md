@@ -119,3 +119,10 @@ ed, expr, grep, m4 or xargs.
 CSH-079 is blocked for acceptance by the attested Darwin libc crash and the
 unresolved disposable-environment investigation, in addition to the retained
 locale/format partitions. None of these tickets is marked done or closed.
+
+## Subsequent streaming and multibyte work
+
+The [follow-up](streaming-multibyte/README.md) adds live-stream checks, repairs M4
+character operations and substring overflow, strengthens interrupted-write
+attestation, and retains newly demonstrated awk/expr/ed failures. None of the
+three tickets is accepted.

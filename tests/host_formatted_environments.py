@@ -114,6 +114,17 @@ def api_error_cases(shell, prefix, helper):
                            actual=dict(status=result['status'], stdout_hex=output.hex(), stderr_hex=diagnostic.hex()))
 
 
+def restarted_write(measured, captured, utility):
+    """Reject success if the alarm arrived outside the actual write syscall."""
+    return (measured.get('signals', 0) > 0 and
+            measured.get('interrupted_symbol') in
+            ('write', '__write', '__write_nocancel', '__libc_write') and
+            measured.get('prefill_remaining') == 0 and measured.get('drain_error') == 0 and
+            measured.get('stream_error') == 0 and measured.get('provider_status') == 0 and
+            captured == b'value' + (b'\n' if utility == 'echo' else b'') and
+            measured.get('drained') == len(captured))
+
+
 def interrupt_cases(shell, prefix, helpers):
     with tempfile.TemporaryDirectory(prefix='interrupt-', dir=prefix.parent) as temporary:
         selected = Path(temporary)
@@ -148,11 +159,7 @@ def interrupt_cases(shell, prefix, helpers):
                                         measured.get('stream_error') == 1 and measured.get('provider_status') == 1 and
                                         captured == b'p' * measured['filled'])
                     if disposition == 'restart':
-                        observed = bool(observed and measured.get('signals', 0) > 0 and
-                                        measured.get('prefill_remaining') == 0 and measured.get('drain_error') == 0 and
-                                        measured.get('stream_error') == 0 and measured.get('provider_status') == 0 and
-                                        captured == b'value' + (b'\n' if utility == 'echo' else b'') and
-                                        measured.get('drained') == len(captured))
+                        observed = bool(observed and restarted_write(measured, captured, utility))
                     if disposition == 'partial':
                         observed = bool(observed and measured.get('signals', 0) > 0 and captured and
                                         0 < len(captured) < measured.get('payload_size', 0) and

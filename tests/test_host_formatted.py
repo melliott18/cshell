@@ -12,6 +12,16 @@ from host_formatted_failures import run_owned
 
 
 class ThresholdFailures(unittest.TestCase):
+    def test_restart_requires_interrupted_write_and_exact_payload(self):
+        from host_formatted_environments import restarted_write
+        measured = dict(signals=1, interrupted_symbol='write', prefill_remaining=0,
+                        drain_error=0, stream_error=0, provider_status=0, drained=5)
+        self.assertTrue(restarted_write(measured, b'value', 'printf'))
+        for changes in (dict(interrupted_symbol='setitimer'), dict(signals=0),
+                        dict(prefill_remaining=1), dict(stream_error=1)):
+            self.assertFalse(restarted_write(dict(measured, **changes), b'value', 'printf'))
+        self.assertFalse(restarted_write(measured, b'wrong', 'printf'))
+
     def test_darwin_low_stack_is_rejected_before_any_process_launch(self):
         with patch('host_echo_threshold.platform.system', return_value='Darwin'), \
              patch('host_echo_threshold.os.fork') as launch:

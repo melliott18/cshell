@@ -36,7 +36,15 @@
    return true;
 --- a/src/builtin.c
 +++ b/src/builtin.c
-@@ -436,6 +436,8 @@
+@@ -23,6 +23,7 @@
+    expansion of user defined macros.  */
+ 
+ #include "m4.h"
++#include <wchar.h>
+ 
+ #include "execute.h"
+ #include "memchr2.h"
+@@ -436,6 +437,8 @@
        *valuep = strtol (arg, &endp, 10);
        if (*endp != '\0')
          {
@@ -45,7 +53,7 @@
            M4ERROR ((warning_status, 0,
                      _("non-numeric argument to builtin `%s'"),
                      TOKEN_DATA_TEXT (macro)));
-@@ -1479,6 +1481,8 @@
+@@ -1479,6 +1482,8 @@
    fd = mkstemp (name);
    if (fd < 0)
      {
@@ -54,3 +62,144 @@
        M4ERROR ((0, errno, _("%s: cannot create tempfile `%s'"), me, pattern));
        obstack_free (obs, obstack_finish (obs));
      }
+@@ -1785,6 +1790,39 @@
+    "substr", "translit", "format", "regexp" and "patsubst".  The last
+    three are GNU specific.  */
+ 
++/* POSIX string positions count characters in LC_CTYPE, not bytes. */
++static wchar_t *
++cshell_wide (const char *text)
++{
++  size_t length = mbstowcs (NULL, text, 0);
++  wchar_t *result;
++  if (length == (size_t) -1)
++    M4ERROR ((EXIT_FAILURE, 0, _("invalid multibyte string")));
++  result = xnmalloc (length + 1, sizeof *result);
++  mbstowcs (result, text, length + 1);
++  return result;
++}
++
++static void
++cshell_wide_output (struct obstack *obs, const wchar_t *text, size_t length)
++{
++  mbstate_t state;
++  char bytes[MB_LEN_MAX];
++  size_t i, count;
++  memset (&state, 0, sizeof state);
++  for (i = 0; i < length; ++i)
++    {
++      count = wcrtomb (bytes, text[i], &state);
++      if (count == (size_t) -1)
++        M4ERROR ((EXIT_FAILURE, 0, _("invalid multibyte character")));
++      obstack_grow (obs, bytes, count);
++    }
++  count = wcrtomb (bytes, L'\0', &state);
++  if (count == (size_t) -1)
++    M4ERROR ((EXIT_FAILURE, 0, _("invalid multibyte shift state")));
++  obstack_grow (obs, bytes, count - 1);
++}
++
+ /*---------------------------------------------.
+ | Expand to the length of the first argument.  |
+ `---------------------------------------------*/
+@@ -1794,6 +1832,13 @@
+ {
+   if (bad_argc (argv[0], argc, 2, 2))
+     return;
++  if (MB_CUR_MAX > 1)
++    {
++      wchar_t *text = cshell_wide (ARG (1));
++      shipout_int (obs, wcslen (text));
++      free (text);
++      return;
++    }
+   shipout_int (obs, ARGLEN (1));
+ }
+ 
+@@ -1817,6 +1862,16 @@
+       return;
+     }
+ 
++  if (MB_CUR_MAX > 1)
++    {
++      wchar_t *text = cshell_wide (ARG (1));
++      wchar_t *needle = cshell_wide (ARG (2));
++      const wchar_t *match = wcsstr (text, needle);
++      shipout_int (obs, match ? match - text : -1);
++      free (needle);
++      free (text);
++      return;
++    }
+   haystack = ARG (1);
+   result = strstr (haystack, ARG (2));
+   retval = result ? result - haystack : -1;
+@@ -1837,6 +1892,7 @@
+ {
+   int start = 0;
+   int length, avail;
++  wchar_t *wide = NULL;
+ 
+   if (bad_argc (argv[0], argc, 3, 4))
+     {
+@@ -1853,12 +1909,24 @@
+   if (argc >= 4 && !numeric_arg (argv[0], ARG (3), &length))
+     return;
+ 
+-  if (start < 0 || length <= 0 || start >= avail)
+-    return;
+-
+-  if (start + length > avail)
+-    length = avail - start;
+-  obstack_grow (obs, ARG (1) + start, length);
++  if (MB_CUR_MAX > 1)
++    {
++      wide = cshell_wide (ARG (1));
++      avail = wcslen (wide);
++      if (argc < 4)
++        length = avail;
++    }
++  if (start >= 0 && length > 0 && start < avail)
++    {
++      /* Subtraction avoids signed overflow for an INT_MAX count. */
++      if (length > avail - start)
++        length = avail - start;
++      if (wide)
++        cshell_wide_output (obs, wide + start, length);
++      else
++        obstack_grow (obs, ARG (1) + start, length);
++    }
++  free (wide);
+ }
+ 
+ /*------------------------------------------------------------------.
+@@ -1935,6 +2003,30 @@
+     }
+ 
+   to = ARG (3);
++  /* POSIX permits literal leading/trailing hyphens. Interior ranges are
++     a GNU extension and retain the byte-oriented implementation below. */
++  if (MB_CUR_MAX > 1
++      && !(strlen (from) > 2 && memchr (from + 1, '-', strlen (from) - 2))
++      && !(strlen (to) > 2 && memchr (to + 1, '-', strlen (to) - 2)))
++    {
++      wchar_t *wide = cshell_wide (data);
++      wchar_t *source = cshell_wide (from);
++      wchar_t *target = cshell_wide (to);
++      size_t i, used = 0, targets = wcslen (target);
++      for (i = 0; wide[i]; ++i)
++        {
++          const wchar_t *match = wcschr (source, wide[i]);
++          if (!match)
++            wide[used++] = wide[i];
++          else if ((size_t) (match - source) < targets)
++            wide[used++] = target[match - source];
++        }
++      cshell_wide_output (obs, wide, used);
++      free (target);
++      free (source);
++      free (wide);
++      return;
++    }
+   if (strchr (to, '-') != NULL)
+     {
+       to = expand_ranges (to, obs);

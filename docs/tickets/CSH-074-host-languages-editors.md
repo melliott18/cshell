@@ -169,3 +169,14 @@ all 136 patch assertions also pass ASan/UBSan.
 The [continuation evidence and review](../evidence/host-contract-continuation-2026-11-07/README.md)
 retain the original failures and exact validation boundaries. Complete-page
 coverage of the eight owned utilities remains open. This ticket is not accepted.
+
+## Streaming and multibyte follow-up (2026-11-07)
+
+Repaired M4 multibyte len/index/substr/translit operations and signed overflow
+for INT_MAX substring counts. Eleven new cases add 44 assertions; the native
+language/editor suite passes 877 assertions and M4 passes 148 assertions under
+ASan/UBSan and in Debian. The separate multibyte audit retains 16 native failures
+(awk, expr and ed) and 12 Debian failures (awk). Required provider repairs and
+full-page coverage remain open; this ticket is not accepted.
+
+See the [follow-up evidence and acceptance review](../evidence/host-contract-continuation-2026-11-07/streaming-multibyte/README.md) for commands, identities, failures and remaining work.

@@ -50,6 +50,15 @@ class LanguageEvidenceTests(unittest.TestCase):
         self.assertEqual({r['id'] for r in remaining},
                          {r['id'] for r in manifest['provider_regressions']})
 
+    def test_multibyte_audit_contract_accounting(self):
+        from host_language_multibyte_cases import cases as audit_cases
+        manifest = json.loads(Path(__file__).with_name('host_language_contracts.json').read_text())
+        rows = list(audit_cases())
+        self.assertEqual({r['id'] for r in rows}, {r['id'] for r in manifest['multibyte_audit']})
+        for row in rows:
+            page = next(p for p in manifest['pages'] if p['utility'] == row['utility'])
+            self.assertTrue(set(row['clauses']) <= {s['section'] for s in page['sections']})
+
     def test_status_ranges_exclude_signal_death(self):
         for expectation in ('normal','nonzero','error','xargs-error'):
             self.assertFalse(matches(expectation,-9))

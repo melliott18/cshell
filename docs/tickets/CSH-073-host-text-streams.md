@@ -248,3 +248,13 @@ this does not qualify arbitrary errors, other locales or the remaining formats.
 The [continuation evidence and review](../evidence/host-contract-continuation-2026-11-07/README.md)
 retain the initial paste failures and native strings timeouts separately. The
 ticket remains in review and is not accepted.
+
+## Streaming and multibyte follow-up (2026-11-07)
+
+Added 14 passing direct/exec live-stream assertions on native macOS and Debian
+for cat -u, tee output/copies/append, and tail -f regular files, renamed
+descriptors, named FIFOs and stdin pipes. Negative controls reject buffering and
+missing file copies. The section ledger now records these bounded witnesses;
+remaining complete-page contracts still prevent acceptance.
+
+See the [follow-up evidence and acceptance review](../evidence/host-contract-continuation-2026-11-07/streaming-multibyte/README.md) for commands, identities, failures and remaining work.

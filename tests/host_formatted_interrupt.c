@@ -5,14 +5,21 @@
  * read(). No child, process inventory, or host limit changes are involved.
  */
 #define _GNU_SOURCE
+#include <dlfcn.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
+#ifdef __APPLE__
+#include <sys/ucontext.h>
+#else
+#include <ucontext.h>
+#endif
 
 #ifdef HOST_FORMATTED_ECHO
 #define main profile_main
@@ -27,10 +34,26 @@ static volatile sig_atomic_t delivered;
 static volatile sig_atomic_t drain_error;
 static volatile sig_atomic_t restart_fd = -1;
 static volatile sig_atomic_t restart_remaining;
-static void caught(int number)
+static volatile sig_atomic_t pc_low, pc_high;
+static void caught(int number, siginfo_t *info, void *context)
 {
     int saved_errno = errno;
+    uintptr_t pc = 0;
     (void)number;
+    (void)info;
+#if defined(__APPLE__) && defined(__aarch64__)
+    pc = ((ucontext_t *)context)->uc_mcontext->__ss.__pc;
+#elif defined(__APPLE__) && defined(__x86_64__)
+    pc = ((ucontext_t *)context)->uc_mcontext->__ss.__rip;
+#elif defined(__linux__) && defined(__aarch64__)
+    pc = ((ucontext_t *)context)->uc_mcontext.pc;
+#elif defined(__linux__) && defined(__x86_64__)
+    pc = ((ucontext_t *)context)->uc_mcontext.gregs[REG_RIP];
+#else
+    (void)context; /* An unresolved PC is an explicit failed attestation. */
+#endif
+    pc_low = (sig_atomic_t)(uint32_t)pc;
+    pc_high = (sig_atomic_t)(uint32_t)(pc >> 32);
     if (delivered < 100) ++delivered;
     while (restart_fd >= 0 && restart_remaining) {
         char buffer[1024];
@@ -95,16 +118,23 @@ int main(int argc, char **argv)
     fprintf(record, "{\"ready\":true,\"filled\":%zu}\n", filled);
     if (fclose(record)) return 125;
     memset(&action, 0, sizeof action);
-    action.sa_handler = !strcmp(mode, "default") ? SIG_DFL : caught;
+    action.sa_flags = SA_SIGINFO;
+    action.sa_sigaction = caught;
+    if (!strcmp(mode, "default")) {
+        action.sa_flags = 0;
+        action.sa_handler = SIG_DFL;
+    }
     if (restart) {
-        action.sa_flags = SA_RESTART;
+        action.sa_flags |= SA_RESTART;
         restart_fd = descriptors[0];
         restart_remaining = (sig_atomic_t)filled;
     }
     sigemptyset(&action.sa_mask);
     if (sigaction(SIGALRM, &action, NULL) < 0) return 125;
     memset(&timer, 0, sizeof timer);
-    timer.it_value.tv_usec = timer.it_interval.tv_usec = 10000;
+    timer.it_value.tv_usec = 10000;
+    /* echo can attempt its trailing newline after the first output failure. */
+    timer.it_interval.tv_usec = restart ? 0 : 10000;
     if (setitimer(ITIMER_REAL, &timer, NULL) < 0) return 125;
     status = profile_main(argc, argv);
     memset(&timer, 0, sizeof timer);
@@ -120,11 +150,16 @@ int main(int argc, char **argv)
     if (amount < 0 || close(descriptors[0]) < 0 || fclose(capture)) return 125;
     record = fopen("interrupt.json", "w");
     if (!record) return 125;
+    Dl_info interrupted = {0};
+    uintptr_t pc = ((uintptr_t)(uint32_t)pc_high << 32) | (uint32_t)pc_low;
+    dladdr((const void *)pc, &interrupted);
     fprintf(record, "{\"ready\":true,\"filled\":%zu,\"drained\":%zu,"
             "\"signals\":%d,\"stream_error\":%d,\"provider_status\":%d,"
-            "\"prefill_remaining\":%zu,\"drain_error\":%d,\"payload_size\":%zu}\n",
+            "\"prefill_remaining\":%zu,\"drain_error\":%d,\"payload_size\":%zu,"
+            "\"interrupted_symbol\":\"%s\"}\n",
             filled, drained, (int)delivered, stream_error, status,
-            (size_t)restart_remaining, (int)drain_error, payload_size);
+            (size_t)restart_remaining, (int)drain_error, payload_size,
+            interrupted.dli_sname ? interrupted.dli_sname : "unresolved");
     if (fclose(record)) return 125;
     free(payload);
     return status;

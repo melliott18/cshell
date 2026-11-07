@@ -685,7 +685,10 @@ The profile builds private ed, xargs, m4 and patch executables offline, alongsid
 sources are retained. `vendor/xargs` derives from FreeBSD commit
 `16a79708d089423ec0c3d32f25e7ca97ae58e97b`; each source retains its license.
 `vendor/m4` retains the complete GNU M4 1.4.20 source archive and GPL-3.0-or-later
-COPYING, plus a reviewable patch for FIFO wrap processing and error status.
+COPYING, plus a reviewable patch for FIFO wrap processing, error status,
+locale-aware len/index/substr/translit character operations and overflow-safe
+substring bounds. Interior translit hyphen ranges retain GNU extension semantics;
+leading and trailing hyphens use the POSIX literal-character behavior.
 Each directory's `provenance.json` records upstream hashes and local changes. These are independent host processes, never linked into cshell.
 
 The ed adapter emits the exact POSIX SIGINT stdout marker. The xargs adapter

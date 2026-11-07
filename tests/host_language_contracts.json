@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "scope": "Bounded operation contracts in C locale plus one UTF-8 regex witness; complete normative pages remain open.",
+  "scope": "Bounded operation contracts in C and selected UTF-8 cases; complete normative pages remain open. The separate multibyte audit retains required provider failures.",
   "owner": "CSH-074",
   "pages": [
     {
@@ -1848,8 +1848,20 @@
           "section": "ENVIRONMENT VARIABLES",
           "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html#tag_20_74_08",
           "disposition": "unqualified",
-          "witnesses": [],
-          "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Locale precedence, non-C collation/encoding, NLSPATH/catalogs and other listed variables remain unqualified.",
+          "witnesses": [
+            "m4/multibyte-length",
+            "m4/multibyte-combining-count",
+            "m4/multibyte-index",
+            "m4/multibyte-index-missing-empty",
+            "m4/multibyte-substring",
+            "m4/multibyte-substring-large-count",
+            "m4/multibyte-transliteration",
+            "m4/multibyte-transliteration-wide",
+            "m4/multibyte-transliteration-delete",
+            "m4/multibyte-transliteration-edge-hyphen",
+            "m4/multibyte-substring-large-count-C"
+          ],
+          "reason": "LC_ALL=C and private HOME/TMPDIR are supplied. Selected en_US.UTF-8 len/index/substr/translit character semantics are checked. Locale precedence, other encodings, NLSPATH/catalogs and other listed variables remain unqualified.",
           "owner": "CSH-074"
         },
         {
@@ -1923,7 +1935,18 @@
             "m4/substr-nonnumeric",
             "m4/wrap-rescan-order",
             "m4/wrap-many",
-            "m4/mkstemp-unique"
+            "m4/mkstemp-unique",
+            "m4/multibyte-length",
+            "m4/multibyte-combining-count",
+            "m4/multibyte-index",
+            "m4/multibyte-index-missing-empty",
+            "m4/multibyte-substring",
+            "m4/multibyte-substring-large-count",
+            "m4/multibyte-transliteration",
+            "m4/multibyte-transliteration-wide",
+            "m4/multibyte-transliteration-delete",
+            "m4/multibyte-transliteration-edge-hyphen",
+            "m4/multibyte-substring-large-count-C"
           ],
           "reason": "Selected language/algorithm operations only; remaining grammar, commands, expressions and interactions remain unqualified.",
           "owner": "CSH-074"
@@ -1989,7 +2012,18 @@
         "m4/substr-nonnumeric",
         "m4/wrap-rescan-order",
         "m4/wrap-many",
-        "m4/mkstemp-unique"
+        "m4/mkstemp-unique",
+        "m4/multibyte-length",
+        "m4/multibyte-combining-count",
+        "m4/multibyte-index",
+        "m4/multibyte-index-missing-empty",
+        "m4/multibyte-substring",
+        "m4/multibyte-substring-large-count",
+        "m4/multibyte-transliteration",
+        "m4/multibyte-transliteration-wide",
+        "m4/multibyte-transliteration-delete",
+        "m4/multibyte-transliteration-edge-hyphen",
+        "m4/multibyte-substring-large-count-C"
       ],
       "open_contracts": []
     },
@@ -2709,6 +2743,213 @@
       "disposition": "selected-contract",
       "reason": "Required in default suite. Private GNU M4 repairs wrap ordering and error status; mkstemp file effects are independently asserted.",
       "owner": "CSH-074"
+    }
+  ],
+  "multibyte_audit": [
+    {
+      "id": "awk/multibyte-length-substr-index",
+      "utility": "awk",
+      "clauses": [
+        "String Functions",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html"
+    },
+    {
+      "id": "awk/multibyte-match-positions",
+      "utility": "awk",
+      "clauses": [
+        "String Functions",
+        "Regular Expressions",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html"
+    },
+    {
+      "id": "awk/multibyte-global-dot",
+      "utility": "awk",
+      "clauses": [
+        "String Functions",
+        "Regular Expressions",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/awk.html"
+    },
+    {
+      "id": "bc/multibyte-literal-string",
+      "utility": "bc",
+      "clauses": [
+        "Lexical Conventions in bc",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/bc.html"
+    },
+    {
+      "id": "ed/multibyte-substitute-dot",
+      "utility": "ed",
+      "clauses": [
+        "Regular Expressions in ed",
+        "Substitute Command",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html"
+    },
+    {
+      "id": "ed/multibyte-backreference",
+      "utility": "ed",
+      "clauses": [
+        "Regular Expressions in ed",
+        "Substitute Command",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html"
+    },
+    {
+      "id": "expr/multibyte-match-length",
+      "utility": "expr",
+      "clauses": [
+        "Matching Expression",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html"
+    },
+    {
+      "id": "expr/multibyte-capture",
+      "utility": "expr",
+      "clauses": [
+        "Matching Expression",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/expr.html"
+    },
+    {
+      "id": "grep/multibyte-ere-interval",
+      "utility": "grep",
+      "clauses": [
+        "DESCRIPTION",
+        "OPTIONS",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html"
+    },
+    {
+      "id": "grep/multibyte-case-fold",
+      "utility": "grep",
+      "clauses": [
+        "DESCRIPTION",
+        "OPTIONS",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/grep.html"
+    },
+    {
+      "id": "m4/multibyte-length",
+      "utility": "m4",
+      "clauses": [
+        "EXTENDED DESCRIPTION",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html"
+    },
+    {
+      "id": "m4/multibyte-combining-count",
+      "utility": "m4",
+      "clauses": [
+        "EXTENDED DESCRIPTION",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html"
+    },
+    {
+      "id": "m4/multibyte-index",
+      "utility": "m4",
+      "clauses": [
+        "EXTENDED DESCRIPTION",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html"
+    },
+    {
+      "id": "m4/multibyte-index-missing-empty",
+      "utility": "m4",
+      "clauses": [
+        "EXTENDED DESCRIPTION",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html"
+    },
+    {
+      "id": "m4/multibyte-substring",
+      "utility": "m4",
+      "clauses": [
+        "EXTENDED DESCRIPTION",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html"
+    },
+    {
+      "id": "m4/multibyte-substring-large-count",
+      "utility": "m4",
+      "clauses": [
+        "EXTENDED DESCRIPTION",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html"
+    },
+    {
+      "id": "m4/multibyte-transliteration",
+      "utility": "m4",
+      "clauses": [
+        "EXTENDED DESCRIPTION",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html"
+    },
+    {
+      "id": "m4/multibyte-transliteration-wide",
+      "utility": "m4",
+      "clauses": [
+        "EXTENDED DESCRIPTION",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html"
+    },
+    {
+      "id": "m4/multibyte-transliteration-edge-hyphen",
+      "utility": "m4",
+      "clauses": [
+        "EXTENDED DESCRIPTION",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html"
+    },
+    {
+      "id": "m4/multibyte-transliteration-delete",
+      "utility": "m4",
+      "clauses": [
+        "EXTENDED DESCRIPTION",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html"
+    },
+    {
+      "id": "m4/multibyte-substring-large-count-C",
+      "utility": "m4",
+      "clauses": [
+        "EXTENDED DESCRIPTION",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/m4.html"
+    },
+    {
+      "id": "xargs/multibyte-quoted-arguments",
+      "utility": "xargs",
+      "clauses": [
+        "DESCRIPTION",
+        "STDIN",
+        "ENVIRONMENT VARIABLES"
+      ],
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/xargs.html"
     }
   ]
 }

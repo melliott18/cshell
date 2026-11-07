@@ -177,7 +177,7 @@ def main():
         rows.extend(run_boundaries(binary, args.path, identity, args.fixture_root, args.capacity_root, args.audit))
     totals = {state.lower(): sum(row['verdict'] == state for row in rows) for state in ('PASS','FAIL','UNAVAILABLE')}
     group_totals = {}
-    for group in ('transformations', 'offsets', 'large-inputs', 'interruptions'):
+    for group in ('transformations', 'offsets', 'large-inputs', 'interruptions', 'streaming'):
         members = [row for row in rows if row.get('category', row.get('case', {}).get('category')) == group]
         group_totals[group] = {state.lower(): sum(row['verdict'] == state for row in members)
                                for state in ('PASS', 'FAIL', 'UNAVAILABLE')}

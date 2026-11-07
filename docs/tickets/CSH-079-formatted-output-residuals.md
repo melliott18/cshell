@@ -45,7 +45,7 @@ manifest links this boundary without rewriting the historical observations.
 
 - [x] Account for each retained condition above separately with new supplied
   capabilities and strict assertions, or an explicit individual disposition.
-- [x] Investigate the Darwin near-ARG_MAX low-stack exec failure with kernel/OS
+- [ ] Investigate the Darwin near-ARG_MAX low-stack exec failure with kernel/OS
   identity and owned-process disappearance, including timeout cleanup. Do not
   repeat it on a personal host merely to retry a failed run.
 - [x] Supply independent libc/locale/conversion and signal/error oracles; keep
@@ -163,3 +163,15 @@ historical low-stack investigation. Other locale/format remainders also remain
 owned here. The [continuation evidence and review](../evidence/host-contract-continuation-2026-11-07/README.md)
 provide the reproducer, traces, passing controls and remaining boundaries.
 This ticket is not accepted or closed.
+
+## Streaming and multibyte follow-up (2026-11-07)
+
+Restart witnesses now require SA_SIGINFO instruction-pointer evidence inside
+write, resolved outside the signal handler. All 40 interruption assertions pass
+on native macOS and Debian, and under native ASan/UBSan. A negative control
+rejects alarms delivered outside write. The user has no disposable resettable
+Mac available; no low-stack reproduction was attempted. Darwin libc allocator
+crashes and the other retained obligations remain unresolved. The low-stack
+checkbox is unchecked because a blocker disposition is not completed reproduction.
+
+See the [follow-up evidence and acceptance review](../evidence/host-contract-continuation-2026-11-07/streaming-multibyte/README.md) for commands, identities, failures and remaining work.
