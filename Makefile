@@ -493,14 +493,46 @@ build/host-pax: $(HOST_PAX_SOURCES)
 	cd build/host-pax-build && CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(filter-out -Werror -Wpedantic -Wshadow,$(CFLAGS))" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" sh ../../tools/host-profile/vendor/pax/Build.sh > build.log 2>&1 || { cat build/host-pax-build/build.log; exit 1; }
 	cp build/host-pax-build/pax $@
 
-host-profile: build/host-printf build/host-paths build/host-pax
+build/host-du: tools/host-profile/du.c
+	@mkdir -p build
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
+# GNU cp's decline result is repaired in source, never translated by a wrapper.
+HOST_CP_SOURCES = tools/host-profile/build-cp.sh $(wildcard tools/host-profile/vendor/coreutils/*)
+build/host-cp: $(HOST_CP_SOURCES)
+	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(filter-out -Werror -Wpedantic -Wshadow,$(CFLAGS))" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" sh tools/host-profile/build-cp.sh
+
+# The shared source build produces both programs before either is provisioned.
+build/host-rm: build/host-cp
+	cp build/host-coreutils-build/src/rm $@
+
+# GNU touch plus IANA tzcode supplies Issue 8 signed/next-day TZ transitions.
+build/host-touch: build/host-cp tools/host-profile/build-touch.sh $(wildcard tools/host-profile/vendor/tzcode/*)
+	@mkdir -p build/host-tzcode
+	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(filter-out -Werror -Wpedantic -Wshadow,$(CFLAGS))" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" sh tools/host-profile/build-touch.sh > build/host-tzcode/build.log 2>&1 || { tail -80 build/host-tzcode/build.log; exit 1; }
+
+# CSH-107: selected GNU creation utilities honor omitted-who copy assignment.
+build/host-mkdir: build/host-cp
+	$(MAKE) -C build/host-coreutils-build -j4 src/mkdir src/mkfifo > build/host-coreutils-build/creation.log 2>&1 || { cat build/host-coreutils-build/creation.log; exit 1; }
+	cp build/host-coreutils-build/src/mkdir $@
+
+build/host-mkfifo: build/host-mkdir
+	cp build/host-coreutils-build/src/mkfifo $@
+
+# CSH-110: pinned ln preserves a same-entry symbolic source under -fs.
+# Serialize after creation to avoid concurrent writes in the shared build tree.
+build/host-ln: build/host-mkfifo
+	$(MAKE) -C build/host-coreutils-build -j4 src/ln > build/host-coreutils-build/ln.log 2>&1 || { cat build/host-coreutils-build/ln.log; exit 1; }
+	cp build/host-coreutils-build/src/ln $@
+
+host-profile: build/host-ln build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin
 
 build/tests/host_printf_faults: tests/host_printf_faults.c tools/host-profile/printf.c tools/host-profile/vendor/printf.c
 	@mkdir -p $(@D)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_printf_faults.c $(LDLIBS)
 
-test-host-profile: test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
+test-host-profile: test-host-filesystem-allocation test-host-inventory cshell build/tests/host_utility_helper build/tests/host_printf_faults host-profile
 	$(PYTHON) tests/host_utilities.py ./cshell build/tests/host_utility_helper --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults $(HOST_PROFILE_FLAGS) --record build/tests/host-profile-results.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 	$(PYTHON) tests/host_filesystem.py ./cshell --audit --provider-audit --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-profile.json $(HOST_FILESYSTEM_FLAGS) $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
 
@@ -643,3 +675,160 @@ test-host-filesystem-audit: cshell
 .PHONY: test-host-filesystem-provider-audit
 test-host-filesystem-provider-audit: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --extended-only --provider-audit --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-provider-audit.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-080 call-site ENOMEM evidence for the local pathname providers.
+build/tests/host_paths_faults: tests/host_paths_faults.c tools/host-profile/paths.c
+	@mkdir -p $(@D)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ tests/host_paths_faults.c $(LDLIBS)
+
+.PHONY: test-host-filesystem-allocation
+test-host-filesystem-allocation: cshell build/tests/host_paths_faults
+	$(PYTHON) tests/host_filesystem_allocation.py ./cshell build/tests/host_paths_faults --record build/tests/host-filesystem-allocation.json $(if $(findstring -fsanitize,$(LDFLAGS)),--sanitizer)
+
+# CSH-084: independently armed private permission and residual oracles.
+.PHONY: test-host-filesystem-residual
+test-host-filesystem-residual: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --residual-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-residual.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-085: independently measured private graphs and timestamp capabilities.
+.PHONY: test-host-filesystem-isolated
+test-host-filesystem-isolated: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --isolated-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-isolated.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-086: owned terminals and independent overwrite decision effects.
+.PHONY: test-host-filesystem-interactive
+test-host-filesystem-interactive: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --interactive-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-interactive.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-087: independent operand and recursive decision effects.
+.PHONY: test-host-filesystem-decisions
+test-host-filesystem-decisions: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --decisions-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-decisions.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-088: pre-exec metadata and exact timestamp oracles.
+.PHONY: test-host-filesystem-metadata
+test-host-filesystem-metadata: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --metadata-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-metadata.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-089: declined children and bounded nested recursive decisions.
+.PHONY: test-host-filesystem-recursive
+test-host-filesystem-recursive: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --recursive-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-recursive.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-090: independently measured total pathname byte boundaries.
+.PHONY: test-host-filesystem-path-limits
+test-host-filesystem-path-limits: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --path-limits-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-path-limits.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-091: physical cwd resolution after private rename/removal.
+.PHONY: test-host-filesystem-cwd
+test-host-filesystem-cwd: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --cwd-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-cwd.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-092: child-only umask and final symbolic creation-mode witnesses.
+.PHONY: test-host-filesystem-creation
+test-host-filesystem-creation: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --creation-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-creation.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-093: independently armed external pathname utility output errors.
+.PHONY: test-host-filesystem-output
+test-host-filesystem-output: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --output-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-output.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-094: inherited-PWD logical fallback after private rename/removal.
+.PHONY: test-host-filesystem-cwd-logical
+test-host-filesystem-cwd-logical: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --cwd-logical-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-cwd-logical.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-095: authored numeric magic boundaries and first-match precedence.
+.PHONY: test-host-filesystem-magic
+test-host-filesystem-magic: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --magic-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-magic.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-096: independently measured calendar timestamps and field selection.
+.PHONY: test-host-filesystem-calendar
+test-host-filesystem-calendar: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --calendar-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-calendar.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-097: reference timestamps, alias graphs and no-create continuation.
+.PHONY: test-host-filesystem-reference
+test-host-filesystem-reference: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --reference-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-reference.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-098: date syntax, exact fractional seconds and fixed timezone interpretation.
+.PHONY: test-host-filesystem-datetime
+test-host-filesystem-datetime: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --datetime-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-datetime.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-099: explicit daylight-saving rules with independently authored UTC fields.
+.PHONY: test-host-filesystem-timezone
+test-host-filesystem-timezone: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --timezone-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-timezone.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-100: Julian and zero-based day rules across leap/common years.
+.PHONY: test-host-filesystem-day-rules
+test-host-filesystem-day-rules: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --day-rules-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-day-rules.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-101: nondefault transition clocks and sub-hour daylight offsets.
+.PHONY: test-host-filesystem-transition-times
+test-host-filesystem-transition-times: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --transition-times-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-transition-times.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-102: authored string escapes, numeric offsets and EOF boundaries.
+.PHONY: test-host-filesystem-magic-strings
+test-host-filesystem-magic-strings: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --magic-strings-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-magic-strings.json $(HOST_FILESYSTEM_FLAGS)
+
+# Pinned file/libmagic with bounded message-format and one-byte input repairs.
+build/host-file: tools/host-profile/build-file.sh $(wildcard tools/host-profile/vendor/file/*)
+	CC="$(CC)" CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(filter-out -Werror -Wpedantic -Wshadow,$(CFLAGS))" LDFLAGS="$(LDFLAGS)" LIBS="$(LDLIBS)" sh tools/host-profile/build-file.sh
+
+.PHONY: test-host-filesystem-magic-messages
+test-host-filesystem-magic-messages: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --magic-messages-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-magic-messages.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-magic-types
+test-host-filesystem-magic-types: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --magic-types-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-magic-types.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-magic-defaults
+test-host-filesystem-magic-defaults: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --magic-defaults-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-magic-defaults.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-link-bytes
+test-host-filesystem-link-bytes: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --link-bytes-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-link-bytes.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-107: omitted-who symbolic creation modes under independently proved masks.
+.PHONY: test-host-filesystem-omitted-who
+test-host-filesystem-omitted-who: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --omitted-who-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-omitted-who.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-108: bounded mkdir -p graphs and preserved existing objects.
+.PHONY: test-host-filesystem-parent-graphs
+test-host-filesystem-parent-graphs: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --parent-graphs-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-parent-graphs.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-109: rmdir parent graphs and independently proved ancestor denial.
+.PHONY: test-host-filesystem-removal
+test-host-filesystem-removal: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --removal-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-removal.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-110: ln destination graphs and collision continuation.
+.PHONY: test-host-filesystem-link-graphs
+test-host-filesystem-link-graphs: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --link-graphs-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-link-graphs.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-111: independently proved private ln permission boundaries.
+.PHONY: test-host-filesystem-link-permissions
+test-host-filesystem-link-permissions: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --link-permissions-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-link-permissions.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-touch-permissions
+test-host-filesystem-touch-permissions: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --touch-permissions-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-touch-permissions.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-touch-current
+test-host-filesystem-touch-current: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --touch-current-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-touch-current.json $(HOST_FILESYSTEM_FLAGS)

@@ -1,0 +1,242 @@
+{
+  "system": "Linux",
+  "path": "/work/build/host-profile/bin",
+  "executables": {
+    "printf": {
+      "override": true,
+      "target": "/work/build/host-printf",
+      "realpath": "/work/build/host-printf",
+      "sha256": "b7b299c28d9ea58a8de32ee0f52590398ea284234055dab038809c2f67a29f04"
+    },
+    "echo": {
+      "override": false,
+      "target": "/bin/echo",
+      "realpath": "/usr/bin/echo",
+      "sha256": "06b166eee3ef88d62a7174a4a03a42416d959fb4bd05754d597365f89b9cd984"
+    },
+    "test": {
+      "override": false,
+      "target": "/bin/test",
+      "realpath": "/usr/bin/test",
+      "sha256": "db7c4676eac33eadb8e908c3d540254f23d7902521d1a4622ebb5439001f097b"
+    },
+    "[": {
+      "override": false,
+      "target": "/bin/[",
+      "realpath": "/usr/bin/[",
+      "sha256": "fd8f74b04e8fc3410818605f34382b7da516d386fc14d566040ee61d75623b09"
+    },
+    "true": {
+      "override": false,
+      "target": "/bin/true",
+      "realpath": "/usr/bin/true",
+      "sha256": "dfd1b0241759344063bd5052622d90910c53084234a26f19527d150da3e43d4b"
+    },
+    "false": {
+      "override": false,
+      "target": "/bin/false",
+      "realpath": "/usr/bin/false",
+      "sha256": "903ccf165f04653d2717e8589cdee1a09a5c0aecfa5dfd8ea1e02050aca43e3e"
+    },
+    "pwd": {
+      "override": false,
+      "target": "/bin/pwd",
+      "realpath": "/usr/bin/pwd",
+      "sha256": "57a579e9fbdc1393dafc4e7532b3cc2b1515d6e40b043443da8548313d0d793b"
+    },
+    "kill": {
+      "override": true,
+      "target": "/bin/busybox",
+      "realpath": "/usr/bin/busybox",
+      "sha256": "fe2939a5a1ca79ae7df6ee715fea8f946a7cade6d8a558a25f2d4a60320b7248"
+    },
+    "cat": {
+      "override": false,
+      "target": "/bin/cat",
+      "realpath": "/usr/bin/cat",
+      "sha256": "491ea6f9b1804d893d660477e6873855b28271c018b13f086c2fc419d51560bb"
+    },
+    "env": {
+      "override": false,
+      "target": "/bin/env",
+      "realpath": "/usr/bin/env",
+      "sha256": "67a8c7fac47281a5ee335366bcd12f31aa7eeca008cef6eccad38304753ddee9"
+    },
+    "find": {
+      "override": false,
+      "target": "/bin/find",
+      "realpath": "/usr/bin/find",
+      "sha256": "02953b247cc5538ed853c4a21d50dd789a964b21ae9908c0dfdf46358188f9fe"
+    },
+    "ls": {
+      "override": false,
+      "target": "/bin/ls",
+      "realpath": "/usr/bin/ls",
+      "sha256": "8d0a90d5aa1f9151e09f0550a9db8522c0a9a035633de3d94debd2701299a255"
+    },
+    "stty": {
+      "override": false,
+      "target": "/bin/stty",
+      "realpath": "/usr/bin/stty",
+      "sha256": "5a31ff763d7618f975e1a7fd11d0537dac76db6e6ff0157bcf7a2497ac803b38"
+    },
+    "ed": {
+      "override": false,
+      "target": "/bin/ed",
+      "realpath": "/usr/bin/ed",
+      "sha256": "0aa4cddab76c0ed02d50894b9c719527f5d0fc4fb55ce7ec6a9c05ac174324dd"
+    },
+    "sed": {
+      "override": false,
+      "target": "/bin/sed",
+      "realpath": "/usr/bin/sed",
+      "sha256": "b5d4c730f921851b46db74b6a3d84e99c6a0e3797ba126061be24b4d86878f61"
+    },
+    "head": {
+      "override": false,
+      "target": "/bin/head",
+      "realpath": "/usr/bin/head",
+      "sha256": "d46405d797a24d1e9844039634f7ca28b62a995bd1529fd15ca1fddbd9cd3b73"
+    },
+    "cmp": {
+      "override": false,
+      "target": "/bin/cmp",
+      "realpath": "/usr/bin/cmp",
+      "sha256": "2f7b69a504f687fdc54ea05e3d89c16d13c79a9078036e0bfca7792d2ae3846c"
+    },
+    "chmod": {
+      "override": false,
+      "target": "/bin/chmod",
+      "realpath": "/usr/bin/chmod",
+      "sha256": "ca00b5e3f39f71555b48b45effd7be511d3e73d87a767579bc10aff81bf02bc6"
+    },
+    "rm": {
+      "override": false,
+      "target": "/bin/rm",
+      "realpath": "/usr/bin/rm",
+      "sha256": "dc7b54162ea7f69fb0b84a0f99bc88c0d91319d964c358008c388b2ba27394d0"
+    },
+    "sleep": {
+      "override": false,
+      "target": "/bin/sleep",
+      "realpath": "/usr/bin/sleep",
+      "sha256": "17a623f303e2489770e64a9eab9420c66e576ec5ad215ea7c46ec392a2212f49"
+    },
+    "sh": {
+      "override": false,
+      "target": "/bin/sh",
+      "realpath": "/usr/bin/dash",
+      "sha256": "15fc4c72f49c86639a383121eec6fbdbcd32ec9d03db915cb3096928295e1a17"
+    },
+    "basename": {
+      "override": false,
+      "target": "/bin/basename",
+      "realpath": "/usr/bin/basename",
+      "sha256": "75c41954f12dbfd2a3c36a0a80279656e1c394c8fbf19415f987ea3c5311a0ec"
+    },
+    "dirname": {
+      "override": false,
+      "target": "/bin/dirname",
+      "realpath": "/usr/bin/dirname",
+      "sha256": "40db5e8700922e932aafd7e0251182a70c1197a90946ded544e20a871d73c86a"
+    },
+    "cp": {
+      "override": false,
+      "target": "/bin/cp",
+      "realpath": "/usr/bin/cp",
+      "sha256": "939203c07f6783252aafd545ab03c026c02f198245122564102ba7d652aaecde"
+    },
+    "dd": {
+      "override": false,
+      "target": "/bin/dd",
+      "realpath": "/usr/bin/dd",
+      "sha256": "57e766b90bd8c45b390da857893d13ef2d5af3c42fe95f2cadd31852220c9962"
+    },
+    "df": {
+      "override": false,
+      "target": "/bin/df",
+      "realpath": "/usr/bin/df",
+      "sha256": "cc6f4d541a9f7bd5f668fd3d4e2980de69ed476254ac2a2e488676818801ce60"
+    },
+    "du": {
+      "override": true,
+      "target": "/work/build/host-du",
+      "realpath": "/work/build/host-du",
+      "sha256": "14fef293e3821bee60443595a8318bcb82bd6ca1676ac151fd84266a2368111e",
+      "backend": {
+        "path": "/usr/bin/du",
+        "realpath": "/usr/bin/du",
+        "sha256": "f995bf38c5cc2ef8bc2a922fa451cf8b9fce7992a423a9e6e3fbed97085bb49f",
+        "environment": {
+          "POSIXLY_CORRECT": "1"
+        }
+      }
+    },
+    "file": {
+      "override": false,
+      "target": "/bin/file",
+      "realpath": "/usr/bin/file",
+      "sha256": "19f8ec6c7cb2497d5f34d24ea24786c20857a0f859a9ca022bd77b809729d178"
+    },
+    "ln": {
+      "override": false,
+      "target": "/bin/ln",
+      "realpath": "/usr/bin/ln",
+      "sha256": "770fac0193aa8e7712032c049720f7af0bd4d54b799cb66816b318273535664e"
+    },
+    "mkdir": {
+      "override": false,
+      "target": "/bin/mkdir",
+      "realpath": "/usr/bin/mkdir",
+      "sha256": "8fca34baba116e4e0b099db07b98b066314be0ceee7ae4c2eb2388cfa062c5b0"
+    },
+    "mkfifo": {
+      "override": false,
+      "target": "/bin/mkfifo",
+      "realpath": "/usr/bin/mkfifo",
+      "sha256": "db022d5e11018ab024ba9d2593281619bc07f6708c021faf019a8419b6316323"
+    },
+    "mv": {
+      "override": false,
+      "target": "/bin/mv",
+      "realpath": "/usr/bin/mv",
+      "sha256": "628955ea9db8f8624bfef0f88a56aa90bfaddbfd415631c87204c513d6be77f5"
+    },
+    "pathchk": {
+      "override": false,
+      "target": "/bin/pathchk",
+      "realpath": "/usr/bin/pathchk",
+      "sha256": "7cb693b400c65303ec8be6aed119879a3725abd9687703f2cf1d7d850b0fbbf5"
+    },
+    "pax": {
+      "override": true,
+      "target": "/work/build/host-pax",
+      "realpath": "/work/build/host-pax",
+      "sha256": "487d109697260ebd464fe70c013fdf39e6fc861da0b881767b2da84fd6e84948"
+    },
+    "readlink": {
+      "override": true,
+      "target": "/work/build/host-paths",
+      "realpath": "/work/build/host-paths",
+      "sha256": "9c84539955881e7050f8d8015d24047b90e0350ff8ae5aa5dccaf0d617b809aa"
+    },
+    "realpath": {
+      "override": true,
+      "target": "/work/build/host-paths",
+      "realpath": "/work/build/host-paths",
+      "sha256": "9c84539955881e7050f8d8015d24047b90e0350ff8ae5aa5dccaf0d617b809aa"
+    },
+    "rmdir": {
+      "override": false,
+      "target": "/bin/rmdir",
+      "realpath": "/usr/bin/rmdir",
+      "sha256": "f409b966ef25d3f736a338bf97327991e0fb35c05b05336ff97502b64c153f66"
+    },
+    "touch": {
+      "override": false,
+      "target": "/bin/touch",
+      "realpath": "/usr/bin/touch",
+      "sha256": "866e7f7d08fc061d62dc5ba5c88785f0ecbcd3eebf3a533ea29b38a462622c42"
+    }
+  }
+}

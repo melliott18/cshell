@@ -1,0 +1,61 @@
+{
+  "source_identity": "6f8c09f34217b6b8cff602346d6cd12e31a755b92234bbb16b958c9f276ba395",
+  "base_commit": "96b1a669c0d619912bd7d1a700ddd3875c7e5583",
+  "selected_dd": {
+    "path": "/usr/local/bin/gdd",
+    "realpath": "/usr/local/Cellar/coreutils/9.3/bin/gdd",
+    "sha256": "372af227768a893416e81c569baf890062a8db1ad851b1828296e29a8bed6bcc",
+    "version": "dd (coreutils) 9.3\nCopyright (C) 2023 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n\nWritten by Paul Rubin, David MacKenzie, and Stuart Kemp.\n",
+    "package_receipt": {
+      "homebrew_version": "4.0.14-44-g22fb173",
+      "used_options": [],
+      "unused_options": [],
+      "built_as_bottle": true,
+      "poured_from_bottle": true,
+      "loaded_from_api": true,
+      "installed_as_dependency": false,
+      "installed_on_request": true,
+      "changed_files": [
+        "ChangeLog"
+      ],
+      "time": 1692909635,
+      "source_modified_time": 1681828338,
+      "compiler": "clang",
+      "aliases": [],
+      "runtime_dependencies": [
+        {
+          "full_name": "gmp",
+          "version": "6.2.1",
+          "declared_directly": true
+        }
+      ],
+      "source": {
+        "spec": "stable",
+        "versions": {
+          "stable": "9.3",
+          "head": null,
+          "version_scheme": 0
+        },
+        "path": "/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/c/coreutils.rb",
+        "tap_git_head": "27d1dfc04ab48bfacc8ecce3680823e5dc72e1ef",
+        "tap": "homebrew/core"
+      },
+      "arch": "x86_64",
+      "built_on": {
+        "os": "Macintosh",
+        "os_version": "macOS 13.3",
+        "cpu_family": "penryn",
+        "xcode": "14.3",
+        "clt": "14.3.0.0.1.1679647830",
+        "preferred_perl": "5.30"
+      }
+    }
+  },
+  "selected_find": {
+    "path": "/Users/mitchell/.codex/worktrees/csh-080-filesystem-contracts/cshell/build/native-findutils/bin/gfind",
+    "sha256": "cc04c2a28dce26e175e85a84d51ec897d0b4d77cb2de0a897602781282338776",
+    "reused_build": "docs/evidence/csh-072/repairs/native-find-build.json",
+    "copied_from": "/Users/mitchell/.codex/worktrees/csh-072-filesystem-paths/cshell/build/native-findutils/bin/gfind"
+  },
+  "docker_image": "sha256:c26f223bf9bf875e44022abb2cb8f5eb5c9377ae7a669d7d132af38f952fe876 linux/arm64"
+}

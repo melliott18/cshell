@@ -1,0 +1,130 @@
+# CSH-099 explicit daylight-saving rule evidence
+
+Collected 2026-10-23 in a separate worktree based on CSH-098 commit `00b1ac1`.
+Integration remains gated on that unmerged dependency.
+
+## Scope and independent oracle
+
+Issue 8 [touch](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html)
+OPTIONS and ENVIRONMENT VARIABLES define local -d/-t interpretation, Z overriding
+TZ, and timestamp field selection. [XBD chapter 8](https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap08.html#tag_08)
+defines offset signs, the default daylight offset, explicit daylight offsets,
+month/week/day rules and a daylight season spanning the end of the year.
+`normative-sources.json` retains both page hashes from direct HTTPS retrieval
+(the web reader returned 403).
+
+`tests/host_filesystem_timezone.py` supplies 104 cases, each run by direct exec
+and cshell string/file/stdin dispatch: 416 assertions per platform. Twelve
+unique local times are supplied in both -d and -t forms, with two additional
+Z overrides during daylight time. Every spelling uses default, access-only,
+modification-only and explicit-both field selection.
+
+The authored zones are `NST5NDT,M3.2.0/2,M11.1.0/2` and
+`SST-10SDT-11,M10.1.0/2,M4.1.0/3`. The first uses the default one-hour daylight
+shift west of UTC; the second uses an explicit offset east of UTC and ends its
+daylight season earlier in the year than it starts. January/July samples and
+unique times before/after each 2024 transition exercise both seasons. Before
+fallback the sample precedes the repeated hour; the first unique time after
+fallback is also checked. No result is asserted for a repeated or skipped time.
+
+Expected UTC calendar fields are authored separately from local input strings.
+Integer Gregorian subtraction supplies Epoch timestamps. Literal epoch constants
+in the harness regression check offset signs, transition dates and year wrap.
+No provider output, timezone database, mktime, date-string parser, floating-point
+timestamp or current clock supplies the oracle.
+
+The shared CSH-098 setup probes exact expected timestamps on the target inode,
+then restores independently distinct fractional baselines and reads both fields
+back. Failed or rounded setup fails before exec. Post-exec metadata is captured
+before content reads; selected and unselected fields, inode identity, mode,
+link count, contents, empty stdout/stderr and zero status must all agree.
+Records retain exact TZ/arguments, probes, provider identity, outputs, effects
+and cleanup. Four new harness regressions cover the independent expectations,
+incorrect fields/identity/content/channels/status, failed/rounded setup and
+failed-exec/timeout cleanup in all four modes. Existing regressions are retained.
+
+These are private ordinary files with representable timestamps. No privileged
+provisioning, libc injection, kernel faults or filesystem exhaustion is involved.
+Skipped/repeated wall times, J/n and other rule forms, geographical timezone
+databases, arbitrary ranges, creation/current clocks, races and permission/ACL
+boundaries remain unqualified. Providers and selected allowances are unchanged.
+
+## Results
+
+All required targets passed on native macOS 14.8.7 arm64 UID 501 and Debian 12
+arm64 Docker UID 10001. Both platforms passed 10 ownership tests and 96 filesystem
+harness tests. All 416 new assertions pass with zero selected-profile allowances.
+Selected filesystem totals are 2603/0 on macOS and 2643/0 on Linux (pass/fail).
+Stock full/provider audits retain exactly CSH-098's failure IDs and modes:
+macOS 73/16 failures and Linux 42/8 failures. Their nonzero statuses remain failures.
+
+| Target/report | macOS pass/fail | Linux pass/fail |
+| --- | --- | --- |
+| host-filesystem-allocation | 240 / 0 | 200 / 0 |
+| host-filesystem-audit | 2510 / 73 | 2577 / 42 |
+| host-filesystem-calendar | 160 / 0 | 160 / 0 |
+| host-filesystem-creation | 104 / 0 | 104 / 0 |
+| host-filesystem-cwd-logical | 48 / 0 | 48 / 0 |
+| host-filesystem-cwd | 32 / 0 | 32 / 0 |
+| host-filesystem-datetime | 256 / 0 | 256 / 0 |
+| host-filesystem-decisions | 68 / 0 | 68 / 0 |
+| host-filesystem-interactive | 39 / 0 | 39 / 0 |
+| host-filesystem-isolated | 112 / 0 | 112 / 0 |
+| host-filesystem-magic | 184 / 0 | 184 / 0 |
+| host-filesystem-metadata | 64 / 0 | 64 / 0 |
+| host-filesystem-output | 32 / 0 | 56 / 0 |
+| host-filesystem-path-limits | 32 / 0 | 32 / 0 |
+| host-filesystem-profile | 2603 / 0 | 2643 / 0 |
+| host-filesystem-provider-audit | 168 / 0 | 184 / 0 |
+| host-filesystem-recursive | 30 / 0 | 30 / 0 |
+| host-filesystem-reference | 112 / 0 | 112 / 0 |
+| host-filesystem-residual | 104 / 0 | 104 / 0 |
+| host-filesystem-stock-provider-audit | 152 / 16 | 176 / 8 |
+| host-filesystem-timezone | 416 / 0 | 416 / 0 |
+| host-profile-results | 1162 / 0 | 1162 / 0 |
+
+Final build/test source digest: `1897da74c93258a8dd0c57b36348230e880af827b91702a072deaea9ccfed482`.
+
+`summary.json` and `stock-failure-comparison.json` are generated by the passing
+verifier. `SHA256SUMS` covers all retained artifacts except this narrative and
+itself. Provider manifests, configure/build logs and image/container identity are
+retained. Historical evidence is unchanged.
+
+## Validation and reproduction
+
+```sh
+# Native PATH must provide gtest, g[, gfind and gdd.
+make -j4 cshell host-profile
+python3 docs/evidence/csh-099/validate.py native
+
+docker build -f docs/evidence/csh-099/Dockerfile.linux -t cshell-test:csh-099 .
+docker create --init --name cshell-csh099-validation cshell-test:csh-099 \
+  python3 docs/evidence/csh-099/validate.py linux
+docker start -a cshell-csh099-validation
+docker cp cshell-csh099-validation:/work/build/csh099-validation ./build/csh099-linux-results
+docker rm cshell-csh099-validation
+
+# Retain the native/Linux records in this directory before verification.
+python3 docs/evidence/csh-099/verify.py
+```
+
+`validate.py` runs every ticket-required target and the new timezone target,
+then separate stock full/provider audits; expected command statuses are 0, 2
+and 1. `verify.py` requires every previous selected assertion, exactly 416 new
+passing assertions, exact timestamps and armed inode probes, channel/status/effect
+checks, cleanup, manifest agreement and one build/test source digest across
+platforms. Stock failure IDs/modes must equal CSH-098 exactly.
+
+Native qualification uses an unprivileged macOS identity. gfind was copied from
+CSH-098's ignored build/local-bin; pinned local providers were rebuilt in this
+worktree. Linux uses the CSH-098 Debian image with the recorded overlay, Docker
+init, UID 10001 and no host mounts. No sanitizer or hosted-CI result is claimed.
+
+## Remaining ownership
+
+[CSH-100](../../tickets/CSH-100-filesystem-environment-residuals.md)
+([#211](https://github.com/melliott18/cshell/issues/211)) retains all 21 utility
+residuals with explicit environments, reasons and utility/libc/platform
+implementation ownership. All four original U-040 conditions remain open.
+This applies the ticket's explicit-disposition alternative, with no whole-utility
+or U-034/U-040 completion claim. Historical evidence remains unchanged.

@@ -1,0 +1,9 @@
+{
+  "image_id": "sha256:c9b349e9294ba796f7210f88f432c684ac49dfa92f125147b1aa8f2fdc2e494d",
+  "base_image_id": "sha256:915d00725a53841a0b1750b4615082974e0a554e1b6d8322fc3a84c0f5c8c46a",
+  "container_image": "sha256:c9b349e9294ba796f7210f88f432c684ac49dfa92f125147b1aa8f2fdc2e494d",
+  "user": "cshell",
+  "init": true,
+  "mounts": [],
+  "docker_version": "24.0.6"
+}

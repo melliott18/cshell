@@ -39,13 +39,16 @@ jobs:
             brew list "$package" >/dev/null 2>&1 || brew install "$package"
           done
       - name: Build selected profile and verify the harness
-        run: make -j2 cshell host-profile test-host-inventory
+        run: make -j2 cshell host-profile test-host-inventory test-host-filesystem-allocation
       - name: Qualify the declared filesystem subset
         run: |
           mkdir -p build/tests
           python3 tests/host_filesystem.py ./cshell --audit --provider-audit \
             --path "$PWD/build/host-profile/bin:$(getconf PATH)" \
             --record build/tests/filesystem-selected.json 2>&1 | tee build/tests/filesystem-selected.log
+      - name: Audit full stock profile (strict diagnostic run)
+        continue-on-error: true
+        run: make test-host-filesystem-audit 2>&1 | tee build/tests/filesystem-stock-audit.log
       - name: Audit stock vendor contracts (strict diagnostic run)
         continue-on-error: true
         run: |
@@ -60,4 +63,5 @@ jobs:
           path: |
             build/tests/filesystem-*.json
             build/tests/filesystem-*.log
+            build/tests/host-filesystem-*.json
             build/host-profile/manifest.json

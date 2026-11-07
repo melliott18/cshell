@@ -1,0 +1,11 @@
+{
+  "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html",
+  "sha256": "44451db47f43a6dfb058b6e8f71aee7db1fec99961573246380f7deb0c54bc9f",
+  "bytes": 10270,
+  "sections": [
+    "DESCRIPTION",
+    "OPTIONS",
+    "EXIT STATUS",
+    "CONSEQUENCES OF ERRORS"
+  ]
+}

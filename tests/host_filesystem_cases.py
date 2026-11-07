@@ -131,6 +131,7 @@ def setup(directory, row):
     (directory / 'ascii').write_bytes(b'abcdefgh')
     (directory / 'empty').touch()
     (directory / 'tree').mkdir()
+    (directory / 'tree').chmod(0o700)
     (directory / 'tree/leaf').write_bytes(b'leaf\n')
     (directory / 'tree/link').symlink_to('../data')
     (directory / 'link').symlink_to('data')
@@ -175,7 +176,8 @@ def setup(directory, row):
             archive.addfile(info, io.BytesIO(data))
     from host_filesystem_extended import setup as extended_setup
     extended_setup(directory, row)
-    return cwd
+    from host_filesystem_remaining import setup as remaining_setup
+    return remaining_setup(directory, row) or cwd
 
 
 def effect_errors(directory, row):
@@ -189,7 +191,8 @@ def effect_errors(directory, row):
                       else 'link' if stat.S_ISLNK(info.st_mode) else 'fifo' if stat.S_ISFIFO(info.st_mode) else 'other',
                       'mode': stat.S_IMODE(info.st_mode), 'size': info.st_size, 'nlink': info.st_nlink,
                       'uid': info.st_uid, 'gid': info.st_gid,
-                      'atime': int(info.st_atime), 'mtime': int(info.st_mtime)}
+                      'atime': int(info.st_atime), 'mtime': int(info.st_mtime),
+                      'atime_ns': info.st_atime_ns, 'mtime_ns': info.st_mtime_ns}
             if 'owner_of' in expected:
                 other = (directory / expected['owner_of']).lstat()
                 actual['owner_of'] = expected['owner_of'] if (info.st_uid, info.st_gid) == (other.st_uid, other.st_gid) else None

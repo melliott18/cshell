@@ -1,0 +1,6 @@
+{
+  "source": "/Users/mitchell/.codex/worktrees/csh-101-filesystem-environments/cshell/build/local-bin/gfind",
+  "destination": "/Users/mitchell/.codex/worktrees/csh-102/cshell/build/local-bin/gfind",
+  "sha256": "cc04c2a28dce26e175e85a84d51ec897d0b4d77cb2de0a897602781282338776",
+  "version": "find (GNU findutils) 4.10.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n\nWritten by Eric B. Decker, James Youngman, and Kevin Dalley.\nFeatures enabled: D_TYPE O_NOFOLLOW(enabled) LEAF_OPTIMISATION FTS(FTS_CWDFD) CBO(level=1) \n"
+}
