@@ -8,6 +8,10 @@
 - Branch: test/CSH-074-host-languages-editors
 - Issue: [#146](https://github.com/melliott18/cshell/issues/146)
 
+## Acceptance review (2026-11-07)
+
+Not accepted. Complete-page coverage remains open, including further patch prompts, locale/default behavior and additional language/editor contracts. This ticket still owns those remainders. See the [acceptance review](acceptance-review-2026-11-07.md) for validation and limitations.
+
 ## Goal
 
 Qualify host languages, editors and argument construction for the selected POSIX.1-2024 base profile. This is an

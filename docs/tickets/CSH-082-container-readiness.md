@@ -1,12 +1,16 @@
 # CSH-082: Prepare application containers for Pipeline
 
-- Status: review
+- Status: done
 - Type: fix
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-039
 - Branch: `fix/CSH-082-container-readiness`
 - Issue: [#169](https://github.com/melliott18/cshell/issues/169)
+
+## Acceptance review (2026-11-07)
+
+Accepted for the documented scope after review of the criteria, merged implementation, retained platform evidence and residual ownership. The implementation and its dependency commits are ancestors of main. Earlier statements that integration is pending describe the pre-merge history and are superseded by this acceptance. Acceptance covers container preparation and handoff documentation; platform registration, other architectures and release/POSIX qualification remain outside this ticket. See the [acceptance review](acceptance-review-2026-11-07.md) for validation and limitations.
 
 ## Goal
 

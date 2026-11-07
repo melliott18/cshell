@@ -1,12 +1,16 @@
 # CSH-113: Supply remaining filesystem environments after touch permission qualification
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-112
 - Branch: `test/CSH-113-filesystem-environments`
 - Issue: [#237](https://github.com/melliott18/cshell/issues/237)
+
+## Acceptance review (2026-11-07)
+
+Accepted for the documented scope after review of the criteria, merged implementation, retained platform evidence and residual ownership. The implementation and its dependency commits are ancestors of main. Earlier statements that integration is pending describe the pre-merge history and are superseded by this acceptance. All remaining filesystem contracts continue through the recorded handoffs to open CSH-114; accepting this ticket does not qualify full utility pages or close those residuals. See the [acceptance review](acceptance-review-2026-11-07.md) for validation and limitations.
 
 ## Goal
 
@@ -109,7 +113,7 @@ comparisons. The initial timeout-reporting harness failure is retained under
 
 All 21 utility dispositions and four original U-040 conditions remain explicitly
 open in the local [CSH-114 follow-up](CSH-114-filesystem-environment-residuals.md),
-whose GitHub allocation is pending. Utility/libc/platform vendors retain their
+now allocated as [#240](https://github.com/melliott18/cshell/issues/240). Utility/libc/platform vendors retain their
 implementation ownership. U-034/U-040 stay partial. No shell/runtime or provider
 change, new sanitizer run or separately hosted native-Linux run is claimed.
 This ticket is ready for review; it is not integrated into `main`.

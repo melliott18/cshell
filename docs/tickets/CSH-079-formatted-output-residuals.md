@@ -9,6 +9,10 @@
 - Issue: [#157](https://github.com/melliott18/cshell/issues/157)
 - Pull request: [#175](https://github.com/melliott18/cshell/pull/175)
 
+## Acceptance review (2026-11-07)
+
+Not accepted. The checked criteria cover a bounded investigation and individual dispositions. The ticket explicitly retains Darwin libc-internal allocation, other locale/format/signal partitions and the unresolved original low-stack observation; it is not ready for whole-ticket closure. See the [acceptance review](acceptance-review-2026-11-07.md) for validation and limitations.
+
 ## Goal
 
 Own each full-page and environmental remainder after the bounded

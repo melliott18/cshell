@@ -1,12 +1,16 @@
 # CSH-077: Qualify host terminal and session utilities
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
 - Branch: test/CSH-077-host-terminal-utilities
 - Issue: [#149](https://github.com/melliott18/cshell/issues/149)
+
+## Acceptance review (2026-11-07)
+
+Accepted for the documented scope after review of the criteria, merged implementation, retained platform evidence and residual ownership. The implementation and its dependency commits are ancestors of main. Earlier statements that integration is pending describe the pre-merge history and are superseded by this acceptance. The section-map criterion is satisfied through its explicit individual-disposition alternative; full remaining terminal/session contracts and physical hardware requirements stay open under CSH-081. See the [acceptance review](acceptance-review-2026-11-07.md) for validation and limitations.
 
 ## Goal
 
@@ -57,7 +61,7 @@ profiles and executable/environment identities, remains unchanged.
 
 - [x] Select each required exec-accessible provider, supply missing packages/services,
   and retain exact PATH, realpath, executable hash, package and environment identity.
-- [ ] Map every applicable page section and common default to clause-derived
+- [x] Map every applicable page section and common default to clause-derived
   assertions or an individually justified disposition; repair required-contract
   failures. Selected examples alone do not complete a utility contract.
 - [x] Resolve each assigned retained condition with its required capability and

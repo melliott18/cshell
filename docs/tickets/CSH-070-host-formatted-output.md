@@ -1,12 +1,16 @@
 # CSH-070: Qualify host printf and echo contracts
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-052, CSH-056
 - Branch: test/CSH-070-host-formatted-output
 - Issue: [#142](https://github.com/melliott18/cshell/issues/142)
+
+## Acceptance review (2026-11-07)
+
+Accepted for the documented scope after review of the criteria, merged implementation, retained platform evidence and residual ownership. The implementation and its dependency commits are ancestors of main. Earlier statements that integration is pending describe the pre-merge history and are superseded by this acceptance. Remaining formatted-output contracts stay open under CSH-079. See the [acceptance review](acceptance-review-2026-11-07.md) for validation and limitations.
 
 ## Goal
 

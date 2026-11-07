@@ -1,12 +1,16 @@
 # CSH-104: Supply remaining filesystem environments after magic-message qualification
 
-- Status: review
+- Status: done
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-103
 - Branch: `test/CSH-104-filesystem-environments`
 - Issue: [#219](https://github.com/melliott18/cshell/issues/219)
+
+## Acceptance review (2026-11-07)
+
+Accepted for the documented scope after review of the criteria, merged implementation, retained platform evidence and residual ownership. The implementation and its dependency commits are ancestors of main. Earlier statements that integration is pending describe the pre-merge history and are superseded by this acceptance. All remaining filesystem contracts continue through the recorded handoffs to open CSH-114; accepting this ticket does not qualify full utility pages or close those residuals. See the [acceptance review](acceptance-review-2026-11-07.md) for validation and limitations.
 
 ## Goal
 

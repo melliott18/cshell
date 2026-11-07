@@ -8,6 +8,10 @@
 - Branch: test/CSH-073-host-text-streams
 - Issue: [#145](https://github.com/melliott18/cshell/issues/145)
 
+## Acceptance review (2026-11-07)
+
+Not accepted. Complete-page and common-default coverage, plus remaining retained text/byte conditions, are still owned here. The repaired finite audits do not complete these acceptance criteria. The automatic issue closure during PR integration is corrected by reopening #145. See the [acceptance review](acceptance-review-2026-11-07.md) for validation and limitations.
+
 ## Goal
 
 Qualify host text and byte stream utilities for the selected POSIX.1-2024 base profile. This is an
