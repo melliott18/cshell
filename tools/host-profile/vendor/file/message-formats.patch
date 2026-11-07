@@ -38,7 +38,24 @@
  			qsort(mset[j].me, mset[j].count, sizeof(*mset[0].me),
  			    apprentice_sort);
  
-@@ -2647,7 +2642,7 @@
+@@ -2277,7 +2272,15 @@
+ 		 * SUS string type if it begins with "s".  In any case,
+ 		 * it's not unsigned.
+ 		 */
+-		m->type = get_type(type_tbl, l, &l);
++		/* POSIX textual magic spells native dL as "long". Keep the
++		 * vendor's four-byte keyword when compiling its system database. */
++		if (action == FILE_LOAD && strncmp(l, "long", 4) == 0 &&
++		    (isspace(CAST(unsigned char, l[4])) || l[4] == '&')) {
++			m->type = sizeof(long) == 8 ? FILE_QUAD :
++			    sizeof(long) == 4 ? FILE_LONG : FILE_INVALID;
++			l += 4;
++		} else
++			m->type = get_type(type_tbl, l, &l);
+ 		if (m->type == FILE_INVALID) {
+ 			/*
+ 			 * Not a keyword type; parse it as an SUS type,
+@@ -2647,7 +2650,7 @@
  			}
  		} else
  			h = 0;
@@ -47,7 +64,7 @@
  			ptr++;
  #define CHECKLEN() do { \
  	for (len = cnt = 0; isdigit(CAST(unsigned char, *ptr)); ptr++, cnt++) \
-@@ -2721,7 +2716,8 @@
+@@ -2721,7 +2724,8 @@
  			}
  #endif
  		case 'c':
@@ -57,7 +74,7 @@
  				return 0;
  			goto invalid;
  		case 'i':
-@@ -2806,9 +2802,15 @@
+@@ -2806,9 +2810,15 @@
  	char *ptr;
  	const char *estr;
  
@@ -76,7 +93,7 @@
  	if (*ptr == '\0') {
  		/* No format string; ok */
  		return 1;
-@@ -2841,6 +2843,10 @@
+@@ -2841,6 +2851,10 @@
  
  	for (; *ptr; ptr++) {
  		if (*ptr == '%') {
@@ -87,7 +104,7 @@
  			file_magwarn(ms,
  			    "Too many format strings (should have at most one) "
  			    "for `%s' with description `%s'",
-@@ -2944,7 +2950,8 @@
+@@ -2944,7 +2958,8 @@
  			for (q = *p; isspace(CAST(unsigned char, *q)); q++)
  				continue;
  			if (*q == '-' && ull != UINT64_MAX)

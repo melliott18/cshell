@@ -1,11 +1,11 @@
 # CSH-105: Supply remaining filesystem environments after portable numeric magic qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-104
-- Branch: Assigned when work starts
+- Branch: test/CSH-105-filesystem-environments
 - Issue: [#221](https://github.com/melliott18/cshell/issues/221)
 
 ## Goal
@@ -56,10 +56,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -68,7 +68,7 @@ test-host-filesystem-provider-audit test-host-filesystem-residual
 test-host-filesystem-isolated test-host-filesystem-interactive
 test-host-filesystem-decisions test-host-filesystem-metadata
 test-host-filesystem-recursive test-host-filesystem-path-limits test-host-filesystem-cwd
-test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times test-host-filesystem-magic-strings test-host-filesystem-magic-messages test-host-filesystem-magic-types` on native macOS and Linux as an unprivileged
+test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times test-host-filesystem-magic-strings test-host-filesystem-magic-messages test-host-filesystem-magic-types test-host-filesystem-magic-defaults` on native macOS and Linux as an unprivileged
 fixture identity. Retain separate nonzero stock `make test-host-filesystem-audit`
 and stock `tests/host_filesystem.py --extended-only --provider-audit` records.
 Add bounded setup/failure/timeout cleanup regressions for new environments.
@@ -126,3 +126,43 @@ CSH-103 supplies 108 file magic-message cases / 432 assertions for native signed
 
 CSH-104 supplies 360 portable numeric magic cases / 1440 assertions for dC/dS/dI/dL and uC/uS/uI/uL, their explicit byte-count forms, signed extrema, unsigned high-bit ranges, comparisons, hexadecimal/octal masks and constants, bit tests and incomplete fields. Native C ABI widths and independently authored integer bytes supply the oracle; exact channels/status and unchanged inputs are required. The pinned file provider repairs native long type selection, rejection of truncated eight-byte values and signed-minimum parsing without overflow. Default d/u widths, the long keyword alias, further numeric/message combinations, cross-database -m/-M/-d precedence, default classification, encodings/locales and utility resource failures remain unqualified.
 All four original conditions remain open. Utility/libc/platform vendors retain implementation ownership.
+
+## Implementation scope
+
+CSH-105 supplies 280 file cases / 1120 assertions for default d/u (the selected provider uses native int/unsigned int) and byte/short/long aliases, at top level and in continuations. Native ABI widths and independent integer bytes cover signed extrema, unsigned high-bit comparisons, masks, bit tests, every truncated length and trailing bytes. The selected provider repairs textual long to mean native dL while retaining the vendor compiled-database encoding. Exact channels/status and unchanged inputs are required.
+
+Further numeric/message combinations, cross-database -m/-M/-d precedence, default classification, encodings/locales and utility resource failures remain unqualified. All 21 utility dispositions and four original U-040 conditions transfer individually to [CSH-106](CSH-106-filesystem-environment-residuals.md). Integration remains gated on CSH-104.
+
+## Validation record
+
+Implemented in the separate managed worktree on `test/CSH-105-filesystem-environments`,
+based on CSH-104 commit `9d37825`. [Retained evidence](../evidence/csh-105/README.md)
+includes native macOS and unprivileged Debian/Linux Docker runs, exact provider
+and build identities, channels/status/effects, setup and cleanup.
+
+The selected filesystem profiles pass 6855/6895 assertions on macOS/Linux,
+including all 1120 new assertions; both general host profiles pass 1162 with
+zero gaps. Both pass 10 ownership and 120 filesystem harness tests, 3950 runtime
+cases and 33 terminal cases. The 93-test harness suite passes on both (one
+Darwin-only skip on Linux). Focused file/libmagic ASan/UBSan passes 3540 magic
+assertions, 14 format checks and five compiled-database checks on each platform.
+No whole-project sanitizer or hosted native-Linux run is claimed.
+
+A pre-existing metadata-timeout assertion raced container-init reaping. Two
+isolated failures recorded SIGKILL zombies adopted by PID 1; a controlled
+subreaper reproduced the failure. The assertion now requires PID disappearance
+within a bounded two-second reaping window. Original failures and a passing
+controlled delayed-reaper check remain in the evidence.
+
+The verifier passes: every CSH-104 selected expectation and stock failure is
+preserved, all fixture cleanup succeeds, and final source/provider identities
+match. Stock full/provider failures remain 681/16 on macOS and 578/8 on Linux;
+unpatched file 5.46 retains 308 failures in the new cases on each platform.
+The preceding selected provider has 112 new failures on macOS. The bundled
+compiled database is byte-for-byte unchanged. No allowances are introduced.
+
+The explicit-disposition alternative transfers all 21 unsupplied utility
+contracts and four original U-040 conditions to [CSH-106](CSH-106-filesystem-environment-residuals.md)
+([#223](https://github.com/melliott18/cshell/issues/223)). U-034/U-040 remain
+partial. Integration remains gated on CSH-104; review status does not mark
+that dependency or this ticket integrated.
