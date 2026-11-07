@@ -35,3 +35,8 @@
 
 !docs/evidence/csh-100/
 !docs/evidence/csh-100/validate.py
+
+!docs/evidence/csh-101/
+!docs/evidence/csh-101/validate.py
+!docs/evidence/csh-101/sanitize.py
+!docs/evidence/csh-101/supplement.py

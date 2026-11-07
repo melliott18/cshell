@@ -1,0 +1,41 @@
+...EEEE
+======================================================================
+ERROR: test_touch_current_partial_setup_exec_and_timeout_cleanup (test_host_filesystem.FilesystemHarnessTests.test_touch_current_partial_setup_exec_and_timeout_cleanup) (mode='direct', fault='timeout')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/mitchell/.codex/worktrees/csh-113-filesystem-environments/cshell/tests/test_host_filesystem.py", line 721, in check_fixture_exec_failure_and_timeout_clean_all_modes
+    self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                                                ~~~~~~^^^^^^^^^^
+KeyError: 'errors'
+
+======================================================================
+ERROR: test_touch_current_partial_setup_exec_and_timeout_cleanup (test_host_filesystem.FilesystemHarnessTests.test_touch_current_partial_setup_exec_and_timeout_cleanup) (mode='string', fault='timeout')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/mitchell/.codex/worktrees/csh-113-filesystem-environments/cshell/tests/test_host_filesystem.py", line 721, in check_fixture_exec_failure_and_timeout_clean_all_modes
+    self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                                                ~~~~~~^^^^^^^^^^
+KeyError: 'errors'
+
+======================================================================
+ERROR: test_touch_current_partial_setup_exec_and_timeout_cleanup (test_host_filesystem.FilesystemHarnessTests.test_touch_current_partial_setup_exec_and_timeout_cleanup) (mode='file', fault='timeout')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/mitchell/.codex/worktrees/csh-113-filesystem-environments/cshell/tests/test_host_filesystem.py", line 721, in check_fixture_exec_failure_and_timeout_clean_all_modes
+    self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                                                ~~~~~~^^^^^^^^^^
+KeyError: 'errors'
+
+======================================================================
+ERROR: test_touch_current_partial_setup_exec_and_timeout_cleanup (test_host_filesystem.FilesystemHarnessTests.test_touch_current_partial_setup_exec_and_timeout_cleanup) (mode='stdin', fault='timeout')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/mitchell/.codex/worktrees/csh-113-filesystem-environments/cshell/tests/test_host_filesystem.py", line 721, in check_fixture_exec_failure_and_timeout_clean_all_modes
+    self.assertTrue(any('timeout' in e for e in record['errors']), record)
+                                                ~~~~~~^^^^^^^^^^
+KeyError: 'errors'
+
+----------------------------------------------------------------------
+Ran 4 tests in 21.504s
+
+FAILED (errors=4)

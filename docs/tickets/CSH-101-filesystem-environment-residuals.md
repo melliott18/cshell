@@ -1,12 +1,13 @@
 # CSH-101: Supply remaining filesystem environments after Julian and numbered daylight-saving rule qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-100
-- Branch: Assigned when work starts
+- Branch: test/CSH-101-filesystem-environments
 - Issue: [#213](https://github.com/melliott18/cshell/issues/213)
+- Pull request: [#216](https://github.com/melliott18/cshell/pull/216)
 
 ## Goal
 
@@ -56,10 +57,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -115,3 +116,35 @@ CSH-098 supplies 64 touch date-form cases / 256 assertions for period/comma frac
 CSH-099 supplies 104 touch cases / 416 assertions for unique local times around explicit northern and southern POSIX M-rule daylight-saving transitions, seasonal offsets, -d/-t forms and Z overriding daylight time. Independently authored UTC fields and exact inode timestamp probes supply the oracle; all four field selections require unchanged identity/mode/content and empty channels. Skipped/repeated times, other rule forms, timezone databases, arbitrary ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified. All four original U-040 conditions remain open.
 
 CSH-100 supplies 128 touch cases / 512 assertions for explicit POSIX Jn and zero-based n daylight-saving rules across common and leap years, including default 02:00 transitions and unique times before/after the authored changes. Independently authored UTC fields and exact target-inode timestamp probes supply the oracle for -d/-t and all four field selections. Skipped/repeated times, arbitrary rule values and transition times, timezone databases, timestamp ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified. All four original U-040 conditions remain open.
+
+## Implementation scope
+
+CSH-101 supplies 96 touch cases / 384 assertions for explicit M/J/n transition clocks, minute/second standard and daylight offsets, 45-minute-10-second and 30-minute-15-second advances, and negative/next-day transition times. Independently authored UTC fields and exact target-inode probes supply the oracle for -d/-t and all four field selections. Skipped/repeated times, arbitrary rules and offsets, timezone databases, timestamp ranges, creation/current-time tolerances, races and permission/ACL errors remain unqualified.
+
+The remaining 21 utility dispositions and four retained U-040 conditions transfer to
+[CSH-102](CSH-102-filesystem-environment-residuals.md). Utility/libc/platform vendors
+retain implementation ownership. Integration remains gated on CSH-100.
+
+The selected touch provider is GNU coreutils 9.7 linked with pinned IANA tzcode 2025b. Both Apple touch and the installed GNU touch using Darwin conversion return wrong timestamps for the authored previous-day start and next-day end boundaries (64 stock assertions). Preserve these failures separately and require all 384 new assertions without allowances for the selected provider. The replacement does not qualify arbitrary timezone rules or databases.
+
+## Validation record
+
+Implemented in a separate managed worktree on `test/CSH-101-filesystem-environments`,
+based on CSH-100 commit `4bd700f`. [Retained evidence](../evidence/csh-101/README.md)
+contains exact commands, setup probes, channels/status/effects, cleanup, provider
+and build provenance, stock failures, sanitizer scope and corrected initial failures.
+
+Native macOS and unprivileged Linux/Docker pass all required selected targets,
+including 384 new assertions per platform and 3499/3539 full filesystem assertions.
+The general profile passes 1162 assertions each. Both pass 3950 runtime cases,
+33 runtime PTY cases, and 93 harness tests (one Darwin-only test skipped on Linux).
+Focused IANA conversion ASan/UBSan runs pass 384 assertions per platform.
+All 10 ownership and 104 filesystem harness tests pass. The retained verifier
+confirms unchanged prior expected values and stock failures; native stock adds
+64 timestamp failures, with no selected-profile allowance. No hosted-CI or
+whole-provider sanitizer result is claimed.
+
+The explicit-disposition alternative is used for every remaining environment;
+[CSH-102](CSH-102-filesystem-environment-residuals.md) ([#215](https://github.com/melliott18/cshell/issues/215))
+retains all 21 utility rows and four original open conditions. No whole utility
+or U-034/U-040 completion claim is made. Integration still depends on CSH-100.
