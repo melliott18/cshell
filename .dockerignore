@@ -48,3 +48,6 @@
 # Shared accounting inputs required by the integrated qualification profiles.
 !docs/host-locale-catalogs.md
 !docs/tickets/allocations.json
+
+!docs/evidence/csh-115/
+!docs/evidence/csh-115/validate.py

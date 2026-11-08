@@ -345,3 +345,9 @@ records the completed implementation milestone and combined evidence.
 and pathname residuals, including case, read and alias utilities. Its condition
 map assigns external prerequisites P1–P6 without promoting whole families or
 counting unavailable capabilities as passes.
+
+### CSH-115 ls allocation increment
+
+CSH-115 supplies 20 ls cases / 80 assertions for -s -k and -k -s allocation reporting on empty, regular, seek-created, hard-linked, directory, FIFO and symlink objects; -H/-L operand following and C-sorted multiple operands retain per-name hard-link counts. Independent pre-exec lstat allocation and stat alias probes supply 1024-byte counts, with unchanged metadata, bytes, links, channels/status and cleanup required. The selected unmodified GNU coreutils 9.7 ls replaces Apple ls, whose -H block count uses the link instead of its referent. Default -s units are implementation-defined and are not qualified. Sparse allocation is reported only where measured; no shared-extent, capacity, rounding-boundary or general filesystem accounting claim is made.
+
+U-034/U-040 remain partial. [CSH-116](tickets/CSH-116-filesystem-environment-residuals.md) owns all 21 full utility contracts and four retained conditions. See [CSH-115 evidence](evidence/csh-115/README.md).

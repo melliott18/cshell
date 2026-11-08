@@ -551,7 +551,12 @@ build/host-mv: build/host-ln
 	env -u MAKEFLAGS -u MFLAGS -u MAKEOVERRIDES $(MAKE) -C build/host-coreutils-build -j4 src/mv > build/host-coreutils-build/mv.log 2>&1 || { cat build/host-coreutils-build/mv.log; exit 1; }
 	cp build/host-coreutils-build/src/mv $@
 
-host-profile: build/host-bc build/host-mv build/host-awk build/host-uudecode build/host-ed build/host-xargs build/host-m4 build/host-patch build/host-test build/host-chmod build/host-newgrp build/host-ln build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
+# CSH-115: pinned ls follows operand links for -H block accounting.
+build/host-ls: build/host-mv
+	env -u MAKEFLAGS -u MFLAGS -u MAKEOVERRIDES $(MAKE) -C build/host-coreutils-build -j4 src/ls > build/host-coreutils-build/ls.log 2>&1 || { cat build/host-coreutils-build/ls.log; exit 1; }
+	cp build/host-coreutils-build/src/ls $@
+
+host-profile: build/host-ls build/host-bc build/host-mv build/host-awk build/host-uudecode build/host-ed build/host-xargs build/host-m4 build/host-patch build/host-test build/host-chmod build/host-newgrp build/host-ln build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin --cc="$(CC)" --cppflags="$(CPPFLAGS)" --cflags="$(CFLAGS)" --ldflags="$(LDFLAGS)" --ldlibs="$(LDLIBS)" $(if $(HOST_TEXT_PROVIDER_BIN),--text-bin "$(HOST_TEXT_PROVIDER_BIN)")
 
 build/host-chmod: tools/host-profile/chmod.c
@@ -1185,3 +1190,7 @@ build/host-bc: tools/host-profile/build_bc.py $(wildcard tools/host-profile/vend
 .PHONY: test-host-filesystem-touch-objects
 test-host-filesystem-touch-objects: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --touch-objects-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-touch-objects.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-ls-blocks
+test-host-filesystem-ls-blocks: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --ls-blocks-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-ls-blocks.json $(HOST_FILESYSTEM_FLAGS)

@@ -121,6 +121,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-081](CSH-081-host-terminal-residual-contracts.md) | Qualify residual terminal and session contracts | [CSH-077](CSH-077-host-terminal-utilities.md) | [#159](https://github.com/melliott18/cshell/issues/159) |
 
 | [CSH-115](CSH-115-filesystem-environment-residuals.md) | Supply remaining filesystem environments after touch object qualification | [CSH-114](CSH-114-filesystem-environment-residuals.md) | [#242](https://github.com/melliott18/cshell/issues/242) |
+| [CSH-116](CSH-116-filesystem-environment-residuals.md) | Supply remaining filesystem environments after ls block-allocation qualification | [CSH-115](CSH-115-filesystem-environment-residuals.md) | [#244](https://github.com/melliott18/cshell/issues/244) |
 
 ## Child implementation tickets
 
