@@ -1945,3 +1945,7 @@ JUnit stage reports, restricted test-container command, and runtime-image checks
 
 
 `make test-host-filesystem-touch-objects` checks CSH-114 directory/FIFO timestamps and namespace-error continuation in direct execution and all shell input modes. See [CSH-114 evidence](evidence/csh-114/README.md).
+
+### Measured ls block allocation
+
+`make test-host-filesystem-ls-blocks` runs 20 CSH-115 cases in four dispatch modes. Independent pre-exec lstat and stat probes supply the explicit `-k` block counts, link identities and unchanged-object oracle. The runner records whether the seek-created file is physically sparse. Default units, directory totals, shared extents and capacity limits remain open. The pinned GNU ls is selected; stock Darwin -H failures remain in the separate audit. Five harness tests cover counts/order, channels/effects, partial setup, failed exec and bounded timeout cleanup.

@@ -783,3 +783,7 @@ sources are retained, so Bison is unnecessary for builds. Linux selects the
 pinned shared coreutils mv with declined-interactive success, preserving actual
 move failures. Vendor build subprocesses discard outer Make overrides so -B and
 -Werror cannot override their configured flags; instrumentation flags remain.
+
+## ls block allocation
+
+CSH-115 selects unmodified GNU coreutils 9.7 `ls` from the existing checksum-pinned source build on both platforms. Apple `ls -H -d -s -k` reports the symlink block count instead of the referent count. The manifest records the source archive hash, configure flags, `src/ls` target, build log and executable hash. The new 80 assertions retain stock failures and qualify only explicit 1024-byte allocation on the measured private graph; default units and directory totals remain open.

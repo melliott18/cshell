@@ -64,6 +64,7 @@ def provision(destination, gnu_bin=None, text_bin=None, catalog_bin=None, cc="cc
                  'newgrp': str(ROOT / 'build/host-newgrp'),
                  'test': str(ROOT / 'build/host-test'), '[': str(ROOT / 'build/host-test'),
                  'ln': str(ROOT / 'build/host-ln'),
+                 'ls': str(ROOT / 'build/host-ls'),
                  'mkdir': str(ROOT / 'build/host-mkdir'),
                  'mkfifo': str(ROOT / 'build/host-mkfifo'),
                  'file': str(ROOT / 'build/host-file'),
@@ -200,6 +201,13 @@ def provision(destination, gnu_bin=None, text_bin=None, catalog_bin=None, cc="cc
         configure=manifest['executables']['cp']['source']['configure'],
         build_targets=['src/ln'], log='build/host-coreutils-build/ln.log',
         scope='unmodified ln from the shared pinned source build')
+    manifest['executables']['ls']['source'] = dict(
+        version='GNU coreutils 9.7',
+        archive=manifest['executables']['cp']['source']['archive'],
+        archive_sha256=manifest['executables']['cp']['source']['archive_sha256'],
+        configure=manifest['executables']['cp']['source']['configure'],
+        build_targets=['src/ls'], log='build/host-coreutils-build/ls.log',
+        scope='unmodified ls from the shared pinned source build')
     manifest['executables']['touch']['source'] = dict(
         version='GNU coreutils 9.7 + IANA tzcode 2025b',
         coreutils_archive_sha256=manifest['executables']['cp']['source']['archive_sha256'],
