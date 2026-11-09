@@ -1194,3 +1194,7 @@ test-host-filesystem-touch-objects: cshell host-profile
 .PHONY: test-host-filesystem-ls-blocks
 test-host-filesystem-ls-blocks: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --ls-blocks-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-ls-blocks.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-ls-totals
+test-host-filesystem-ls-totals: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --ls-totals-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-ls-totals.json $(HOST_FILESYSTEM_FLAGS)

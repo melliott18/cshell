@@ -34,6 +34,7 @@ import host_filesystem_touch_permissions as touch_permissions
 import host_filesystem_touch_current as touch_current
 import host_filesystem_touch_objects as touch_objects
 import host_filesystem_ls_blocks as ls_blocks
+import host_filesystem_ls_totals as ls_totals
 import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
 import host_filesystem_magic_strings as magic_strings
@@ -956,6 +957,121 @@ class FilesystemHarnessTests(unittest.TestCase):
                     self.assertLess(time.monotonic(), deadline, 'timed-out provider was not reaped')
                     time.sleep(.02)
                 self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_ls_totals_matrix_and_all_modes(self):
+        rows = list(ls_totals.cases())
+        self.assertEqual(len(rows), 32)
+        self.assertEqual(len({r['id'] for r in rows}), 32)
+        for row in rows:
+            original = copy.deepcopy(row)
+            for mode in ('direct', 'string', 'file', 'stdin'):
+                with self.subTest(case=row['id'], mode=mode), tempfile.TemporaryDirectory() as root, \
+                        patch('host_filesystem.smoke.capture', side_effect=self.ls_total_capture(row)):
+                    record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                      os.defpath, row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS', record)
+                    self.assertEqual(record['ls_total_environment']['before'], record['ls_total_observed'])
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+                    self.assertEqual(row, original)
+                    json.dumps(record)
+
+    @staticmethod
+    def ls_total_capture(row, fault=None):
+        # Independent traversal of actual fixture entries, not expected_sections.
+        def capture(binary, invocation, cwd, *args, **kwargs):
+            spec = row['ls_totals']
+            paths = sorted(set(arg for arg in row['args'] if arg.startswith('totals/')))
+            if '-R' in row['args']:
+                paths.append('totals/tree/child')
+            sections = []
+            for path in paths:
+                entries = sorted((cwd / path).iterdir())
+                entries = [p for p in entries if spec['hidden'] or not p.name.startswith('.')]
+                values = [(p.name, (p.stat() if spec['follow'] else p.lstat()).st_blocks) for p in entries]
+                total = (sum(b for n, b in values) + 1) // 2
+                section = f'{path}:\n' if len(paths) > 1 else ''
+                section += f'total {total}\n'
+                section += ''.join(f'{(b + 1) // 2} {n}\n' for n, b in values)
+                sections.append(section)
+            output = '\n'.join(sections).encode()
+            if fault == 'total': output = output.replace(b'total ', b'total 999', 1)
+            if fault == 'header': output = output.replace(b'totals/tree:', b'totals/wrong:')
+            if fault == 'order': output = b'\n'.join(reversed(output.split(b'\n')))
+            if fault == 'missing': output = output.replace(b'0 empty\n', b'', 1)
+            if fault == 'extra': output += b'0 extra\n'
+            if fault == 'newline': output = output.rstrip(b'\n')
+            if fault == 'bytes': (cwd / 'totals/tree/regular').write_bytes(b'X' * len(ls_totals.FILES['tree/regular']))
+            if fault == 'mode': (cwd / 'totals/tree/empty').chmod(0o777)
+            if fault == 'entries': (cwd / 'totals/vacant/extra').touch()
+            if fault == 'link':
+                (cwd / 'totals/tree/symbol').unlink()
+                (cwd / 'totals/tree/symbol').symlink_to('empty')
+            return (1 if fault == 'status' else 0,
+                    dict(stdout=output, stderr=b'wrong' if fault == 'stderr' else b''), [])
+        return capture
+
+    def test_ls_totals_reject_bad_output_and_changed_objects(self):
+        row = next(r for r in ls_totals.cases() if r['id'].endswith('hidden-logical-recursive'))
+        for fault in ('total', 'header', 'order', 'missing', 'extra', 'newline',
+                      'bytes', 'mode', 'entries', 'link', 'status', 'stderr'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=self.ls_total_capture(row, fault)):
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_totals_sum_before_rounding_and_count_each_name(self):
+        # Synthetic odd counts exercise arithmetic without claiming the host
+        # physically supplies odd 512-byte allocation boundaries.
+        before = {name: dict(blocks=0) for name in ls_totals.NAMES}
+        before['tree/regular']['blocks'] = before['tree/hard']['blocks'] = 3
+        before['tree/symbol']['blocks'] = 1
+        before['tree/.hidden']['blocks'] = 5
+        before['tree/child/leaf']['blocks'] = 99
+        before['tree']['blocks'] = 99
+        spec = dict(graph='single', hidden=False, follow=False)
+        section = ls_totals.expected_sections(before, spec)[0]
+        self.assertEqual(section['total'], 4)  # ceil((3+3+1)/2), not 2+2+1
+        self.assertEqual(section['entries'], [('child', 0), ('empty', 0), ('fifo', 0),
+                                             ('hard', 2), ('regular', 2), ('symbol', 1)])
+        spec['hidden'] = True
+        self.assertEqual(ls_totals.expected_sections(before, spec)[0]['total'], 6)
+        spec['follow'] = True
+        self.assertEqual(ls_totals.expected_sections(before, spec)[0]['total'], 7)
+        recursive = ls_totals.expected_sections(before, dict(spec, graph='recursive'))
+        environment = dict(sections=recursive)
+        output = b''
+        for index, section in enumerate(recursive):
+            if index: output += b'\n'
+            output += (section['directory'] + ':\n' + f"total {section['total']}\n").encode()
+            output += b''.join(f'{count} {name}\n'.encode() for name, count in section['entries'])
+        self.assertTrue(ls_totals.output_matches(environment, output))
+        self.assertTrue(ls_totals.output_matches(environment, output.removeprefix(b'totals/tree:\n')))
+        self.assertFalse(ls_totals.output_matches(environment, output.replace(b'totals/tree/child:\n', b'')))
+        empty = ls_totals.expected_sections(before, dict(spec, graph='empty'))
+        self.assertTrue(ls_totals.output_matches(dict(sections=empty), b'total 0\n'))
+        self.assertFalse(ls_totals.output_matches(dict(sections=empty), b''))
+
+    def test_ls_totals_partial_setup_and_failed_probes_never_execute(self):
+        row = next(ls_totals.cases())
+        for target, replacement in (('os.mkfifo', OSError('controlled FIFO setup failure')),
+                                    ('os.geteuid', lambda: 0),
+                                    ('measurements', OSError('controlled metadata failure'))):
+            with self.subTest(target=target), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem_ls_totals.' + target, side_effect=replacement), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                capture.assert_not_called()
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'), record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_totals_failed_exec_and_timeout_cleanup(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(ls_totals.cases()))
 
     def test_ls_blocks_matrix_and_all_modes(self):
         rows = list(ls_blocks.cases())
@@ -2815,7 +2931,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -2945,6 +3061,8 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         entry = next(r for r in ledger['utilities'] if r['utility'] == 'ls')
         self.assertEqual(set(entry['csh115_assertions']), {r['id'] for r in ls_blocks.cases()})
         self.assertTrue(set(entry['csh115_assertions']) <= set(entry['assertions']))
+        self.assertEqual(set(entry['csh116_assertions']), {r['id'] for r in ls_totals.cases()})
+        self.assertTrue(set(entry['csh116_assertions']) <= set(entry['assertions']))
         manifest = json.loads((root / 'host_contracts.json').read_text())
         conditions = {c for owner in manifest['owners'] if 'basename' in owner['utilities'] for c in owner['conditions']}
         self.assertEqual({r['id'] for r in ledger['conditions']}, conditions)
@@ -3063,7 +3181,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

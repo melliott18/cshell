@@ -1949,3 +1949,7 @@ JUnit stage reports, restricted test-container command, and runtime-image checks
 ### Measured ls block allocation
 
 `make test-host-filesystem-ls-blocks` runs 20 CSH-115 cases in four dispatch modes. Independent pre-exec lstat and stat probes supply the explicit `-k` block counts, link identities and unchanged-object oracle. The runner records whether the seek-created file is physically sparse. Default units, directory totals, shared extents and capacity limits remain open. The pinned GNU ls is selected; stock Darwin -H failures remain in the separate audit. Five harness tests cover counts/order, channels/effects, partial setup, failed exec and bounded timeout cleanup.
+
+`make test-host-filesystem-ls-totals` selects CSH-116: 32 ls cases / 128 assertions
+for directory totals, hidden entries, multiple operands, recursive sections and
+symlink following. The full selected profile also requires these cases.
