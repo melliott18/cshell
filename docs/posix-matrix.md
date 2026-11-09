@@ -351,3 +351,11 @@ counting unavailable capabilities as passes.
 CSH-115 supplies 20 ls cases / 80 assertions for -s -k and -k -s allocation reporting on empty, regular, seek-created, hard-linked, directory, FIFO and symlink objects; -H/-L operand following and C-sorted multiple operands retain per-name hard-link counts. Independent pre-exec lstat allocation and stat alias probes supply 1024-byte counts, with unchanged metadata, bytes, links, channels/status and cleanup required. The selected unmodified GNU coreutils 9.7 ls replaces Apple ls, whose -H block count uses the link instead of its referent. Default -s units are implementation-defined and are not qualified. Sparse allocation is reported only where measured; no shared-extent, capacity, rounding-boundary or general filesystem accounting claim is made.
 
 U-034/U-040 remain partial. [CSH-116](tickets/CSH-116-filesystem-environment-residuals.md) owns all 21 full utility contracts and four retained conditions. See [CSH-115 evidence](evidence/csh-115/README.md).
+
+## CSH-116 directory allocation totals
+
+CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals with -s -k and -k -s, empty/populated directories, hidden-entry selection with -A, C-sorted multiple operands, recursive sections and -L file-symlink following. Pre-exec lstat allocation and stat alias probes supply 1024-byte totals by summing raw 512-byte counts before rounding, counting each hard-link name and excluding unlisted descendants. Exact section/count/name order, permitted initial recursive heading omission, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Default units, arbitrary graphs, other filesystem accounting policies, shared extents, physical rounding boundaries, capacity, non-C locales and resource failures remain unqualified.
+
+See [CSH-116 evidence](evidence/csh-116/README.md). U-034/U-040 remain partial;
+[CSH-117](tickets/CSH-117-filesystem-environment-residuals.md) owns every remaining
+utility environment and all four retained conditions.

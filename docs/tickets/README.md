@@ -122,6 +122,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 
 | [CSH-115](CSH-115-filesystem-environment-residuals.md) | Supply remaining filesystem environments after touch object qualification | [CSH-114](CSH-114-filesystem-environment-residuals.md) | [#242](https://github.com/melliott18/cshell/issues/242) |
 | [CSH-116](CSH-116-filesystem-environment-residuals.md) | Supply remaining filesystem environments after ls block-allocation qualification | [CSH-115](CSH-115-filesystem-environment-residuals.md) | [#244](https://github.com/melliott18/cshell/issues/244) |
+| [CSH-117](CSH-117-filesystem-environment-residuals.md) | Supply remaining filesystem environments after ls directory-total qualification | [CSH-116](CSH-116-filesystem-environment-residuals.md) | [#246](https://github.com/melliott18/cshell/issues/246) |
 
 ## Child implementation tickets
 
