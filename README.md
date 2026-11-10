@@ -76,6 +76,7 @@ make test-options  # Invocation/set, option effects, and environment interaction
 make test-host-terminal-residuals # Strict residual terminal/locale/error witnesses
 make test-host-filesystem-ls-blocks # Measured ls allocation and operand-link counts
 make test-host-filesystem-ls-totals # Measured directory totals, selection and recursion
+make test-host-filesystem-ls-identity # Measured inode numbers and file-type suffixes
 make test-host-inventory # Complete utility and residual ownership consistency
 make test-host-utilities # Stock-host integration, identities and known gaps
 make test-host-filesystem # Bounded filesystem/pathname provider witnesses

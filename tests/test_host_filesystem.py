@@ -35,6 +35,7 @@ import host_filesystem_touch_current as touch_current
 import host_filesystem_touch_objects as touch_objects
 import host_filesystem_ls_blocks as ls_blocks
 import host_filesystem_ls_totals as ls_totals
+import host_filesystem_ls_identity as ls_identity
 import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
 import host_filesystem_magic_strings as magic_strings
@@ -957,6 +958,117 @@ class FilesystemHarnessTests(unittest.TestCase):
                     self.assertLess(time.monotonic(), deadline, 'timed-out provider was not reaped')
                     time.sleep(.02)
                 self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_ls_identity_matrix_and_all_modes(self):
+        rows = list(ls_identity.cases())
+        self.assertEqual(len(rows), 36)
+        self.assertEqual(len({r['id'] for r in rows}), 36)
+        for row in rows:
+            original = copy.deepcopy(row)
+            for mode in ('direct', 'string', 'file', 'stdin'):
+                with self.subTest(case=row['id'], mode=mode), tempfile.TemporaryDirectory() as root, \
+                        patch('host_filesystem.smoke.capture', side_effect=self.ls_identity_capture(row)):
+                    record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                      os.defpath, row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS', record)
+                    self.assertEqual(record['ls_identity_environment']['before'], record['ls_identity_observed'])
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+                    self.assertEqual(row, original)
+                    json.dumps(record)
+
+    @staticmethod
+    def ls_identity_capture(row, fault=None):
+        # Derive the mock from live directory entries and argv, independently
+        # of the authored name list and expected_entries oracle.
+        def capture(binary, invocation, cwd, *args, **kwargs):
+            argv = row['args']
+            paths = (sorted(cwd / arg for arg in argv if arg.startswith('identity/'))
+                     if '-d' in argv else sorted((cwd / 'identity').iterdir()))
+            lines = []
+            for path in paths:
+                info = (path.stat() if '-L' in argv or ('-H' in argv and '-d' in argv) else path.lstat())
+                mode = info.st_mode
+                suffix = ''
+                if '-F' in argv:
+                    if stat.S_ISDIR(mode): suffix = '/'
+                    elif stat.S_ISFIFO(mode): suffix = '|'
+                    elif stat.S_ISLNK(mode): suffix = '@'
+                    elif mode & 0o111: suffix = '*'
+                elif '-p' in argv and stat.S_ISDIR(mode):
+                    suffix = '/'
+                name = str(path.relative_to(cwd)) if '-d' in argv else path.name
+                lines.append((str(info.st_ino) + ' ' if '-i' in argv else '') + name + suffix + '\n')
+            output = ''.join(lines).encode()
+            if fault == 'inode': output = b'999999' + output
+            if fault == 'suffix': output = output.replace(b'link-dir/', b'link-dir@')
+            if fault == 'order': output = ''.join(reversed(lines)).encode()
+            if fault == 'missing': output = ''.join(lines[1:]).encode()
+            if fault == 'extra': output += b'extra\n'
+            if fault == 'newline': output = output.rstrip(b'\n')
+            if fault == 'bytes': (cwd / 'identity/regular').write_bytes(b'X' * len(ls_identity.FILES['regular']))
+            if fault == 'mode': (cwd / 'identity/exec-group').chmod(0o600)
+            if fault == 'entries': (cwd / 'identity/directory/extra').touch()
+            if fault == 'link':
+                (cwd / 'identity/link-file').unlink()
+                (cwd / 'identity/link-file').symlink_to('exec-user')
+            return (1 if fault == 'status' else 0,
+                    dict(stdout=output, stderr=b'wrong' if fault == 'stderr' else b''), [])
+        return capture
+
+    def test_ls_identity_reject_bad_output_and_changed_objects(self):
+        row = next(r for r in ls_identity.cases() if r['id'].endswith('F-inode-L-operands'))
+        for fault in ('inode', 'suffix', 'order', 'missing', 'extra', 'newline',
+                      'bytes', 'mode', 'entries', 'link', 'status', 'stderr'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=self.ls_identity_capture(row, fault)):
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_identity_literal_suffix_and_inode_oracle(self):
+        row = next(r for r in ls_identity.cases() if r['id'].endswith('F-inode-H-directory'))
+        with tempfile.TemporaryDirectory() as root:
+            environment = ls_identity.setup(Path(root), row)
+            before = environment['before']
+            entries = {e['name']: e['inode'] for e in environment['entries']}
+            self.assertEqual(set(entries), {'.hidden', 'directory/', 'exec-group*', 'exec-other*',
+                                           'exec-user*', 'fifo|', 'hard', 'link-dir@', 'link-exec@',
+                                           'link-fifo@', 'link-file@', 'regular'})
+            self.assertEqual(entries['regular'], entries['hard'])
+            self.assertEqual(entries['link-dir@'], before['link-dir']['inode'])
+            spec = dict(row['ls_identity'], graph='operands')
+            entries = {e['name']: e['inode'] for e in ls_identity.expected_entries(before, spec)}
+            self.assertEqual(entries['identity/link-dir/'], before['directory']['inode'])
+            self.assertEqual(entries['identity/link-file'], before['regular']['inode'])
+            self.assertEqual(entries['identity/link-exec*'], before['exec-user']['inode'])
+            self.assertEqual(entries['identity/link-fifo|'], before['fifo']['inode'])
+            self.assertEqual(len(entries), 12)
+            for style in ('p', 'plain'):
+                entries = ls_identity.expected_entries(before, dict(spec, style=style, inode=False))
+                self.assertTrue(all(e['inode'] is None for e in entries))
+                self.assertFalse(any(e['name'].endswith(('*', '@', '|')) for e in entries))
+                self.assertEqual(sum(e['name'].endswith('/') for e in entries), 2 if style == 'p' else 0)
+
+    def test_ls_identity_partial_setup_and_failed_probes_never_execute(self):
+        row = next(ls_identity.cases())
+        for target, replacement in (('os.mkfifo', OSError('controlled FIFO setup failure')),
+                                    ('os.geteuid', lambda: 0),
+                                    ('measurements', OSError('controlled metadata failure'))):
+            with self.subTest(target=target), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem_ls_identity.' + target, side_effect=replacement), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                capture.assert_not_called()
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'), record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_identity_failed_exec_and_timeout_cleanup(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(ls_identity.cases()))
 
     def test_ls_totals_matrix_and_all_modes(self):
         rows = list(ls_totals.cases())
@@ -2931,7 +3043,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -3063,6 +3175,8 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         self.assertTrue(set(entry['csh115_assertions']) <= set(entry['assertions']))
         self.assertEqual(set(entry['csh116_assertions']), {r['id'] for r in ls_totals.cases()})
         self.assertTrue(set(entry['csh116_assertions']) <= set(entry['assertions']))
+        self.assertEqual(set(entry['csh117_assertions']), {r['id'] for r in ls_identity.cases()})
+        self.assertTrue(set(entry['csh117_assertions']) <= set(entry['assertions']))
         manifest = json.loads((root / 'host_contracts.json').read_text())
         conditions = {c for owner in manifest['owners'] if 'basename' in owner['utilities'] for c in owner['conditions']}
         self.assertEqual({r['id'] for r in ledger['conditions']}, conditions)
@@ -3181,7 +3295,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

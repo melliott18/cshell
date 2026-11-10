@@ -1953,3 +1953,12 @@ JUnit stage reports, restricted test-container command, and runtime-image checks
 `make test-host-filesystem-ls-totals` selects CSH-116: 32 ls cases / 128 assertions
 for directory totals, hidden entries, multiple operands, recursive sections and
 symlink following. The full selected profile also requires these cases.
+
+## ls inode numbers and type suffixes
+
+`make test-host-filesystem-ls-identity` selects CSH-117: 36 cases / 144 assertions
+per platform. `-i`, `-F` and `-p` combine directory listings or reversed `-d`
+operands with physical, `-H` and `-L` handling. Independent lstat/stat probes
+measure inode numbers, types and execute bits. Exact output and unchanged
+objects are required, with setup, timeout and cleanup failures remaining fatal.
+See [the evidence](evidence/csh-117/README.md) for the oracle, limits and reproduction.
