@@ -561,3 +561,11 @@ CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals wi
 See [CSH-116 evidence](evidence/csh-116/README.md). U-034/U-040 remain partial;
 [CSH-117](tickets/CSH-117-filesystem-environment-residuals.md) owns every remaining
 utility environment and all four retained conditions.
+
+## CSH-117 inode and file-type rendering
+
+CSH-117 supplies 36 ls cases / 144 assertions for inode numbers (-i) and plain, -F and -p type rendering on regular files, independently set user/group/other execute bits, directories, FIFOs, a hard-link pair and file/directory/executable/FIFO symlinks. C-sorted directory entries and reverse-authored -d operands exercise physical, -H and -L handling. Pre-exec lstat inode/type/mode and stat referent probes supply the oracle. Exact names, suffixes, inode numbers, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Sockets/devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.
+
+See [CSH-117 evidence](evidence/csh-117/README.md). U-034/U-040 remain partial;
+[CSH-118](tickets/CSH-118-filesystem-environment-residuals.md) owns all 21 full
+utility contracts and four retained conditions.
