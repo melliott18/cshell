@@ -1962,3 +1962,7 @@ operands with physical, `-H` and `-L` handling. Independent lstat/stat probes
 measure inode numbers, types and execute bits. Exact output and unchanged
 objects are required, with setup, timeout and cleanup failures remaining fatal.
 See [the evidence](evidence/csh-117/README.md) for the oracle, limits and reproduction.
+
+## Measured socket pathname listings
+
+`make test-host-filesystem-ls-sockets` runs 36 CSH-118 cases in direct exec and cshell string/file/stdin modes (144 assertions). A bounded child binds and closes private AF_UNIX stream/datagram sockets, including an executable-mode socket; relative bind paths avoid temporary-directory socket-address limits. Independent metadata and referent probes check plain/-F/-p output, optional inode columns, and physical/-H/-L handling. Setup, provider failure, timeout, object preservation and cleanup are strict. See [CSH-118 evidence](evidence/csh-118/README.md).

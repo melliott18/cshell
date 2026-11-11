@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+    "tests/host_filesystem.py",
+    "./cshell",
+    "--extended-only",
+    "--provider-audit",
+    "--record",
+    "build/tests/host-filesystem-stock-provider-audit.json"
+  ],
+  "status": 1,
+  "seconds": 1.7852279579965398,
+  "log": "native-command-2.log.gz"
+}

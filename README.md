@@ -95,6 +95,7 @@ make test-host-permissions # Predicate, mode, ownership and identity assertions
 make test-host-terminal # Stock terminal-provider checks (strict failures retained)
 make test-host-terminal-profile # Qualified bounded PTY/session-record checks
 make test-host-profile   # Opt-in qualified utilities, strict gaps and boundaries
+make test-host-filesystem-ls-sockets # Measured socket inode/type rendering
 make test-host-filesystem-removal # rmdir parent graphs, permissions and continuation
 
 make test-host-text      # Strict bounded text/byte utility subset

@@ -1,11 +1,11 @@
 # CSH-118: Supply remaining filesystem environments after ls inode and type qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-117
-- Branch: Assigned when work starts
+- Branch: `test/CSH-118-filesystem-environments`
 - Issue: [#248](https://github.com/melliott18/cshell/issues/248)
 
 ## Goal
@@ -56,10 +56,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -68,10 +68,44 @@ test-host-filesystem-provider-audit test-host-filesystem-residual
 test-host-filesystem-isolated test-host-filesystem-interactive
 test-host-filesystem-decisions test-host-filesystem-metadata
 test-host-filesystem-recursive test-host-filesystem-path-limits test-host-filesystem-cwd
-test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times test-host-filesystem-magic-strings test-host-filesystem-magic-messages test-host-filesystem-magic-types test-host-filesystem-magic-defaults test-host-filesystem-link-bytes test-host-filesystem-omitted-who test-host-filesystem-parent-graphs test-host-filesystem-removal test-host-filesystem-link-graphs test-host-filesystem-link-permissions test-host-filesystem-touch-permissions test-host-filesystem-touch-current test-host-filesystem-touch-objects test-host-filesystem-ls-blocks test-host-filesystem-ls-totals test-host-filesystem-ls-identity` on native macOS and Linux as an unprivileged
+test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times test-host-filesystem-magic-strings test-host-filesystem-magic-messages test-host-filesystem-magic-types test-host-filesystem-magic-defaults test-host-filesystem-link-bytes test-host-filesystem-omitted-who test-host-filesystem-parent-graphs test-host-filesystem-removal test-host-filesystem-link-graphs test-host-filesystem-link-permissions test-host-filesystem-touch-permissions test-host-filesystem-touch-current test-host-filesystem-touch-objects test-host-filesystem-ls-blocks test-host-filesystem-ls-totals test-host-filesystem-ls-identity test-host-filesystem-ls-sockets` on native macOS and Linux as an unprivileged
 fixture identity. Retain separate nonzero stock `make test-host-filesystem-audit`
 and stock `tests/host_filesystem.py --extended-only --provider-audit` records.
 Add bounded setup/failure/timeout cleanup regressions for new environments.
 Use only private disposable filesystems and credentials. Never fill the host
 volume or use protected mounts; `/dev/full` is not filesystem exhaustion.
 Privileged provisioning requires an isolated runner; prompts require owned PTYs.
+
+## Implementation scope
+
+CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.
+
+Implemented in a separate worktree on `test/CSH-118-filesystem-environments`,
+based on CSH-117 commit `de194ba` (PR #249, not yet integrated).
+[CSH-119](CSH-119-filesystem-environment-residuals.md) / [#250](https://github.com/melliott18/cshell/issues/250) owns every remaining contract and all four retained conditions.
+[Evidence](../evidence/csh-118/README.md) records validation and limits.
+
+## Validation result — 2026-11-11
+
+All listed selected targets pass on native macOS 14.8.7 arm64 (uid 501,
+private fixture root gid 20) and unprivileged Linux/Docker aarch64 with glibc
+2.36 (uid 10001). Filesystem profiles pass 12939 / 12979 assertions with zero
+allowances, including 144 new socket assertions per platform. General host
+integration passes 1162 assertions with zero gaps; ownership and filesystem
+harnesses pass 13 and 189 tests. Every predecessor expectation is preserved.
+
+Separate stock audits retain 853 / 578 full-suite failures and 16 / 8 provider
+failures. Native adds exactly 16 socket -H inode/type failures; every previous
+failure persists. Final command statuses are `[0, 2, 1]` on both platforms.
+Evidence verification passes exact source/provider provenance, independent
+measured oracles, channels/status, unchanged objects and cleanup. Initial
+timeout failures and the corrected native temporary-root group are retained
+separately from final passing evidence. Ticket tests (24) and live registry
+validation pass with 119 reservations.
+
+All acceptance criteria are satisfied as bounded qualification plus explicit
+remaining dispositions. CSH-119 owns all remaining contracts and the four
+retained conditions. All 21 full utility contracts and U-034/U-040 remain open
+or partial. CSH-118 is ready for review and is not integrated; CSH-117 is its
+prerequisite. No new sanitizer, standalone runtime/PTY or separately hosted
+native-Linux qualification is claimed.
