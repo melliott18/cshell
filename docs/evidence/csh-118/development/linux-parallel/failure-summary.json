@@ -1,0 +1,13 @@
+[
+  "Ran 13 tests in 1.049s",
+  "Ran 10 tests in 1.533s",
+  "Ran 6 tests in 5.421s",
+  "Ran 10 tests in 0.516s",
+  "Ran 10 tests in 0.359s",
+  "ERROR: test_residual_timeout_cleanup_for_each_environment (__main__.FilesystemHarnessTests.test_residual_timeout_cleanup_for_each_environment) (capability='files')",
+  "ERROR: test_residual_timeout_cleanup_for_each_environment (__main__.FilesystemHarnessTests.test_residual_timeout_cleanup_for_each_environment) (capability='byte_link')",
+  "FAIL: test_parent_graph_timeout_restores_restrictive_tree (__main__.FilesystemHarnessTests.test_parent_graph_timeout_restores_restrictive_tree) (mode='string')",
+  "Ran 189 tests in 249.456s",
+  "FAILED (failures=1, errors=2)",
+  "make: *** [Makefile:742: test-host-inventory] Error 1"
+]

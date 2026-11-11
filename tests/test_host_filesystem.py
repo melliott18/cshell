@@ -36,6 +36,7 @@ import host_filesystem_touch_objects as touch_objects
 import host_filesystem_ls_blocks as ls_blocks
 import host_filesystem_ls_totals as ls_totals
 import host_filesystem_ls_identity as ls_identity
+import host_filesystem_ls_sockets as ls_sockets
 import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
 import host_filesystem_magic_strings as magic_strings
@@ -958,6 +959,164 @@ class FilesystemHarnessTests(unittest.TestCase):
                     self.assertLess(time.monotonic(), deadline, 'timed-out provider was not reaped')
                     time.sleep(.02)
                 self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_ls_sockets_matrix_and_all_modes(self):
+        rows = list(ls_sockets.cases())
+        self.assertEqual(len(rows), 36)
+        self.assertEqual(len({r['id'] for r in rows}), 36)
+        for row in rows:
+            original = copy.deepcopy(row)
+            for mode in ('direct', 'string', 'file', 'stdin'):
+                with self.subTest(case=row['id'], mode=mode), tempfile.TemporaryDirectory() as root, \
+                        patch('host_filesystem.smoke.capture', side_effect=self.ls_sockets_capture(row)):
+                    record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                      os.defpath, row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS', record)
+                    self.assertEqual(record['ls_socket_environment']['before'], record['ls_socket_observed'])
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+                    self.assertEqual(row, original)
+                    json.dumps(record)
+
+    @staticmethod
+    def ls_sockets_capture(row, fault=None):
+        # Derive the mock from live directory entries and argv, independently
+        # of the authored name list and expected_entries oracle.
+        def capture(binary, invocation, cwd, *args, **kwargs):
+            argv = row['args']
+            paths = (sorted(cwd / arg for arg in argv if arg.startswith('sockets/'))
+                     if '-d' in argv else sorted((cwd / 'sockets').iterdir()))
+            lines = []
+            for path in paths:
+                info = (path.stat() if '-L' in argv or ('-H' in argv and '-d' in argv) else path.lstat())
+                mode = info.st_mode
+                suffix = ''
+                if '-F' in argv:
+                    if stat.S_ISDIR(mode): suffix = '/'
+                    elif stat.S_ISSOCK(mode): suffix = '='
+                    elif stat.S_ISLNK(mode): suffix = '@'
+                    elif mode & 0o111: suffix = '*'
+                elif '-p' in argv and stat.S_ISDIR(mode):
+                    suffix = '/'
+                name = str(path.relative_to(cwd)) if '-d' in argv else path.name
+                lines.append((str(info.st_ino) + ' ' if '-i' in argv else '') + name + suffix + '\n')
+            output = ''.join(lines).encode()
+            if fault == 'inode': output = b'999999' + output
+            if fault == 'suffix': output = output.replace(b'link-stream=', b'link-stream@')
+            if fault == 'order': output = ''.join(reversed(lines)).encode()
+            if fault == 'missing': output = ''.join(lines[1:]).encode()
+            if fault == 'extra': output += b'extra\n'
+            if fault == 'newline': output = output.rstrip(b'\n')
+            if fault == 'bytes': (cwd / 'sockets/regular').write_bytes(b'X' * len(ls_sockets.FILES['regular']))
+            if fault == 'mode': (cwd / 'sockets/datagram').chmod(0o600)
+            if fault == 'entries': (cwd / 'sockets/directory/extra').touch()
+            if fault == 'link':
+                (cwd / 'sockets/link-stream').unlink()
+                (cwd / 'sockets/link-stream').symlink_to('regular')
+            return (1 if fault == 'status' else 0,
+                    dict(stdout=output, stderr=b'wrong' if fault == 'stderr' else b''), [])
+        return capture
+
+    def test_ls_sockets_reject_bad_output_and_changed_objects(self):
+        row = next(r for r in ls_sockets.cases() if r['id'].endswith('F-inode-L-operands'))
+        for fault in ('inode', 'suffix', 'order', 'missing', 'extra', 'newline',
+                      'bytes', 'mode', 'entries', 'link', 'status', 'stderr'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=self.ls_sockets_capture(row, fault)):
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_sockets_literal_suffix_and_inode_oracle(self):
+        row = next(r for r in ls_sockets.cases() if r['id'].endswith('F-inode-H-directory'))
+        with tempfile.TemporaryDirectory() as root:
+            environment = ls_sockets.setup(Path(root), row)
+            before = environment['before']
+            entries = {e['name']: e['inode'] for e in environment['entries']}
+            self.assertEqual(set(entries), {'datagram=', 'directory/', 'link-datagram@',
+                                           'link-stream@', 'regular', 'stream='})
+            self.assertEqual(entries['stream='], before['stream']['inode'])
+            self.assertEqual(entries['link-stream@'], before['link-stream']['inode'])
+            self.assertTrue(stat.S_ISSOCK(before['datagram']['mode']))
+            self.assertEqual(stat.S_IMODE(before['datagram']['mode']), 0o700)
+            spec = dict(row['ls_sockets'], graph='operands')
+            entries = {e['name']: e['inode'] for e in ls_sockets.expected_entries(before, spec)}
+            self.assertEqual(entries['sockets/link-stream='], before['stream']['inode'])
+            self.assertEqual(entries['sockets/link-datagram='], before['datagram']['inode'])
+            self.assertEqual(len(entries), 6)
+            for style in ('p', 'plain'):
+                entries = ls_sockets.expected_entries(before, dict(spec, style=style, inode=False))
+                self.assertTrue(all(e['inode'] is None for e in entries))
+                self.assertFalse(any(e['name'].endswith(('*', '@', '=')) for e in entries))
+                self.assertEqual(sum(e['name'].endswith('/') for e in entries), 1 if style == 'p' else 0)
+
+    def test_ls_sockets_partial_setup_and_failed_probes_never_execute(self):
+        row = next(ls_sockets.cases())
+        for target, replacement in (('bind_sockets', OSError('controlled bind setup failure')),
+                                    ('os.geteuid', lambda: 0),
+                                    ('measurements', OSError('controlled metadata failure'))):
+            with self.subTest(target=target), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem_ls_sockets.' + target, side_effect=replacement), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                capture.assert_not_called()
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'), record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_sockets_failed_exec_and_timeout_cleanup(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(ls_sockets.cases()))
+
+    def test_ls_sockets_partial_bind_failure_and_timeout(self):
+        row = next(ls_sockets.cases())
+        for failure in (OSError('second bind failed'), subprocess.TimeoutExpired('bind', 3)):
+            def partial(root):
+                (root / 'stream').touch()
+                raise failure
+            with tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem_ls_sockets.bind_sockets', side_effect=partial), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                capture.assert_not_called()
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_sockets_bind_child_protocol(self):
+        for result in (subprocess.CompletedProcess([], 1, b'', b'failed'),
+                       subprocess.CompletedProcess([], 0, b'wrong', b''),
+                       subprocess.CompletedProcess([], 0, b'bound-and-closed\n', b'warning')):
+            with patch('host_filesystem_ls_sockets.subprocess.run', return_value=result):
+                with self.assertRaises(OSError):
+                    ls_sockets.bind_sockets(Path('/unused'))
+        with tempfile.TemporaryDirectory() as root:
+            cwd = Path.cwd()
+            # The parent pathname deliberately exceeds either platform sun_path.
+            directory = Path(root) / ('x' * 120)
+            directory.mkdir()
+            ls_sockets.bind_sockets(directory)
+            self.assertEqual(Path.cwd(), cwd)
+            for name in ls_sockets.SOCKETS:
+                self.assertTrue(stat.S_ISSOCK((directory / name).lstat().st_mode))
+
+    def test_ls_sockets_real_bind_timeout_reaps_child(self):
+        run = subprocess.run
+        with tempfile.TemporaryDirectory() as root:
+            directory = Path(root)
+            def stalled_bind(argv, **kwargs):
+                return run([sys.executable, '-c',
+                            "import os,time; open('pid','w').write(str(os.getpid())); time.sleep(10)"],
+                           **dict(kwargs, timeout=.2))
+            with patch('host_filesystem_ls_sockets.subprocess.run', side_effect=stalled_bind):
+                with self.assertRaises(subprocess.TimeoutExpired):
+                    ls_sockets.bind_sockets(directory)
+            pid = int((directory / 'pid').read_text())
+            with self.assertRaises(ProcessLookupError):
+                os.kill(pid, 0)
 
     def test_ls_identity_matrix_and_all_modes(self):
         rows = list(ls_identity.cases())
@@ -3043,7 +3202,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -3177,6 +3336,8 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         self.assertTrue(set(entry['csh116_assertions']) <= set(entry['assertions']))
         self.assertEqual(set(entry['csh117_assertions']), {r['id'] for r in ls_identity.cases()})
         self.assertTrue(set(entry['csh117_assertions']) <= set(entry['assertions']))
+        self.assertEqual(set(entry['csh118_assertions']), {r['id'] for r in ls_sockets.cases()})
+        self.assertTrue(set(entry['csh118_assertions']) <= set(entry['assertions']))
         manifest = json.loads((root / 'host_contracts.json').read_text())
         conditions = {c for owner in manifest['owners'] if 'basename' in owner['utilities'] for c in owner['conditions']}
         self.assertEqual({r['id'] for r in ledger['conditions']}, conditions)
@@ -3295,7 +3456,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])
