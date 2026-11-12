@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "ticket": "CSH-118",
+  "ticket": "CSH-119",
   "qualification": "case-scoped only; selected profile requires both ordinary and provider-audit assertions; stock failures remain failures CSH-112 supplies 20 touch cases / 80 assertions for denied ancestor search on existing and missing operands, denied parent write during creation, silent -c suppression, and explicit timestamps on owned non-writable files. All four field selections process accessible operands before and after the middle operand. Independent kernel EACCES probes and exact authored timestamp readback precede exact provider exec. Timestamps, inode identities, modes, link counts, bytes, channels, status, exec records and cleanup are required. CSH-113 supplies 60 touch cases / 240 assertions for current-time existing-file updates, creation and silent -c handling, plus creation with explicit UTC or reference timestamps. All four field selections and child-only masks 027, 077 and 777 require accessible operands before and after the middle operand. Independent kernel creation probes, authored timestamp readback and realtime/monotonic brackets supply the oracles. Current times use a documented one-second lower-bound floor; this is seconds-resolution evidence, not nanosecond accuracy. Exact channels/status, preserved identities/modes/bytes/link counts, created empty-file modes, exec records and cleanup are required. CSH-114 supplies 28 touch cases / 112 assertions for existing directories and FIFOs, directory/FIFO symlink chains, a FIFO hard link, and continued processing after ENOTDIR and ELOOP operands. All four field selections use authored explicit UTC timestamps and distinct fractional baselines. Independent kernel namespace probes and exact timestamp readback precede exact provider exec. Exact channels/status, preserved inode identities, modes, sizes, link counts, bytes, link texts, child contents, exec records and cleanup are required. FIFOs are never opened or used for data transfer. CSH-115 supplies 20 ls cases / 80 assertions for -s -k and -k -s allocation reporting on empty, regular, seek-created, hard-linked, directory, FIFO and symlink objects; -H/-L operand following and C-sorted multiple operands retain per-name hard-link counts. Independent pre-exec lstat allocation and stat alias probes supply 1024-byte counts, with unchanged metadata, bytes, links, channels/status and cleanup required. The selected unmodified GNU coreutils 9.7 ls replaces Apple ls, whose -H block count uses the link instead of its referent. Default -s units are implementation-defined and are not qualified. Sparse allocation is reported only where measured; no shared-extent, capacity, rounding-boundary or general filesystem accounting claim is made. CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals with -s -k and -k -s, empty/populated directories, hidden-entry selection with -A, C-sorted multiple operands, recursive sections and -L file-symlink following. Pre-exec lstat allocation and stat alias probes supply 1024-byte totals by summing raw 512-byte counts before rounding, counting each hard-link name and excluding unlisted descendants. Exact section/count/name order, permitted initial recursive heading omission, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Default units, arbitrary graphs, other filesystem accounting policies, shared extents, physical rounding boundaries, capacity, non-C locales and resource failures remain unqualified. CSH-117 supplies 36 ls cases / 144 assertions for inode numbers (-i) and plain, -F and -p type rendering on regular files, independently set user/group/other execute bits, directories, FIFOs, a hard-link pair and file/directory/executable/FIFO symlinks. C-sorted directory entries and reverse-authored -d operands exercise physical, -H and -L handling. Pre-exec lstat inode/type/mode and stat referent probes supply the oracle. Exact names, suffixes, inode numbers, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Sockets/devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.",
   "common_defaults": {
     "U-034": "Each of the 21 actual providers is inventoried and directly execed, alongside public cshell string/file/stdin dispatch; pwd builtin and external exec remain distinct. CSH-087 terminal sequences use direct exec and cshell string/file modes; two directory replacement cases also use stdin mode. CSH-088 metadata cases use direct exec and all three shell input modes. CSH-089 recursive decisions use direct exec and cshell string/file modes on owned PTYs. CSH-090 path-limit witnesses use direct exec and all three shell input modes. CSH-091 uses a child-only setup helper to exec the external pwd in direct and cshell string/file/stdin modes; these do not test the pwd builtin. CSH-092 execs the exact inventoried mkdir/mkfifo provider after a child-only umask helper, in direct and all three cshell modes. CSH-093 always execs the inventoried external provider after a child-only I/O probe; the pwd builtin is not tested. CSH-094 execs external pwd after the child-only namespace/PWD probe in all four modes. CSH-095 runs the exact inventoried file provider directly and through cshell string/file/stdin dispatch. CSH-096 runs external touch directly and through all three cshell input modes. CSH-097 runs the inventoried external touch provider directly and through string/file/stdin dispatch. CSH-100 runs external touch directly and through cshell string/file/stdin dispatch. CSH-101 runs external touch directly and through cshell string/file/stdin dispatch. CSH-102 runs the inventoried file provider directly and through cshell string/file/stdin modes. CSH-104 runs the exact file provider directly and through all three cshell input modes. CSH-105 runs the exact file provider directly and through cshell string/file/stdin modes. CSH-106 runs the exact readlink provider directly and through cshell string/file/stdin modes. CSH-107 runs exact mkdir/mkfifo providers directly and through cshell string/file/stdin. CSH-110 execs the exact selected ln provider directly and through cshell string/file/stdin. CSH-115 records the pinned GNU ls archive, build flags, log and executable hash.",
@@ -11,7 +11,7 @@
       "utility": "basename",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/basename.html",
       "source_sha256": "76c256427a758fc4388559e7a71fcc9351ed0cfb19afc5af07d38c4cf25c8ab2",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "basename/path-6-620a",
@@ -202,7 +202,7 @@
       "utility": "dirname",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dirname.html",
       "source_sha256": "f218ded1508843cdd90913db7cd56ee938d43f67050d6f0645d88cbf916ec6c4",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "dirname/0",
@@ -417,7 +417,7 @@
       "utility": "cp",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cp.html",
       "source_sha256": "777d1c06255117e8ea9d8c5ede3996ef77b7c5ddecd1cbf9e584deef239a5836",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "cp/bytes",
@@ -795,7 +795,7 @@
       "utility": "dd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/dd.html",
       "source_sha256": "876cebeba49456b8e22b53057bc861120f092c36522193823685cea8b821e249",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "dd/copy",
@@ -1020,7 +1020,7 @@
       "utility": "df",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/df.html",
       "source_sha256": "afbeec1b5e25c2ebf0de45fcffdcff03cf9f3bf4aa6960fc09b426cfc1a45a11",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "df/portable-k",
@@ -1117,7 +1117,7 @@
       "utility": "du",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/du.html",
       "source_sha256": "659c1410d265ef1d4056a784611c6af0df45495f99ff9abfbdbc3c9eb516c100",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "du/file-k",
@@ -1274,7 +1274,7 @@
       "utility": "file",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/file.html",
       "source_sha256": "c2e7590cab2534dbf4a0b3fbd8cc77312990c495c6a448243ca63c14074067bb",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "file/empty",
@@ -10461,7 +10461,7 @@
       "utility": "find",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/find.html",
       "source_sha256": "6293363b063c9de0bc4d190b62a09d3cd03906a1fa40d3ddc52ecd6a09a62502",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "find/regular",
@@ -10741,7 +10741,7 @@
       "utility": "ln",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ln.html",
       "source_sha256": "c4e793bb510483faef398e4c16fb7adc2d60b99c712ea7e6b5f2751a4c6c453c",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "ln/hard",
@@ -11386,7 +11386,7 @@
       "utility": "ls",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
       "source_sha256": "cd4db85f09dbadf3d529b1bf6a8c157806759c5a22d3ca616aad0cc0363f07bc",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "ls/512-c-order",
@@ -11531,9 +11531,33 @@
         "ls/sockets-F-inode-H-directory",
         "ls/sockets-F-inode-H-operands",
         "ls/sockets-F-inode-L-directory",
-        "ls/sockets-F-inode-L-operands"
+        "ls/sockets-F-inode-L-operands",
+        "ls/visibility-default-0-plain",
+        "ls/visibility-default-0-inode",
+        "ls/visibility-default-0-F",
+        "ls/visibility-default-0-p",
+        "ls/visibility-default-1-plain",
+        "ls/visibility-default-1-inode",
+        "ls/visibility-default-1-F",
+        "ls/visibility-default-1-p",
+        "ls/visibility-A-0-plain",
+        "ls/visibility-A-0-inode",
+        "ls/visibility-A-0-F",
+        "ls/visibility-A-0-p",
+        "ls/visibility-A-1-plain",
+        "ls/visibility-A-1-inode",
+        "ls/visibility-A-1-F",
+        "ls/visibility-A-1-p",
+        "ls/visibility-a-0-plain",
+        "ls/visibility-a-0-inode",
+        "ls/visibility-a-0-F",
+        "ls/visibility-a-0-p",
+        "ls/visibility-a-1-plain",
+        "ls/visibility-a-1-inode",
+        "ls/visibility-a-1-F",
+        "ls/visibility-a-1-p"
       ],
-      "remaining": "Long numeric listings for regular files, hard links, directories, FIFOs and symlinks, plus C-locale size/mtime/atime sorting with ties and reversal now have measured private witnesses. Name-based owner/group rendering, recent timestamps, default block units, remaining sorting switches, arbitrary recursive graphs, terminal formatting, non-C collation and I/O exhaustion remain unqualified. CSH-084 ordinary owner-mode EACCES remains bounded. CSH-115 supplies 20 ls cases / 80 assertions for -s -k and -k -s allocation reporting on empty, regular, seek-created, hard-linked, directory, FIFO and symlink objects; -H/-L operand following and C-sorted multiple operands retain per-name hard-link counts. Independent pre-exec lstat allocation and stat alias probes supply 1024-byte counts, with unchanged metadata, bytes, links, channels/status and cleanup required. The selected unmodified GNU coreutils 9.7 ls replaces Apple ls, whose -H block count uses the link instead of its referent. Default -s units are implementation-defined and are not qualified. Sparse allocation is reported only where measured; no shared-extent, capacity, rounding-boundary or general filesystem accounting claim is made. CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals with -s -k and -k -s, empty/populated directories, hidden-entry selection with -A, C-sorted multiple operands, recursive sections and -L file-symlink following. Pre-exec lstat allocation and stat alias probes supply 1024-byte totals by summing raw 512-byte counts before rounding, counting each hard-link name and excluding unlisted descendants. Exact section/count/name order, permitted initial recursive heading omission, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Default units, arbitrary graphs, other filesystem accounting policies, shared extents, physical rounding boundaries, capacity, non-C locales and resource failures remain unqualified. CSH-117 supplies 36 ls cases / 144 assertions for inode numbers (-i) and plain, -F and -p type rendering on regular files, independently set user/group/other execute bits, directories, FIFOs, a hard-link pair and file/directory/executable/FIFO symlinks. C-sorted directory entries and reverse-authored -d operands exercise physical, -H and -L handling. Pre-exec lstat inode/type/mode and stat referent probes supply the oracle. Exact names, suffixes, inode numbers, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Sockets/devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.",
+      "remaining": "Long numeric listings for regular files, hard links, directories, FIFOs and symlinks, plus C-locale size/mtime/atime sorting with ties and reversal now have measured private witnesses. Name-based owner/group rendering, recent timestamps, default block units, remaining sorting switches, arbitrary recursive graphs, terminal formatting, non-C collation and I/O exhaustion remain unqualified. CSH-084 ordinary owner-mode EACCES remains bounded. CSH-115 supplies 20 ls cases / 80 assertions for -s -k and -k -s allocation reporting on empty, regular, seek-created, hard-linked, directory, FIFO and symlink objects; -H/-L operand following and C-sorted multiple operands retain per-name hard-link counts. Independent pre-exec lstat allocation and stat alias probes supply 1024-byte counts, with unchanged metadata, bytes, links, channels/status and cleanup required. The selected unmodified GNU coreutils 9.7 ls replaces Apple ls, whose -H block count uses the link instead of its referent. Default -s units are implementation-defined and are not qualified. Sparse allocation is reported only where measured; no shared-extent, capacity, rounding-boundary or general filesystem accounting claim is made. CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals with -s -k and -k -s, empty/populated directories, hidden-entry selection with -A, C-sorted multiple operands, recursive sections and -L file-symlink following. Pre-exec lstat allocation and stat alias probes supply 1024-byte totals by summing raw 512-byte counts before rounding, counting each hard-link name and excluding unlisted descendants. Exact section/count/name order, permitted initial recursive heading omission, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Default units, arbitrary graphs, other filesystem accounting policies, shared extents, physical rounding boundaries, capacity, non-C locales and resource failures remain unqualified. CSH-117 supplies 36 ls cases / 144 assertions for inode numbers (-i) and plain, -F and -p type rendering on regular files, independently set user/group/other execute bits, directories, FIFOs, a hard-link pair and file/directory/executable/FIFO symlinks. C-sorted directory entries and reverse-authored -d operands exercise physical, -H and -L handling. Pre-exec lstat inode/type/mode and stat referent probes supply the oracle. Exact names, suffixes, inode numbers, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Sockets/devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-119 supplies 24 ls cases / 96 assertions for default hidden-entry filtering, -A and -a, reverse C order and plain/inode/-F/-p rendering. Independent pre-exec lstat probes establish private dot and dot-dot directory identities, types and metadata. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Arbitrary graphs, recursive dot handling, devices, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.",
       "normative_headings": [
         "NAME",
         "SYNOPSIS",
@@ -11559,7 +11583,7 @@
           "disposition": "Specification metadata; executable identity and concrete argv are retained per invocation. Unexercised synopsis alternatives remain open."
         },
         "DESCRIPTION": {
-          "disposition": "Long numeric listings for regular files, hard links, directories, FIFOs and symlinks, plus C-locale size/mtime/atime sorting with ties and reversal now have measured private witnesses. Name-based owner/group rendering, recent timestamps, block units, remaining sorting switches, recursive graphs, terminal formatting, non-C collation and I/O exhaustion remain unqualified. CSH-084 ordinary owner-mode EACCES remains bounded. CSH-115 supplies 20 ls cases / 80 assertions for -s -k and -k -s allocation reporting on empty, regular, seek-created, hard-linked, directory, FIFO and symlink objects; -H/-L operand following and C-sorted multiple operands retain per-name hard-link counts. Independent pre-exec lstat allocation and stat alias probes supply 1024-byte counts, with unchanged metadata, bytes, links, channels/status and cleanup required. The selected unmodified GNU coreutils 9.7 ls replaces Apple ls, whose -H block count uses the link instead of its referent. Default -s units are implementation-defined and are not qualified. Sparse allocation is reported only where measured; no shared-extent, capacity, rounding-boundary or general filesystem accounting claim is made. CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals with -s -k and -k -s, empty/populated directories, hidden-entry selection with -A, C-sorted multiple operands, recursive sections and -L file-symlink following. Pre-exec lstat allocation and stat alias probes supply 1024-byte totals by summing raw 512-byte counts before rounding, counting each hard-link name and excluding unlisted descendants. Exact section/count/name order, permitted initial recursive heading omission, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Default units, arbitrary graphs, other filesystem accounting policies, shared extents, physical rounding boundaries, capacity, non-C locales and resource failures remain unqualified. CSH-117 supplies 36 ls cases / 144 assertions for inode numbers (-i) and plain, -F and -p type rendering on regular files, independently set user/group/other execute bits, directories, FIFOs, a hard-link pair and file/directory/executable/FIFO symlinks. C-sorted directory entries and reverse-authored -d operands exercise physical, -H and -L handling. Pre-exec lstat inode/type/mode and stat referent probes supply the oracle. Exact names, suffixes, inode numbers, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Sockets/devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.",
+          "disposition": "Long numeric listings for regular files, hard links, directories, FIFOs and symlinks, plus C-locale size/mtime/atime sorting with ties and reversal now have measured private witnesses. Name-based owner/group rendering, recent timestamps, block units, remaining sorting switches, recursive graphs, terminal formatting, non-C collation and I/O exhaustion remain unqualified. CSH-084 ordinary owner-mode EACCES remains bounded. CSH-115 supplies 20 ls cases / 80 assertions for -s -k and -k -s allocation reporting on empty, regular, seek-created, hard-linked, directory, FIFO and symlink objects; -H/-L operand following and C-sorted multiple operands retain per-name hard-link counts. Independent pre-exec lstat allocation and stat alias probes supply 1024-byte counts, with unchanged metadata, bytes, links, channels/status and cleanup required. The selected unmodified GNU coreutils 9.7 ls replaces Apple ls, whose -H block count uses the link instead of its referent. Default -s units are implementation-defined and are not qualified. Sparse allocation is reported only where measured; no shared-extent, capacity, rounding-boundary or general filesystem accounting claim is made. CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals with -s -k and -k -s, empty/populated directories, hidden-entry selection with -A, C-sorted multiple operands, recursive sections and -L file-symlink following. Pre-exec lstat allocation and stat alias probes supply 1024-byte totals by summing raw 512-byte counts before rounding, counting each hard-link name and excluding unlisted descendants. Exact section/count/name order, permitted initial recursive heading omission, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Default units, arbitrary graphs, other filesystem accounting policies, shared extents, physical rounding boundaries, capacity, non-C locales and resource failures remain unqualified. CSH-117 supplies 36 ls cases / 144 assertions for inode numbers (-i) and plain, -F and -p type rendering on regular files, independently set user/group/other execute bits, directories, FIFOs, a hard-link pair and file/directory/executable/FIFO symlinks. C-sorted directory entries and reverse-authored -d operands exercise physical, -H and -L handling. Pre-exec lstat inode/type/mode and stat referent probes supply the oracle. Exact names, suffixes, inode numbers, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Sockets/devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-119 supplies 24 ls cases / 96 assertions for default hidden-entry filtering, -A and -a, reverse C order and plain/inode/-F/-p rendering. Independent pre-exec lstat probes establish private dot and dot-dot directory identities, types and metadata. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Arbitrary graphs, recursive dot handling, devices, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.",
           "csh080_assertions": [
             "ls/remaining-reverse-c",
             "ls/remaining-all-reverse-c",
@@ -11713,10 +11737,36 @@
             "ls/sockets-F-inode-H-operands",
             "ls/sockets-F-inode-L-directory",
             "ls/sockets-F-inode-L-operands"
+          ],
+          "csh119_assertions": [
+            "ls/visibility-default-0-plain",
+            "ls/visibility-default-0-inode",
+            "ls/visibility-default-0-F",
+            "ls/visibility-default-0-p",
+            "ls/visibility-default-1-plain",
+            "ls/visibility-default-1-inode",
+            "ls/visibility-default-1-F",
+            "ls/visibility-default-1-p",
+            "ls/visibility-A-0-plain",
+            "ls/visibility-A-0-inode",
+            "ls/visibility-A-0-F",
+            "ls/visibility-A-0-p",
+            "ls/visibility-A-1-plain",
+            "ls/visibility-A-1-inode",
+            "ls/visibility-A-1-F",
+            "ls/visibility-A-1-p",
+            "ls/visibility-a-0-plain",
+            "ls/visibility-a-0-inode",
+            "ls/visibility-a-0-F",
+            "ls/visibility-a-0-p",
+            "ls/visibility-a-1-plain",
+            "ls/visibility-a-1-inode",
+            "ls/visibility-a-1-F",
+            "ls/visibility-a-1-p"
           ]
         },
         "OPTIONS": {
-          "disposition": "Long numeric listings for regular files, hard links, directories, FIFOs and symlinks, plus C-locale size/mtime/atime sorting with ties and reversal now have measured private witnesses. Name-based owner/group rendering, recent timestamps, block units, remaining sorting switches, recursive graphs, terminal formatting, non-C collation and I/O exhaustion remain unqualified. CSH-084 ordinary owner-mode EACCES remains bounded. CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals with -s -k and -k -s, empty/populated directories, hidden-entry selection with -A, C-sorted multiple operands, recursive sections and -L file-symlink following. Pre-exec lstat allocation and stat alias probes supply 1024-byte totals by summing raw 512-byte counts before rounding, counting each hard-link name and excluding unlisted descendants. Exact section/count/name order, permitted initial recursive heading omission, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Default units, arbitrary graphs, other filesystem accounting policies, shared extents, physical rounding boundaries, capacity, non-C locales and resource failures remain unqualified. CSH-117 supplies 36 ls cases / 144 assertions for inode numbers (-i) and plain, -F and -p type rendering on regular files, independently set user/group/other execute bits, directories, FIFOs, a hard-link pair and file/directory/executable/FIFO symlinks. C-sorted directory entries and reverse-authored -d operands exercise physical, -H and -L handling. Pre-exec lstat inode/type/mode and stat referent probes supply the oracle. Exact names, suffixes, inode numbers, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Sockets/devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.",
+          "disposition": "Long numeric listings for regular files, hard links, directories, FIFOs and symlinks, plus C-locale size/mtime/atime sorting with ties and reversal now have measured private witnesses. Name-based owner/group rendering, recent timestamps, block units, remaining sorting switches, recursive graphs, terminal formatting, non-C collation and I/O exhaustion remain unqualified. CSH-084 ordinary owner-mode EACCES remains bounded. CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals with -s -k and -k -s, empty/populated directories, hidden-entry selection with -A, C-sorted multiple operands, recursive sections and -L file-symlink following. Pre-exec lstat allocation and stat alias probes supply 1024-byte totals by summing raw 512-byte counts before rounding, counting each hard-link name and excluding unlisted descendants. Exact section/count/name order, permitted initial recursive heading omission, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Default units, arbitrary graphs, other filesystem accounting policies, shared extents, physical rounding boundaries, capacity, non-C locales and resource failures remain unqualified. CSH-117 supplies 36 ls cases / 144 assertions for inode numbers (-i) and plain, -F and -p type rendering on regular files, independently set user/group/other execute bits, directories, FIFOs, a hard-link pair and file/directory/executable/FIFO symlinks. C-sorted directory entries and reverse-authored -d operands exercise physical, -H and -L handling. Pre-exec lstat inode/type/mode and stat referent probes supply the oracle. Exact names, suffixes, inode numbers, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Sockets/devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-119 supplies 24 ls cases / 96 assertions for default hidden-entry filtering, -A and -a, reverse C order and plain/inode/-F/-p rendering. Independent pre-exec lstat probes establish private dot and dot-dot directory identities, types and metadata. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Arbitrary graphs, recursive dot handling, devices, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.",
           "csh080_assertions": [
             "ls/remaining-reverse-c",
             "ls/remaining-all-reverse-c",
@@ -11867,10 +11917,36 @@
             "ls/sockets-F-inode-H-operands",
             "ls/sockets-F-inode-L-directory",
             "ls/sockets-F-inode-L-operands"
+          ],
+          "csh119_assertions": [
+            "ls/visibility-default-0-plain",
+            "ls/visibility-default-0-inode",
+            "ls/visibility-default-0-F",
+            "ls/visibility-default-0-p",
+            "ls/visibility-default-1-plain",
+            "ls/visibility-default-1-inode",
+            "ls/visibility-default-1-F",
+            "ls/visibility-default-1-p",
+            "ls/visibility-A-0-plain",
+            "ls/visibility-A-0-inode",
+            "ls/visibility-A-0-F",
+            "ls/visibility-A-0-p",
+            "ls/visibility-A-1-plain",
+            "ls/visibility-A-1-inode",
+            "ls/visibility-A-1-F",
+            "ls/visibility-A-1-p",
+            "ls/visibility-a-0-plain",
+            "ls/visibility-a-0-inode",
+            "ls/visibility-a-0-F",
+            "ls/visibility-a-0-p",
+            "ls/visibility-a-1-plain",
+            "ls/visibility-a-1-inode",
+            "ls/visibility-a-1-F",
+            "ls/visibility-a-1-p"
           ]
         },
         "OPERANDS": {
-          "disposition": "Long numeric listings for regular files, hard links, directories, FIFOs and symlinks, plus C-locale size/mtime/atime sorting with ties and reversal now have measured private witnesses. Name-based owner/group rendering, recent timestamps, block units, remaining sorting switches, recursive graphs, terminal formatting, non-C collation and I/O exhaustion remain unqualified. CSH-084 ordinary owner-mode EACCES remains bounded. CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals with -s -k and -k -s, empty/populated directories, hidden-entry selection with -A, C-sorted multiple operands, recursive sections and -L file-symlink following. Pre-exec lstat allocation and stat alias probes supply 1024-byte totals by summing raw 512-byte counts before rounding, counting each hard-link name and excluding unlisted descendants. Exact section/count/name order, permitted initial recursive heading omission, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Default units, arbitrary graphs, other filesystem accounting policies, shared extents, physical rounding boundaries, capacity, non-C locales and resource failures remain unqualified. CSH-117 supplies 36 ls cases / 144 assertions for inode numbers (-i) and plain, -F and -p type rendering on regular files, independently set user/group/other execute bits, directories, FIFOs, a hard-link pair and file/directory/executable/FIFO symlinks. C-sorted directory entries and reverse-authored -d operands exercise physical, -H and -L handling. Pre-exec lstat inode/type/mode and stat referent probes supply the oracle. Exact names, suffixes, inode numbers, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Sockets/devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.",
+          "disposition": "Long numeric listings for regular files, hard links, directories, FIFOs and symlinks, plus C-locale size/mtime/atime sorting with ties and reversal now have measured private witnesses. Name-based owner/group rendering, recent timestamps, block units, remaining sorting switches, recursive graphs, terminal formatting, non-C collation and I/O exhaustion remain unqualified. CSH-084 ordinary owner-mode EACCES remains bounded. CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals with -s -k and -k -s, empty/populated directories, hidden-entry selection with -A, C-sorted multiple operands, recursive sections and -L file-symlink following. Pre-exec lstat allocation and stat alias probes supply 1024-byte totals by summing raw 512-byte counts before rounding, counting each hard-link name and excluding unlisted descendants. Exact section/count/name order, permitted initial recursive heading omission, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Default units, arbitrary graphs, other filesystem accounting policies, shared extents, physical rounding boundaries, capacity, non-C locales and resource failures remain unqualified. CSH-117 supplies 36 ls cases / 144 assertions for inode numbers (-i) and plain, -F and -p type rendering on regular files, independently set user/group/other execute bits, directories, FIFOs, a hard-link pair and file/directory/executable/FIFO symlinks. C-sorted directory entries and reverse-authored -d operands exercise physical, -H and -L handling. Pre-exec lstat inode/type/mode and stat referent probes supply the oracle. Exact names, suffixes, inode numbers, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Sockets/devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-119 supplies 24 ls cases / 96 assertions for default hidden-entry filtering, -A and -a, reverse C order and plain/inode/-F/-p rendering. Independent pre-exec lstat probes establish private dot and dot-dot directory identities, types and metadata. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Arbitrary graphs, recursive dot handling, devices, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.",
           "csh080_assertions": [
             "ls/remaining-reverse-c",
             "ls/remaining-all-reverse-c",
@@ -12021,6 +12097,32 @@
             "ls/sockets-F-inode-H-operands",
             "ls/sockets-F-inode-L-directory",
             "ls/sockets-F-inode-L-operands"
+          ],
+          "csh119_assertions": [
+            "ls/visibility-default-0-plain",
+            "ls/visibility-default-0-inode",
+            "ls/visibility-default-0-F",
+            "ls/visibility-default-0-p",
+            "ls/visibility-default-1-plain",
+            "ls/visibility-default-1-inode",
+            "ls/visibility-default-1-F",
+            "ls/visibility-default-1-p",
+            "ls/visibility-A-0-plain",
+            "ls/visibility-A-0-inode",
+            "ls/visibility-A-0-F",
+            "ls/visibility-A-0-p",
+            "ls/visibility-A-1-plain",
+            "ls/visibility-A-1-inode",
+            "ls/visibility-A-1-F",
+            "ls/visibility-A-1-p",
+            "ls/visibility-a-0-plain",
+            "ls/visibility-a-0-inode",
+            "ls/visibility-a-0-F",
+            "ls/visibility-a-0-p",
+            "ls/visibility-a-1-plain",
+            "ls/visibility-a-1-inode",
+            "ls/visibility-a-1-F",
+            "ls/visibility-a-1-p"
           ]
         },
         "STDIN": {
@@ -12049,7 +12151,7 @@
           "disposition": "Unqualified: watchdog cleanup is a harness guarantee, not an assertion of the utility signal contract. Requires controlled delivery during active operations."
         },
         "STDOUT": {
-          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open. CSH-115 supplies 20 ls cases / 80 assertions for -s -k and -k -s allocation reporting on empty, regular, seek-created, hard-linked, directory, FIFO and symlink objects; -H/-L operand following and C-sorted multiple operands retain per-name hard-link counts. Independent pre-exec lstat allocation and stat alias probes supply 1024-byte counts, with unchanged metadata, bytes, links, channels/status and cleanup required. The selected unmodified GNU coreutils 9.7 ls replaces Apple ls, whose -H block count uses the link instead of its referent. Default -s units are implementation-defined and are not qualified. Sparse allocation is reported only where measured; no shared-extent, capacity, rounding-boundary or general filesystem accounting claim is made. CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals with -s -k and -k -s, empty/populated directories, hidden-entry selection with -A, C-sorted multiple operands, recursive sections and -L file-symlink following. Pre-exec lstat allocation and stat alias probes supply 1024-byte totals by summing raw 512-byte counts before rounding, counting each hard-link name and excluding unlisted descendants. Exact section/count/name order, permitted initial recursive heading omission, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Default units, arbitrary graphs, other filesystem accounting policies, shared extents, physical rounding boundaries, capacity, non-C locales and resource failures remain unqualified. CSH-117 supplies 36 ls cases / 144 assertions for inode numbers (-i) and plain, -F and -p type rendering on regular files, independently set user/group/other execute bits, directories, FIFOs, a hard-link pair and file/directory/executable/FIFO symlinks. C-sorted directory entries and reverse-authored -d operands exercise physical, -H and -L handling. Pre-exec lstat inode/type/mode and stat referent probes supply the oracle. Exact names, suffixes, inode numbers, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Sockets/devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.",
+          "disposition": "Case byte expectations are exact except df spacing/live fields, du independently measured blocks, and file classification wording, whose normative predicates are explicit. Other formats and output errors remain open. CSH-115 supplies 20 ls cases / 80 assertions for -s -k and -k -s allocation reporting on empty, regular, seek-created, hard-linked, directory, FIFO and symlink objects; -H/-L operand following and C-sorted multiple operands retain per-name hard-link counts. Independent pre-exec lstat allocation and stat alias probes supply 1024-byte counts, with unchanged metadata, bytes, links, channels/status and cleanup required. The selected unmodified GNU coreutils 9.7 ls replaces Apple ls, whose -H block count uses the link instead of its referent. Default -s units are implementation-defined and are not qualified. Sparse allocation is reported only where measured; no shared-extent, capacity, rounding-boundary or general filesystem accounting claim is made. CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals with -s -k and -k -s, empty/populated directories, hidden-entry selection with -A, C-sorted multiple operands, recursive sections and -L file-symlink following. Pre-exec lstat allocation and stat alias probes supply 1024-byte totals by summing raw 512-byte counts before rounding, counting each hard-link name and excluding unlisted descendants. Exact section/count/name order, permitted initial recursive heading omission, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Default units, arbitrary graphs, other filesystem accounting policies, shared extents, physical rounding boundaries, capacity, non-C locales and resource failures remain unqualified. CSH-117 supplies 36 ls cases / 144 assertions for inode numbers (-i) and plain, -F and -p type rendering on regular files, independently set user/group/other execute bits, directories, FIFOs, a hard-link pair and file/directory/executable/FIFO symlinks. C-sorted directory entries and reverse-authored -d operands exercise physical, -H and -L handling. Pre-exec lstat inode/type/mode and stat referent probes supply the oracle. Exact names, suffixes, inode numbers, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Sockets/devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-119 supplies 24 ls cases / 96 assertions for default hidden-entry filtering, -A and -a, reverse C order and plain/inode/-F/-p rendering. Independent pre-exec lstat probes establish private dot and dot-dot directory identities, types and metadata. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Arbitrary graphs, recursive dot handling, devices, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.",
           "csh080_assertions": [
             "ls/remaining-reverse-c",
             "ls/remaining-all-reverse-c",
@@ -12203,10 +12305,36 @@
             "ls/sockets-F-inode-H-operands",
             "ls/sockets-F-inode-L-directory",
             "ls/sockets-F-inode-L-operands"
+          ],
+          "csh119_assertions": [
+            "ls/visibility-default-0-plain",
+            "ls/visibility-default-0-inode",
+            "ls/visibility-default-0-F",
+            "ls/visibility-default-0-p",
+            "ls/visibility-default-1-plain",
+            "ls/visibility-default-1-inode",
+            "ls/visibility-default-1-F",
+            "ls/visibility-default-1-p",
+            "ls/visibility-A-0-plain",
+            "ls/visibility-A-0-inode",
+            "ls/visibility-A-0-F",
+            "ls/visibility-A-0-p",
+            "ls/visibility-A-1-plain",
+            "ls/visibility-A-1-inode",
+            "ls/visibility-A-1-F",
+            "ls/visibility-A-1-p",
+            "ls/visibility-a-0-plain",
+            "ls/visibility-a-0-inode",
+            "ls/visibility-a-0-F",
+            "ls/visibility-a-0-p",
+            "ls/visibility-a-1-plain",
+            "ls/visibility-a-1-inode",
+            "ls/visibility-a-1-F",
+            "ls/visibility-a-1-p"
           ]
         },
         "STDERR": {
-          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open. CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.",
+          "disposition": "Successful cases require empty stderr except dd authored record counts plus a vendor transfer-statistic line. Error wording uses a nonempty predicate; PTY rm uses exact selected-vendor prompts. Other diagnostic/localized conditions remain open. CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-119 supplies 24 ls cases / 96 assertions for default hidden-entry filtering, -A and -a, reverse C order and plain/inode/-F/-p rendering. Independent pre-exec lstat probes establish private dot and dot-dot directory identities, types and metadata. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Arbitrary graphs, recursive dot handling, devices, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.",
           "csh080_assertions": [
             "ls/remaining-reverse-c",
             "ls/remaining-all-reverse-c",
@@ -12288,10 +12416,36 @@
             "ls/sockets-F-inode-H-operands",
             "ls/sockets-F-inode-L-directory",
             "ls/sockets-F-inode-L-operands"
+          ],
+          "csh119_assertions": [
+            "ls/visibility-default-0-plain",
+            "ls/visibility-default-0-inode",
+            "ls/visibility-default-0-F",
+            "ls/visibility-default-0-p",
+            "ls/visibility-default-1-plain",
+            "ls/visibility-default-1-inode",
+            "ls/visibility-default-1-F",
+            "ls/visibility-default-1-p",
+            "ls/visibility-A-0-plain",
+            "ls/visibility-A-0-inode",
+            "ls/visibility-A-0-F",
+            "ls/visibility-A-0-p",
+            "ls/visibility-A-1-plain",
+            "ls/visibility-A-1-inode",
+            "ls/visibility-A-1-F",
+            "ls/visibility-A-1-p",
+            "ls/visibility-a-0-plain",
+            "ls/visibility-a-0-inode",
+            "ls/visibility-a-0-F",
+            "ls/visibility-a-0-p",
+            "ls/visibility-a-1-plain",
+            "ls/visibility-a-1-inode",
+            "ls/visibility-a-1-F",
+            "ls/visibility-a-1-p"
           ]
         },
         "OUTPUT FILES": {
-          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness. CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals with -s -k and -k -s, empty/populated directories, hidden-entry selection with -A, C-sorted multiple operands, recursive sections and -L file-symlink following. Pre-exec lstat allocation and stat alias probes supply 1024-byte totals by summing raw 512-byte counts before rounding, counting each hard-link name and excluding unlisted descendants. Exact section/count/name order, permitted initial recursive heading omission, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Default units, arbitrary graphs, other filesystem accounting policies, shared extents, physical rounding boundaries, capacity, non-C locales and resource failures remain unqualified. CSH-117 supplies 36 ls cases / 144 assertions for inode numbers (-i) and plain, -F and -p type rendering on regular files, independently set user/group/other execute bits, directories, FIFOs, a hard-link pair and file/directory/executable/FIFO symlinks. C-sorted directory entries and reverse-authored -d operands exercise physical, -H and -L handling. Pre-exec lstat inode/type/mode and stat referent probes supply the oracle. Exact names, suffixes, inode numbers, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Sockets/devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.",
+          "disposition": "Only authored private fixture bytes/types/links/metadata and independently decoded ustar members are checked. Other applicable file forms and effects remain open; sections specifying None impose no file-format witness. CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals with -s -k and -k -s, empty/populated directories, hidden-entry selection with -A, C-sorted multiple operands, recursive sections and -L file-symlink following. Pre-exec lstat allocation and stat alias probes supply 1024-byte totals by summing raw 512-byte counts before rounding, counting each hard-link name and excluding unlisted descendants. Exact section/count/name order, permitted initial recursive heading omission, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Default units, arbitrary graphs, other filesystem accounting policies, shared extents, physical rounding boundaries, capacity, non-C locales and resource failures remain unqualified. CSH-117 supplies 36 ls cases / 144 assertions for inode numbers (-i) and plain, -F and -p type rendering on regular files, independently set user/group/other execute bits, directories, FIFOs, a hard-link pair and file/directory/executable/FIFO symlinks. C-sorted directory entries and reverse-authored -d operands exercise physical, -H and -L handling. Pre-exec lstat inode/type/mode and stat referent probes supply the oracle. Exact names, suffixes, inode numbers, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Sockets/devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-119 supplies 24 ls cases / 96 assertions for default hidden-entry filtering, -A and -a, reverse C order and plain/inode/-F/-p rendering. Independent pre-exec lstat probes establish private dot and dot-dot directory identities, types and metadata. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Arbitrary graphs, recursive dot handling, devices, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.",
           "csh116_assertions": [
             "ls/totals-sk-visible-physical-empty",
             "ls/totals-sk-visible-physical-single",
@@ -12401,13 +12555,39 @@
             "ls/sockets-F-inode-H-operands",
             "ls/sockets-F-inode-L-directory",
             "ls/sockets-F-inode-L-operands"
+          ],
+          "csh119_assertions": [
+            "ls/visibility-default-0-plain",
+            "ls/visibility-default-0-inode",
+            "ls/visibility-default-0-F",
+            "ls/visibility-default-0-p",
+            "ls/visibility-default-1-plain",
+            "ls/visibility-default-1-inode",
+            "ls/visibility-default-1-F",
+            "ls/visibility-default-1-p",
+            "ls/visibility-A-0-plain",
+            "ls/visibility-A-0-inode",
+            "ls/visibility-A-0-F",
+            "ls/visibility-A-0-p",
+            "ls/visibility-A-1-plain",
+            "ls/visibility-A-1-inode",
+            "ls/visibility-A-1-F",
+            "ls/visibility-A-1-p",
+            "ls/visibility-a-0-plain",
+            "ls/visibility-a-0-inode",
+            "ls/visibility-a-0-F",
+            "ls/visibility-a-0-p",
+            "ls/visibility-a-1-plain",
+            "ls/visibility-a-1-inode",
+            "ls/visibility-a-1-F",
+            "ls/visibility-a-1-p"
           ]
         },
         "EXTENDED DESCRIPTION": {
           "disposition": "Long numeric listings for regular files, hard links, directories, FIFOs and symlinks, plus C-locale size/mtime/atime sorting with ties and reversal now have measured private witnesses. Name-based owner/group rendering, recent timestamps, block units, remaining sorting switches, recursive graphs, terminal formatting, non-C collation and I/O exhaustion remain unqualified. CSH-084 ordinary owner-mode EACCES remains bounded."
         },
         "EXIT STATUS": {
-          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open. CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals with -s -k and -k -s, empty/populated directories, hidden-entry selection with -A, C-sorted multiple operands, recursive sections and -L file-symlink following. Pre-exec lstat allocation and stat alias probes supply 1024-byte totals by summing raw 512-byte counts before rounding, counting each hard-link name and excluding unlisted descendants. Exact section/count/name order, permitted initial recursive heading omission, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Default units, arbitrary graphs, other filesystem accounting policies, shared extents, physical rounding boundaries, capacity, non-C locales and resource failures remain unqualified. CSH-117 supplies 36 ls cases / 144 assertions for inode numbers (-i) and plain, -F and -p type rendering on regular files, independently set user/group/other execute bits, directories, FIFOs, a hard-link pair and file/directory/executable/FIFO symlinks. C-sorted directory entries and reverse-authored -d operands exercise physical, -H and -L handling. Pre-exec lstat inode/type/mode and stat referent probes supply the oracle. Exact names, suffixes, inode numbers, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Sockets/devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.",
+          "disposition": "Every case checks zero or the normative positive-error class; signal death cannot satisfy a positive-error assertion. Other conditions remain open. CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals with -s -k and -k -s, empty/populated directories, hidden-entry selection with -A, C-sorted multiple operands, recursive sections and -L file-symlink following. Pre-exec lstat allocation and stat alias probes supply 1024-byte totals by summing raw 512-byte counts before rounding, counting each hard-link name and excluding unlisted descendants. Exact section/count/name order, permitted initial recursive heading omission, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Default units, arbitrary graphs, other filesystem accounting policies, shared extents, physical rounding boundaries, capacity, non-C locales and resource failures remain unqualified. CSH-117 supplies 36 ls cases / 144 assertions for inode numbers (-i) and plain, -F and -p type rendering on regular files, independently set user/group/other execute bits, directories, FIFOs, a hard-link pair and file/directory/executable/FIFO symlinks. C-sorted directory entries and reverse-authored -d operands exercise physical, -H and -L handling. Pre-exec lstat inode/type/mode and stat referent probes supply the oracle. Exact names, suffixes, inode numbers, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Sockets/devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. CSH-119 supplies 24 ls cases / 96 assertions for default hidden-entry filtering, -A and -a, reverse C order and plain/inode/-F/-p rendering. Independent pre-exec lstat probes establish private dot and dot-dot directory identities, types and metadata. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Arbitrary graphs, recursive dot handling, devices, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.",
           "csh080_assertions": [
             "ls/remaining-reverse-c",
             "ls/remaining-all-reverse-c",
@@ -12561,6 +12741,32 @@
             "ls/sockets-F-inode-H-operands",
             "ls/sockets-F-inode-L-directory",
             "ls/sockets-F-inode-L-operands"
+          ],
+          "csh119_assertions": [
+            "ls/visibility-default-0-plain",
+            "ls/visibility-default-0-inode",
+            "ls/visibility-default-0-F",
+            "ls/visibility-default-0-p",
+            "ls/visibility-default-1-plain",
+            "ls/visibility-default-1-inode",
+            "ls/visibility-default-1-F",
+            "ls/visibility-default-1-p",
+            "ls/visibility-A-0-plain",
+            "ls/visibility-A-0-inode",
+            "ls/visibility-A-0-F",
+            "ls/visibility-A-0-p",
+            "ls/visibility-A-1-plain",
+            "ls/visibility-A-1-inode",
+            "ls/visibility-A-1-F",
+            "ls/visibility-A-1-p",
+            "ls/visibility-a-0-plain",
+            "ls/visibility-a-0-inode",
+            "ls/visibility-a-0-F",
+            "ls/visibility-a-0-p",
+            "ls/visibility-a-1-plain",
+            "ls/visibility-a-1-inode",
+            "ls/visibility-a-1-F",
+            "ls/visibility-a-1-p"
           ]
         },
         "CONSEQUENCES OF ERRORS": {
@@ -12747,13 +12953,39 @@
         "ls/sockets-F-inode-H-operands",
         "ls/sockets-F-inode-L-directory",
         "ls/sockets-F-inode-L-operands"
+      ],
+      "csh119_assertions": [
+        "ls/visibility-default-0-plain",
+        "ls/visibility-default-0-inode",
+        "ls/visibility-default-0-F",
+        "ls/visibility-default-0-p",
+        "ls/visibility-default-1-plain",
+        "ls/visibility-default-1-inode",
+        "ls/visibility-default-1-F",
+        "ls/visibility-default-1-p",
+        "ls/visibility-A-0-plain",
+        "ls/visibility-A-0-inode",
+        "ls/visibility-A-0-F",
+        "ls/visibility-A-0-p",
+        "ls/visibility-A-1-plain",
+        "ls/visibility-A-1-inode",
+        "ls/visibility-A-1-F",
+        "ls/visibility-A-1-p",
+        "ls/visibility-a-0-plain",
+        "ls/visibility-a-0-inode",
+        "ls/visibility-a-0-F",
+        "ls/visibility-a-0-p",
+        "ls/visibility-a-1-plain",
+        "ls/visibility-a-1-inode",
+        "ls/visibility-a-1-F",
+        "ls/visibility-a-1-p"
       ]
     },
     {
       "utility": "mkdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkdir.html",
       "source_sha256": "7d37d11b3829422919fbc928cf3e4e0e2c9ba3d0eaba2e2e36362e80f4086576",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "mkdir/parents",
@@ -13476,7 +13708,7 @@
       "utility": "mkfifo",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mkfifo.html",
       "source_sha256": "508f579e25f7ac32d94c2f57aef1a12448e4984fc60d467120cb2bb66157c3ed",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "mkfifo/mode",
@@ -13839,7 +14071,7 @@
       "utility": "mv",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/mv.html",
       "source_sha256": "c17c6279d2fdf408e2aa82bd674d5eff5130f391361b2e175e4862d6c4a89662",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "mv/rename",
@@ -14173,7 +14405,7 @@
       "utility": "pathchk",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pathchk.html",
       "source_sha256": "ce446d31316645a78d6aa4df6ff45829afbdbd3d667c84ae2c6a3bdfe0ce825a",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "pathchk/portable",
@@ -14473,7 +14705,7 @@
       "utility": "pax",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pax.html",
       "source_sha256": "398b008eab3110cd482eee2e62797adaf915405e488b1f36bc73fc2a29591efb",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "pax/copy-tree",
@@ -14657,7 +14889,7 @@
       "utility": "pwd",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/pwd.html",
       "source_sha256": "6c0724e219d469ac68640fc07c825a95e090931483b9cee2d089dec136efd7f6",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "pwd/physical",
@@ -15057,7 +15289,7 @@
       "utility": "readlink",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/readlink.html",
       "source_sha256": "b8af59cd805ca79ad73dab35ad008a55b9f8bbef0fc84ce7334ffac7b8f0f4dc",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "readlink/link",
@@ -17434,7 +17666,7 @@
       "utility": "realpath",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/realpath.html",
       "source_sha256": "dfded63f96378a20c8952547dea666f07d0006e8868fa37a883b8553de684cc5",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "realpath/existing",
@@ -17580,7 +17812,7 @@
       "utility": "rm",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rm.html",
       "source_sha256": "7ea788ea4ed4cc0f309bfc9681b650da0cbcec9d535604cb12bfd57fbddb9839",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "rm/file",
@@ -17928,7 +18160,7 @@
       "utility": "rmdir",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/rmdir.html",
       "source_sha256": "44451db47f43a6dfb058b6e8f71aee7db1fec99961573246380f7deb0c54bc9f",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "rmdir/empty",
@@ -18265,7 +18497,7 @@
       "utility": "touch",
       "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/touch.html",
       "source_sha256": "ae8c1a8fc027372a6a50561b7c07bea8c30a471458ee72c00d7b35c039d756b7",
-      "owner": "CSH-119",
+      "owner": "CSH-120",
       "full_contract_qualified": false,
       "assertions": [
         "touch/reference",
@@ -23839,5 +24071,5 @@
       ]
     }
   ],
-  "predecessor": "CSH-117"
+  "predecessor": "CSH-118"
 }

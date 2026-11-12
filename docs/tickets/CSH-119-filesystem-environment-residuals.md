@@ -1,11 +1,11 @@
 # CSH-119: Supply remaining filesystem environments after ls socket qualification
 
-- Status: backlog
+- Status: in-progress
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-118
-- Branch: Assigned when work starts
+- Branch: `test/CSH-119-filesystem-environments`
 - Issue: [#250](https://github.com/melliott18/cshell/issues/250)
 
 ## Goal
@@ -68,10 +68,34 @@ test-host-filesystem-provider-audit test-host-filesystem-residual
 test-host-filesystem-isolated test-host-filesystem-interactive
 test-host-filesystem-decisions test-host-filesystem-metadata
 test-host-filesystem-recursive test-host-filesystem-path-limits test-host-filesystem-cwd
-test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times test-host-filesystem-magic-strings test-host-filesystem-magic-messages test-host-filesystem-magic-types test-host-filesystem-magic-defaults test-host-filesystem-link-bytes test-host-filesystem-omitted-who test-host-filesystem-parent-graphs test-host-filesystem-removal test-host-filesystem-link-graphs test-host-filesystem-link-permissions test-host-filesystem-touch-permissions test-host-filesystem-touch-current test-host-filesystem-touch-objects test-host-filesystem-ls-blocks test-host-filesystem-ls-totals test-host-filesystem-ls-identity test-host-filesystem-ls-sockets` on native macOS and Linux as an unprivileged
+test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times test-host-filesystem-magic-strings test-host-filesystem-magic-messages test-host-filesystem-magic-types test-host-filesystem-magic-defaults test-host-filesystem-link-bytes test-host-filesystem-omitted-who test-host-filesystem-parent-graphs test-host-filesystem-removal test-host-filesystem-link-graphs test-host-filesystem-link-permissions test-host-filesystem-touch-permissions test-host-filesystem-touch-current test-host-filesystem-touch-objects test-host-filesystem-ls-blocks test-host-filesystem-ls-totals test-host-filesystem-ls-identity test-host-filesystem-ls-sockets test-host-filesystem-ls-visibility` on native macOS and Linux as an unprivileged
 fixture identity. Retain separate nonzero stock `make test-host-filesystem-audit`
 and stock `tests/host_filesystem.py --extended-only --provider-audit` records.
 Add bounded setup/failure/timeout cleanup regressions for new environments.
 Use only private disposable filesystems and credentials. Never fill the host
 volume or use protected mounts; `/dev/full` is not filesystem exhaustion.
 Privileged provisioning requires an isolated runner; prompts require owned PTYs.
+
+## Implementation scope
+
+CSH-119 supplies 24 ls cases / 96 assertions for default hidden-entry filtering, -A and -a, reverse C order and plain/inode/-F/-p rendering. Independent pre-exec lstat probes establish private dot and dot-dot directory identities, types and metadata. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Arbitrary graphs, recursive dot handling, devices, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.
+
+Based on CSH-118 commit `083c982` (not yet integrated). [CSH-120](CSH-120-filesystem-environment-residuals.md) / [#252](https://github.com/melliott18/cshell/issues/252) owns every remaining contract and all four retained conditions.
+
+## Validation result — 2026-11-12
+
+The implementation adds 24 cases / 96 assertions and preserves all predecessor
+expectations and selected providers. The focused native and Linux/Docker
+filesystem targets pass, including setup, failure and timeout cleanup checks.
+All 192 filesystem harness tests and 13 ownership tests pass; ticket tests and
+live validation pass with 120 reservations.
+
+Full requested host-profile validation remains incomplete: native macOS's
+existing permissions control timed out, and Linux's existing ed/signal-int
+(direct) failed. No expectations, deadlines or allowances were weakened.
+The initial Linux disk-full and noexec setup failures are retained separately.
+The isolated native permissions harness subsequently passes all six tests.
+Combined filesystem profiles pass 13,035 / 13,075 assertions with zero failures
+on native / Linux respectively; the evidence verifier passes.
+This ticket remains in-progress and its PR is a draft pending successful full
+host-profile validation. See [evidence](../evidence/csh-119/README.md).
