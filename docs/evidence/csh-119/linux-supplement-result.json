@@ -1,0 +1,5 @@
+{
+  "command": "python3 docs/evidence/csh-119/supplement.py",
+  "make_status": 0,
+  "log": "linux-supplement-0.log.gz"
+}
