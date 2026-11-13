@@ -60,8 +60,8 @@
       }
     },
     {
-      "ticket": "CSH-120",
-      "path": "docs/tickets/CSH-120-filesystem-environment-residuals.md",
+      "ticket": "CSH-121",
+      "path": "docs/tickets/CSH-121-filesystem-environment-residuals.md",
       "title": "Supply remaining filesystem environments after ls socket qualification",
       "utilities": [
         "basename",

@@ -1210,3 +1210,7 @@ test-host-filesystem-ls-sockets: cshell host-profile
 .PHONY: test-host-filesystem-ls-visibility
 test-host-filesystem-ls-visibility: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --ls-visibility-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-ls-visibility.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-ls-recursive
+test-host-filesystem-ls-recursive: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --ls-recursive-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-ls-recursive.json $(HOST_FILESYSTEM_FLAGS)
