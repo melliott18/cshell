@@ -38,6 +38,7 @@ import host_filesystem_ls_totals as ls_totals
 import host_filesystem_ls_identity as ls_identity
 import host_filesystem_ls_sockets as ls_sockets
 import host_filesystem_ls_visibility as ls_visibility
+import host_filesystem_ls_recursive as ls_recursive
 import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
 import host_filesystem_magic_strings as magic_strings
@@ -960,6 +961,82 @@ class FilesystemHarnessTests(unittest.TestCase):
                     self.assertLess(time.monotonic(), deadline, 'timed-out provider was not reaped')
                     time.sleep(.02)
                 self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_ls_recursive_matrix_and_all_modes(self):
+        rows = list(ls_recursive.cases())
+        self.assertEqual(len(rows), 48)
+        self.assertEqual(len({r['id'] for r in rows}), 48)
+        for row in rows:
+            original = copy.deepcopy(row)
+            for mode in ('direct', 'string', 'file', 'stdin'):
+                with self.subTest(case=row['id'], mode=mode), tempfile.TemporaryDirectory() as root:
+                    record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                      os.defpath, row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS', record)
+                    self.assertEqual(record['ls_recursive_environment']['before'], record['ls_recursive_observed'])
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+            self.assertEqual(row, original)
+
+    def test_ls_recursive_oracle_and_output_rejections(self):
+        row = next(r for r in ls_recursive.cases() if r['id'].endswith('a-0-1-inode'))
+        with tempfile.TemporaryDirectory() as temporary:
+            env = ls_recursive.setup(Path(temporary), row)
+            expected_paths = ['tree', 'tree/.hidden-dir', 'tree/.hidden-dir/.deep',
+                              'tree/branch', 'tree/visible', 'tree/visible/.nested',
+                              'tree/alias', 'tree/alias/.nested', 'tree/.hidden-alias',
+                              'tree/.hidden-alias/.deep']
+            self.assertEqual(set(env['sections']), {'recursion/' + p for p in expected_paths})
+            before = env['before']
+            self.assertEqual(before['tree/alias/.']['inode'], before['tree/visible']['inode'])
+            self.assertNotEqual(before['tree/alias']['inode'], before['tree/alias/.']['inode'])
+            self.assertEqual(before['tree/alias/..']['inode'], before['tree']['inode'])
+            self.assertEqual([e['name'] for e in env['sections']['recursion/tree']['entries']],
+                             ['.', '..', '.hidden', '.hidden-alias', '.hidden-dir', 'alias', 'branch', 'file', 'visible'])
+            blocks = [name.encode() + b':\n' + b''.join(
+                str(e['inode']).encode() + b' ' + e['name'].encode() + b'\n'
+                for e in section['entries']) for name, section in env['sections'].items()]
+            output = b'\n'.join(blocks)
+            self.assertTrue(ls_recursive.output_matches(env, output))
+            self.assertTrue(ls_recursive.output_matches(env, b'\n'.join(reversed(blocks))))
+            self.assertTrue(ls_recursive.output_matches(env, output.split(b':\n', 1)[1]))
+            for bad in (b'\n'.join(blocks[1:]), output + b'\n' + blocks[0],
+                        output.replace(b'recursion/tree/branch:', b'recursion/tree/..:'),
+                        output.replace(b' leaf\n', b' wrong\n'),
+                        output.replace(b' .\n', b' .extra\n'), output + b'garbage\n'):
+                self.assertFalse(ls_recursive.output_matches(env, bad), bad)
+
+    def test_ls_recursive_detects_mutations(self):
+        row = next(ls_recursive.cases())
+        for fault in ('bytes', 'metadata', 'link', 'entries'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as temporary:
+                directory = Path(temporary)
+                env = ls_recursive.setup(directory, row)
+                root = directory / 'recursion'
+                if fault == 'bytes':
+                    (root / 'guard').write_bytes(b'outside change\n')
+                elif fault == 'metadata':
+                    (root / 'tree/visible/leaf').chmod(0o400)
+                elif fault == 'link':
+                    (root / 'tree/alias').unlink()
+                    (root / 'tree/alias').symlink_to('visible/.nested/..')
+                else:
+                    (root / 'tree/.hidden-dir/extra').write_bytes(b'extra')
+                self.assertTrue(ls_recursive.verify(directory, env)[0])
+
+    def test_ls_recursive_setup_failure_and_timeout_cleanup(self):
+        row = next(ls_recursive.cases())
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(row)
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem_ls_recursive.os.symlink', side_effect=OSError('injected')), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}}, os.defpath, row, mode, Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertEqual(record['phase'], 'setup')
+                capture.assert_not_called()
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
 
     def test_ls_visibility_matrix_and_all_modes(self):
         rows = list(ls_visibility.cases())
@@ -3240,7 +3317,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases()) + list(ls_visibility.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases()) + list(ls_visibility.cases()) + list(ls_recursive.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -3377,6 +3454,8 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         self.assertEqual(set(entry['csh118_assertions']), {r['id'] for r in ls_sockets.cases()})
         self.assertTrue(set(entry['csh118_assertions']) <= set(entry['assertions']))
         self.assertEqual(set(entry['csh119_assertions']), {r['id'] for r in ls_visibility.cases()})
+        self.assertEqual(set(entry['csh120_assertions']), {r['id'] for r in ls_recursive.cases()})
+        self.assertTrue(set(entry['csh120_assertions']) <= set(entry['assertions']))
         manifest = json.loads((root / 'host_contracts.json').read_text())
         conditions = {c for owner in manifest['owners'] if 'basename' in owner['utilities'] for c in owner['conditions']}
         self.assertEqual({r['id'] for r in ledger['conditions']}, conditions)
@@ -3495,7 +3574,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases()) + list(ls_visibility.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases()) + list(ls_visibility.cases()) + list(ls_recursive.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

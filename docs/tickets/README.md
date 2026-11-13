@@ -126,6 +126,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-118](CSH-118-filesystem-environment-residuals.md) | Supply remaining filesystem environments after ls inode/type qualification | [CSH-117](CSH-117-filesystem-environment-residuals.md) | [#248](https://github.com/melliott18/cshell/issues/248) |
 | [CSH-119](CSH-119-filesystem-environment-residuals.md) | Supply remaining filesystem environments after ls socket qualification | [CSH-118](CSH-118-filesystem-environment-residuals.md) | [#250](https://github.com/melliott18/cshell/issues/250) |
 | [CSH-120](CSH-120-filesystem-environment-residuals.md) | Supply remaining filesystem environments after ls hidden-entry qualification | [CSH-119](CSH-119-filesystem-environment-residuals.md) | [#252](https://github.com/melliott18/cshell/issues/252) |
+| [CSH-121](CSH-121-filesystem-environment-residuals.md) | Supply remaining filesystem environments after recursive ls qualification | [CSH-120](CSH-120-filesystem-environment-residuals.md) | [#254](https://github.com/melliott18/cshell/issues/254) |
 
 ## Child implementation tickets
 
