@@ -94,6 +94,7 @@ make test-host-permissions # Predicate, mode, ownership and identity assertions
 
 make test-host-terminal # Stock terminal-provider checks (strict failures retained)
 make test-host-terminal-profile # Qualified bounded PTY/session-record checks
+make test-host-filesystem-ls-operands # Mixed ls operands and symlink following
 make test-host-profile   # Opt-in qualified utilities, strict gaps and boundaries
 make test-host-filesystem-ls-sockets # Measured socket inode/type rendering
 make test-host-filesystem-removal # rmdir parent graphs, permissions and continuation
@@ -225,3 +226,5 @@ The [CSH-012 requirement, defect, platform and documentation review](docs/confor
 `make test-host-filesystem-touch-current` checks CSH-113 touch creation modes and bounded current-time behavior in direct execution and all shell input modes. See [CSH-113 evidence](docs/evidence/csh-113/README.md).
 
 `make test-host-filesystem-touch-objects` checks CSH-114 directory/FIFO timestamps and namespace-error continuation in direct execution and all shell input modes. See [CSH-114 evidence](docs/evidence/csh-114/README.md).
+
+`make test-host-filesystem-ls-operands` qualifies mixed `ls` operands and operand/entry symlink following with independent inode/type probes. See [CSH-121 evidence](docs/evidence/csh-121/README.md) for scope and retained stock failures.

@@ -1970,3 +1970,5 @@ See [the evidence](evidence/csh-117/README.md) for the oracle, limits and reprod
 `make test-host-filesystem-ls-visibility` runs the CSH-119 private hidden-entry and dot-directory matrix through direct exec and all three shell modes.
 
 `make test-host-filesystem-ls-recursive` runs the 48 CSH-120 recursive ls cases in direct exec and all three shell modes (192 assertions). The authored acyclic tree, independent inode/type probes, exact section sets, C-sorted entries and unchanged-object checks cover default/-A/-a selection and physical/-L directory aliases. Section order is unspecified; dot and dot-dot are never descended into. Setup/exec failures and timeout cleanup are harness-tested. See [evidence](evidence/csh-120/README.md).
+
+`make test-host-filesystem-ls-operands` qualifies mixed `ls` operands and operand/entry symlink following with independent inode/type probes. See [CSH-121 evidence](evidence/csh-121/README.md) for scope and retained stock failures.
