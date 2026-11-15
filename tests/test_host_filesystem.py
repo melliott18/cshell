@@ -40,6 +40,7 @@ import host_filesystem_ls_sockets as ls_sockets
 import host_filesystem_ls_visibility as ls_visibility
 import host_filesystem_ls_recursive as ls_recursive
 import host_filesystem_ls_operands as ls_operands
+import host_filesystem_ls_names as ls_names
 import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
 import host_filesystem_magic_strings as magic_strings
@@ -962,6 +963,100 @@ class FilesystemHarnessTests(unittest.TestCase):
                     self.assertLess(time.monotonic(), deadline, 'timed-out provider was not reaped')
                     time.sleep(.02)
                 self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_ls_names_matrix_and_all_modes(self):
+        rows = list(ls_names.cases())
+        self.assertEqual(len(rows), 48)
+        self.assertEqual(len({r['id'] for r in rows}), 48)
+        for row in rows:
+            original = copy.deepcopy(row)
+            for mode in ('direct', 'string', 'file', 'stdin'):
+                with self.subTest(case=row['id'], mode=mode), tempfile.TemporaryDirectory() as root:
+                    record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                      os.defpath, row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS', record)
+                    self.assertEqual(record['ls_names_environment']['before'], record['ls_names_observed'])
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+            self.assertEqual(row, original)
+
+    def test_ls_names_literal_oracle_and_corruption(self):
+        rows = list(ls_names.cases())
+        with tempfile.TemporaryDirectory() as root:
+            env = ls_names.setup(Path(root), rows[0])
+            for row in rows:
+                spec = row['ls_names']
+                entries = ls_names.expected_entries(env['before'], spec)
+                prefix = 'names/' if spec['graph'] == 'operands' else ''
+                suffixes = {'dir\nname': '/' if spec['style'] != 'plain' else '',
+                            'fifo\tname': '|' if spec['style'] == 'F' else '',
+                            'exec\rname': '*' if spec['style'] == 'F' else '',
+                            'link\x1bname': '@' if spec['style'] == 'F' else ''}
+                # Literal controls check replacement, including collisions with
+                # the authored question mark and preservation of spaces/quotes.
+                names = [prefix + (n.translate(dict.fromkeys([*range(1, 32), 127], '?'))
+                                   if spec['quote'] else n) + suffixes.get(n, '')
+                         for n in sorted(ls_names.ENTRIES, reverse=spec['reverse'])]
+                self.assertEqual([e['name'] for e in entries], names)
+                self.assertEqual([e['inode'] for e in entries],
+                                 [env['before'][n]['inode'] if spec['inode'] else None
+                                  for n in sorted(ls_names.ENTRIES, reverse=spec['reverse'])])
+                output = b''.join((str(e['inode']).encode() + b' ' if spec['inode'] else b'')
+                                  + e['name'].encode() + b'\n' for e in entries)
+                expected = dict(entries=entries)
+                self.assertTrue(ls_names.output_matches(expected, output))
+                for bad in (output[:-1], output + b'extra\n', output.replace(b' space ', b'space'),
+                            output.replace(b'control-', b'changed-', 1),
+                            output.replace(b'quote', b'"quote', 1)):
+                    self.assertFalse(ls_names.output_matches(expected, bad))
+                if spec['quote']:
+                    self.assertEqual(names.count(prefix + 'control-?'), 33)
+                    self.assertFalse(ls_names.output_matches(expected, output.replace(b'control-?', b'control-\t', 1)))
+                if spec['inode']:
+                    self.assertFalse(ls_names.output_matches(expected, output.replace(str(entries[0]['inode']).encode(), b'0', 1)))
+
+    def test_ls_names_detects_mutations(self):
+        for fault in ('bytes', 'mode', 'link', 'entries'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as temporary:
+                directory = Path(temporary)
+                env = ls_names.setup(directory, next(ls_names.cases()))
+                root = directory / 'names'
+                if fault == 'bytes':
+                    (root / ls_names.DIRECTORY / 'guard').write_bytes(b'changed')
+                elif fault == 'mode':
+                    (root / ls_names.EXECUTABLE).chmod(0o600)
+                elif fault == 'link':
+                    (root / ls_names.LINK).unlink()
+                    (root / ls_names.LINK).symlink_to(ls_names.EXECUTABLE)
+                else:
+                    (root / 'extra').write_bytes(b'extra')
+                self.assertTrue(ls_names.verify(directory, env)[0])
+
+    def test_ls_names_partial_setup_failure_and_timeout_cleanup(self):
+        row = next(ls_names.cases())
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(row)
+        real_symlink = os.symlink
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            observed = []
+            def fail_late(target, link, *args, **kwargs):
+                link = Path(link)
+                if link.name == ls_names.LINK and link.parent.name == 'names':
+                    self.assertTrue((link.parent / ls_names.DIRECTORY / 'guard').is_file())
+                    self.assertTrue(stat.S_ISFIFO((link.parent / ls_names.FIFO).lstat().st_mode))
+                    observed.append(True)
+                    raise OSError('injected CSH-122 final-link setup failure')
+                return real_symlink(target, link, *args, **kwargs)
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root, \
+                    patch('os.symlink', side_effect=fail_late), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}}, os.defpath, row, mode, Path(root), None)
+                self.assertEqual(observed, [True])
+                self.assertEqual(record['verdict'], 'FAIL')
+                self.assertEqual(record['phase'], 'setup')
+                self.assertEqual(record['error'], 'injected CSH-122 final-link setup failure')
+                capture.assert_not_called()
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
 
     def test_ls_operands_matrix_and_all_modes(self):
         rows = list(ls_operands.cases())
@@ -3437,7 +3532,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases()) + list(ls_visibility.cases()) + list(ls_recursive.cases()) + list(ls_operands.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases()) + list(ls_visibility.cases()) + list(ls_recursive.cases()) + list(ls_operands.cases()) + list(ls_names.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -3574,6 +3669,8 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         self.assertEqual(set(entry['csh118_assertions']), {r['id'] for r in ls_sockets.cases()})
         self.assertTrue(set(entry['csh118_assertions']) <= set(entry['assertions']))
         self.assertEqual(set(entry['csh119_assertions']), {r['id'] for r in ls_visibility.cases()})
+        self.assertEqual(set(entry['csh122_assertions']), {r['id'] for r in ls_names.cases()})
+        self.assertTrue(set(entry['csh122_assertions']) <= set(entry['assertions']))
         self.assertEqual(set(entry['csh121_assertions']), {r['id'] for r in ls_operands.cases()})
         self.assertTrue(set(entry['csh121_assertions']) <= set(entry['assertions']))
         self.assertEqual(set(entry['csh120_assertions']), {r['id'] for r in ls_recursive.cases()})
@@ -3696,7 +3793,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases()) + list(ls_visibility.cases()) + list(ls_recursive.cases()) + list(ls_operands.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases()) + list(ls_visibility.cases()) + list(ls_recursive.cases()) + list(ls_operands.cases()) + list(ls_names.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])

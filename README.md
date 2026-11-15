@@ -228,3 +228,5 @@ The [CSH-012 requirement, defect, platform and documentation review](docs/confor
 `make test-host-filesystem-touch-objects` checks CSH-114 directory/FIFO timestamps and namespace-error continuation in direct execution and all shell input modes. See [CSH-114 evidence](docs/evidence/csh-114/README.md).
 
 `make test-host-filesystem-ls-operands` qualifies mixed `ls` operands and operand/entry symlink following with independent inode/type probes. See [CSH-121 evidence](docs/evidence/csh-121/README.md) for scope and retained stock failures.
+
+`make test-host-filesystem-ls-names` checks CSH-122 literal and `-q` C-locale filename rendering, inode/type columns, original-name sorting, preserved objects and cleanup in all four execution modes.
