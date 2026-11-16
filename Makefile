@@ -1222,3 +1222,7 @@ test-host-filesystem-ls-operands: cshell host-profile
 .PHONY: test-host-filesystem-ls-names
 test-host-filesystem-ls-names: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --ls-names-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-ls-names.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-ls-output
+test-host-filesystem-ls-output: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --ls-output-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-ls-output.json $(HOST_FILESYSTEM_FLAGS)

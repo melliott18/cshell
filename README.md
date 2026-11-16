@@ -230,3 +230,5 @@ The [CSH-012 requirement, defect, platform and documentation review](docs/confor
 `make test-host-filesystem-ls-operands` qualifies mixed `ls` operands and operand/entry symlink following with independent inode/type probes. See [CSH-121 evidence](docs/evidence/csh-121/README.md) for scope and retained stock failures.
 
 `make test-host-filesystem-ls-names` checks CSH-122 literal and `-q` C-locale filename rendering, inode/type columns, original-name sorting, preserved objects and cleanup in all four execution modes.
+
+`make test-host-filesystem-ls-output` checks CSH-123 independently armed `ls` stdout errors, preserved private objects and cleanup in all four execution modes.
