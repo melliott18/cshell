@@ -1974,3 +1974,7 @@ See [the evidence](evidence/csh-117/README.md) for the oracle, limits and reprod
 `make test-host-filesystem-ls-operands` qualifies mixed `ls` operands and operand/entry symlink following with independent inode/type probes. See [CSH-121 evidence](evidence/csh-121/README.md) for scope and retained stock failures.
 
 `make test-host-filesystem-ls-names` checks CSH-122 literal and `-q` C-locale filename rendering, inode/type columns, original-name sorting, preserved objects and cleanup in all four execution modes.
+
+### ls output errors (CSH-123)
+
+`make test-host-filesystem-ls-output` independently arms EBADF and EPIPE on macOS and Linux, plus Linux virtual-device ENOSPC, for eight listing forms in all four invocation modes. The private measured object graph must remain unchanged; setup/exec failures cannot satisfy the output-error oracle. This does not fill a filesystem or qualify arbitrary I/O failures. See [retained evidence](evidence/csh-123/README.md).

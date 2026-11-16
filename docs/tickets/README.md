@@ -129,6 +129,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-121](CSH-121-filesystem-environment-residuals.md) | Supply remaining filesystem environments after recursive ls qualification | [CSH-120](CSH-120-filesystem-environment-residuals.md) | [#254](https://github.com/melliott18/cshell/issues/254) |
 | [CSH-122](CSH-122-filesystem-environment-residuals.md) | Supply remaining filesystem environments after mixed ls operands | [CSH-121](CSH-121-filesystem-environment-residuals.md) | [#256](https://github.com/melliott18/cshell/issues/256) |
 | [CSH-123](CSH-123-filesystem-environment-residuals.md) | Supply remaining filesystem environments after literal and quoted ls filename qualification | [CSH-122](CSH-122-filesystem-environment-residuals.md) | [#258](https://github.com/melliott18/cshell/issues/258) |
+| [CSH-124](CSH-124-filesystem-environment-residuals.md) | Supply remaining filesystem environments after ls output-error qualification | [CSH-123](CSH-123-filesystem-environment-residuals.md) | [#260](https://github.com/melliott18/cshell/issues/260) |
 
 ## Child implementation tickets
 
