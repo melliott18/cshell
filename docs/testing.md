@@ -1978,3 +1978,10 @@ See [the evidence](evidence/csh-117/README.md) for the oracle, limits and reprod
 ### ls output errors (CSH-123)
 
 `make test-host-filesystem-ls-output` independently arms EBADF and EPIPE on macOS and Linux, plus Linux virtual-device ENOSPC, for eight listing forms in all four invocation modes. The private measured object graph must remain unchanged; setup/exec failures cannot satisfy the output-error oracle. This does not fill a filesystem or qualify arbitrary I/O failures. See [retained evidence](evidence/csh-123/README.md).
+
+`make test-host-filesystem-ls-utf8` runs the CSH-124 UTF-8 filename matrix
+with an installed UTF-8 LC_CTYPE and C LC_COLLATE. Before provider exec a bounded
+child verifies libc print classes, and byte-path directory reads verify authored
+filenames. Literal and -q output, ordering, inode/type columns, metadata and
+cleanup are checked in all four execution modes. See
+[CSH-124 evidence](evidence/csh-124/README.md) for scope and reproduction.
