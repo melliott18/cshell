@@ -60,9 +60,9 @@
       }
     },
     {
-      "ticket": "CSH-124",
-      "path": "docs/tickets/CSH-124-filesystem-environment-residuals.md",
-      "title": "Supply remaining filesystem environments after ls output-error qualification",
+      "ticket": "CSH-125",
+      "path": "docs/tickets/CSH-125-filesystem-environment-residuals.md",
+      "title": "Supply remaining filesystem environments after ls UTF-8 qualification",
       "utilities": [
         "basename",
         "dirname",
