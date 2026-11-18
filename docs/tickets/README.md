@@ -131,6 +131,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-123](CSH-123-filesystem-environment-residuals.md) | Supply remaining filesystem environments after literal and quoted ls filename qualification | [CSH-122](CSH-122-filesystem-environment-residuals.md) | [#258](https://github.com/melliott18/cshell/issues/258) |
 | [CSH-124](CSH-124-filesystem-environment-residuals.md) | Supply remaining filesystem environments after ls output-error qualification | [CSH-123](CSH-123-filesystem-environment-residuals.md) | [#260](https://github.com/melliott18/cshell/issues/260) |
 | [CSH-125](CSH-125-filesystem-environment-residuals.md) | Supply remaining filesystem environments after ls UTF-8 qualification | [CSH-124](CSH-124-filesystem-environment-residuals.md) | [#262](https://github.com/melliott18/cshell/issues/262) |
+| [CSH-126](CSH-126-filesystem-environment-residuals.md) | Supply remaining filesystem environments after ls stream-format qualification | [CSH-125](CSH-125-filesystem-environment-residuals.md) | [#264](https://github.com/melliott18/cshell/issues/264) |
 
 ## Child implementation tickets
 

@@ -1985,3 +1985,7 @@ child verifies libc print classes, and byte-path directory reads verify authored
 filenames. Literal and -q output, ordering, inode/type columns, metadata and
 cleanup are checked in all four execution modes. See
 [CSH-124 evidence](evidence/csh-124/README.md) for scope and reproduction.
+
+### CSH-125 ls stream formatting
+
+`make test-host-filesystem-ls-stream` requires 400 assertions across direct exec and all three cshell input modes. It covers -m separators, -1/-m precedence, -l followed by -m, type suffixes and C ordering with COLUMNS=1/4096. Exact outputs permit only the standard optional space before a wrapping newline. Setup, metadata/contents/link preservation and cleanup are required. Intermediate widths, terminal layouts and other locales remain open. See [evidence](evidence/csh-125/README.md).
