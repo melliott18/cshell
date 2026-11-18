@@ -48,6 +48,7 @@ import host_filesystem_ls_operands as ls_operands
 import host_filesystem_ls_names as ls_names
 import host_filesystem_ls_output as ls_output
 import host_filesystem_ls_utf8 as ls_utf8
+import host_filesystem_ls_stream as ls_stream
 import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
 import host_filesystem_magic_strings as magic_strings
@@ -189,6 +190,9 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
         ls_output_environment = ls_output.setup(directory, row)
         if ls_output_environment is not None:
             record['ls_output_environment'] = serial(ls_output_environment)
+        ls_stream_environment = ls_stream.setup(directory, row)
+        if ls_stream_environment is not None:
+            record['ls_stream_environment'] = serial(ls_stream_environment)
         ls_utf8_environment = ls_utf8.setup(directory, row, utf8)
         if ls_utf8_environment is not None:
             record['ls_utf8_environment'] = serial(ls_utf8_environment)
@@ -404,6 +408,10 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
         errors.extend(output_errors)
         if output_observed is not None:
             record['ls_output_observed'] = output_observed
+        stream_errors, stream_observed = ls_stream.verify(directory, ls_stream_environment)
+        errors.extend(stream_errors)
+        if stream_observed is not None:
+            record['ls_stream_observed'] = stream_observed
         utf8_errors, utf8_observed = ls_utf8.verify(directory, ls_utf8_environment)
         errors.extend(utf8_errors)
         if utf8_observed is not None:
@@ -485,7 +493,8 @@ def run_case(binary, providers, search_path, row, mode, fixture_root, utf8, time
         errors.extend(effects)
         if not match(row['status'], status):
             errors.append('status mismatch')
-        stdout_ok = (ls_utf8.output_matches(ls_utf8_environment, output['stdout'])
+        stdout_ok = (ls_stream.output_matches(ls_stream_environment, output['stdout'])
+                     if row['stdout'] == 'ls-stream' else ls_utf8.output_matches(ls_utf8_environment, output['stdout'])
                      if row['stdout'] == 'ls-utf8' else ls_names.output_matches(ls_names_environment, output['stdout'])
                      if row['stdout'] == 'ls-names' else ls_operands.output_matches(ls_operands_environment, output['stdout'])
                      if row['stdout'] == 'ls-operands' else ls_recursive.output_matches(ls_recursive_environment, output['stdout'])
@@ -536,6 +545,7 @@ def main():
     parser.add_argument('--audit', action='store_true')
     parser.add_argument('--sanitizer', action='store_true')
     parser.add_argument('--provider-audit', action='store_true', help='Require cycle/archive/fault provider contracts; all are mandatory in the selected profile')
+    parser.add_argument('--ls-stream-only', action='store_true', help='Select CSH-125 ls stream formatting')
     parser.add_argument('--ls-utf8-only', action='store_true', help='Select CSH-124 UTF-8 ls character rendering')
     parser.add_argument('--ls-output-only', action='store_true', help='Select CSH-123 ls kernel output failures')
     parser.add_argument('--ls-names-only', action='store_true', help='Select CSH-122 literal and -q filename rendering')
@@ -593,7 +603,9 @@ def main():
             pass
     locale.setlocale(locale.LC_CTYPE, previous)
     rows = [row for row in extended_cases() if args.provider_audit or not row.get('provider_audit')]
-    if args.ls_utf8_only:
+    if args.ls_stream_only:
+        rows = list(ls_stream.cases())
+    elif args.ls_utf8_only:
         rows = list(ls_utf8.cases())
     elif args.ls_output_only:
         rows = list(ls_output.cases())
@@ -678,7 +690,7 @@ def main():
     elif args.remaining_only:
         rows = list(remaining_cases())
     elif not args.extended_only:
-        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows + list(remaining_cases()) + list(residual.cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases()) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases()) + list(ls_visibility.cases()) + list(ls_recursive.cases()) + list(ls_operands.cases()) + list(ls_names.cases()) + list(ls_output.cases()) + list(ls_utf8.cases())
+        rows = list(cases()) + list(terminal_cases()) + (list(audit_cases()) if args.audit else []) + rows + list(remaining_cases()) + list(residual.cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases()) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases()) + list(ls_visibility.cases()) + list(ls_recursive.cases()) + list(ls_operands.cases()) + list(ls_names.cases()) + list(ls_output.cases()) + list(ls_utf8.cases()) + list(ls_stream.cases())
     records = []
     for row in rows:
         for mode in row.get('modes', ('direct', 'string', 'file', 'stdin')):
@@ -688,8 +700,8 @@ def main():
             if record['verdict'] != 'PASS':
                 print(json.dumps(record), flush=True)
     totals = {key: sum(r['verdict'] == key for r in records) for key in ('PASS', 'FAIL')}
-    result = dict(ticket='CSH-124', predecessor='CSH-123', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
-                  full_contracts_qualified=False, selection='ls-utf8' if args.ls_utf8_only else 'ls-output' if args.ls_output_only else 'ls-names' if args.ls_names_only else 'ls-operands' if args.ls_operands_only else 'ls-recursive' if args.ls_recursive_only else 'ls-visibility' if args.ls_visibility_only else 'ls-sockets' if args.ls_sockets_only else 'ls-identity' if args.ls_identity_only else 'ls-totals' if args.ls_totals_only else 'ls-blocks' if args.ls_blocks_only else 'touch-objects' if args.touch_objects_only else 'touch-current' if args.touch_current_only else 'touch-permissions' if args.touch_permissions_only else 'link-permissions' if args.link_permissions_only else 'link-graphs' if args.link_graphs_only else 'removal' if args.removal_only else 'parent-graphs' if args.parent_graphs_only else 'omitted-who' if args.omitted_who_only else 'link-bytes' if args.link_bytes_only else 'magic-defaults' if args.magic_defaults_only else 'magic-types' if args.magic_types_only else 'magic-messages' if args.magic_messages_only else 'magic-strings' if args.magic_strings_only else 'transition-times' if args.transition_times_only else 'day-rules' if args.day_rules_only else 'timezone' if args.timezone_only else 'datetime' if args.datetime_only else 'reference' if args.reference_only else 'calendar' if args.calendar_only else 'magic' if args.magic_only else 'cwd-logical' if args.cwd_logical_only else 'output' if args.output_only else 'creation' if args.creation_only else 'cwd' if args.cwd_only else 'path-limits' if args.path_limits_only else 'recursive' if args.recursive_only else 'metadata' if args.metadata_only else 'decisions' if args.decisions_only else 'interactive' if args.interactive_only else 'isolated' if args.isolated_only else 'residual' if args.residual_only else 'remaining' if args.remaining_only else 'extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
+    result = dict(ticket='CSH-125', predecessor='CSH-124', scope='bounded subset plus required-contract audit' if args.audit else 'bounded subset',
+                  full_contracts_qualified=False, selection='ls-stream' if args.ls_stream_only else 'ls-utf8' if args.ls_utf8_only else 'ls-output' if args.ls_output_only else 'ls-names' if args.ls_names_only else 'ls-operands' if args.ls_operands_only else 'ls-recursive' if args.ls_recursive_only else 'ls-visibility' if args.ls_visibility_only else 'ls-sockets' if args.ls_sockets_only else 'ls-identity' if args.ls_identity_only else 'ls-totals' if args.ls_totals_only else 'ls-blocks' if args.ls_blocks_only else 'touch-objects' if args.touch_objects_only else 'touch-current' if args.touch_current_only else 'touch-permissions' if args.touch_permissions_only else 'link-permissions' if args.link_permissions_only else 'link-graphs' if args.link_graphs_only else 'removal' if args.removal_only else 'parent-graphs' if args.parent_graphs_only else 'omitted-who' if args.omitted_who_only else 'link-bytes' if args.link_bytes_only else 'magic-defaults' if args.magic_defaults_only else 'magic-types' if args.magic_types_only else 'magic-messages' if args.magic_messages_only else 'magic-strings' if args.magic_strings_only else 'transition-times' if args.transition_times_only else 'day-rules' if args.day_rules_only else 'timezone' if args.timezone_only else 'datetime' if args.datetime_only else 'reference' if args.reference_only else 'calendar' if args.calendar_only else 'magic' if args.magic_only else 'cwd-logical' if args.cwd_logical_only else 'output' if args.output_only else 'creation' if args.creation_only else 'cwd' if args.cwd_only else 'path-limits' if args.path_limits_only else 'recursive' if args.recursive_only else 'metadata' if args.metadata_only else 'decisions' if args.decisions_only else 'interactive' if args.interactive_only else 'isolated' if args.isolated_only else 'residual' if args.residual_only else 'remaining' if args.remaining_only else 'extensions' if args.extended_only else 'full declared subset', provider_audit=args.provider_audit,
                   unavailable_capabilities=[] if platform.system() == 'Linux' else ['Linux virtual-device ENOSPC'],
                   path=args.path, providers=providers, platform=platform.platform(),
                   libc=platform.libc_ver(), utf8_locale=utf8, uid=os.getuid(), gid=os.getgid(), groups=os.getgroups(),

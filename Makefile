@@ -1230,3 +1230,7 @@ test-host-filesystem-ls-output: cshell host-profile
 .PHONY: test-host-filesystem-ls-utf8
 test-host-filesystem-ls-utf8: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --ls-utf8-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-ls-utf8.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-ls-stream
+test-host-filesystem-ls-stream: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --ls-stream-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-ls-stream.json $(HOST_FILESYSTEM_FLAGS)
