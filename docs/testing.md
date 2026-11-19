@@ -1989,3 +1989,7 @@ cleanup are checked in all four execution modes. See
 ### CSH-125 ls stream formatting
 
 `make test-host-filesystem-ls-stream` requires 400 assertions across direct exec and all three cshell input modes. It covers -m separators, -1/-m precedence, -l followed by -m, type suffixes and C ordering with COLUMNS=1/4096. Exact outputs permit only the standard optional space before a wrapping newline. Setup, metadata/contents/link preservation and cleanup are required. Intermediate widths, terminal layouts and other locales remain open. See [evidence](evidence/csh-125/README.md).
+
+## CSH-126 long-listing environments
+
+`make test-host-filesystem-ls-long` requires 240 assertions across direct exec and all three cshell input modes. Sixty cases cover -l, -n, -n -l, -l -n, -1 -l, -l -1, and -C/-m/-x followed by -l/-n on five object types. Pre-exec filesystem and account-database probes supply expected owner/group fields, modes, link counts, sizes and old UTC dates. Setup errors, mutations, exec failure and timeout cleanup are tested. Missing-account fallback, other identities, recent timestamps and XSI -g/-o are not qualified. See [evidence](evidence/csh-126/README.md).
