@@ -60,9 +60,9 @@
       }
     },
     {
-      "ticket": "CSH-126",
-      "path": "docs/tickets/CSH-126-filesystem-environment-residuals.md",
-      "title": "Supply remaining filesystem environments after ls stream-format qualification",
+      "ticket": "CSH-127",
+      "path": "docs/tickets/CSH-127-filesystem-environment-residuals.md",
+      "title": "Supply remaining filesystem environments after ls long-listing qualification",
       "utilities": [
         "basename",
         "dirname",

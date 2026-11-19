@@ -44,6 +44,7 @@ import host_filesystem_ls_names as ls_names
 import host_filesystem_ls_output as ls_output
 import host_filesystem_ls_utf8 as ls_utf8
 import host_filesystem_ls_stream as ls_stream
+import host_filesystem_ls_long as ls_long
 import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
 import host_filesystem_magic_strings as magic_strings
@@ -1058,6 +1059,113 @@ class FilesystemHarnessTests(unittest.TestCase):
                 capture.assert_not_called()
                 self.assertTrue(record['cleanup'])
                 self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_long_matrix_and_oracle(self):
+        rows = list(ls_long.cases())
+        self.assertEqual(len(rows), 60)
+        self.assertEqual(len({r['id'] for r in rows}), 60)
+        for row in rows:
+            with self.subTest(case=row['id']), tempfile.TemporaryDirectory() as directory:
+                env = ls_long.setup(Path(directory), row)
+                kind = row['ls_long']['kind']
+                info = env['before'][kind]
+                numeric = 'n' in row['ls_long']['form']
+                owner = str(info['uid']) if numeric else env['owner']
+                group = str(info['gid']) if numeric else env['group']
+                # Literal mode/date/link expectations are independent of the
+                # production oracle's stat.filemode and regex construction.
+                modes = dict(regular='-rw-r-----', hardlink='-rw-r-----',
+                             directory='drwxr-x---', fifo='prw-------')
+                permissions = modes.get(kind)
+                # Symlink mode is host-defined; require the measured mode.
+                if kind == 'symlink':
+                    permissions = stat.filemode(info['mode'])
+                text = (f'{permissions}  {2 if kind == "hardlink" else info["nlink"]} '
+                        f'{owner}  {group} {info["size"]} Jan  2  2000 meta/{kind}'
+                        + (' -> target' if kind == 'symlink' else '') + '\n')
+                good = text.encode()
+                self.assertTrue(ls_long.output_matches(env, good), row['id'])
+                for bad in (b'\n' + good, good + b'extra\n', good[:-1],
+                            good.replace(b'Jan', b'Feb'), good.replace(b'2000', b'2001'),
+                            good.replace(owner.encode() + b'  ', b'wrong-owner  ', 1),
+                            good.replace(b'  ' + group.encode() + b' ', b'  wrong-group ', 1),
+                            good.replace(b'meta/', b'other/'),
+                            good.replace(permissions.encode(), b'----------', 1)):
+                    self.assertFalse(ls_long.output_matches(env, bad), (row['id'], bad))
+                other = str(info['uid']) if not numeric else env['owner']
+                self.assertFalse(ls_long.output_matches(env, good.replace(owner.encode() + b'  ', other.encode() + b'  ', 1)))
+                self.assertEqual(ls_long.verify(Path(directory), env)[0], [])
+
+    def test_ls_long_run_case_all_modes(self):
+        row = next(ls_long.cases())
+        original = copy.deepcopy(row)
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root:
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, mode, Path(root), None)
+                self.assertEqual(record['verdict'], 'PASS', record)
+                self.assertEqual(record['invocation']['env']['TZ'], 'UTC0')
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+        self.assertEqual(row, original)
+
+    def test_ls_long_detects_mutations(self):
+        for fault in ('bytes', 'mode', 'link', 'entries', 'children'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as directory:
+                directory = Path(directory)
+                kind = 'directory' if fault == 'children' else 'symlink'
+                row = next(r for r in ls_long.cases() if r['ls_long']['kind'] == kind)
+                env = ls_long.setup(directory, row)
+                root = directory / 'meta'
+                if fault == 'bytes':
+                    (root / 'target').write_bytes(b'mutation!')
+                elif fault == 'mode':
+                    (root / 'target').chmod(0o700)
+                elif fault == 'link':
+                    (root / 'symlink').unlink()
+                    (root / 'symlink').symlink_to('other')
+                elif fault == 'children':
+                    (root / 'directory/extra').write_bytes(b'extra')
+                else:
+                    (root / 'extra').write_bytes(b'extra')
+                self.assertTrue(ls_long.verify(directory, env)[0])
+
+    def test_ls_long_probe_failure_before_exec(self):
+        for probe, error in (('measure', OSError('injected lstat failure')),
+                             ('pwd.getpwuid', KeyError('missing owner')),
+                             ('grp.getgrgid', KeyError('missing group'))):
+            with self.subTest(probe=probe), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem_ls_long.' + probe, side_effect=error), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, next(ls_long.cases()), 'direct', Path(root), None)
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+                capture.assert_not_called()
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_long_partial_setup_failure_before_exec(self):
+        row = next(r for r in ls_long.cases() if r['ls_long']['kind'] == 'symlink')
+        real_symlink = os.symlink
+        def fail_late(target, link, *args, **kwargs):
+            link = Path(link)
+            if link.name == 'symlink' and link.parent.name == 'meta':
+                self.assertEqual((link.parent / 'target').read_bytes(), b'referent\n')
+                raise OSError('injected CSH-126 link setup failure')
+            return real_symlink(target, link, *args, **kwargs)
+        for mode in ('direct', 'string', 'file', 'stdin'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as root, \
+                    patch('os.symlink', side_effect=fail_late), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, mode, Path(root), None)
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+                capture.assert_not_called()
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_long_exec_failure_and_timeout_cleanup(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(ls_long.cases()))
 
     def test_ls_stream_matrix_and_oracle(self):
         rows = list(ls_stream.cases())
@@ -3859,7 +3967,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases()) + list(ls_visibility.cases()) + list(ls_recursive.cases()) + list(ls_operands.cases()) + list(ls_names.cases()) + list(ls_output.cases("Linux")) + list(ls_utf8.cases()) + list(ls_stream.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases()) + list(ls_visibility.cases()) + list(ls_recursive.cases()) + list(ls_operands.cases()) + list(ls_names.cases()) + list(ls_output.cases("Linux")) + list(ls_utf8.cases()) + list(ls_stream.cases()) + list(ls_long.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -3996,6 +4104,8 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         self.assertEqual(set(entry['csh118_assertions']), {r['id'] for r in ls_sockets.cases()})
         self.assertTrue(set(entry['csh118_assertions']) <= set(entry['assertions']))
         self.assertEqual(set(entry['csh119_assertions']), {r['id'] for r in ls_visibility.cases()})
+        self.assertEqual(set(entry['csh126_assertions']), {r['id'] for r in ls_long.cases()})
+        self.assertTrue(set(entry['csh126_assertions']) <= set(entry['assertions']))
         self.assertEqual(set(entry['csh125_assertions']), {r['id'] for r in ls_stream.cases()})
         self.assertTrue(set(entry['csh125_assertions']) <= set(entry['assertions']))
         self.assertEqual(set(entry['csh124_assertions']), {r['id'] for r in ls_utf8.cases()})
@@ -4126,7 +4236,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases()) + list(ls_visibility.cases()) + list(ls_recursive.cases()) + list(ls_operands.cases()) + list(ls_names.cases()) + list(ls_output.cases("Linux")) + list(ls_utf8.cases()) + list(ls_stream.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases()) + list(ls_visibility.cases()) + list(ls_recursive.cases()) + list(ls_operands.cases()) + list(ls_names.cases()) + list(ls_output.cases("Linux")) + list(ls_utf8.cases()) + list(ls_stream.cases()) + list(ls_long.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])
