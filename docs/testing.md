@@ -1993,3 +1993,8 @@ cleanup are checked in all four execution modes. See
 ## CSH-126 long-listing environments
 
 `make test-host-filesystem-ls-long` requires 240 assertions across direct exec and all three cshell input modes. Sixty cases cover -l, -n, -n -l, -l -n, -1 -l, -l -1, and -C/-m/-x followed by -l/-n on five object types. Pre-exec filesystem and account-database probes supply expected owner/group fields, modes, link counts, sizes and old UTC dates. Setup errors, mutations, exec failure and timeout cleanup are tested. Missing-account fallback, other identities, recent timestamps and XSI -g/-o are not qualified. See [evidence](evidence/csh-126/README.md).
+
+`make test-host-filesystem-ls-modes` runs the CSH-127 private permission-field
+fixtures through direct exec and all three cshell input modes. Exact kernel
+mode readback is required; no set-ID fixture is executed. See
+[CSH-127 evidence](evidence/csh-127/README.md).

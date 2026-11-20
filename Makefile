@@ -1238,3 +1238,7 @@ test-host-filesystem-ls-stream: cshell host-profile
 .PHONY: test-host-filesystem-ls-long
 test-host-filesystem-ls-long: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --ls-long-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-ls-long.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-ls-modes
+test-host-filesystem-ls-modes: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --ls-modes-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-ls-modes.json $(HOST_FILESYSTEM_FLAGS)
