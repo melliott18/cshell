@@ -1998,3 +1998,7 @@ cleanup are checked in all four execution modes. See
 fixtures through direct exec and all three cshell input modes. Exact kernel
 mode readback is required; no set-ID fixture is executed. See
 [CSH-127 evidence](evidence/csh-127/README.md).
+
+### CSH-128 ls dates
+
+`make test-host-filesystem-ls-dates` runs 60 cases in four invocation modes, with recent, old and future modification timestamps in UTC and a fixed +05:45 zone. Exact pre-exec timestamp readback and before/after clock-category checks precede independent calendar rendering. Six-month boundaries, clock changes, DST and timestamp ranges remain open. [Evidence and reproduction](evidence/csh-128/README.md).

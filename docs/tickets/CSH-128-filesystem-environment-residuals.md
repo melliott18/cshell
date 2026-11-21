@@ -1,11 +1,11 @@
 # CSH-128: Supply remaining filesystem environments after ls permission-field qualification
 
-- Status: backlog
+- Status: review
 - Type: test
 - Kind: implementation
 - Parent: None
 - Depends on: CSH-127
-- Branch: Assigned when work starts
+- Branch: `test/CSH-128-filesystem-environments`
 - Issue: [#268](https://github.com/melliott18/cshell/issues/268)
 
 ## Goal
@@ -74,10 +74,10 @@ CSH-072 bounded witnesses. All four conditions remain open:
 
 ## Acceptance criteria
 
-- [ ] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
-- [ ] Require zero selected-profile allowances and exact provider/build provenance.
-- [ ] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
-- [ ] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
+- [x] Supply each environment and a clause-derived independent oracle, or retain its explicit open disposition and next owner.
+- [x] Require zero selected-profile allowances and exact provider/build provenance.
+- [x] Record native/Linux output, status, effects, setup errors and cleanup separately; distinguish call-site/libc injection, kernel faults and actual filesystem exhaustion.
+- [x] Update the current section map, ownership manifest and U-034/U-040 evidence without rewriting historical evidence.
 
 ## Validation
 
@@ -86,10 +86,41 @@ test-host-filesystem-provider-audit test-host-filesystem-residual
 test-host-filesystem-isolated test-host-filesystem-interactive
 test-host-filesystem-decisions test-host-filesystem-metadata
 test-host-filesystem-recursive test-host-filesystem-path-limits test-host-filesystem-cwd
-test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times test-host-filesystem-magic-strings test-host-filesystem-magic-messages test-host-filesystem-magic-types test-host-filesystem-magic-defaults test-host-filesystem-link-bytes test-host-filesystem-omitted-who test-host-filesystem-parent-graphs test-host-filesystem-removal test-host-filesystem-link-graphs test-host-filesystem-link-permissions test-host-filesystem-touch-permissions test-host-filesystem-touch-current test-host-filesystem-touch-objects test-host-filesystem-ls-blocks test-host-filesystem-ls-totals test-host-filesystem-ls-identity test-host-filesystem-ls-sockets test-host-filesystem-ls-visibility test-host-filesystem-ls-recursive test-host-filesystem-ls-operands test-host-filesystem-ls-names test-host-filesystem-ls-output test-host-filesystem-ls-utf8 test-host-filesystem-ls-stream test-host-filesystem-ls-long test-host-filesystem-ls-modes` on native macOS and Linux as an unprivileged
+test-host-filesystem-creation test-host-filesystem-output test-host-filesystem-cwd-logical test-host-filesystem-magic test-host-filesystem-calendar test-host-filesystem-reference test-host-filesystem-datetime test-host-filesystem-timezone test-host-filesystem-day-rules test-host-filesystem-transition-times test-host-filesystem-magic-strings test-host-filesystem-magic-messages test-host-filesystem-magic-types test-host-filesystem-magic-defaults test-host-filesystem-link-bytes test-host-filesystem-omitted-who test-host-filesystem-parent-graphs test-host-filesystem-removal test-host-filesystem-link-graphs test-host-filesystem-link-permissions test-host-filesystem-touch-permissions test-host-filesystem-touch-current test-host-filesystem-touch-objects test-host-filesystem-ls-blocks test-host-filesystem-ls-totals test-host-filesystem-ls-identity test-host-filesystem-ls-sockets test-host-filesystem-ls-visibility test-host-filesystem-ls-recursive test-host-filesystem-ls-operands test-host-filesystem-ls-names test-host-filesystem-ls-output test-host-filesystem-ls-utf8 test-host-filesystem-ls-stream test-host-filesystem-ls-long test-host-filesystem-ls-modes test-host-filesystem-ls-dates` on native macOS and Linux as an unprivileged
 fixture identity. Retain separate nonzero stock `make test-host-filesystem-audit`
 and stock `tests/host_filesystem.py --extended-only --provider-audit` records.
 Add bounded setup/failure/timeout cleanup regressions for new environments.
 Use only private disposable filesystems and credentials. Never fill the host
 volume or use protected mounts; `/dev/full` is not filesystem exhaustion.
 Privileged provisioning requires an isolated runner; prompts require owned PTYs.
+
+## Implementation scope
+
+CSH-128 supplies 60 ls cases / 240 assertions for recent, old and future modification dates on regular files, hard links, directories, FIFOs and symlinks. Named and numeric long listings use UTC and a fixed +05:45 offset, including date rollover and minute offsets. Authored integer timestamps, exact pre-exec utime/lstat readback and before/after interior clock-category checks supply the oracle. Exact date fields, channels/status, unchanged metadata including ctime, bytes, links, entries and cleanup are required. Selected providers are unchanged. Six-month and current-instant boundaries, clock changes, DST, timestamp ranges, other locales and arbitrary timezone definitions remain unqualified.
+
+Based on CSH-127 commit `44cedbe`, awaiting integration. [CSH-130](CSH-130-filesystem-environment-residuals.md) / [#271](https://github.com/melliott18/cshell/issues/271) owns every remaining contract and the four retained conditions.
+
+## Validation result — 2026-11-21
+
+The complete 49-target required Make command passes on native macOS 14.8.7
+arm64 (UID 501) and Linux arm64/Docker with glibc 2.36 (UID/GID 10001).
+Selected filesystem profiles pass 15,211 / 15,283 assertions with zero
+failures, including all 240 new assertions on each platform. Both platforms
+pass all 239 filesystem harness tests and 13 ownership tests.
+
+Stock full audits retain exactly 1,069 / 578 failures; stock provider audits
+retain 16 / 8. The evidence verifier passes for both platforms: every
+predecessor expectation and stock failure identity is retained, all new
+case/mode pairs are present, source/provider provenance matches, and
+metadata, date fields and cleanup checks pass. Selected providers, source
+pins, build flags, deadlines and allowances are unchanged.
+
+All 24 ticket tests and offline/live identity checks pass with 130 shared
+reservations. No sanitizer, hosted CI or separately hosted native-Linux
+result is claimed. Linux used the retained predecessor provider image and
+the task-owned container was removed after collection.
+
+CSH-128 is ready for review, pending integration of CSH-127. CSH-130 owns
+every remaining filesystem contract and the four retained conditions.
+
+See [retained evidence and reproduction](../evidence/csh-128/README.md).

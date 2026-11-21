@@ -63,7 +63,7 @@ def setup(directory, row):
                 probe='pre-exec lstat, exact utime readback, getpwuid/getgrgid, bytes and link text')
 
 
-def output_matches(environment, output):
+def output_matches(environment, output, date_fields=(b'Jan', b'2', b'2000')):
     spec = environment['spec']
     info = environment['before'][spec['kind']]
     numeric = 'n' in spec['form']  # -l does not turn off an earlier -n.
@@ -72,7 +72,7 @@ def output_matches(environment, output):
     fields = [re.escape(stat.filemode(info['mode']).encode()) + rb'[+@.]?',
               str(info['nlink']).encode(), re.escape(owner.encode('ascii')),
               re.escape(group.encode('ascii')), str(info['size']).encode(),
-              b'Jan', b'2', b'2000', ('meta/' + spec['kind']).encode()]
+              *date_fields, ('meta/' + spec['kind']).encode()]
     pattern = rb'[ \t]+'.join(fields)
     if spec['kind'] == 'symlink':
         pattern += rb' -> target'

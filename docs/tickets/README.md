@@ -135,6 +135,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-127](CSH-127-filesystem-environment-residuals.md) | Supply remaining filesystem environments after ls long-listing qualification | [CSH-126](CSH-126-filesystem-environment-residuals.md) | [#266](https://github.com/melliott18/cshell/issues/266) |
 | [CSH-128](CSH-128-filesystem-environment-residuals.md) | Supply remaining filesystem environments after ls permission-field qualification | [CSH-127](CSH-127-filesystem-environment-residuals.md) | [#268](https://github.com/melliott18/cshell/issues/268) |
 | [CSH-129](CSH-129-ed-signal-response.md) | Investigate intermittent ed SIGINT response capture | None | [#269](https://github.com/melliott18/cshell/issues/269) |
+| [CSH-130](CSH-130-filesystem-environment-residuals.md) | Supply remaining filesystem environments after ls date qualification | [CSH-128](CSH-128-filesystem-environment-residuals.md) | [#271](https://github.com/melliott18/cshell/issues/271) |
 
 ## Child implementation tickets
 
