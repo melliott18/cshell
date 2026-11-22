@@ -13,83 +13,140 @@ import sys
 import time
 
 
-def ed_signal(argv, action):
-    # Inherit the outer smoke.capture process group and resource bounds. Killing
-    # that group on timeout also catches ed shell escapes and helper descendants.
-    master = slave = None
-    if action == 'int':
-        master, slave = pty.openpty()
-        attrs = termios.tcgetattr(slave)
-        attrs[3] &= ~termios.ECHO
-        attrs[1] &= ~termios.OPOST
-        termios.tcsetattr(slave, termios.TCSANOW, attrs)
-    child = subprocess.Popen(argv, stdin=slave if slave is not None else subprocess.PIPE,
-                             stdout=slave if slave is not None else subprocess.PIPE,
-                             stderr=subprocess.PIPE)
-    if slave is not None:
-        os.close(slave)
-    read_fd = master if master is not None else child.stdout.fileno()
-    write_fd = master if master is not None else child.stdin.fileno()
-    def send(data):
-        os.write(write_fd, data)
-    observed = bytearray()
-    diagnostics = bytearray()
-    def read_until(wanted):
+class EdCapture:
+    """Keep both output descriptors until their individual EOF boundaries."""
+    def __init__(self, stdout_fd, stderr_fd):
+        self.stdout = bytearray()
+        self.stderr = bytearray()
+        self.events = []
+        self.phase = 'setup'
+        self.selector = selectors.DefaultSelector()
+        try:
+            for fd, name in ((stdout_fd, 'stdout'), (stderr_fd, 'stderr')):
+                os.set_blocking(fd, False)
+                self.selector.register(fd, selectors.EVENT_READ, name)
+        except BaseException:
+            self.selector.close()
+            raise
+
+    def event(self, **event):
+        # A one-byte producer must not turn bounded output into an unbounded log.
+        if len(self.events) < 512:
+            self.events.append(dict(phase=self.phase, **event))
+
+    def read(self, deadline):
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise RuntimeError('ed readiness/response bound exceeded')
+        ready = self.selector.select(remaining)
+        self.event(event='ready', streams=[key.data for key, _ in ready])
+        for key, _ in ready:
+            try:
+                block = os.read(key.fd, 4096)
+            except BlockingIOError:
+                continue
+            self.event(event='data' if block else 'eof', stream=key.data, size=len(block))
+            if not block:
+                self.selector.unregister(key.fd)
+                continue
+            room = 65536 - len(self.stdout) - len(self.stderr)
+            getattr(self, key.data).extend(block[:room])
+            if len(block) > room:
+                raise RuntimeError('ed output bound exceeded')
+
+    def read_until(self, wanted):
         deadline = time.monotonic() + 2
-        start_out, start_err = len(observed), len(diagnostics)
-        with selectors.DefaultSelector() as sel:
-            sel.register(read_fd, selectors.EVENT_READ, observed)
-            sel.register(child.stderr, selectors.EVENT_READ, diagnostics)
-            while not ((wanted in observed[start_out:]) or
-                       (wanted in diagnostics[start_err:])):
-                if len(observed) + len(diagnostics) > 65536 or time.monotonic() >= deadline:
-                    raise RuntimeError('ed readiness/response bound exceeded: '+repr(bytes(observed)))
-                for key, _ in sel.select(max(0, deadline-time.monotonic())):
-                    block = os.read(key.fd, 4096)
-                    if not block:
-                        raise RuntimeError('ed exited before response: '+repr(bytes(observed)))
-                    key.data.extend(block)
-                    # A final stdout response can share a readiness batch with
-                    # stderr EOF. Accept it before inspecting the next fd.
-                    if wanted in observed[start_out:] or wanted in diagnostics[start_err:]:
-                        return
+        start_out, start_err = len(self.stdout), len(self.stderr)
+        while wanted not in self.stdout[start_out:] and wanted not in self.stderr[start_err:]:
+            if not self.selector.get_map():
+                raise RuntimeError('ed exited before response: ' + repr(bytes(self.stdout)))
+            self.read(deadline)
+
+    def drain(self):
+        deadline = time.monotonic() + 2
+        while self.selector.get_map():
+            self.read(deadline)
+
+    def close(self):
+        self.selector.close()
+
+
+def ed_signal(argv, action):
+    # Inherit smoke.capture's process group/resource bounds: its cleanup also
+    # catches ed shell escapes and helper descendants after any failure.
+    master = slave = child = capture = None
+    complete = False
+    phase = 'setup'
     try:
+        if action == 'int':
+            master, slave = pty.openpty()
+            attrs = termios.tcgetattr(slave)
+            attrs[3] &= ~termios.ECHO
+            attrs[1] &= ~termios.OPOST
+            termios.tcsetattr(slave, termios.TCSANOW, attrs)
+        # Only input needs terminal semantics. A pipe preserves final stdout
+        # even if the child exits before its last response is consumed; Darwin
+        # can discard queued PTY output when the last slave descriptor closes.
+        child = subprocess.Popen(argv, stdin=slave if slave is not None else subprocess.PIPE,
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE)
+        if slave is not None:
+            os.close(slave)
+            slave = None
+        read_fd = child.stdout.fileno()
+        write_fd = master if master is not None else child.stdin.fileno()
+        capture = EdCapture(read_fd, child.stderr.fileno())
+        observed, diagnostics = capture.stdout, capture.stderr
+        os.set_blocking(write_fd, False)
+
+        def send(data):
+            deadline = time.monotonic() + 2
+            while data:
+                try:
+                    written = os.write(write_fd, data)
+                    if not written:
+                        raise RuntimeError('ed input closed before command')
+                    data = data[written:]
+                except BlockingIOError:
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0:
+                        raise RuntimeError('ed command write bound exceeded')
+                    with selectors.DefaultSelector() as sel:
+                        sel.register(write_fd, selectors.EVENT_WRITE)
+                        sel.select(remaining)
+
+        capture.phase = phase = 'initial-response'
         ready_command = shlex.join([sys.executable, str(Path(__file__).resolve()), 'ready'])
         send(b'a\nrecovered\n.\n1p\n!' + ready_command.encode() + b'\n' +
              (b'P\n' if action == 'int' else b''))
-        read_until(b'recovered\n')
-        # Seeing bytes in the pipe does not prove ed's stdio operation returned.
-        # A later shell escape proves the print command completed before a signal
-        # can interrupt it and make exit flush the same stdio buffer a second time.
+        capture.read_until(b'recovered\n')
+        # The shell escape proves the print returned; the later prompt proves
+        # system() has returned and restored SIGINT before we deliver it.
+        capture.phase = phase = 'readiness'
         ready_deadline = time.monotonic() + 2
         while not Path('ready').exists():
             if time.monotonic() >= ready_deadline:
                 raise RuntimeError('ed did not reach the post-print readiness command')
-            time.sleep(0.005)  # Handler and modified buffer are ready.
-        if action == 'int':
-            # The prompt after P proves system() returned and restored SIGINT.
-            # The shell-escape helper alone runs while system() ignores SIGINT.
-            if not observed.endswith(b'*'):
-                read_until(b'*')
+            time.sleep(0.005)
+        if action == 'int' and not observed.endswith(b'*'):
+            capture.read_until(b'*')
         if action == 'hup-home':
-            Path('ed.hup').mkdir()  # Deterministic cwd write failure, even as root.
+            Path('ed.hup').mkdir()
         sent = signal.SIGINT if action == 'int' else signal.SIGHUP
+        capture.phase = phase = 'signal-response'
         child.send_signal(sent)
         if action == 'int':
-            read_until(b'?\n*')
+            capture.read_until(b'?\n*')
+            capture.phase = phase = 'final-response'
             send(b'P\n1p\nw saved\nq\n')
-            read_until(b'recovered\n')
-        # Keep stdin open until ed acknowledges SIGINT / exits on SIGHUP.
+            capture.read_until(b'recovered\n')
+        # Drain both output pipes under the same bounds. A pre-drain wait can
+        # deadlock if a broken provider fills stderr. Trailing bytes remain in
+        # the oracle.
+        capture.phase = phase = 'final-drain'
+        capture.drain()
         child.wait(timeout=2)
-        out, err = child.communicate()
-        observed.extend(out or b'')
-        diagnostics.extend(err)
         err = bytes(diagnostics)
-        result=dict(argv=argv, signal=sent.name, status=child.returncode,
-                    stdout=bytes(observed).hex(), stderr=err.hex(), reaped=True,
-                    files={str(p):p.read_bytes().hex() for p in
-                           (Path('saved'),Path('ed.hup'),Path('.home/ed.hup')) if p.is_file()})
-        Path('signal.json').write_text(json.dumps(result,indent=2)+'\n')
         if action == 'int':
             ok=(bytes(observed)==b'recovered\n*?\n*recovered\n' and not err
                 and child.returncode >= 0 and Path('saved').read_bytes()==b'recovered\n')
@@ -97,25 +154,37 @@ def ed_signal(argv, action):
             recovery=Path('.home/ed.hup' if action=='hup-home' else 'ed.hup')
             ok=(bytes(observed)==b'recovered\n' and (action=='hup-home' or not err) and child.returncode >= 0
                 and recovery.read_bytes()==b'recovered\n')
-        # HUP/INT exit statuses are retained, but no exact status is specified for
-        # these asynchronous paths. Signal death is never accepted as recovery.
+        # Retain the status; signal death never qualifies as recovery.
         if not ok:
-            raise RuntimeError('ed signal assertion failed: '+json.dumps(result))
-        print('recovered and reaped')
+            raise RuntimeError('ed signal assertion failed')
+        complete = True
     finally:
-        if child.poll() is None:
-            child.kill()
-        child.wait(timeout=1)
-        if not Path('signal.json').exists():
-            Path('signal.json').write_text(json.dumps(dict(argv=argv, action=action,
-                status=child.returncode, stdout=bytes(observed).hex(),
-                stderr=bytes(diagnostics).hex(), reaped=True,
-                incomplete=True), indent=2) + '\n')
-        for stream in (child.stdin,child.stdout,child.stderr):
-            if stream is not None:
-                stream.close()
-        if master is not None:
-            os.close(master)
+        try:
+            if child is not None:
+                if child.poll() is None:
+                    child.kill()
+                child.wait(timeout=1)
+        finally:
+            if capture is not None:
+                capture.close()
+            if child is not None:
+                for stream in (child.stdin, child.stdout, child.stderr):
+                    if stream is not None:
+                        stream.close()
+            for fd in (slave, master):
+                if fd is not None:
+                    os.close(fd)
+            result = dict(argv=argv, action=action, phase=phase,
+                          signal=('SIGINT' if action == 'int' else 'SIGHUP'),
+                          status=child.returncode if child is not None else None,
+                          stdout=bytes(capture.stdout).hex() if capture else '',
+                          stderr=bytes(capture.stderr).hex() if capture else '',
+                          reaped=child is not None and child.returncode is not None,
+                          incomplete=not complete, events=capture.events if capture else [],
+                          files={str(p):p.read_bytes().hex() for p in
+                                 (Path('saved'),Path('ed.hup'),Path('.home/ed.hup')) if p.is_file()})
+            Path('signal.json').write_text(json.dumps(result,indent=2)+'\n')
+    print('recovered and reaped')
 
 
 if __name__ == '__main__':
