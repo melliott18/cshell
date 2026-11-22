@@ -121,6 +121,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-081](CSH-081-host-terminal-residual-contracts.md) | Qualify residual terminal and session contracts | [CSH-077](CSH-077-host-terminal-utilities.md) | [#159](https://github.com/melliott18/cshell/issues/159) |
 
 | [CSH-115](CSH-115-filesystem-environment-residuals.md) | Supply remaining filesystem environments after touch object qualification | [CSH-114](CSH-114-filesystem-environment-residuals.md) | [#242](https://github.com/melliott18/cshell/issues/242) |
+| [CSH-129](CSH-129-ed-signal-response.md) | Repair intermittent ed SIGINT response capture | None | [#269](https://github.com/melliott18/cshell/issues/269) |
 
 ## Child implementation tickets
 

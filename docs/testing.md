@@ -1904,6 +1904,14 @@ unqualified. SIGINT is required by default using the private ed provider;
 `--provider-regressions` selects the repaired M4 regressions, which are also
 required by the default suite. No known-gap allowances are used.
 
+CSH-129 adds a deterministic real-editor regression: after the final commands,
+wait for ed to exit and present stderr EOF ahead of queued stdout. Run it with
+`python3 tests/ed_signal_order_probe.py --ed build/host-ed --record build/tests/ed-order.json`.
+The same probe accepts `--helper` to reproduce the pre-fix failure. Language
+harness controls also reject missing/trailing output, wrong saved bytes, signal
+death, floods and timeouts, and check PTY cleanup on setup failures. See the
+[CSH-129 retained evidence](evidence/csh-129/README.md).
+
 ## Locale and message catalog providers
 
 `make host-catalog-fixtures` supplies shared immutable locale/catalog generations

@@ -195,5 +195,130 @@ class LanguageEvidenceTests(unittest.TestCase):
             self.assertTrue(record['fixture_removed'])
 
 
-if __name__=='__main__':
+class EdResponseCaptureTests(unittest.TestCase):
+    def test_real_editor_stderr_eof_precedes_queued_final_response(self):
+        from ed_signal_order_probe import probe
+        helper = Path(__file__).with_name('host_language_helper.py').resolve()
+        editor = helper.parents[1] / 'build/host-ed'
+        if not editor.exists():
+            self.skipTest('build/host-ed is built by test-host-languages')
+        record = probe(helper, [str(editor), '-s', 'original'])
+        self.assertEqual(record['outcome'], 'PASS', record)
+        self.assertEqual(record['files']['saved'], b'recovered\n'.hex())
+        self.assertTrue(record['reaped'])
+        self.assertTrue(record['fixture_removed'])
+        reads = [e for e in record['events'] if e['event'] == 'read']
+        self.assertEqual(reads[0], dict(event='read', stream='stderr', data=''))
+        self.assertEqual(reads[1]['stream'], 'stdout')
+        self.assertIn(b'recovered\n'.hex(), reads[1]['data'])
+
+    def test_pipe_eof_does_not_discard_other_stream_and_marker_can_split(self):
+        from host_language_helper import EdCapture
+        for response_stream in ('stdout', 'stderr'):
+            with self.subTest(response_stream=response_stream):
+                out_read, out_write = os.pipe()
+                err_read, err_write = os.pipe()
+                capture = EdCapture(out_read, err_read)
+                try:
+                    closed_write = err_write if response_stream == 'stdout' else out_write
+                    live_write = out_write if response_stream == 'stdout' else err_write
+                    os.close(closed_write)
+                    capture.read(time.monotonic() + 1)
+                    self.assertEqual(len(capture.selector.get_map()), 1)
+                    os.write(live_write, b'recov')
+                    # Use small real reads to split the response across batches.
+                    real_read = os.read
+                    with patch('host_language_helper.os.read', side_effect=lambda fd, n: real_read(fd, min(n, 3))):
+                        os.write(live_write, b'ered\n')
+                        capture.read_until(b'recovered\n')
+                    os.close(live_write)
+                    capture.drain()
+                    self.assertEqual(bytes(getattr(capture, response_stream)), b'recovered\n')
+                    # Old bytes must not satisfy a new response boundary.
+                    with self.assertRaisesRegex(RuntimeError, 'exited before response'):
+                        capture.read_until(b'recovered\n')
+                finally:
+                    capture.close()
+                    os.close(out_read)
+                    os.close(err_read)
+
+    def test_signal_bad_providers_fail_reap_and_remove_fixtures(self):
+        # A small protocol peer exercises the real PTY, selector and outer
+        # cleanup without depending on timing or a permissive provider oracle.
+        protocol = '''import os, signal, sys, time
+from pathlib import Path
+variant = VARIANT
+signal.signal(signal.SIGINT, lambda *args: os.write(1, b'?\\n*'))
+for line in sys.stdin:
+    if line.startswith('!'):
+        Path('ready').write_text('ready')
+    elif line == '1p\\n':
+        os.write(1, b'recovered\\n')
+    elif line == 'P\\n':
+        os.write(1, b'*')
+        break
+for line in sys.stdin:
+    if line == '1p\\n':
+        if variant != 'missing': os.write(1, b'recovered\\n')
+    elif line == 'w saved\\n':
+        Path('saved').write_bytes(b'wrong\\n' if variant == 'file' else b'recovered\\n')
+    elif line == 'q\\n':
+        if variant == 'stdout': os.write(1, b'extra')
+        if variant == 'stderr': os.write(2, b'extra')
+        if variant == 'flood':
+            while True: os.write(2, b'x' * 4096)
+        if variant == 'timeout': time.sleep(30)
+        if variant == 'death': os.kill(os.getpid(), signal.SIGKILL)
+        break
+'''
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            provider = root / 'provider'
+            for variant in ('ok', 'missing', 'file', 'stdout', 'stderr', 'flood', 'timeout', 'death'):
+                with self.subTest(variant=variant):
+                    provider.write_text('#!' + sys.executable + '\n' + protocol.replace('VARIANT', repr(variant)))
+                    provider.chmod(0o700)
+                    started = time.monotonic()
+                    record = run_signal(provider, str(provider), 'int', 'direct', root, os.defpath)
+                    self.assertLess(time.monotonic() - started, 7)
+                    self.assertEqual(record['verdict'], 'PASS' if variant == 'ok' else 'FAIL', record)
+                    self.assertTrue(record['fixture_removed'])
+                    self.assertTrue(record['signal']['reaped'], record)
+                    self.assertLessEqual(len(bytes.fromhex(record['signal']['stdout'])) +
+                                         len(bytes.fromhex(record['signal']['stderr'])), 65536)
+
+    def test_setup_failures_close_pty_and_retain_record(self):
+        import host_language_helper as helper
+        for failure in ('attributes', 'spawn', 'capture'):
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as temporary:
+                previous = Path.cwd()
+                descriptors = []
+                real_openpty = helper.pty.openpty
+                def openpty():
+                    pair = real_openpty()
+                    descriptors.extend(pair)
+                    return pair
+                try:
+                    os.chdir(temporary)
+                    target = dict(attributes='termios.tcgetattr', spawn='subprocess.Popen',
+                                  capture='EdCapture')[failure]
+                    with patch.object(helper.pty, 'openpty', side_effect=openpty), \
+                         patch('host_language_helper.' + target, side_effect=OSError('injected setup failure')):
+                        with self.assertRaisesRegex(OSError, 'injected setup failure'):
+                            helper.ed_signal([sys.executable, '-c', 'import time; time.sleep(30)'], 'int')
+                    detail = json.loads(Path('signal.json').read_text())
+                    self.assertTrue(detail['incomplete'])
+                    if failure == 'capture':
+                        self.assertTrue(detail['reaped'])
+                        self.assertEqual(detail['status'], -signal.SIGKILL)
+                    else:
+                        self.assertIsNone(detail['status'])
+                    for fd in descriptors:
+                        with self.assertRaises(OSError):
+                            os.fstat(fd)
+                finally:
+                    os.chdir(previous)
+
+
+if __name__ == "__main__":
     unittest.main()

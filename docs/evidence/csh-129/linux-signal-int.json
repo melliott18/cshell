@@ -1,0 +1,1021 @@
+{
+  "recorded_utc": "2026-11-22T17:09:38.296451+00:00",
+  "argv": [
+    "tests/host_languages.py",
+    "./cshell",
+    "--path",
+    "/work/build/host-profile/bin:/bin:/usr/bin",
+    "--case",
+    "ed/signal-int",
+    "--record",
+    "build/csh129-validation/signal-int.json"
+  ],
+  "platform": "Linux-6.4.16-linuxkit-aarch64-with-glibc2.36",
+  "uname": [
+    "Linux",
+    "4a8d128236b7",
+    "6.4.16-linuxkit",
+    "#1 SMP PREEMPT Thu Nov 16 10:49:20 UTC 2023",
+    "aarch64",
+    ""
+  ],
+  "libc": [
+    "glibc",
+    "2.36"
+  ],
+  "uid": 10001,
+  "gid": 10001,
+  "path": "/work/build/host-profile/bin:/bin:/usr/bin",
+  "environment": {
+    "LANG": "C",
+    "LC_ALL": "C",
+    "HOME": "private .home",
+    "TMPDIR": "private .tmp"
+  },
+  "filesystem": {
+    "path": "/tmp",
+    "device": 1048742,
+    "platform": "Linux",
+    "mount": {
+      "mountpoint": "/",
+      "type": "overlay",
+      "source": "overlay",
+      "options": "rw,relatime",
+      "device": "0:422",
+      "root": "/"
+    }
+  },
+  "inventory": {
+    "awk": {
+      "path": "/work/build/host-profile/bin/awk",
+      "realpath": "/work/build/host-awk",
+      "sha256": "ced86e83ed8da4f45efda673683d2c0d6bb2edb4bb38ba4e034074a086274619",
+      "package_owners": ""
+    },
+    "bc": {
+      "path": "/work/build/host-profile/bin/bc",
+      "realpath": "/work/build/host-bc",
+      "sha256": "7531ad4285498f0b91dd94c04842581170d88b8dbe40923c9afeb7e74f5e2af5",
+      "package_owners": ""
+    },
+    "ed": {
+      "path": "/work/build/host-profile/bin/ed",
+      "realpath": "/work/build/host-ed",
+      "sha256": "b69f0e6f277fe6c2d3a203ff2bc164fe0814dd7ad6df2cd8dd7d72cce2f5283e",
+      "package_owners": ""
+    },
+    "expr": {
+      "path": "/bin/expr",
+      "realpath": "/usr/bin/expr",
+      "sha256": "de120b772e3aaf8a15b670c725717d1e873b831b07c6eeb08e0a46f5e56a5f61",
+      "package_owners": "coreutils: /usr/bin/expr"
+    },
+    "grep": {
+      "path": "/bin/grep",
+      "realpath": "/usr/bin/grep",
+      "sha256": "d4323504915163bfb15b27d84d7dd7c35369d6a2bbba89e239d758044c1135b1",
+      "package_owners": "grep: /bin/grep"
+    },
+    "m4": {
+      "path": "/work/build/host-profile/bin/m4",
+      "realpath": "/work/build/host-m4",
+      "sha256": "d6c498310c9b91ec0e6ce593a2a2179afad83f8d20eb4438b10bef8c81d440e3",
+      "package_owners": ""
+    },
+    "patch": {
+      "path": "/work/build/host-profile/bin/patch",
+      "realpath": "/work/build/host-patch",
+      "sha256": "89f82637cec49722dc85322385a46fed1daf7680cd82bd210b8ebbd1b8c8c42d",
+      "package_owners": ""
+    },
+    "xargs": {
+      "path": "/work/build/host-profile/bin/xargs",
+      "realpath": "/work/build/host-xargs",
+      "sha256": "49e34e00dd1451e720ca3f85e10fdf53c3d67faa89746ee6c642748708702276",
+      "package_owners": ""
+    }
+  },
+  "source_identity": {
+    "sha256": "551d3dd8d8194bf55186abe96ac18fa2cd60578961923a05b6dc8aa36a5ee33c",
+    "files": {
+      "Dockerfile": "3ec3fb0a80a550e3f0fa03c6b7303eac26666fa3b381312f5d115822ee3eec54",
+      "Makefile": "59303025e011defff4e42401d4e0aeca577a97c4033315b66fb4a596cafcb99c",
+      "build/host-newgrp-provider.h": "3d9f80e50e63afb5c90d2dd4901111bb08962db96694d90b090d4e0d623d0233",
+      "build/host-test-provider.h": "ceb5d5583330c9e5b5d9a6eca0fe6ef7c756d6ac6ab245b28279bed3baaf3e76",
+      "include/cshell/alias.h": "f727c4b6d5a1b3ff9175c2df10cb3ee50358cb266a21f92494fd2eff502962dc",
+      "include/cshell/arithmetic.h": "54baa41829311db7293c44231382b6165d70b69364a4872a5b36c14b6064b049",
+      "include/cshell/ast.h": "a9a5bc6def771ecc7a5adb587b5ed0d1af3cc1fb3b9ece26306eabcf0fda87cf",
+      "include/cshell/builtin.h": "9a29761b985667e1feaff0a05aeb1e80de9d03ff65cd31289255cf698dc297d1",
+      "include/cshell/character.h": "b8fffab94553a0c667b0dd7aaa9bc5640a991ed49ec2ecb62f8c958fd800f002",
+      "include/cshell/execute.h": "36f10e8114248446ad779603224b6c7f728247737ce94885d0ea05b93e004e39",
+      "include/cshell/expand.h": "f73748157041e858509766acc1e1e1316bd23622286aa4d1597de7959c7c37c3",
+      "include/cshell/input.h": "bfdd7f16312992f763f76d888ef5f3dce41c5c3b813c18d558271fec6ac636e2",
+      "include/cshell/invocation.h": "32d1919150df784605aa47e4cebf15ac22e79332532b69821cae78577f237edf",
+      "include/cshell/jobs.h": "dbc426c66299be076ac82b21f2e140d30d02290f57b6cf9a0e0575d598083194",
+      "include/cshell/lexer.h": "043f2bd56c8e0d269b46424c8d0ecd81a972909c677fe93df8b6ca6776682db5",
+      "include/cshell/options.h": "261154be284ee80c8a0000b67bb8c0cb7de2321dc37c8477be84adfd4131ca15",
+      "include/cshell/output.h": "701e3a9a07001158145904b5130d87bd8b7cc5fae50cf8d89238a8b8dc6f2d5d",
+      "include/cshell/parser.h": "1d8ac0049dfd3ae24928afab15ea03afc9186646c8caa2ece70c98505e70ca01",
+      "include/cshell/quote.h": "32e5cde3460a54a838b53339922cff78bace0280b36f6abd031dc57213ce4d40",
+      "include/cshell/redirect.h": "c109c4e109800c2aceb06724219bac4344cae972da5120b993ac4a82c33b841a",
+      "include/cshell/stack.h": "9ed0fba3f9eb323ab061ae4443bc96d81bcb577adc972993aa08d18a5d442aaf",
+      "include/cshell/state.h": "f7276560ffe419ece5a6fe2ec06222b3723fd3849d83378d30de63c9561c45d1",
+      "include/cshell/traps.h": "caebc69d2d31c17a98d19f41c1c4506ba90abce28a7f7e75a4beb677e3323eac",
+      "src/alias.c": "f12dfb9647bf37096ff7b2b7ff4a78cb0fee610955af16aa0f5d84aa12cdb7af",
+      "src/arithmetic.c": "363357cc9cd058b67deba9b07f4e3b929cecd484152b4858a319e084d14cbac0",
+      "src/ast.c": "3291b111de7bd1d320a3227835515f1556bc1781fd3d13e35de0220d3e14f099",
+      "src/builtin.c": "f8b6140834111890c2002a469c0716098caaca93bc6a09249f34512547a5c33f",
+      "src/character.c": "e954be51f1ed90d1bc75de64fdac2ec6226e556b731fefac9e8e73485a2e75e3",
+      "src/execute.c": "a4bfd606ad33bcde15c9eed64d52d39ac360aeb405aaff44a344cc410d6451d4",
+      "src/expand.c": "3c6dda4e0556e9e5fe67fea47a25cc899480b8a049fa2fe6212d2a8c40ebdbc6",
+      "src/field_internal.h": "2ece7cd114aa7d98e3e02ff294c3d7cfd4b01fb79dc77c40d47f341e48c892df",
+      "src/fields.c": "602fd8de139c6cb455e840927bc17403f6a720e4546233176134f15145a6d8bd",
+      "src/input.c": "e029a1c225f3f9a335a7aece89492825103dc69a4387b984a526bb0f2118fb37",
+      "src/invocation.c": "0a02152e17bc302a4235976fe549fdbff18b4593cf96e64223e62d0e89c1bbde",
+      "src/jobs.c": "3bc523830082029d418a2a1d7c8efccc29bf5ccf853b0913654b1b4f0d494657",
+      "src/lexer.c": "46e79b1d5a3fe11ddb36e48e44ffe0e92746761964dcc6f12f5f4ec8333c2484",
+      "src/main.c": "9f5ba5aa825deac1a2f5301b757476dd50c3410359773bdccba88869e4057fbd",
+      "src/parser.c": "19555c938839c9795080b4c664728ddbf868713fc08b110840dc8fab3070549a",
+      "src/pathname.c": "2fcd850994b8715cbd1f64298306c5be554c04bfdf55e0f91ac120f4019468a1",
+      "src/prepare.c": "edc11215dfb54eed668cca8b26f755d1308dfc66206daacbf9cdca0eda9d5411",
+      "src/prepare.h": "dd9cad3706a1b40d37739a84f622595d4e1c77d4da5dcc58671162b46f176cdc",
+      "src/quote.c": "ec4fba0a8ffb0168155620178b7aec778e3fc9b9ea097cf5e80166607af9b18b",
+      "src/redirect.c": "fb20ebb87da3691bd90170078c6b707240a235112c1abb01d07965c9b73864c7",
+      "src/stack.c": "b0aa558bdb49d964d16a9ccf664dfb933c07c5aa50572ab4929fdb932517f007",
+      "src/state.c": "a80156ba4764cd5759ef4f7b4a0bb40046af855c3fd57494afff79230fc56ba1",
+      "src/traps.c": "17893d737520934ddc2e87f120769162a27e3ae1ceca45f9294dfe88307a228c",
+      "src/utility.c": "717e595e80506b2c8b64913713c7a967d984ce27fbe8a2460da60177e0568dab",
+      "tests/alias_faults.c": "4bce3434c621354368554a9fc6ca4bbfb52b35a5d5f568ec159a70c7fa482c86",
+      "tests/alias_faults.h": "a0b4a890e7b34cd949d1936b5335fc964438823f3cfd707d0bca8903585854b1",
+      "tests/alias_lexer.c": "86e1b5a1e28b649d6c11c58af41f1c8858095d4d55be76f09a06adf523ce84e3",
+      "tests/alias_parser.c": "a598c8fbadb92228ea4ed4eecb3254a5adeb191b6deb52027b7080144ebadfbf",
+      "tests/alias_storage.c": "5a0450b0090c1bd6a28f8500ded6c5115d44e88352867817789461eada6af30f",
+      "tests/arithmetic_faults.c": "671837bd1836a12249a28d368df2a8cc5203c8c84c42e2a1ecb4c9c9d94a9121",
+      "tests/arithmetic_faults.h": "0dafbcc1ac07c2d23b753ec5f736b8e6f8305d315399219d6617f32ed810ce96",
+      "tests/arithmetic_fixture.c": "72f6e3ce863a49d59c877fcdf2b88abd8dcf284540198ea51add39281a013c9a",
+      "tests/assignment_fixture.c": "5c3798dcdbab5add0fa6d5ca1162b3e3b6870e5f0137e02d4a641c26b6d1e65e",
+      "tests/ast_fixture.c": "14bea23e3b1db21483055af86bf8396a5996eb94316c395161bf34e7de2dc3cc",
+      "tests/builtin_fixture.c": "9dd3ef56ae58e016d5364862db6836adfb2d6a1ef705e6b86c7b98232f87bdf5",
+      "tests/builtins.py": "86b5d9c01420f82dd857a24c48aed5f9f226105ca1adf1294fd0ac1c22944da6",
+      "tests/catalog_adapter_fixture.c": "410619a55a03defd43a37894ea26806e9ae85852924cde836fd82c304298fd3b",
+      "tests/character_fixture.c": "9716ace50ef353a5d601b9984e3dd964fac2c7bed8525b7816e582d9898ed1ec",
+      "tests/command_read_faults.c": "fe43bae2192d90fddc39db7d05380fd437ab2e623edad3b2b216d7060d96dc90",
+      "tests/command_read_faults.h": "30aff92390426fe0e51e7f5f8cc5728be6740e4a8730b18ff6fe080eb0479c64",
+      "tests/container_report.py": "03882121349a13a257c71e4ce1af7ada3e5f1f2e9784e1f9a6ba71d66c5659d4",
+      "tests/container_runtime.py": "5641ba7cb2daf095dbd3f9bd95546ee4d069f6242609f6bf71b12b1537ede2ce",
+      "tests/context_fixture.c": "2f1236a773520653a34ac194a22592853041b70de092e975140625cd5c54b146",
+      "tests/context_schedule.h": "ca300640505342f66b2e2f55cca4dd62ae02aa41d61bf57c39d425b070c4ec14",
+      "tests/contexts.py": "ebab86dd46ce5ef7c0f797ab3f71c528d5fdc92bc0c7c15ebf43867bf7187a04",
+      "tests/control_flow.py": "5743d1d0299bd575a72926a79aa39be8fafa577362c7a9bcd0a42706d431e0d3",
+      "tests/control_flow_cases.py": "e868867f5124bdbf0564e40afdb7f8fdafe21955d3b138c164a222bfad3ed571",
+      "tests/crash_notification.c": "17491fa22c042c3ee893ce89c28e72693fe09d11bb0b503098c79a24842ddf80",
+      "tests/crash_notification.h": "3262c45f2f1bc298c09ad31da0d8a17e5e5d74b7c1a7908831c641be8d03129e",
+      "tests/csh129-original-helper.py": "d61f2572c564e1070037469146148704958178034907e771fb95ad867eb0fbbd",
+      "tests/darwin_processes.py": "96b3d80118b02ac24acfe97981cc85b0cb8687c752e81209532229197f1d598b",
+      "tests/ed_signal_order_probe.py": "31891294d857a078584edd7267781eda2132792e3ddaa1af52852bd1c6496c21",
+      "tests/evaluation_cases.py": "fd4b6dd6da9531f6862d8f354dead2ca0216eece10dbc35ea436219991b33d59",
+      "tests/execute.py": "c66a5d879625620d0f2f521f1651af92dae08b696e92a0b870a64d0d49e84fd7",
+      "tests/execute_faults.c": "5b1d3a402a9e01c784354d30ee1b934be9092ad43e7fda9e1c77284bb8b3a273",
+      "tests/execute_faults.h": "97e534d77cad56e76806a3963bf73ad8c6b305cc87f6ab072766d3fbf58bf9b3",
+      "tests/execute_fixture.c": "7140cb1cec7b8114d5c69788aa92bee81d7cab70165e47ccbbd999f6365a7190",
+      "tests/execute_helper.c": "44f493880a28956415f0c1502f2713cf808f0b33cd3c842c1b5fec6c2433ea6d",
+      "tests/execution_cases.py": "ad6e58d742258c8d3b28318abc1defdb375a2f80b9cf0c8f00b609d0c23b38d8",
+      "tests/execution_contracts.py": "626d9743a0d11968ea7d3012fa2a625e7baed5c12f76f7dd3aa116e985113827",
+      "tests/execution_redirection_cases.py": "751b8df9141726ee52c3dc48bb5c83fb3ad14678aa2a6bfe8cd61434f5a7e817",
+      "tests/expand_faults.c": "eb24eb090d10a5b042b27b785713fa1f5684979084a4377bc02093a3d9c6f20e",
+      "tests/expand_faults.h": "c59af0b08cf78faf04798ddd75ad3915b4813873d50bec02891b4e37fe497c59",
+      "tests/expand_fixture.c": "1e278eb0907be42d149ab2b0f3e5ffc53b93047e55ab17fa20f8eeb574c28ed9",
+      "tests/expansion_cases.py": "d8dffadccbca5d87a5986d876c7d5a4b4ddf2d73739383293f4de3466ef86697",
+      "tests/fields.py": "b2469449059e60efcbbb3020c9d414a7d030e6c09e6734e2defd6824e22c9a78",
+      "tests/fields_faults.c": "c9e25ef5dc7f78c4b0efdf3073c1caebba734ca3f4c51dae2357b553849fbc6b",
+      "tests/fields_faults.h": "ff284d88872993fbc6cf8657d8c6c4c11018d50287cd838f246e5b1895782209",
+      "tests/fields_fixture.c": "8ef780fcc423056dbc5f0df5f09007b8364590ef35442589fe8d4b19ee5bd16a",
+      "tests/fixtures/alias.json": "908ec91229179e704f6396e7577a4af412b9c7d1cde2d20ff407588a3895bfef",
+      "tests/fixtures/arithmetic-faults.json": "25090fb0617d1310bc53f37e0919c17ed4bf6f61dfdae2bae86d3acd79040dcb",
+      "tests/fixtures/arithmetic.json": "19fca4fc27a4ed62bdf89cebb7051ddaaf6fd4a759045a221d74a028601783d3",
+      "tests/fixtures/execution-known-gaps.json": "a14b668f66d1a2e639cdf647bac14db07ea1f0991423e9fdbec96c4fa9ee103d",
+      "tests/fixtures/expand-faults.json": "a186c3b95692ae59cdb298e5fd44f911d1e9cfd2d46778ede31b6948e4681bcd",
+      "tests/fixtures/expand.json": "5a7d4dc2f844b43538278ccd63e85c6b4025cac152d5f92355c775c8e45a984e",
+      "tests/fixtures/job-notifications.json": "0211cfabab4c03b1fc16be6908b1319007348d6dbed7cdeac096da88abe210d2",
+      "tests/fixtures/job-retention.json": "927a4df773c087cbe19059582d87365eea7cc359a497c5865371e9208d0087dc",
+      "tests/fixtures/jobs-fault-pty.json": "d2b1b35a1c029d6375390d0b864270989aab213bc20903a1c2fa10da8b104b45",
+      "tests/fixtures/prompt-faults.json": "90acd695b357ece661acb0b601aefa284ef06ed2f47968c309230eb8c6281824",
+      "tests/fixtures/quote.json": "bffc802358ef908c20fa5e5b162fbb25dead5a9857bddea35bbbabd4e362e520",
+      "tests/fixtures/self/failing.json": "92bc19ac78ee5bac9e3525b7306d4f55fae4b836616f117df472255085b7b652",
+      "tests/fixtures/self/passing.json": "bc7ca401a8966f4511274b8c40f529a0aa6c42596d39ddbde24ca70bbe3ae449",
+      "tests/fixtures/state-faults.json": "9fc8bb7eebb72611f390a2c30fcde4f35f8fd30e4bd9981a4d288517d8bd7af3",
+      "tests/fixtures/state.json": "9f676b4aa8d9778b1826c9b0eaf8e1c08258d9e7274a1e70f5cd1348dfdcdce7",
+      "tests/helpers/candidate.py": "3510cf57d6f101f2f01b4a4e3168a6e6c27bbfc180c18967606f75e3ed7087d7",
+      "tests/helpers/pty_candidate.py": "d6f8e4bb364c9fe0419fbe8ee06d81c7c437398d34e5cb60c5fdadc18fc6ca7e",
+      "tests/helpers/retention_candidate.py": "a9f84201222a7ebeb03e95f6b1834ff7c45ab97eb41cea73ca9c5ccff85e8589",
+      "tests/host_acl_cases.py": "1ce894f08ecee0abd463c2087b240a32c6a6ae7f786a0011b74ec18cdb4cea59",
+      "tests/host_acl_residual_cases.py": "b4ea2b40b3c70d12a97d14bf312a3e04a31efe6e66f81fcbcafb363461ee5768",
+      "tests/host_boundary_cases.py": "42ac53151662817ceb85fb45911a10d2251d08c63345d03d1a3fc2f9cc9eedc2",
+      "tests/host_capability_cases.py": "d56591d6db355e4da36b6292c5891827a8b99ed0b10c1a4a14d78524e3f4b67b",
+      "tests/host_capability_limits.py": "8948000b833aead7cb8d7d5eadf696756aef22c9af8599035cbb04f4f7d4b408",
+      "tests/host_catalog_cases.py": "c4da601bda4908e9f0eefbe304a2a03ca409887f6246b30024f5f488beaae59a",
+      "tests/host_catalog_clauses.json": "0bc4b672ba2d50a0cc5459691a21e84484f5b20530ddd7dae5f8e3b2fa43f7cd",
+      "tests/host_catalog_probe.c": "c4030d0d4474794351b16f02216f3bc83b822e89903c84e735c0d8104793242b",
+      "tests/host_catalog_scope.json": "a1b717e447f3878278b3181af5b243b0d3e9f950eabc05b7351cc733cd20c8b8",
+      "tests/host_catalogs.py": "a8d4f329edf16c2c428aa0b80d414d8030eae4eb763842b44840bfda3199f6fe",
+      "tests/host_contract_inventory.py": "2162bbf851653386b811a8b5af35c9a800a02afe52b15119477f977fa7aac15a",
+      "tests/host_contracts.json": "a9f26bdcfdf807b31473828e80734f5ec9f7d43fa746cf7a33fb5a073067170d",
+      "tests/host_echo_threshold.py": "ea62c1f0179e8e9a1947fb366a243dcf069351fa40046072d8bb7e4ec6f73e4a",
+      "tests/host_ed_faults.c": "398b6cfe74aa06b2008cc43be16f7d7b8f58b1697b6f23807c791948161b5284",
+      "tests/host_ed_faults.h": "078092e18be28e1a85cd4049d192bc596deef951926eb3c9f6bcdeef56c64bfd",
+      "tests/host_environment_cases.py": "34ffc69ad039063bd580192a29486d2469e64102ae38a6b84002fe591bea5164",
+      "tests/host_file_format_checks.py": "ad023fe34d0d76f2d26640f3aaeb81dd80980f2d5668680a48120a8855b7a6aa",
+      "tests/host_file_type_checks.py": "e35191a394e51905dcef8e259620d6de246415386f88ce03843ff70ddff651b9",
+      "tests/host_filesystem.py": "a71ef4a9aafc92c2f4e781a368b25439a6ae6e4cdde957e3b3aee74f0348654e",
+      "tests/host_filesystem_allocation.py": "999380d81e9ed46426b7527704584f0e07fe4903f425cfe5a0dee8f545ed607d",
+      "tests/host_filesystem_calendar.py": "71672a50d2d93c2faddad5dde20c89ed3355cb07455b3c4bb9ad20b6b8712396",
+      "tests/host_filesystem_cases.py": "c58a7e7ed5e964ed82e0c388020cd4f5dead99ef761b5d85fb367a2a6a5be990",
+      "tests/host_filesystem_contracts.json": "b079b4b3b08de5b356404b6c798ac79b5d4e0694085ee21054c4445735034453",
+      "tests/host_filesystem_creation.py": "126e11019eac4a5f48bd7778543e5a766ad390a53217c61a1427702be0d4267e",
+      "tests/host_filesystem_creation_exec.py": "9182aa6d0e83f3cd79c3f65c8da97c0b8bf89e7001063d8d80583546c081f677",
+      "tests/host_filesystem_cwd.py": "0466dd3a727ed1ed930540125c5e3b535b2ee49097f80f75facb5d6138003821",
+      "tests/host_filesystem_cwd_exec.py": "2136d2f35ed37529097b0c5fbceea10d00d47b2d519747158d147d12772d9399",
+      "tests/host_filesystem_datetime.py": "fadae025d481c290e84b9badbec4981a4293f1437cd49067e6cf40f9e3d3ff80",
+      "tests/host_filesystem_day_rules.py": "32f610dc27601c5af44c646d70cf48511f0cc2df42149f8e9e9f6395c499bdb1",
+      "tests/host_filesystem_decisions.py": "e18cf19c2ec62b94ed9b4ef539b32e7531e74f56a343f695147bcb54c43c9c9c",
+      "tests/host_filesystem_extended.py": "ca61ed278477049769baf04b6e89a5bb6c01dd465caa159419a826ca434829e2",
+      "tests/host_filesystem_fault.py": "28a9e1e22c7fe75985e8a8f8585ff51b218aac70044846cf1271724ec5694e6d",
+      "tests/host_filesystem_interactive.py": "0114aab9ecba6fd85cb11dac0e172b67514aa61aea4633363af406f0208621e4",
+      "tests/host_filesystem_isolated.py": "667848e112bdd330835cead58dc2f284e2bc4ca2b3d533eef695340515121e43",
+      "tests/host_filesystem_link_bytes.py": "5bb7df8eb2664b2ff2e9a40d6b9340a8db8200825c2b36b1d584f6ac0e49d3fa",
+      "tests/host_filesystem_link_exec.py": "6ac667bf7f8cac769d54143767c76a4eef6718440a283f4d2fb061a659711f76",
+      "tests/host_filesystem_link_graphs.py": "b1efb255788348d65a67f238f234ad0bbc3a14dd88e57d001b73a1faaee1bf72",
+      "tests/host_filesystem_link_permissions.py": "5a73d75d3eb978e2b23d59922b4f32c522bff0d130e5447f3be7c9c823f0d4c4",
+      "tests/host_filesystem_magic.py": "7119f9c72a89879883452c71509b47b6981599a24f640548e849d3b2f79dfc98",
+      "tests/host_filesystem_magic_defaults.py": "ad6b3f125daabc1395096fc401150005322cbc83443758a1ab8b0d8130b20950",
+      "tests/host_filesystem_magic_messages.py": "3300b4392a0c22626a2e38f807b61f9da180d9d67b40eda4116e63e95c539fc5",
+      "tests/host_filesystem_magic_strings.py": "9aac60c470df36f4cb5e57df797a37e6b94a77acc98dbc827826adfc5c3e18bd",
+      "tests/host_filesystem_magic_types.py": "082db51a17be46853c0238f5848b5c91b0a7714809cc0879f5ce7e2e97ebf0d0",
+      "tests/host_filesystem_metadata.py": "7385b1178a9a162a62e7f04d089ed03199c2f443bf9ac0d47caedac34465318d",
+      "tests/host_filesystem_output.py": "06e59c3faee3f7f8961170e3da75ee06c678f40bab5a56f0565832b930f04389",
+      "tests/host_filesystem_path_limits.py": "a4938209ed906e05478a35b774e0e127d4709ee81b7c1f3c33c414028fa233cd",
+      "tests/host_filesystem_prompt_exec.py": "078daf4fd0caf87a8f921b005f75ac1d7c9ced54925e90c50932643f554ccfec",
+      "tests/host_filesystem_recursive.py": "d00cbda176c4dec31134e471df18e80d38aa5036d0d2e3b46e42de3897e6e41b",
+      "tests/host_filesystem_reference.py": "1284dea646c572d775f6fcd50dff56bcb073dbdc3ee142ec1af7756570e4324e",
+      "tests/host_filesystem_remaining.py": "0a1fa6eaf127789c2e7a6149cbcb6836a8b66d4ff3e35a74b87181df051a21ad",
+      "tests/host_filesystem_removal.py": "f0f371a1a2d692e67eb7feb6a5815b5c51556d2874ab47829533855800683bbb",
+      "tests/host_filesystem_residual_cases.py": "c19f2a621dbb5a25cab94c0925678e7aaeaec9142875b920152ff00c6fa5ba0e",
+      "tests/host_filesystem_residuals.json": "16232275907ef38d79d8f79f185cf3fd618bea902bbf194b2b579a1302025de0",
+      "tests/host_filesystem_timezone.py": "b283e7c713c955ef501fcefdd8875efea446e815670ca5ff9692fa7a3dab1b73",
+      "tests/host_filesystem_touch_current.py": "c1c901908e816a40d12bef48296845831835688dd1567d6d4778fd0cfac0589b",
+      "tests/host_filesystem_touch_current_exec.py": "215e45dfaecf25b33964da62013a0794cb7f146274b68fbd6af122b0a65caab7",
+      "tests/host_filesystem_touch_exec.py": "2e057b1f181c8e5982649c913b7ddcb3ca095e1a205a0731927c19e87770fd30",
+      "tests/host_filesystem_touch_objects.py": "777faa2144123799ad8d75173143296903562345e3c327f7d8176fddf6667c71",
+      "tests/host_filesystem_touch_permissions.py": "a845c282c886f2e86fd2f0992a0cce8f4cdab27273273d6c048c981635dd3810",
+      "tests/host_filesystem_transition_times.py": "80f21273703799b528fa0b6266761976de6dc14fe5ab72471fce27263ac5ce83",
+      "tests/host_formatted.py": "cff3d8cadf44a4ddf0ae1d4ca2b53b562356b8bb0f3e023e78991f064e4d3367",
+      "tests/host_formatted_alloc_main.c": "cfac12cce94a39d4f8c0e7370b1237eb49addd2cf8d250f99491e671d95cd87d",
+      "tests/host_formatted_cases.py": "1834d368f2e93fca6601e64f015a08ce3be0ba013bf874a734e59dd74e75ae39",
+      "tests/host_formatted_disposable.py": "81f345ae5707ba877ac49955d129f7b2621f02d38001d4d1e82547d184188a06",
+      "tests/host_formatted_environments.py": "8523ae601205776973c32eb7225869084e5412d1c1d9e7f8af660aa8d2684847",
+      "tests/host_formatted_failures.py": "1dad3a9f65a78c2b6546b9b6abc895d57aa9ea8b57acd9cd8229761ca7fce284",
+      "tests/host_formatted_interrupt.c": "ea50bc14ae5f95432cf314c1c98d87b26b13524fd742231b55f400579471ffd8",
+      "tests/host_formatted_libc.py": "9fa887aae0be190eb65e9daf94d65812f71663721358750eeb5efcbc06d493cf",
+      "tests/host_formatted_libc_alloc.c": "a2ca4cc0bcb33f1bba857096a0d45e482586aec9cf1503de5551d9d8f767064f",
+      "tests/host_formatted_libc_main.c": "dade65530b5318b19cae1864b1861d61fddfe3bc3207f9276b402eefb12bd152",
+      "tests/host_language_cases.py": "c1d31219d5341416531ce27e31e32199f39acbaf2d899ffbbb39e088f422494f",
+      "tests/host_language_completion_cases.py": "15ccadf7c877ac28730d0801eaea80dd5cf751e7d28fd727233995f1e9714a05",
+      "tests/host_language_contracts.json": "b8fa23e2d5f6bd7daf8abfd2e94a851de754dc023aeffc67ca1bce05d2d88389",
+      "tests/host_language_coverage_cases.py": "de3e3436bf0ef20e7a77cac49dc922944e2d8e7bcf3055b1d6e353478ef53821",
+      "tests/host_language_extended_cases.py": "1039204b8ae4bffc756e6465a5e88b42ceaea93e379c11f45485327cd6eeda59",
+      "tests/host_language_helper.py": "a477524c3409f26797c5eefec23d9d1223b788b23676fcd0e3fe0b8c37ea9049",
+      "tests/host_language_multibyte_cases.py": "9e42ddfa6c8e9cab3030cccefab3c9912c93b14132bc2bdc99903bdaac6610fa",
+      "tests/host_language_patch_cases.py": "6a037ff18446e16c6002b2280a8b109eaf59af4bf3c44054eee5f42610db4ed9",
+      "tests/host_language_provider_cases.py": "1e0ce10157d1e955c3987ae9717b54d6ad28923b72a78cfc1c8685326b1abe52",
+      "tests/host_language_terminal_cases.py": "b648dad548d084da884f5ff0622d9338b1fb8e1b8f9b61cd41fa97762f57bf93",
+      "tests/host_languages.py": "577641ac7e7a36d5c683d409f246592033d3f7a2d94ffee85fef7d9a2e827c84",
+      "tests/host_paths_faults.c": "dfe478f77794c35f482d9db54383f07383ee89e9868ea2fbdb80ca8e2358b679",
+      "tests/host_permission_cases.py": "4d67938e3c739ee82d5328ecd181a0f51f29b9b3e6f4ba78910823eb8cb2a2c6",
+      "tests/host_permission_qualification.py": "fac9723c157e76d388a01d89fa4bc3cdde94069914fad96c924113ed5d18400e",
+      "tests/host_permissions.py": "c5b5bc878904c7e180c315ac8d808817629eef5c667ba1f0943b239cad29ba4b",
+      "tests/host_permissions_child.py": "79a9d95044cf83b2de4275f8b2d3078b12cf779a5096490e60302784abdd45c2",
+      "tests/host_platform.py": "c25ba756f6ba4b7c67de81378ddb3bf99d23a6b3e32aa9e6c0e281c2bac827d6",
+      "tests/host_platform_probe.py": "894e9dba2b2d9df08a6ad4b60a4f40b60a3418fba45cbe05e1538b3985ce791a",
+      "tests/host_printf_faults.c": "9fc925bd3aa00f4bf566d6cebaf16410a21f6c456a6f5e7529fc6972210ab9ca",
+      "tests/host_printf_resources.c": "038265d8ae46b3434eb5a77225f24444e7a8577d9eeb9fb4c8d0ae25c41d91c9",
+      "tests/host_probe_timeout.py": "46ad42cdaea764d7612c68eb0aa3df3d9624173e2884a5da7752f98e8443fc83",
+      "tests/host_registered_sessions.py": "55ad50b42f9a87eae353db929e606f1af1818d21474ccbf46f6da7d82ceaab91",
+      "tests/host_service_clock.c": "d16a6107f23e96ec5948a3218d00452974ad7133f17b355cb32901700bb8f8c5",
+      "tests/host_service_contracts.json": "ef4d959d46b9bc7086a6a193b728a5d2cf5cc2701c6f9e0a614baec50621456d",
+      "tests/host_service_edges.py": "64a2b0e1a34e1c5843d5360f127019082d28b1937b5eb5bd74a7fd9f9d1f825c",
+      "tests/host_service_syslog.py": "cfe1ada38831fdda1d97ad2fc2f5be7c6c023b31affcc75f89a382d75f3e7a7b",
+      "tests/host_services.py": "2364da886e77b3ca512598cea59290b32d45f1d3140c49de1562e16f6fcbb0ec",
+      "tests/host_session_records.c": "6c5f75c9a50098bbc0854d9873ee0bafd17b84c358d4012e924923f361cf1f0a",
+      "tests/host_terminal.py": "55eede6c594a66949cd1f070f52f60eb0f0b5c05b1b40cf42edb593da30987c3",
+      "tests/host_terminal.ti": "37297818f0c2cd5be8e0e44d5c563b221bfefb46cd6fe6cdbe17a3f94d939da2",
+      "tests/host_terminal_effects.py": "9b845560cffb5e9a09939107a284285fb45c96ff45b1462f1a3b32d47974013d",
+      "tests/host_terminal_residuals.py": "8ece03cd7075ac8e61b68900a8c33e130aaaaa9aadc6bc3a872d4f8da881a418",
+      "tests/host_text.py": "e5dc12261799313e8f415db7614e22ba7a11caf4d2fce4804d554c4779873a2c",
+      "tests/host_text_boundaries.py": "f4920030d24c5fb3c08af70448658963ee852a2bfef5f815f78ea54f27936d7a",
+      "tests/host_text_capacity.py": "0452f3431c42226a3f4b724afaaaa0d0ee08be74a1a586d8d72d37d8aa1c0fa8",
+      "tests/host_text_cases.py": "25cacfc83781118303442d79cee4c427c5e912eec3b9f9835e3eb50f9321e4dd",
+      "tests/host_text_completion_cases.py": "c458a3d8d07754f1438c1478e4f0091fa8b14d98db0d1c1de458eb3c40d81679",
+      "tests/host_text_contracts.json": "ac1e8d30bbea8cb6602b8982111e270f74d5a3b6a2d01980d82a64320104199a",
+      "tests/host_text_contracts.py": "997ed725d0c5d5f6a7cf11ccfe53c5b0de401a4336e01d32edacc20f7144452a",
+      "tests/host_text_data.py": "c81fabc879e1b317b1c4f02d7853523ef48c6fc6d8c88bbb50629bc4c959fb0b",
+      "tests/host_text_extended.py": "ac5f3ad0998b59a414f7108cc00978ce7f4a8b441556ed5f598b00c151c53492",
+      "tests/host_text_faults.c": "d7d485a180e12b0197216c1f264f2356f0b330f9aaee946b550c59af302b14ea",
+      "tests/host_text_faults.py": "405dadc672f32592414f8f16209b77c06fc99749c7b76bc39ffde7fd70f7f592",
+      "tests/host_text_interruptions.py": "db803cdb2fecde67d3ff5be8af933148a72eef790710fff6fa44683a6e6af434",
+      "tests/host_text_io.py": "df992b2f9fdd0e3cc6d2df3565b9575be672c40df25465312c4e677506478038",
+      "tests/host_text_locale_cases.py": "4fcad189ebc901b961d8609f80213539cd4435472e48a1e5d1e76f956105b4f8",
+      "tests/host_text_observer.py": "364e60c7a8e412711548c6cf4c6db72e48f8e9fba8fc0e2a100fb958fa8b0544",
+      "tests/host_text_streams.py": "fa9e5660c458f88f8946087c955eb2d4153cd103de5a54a53fa51f660d552992",
+      "tests/host_utilities.py": "ca56c6d2434861e70b2db7e31d35095d4b6f80b246ab5dd0ccc96dedd6f6b493",
+      "tests/host_utility_cases.py": "40b4dca05831a9ea8a157f4364a7eb1c5c7c84de429ec197938b181a4ebfeae2",
+      "tests/host_utility_helper.c": "80f496bc8d8efec5445425e10a84d44e26254416ab0e94dc300345c9025d9d33",
+      "tests/input.py": "289b576a80b9aeb2b167e7e87b74cec9c4306a04d196fb36ecb30c3c2776c6d4",
+      "tests/input_faults.c": "2ab030878f7fad145cb6ef535b3705b26c18936ae68ea32a82fec3ba94ad0d29",
+      "tests/input_faults.h": "3c72d4e870f7d92f70df30e51bd190798168b07fbaf38e94ff702ff4a247f089",
+      "tests/input_fixture.c": "8a4fae7112c1d435b44ee86c8e75afd62dd1e5eeaf5202e15fefc097853bcf13",
+      "tests/invocation.py": "580d62bdf2f54b651bb4fb8c56f180d031b932259d3cd9f33031ceff29d64f16",
+      "tests/jobs.py": "72e30a10270cf247e58adb5c10abd5662bf5bd5f97cd8f05459b672c0d2bd271",
+      "tests/jobs_cases.py": "546336cf433371380559c7cf253ea974bddc2745099b6ac2072882c8f5a0cc82",
+      "tests/jobs_fixture.c": "2914f54d4554779afaa5a981b0c156128d0aa36b71a57edcce42d5f54d6d88a0",
+      "tests/jobs_helper.c": "4211a9a74ece556932ed60d9243e9cc497bbf75b76c31b9f4f58db6b790acc84",
+      "tests/jobs_lifecycle.c": "b42f92124672ba819a5d7536930df7f994c0e9d4320d98c1d8fdd0c9b16abcd8",
+      "tests/kill_job_state.c": "801d144e5d185098e50d3dbbe0d59031b1452271ad84a17acbeb5b482c179232",
+      "tests/kill_job_state_cases.py": "15c930d5197b7fcbe5ed457164d02f5d14d974436932abd677a8d2e6cbae2b9e",
+      "tests/kill_permission.c": "46d5ee011a7f5b7b080e68cc7a45e9e67181e74873fec184c570eff5644a43f4",
+      "tests/lexer.py": "fdd559a8aa53e32d3ccd66c913edfa24d959b69890d12bf3f46af3defc2f9262",
+      "tests/lexer_faults.c": "dd4aad84ba78bbcaffe1b0e1fbb8effc2c345eb3523ac8bd0e96cb1249006b53",
+      "tests/lexer_faults.h": "30b4ec6f25b7163b428a7bba9dfb28ce072d5589ce059c50203d56df1851ac8a",
+      "tests/lexer_fixture.c": "3bbc5b1247510bb90bdfd88c580f805fa64749fa1984a035f7e352728d70a04b",
+      "tests/locale_adapter_fixture.c": "74c1ca81d1d769d2d1e085227ba96b5300ad5b05a2115c926eef2df04aee6a37",
+      "tests/locale_cases.py": "d6ff41df9773fded289d9dcf9f5fa5e0c3dd92b5c771e8bd2588e25cf7b82b09",
+      "tests/locale_catalog_fixtures.py": "6f2521cc93c4e43b52fa414d92cec38a263a40fad851069ef3b78c5c391366ad",
+      "tests/locale_pathname.py": "b86424bbd7ab5e446a1bd89a5a6145a1d3bb01f26881497512a0d8afa2f1c715",
+      "tests/locale_probe.c": "424dc0f0268e3975c9097a597625d06775be9214f203a277c4c23f8ffa9f24e3",
+      "tests/locales/csh_067": "35b2eefe5519b049c8b6cf48e1547689f0edeca3ee8f0ff5fda56416cfbe5f1e",
+      "tests/multibyte_cases.py": "d33ee35186b833ce29fbeb0ba1b5dbb063c4042564d8766a3cefefad509a548c",
+      "tests/nesting.py": "5037fd19c176e2510921cb8f45aab0fcd5b894083d386e563e624e699481281d",
+      "tests/nesting_fixture.c": "09c489d44676e0401d8af4413b77f8d141a3a270491bfdf3692439f3d9528a9c",
+      "tests/option_cases.py": "8217aa8bb3bae9f57c43fb59d8fee535e2d7be37903d5fda5d979377f85cc126",
+      "tests/option_evidence_cases.py": "a1ba235f476aafb492dab238735bb7c1ee7976f665d8a505936e2d7c2530befc",
+      "tests/parser.py": "e686d865d087f2732ba4c963da4583d7e5905cff0f54bcb0211a4dfe19e53bec",
+      "tests/parser_faults.c": "b5ec2279673396918634c1b89187705190f81cfae03b2e03ebb27f6c23b397ce",
+      "tests/parser_faults.h": "8e8499070c1751e3774e8170c073d060475c17129970017548757531f35fba09",
+      "tests/parser_fixture.c": "a2d9c67e8ee9c210c012f248a8ba4853f5de6afc0b341be52f3bc777fc6f1155",
+      "tests/parser_recovery_cases.py": "2b1fcd479916eb409e6a02a4e0db7d9b2b477e54971ce75455cd1061d55de7d3",
+      "tests/pathname_runtime_faults.c": "9fe9c91ac468ea8fedb5ba08bb57257a07579570faa1449cb59ae4ea3efed57a",
+      "tests/pathname_runtime_faults.h": "4a7142d9175e439921ac8088b8c04bdc970d416d8dd65256767797cfa9b69a22",
+      "tests/pipeline.py": "12ad2671bf5d40131a1a171f8b15ef748b36ca31ca9f6983efe76c7ec6c96b8a",
+      "tests/pipeline_fixture.c": "3b8ff149fd29981d1877476e3ddc020bbf2e144aa098f9ffd4c157fada2ab47e",
+      "tests/portability.py": "7c338080e9298a92e8c677367563abe4c5acfc8f11fd0dfd75f998b3752af9bf",
+      "tests/prompt_faults.c": "b33a1ab27ae8daadaadd0f6c30241b4670a3aa0bfbc752557968e959a630b863",
+      "tests/prompt_faults.h": "3afa85d7f2b6e82b55465ae7c9bdd525617cdd075d51775bd7f9662057bcf2d9",
+      "tests/pty_harness.py": "3dc6fee5493b10ccd2debd3d1d26b67508d333c81e6bcc704af4267a6cf949a3",
+      "tests/quote_fixture.c": "42446b4eff85b11642baaac22994a5dfc91b29730579b8032dae65d8d61b6296",
+      "tests/redirection_edges.py": "003203df2f81454f309ee1f0cee0efa5367ae9430ae495708476d3bb2e7d36c4",
+      "tests/redirection_faults.c": "813791ddbfdf44f8ff4511fc2423c9c6064e5ae37f941987a0f0fe0a43dadcda",
+      "tests/redirection_faults.h": "192e29ad890b57dad6e0fda20dd71042782eda6688e003cf67194071f0b0e6ff",
+      "tests/redirection_offset_helper.c": "62f38c87c72be0e517d9c64fdbb3773069a2269974b100fc507d57f5d703215f",
+      "tests/redirection_offsets.py": "9322364a3919f4cd3e4e9cce0516efa86af12a475ca13bd3cb78b64a3748bcbf",
+      "tests/retention_diagnostics.py": "d5bae1ae0222e5e75cc6902a7199102183eebdc5fe69eb4385519807aaced4db",
+      "tests/retention_trace.c": "5b88e2ff78bbcaf81f566989a54a544b586f68faed89a4cd145c6738d11d12fa",
+      "tests/retention_trace.h": "8d4fc3ba0add607f36024eebf7e1ec2db50bf8fdac6ffc675baa6542158e39e1",
+      "tests/retention_trace_checks.py": "eac7d91b9769e26de089570cd7e5e10cd1e5ac406ed219ad95e0872f74ab1e08",
+      "tests/runtime_cases.py": "d2376bef39c43ea683caed46ff5e2c0776a4ee240c75f8ced612f9a2043be253",
+      "tests/signal_contracts.py": "9bda97f8d5e19bb2a24b649f804e7f946dfb91313163ec10e7bf6ffb10b421d9",
+      "tests/signal_edges.py": "9bcf22bd3d90e484c9dba58706a474c5c029e80007c465a018afdea33bc4d123",
+      "tests/signal_edges_helper.c": "97afc18626570f20a632f35e6a7aa2477fc43c7aae785b53de0539fb1b813c36",
+      "tests/smoke.py": "79587257fb512e8367bbdc171300b191328e0ad11cacd656dccd2ee296d9e99f",
+      "tests/state_builtin_cases.py": "7cbf36f8ef2eca17bcef7b97975b55295d6b47fc6e29e823ddf0de9a19415334",
+      "tests/state_builtin_edges.py": "27990b7f4edb51a84968fd095301e59591a41c141945858c5798b0728d2f0785",
+      "tests/state_builtin_faults.c": "eba553278f9d48daa390de73d71ecd2d8d2e52bdcb0cb5e1eefc860127546069",
+      "tests/state_builtin_faults.h": "2ee2ee198124684eae794bb37c31095433aaea37fc75fafe1af46adc89e92695",
+      "tests/state_builtin_helper.c": "f56845edbf94a5c7fc188bc7e7932b85d3cd83327a9f77d46554fca73e969e85",
+      "tests/state_builtin_observations.py": "167a9b62936b2d97bdec6c0f906c8cda63c3eeb56c27473fd1d332f7ceb5f12d",
+      "tests/state_faults.c": "b8a8091c581de7c9af8b255e5700f35e317d205b0d580a1e5e6b1457f4d27f9e",
+      "tests/state_faults.h": "9d5124050fd08a6ed7559e8e9333163152c4c6bc25814223a37652cdce7e49fa",
+      "tests/state_fixture.c": "1562503fa1b1ecd7a2f7f48666cc132aea426b3ee72fb5e91fc184ca279e425c",
+      "tests/substitution.py": "ff582501cc815d7f7ea9ef14a54568db1997542db54ad50709c2ddda1ca6ced8",
+      "tests/substitution_cases.py": "4818f259cf5445ae9383b44ecd7c10073b2e0de4399e751add2f32add890267d",
+      "tests/substitution_fixture.c": "b0a499dab4d6369b278fae6cb665f4e31ab6371b4f0e4c6247c5671c2fb9b604",
+      "tests/syntax_cases.py": "e823f1b827172602f44194509390ff3f90ee0871ffea74fb5a82acd0de0f240e",
+      "tests/test_cleanup_harness.py": "2dfa0188f0b2a525e2f482266ef903d82cd66c2f163acbc6064d87e4b797a652",
+      "tests/test_container_report_harness.py": "88304b39a1b96ec5d051b9faa55c9639c94d4e9e98036d3caf2bb6a30a97bf3d",
+      "tests/test_darwin_process_harness.py": "2127fd1c0818e623388a7d785736222bd09c365e2f47986e0ef934713966840e",
+      "tests/test_harness.py": "c5201fff2f0dfd6df58fbfcec0427eb1a5011bef02f03ecfd8acb2038dce95b4",
+      "tests/test_host_catalogs.py": "7f196678f53732e04225323b01cf248178857eb11248ec014d8751576ccd0aad",
+      "tests/test_host_contract_inventory.py": "f3b3ec54ada380ede37ac26709424c0dd7dd39f18a091080fb68fe079065c521",
+      "tests/test_host_filesystem.py": "7a0e6ac2e5ca0fcb690d5a68fdb6b6e760f995d8ba757fb8219a89160b753c7a",
+      "tests/test_host_formatted.py": "6bb8dbf2692a60c96c3fea8801c6b452e015b6cb6183dc4c66a9f922c4f733d1",
+      "tests/test_host_harness.py": "f3871b69382d5919cff91e87cf9d31b17fb41d70e081b6b7f43cafe832be5c5b",
+      "tests/test_host_languages.py": "97a9f8f6ef8f5a438dcb59f7b61911e49d1007acd6707121adc4df4f709f2a3e",
+      "tests/test_host_permissions.py": "dc5696b045e858c77a2788badb76059ca7caebf21cb0209f045ab74772e895de",
+      "tests/test_host_service_launcher.py": "0dca9fd7c5a81d38ce9d865b5cafc8c794c25a78184203f1af57bfc517a56e2d",
+      "tests/test_host_services.py": "831c0138798295f975b0eb8bf9fab0e052dd44e9ed69fd7edb4bab55c098241b",
+      "tests/test_host_terminal.py": "18a03338f6026a3981ce7d094cd75c6a2b0fb8f91a82d22b5f0f93f575ffaaf9",
+      "tests/test_host_text.py": "eed8bf6c3be330d0423c665f82cb80906f0bcc90183d431c4ce87e119ef5c472",
+      "tests/test_pty_harness.py": "34e545514b237675c1dee2be5ec79f3483d6c037841fb26dbb8005839995190f",
+      "tests/test_retention_harness.py": "e0e9c8a7c24d5d919a3a7e192a8b8b0b9a7d1982331fe42433b82f3bb3cc7bd5",
+      "tests/test_ticket_registry.py": "58312fe0285f90d78faf59c3017e04f8f501a453c265565a8c67444097332136",
+      "tests/trap_cases.py": "f0f964f9de75d333dd66af36facdf5f1ffd11f0be54959e53fd4c852a2fada3c",
+      "tests/traps.py": "29c644a4d0fdb026adc6eb3a6e84851823d42f493f228bb92f95162e4444008e",
+      "tests/wait_handshake.c": "acccd0b861d643d443672dd4f294794bdf4134b651a81cf2d662f8dfad7eb58f",
+      "tests/wait_handshake.py": "8f210b1b2d194db124ebcf3cfef64821680ed923bac7da8d37e8f564f6a254ef",
+      "tools/host-profile/README.md": "e05947da6c9d9e106aeab927b78a35add27a3b0f16e4d12e2c33fcbd1d7cfe12",
+      "tools/host-profile/build-cp.sh": "dc05f30d53ab7256aec159c8c3a97cf943529368e8fd1d74847faf26f7e7504b",
+      "tools/host-profile/build-file.sh": "3c52894d664fd13922d5deee1e53bb988b210fecceb663bb50bb28e849d29f02",
+      "tools/host-profile/build-touch.sh": "1f59a67933b80b7abd97565bdac95c644d6942b23b616a8e95a688ebdbebc19f",
+      "tools/host-profile/build_awk.py": "559fb4745b3822c33d9b4d3226777f23665b00d653d953861c644da0fbdae8bd",
+      "tools/host-profile/build_bc.py": "c28bcddba10bebd750de6677aad4493247cdf436863a6f3c126016c0c3cf093f",
+      "tools/host-profile/build_iconv.py": "61be0d1bd5637ffc0fba3cee9f4e91eb11a905780d28393d0fe2d6accbcc4143",
+      "tools/host-profile/build_m4.py": "fa8344e5d04f7180570e04c0679cba18a3c403940c482b3d4a726562bbaa387d",
+      "tools/host-profile/build_patch.py": "6c8ceec2e3c9f9918a612ca4f16c5f19219e29253192ce6228aec0a55ac9266e",
+      "tools/host-profile/catalog_adapter.c": "0840e8afa4d4b8d7b24aaf33869b7cc01a3be287d376dbf484c5c8daa2b9f812",
+      "tools/host-profile/catalogs/de.msg": "c52b127ca97f244d88b41dd5d4298659a368c3862e394592b66d90d5ee50dd6c",
+      "tools/host-profile/catalogs/fr.msg": "38dac05c560db23110e2f04e68fb6ad017cc46a436d7fee88c0f39ab13ceeec4",
+      "tools/host-profile/catalogs/incomplete.msg": "4d84ab12c4289f5475a816416562d786002ed766ce500b74c6058b00309053fc",
+      "tools/host-profile/chmod.c": "dd15e94d3cd54e01a33df56664925179dbab2d7352ec301c427634af00b63673",
+      "tools/host-profile/du.c": "f1b5e4243f72a3fdd59c87e9fd28158a2824810d372b5028333ddf2675bc8ebc",
+      "tools/host-profile/echo.c": "c7a814abd1f5e63ee61db540fa579473789a851e5907bbc0bbf16b5b3767dd6c",
+      "tools/host-profile/format.c": "09d291a5f9c3d4b9535b30a136e4ec3ec27ab23cc4ec3eb77fdec651988e6f62",
+      "tools/host-profile/format.h": "5b775e3cf6b5a5d5ed05ca81f4168497b1fe7da09e239495974a0af8be1e71a2",
+      "tools/host-profile/gencat_darwin.c": "ca468eeeea38f203251b01f1a757115d0442a28b04d80a359b62dd7c1b1a4540",
+      "tools/host-profile/gencat_glibc.c": "76edf203ec82c630ccb9a6396aad1a22a69dc6a4a9b469efefa93bd81c5b2f9e",
+      "tools/host-profile/iconv_adapter.c": "5ad603f7a16b1d9e01713db617e1c8e4ac431c645b9afc86c7171b71a6d55bd6",
+      "tools/host-profile/locale_adapter.c": "f5f10bea2d4bee05c3c1377286bc1816d7efa5038bbd10d5ffcbe387606f694a",
+      "tools/host-profile/newgrp.c": "5e6f1221e65f6af87b337a871c15ba0d7bc4f38a9e0bb2c6ff09a6f6c0ca49ea",
+      "tools/host-profile/paths.c": "681f6fc05ceb7ed598082dbaf6ee1ae49e4f28e417f44cfd5625a47b437506a2",
+      "tools/host-profile/printf.c": "2130e0bc310b8a4ef9e0ac6292dc01e1ec250dfd87259ba4638ddb3399669499",
+      "tools/host-profile/provision.py": "91b95812f1865d424782f586c5d557e07579edfb60af2d60249ce48b43ccfbc5",
+      "tools/host-profile/provision_catalogs.py": "3ec609c97e41b513e565f591c406b5a6a46d99b29eea99cd6f4f726afee0d370",
+      "tools/host-profile/provision_locales.py": "c6f4dba9033d7d2bda7435010edfd4a6bb29c180e4fd09187327a8eb5ce60359",
+      "tools/host-profile/tabs.c": "59fe7696f200499045b8f88f4ceede375c654cbeac541a6766e0610a399f6d00",
+      "tools/host-profile/terminal.c": "41118653cc396d126017403182453c58dadfbc600b850d10dba8a980312d511c",
+      "tools/host-profile/test.c": "704ce2b7fc3ba153ab622e9149cda167c089e83c70d83ee1b39ea6640844b8c1",
+      "tools/host-profile/text/Dockerfile": "e466ceb1841ba693b0810e8cb6ddb6a12d9b516ee8ed31e53216bb7dabd95654",
+      "tools/host-profile/text/README.md": "9600265fe0b858365536bb55ed1286e146104b44a9217d806fcadb9665b8d7d8",
+      "tools/host-profile/text/build.py": "3e7a24b3bd282fbb4ffe847af16428b7e080249977bc65b07837396e5bc023dd",
+      "tools/host-profile/text/ed-sigint.patch": "b587b375b28b8503687d3f427e4d26d70674fd8842d06cf88d038eefbb1a5e29",
+      "tools/host-profile/text/sed-getdelim.patch": "7e7b3ff4d402e674f5750ce0e852096fc04d84490763a626b8349f9e53942f3e",
+      "tools/host-profile/text/sources.json": "b08f1c6f43cf536c497657764842585c0398722d58e1badaaf8aae0266b04e8a",
+      "tools/host-profile/uudecode.c": "78bdada0038b94c22dccc364b163e0b2bc457fb50b5f73090f67cebd1001fd27",
+      "tools/host-profile/vendor/bc/AUTHORS": "743516881d5e0f02cfb60830b46e04156d2a58ebc3c5fa00a8cb63a4293a6dcd",
+      "tools/host-profile/vendor/bc/COPYING": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+      "tools/host-profile/vendor/bc/bc-1.08.2.tar.gz": "ae470fec429775653e042015edc928d07c8c3b2fc59765172a330d3d87785f86",
+      "tools/host-profile/vendor/bc/cshell.patch": "c4a700cd78bb250f47049350ee7b6632063cb219e7e3decf42d23a4d0499a949",
+      "tools/host-profile/vendor/bc/provenance.json": "3cb39f3bad7db3071ba4db092e8fb36b69ed0f51a61a79dc6a8c272ef2a43ec8",
+      "tools/host-profile/vendor/catalog-provenance.json": "60361871f73b3512584b2c048cbe9faae5d94fe37299f2a05af06183614d6848",
+      "tools/host-profile/vendor/catalog-providers.md": "ffb29470e367c6aa5c9151488f8ff09c89cbe3a647a73eff81375639a3540f85",
+      "tools/host-profile/vendor/coreutils/COPYING": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "tools/host-profile/vendor/coreutils/README.md": "fa823049929e00808e341d483354888bf7e6e2b746a8a7d48ad299b0f2613b6f",
+      "tools/host-profile/vendor/coreutils/coreutils-9.7.tar.xz": "e8bb26ad0293f9b5a1fc43fb42ba970e312c66ce92c1b0b16713d7500db251bf",
+      "tools/host-profile/vendor/coreutils/cp-decline-status.patch": "0498e44defeb661524e685ef51ed6a0584b56c746b06a46be6042767fd36d8e8",
+      "tools/host-profile/vendor/coreutils/rm-parent-prompt.patch": "65782e7716d81288b4df2c2ecb2cf25af3ee7432eb7682e10d7695658f6be07b",
+      "tools/host-profile/vendor/ed/AUTHORS": "86f41bf76b3f2ee499fbcb02a787afac63d64cd4111d8701645f962b4db43a07",
+      "tools/host-profile/vendor/ed/COPYING": "022e9c2e9cc1aac3622313df6f971fbb39c1d1b0cb45324c16b8a1fe231c5ea6",
+      "tools/host-profile/vendor/ed/README": "58bfb57f23d45365fe7f2bfffec442b0e36a5baab49eaa19bfe9547455ca6cbd",
+      "tools/host-profile/vendor/ed/buffer.c": "ad96284868b4211bca07fca67449fe20e3e7872fc062d69fe245ca023667a516",
+      "tools/host-profile/vendor/ed/carg_parser.c": "2fedb8962934ae43f2872499b58f4918d580392a07d1a6c2007498b0cdabe560",
+      "tools/host-profile/vendor/ed/carg_parser.h": "4dce9ac377126862bd88a1b11c3e8bac023cb8f2de08ea1aecdc36019c1a42f0",
+      "tools/host-profile/vendor/ed/ed.h": "177e014da6885fa88449e1d7cc4c54b64391126dd9c928fe2c7509e5df848355",
+      "tools/host-profile/vendor/ed/global.c": "1e26ecb8af4a73d4ad77a6f81805eed45129cdf6e50cda0c45d0ea7aaa0391cc",
+      "tools/host-profile/vendor/ed/io.c": "f35357a38fdf17c2fd9528890a82883407974cce89307a7a8a8be28356048760",
+      "tools/host-profile/vendor/ed/main.c": "cb0beafa790ef7b3781ef93c243aaec0d63a03c250cd910665d30aaec5a6dc1e",
+      "tools/host-profile/vendor/ed/main_loop.c": "42bc52283389fbdb582cc99f017f956571b9d11c7f0ed1118d7cfbc85cdb7cb7",
+      "tools/host-profile/vendor/ed/provenance.json": "2ee17e07e9d253dbf093f38232b6f0ed0fda284582780da5c030c576c77d21ef",
+      "tools/host-profile/vendor/ed/regex.c": "864d59f5e651e595a5727534cb2c3298e57af06492dcc8d5120891ae63e0f225",
+      "tools/host-profile/vendor/ed/signal.c": "bbae40ebfec37e25690821274da628d7a63aac4eec729c360c9400dc9ca4bc14",
+      "tools/host-profile/vendor/file/COPYING": "0bfa856a9930bddadbef95d1be1cf4e163c0be618e76ea3275caaf255283e274",
+      "tools/host-profile/vendor/file/README.md": "2c50acd4b4bd13ea550c5062cb6c87e8259c27ace487cbba1374a4327afcafd7",
+      "tools/host-profile/vendor/file/file-5.46.tar.gz": "c9cc77c7c560c543135edc555af609d5619dbef011997e988ce40a3d75d86088",
+      "tools/host-profile/vendor/file/message-formats.patch": "aadd51afa79a7322e28c7a2b31817ff62513d400fabe45f0f58f836e31542afe",
+      "tools/host-profile/vendor/gawk/AUTHORS": "e3c25acbdb1de25778f2c57e7baeb9fc7bc7e8c5c4a3fc6541f2cc701c44f7b7",
+      "tools/host-profile/vendor/gawk/COPYING": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+      "tools/host-profile/vendor/gawk/cshell.patch": "b22747359f1c1e14f05efae282ed3a9a47911f405ca8299453736cb933c65f0a",
+      "tools/host-profile/vendor/gawk/gawk-5.3.2.tar.xz": "f8c3486509de705192138b00ef2c00bbbdd0e84c30d5c07d23fc73a9dc4cc9cc",
+      "tools/host-profile/vendor/gawk/provenance.json": "004aa84f4e0982963657eb18a0cb4ed4f4434f7416c3b50657c9165dd3fbc721",
+      "tools/host-profile/vendor/gencat-darwin/gencat.h": "04eecccb8ca671740fca82d6bf5632a0599969c1071e67147059365dbe88c65c",
+      "tools/host-profile/vendor/gencat-darwin/genlib.c": "bba79c839fdd46c54b81bd7d0d70b3633b0a6ecdc386ea6c931885d19d156032",
+      "tools/host-profile/vendor/gencat-darwin/msgcat.h": "875be437583dc5e2faa625c520821847acbb7bd663d11eef4035ef7d2019f928",
+      "tools/host-profile/vendor/gencat-glibc/COPYING": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+      "tools/host-profile/vendor/gencat-glibc/COPYING.LIB": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551",
+      "tools/host-profile/vendor/gencat-glibc/catgetsinfo.h": "09f470d07297eb4b7db76b6f491d3764e92b31ed66557215c74972b2f99b6bd5",
+      "tools/host-profile/vendor/gencat-glibc/gencat.c": "948a8990623f24c4cbd44471e2ac7ea71fa9142ac0ded52dbcc7bec61123cf1b",
+      "tools/host-profile/vendor/gencat-glibc/programs/xmalloc.h": "bfbc6e4c530e9d5e149af652f99385a40835e883129e40103bdcf2d429e45cc6",
+      "tools/host-profile/vendor/gencat-glibc/version.h": "0522033606ce77672d3adbe4af4f466f85ac2c7eadaa0d8d8f2ac380eff12620",
+      "tools/host-profile/vendor/m4/COPYING": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "tools/host-profile/vendor/m4/cshell.patch": "74a1ba3bc5faa686db247d8c65f8ea59b1ad7f02134008c1c4d0347dd2a7d91c",
+      "tools/host-profile/vendor/m4/m4-1.4.20.tar.gz": "6ac4fc31ce440debe63987c2ebbf9d7b6634e67a7c3279257dc7361de8bdb3ef",
+      "tools/host-profile/vendor/m4/provenance.json": "2f299e327eea10262a5f21834d30ee49e37d52bc7c624bd6d544510310c28fa6",
+      "tools/host-profile/vendor/patch/COPYING": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+      "tools/host-profile/vendor/patch/cshell.patch": "c617e3cefd18e0cf3f5763cb599cafe03cde40424f3e2c9db436b9f73ec1a934",
+      "tools/host-profile/vendor/patch/patch-2.8.tar.xz": "f87cee69eec2b4fcbf60a396b030ad6aa3415f192aa5f7ee84cad5e11f7f5ae3",
+      "tools/host-profile/vendor/patch/provenance.json": "2e1ac563ff2de4aa759d4535018632d69209592c4b2e9941f67baf70ff47f5dc",
+      "tools/host-profile/vendor/pax/.linked/mbsdcc.h": "84304bde427fba984eaccf84893bf8dd3a88d867558653a4ef1d27cd48b1c6e4",
+      "tools/host-profile/vendor/pax/.linked/strlfun.inc": "2414442594b006253da08d0ccd7576675be854a0af4e07fdf7645db021609caf",
+      "tools/host-profile/vendor/pax/Build.sh": "0cdd18a177816738a5c4fc9d3f97083c1e507157146fcfe6c86d7c496ffa0ea9",
+      "tools/host-profile/vendor/pax/CSHELL-CHANGES.md": "9908dbf57c261c08edd1305df2e5983f638f026fa0ea5b4ad0d02c6c9a854633",
+      "tools/host-profile/vendor/pax/Makefile": "4217c5bc041e41825c6eee3edceabbc37a1fe38f4c07102106b07214b9303072",
+      "tools/host-profile/vendor/pax/ar.c": "8dbadc3e0487a9649fb23b88fb2b39fd01f3c9d2bd37da65f47586f104dbbd11",
+      "tools/host-profile/vendor/pax/ar.h": "3cc432720275de921ebd35561f9fb1297463e43d92f6bcc84d4f741b62295500",
+      "tools/host-profile/vendor/pax/ar_io.c": "566e4108aab9a843b6fb24f137342a3ef4b540be99b74eff5de710ce9fb135e6",
+      "tools/host-profile/vendor/pax/ar_subs.c": "d5a1742885a0e96d866008482dfc674cea5754927490a20dbfac2bb9aff5006b",
+      "tools/host-profile/vendor/pax/buf_subs.c": "e2cba98b3b8667dce3867b94cb493a61a19208c9f495179e4b6fd9e367bfe459",
+      "tools/host-profile/vendor/pax/cache.c": "ec531d917f5ca1aa9df2453032791fcadfeecde467ad36b772df8b0231bfc09d",
+      "tools/host-profile/vendor/pax/compat.c": "551f7a81e6cf97cba6348c0c12e7e43e74aeeff1d98dc0534d1b6d9ceb3ef949",
+      "tools/host-profile/vendor/pax/compat.h": "7d83139b1125f2d2ef5f3808b715d40cce5c829b3e365f95090146d31cff209b",
+      "tools/host-profile/vendor/pax/cpio.1": "832c5cd36ed0f75c400e87cd367461a8b6a43f5f66a598f83bbee0c0b6cfda53",
+      "tools/host-profile/vendor/pax/cpio.c": "ec2f5def2c32cc3aa9ba5ce6af3f8109a07785b8d629f24b4873fc95eb4b7ac2",
+      "tools/host-profile/vendor/pax/cpio.h": "69bac88b40c022c5ed97eea4c3d8358aa6f91c3e2f8f4d470842b5ee270c025f",
+      "tools/host-profile/vendor/pax/extern.h": "d4e0a658a5964d1b05537628baec0b7215ca97f120ef6f3b70db8f04600b5c0d",
+      "tools/host-profile/vendor/pax/file_subs.c": "91f2b7c1c77fd9efc596f641e3ce12c522b1a39bd257af1248bb281de6afbe10",
+      "tools/host-profile/vendor/pax/ftimes.h": "83b79496ad4b37b26171d6abe498534f2f9c1e5fb7723bf607dbd240ef11e1ca",
+      "tools/host-profile/vendor/pax/ftree.c": "980a6a3dab3f3370869c656be05ebb522b42beb827ca770e45935d0f9cea6da3",
+      "tools/host-profile/vendor/pax/gen_subs.c": "b2a2c3b072e321bef715021592400bd314e2f31e14e346cf8965f200dbfc5ee1",
+      "tools/host-profile/vendor/pax/getoldopt.c": "9479de14e57f3c098e9a784349d4247a2d4ec694d991180ff97f9eb79a363b40",
+      "tools/host-profile/vendor/pax/options.c": "f51801143f12aa19c9af74094a7370c57caf07ec0352154bc25fe0ccce04dd45",
+      "tools/host-profile/vendor/pax/pat_rep.c": "a5bca779c2c284fcf78ebfae6cc117c942778f75fa524d2dc233ca78caead87f",
+      "tools/host-profile/vendor/pax/pax.1": "c8fe34c180c09ebd82f967ec6f6a5c3651abed395c88f00744054df553ac3f7b",
+      "tools/host-profile/vendor/pax/pax.c": "2ecff99bef82c32648124344e13714a07501733f572e77bc37cb857d2b5a8729",
+      "tools/host-profile/vendor/pax/pax.h": "db4aba32661de2fe15a073ba890b52a47c7ad6a8f97322ec15d05200ffd63c43",
+      "tools/host-profile/vendor/pax/reallocarray.c": "c7947cdb2c4a454df87fe787a76ddbcdf96d3e25421face7d42b4cd275460e08",
+      "tools/host-profile/vendor/pax/sel_subs.c": "4368848f30719e58740e5b30c240c3e5ac0029a15939002788f5b7c454a5cf01",
+      "tools/host-profile/vendor/pax/strmode.c": "cfd0ad2fa0289818eb1a9ee5858eddf740c004ca5e1a07df30a52c39785b8bea",
+      "tools/host-profile/vendor/pax/strtonum.c": "475a6efc3b845a2583684815113926ef2eccd51c78ee6d3b20d272035d192488",
+      "tools/host-profile/vendor/pax/tables.c": "27b29d1069fd80c51b57d686ec24c118ce17b32353253df978d7284004b9b1d0",
+      "tools/host-profile/vendor/pax/tar.1": "75f90dc4863b2fa196bcd1e4dd30e63258fb27987148e65bab881faf27f2ce70",
+      "tools/host-profile/vendor/pax/tar.c": "68b3f843b7f31021215fda1fdaa9f0eb15b176314e973ca7fb873ef2d965f270",
+      "tools/host-profile/vendor/pax/tar.h": "fb4a40168cc427a4905c8f72cec45a85e073b030063cf7d10186f7e9f6fbda5c",
+      "tools/host-profile/vendor/pax/tty_subs.c": "d4b044cfd69533a6fa915c6f2d2451544e14a1226b0dc435e7193e02a7d2db1b",
+      "tools/host-profile/vendor/printf.c": "3f907bb7d44f51f05603bf8ea5b024c12118ceeebc598f68e121345c20ac91dc",
+      "tools/host-profile/vendor/tzcode/LICENSE": "0613408568889f5739e5ae252b722a2659c02002839ad970a63dc5e9174b27cf",
+      "tools/host-profile/vendor/tzcode/README.md": "cebe7a069fea35620aa80dd6a7173f776f972f3214d7faeca43b6a6fa2c5ba2a",
+      "tools/host-profile/vendor/tzcode/tzcode2025b.tar.gz": "05f8fedb3525ee70d49c87d3fae78a8a0dbae4fe87aa565c65cda9948ae135ec",
+      "tools/host-profile/vendor/uudecode.c": "427f832daa60f7f6339fd4584c13df6d11617f2f57d5f73f102e0a8efdd4f3fd",
+      "tools/host-profile/vendor/write.c": "4aa37b7fbd5db94ad44cda020bae4015206bd0f656c5f93abc0d1d69ea7ca29a",
+      "tools/host-profile/vendor/xargs/compat.c": "b85bac34fd1896cd31c1802dfb9c4a2152113dff1c273895b458dcb9d8182736",
+      "tools/host-profile/vendor/xargs/compat.h": "963d94bb750627837cc9fdd0447fbb8644b8a0b1c460b97577239929a30fc57d",
+      "tools/host-profile/vendor/xargs/pathnames.h": "109c6afeff93d48320e419b88f14c029020854cf5a147a240e2860caddf515a8",
+      "tools/host-profile/vendor/xargs/provenance.json": "8e2ebfc99b22adfd3bfb0b01e7d695aa7b9c5ab8e4e4086a7ce787564d88bd9d",
+      "tools/host-profile/vendor/xargs/strnsubst.c": "64483b4b1543a2374ab631565fd995f55958cb0d88cb7b6eaa453d528df6d68a",
+      "tools/host-profile/vendor/xargs/xargs.c": "b5bcae78752877006abde66d687ca59f30ee2ed6aeb4ba381a93609064ee7e9c",
+      "tools/host-services/Dockerfile": "8a6ddae7b7bf829c3a3a19cf77a0478f68913f5b9294727fe9106cc525ce1498",
+      "tools/host-services/at": "5a91a6f7c2094d192c27f55eddd30878eed1e001604889640b3cc74c8377d805",
+      "tools/host-services/batch": "c3065c0675992d1f06b29df24062d9d50463885ab93dad9e81a4cd305d6b7392",
+      "tools/host-services/logger": "98364f5900e33041142f2e2e050d1ef73555fad888ac28bd21081695fa18e2bc",
+      "tools/host-services/run.py": "03bba4e5a5fbed2222f849e5c45b1b10f787ca6cca4167751a9fe94162b113a6",
+      "tools/tickets.py": "048fd9dfb9b70e1862321c7a8276940b9a6e687030e71577bb350bec23979537"
+    }
+  },
+  "binary_sha256": "01db4d7d05f8d91402df59d7bb90debaf3c03b7fdd88f5066316a0b16574175d",
+  "contracts_sha256": "b8fa23e2d5f6bd7daf8abfd2e94a851de754dc023aeffc67ca1bce05d2d88389",
+  "scope": "bounded operation contracts; full pages unqualified",
+  "limits": {
+    "case_seconds": 5,
+    "signal_seconds": 7,
+    "cleanup_seconds": 1,
+    "terminal_cleanup_seconds": 5,
+    "output_bytes": 65536,
+    "child_resources": "smoke.child_limits; 1 MiB files, 64 descriptors, no core dumps"
+  },
+  "selection": [
+    "ed/signal-int"
+  ],
+  "multibyte_audit": false,
+  "ed_faults": null,
+  "extended_sigint": true,
+  "sanitizer": false,
+  "totals": {
+    "PASS": 3,
+    "FAIL": 0
+  },
+  "cases": [
+    {
+      "id": "ed/signal-int",
+      "mode": "direct",
+      "phase": "assertion",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html",
+      "clauses": [
+        "ASYNCHRONOUS EVENTS"
+      ],
+      "invocation": {
+        "args": [
+          "/work/tests/host_language_helper.py",
+          "ed-signal",
+          "int",
+          "/work/build/host-profile/bin/ed",
+          "-s",
+          "original"
+        ],
+        "stdin": "",
+        "env": {
+          "PATH": "/work/build/host-profile/bin:/bin:/usr/bin"
+        }
+      },
+      "verdict": "PASS",
+      "signal": {
+        "argv": [
+          "/work/build/host-profile/bin/ed",
+          "-s",
+          "original"
+        ],
+        "action": "int",
+        "phase": "final-drain",
+        "signal": "SIGINT",
+        "status": 0,
+        "stdout": "7265636f76657265640a2a3f0a2a7265636f76657265640a",
+        "stderr": "",
+        "reaped": true,
+        "incomplete": false,
+        "events": [
+          {
+            "phase": "initial-response",
+            "event": "ready",
+            "streams": [
+              "stdout"
+            ]
+          },
+          {
+            "phase": "initial-response",
+            "event": "data",
+            "stream": "stdout",
+            "size": 10
+          },
+          {
+            "phase": "readiness",
+            "event": "ready",
+            "streams": [
+              "stdout"
+            ]
+          },
+          {
+            "phase": "readiness",
+            "event": "data",
+            "stream": "stdout",
+            "size": 1
+          },
+          {
+            "phase": "signal-response",
+            "event": "ready",
+            "streams": [
+              "stdout"
+            ]
+          },
+          {
+            "phase": "signal-response",
+            "event": "data",
+            "stream": "stdout",
+            "size": 3
+          },
+          {
+            "phase": "final-response",
+            "event": "ready",
+            "streams": [
+              "stdout"
+            ]
+          },
+          {
+            "phase": "final-response",
+            "event": "data",
+            "stream": "stdout",
+            "size": 10
+          },
+          {
+            "phase": "final-drain",
+            "event": "ready",
+            "streams": [
+              "stderr",
+              "stdout"
+            ]
+          },
+          {
+            "phase": "final-drain",
+            "event": "eof",
+            "stream": "stderr",
+            "size": 0
+          },
+          {
+            "phase": "final-drain",
+            "event": "eof",
+            "stream": "stdout",
+            "size": 0
+          }
+        ],
+        "files": {
+          "saved": "7265636f76657265640a"
+        }
+      },
+      "actual": {
+        "status": 0,
+        "stdout": {
+          "hex": "7265636f766572656420616e64207265617065640a"
+        },
+        "stderr": {
+          "hex": ""
+        },
+        "errors": []
+      },
+      "fixture_removed": true
+    },
+    {
+      "id": "ed/signal-int",
+      "mode": "string",
+      "phase": "assertion",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html",
+      "clauses": [
+        "ASYNCHRONOUS EVENTS"
+      ],
+      "invocation": {
+        "args": [
+          "/work/tests/host_language_helper.py",
+          "ed-signal",
+          "int",
+          "/work/cshell",
+          "-c",
+          "exec ed -s original\n"
+        ],
+        "stdin": "",
+        "env": {
+          "PATH": "/work/build/host-profile/bin:/bin:/usr/bin"
+        }
+      },
+      "verdict": "PASS",
+      "signal": {
+        "argv": [
+          "/work/cshell",
+          "-c",
+          "exec ed -s original\n"
+        ],
+        "action": "int",
+        "phase": "final-drain",
+        "signal": "SIGINT",
+        "status": 0,
+        "stdout": "7265636f76657265640a2a3f0a2a7265636f76657265640a",
+        "stderr": "",
+        "reaped": true,
+        "incomplete": false,
+        "events": [
+          {
+            "phase": "initial-response",
+            "event": "ready",
+            "streams": [
+              "stdout"
+            ]
+          },
+          {
+            "phase": "initial-response",
+            "event": "data",
+            "stream": "stdout",
+            "size": 10
+          },
+          {
+            "phase": "readiness",
+            "event": "ready",
+            "streams": [
+              "stdout"
+            ]
+          },
+          {
+            "phase": "readiness",
+            "event": "data",
+            "stream": "stdout",
+            "size": 1
+          },
+          {
+            "phase": "signal-response",
+            "event": "ready",
+            "streams": [
+              "stdout"
+            ]
+          },
+          {
+            "phase": "signal-response",
+            "event": "data",
+            "stream": "stdout",
+            "size": 3
+          },
+          {
+            "phase": "final-response",
+            "event": "ready",
+            "streams": [
+              "stdout"
+            ]
+          },
+          {
+            "phase": "final-response",
+            "event": "data",
+            "stream": "stdout",
+            "size": 10
+          },
+          {
+            "phase": "final-drain",
+            "event": "ready",
+            "streams": [
+              "stderr",
+              "stdout"
+            ]
+          },
+          {
+            "phase": "final-drain",
+            "event": "eof",
+            "stream": "stderr",
+            "size": 0
+          },
+          {
+            "phase": "final-drain",
+            "event": "eof",
+            "stream": "stdout",
+            "size": 0
+          }
+        ],
+        "files": {
+          "saved": "7265636f76657265640a"
+        }
+      },
+      "actual": {
+        "status": 0,
+        "stdout": {
+          "hex": "7265636f766572656420616e64207265617065640a"
+        },
+        "stderr": {
+          "hex": ""
+        },
+        "errors": []
+      },
+      "fixture_removed": true
+    },
+    {
+      "id": "ed/signal-int",
+      "mode": "file",
+      "phase": "assertion",
+      "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ed.html",
+      "clauses": [
+        "ASYNCHRONOUS EVENTS"
+      ],
+      "invocation": {
+        "args": [
+          "/work/tests/host_language_helper.py",
+          "ed-signal",
+          "int",
+          "/work/cshell",
+          "script"
+        ],
+        "stdin": "",
+        "env": {
+          "PATH": "/work/build/host-profile/bin:/bin:/usr/bin"
+        }
+      },
+      "verdict": "PASS",
+      "signal": {
+        "argv": [
+          "/work/cshell",
+          "script"
+        ],
+        "action": "int",
+        "phase": "final-drain",
+        "signal": "SIGINT",
+        "status": 0,
+        "stdout": "7265636f76657265640a2a3f0a2a7265636f76657265640a",
+        "stderr": "",
+        "reaped": true,
+        "incomplete": false,
+        "events": [
+          {
+            "phase": "initial-response",
+            "event": "ready",
+            "streams": [
+              "stdout"
+            ]
+          },
+          {
+            "phase": "initial-response",
+            "event": "data",
+            "stream": "stdout",
+            "size": 10
+          },
+          {
+            "phase": "readiness",
+            "event": "ready",
+            "streams": [
+              "stdout"
+            ]
+          },
+          {
+            "phase": "readiness",
+            "event": "data",
+            "stream": "stdout",
+            "size": 1
+          },
+          {
+            "phase": "signal-response",
+            "event": "ready",
+            "streams": [
+              "stdout"
+            ]
+          },
+          {
+            "phase": "signal-response",
+            "event": "data",
+            "stream": "stdout",
+            "size": 3
+          },
+          {
+            "phase": "final-response",
+            "event": "ready",
+            "streams": [
+              "stdout"
+            ]
+          },
+          {
+            "phase": "final-response",
+            "event": "data",
+            "stream": "stdout",
+            "size": 10
+          },
+          {
+            "phase": "final-drain",
+            "event": "ready",
+            "streams": [
+              "stderr",
+              "stdout"
+            ]
+          },
+          {
+            "phase": "final-drain",
+            "event": "eof",
+            "stream": "stderr",
+            "size": 0
+          },
+          {
+            "phase": "final-drain",
+            "event": "eof",
+            "stream": "stdout",
+            "size": 0
+          }
+        ],
+        "files": {
+          "saved": "7265636f76657265640a"
+        }
+      },
+      "actual": {
+        "status": 0,
+        "stdout": {
+          "hex": "7265636f766572656420616e64207265617065640a"
+        },
+        "stderr": {
+          "hex": ""
+        },
+        "errors": []
+      },
+      "fixture_removed": true
+    }
+  ],
+  "awk_build": {
+    "archive_sha256": "f8c3486509de705192138b00ef2c00bbbdd0e84c30d5c07d23fc73a9dc4cc9cc",
+    "patch_sha256": "b22747359f1c1e14f05efae282ed3a9a47911f405ca8299453736cb933c65f0a",
+    "requested_cflags": "-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2",
+    "cflags": "-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2",
+    "cc": "cc",
+    "ldflags": "",
+    "binary_sha256": "ced86e83ed8da4f45efda673683d2c0d6bb2edb4bb38ba4e034074a086274619"
+  },
+  "bc_build": {
+    "archive_sha256": "ae470fec429775653e042015edc928d07c8c3b2fc59765172a330d3d87785f86",
+    "patch_sha256": "c4a700cd78bb250f47049350ee7b6632063cb219e7e3decf42d23a4d0499a949",
+    "requested_cflags": "-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2",
+    "cflags": "-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2",
+    "cc": "cc",
+    "ldflags": "",
+    "binary_sha256": "7531ad4285498f0b91dd94c04842581170d88b8dbe40923c9afeb7e74f5e2af5"
+  },
+  "m4_build": {
+    "gnulib_sha256": "00ba8af0f3304b89b9ae737956cd24a289d4c96abeaee6b21b7dc1bc361044ba",
+    "included_regex": true,
+    "archive_sha256": "6ac4fc31ce440debe63987c2ebbf9d7b6634e67a7c3279257dc7361de8bdb3ef",
+    "patch_sha256": "74a1ba3bc5faa686db247d8c65f8ea59b1ad7f02134008c1c4d0347dd2a7d91c",
+    "requested_cflags": "-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2",
+    "cflags": "-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2",
+    "cc": "cc",
+    "ldflags": "",
+    "binary_sha256": "d6c498310c9b91ec0e6ce593a2a2179afad83f8d20eb4438b10bef8c81d440e3"
+  },
+  "patch_build": {
+    "archive_sha256": "f87cee69eec2b4fcbf60a396b030ad6aa3415f192aa5f7ee84cad5e11f7f5ae3",
+    "patch_sha256": "c617e3cefd18e0cf3f5763cb599cafe03cde40424f3e2c9db436b9f73ec1a934",
+    "requested_cflags": "-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2",
+    "cflags": "-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2",
+    "cc": "cc",
+    "ldflags": "",
+    "binary_sha256": "89f82637cec49722dc85322385a46fed1daf7680cd82bd210b8ebbd1b8c8c42d"
+  },
+  "expr_version": "expr (GNU coreutils) 9.1",
+  "package_identity": {
+    "argv": [
+      "dpkg-query",
+      "-W",
+      "-f=${Package} ${Version}\n"
+    ],
+    "status": 0,
+    "stdout": "acl 2.3.1-3\nadduser 3.134\napt 2.6.2\nbase-files 12.4+deb12u15\nbase-passwd 3.6.1\nbash 5.2.15-2+b13\nbc 1.07.1-3\nbinutils 2.40-2\nbinutils-aarch64-linux-gnu 2.40-2\nbinutils-common 2.40-2\nbsdextrautils 2.38.1-5+deb12u3\nbsdutils 1:2.38.1-5+deb12u3\nbuild-essential 12.9\nbusybox 1:1.35.0-4+deb12u1+b1\nbzip2 1.0.8-5+b1\nca-certificates 20250419~deb12u2\ncoreutils 9.1-1\ncpp 4:12.2.0-3\ncpp-12 12.2.0-14+deb12u1\ncurl 7.88.1-10+deb12u15\ndash 0.5.12-2\ndebconf 1.5.82\ndebian-archive-keyring 2023.3+deb12u2\ndebianutils 5.7-0.5~deb12u1\ndiffutils 1:3.8-4\ndpkg 1.21.23\ndpkg-dev 1.21.23\ne2fsprogs 1.47.0-2+b2\ned 1.19-1\nfile 1:5.44-3\nfindutils 4.9.0-4\ng++ 4:12.2.0-3\ng++-12 12.2.0-14+deb12u1\ngcc 4:12.2.0-3\ngcc-12 12.2.0-14+deb12u1\ngcc-12-base 12.2.0-14+deb12u1\ngettext 0.21-12\ngettext-base 0.21-12\ngpgv 2.2.40-1.1+deb12u2\ngrep 3.8-5\ngzip 1.12-1\nhostname 3.23+nmu1\ninit-system-helpers 1.65.2+deb12u1\nlibacl1 2.3.1-3\nlibapt-pkg6.0 2.6.2\nlibasan8 12.2.0-14+deb12u1\nlibatomic1 12.2.0-14+deb12u1\nlibattr1 1:2.5.1-4\nlibaudit-common 1:3.0.9-1\nlibaudit1 1:3.0.9-1\nlibbinutils 2.40-2\nlibblkid1 2.38.1-5+deb12u3\nlibbrotli1 1.0.9-2+deb12u1\nlibbsd-dev 0.11.7-2\nlibbsd0 0.11.7-2\nlibbz2-1.0 1.0.8-5+b1\nlibc-bin 2.36-9+deb12u14\nlibc-dev-bin 2.36-9+deb12u14\nlibc-l10n 2.36-9+deb12u14\nlibc6 2.36-9+deb12u14\nlibc6-dev 2.36-9+deb12u14\nlibcap-ng0 0.8.3-1+b3\nlibcap2 1:2.66-4+deb12u3+b1\nlibcc1-0 12.2.0-14+deb12u1\nlibcom-err2 1.47.0-2+b2\nlibcrypt-dev 1:4.4.33-2\nlibcrypt1 1:4.4.33-2\nlibctf-nobfd0 2.40-2\nlibctf0 2.40-2\nlibcurl4 7.88.1-10+deb12u15\nlibdb5.3 5.3.28+dfsg2-1\nlibdebconfclient0 0.270\nlibdpkg-perl 1.21.23\nlibexpat1 2.5.0-1+deb12u5\nlibext2fs2 1.47.0-2+b2\nlibffi8 3.4.4-1\nlibgcc-12-dev 12.2.0-14+deb12u1\nlibgcc-s1 12.2.0-14+deb12u1\nlibgcrypt20 1.10.1-3+deb12u1\nlibgdbm-compat4 1.23-3\nlibgdbm6 1.23-3\nlibgmp10 2:6.2.1+dfsg1-1.1\nlibgnutls30 3.7.9-2+deb12u7\nlibgomp1 12.2.0-14+deb12u1\nlibgpg-error0 1.46-1\nlibgprofng0 2.40-2\nlibgssapi-krb5-2 1.20.1-2+deb12u5\nlibhogweed6 3.8.1-2\nlibhwasan0 12.2.0-14+deb12u1\nlibicu72 72.1-3+deb12u1\nlibidn2-0 2.3.3-1+b1\nlibisl23 0.25-1.1\nlibitm1 12.2.0-14+deb12u1\nlibjansson4 2.14-2\nlibk5crypto3 1.20.1-2+deb12u5\nlibkeyutils1 1.6.3-2\nlibkrb5-3 1.20.1-2+deb12u5\nlibkrb5support0 1.20.1-2+deb12u5\nlibldap-2.5-0 2.5.13+dfsg-5\nliblsan0 12.2.0-14+deb12u1\nliblz4-1 1.9.4-1\nliblzma5 5.4.1-1+deb12u2\nlibmagic-mgc 1:5.44-3\nlibmagic1 1:5.44-3\nlibmd-dev 1.0.4-2\nlibmd0 1.0.4-2\nlibmount1 2.38.1-5+deb12u3\nlibmpc3 1.3.1-1\nlibmpfr6 4.2.0-1\nlibncurses-dev 6.4-4\nlibncurses6 6.4-4\nlibncursesw6 6.4-4\nlibnettle8 3.8.1-2\nlibnghttp2-14 1.52.0-1+deb12u3\nlibnsl-dev 1.3.0-2\nlibnsl2 1.3.0-2\nlibp11-kit0 0.24.1-2\nlibpam-modules 1.5.2-6+deb12u2\nlibpam-modules-bin 1.5.2-6+deb12u2\nlibpam-runtime 1.5.2-6+deb12u2\nlibpam0g 1.5.2-6+deb12u2\nlibpcre2-8-0 10.42-1+deb12u2\nlibperl5.36 5.36.0-7+deb12u4\nlibproc2-0 2:4.0.2-3\nlibpsl5 0.21.2-1\nlibpython3-stdlib 3.11.2-1+b1\nlibpython3.11-minimal 3.11.2-6+deb12u9\nlibpython3.11-stdlib 3.11.2-6+deb12u9\nlibreadline8 8.2-1.3\nlibrtmp1 2.4+20151223.gitfa8646d.1-2+b2\nlibsasl2-2 2.1.28+dfsg-10+deb12u1\nlibsasl2-modules-db 2.1.28+dfsg-10+deb12u1\nlibseccomp2 2.5.4-1+deb12u1\nlibselinux1 3.4-1+b6\nlibsemanage-common 3.4-1\nlibsemanage2 3.4-1+b5\nlibsepol2 3.4-2.1\nlibsmartcols1 2.38.1-5+deb12u3\nlibsqlite3-0 3.40.1-2+deb12u2\nlibss2 1.47.0-2+b2\nlibssh2-1 1.10.0-3+deb12u1\nlibssl3 3.0.22-1~deb12u2\nlibstdc++-12-dev 12.2.0-14+deb12u1\nlibstdc++6 12.2.0-14+deb12u1\nlibsystemd0 252.39-1~deb12u2\nlibtasn1-6 4.19.0-2+deb12u1\nlibtinfo6 6.4-4\nlibtirpc-common 1.3.3+ds-1\nlibtirpc-dev 1.3.3+ds-1\nlibtirpc3 1.3.3+ds-1\nlibtsan2 12.2.0-14+deb12u1\nlibubsan1 12.2.0-14+deb12u1\nlibudev1 252.39-1~deb12u2\nlibunistring2 1.0-2\nlibuuid1 2.38.1-5+deb12u3\nlibxml2 2.9.14+dfsg-1.3~deb12u6\nlibxxhash0 0.8.1-1\nlibzstd1 1.5.4+dfsg2-5\nlinux-libc-dev 6.1.192-2\nlocales 2.36-9+deb12u14\nlogin 1:4.13+dfsg1-1+deb12u2\nlogsave 1.47.0-2+b2\nlzip 1.23-5\nm4 1.4.19-3\nmake 4.3-4.1\nmawk 1.3.4.20200120-3.1\nmedia-types 10.0.0\nmount 2.38.1-5+deb12u3\nncurses-base 6.4-4\nncurses-bin 6.4-4\nopenssl 3.0.22-1~deb12u2\npasswd 1:4.13+dfsg1-1+deb12u2\npatch 2.7.6-7\npax 1:20201030-1\nperl 5.36.0-7+deb12u4\nperl-base 5.36.0-7+deb12u4\nperl-modules-5.36 5.36.0-7+deb12u4\nprocps 2:4.0.2-3\npython3 3.11.2-1+b1\npython3-minimal 3.11.2-1+b1\npython3.11 3.11.2-6+deb12u9\npython3.11-minimal 3.11.2-6+deb12u9\nreadline-common 8.2-1.3\nrpcsvc-proto 1.4.3-1\nsed 4.9-1+deb12u1\nsharutils 1:4.15.2-9\nsysvinit-utils 3.06-4\ntar 1.34+dfsg-1.2+deb12u1\ntini 0.19.0-1+b3\ntzdata 2026f-0+deb12u1\nusr-is-merged 37~deb12u1\nutil-linux 2.38.1-5+deb12u3\nutil-linux-extra 2.38.1-5+deb12u3\nxz-utils 5.4.1-1+deb12u2\nzlib1g 1:1.2.13.dfsg-1\n",
+    "stderr": ""
+  }
+}

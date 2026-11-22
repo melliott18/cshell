@@ -1,0 +1,39 @@
+{
+  "events": [
+    {
+      "event": "ready",
+      "fds": [
+        "stderr",
+        "stdout"
+      ]
+    },
+    {
+      "event": "read",
+      "stream": "stderr",
+      "data": ""
+    }
+  ],
+  "final": true,
+  "unread_stdout": "",
+  "outcome": "FAIL",
+  "error": "ed exited before response: b'recovered\\n*?\\n*'",
+  "signal": {
+    "argv": [
+      "/Users/mitchell/.codex/worktrees/csh-129-ed-signal-capture/cshell/build/host-ed",
+      "-s",
+      "original"
+    ],
+    "action": "int",
+    "status": 0,
+    "stdout": "7265636f76657265640a2a3f0a2a",
+    "stderr": "",
+    "reaped": true,
+    "incomplete": true
+  },
+  "files": {
+    "saved": "7265636f76657265640a",
+    "original": ""
+  },
+  "reaped": true,
+  "fixture_removed": true
+}
