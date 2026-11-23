@@ -1246,3 +1246,7 @@ test-host-filesystem-ls-modes: cshell host-profile
 .PHONY: test-host-filesystem-ls-dates
 test-host-filesystem-ls-dates: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --ls-dates-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-ls-dates.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-ls-times
+test-host-filesystem-ls-times: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --ls-times-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-ls-times.json $(HOST_FILESYSTEM_FLAGS)

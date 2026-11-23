@@ -2002,3 +2002,8 @@ mode readback is required; no set-ID fixture is executed. See
 ### CSH-128 ls dates
 
 `make test-host-filesystem-ls-dates` runs 60 cases in four invocation modes, with recent, old and future modification timestamps in UTC and a fixed +05:45 zone. Exact pre-exec timestamp readback and before/after clock-category checks precede independent calendar rendering. Six-month boundaries, clock changes, DST and timestamp ranges remain open. [Evidence and reproduction](evidence/csh-128/README.md).
+
+`make test-host-filesystem-ls-times` runs CSH-130 modification/access-time
+sorting and display witnesses, including exact nanosecond differences, C ties,
+reverse ordering and named/numeric long listings. Setup must read back every
+authored timestamp exactly; post-exec checks include atime before content reads.
