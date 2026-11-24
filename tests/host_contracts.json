@@ -60,9 +60,9 @@
       }
     },
     {
-      "ticket": "CSH-131",
-      "path": "docs/tickets/CSH-131-filesystem-environment-residuals.md",
-      "title": "Supply remaining filesystem environments after ls permission-field qualification",
+      "ticket": "CSH-132",
+      "path": "docs/tickets/CSH-132-filesystem-environment-residuals.md",
+      "title": "Supply remaining filesystem environments after ls change-time qualification",
       "utilities": [
         "basename",
         "dirname",
