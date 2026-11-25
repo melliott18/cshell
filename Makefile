@@ -1254,3 +1254,8 @@ test-host-filesystem-ls-times: cshell host-profile
 .PHONY: test-host-filesystem-ls-ctime
 test-host-filesystem-ls-ctime: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --ls-ctime-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-ls-ctime.json $(HOST_FILESYSTEM_FLAGS)
+
+# CSH-132: size/time sorting precedence and independent long-listing dates.
+.PHONY: test-host-filesystem-ls-size
+test-host-filesystem-ls-size: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --ls-size-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-ls-size.json $(HOST_FILESYSTEM_FLAGS)

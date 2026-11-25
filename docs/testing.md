@@ -2009,3 +2009,5 @@ reverse ordering and named/numeric long listings. Setup must read back every
 authored timestamp exactly; post-exec checks include atime before content reads.
 
 `make test-host-filesystem-ls-ctime` runs the CSH-131 measured change-time sorting, display and -c/-u precedence witnesses in direct, string, file and stdin modes. The bounded chmod/lstat setup proves strict order and a hard-link tie; recent UTC display requires before/after clock guards. Setup failures, changed metadata and incomplete cleanup fail the assertion. See [evidence](evidence/csh-131/README.md).
+
+`make test-host-filesystem-ls-size` runs CSH-132 size/time sort precedence and long-listing date selection; [evidence](evidence/csh-132/README.md).

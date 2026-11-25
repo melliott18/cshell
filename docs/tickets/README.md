@@ -138,6 +138,7 @@ Foundation, front-end implementation, roadmap maintenance, and test infrastructu
 | [CSH-130](CSH-130-filesystem-environment-residuals.md) | Supply remaining filesystem environments after ls date qualification | [CSH-128](CSH-128-filesystem-environment-residuals.md) | [#271](https://github.com/melliott18/cshell/issues/271) |
 | [CSH-131](CSH-131-filesystem-environment-residuals.md) | Supply remaining filesystem environments after ls time selection | [CSH-130](CSH-130-filesystem-environment-residuals.md) | [#274](https://github.com/melliott18/cshell/issues/274) |
 | [CSH-132](CSH-132-filesystem-environment-residuals.md) | Supply remaining filesystem environments after ls change-time qualification | [CSH-131](CSH-131-filesystem-environment-residuals.md) | [#276](https://github.com/melliott18/cshell/issues/276) |
+| [CSH-133](CSH-133-filesystem-environment-residuals.md) | Supply remaining filesystem environments after ls size-sort qualification | [CSH-132](CSH-132-filesystem-environment-residuals.md) | [#278](https://github.com/melliott18/cshell/issues/278) |
 
 ## Child implementation tickets
 
