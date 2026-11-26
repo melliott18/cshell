@@ -2011,3 +2011,9 @@ authored timestamp exactly; post-exec checks include atime before content reads.
 `make test-host-filesystem-ls-ctime` runs the CSH-131 measured change-time sorting, display and -c/-u precedence witnesses in direct, string, file and stdin modes. The bounded chmod/lstat setup proves strict order and a hard-link tie; recent UTC display requires before/after clock guards. Setup failures, changed metadata and incomplete cleanup fail the assertion. See [evidence](evidence/csh-131/README.md).
 
 `make test-host-filesystem-ls-size` runs CSH-132 size/time sort precedence and long-listing date selection; [evidence](evidence/csh-132/README.md).
+
+`make test-host-filesystem-ls-size-links` runs CSH-133 symbolic-link size sorting
+for physical, -H and -L operands and directory entries, with short/named/numeric
+output, ties and reversal. Independent link lengths, referent bytes and lstat/stat
+probes supply expectations; stock Apple -H failures remain strict. See
+[evidence and reproduction](evidence/csh-133/README.md).

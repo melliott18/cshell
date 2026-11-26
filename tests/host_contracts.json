@@ -60,9 +60,9 @@
       }
     },
     {
-      "ticket": "CSH-133",
-      "path": "docs/tickets/CSH-133-filesystem-environment-residuals.md",
-      "title": "Supply remaining filesystem environments after ls size-sort qualification",
+      "ticket": "CSH-134",
+      "path": "docs/tickets/CSH-134-filesystem-environment-residuals.md",
+      "title": "Supply remaining filesystem environments after ls symbolic-link size qualification",
       "utilities": [
         "basename",
         "dirname",
