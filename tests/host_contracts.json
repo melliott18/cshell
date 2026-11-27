@@ -60,9 +60,9 @@
       }
     },
     {
-      "ticket": "CSH-134",
-      "path": "docs/tickets/CSH-134-filesystem-environment-residuals.md",
-      "title": "Supply remaining filesystem environments after ls symbolic-link size qualification",
+      "ticket": "CSH-135",
+      "path": "docs/tickets/CSH-135-filesystem-environment-residuals.md",
+      "title": "Supply remaining filesystem environments after ls symbolic-link time qualification",
       "utilities": [
         "basename",
         "dirname",

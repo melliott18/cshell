@@ -1264,3 +1264,7 @@ test-host-filesystem-ls-size: cshell host-profile
 .PHONY: test-host-filesystem-ls-size-links
 test-host-filesystem-ls-size-links: cshell host-profile
 	$(PYTHON) tests/host_filesystem.py ./cshell --ls-size-links-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-ls-size-links.json $(HOST_FILESYSTEM_FLAGS)
+
+.PHONY: test-host-filesystem-ls-time-links
+test-host-filesystem-ls-time-links: cshell host-profile
+	$(PYTHON) tests/host_filesystem.py ./cshell --ls-time-links-only --path "$(abspath build/host-profile/bin):$(shell getconf PATH)" --record build/tests/host-filesystem-ls-time-links.json $(HOST_FILESYSTEM_FLAGS)

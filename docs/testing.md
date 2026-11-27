@@ -2017,3 +2017,11 @@ for physical, -H and -L operands and directory entries, with short/named/numeric
 output, ties and reversal. Independent link lengths, referent bytes and lstat/stat
 probes supply expectations; stock Apple -H failures remain strict. See
 [evidence and reproduction](evidence/csh-133/README.md).
+
+### CSH-134 symbolic-link time sorting
+
+CSH-134 supplies 72 ls cases / 288 assertions for symbolic-link modification/access-time sorting on directory entries and reverse-authored operands. Authored day-spaced link and referent timestamps distinguish physical, -H and -L selection, C-name ties and reversal. Short, named and numeric long listings require exact time/type/size fields and measured 1024-byte directory totals. Independent lstat/stat, byte/link readback and final exact utime/lstat probes supply the oracle; timestamp stamping follows all referent probes to avoid setup-induced link atime changes. Exact channels/status, unchanged metadata, regular-file access times, bytes, link texts, entries and cleanup are required. Selected providers are unchanged. Symlink access times may change during traversal. Ctime selection on links, dangling or cyclic links, nanosecond link ordering, other graphs, timestamp boundaries, non-C collation, terminal layouts and resource failures remain unqualified.
+
+[Native/Linux evidence and reproduction](evidence/csh-134/README.md). Remaining contracts stay with [CSH-135](tickets/CSH-135-filesystem-environment-residuals.md); U-034/U-040 remain partial.
+
+`make test-host-filesystem-ls-time-links` runs the 288 strict focused assertions.
