@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "make",
+    "test-host-filesystem-audit"
+  ],
+  "status": 2,
+  "seconds": 143.08740149997175,
+  "log": "native-command-1.log.gz"
+}
