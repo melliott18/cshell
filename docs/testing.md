@@ -1945,3 +1945,24 @@ JUnit stage reports, restricted test-container command, and runtime-image checks
 
 
 `make test-host-filesystem-touch-objects` checks CSH-114 directory/FIFO timestamps and namespace-error continuation in direct execution and all shell input modes. See [CSH-114 evidence](evidence/csh-114/README.md).
+
+### Measured ls block allocation
+
+`make test-host-filesystem-ls-blocks` runs 20 CSH-115 cases in four dispatch modes. Independent pre-exec lstat and stat probes supply the explicit `-k` block counts, link identities and unchanged-object oracle. The runner records whether the seek-created file is physically sparse. Default units, directory totals, shared extents and capacity limits remain open. The pinned GNU ls is selected; stock Darwin -H failures remain in the separate audit. Five harness tests cover counts/order, channels/effects, partial setup, failed exec and bounded timeout cleanup.
+
+`make test-host-filesystem-ls-totals` selects CSH-116: 32 ls cases / 128 assertions
+for directory totals, hidden entries, multiple operands, recursive sections and
+symlink following. The full selected profile also requires these cases.
+
+## ls inode numbers and type suffixes
+
+`make test-host-filesystem-ls-identity` selects CSH-117: 36 cases / 144 assertions
+per platform. `-i`, `-F` and `-p` combine directory listings or reversed `-d`
+operands with physical, `-H` and `-L` handling. Independent lstat/stat probes
+measure inode numbers, types and execute bits. Exact output and unchanged
+objects are required, with setup, timeout and cleanup failures remaining fatal.
+See [the evidence](evidence/csh-117/README.md) for the oracle, limits and reproduction.
+
+## Measured socket pathname listings
+
+`make test-host-filesystem-ls-sockets` runs 36 CSH-118 cases in direct exec and cshell string/file/stdin modes (144 assertions). A bounded child binds and closes private AF_UNIX stream/datagram sockets, including an executable-mode socket; relative bind paths avoid temporary-directory socket-address limits. Independent metadata and referent probes check plain/-F/-p output, optional inode columns, and physical/-H/-L handling. Setup, provider failure, timeout, object preservation and cleanup are strict. See [CSH-118 evidence](evidence/csh-118/README.md).
