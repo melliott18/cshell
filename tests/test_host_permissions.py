@@ -7,7 +7,7 @@ import unittest
 from unittest.mock import patch
 
 from host_permission_cases import case
-from host_permissions import run_case
+from host_permissions import check, run_case
 from host_permissions_child import process_groups
 
 
@@ -19,6 +19,25 @@ class PermissionsEvidenceTests(unittest.TestCase):
                 patch('host_permissions_child.os.getgroups', side_effect=AssertionError('account lookup')):
             groups = process_groups()
         self.assertTrue(all(isinstance(group, int) and group >= 0 for group in groups))
+
+    def test_group_oracle_rejects_account_membership_and_malformed_output(self):
+        # Hosted Darwin id reports 17 account groups, while the invoking
+        # process has 16. POSIX id DESCRIPTION/-G requires the latter; neither
+        # extra membership nor missing process privileges may be accepted.
+        groups = [20, 12, 61, 79, 80, 81, 264, 701, 33, 98, 100, 204, 250, 395, 398, 399]
+        observed = dict(gid=20, egid=20, groups=groups,
+                        account_groups=groups + [400])
+        expected = case('id', 'groups', ['-G'], groups=True)
+        valid = (' '.join(map(str, groups)) + '\n').encode()
+        self.assertTrue(check(expected, 0, dict(stdout=valid, stderr=b''), observed))
+        for invalid in (valid.rstrip(b'\n') + b' 400\n',
+                        (' '.join(map(str, groups[:-1])) + '\n').encode(),
+                        valid.rstrip(b'\n') + b' 20\n',
+                        valid.replace(b' ', b'  ', 1), valid.rstrip(b'\n')):
+            with self.subTest(output=invalid):
+                self.assertFalse(check(expected, 0, dict(stdout=invalid, stderr=b''), observed))
+        self.assertFalse(check(expected, 1, dict(stdout=valid, stderr=b''), observed))
+        self.assertFalse(check(expected, 0, dict(stdout=valid, stderr=b'error'), observed))
 
     def run_provider(self, content, expected):
         with tempfile.TemporaryDirectory(prefix='csh-permission-selftest-') as name:

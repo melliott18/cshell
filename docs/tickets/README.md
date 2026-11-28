@@ -234,3 +234,5 @@ CSH-037 is the final audit, not the first testing milestone.
 
 New IDs must first be reserved in the [shared allocation ledger](../../CONTRIBUTING.md#reserve-a-ticket-number).
 Do not calculate the next ID from this index or a worktree snapshot.
+
+| [CSH-136](CSH-136-shared-ci.md) | Repair shared CI blockers and verify stacked integration | None | [#284](https://github.com/melliott18/cshell/issues/284) |
