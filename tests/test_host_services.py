@@ -15,6 +15,15 @@ from host_services import Suite, require_container, main
 
 
 class ServiceHarnessTests(unittest.TestCase):
+    def setUp(self):
+        # These tests exercise owned child/error handling with /bin/sh, not
+        # package discovery. A slow host dpkg database must not prevent the
+        # deliberately injected failure from being reached.
+        discovery = patch('host_services.providers', side_effect=lambda search: {
+            'date': {'path': '/bin/sh'}, 'logger': {'path': None}})
+        discovery.start()
+        self.addCleanup(discovery.stop)
+
     def test_services_refuse_native_before_operations(self):
         with patch('host_services.platform.system', return_value='Darwin'):
             with self.assertRaisesRegex(RuntimeError, 'dedicated disposable'):

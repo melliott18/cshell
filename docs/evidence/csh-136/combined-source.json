@@ -1,0 +1,13 @@
+{
+  "commit": "73c284a37f0d39c873c3aacb670a83f236a01ae5",
+  "sha256": {
+    "tests/host_filesystem.py": "ed4a6768c821d63eda7c6a9fd1dbf41619d01fd5143948628c075f6298df0675",
+    "tests/host_language_helper.py": "a477524c3409f26797c5eefec23d9d1223b788b23676fcd0e3fe0b8c37ea9049",
+    "tests/host_languages.py": "577641ac7e7a36d5c683d409f246592033d3f7a2d94ffee85fef7d9a2e827c84",
+    "tests/host_permissions.py": "c5b5bc878904c7e180c315ac8d808817629eef5c667ba1f0943b239cad29ba4b",
+    "tests/test_host_permissions.py": "6ff1b6b7fb6a93deec3bc9beb84897802b0d0ab9961253c8cf78481218dc40d2",
+    "tools/host-profile/provision.py": "ed54fb32463aa1f4799b980ed5953f4064aa227d9d687866fc8c5df0543291db",
+    "Makefile": "c0b98af6c314c0f77aaa920d4afa6c0ca079653e3b8524208fb766c92b29a980",
+    ".github/workflows/tests.yml": "8ebadbe6afc617e6b668b45f419b5edbe0d345de0717c4d2c0eabcf97adad62d"
+  }
+}

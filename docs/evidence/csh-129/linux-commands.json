@@ -1,0 +1,74 @@
+{
+  "uid": 10001,
+  "commands": [
+    {
+      "argv": [
+        "make",
+        "-j4",
+        "cshell",
+        "host-profile",
+        "build/tests/host_ed_faults"
+      ],
+      "status": 0,
+      "seconds": 129.30111401801696
+    },
+    {
+      "argv": [
+        "python3",
+        "tests/ed_signal_order_probe.py",
+        "--helper",
+        "tests/csh129-original-helper.py",
+        "--ed",
+        "build/host-ed",
+        "--record",
+        "build/csh129-validation/ordered-original.json"
+      ],
+      "status": 1,
+      "seconds": 0.1383014579769224
+    },
+    {
+      "argv": [
+        "python3",
+        "tests/ed_signal_order_probe.py",
+        "--ed",
+        "build/host-ed",
+        "--record",
+        "build/csh129-validation/ordered-fixed.json"
+      ],
+      "status": 0,
+      "seconds": 0.17382458405336365
+    },
+    {
+      "argv": [
+        "python3",
+        "tests/host_languages.py",
+        "./cshell",
+        "--path",
+        "/work/build/host-profile/bin:/bin:/usr/bin",
+        "--case",
+        "ed/signal-int",
+        "--record",
+        "build/csh129-validation/signal-int.json"
+      ],
+      "status": 0,
+      "seconds": 0.7302464169915766
+    },
+    {
+      "argv": [
+        "make",
+        "test-host-languages",
+        "test-host-profile"
+      ],
+      "status": 0,
+      "seconds": 520.3501538200071
+    },
+    {
+      "argv": [
+        "make",
+        "test-harness"
+      ],
+      "status": 0,
+      "seconds": 16.873738465015776
+    }
+  ]
+}

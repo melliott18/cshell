@@ -7,6 +7,28 @@
 #include <unistd.h>
 #include "host-test-provider.h"
 
+#if defined(__has_feature)
+#if __has_feature(address_sanitizer)
+#define CSH_ADDRESS_SANITIZED 1
+#endif
+#endif
+#if defined(__linux__) && (defined(__SANITIZE_ADDRESS__) || defined(CSH_ADDRESS_SANITIZED))
+/* The controlled unequal-ID execs make /proc/self/environ unreadable to the
+ * sanitizer runtime, even though getenv() still sees the intended options.
+ * Keep the same ASan/UBSan policy as the Linux harness when environment
+ * discovery is unavailable. Leak scanning cannot inspect these credentials;
+ * address/undefined-behavior diagnostics must still stop the process. */
+const char *__asan_default_options(void)
+{
+    return "halt_on_error=1:detect_leaks=0";
+}
+
+const char *__ubsan_default_options(void)
+{
+    return "halt_on_error=1";
+}
+#endif
+
 /* Query the filesystem with effective credentials, including ACLs. A mode-bit
  * approximation (or access() using real IDs) loses grants and denials when
  * identities differ. The kernel owns lookup, ACL and privilege semantics. */

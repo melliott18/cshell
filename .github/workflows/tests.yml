@@ -146,7 +146,9 @@ jobs:
   docker:
     name: Docker (Linux)
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    # The expanded ordinary profile reaches controlled identities around
+    # minute 26; both sanitizer stages still remain. Keep case bounds intact.
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v6
       - name: Build Linux image and test replacement APIs, cshell runtime, and selected behavior
@@ -160,18 +162,27 @@ jobs:
       - name: Test harness failure handling in Linux image
         run: docker run --rm --init cshell-test:local make test-harness
       - name: Qualify controlled host identities and private devices
+        # Only the controlled credential probes need root. The complete
+        # filesystem profile deliberately requires an unprivileged identity.
         run: >-
           docker run --rm --init --user 0 cshell-test:local sh -c
           'mknod /tmp/csh060-block b 7 255 &&
           runuser -u cshell -- make test-host-profile HOST_PROFILE_FLAGS="--block-device /tmp/csh060-block" &&
-          make test-host-profile HOST_PROFILE_FLAGS="--controlled-identities" HOST_PERMISSIONS_FLAGS="--controlled-identities" &&
+          python3 tests/host_utilities.py ./cshell build/tests/host_utility_helper
+          --path "/work/build/host-profile/bin:$(getconf PATH)"
+          --locale-path /work/build/host-profile/locales --strict-gaps --boundaries
+          --printf-faults build/tests/host_printf_faults --controlled-identities
+          --record build/tests/host-controlled-results.json &&
+          python3 tests/host_permissions.py ./cshell
+          --path "/work/build/host-profile/bin:$(getconf PATH)" --controlled-identities
+          --record build/tests/host-permissions-controlled.json &&
           mkdir -p build/busybox-echo && ln -s /bin/busybox build/busybox-echo/echo &&
           python3 tests/host_utilities.py ./cshell build/tests/host_utility_helper
           --path "/work/build/busybox-echo:/work/build/host-profile/bin:$(getconf PATH)"
           --strict-gaps --boundaries --printf-faults build/tests/host_printf_faults
           --echo-policy busybox-fancy --record build/tests/host-busybox-results.json &&
           CSH_TEST_PATH="/work/build/busybox-echo:/work/build/host-profile/bin:$(getconf PATH)"
-          make test-runtime test-pty'
+          runuser -u cshell --preserve-environment -- make test-runtime test-pty'
       - name: Test host probe timeout ownership
         run: docker run --rm --init --user 0 cshell-test:local make test-host-probe-timeout
       - name: Test unequal invocation identities in Linux image
@@ -180,9 +191,19 @@ jobs:
         run: >-
           docker run --rm --init --user 0
           -e ASAN_OPTIONS=halt_on_error=1:detect_leaks=0 -e UBSAN_OPTIONS=halt_on_error=1
-          cshell-test:local make -j2 test-host-profile HOST_PROFILE_FLAGS=--controlled-identities
-          CFLAGS='-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer'
-          LDFLAGS='-fsanitize=address,undefined'
+          cshell-test:local sh -c
+          'runuser -u cshell -- make clean &&
+          runuser -u cshell -- make -j2 cshell host-catalog-fixtures build/tests/host_utility_helper build/tests/host_printf_faults
+          CFLAGS="-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer"
+          LDFLAGS="-fsanitize=address,undefined" &&
+          python3 tests/host_utilities.py ./cshell build/tests/host_utility_helper
+          --path "/work/build/host-profile/bin:$(getconf PATH)"
+          --locale-path /work/build/host-profile/locales --strict-gaps --boundaries
+          --printf-faults build/tests/host_printf_faults --controlled-identities --sanitizer
+          --record build/tests/host-controlled-sanitizer.json &&
+          python3 tests/host_permissions.py ./cshell
+          --path "/work/build/host-profile/bin:$(getconf PATH)" --controlled-identities --sanitizer
+          --record build/tests/host-permissions-controlled-sanitizer.json'
       - name: Check Linux build with ASan and UBSan
         run: >-
           docker run --rm --init -e ASAN_OPTIONS=halt_on_error=1:detect_leaks=0 -e UBSAN_OPTIONS=halt_on_error=1

@@ -1,0 +1,16 @@
+{
+  "platform": "macOS-14.8.7-arm64-arm-64bit",
+  "python": "3.12.2",
+  "base": "d175f9f26f12775923d5f4350a1a187fb9f01f19",
+  "files": {
+    "cshell": "1366988642c41424c2d0a1099e9deff76109f8af8d2f178628f271c17b825409",
+    "build/host-ed": "5a3c6a47822ad3c1ea499306e0e1a7c85729f93ad7dd768f271f4c8631534c8a",
+    "build/prerequisites/gfind": "cc04c2a28dce26e175e85a84d51ec897d0b4d77cb2de0a897602781282338776",
+    "tests/host_language_helper.py": "a477524c3409f26797c5eefec23d9d1223b788b23676fcd0e3fe0b8c37ea9049",
+    "tests/ed_signal_order_probe.py": "31891294d857a078584edd7267781eda2132792e3ddaa1af52852bd1c6496c21",
+    "tests/test_host_languages.py": "97a9f8f6ef8f5a438dcb59f7b61911e49d1007acd6707121adc4df4f709f2a3e",
+    "build/tests/csh129-original-helper.py": "d61f2572c564e1070037469146148704958178034907e771fb95ad867eb0fbbd"
+  },
+  "original_helper_sha256": "d61f2572c564e1070037469146148704958178034907e771fb95ad867eb0fbbd",
+  "eof_only_helper_sha256": "f4a6d859ad9ea9675aeb531a74bc42610e7512c25de3c1e006e514293dc7bfcd"
+}

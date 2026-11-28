@@ -1,0 +1,1037 @@
+{
+  "system": "Darwin",
+  "path": "/Users/mitchell/Projects/cshell/build/host-profile/bin",
+  "executables": {
+    "printf": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-printf",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-printf",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-printf",
+      "sha256": "40bbe300085613354badb72d8318c3c58716c124ea20830737a1c4bf15ebec00",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-printf",
+      "provider_sha256": "40bbe300085613354badb72d8318c3c58716c124ea20830737a1c4bf15ebec00",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "echo": {
+      "override": false,
+      "target": "/bin/echo",
+      "provider": "/bin/echo",
+      "adapter": null,
+      "realpath": "/bin/echo",
+      "sha256": "58b8586cef5f0ca5fab36ef9a2ccea04d0fad1fc63b60351283d96a1fc6d91c4",
+      "provider_realpath": "/bin/echo",
+      "provider_sha256": "58b8586cef5f0ca5fab36ef9a2ccea04d0fad1fc63b60351283d96a1fc6d91c4",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "test": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-test",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-test",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-test",
+      "sha256": "aac005bf60fda4955923f5ad98e4a183badccd8d9f98cf97f2848e4d2f4da725",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-test",
+      "provider_sha256": "aac005bf60fda4955923f5ad98e4a183badccd8d9f98cf97f2848e4d2f4da725",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "[": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-test",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-test",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-test",
+      "sha256": "aac005bf60fda4955923f5ad98e4a183badccd8d9f98cf97f2848e4d2f4da725",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-test",
+      "provider_sha256": "aac005bf60fda4955923f5ad98e4a183badccd8d9f98cf97f2848e4d2f4da725",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "true": {
+      "override": false,
+      "target": "/usr/bin/true",
+      "provider": "/usr/bin/true",
+      "adapter": null,
+      "realpath": "/usr/bin/true",
+      "sha256": "5e2d80e01d8053b8b0fbcd46b0bb4d31b45b4aa63a4f7b7bfab14a05b25f03de",
+      "provider_realpath": "/usr/bin/true",
+      "provider_sha256": "5e2d80e01d8053b8b0fbcd46b0bb4d31b45b4aa63a4f7b7bfab14a05b25f03de",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "false": {
+      "override": false,
+      "target": "/usr/bin/false",
+      "provider": "/usr/bin/false",
+      "adapter": null,
+      "realpath": "/usr/bin/false",
+      "sha256": "ee975fead4a84a15293e7b024e53a5f7db65c17e344313893ab3ebf4f2e60bf5",
+      "provider_realpath": "/usr/bin/false",
+      "provider_sha256": "ee975fead4a84a15293e7b024e53a5f7db65c17e344313893ab3ebf4f2e60bf5",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "pwd": {
+      "override": false,
+      "target": "/bin/pwd",
+      "provider": "/bin/pwd",
+      "adapter": null,
+      "realpath": "/bin/pwd",
+      "sha256": "23ad10f79008c53d35aef47dfcc5dcc340706f66d1e3d8a06d05bd35b96c9cbd",
+      "provider_realpath": "/bin/pwd",
+      "provider_sha256": "23ad10f79008c53d35aef47dfcc5dcc340706f66d1e3d8a06d05bd35b96c9cbd",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "kill": {
+      "override": false,
+      "target": "/bin/kill",
+      "provider": "/bin/kill",
+      "adapter": null,
+      "realpath": "/bin/kill",
+      "sha256": "2cb72601038b0d001f6a584a86edcbd98489cedc64ce61f27c3cf75c499c6d31",
+      "provider_realpath": "/bin/kill",
+      "provider_sha256": "2cb72601038b0d001f6a584a86edcbd98489cedc64ce61f27c3cf75c499c6d31",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "cat": {
+      "override": false,
+      "target": "/bin/cat",
+      "provider": "/bin/cat",
+      "adapter": null,
+      "realpath": "/bin/cat",
+      "sha256": "38c19fef3e9b4e6ffeee7fef5ff90119f913720b48f55ae0406b77d2beee1dab",
+      "provider_realpath": "/bin/cat",
+      "provider_sha256": "38c19fef3e9b4e6ffeee7fef5ff90119f913720b48f55ae0406b77d2beee1dab",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "env": {
+      "override": false,
+      "target": "/usr/bin/env",
+      "provider": "/usr/bin/env",
+      "adapter": null,
+      "realpath": "/usr/bin/env",
+      "sha256": "148a4776d572617e023c1f4588b53d06eec8666c27530e7e4dbaf1b58b2387a4",
+      "provider_realpath": "/usr/bin/env",
+      "provider_sha256": "148a4776d572617e023c1f4588b53d06eec8666c27530e7e4dbaf1b58b2387a4",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "find": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/prerequisites/gfind",
+      "provider": "/Users/mitchell/Projects/cshell/build/prerequisites/gfind",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/prerequisites/gfind",
+      "sha256": "cc04c2a28dce26e175e85a84d51ec897d0b4d77cb2de0a897602781282338776",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/prerequisites/gfind",
+      "provider_sha256": "cc04c2a28dce26e175e85a84d51ec897d0b4d77cb2de0a897602781282338776",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "ls": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-ls",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-ls",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-ls",
+      "sha256": "14b7cd8bd16fc5235ca72f9160c0b482d1c7e8f43c66428ef4686fe114899a28",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-ls",
+      "provider_sha256": "14b7cd8bd16fc5235ca72f9160c0b482d1c7e8f43c66428ef4686fe114899a28",
+      "system_provider": null,
+      "adapter_build": null,
+      "source": {
+        "version": "GNU coreutils 9.7",
+        "archive": "tools/host-profile/vendor/coreutils/coreutils-9.7.tar.xz",
+        "archive_sha256": "e8bb26ad0293f9b5a1fc43fb42ba970e312c66ce92c1b0b16713d7500db251bf",
+        "configure": [
+          "--disable-nls",
+          "--disable-acl",
+          "--without-selinux",
+          "--without-libgmp"
+        ],
+        "build_targets": [
+          "src/ls"
+        ],
+        "log": "build/host-coreutils-build/ls.log",
+        "scope": "unmodified ls from the shared pinned source build"
+      }
+    },
+    "stty": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-terminal-stty",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-terminal-stty",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-terminal-stty",
+      "sha256": "734623565fa56fb2c5c12a09ccd07a2145f913cde03eac405dc5cd94956e06e9",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-terminal-stty",
+      "provider_sha256": "734623565fa56fb2c5c12a09ccd07a2145f913cde03eac405dc5cd94956e06e9",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "ed": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-ed",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-ed",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-ed",
+      "sha256": "5a3c6a47822ad3c1ea499306e0e1a7c85729f93ad7dd768f271f4c8631534c8a",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-ed",
+      "provider_sha256": "5a3c6a47822ad3c1ea499306e0e1a7c85729f93ad7dd768f271f4c8631534c8a",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "sed": {
+      "override": false,
+      "target": "/usr/bin/sed",
+      "provider": "/usr/bin/sed",
+      "adapter": null,
+      "realpath": "/usr/bin/sed",
+      "sha256": "25982752241791e1c57074400473aecda16aea1d7174fc4cdb0dd7382365ff81",
+      "provider_realpath": "/usr/bin/sed",
+      "provider_sha256": "25982752241791e1c57074400473aecda16aea1d7174fc4cdb0dd7382365ff81",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "head": {
+      "override": false,
+      "target": "/usr/bin/head",
+      "provider": "/usr/bin/head",
+      "adapter": null,
+      "realpath": "/usr/bin/head",
+      "sha256": "49a1de825dbaefcf4e8fbbe18029fba298f2bc6ad0a61f08f3ee38784ded216f",
+      "provider_realpath": "/usr/bin/head",
+      "provider_sha256": "49a1de825dbaefcf4e8fbbe18029fba298f2bc6ad0a61f08f3ee38784ded216f",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "cmp": {
+      "override": false,
+      "target": "/usr/bin/cmp",
+      "provider": "/usr/bin/cmp",
+      "adapter": null,
+      "realpath": "/usr/bin/cmp",
+      "sha256": "9a4e2eaeccc87d4fe8f9d436f8d4ac0bb5a3b74b763807328daa729722a1fe03",
+      "provider_realpath": "/usr/bin/cmp",
+      "provider_sha256": "9a4e2eaeccc87d4fe8f9d436f8d4ac0bb5a3b74b763807328daa729722a1fe03",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "chmod": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-chmod",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-chmod",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-chmod",
+      "sha256": "98a3954b7e8dd58f270612e9cd8c7419092ae10485c51687b37c4f048a3fb61c",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-chmod",
+      "provider_sha256": "98a3954b7e8dd58f270612e9cd8c7419092ae10485c51687b37c4f048a3fb61c",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "rm": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-rm",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-rm",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-rm",
+      "sha256": "7a19c136722bde08cc9faeeb68ced47bddb05008f37a03f8873563293e4b64fc",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-rm",
+      "provider_sha256": "7a19c136722bde08cc9faeeb68ced47bddb05008f37a03f8873563293e4b64fc",
+      "system_provider": null,
+      "adapter_build": null,
+      "source": {
+        "version": "GNU coreutils 9.7",
+        "archive": "tools/host-profile/vendor/coreutils/coreutils-9.7.tar.xz",
+        "archive_sha256": "e8bb26ad0293f9b5a1fc43fb42ba970e312c66ce92c1b0b16713d7500db251bf",
+        "patch_sha256": "65782e7716d81288b4df2c2ecb2cf25af3ee7432eb7682e10d7695658f6be07b",
+        "configure": [
+          "--disable-nls",
+          "--disable-acl",
+          "--without-selinux",
+          "--without-libgmp"
+        ]
+      }
+    },
+    "sleep": {
+      "override": false,
+      "target": "/bin/sleep",
+      "provider": "/bin/sleep",
+      "adapter": null,
+      "realpath": "/bin/sleep",
+      "sha256": "69de8c94641382b9460db7d365554471aea2eb772660b7134a8b724e5f6ec180",
+      "provider_realpath": "/bin/sleep",
+      "provider_sha256": "69de8c94641382b9460db7d365554471aea2eb772660b7134a8b724e5f6ec180",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "sh": {
+      "override": false,
+      "target": "/bin/sh",
+      "provider": "/bin/sh",
+      "adapter": null,
+      "realpath": "/bin/sh",
+      "sha256": "10b15cf96b455baa0a2ea5ead25fc4f25b42dbbb45fed8113d8a7bbb790ddeb2",
+      "provider_realpath": "/bin/sh",
+      "provider_sha256": "10b15cf96b455baa0a2ea5ead25fc4f25b42dbbb45fed8113d8a7bbb790ddeb2",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "basename": {
+      "override": false,
+      "target": "/usr/bin/basename",
+      "provider": "/usr/bin/basename",
+      "adapter": null,
+      "realpath": "/usr/bin/basename",
+      "sha256": "8dceba49a7490d4f070365a5527634d180e64d22196967598deb8655a6802983",
+      "provider_realpath": "/usr/bin/basename",
+      "provider_sha256": "8dceba49a7490d4f070365a5527634d180e64d22196967598deb8655a6802983",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "dirname": {
+      "override": false,
+      "target": "/usr/bin/dirname",
+      "provider": "/usr/bin/dirname",
+      "adapter": null,
+      "realpath": "/usr/bin/dirname",
+      "sha256": "3679bcd2e5be8e2d576ca293d93807e40ba082e66921fa0e9cb4b7ca4ef4a82c",
+      "provider_realpath": "/usr/bin/dirname",
+      "provider_sha256": "3679bcd2e5be8e2d576ca293d93807e40ba082e66921fa0e9cb4b7ca4ef4a82c",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "cp": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-cp",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-cp",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-cp",
+      "sha256": "5eb95d875e6fac529fa204adce2549b9af61c32b773bbb966ccef38dded5c7ef",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-cp",
+      "provider_sha256": "5eb95d875e6fac529fa204adce2549b9af61c32b773bbb966ccef38dded5c7ef",
+      "system_provider": null,
+      "adapter_build": null,
+      "source": {
+        "version": "GNU coreutils 9.7",
+        "archive": "tools/host-profile/vendor/coreutils/coreutils-9.7.tar.xz",
+        "archive_sha256": "e8bb26ad0293f9b5a1fc43fb42ba970e312c66ce92c1b0b16713d7500db251bf",
+        "patch_sha256": "0498e44defeb661524e685ef51ed6a0584b56c746b06a46be6042767fd36d8e8",
+        "configure": [
+          "--disable-nls",
+          "--disable-acl",
+          "--without-selinux",
+          "--without-libgmp"
+        ]
+      }
+    },
+    "dd": {
+      "override": true,
+      "target": "/usr/local/bin/gdd",
+      "provider": "/usr/local/bin/gdd",
+      "adapter": null,
+      "realpath": "/usr/local/Cellar/coreutils/9.3/bin/gdd",
+      "sha256": "372af227768a893416e81c569baf890062a8db1ad851b1828296e29a8bed6bcc",
+      "provider_realpath": "/usr/local/Cellar/coreutils/9.3/bin/gdd",
+      "provider_sha256": "372af227768a893416e81c569baf890062a8db1ad851b1828296e29a8bed6bcc",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "df": {
+      "override": false,
+      "target": "/bin/df",
+      "provider": "/bin/df",
+      "adapter": null,
+      "realpath": "/bin/df",
+      "sha256": "d9525d5bbc9faf5cc36fa0d4be4581e86907e2d0bb0eefd77fbd28814c9a9990",
+      "provider_realpath": "/bin/df",
+      "provider_sha256": "d9525d5bbc9faf5cc36fa0d4be4581e86907e2d0bb0eefd77fbd28814c9a9990",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "du": {
+      "override": false,
+      "target": "/usr/bin/du",
+      "provider": "/usr/bin/du",
+      "adapter": null,
+      "realpath": "/usr/bin/du",
+      "sha256": "5e7217c12d6fa6b0950452a7753aef4921ea73dade1c253258af4c6ca503675d",
+      "provider_realpath": "/usr/bin/du",
+      "provider_sha256": "5e7217c12d6fa6b0950452a7753aef4921ea73dade1c253258af4c6ca503675d",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "file": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-file",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-file",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-file",
+      "sha256": "9d0a6b3a0a7edd586c4be3786868a363d002e9bb4ed7a2f3c13462ae2abfb139",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-file",
+      "provider_sha256": "9d0a6b3a0a7edd586c4be3786868a363d002e9bb4ed7a2f3c13462ae2abfb139",
+      "system_provider": null,
+      "adapter_build": null,
+      "source": {
+        "version": "file 5.46 + CSH-103/104 message and numeric type repairs",
+        "archive": "tools/host-profile/vendor/file/file-5.46.tar.gz",
+        "archive_sha256": "c9cc77c7c560c543135edc555af609d5619dbef011997e988ce40a3d75d86088",
+        "patch_sha256": "aadd51afa79a7322e28c7a2b31817ff62513d400fabe45f0f58f836e31542afe",
+        "build_script_sha256": "3c52894d664fd13922d5deee1e53bb988b210fecceb663bb50bb28e849d29f02",
+        "magic_database_sha256": "937bae03f4c4469b2aacf14038ccd39570384ef4ed46ca83d9cecb6527499997",
+        "configure": [
+          "--disable-shared",
+          "--enable-static",
+          "--disable-zlib",
+          "--disable-bzlib",
+          "--disable-xzlib",
+          "--disable-zstdlib",
+          "--disable-lzlib"
+        ]
+      }
+    },
+    "ln": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-ln",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-ln",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-ln",
+      "sha256": "f49ba428cc5cb9d2e202a7eefe9081d82ff066af48ef08978844ea19590901a7",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-ln",
+      "provider_sha256": "f49ba428cc5cb9d2e202a7eefe9081d82ff066af48ef08978844ea19590901a7",
+      "system_provider": null,
+      "adapter_build": null,
+      "source": {
+        "version": "GNU coreutils 9.7",
+        "archive": "tools/host-profile/vendor/coreutils/coreutils-9.7.tar.xz",
+        "archive_sha256": "e8bb26ad0293f9b5a1fc43fb42ba970e312c66ce92c1b0b16713d7500db251bf",
+        "configure": [
+          "--disable-nls",
+          "--disable-acl",
+          "--without-selinux",
+          "--without-libgmp"
+        ],
+        "build_targets": [
+          "src/ln"
+        ],
+        "log": "build/host-coreutils-build/ln.log",
+        "scope": "unmodified ln from the shared pinned source build"
+      }
+    },
+    "mkdir": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-mkdir",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-mkdir",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-mkdir",
+      "sha256": "c5dd5f751a0cb930ae6f2d27bb0008be194a86eb5d0883afa8f464366dc56bb6",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-mkdir",
+      "provider_sha256": "c5dd5f751a0cb930ae6f2d27bb0008be194a86eb5d0883afa8f464366dc56bb6",
+      "system_provider": null,
+      "adapter_build": null,
+      "source": {
+        "version": "GNU coreutils 9.7",
+        "archive": "tools/host-profile/vendor/coreutils/coreutils-9.7.tar.xz",
+        "archive_sha256": "e8bb26ad0293f9b5a1fc43fb42ba970e312c66ce92c1b0b16713d7500db251bf",
+        "configure": [
+          "--disable-nls",
+          "--disable-acl",
+          "--without-selinux",
+          "--without-libgmp"
+        ],
+        "build_targets": [
+          "src/mkdir",
+          "src/mkfifo"
+        ],
+        "log": "build/host-coreutils-build/creation.log",
+        "scope": "unmodified creation utilities from the shared pinned source build"
+      }
+    },
+    "mkfifo": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-mkfifo",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-mkfifo",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-mkfifo",
+      "sha256": "f49593d2a10bb852d148bb8c4d615efba11c3c79de8f31ffbf9626e23a137f6c",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-mkfifo",
+      "provider_sha256": "f49593d2a10bb852d148bb8c4d615efba11c3c79de8f31ffbf9626e23a137f6c",
+      "system_provider": null,
+      "adapter_build": null,
+      "source": {
+        "version": "GNU coreutils 9.7",
+        "archive": "tools/host-profile/vendor/coreutils/coreutils-9.7.tar.xz",
+        "archive_sha256": "e8bb26ad0293f9b5a1fc43fb42ba970e312c66ce92c1b0b16713d7500db251bf",
+        "configure": [
+          "--disable-nls",
+          "--disable-acl",
+          "--without-selinux",
+          "--without-libgmp"
+        ],
+        "build_targets": [
+          "src/mkdir",
+          "src/mkfifo"
+        ],
+        "log": "build/host-coreutils-build/creation.log",
+        "scope": "unmodified creation utilities from the shared pinned source build"
+      }
+    },
+    "mv": {
+      "override": false,
+      "target": "/bin/mv",
+      "provider": "/bin/mv",
+      "adapter": null,
+      "realpath": "/bin/mv",
+      "sha256": "618d90795a99cc12b9cf0c77ca6bf2546f70cb07ab1bb78c7cb2d4437259fcfa",
+      "provider_realpath": "/bin/mv",
+      "provider_sha256": "618d90795a99cc12b9cf0c77ca6bf2546f70cb07ab1bb78c7cb2d4437259fcfa",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "pathchk": {
+      "override": false,
+      "target": "/usr/bin/pathchk",
+      "provider": "/usr/bin/pathchk",
+      "adapter": null,
+      "realpath": "/usr/bin/pathchk",
+      "sha256": "928722f71388c619c73ee7473ee8ec72633939b81997981d6ebc77e99f60a8e6",
+      "provider_realpath": "/usr/bin/pathchk",
+      "provider_sha256": "928722f71388c619c73ee7473ee8ec72633939b81997981d6ebc77e99f60a8e6",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "pax": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-pax",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-pax",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-pax",
+      "sha256": "5ccdbd47f0a3978881c22e1b48910895a95d498e473c5c183c92c23042f375ee",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-pax",
+      "provider_sha256": "5ccdbd47f0a3978881c22e1b48910895a95d498e473c5c183c92c23042f375ee",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "readlink": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-paths",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-paths",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-paths",
+      "sha256": "2c5fd0e24520c61cd66e842f4c15c8ee935047bfd5b58f89c9670e10b6d700be",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-paths",
+      "provider_sha256": "2c5fd0e24520c61cd66e842f4c15c8ee935047bfd5b58f89c9670e10b6d700be",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "realpath": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-paths",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-paths",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-paths",
+      "sha256": "2c5fd0e24520c61cd66e842f4c15c8ee935047bfd5b58f89c9670e10b6d700be",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-paths",
+      "provider_sha256": "2c5fd0e24520c61cd66e842f4c15c8ee935047bfd5b58f89c9670e10b6d700be",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "rmdir": {
+      "override": false,
+      "target": "/bin/rmdir",
+      "provider": "/bin/rmdir",
+      "adapter": null,
+      "realpath": "/bin/rmdir",
+      "sha256": "ffdbd05db23e7367289af5e8a146124f59aa0b09d2e8f3a9d9de08002cebcceb",
+      "provider_realpath": "/bin/rmdir",
+      "provider_sha256": "ffdbd05db23e7367289af5e8a146124f59aa0b09d2e8f3a9d9de08002cebcceb",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "touch": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-touch",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-touch",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-touch",
+      "sha256": "771bce2c41eb6d15e09ab213d799855bf255bc2908c75a3f183fad45f7ab713f",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-touch",
+      "provider_sha256": "771bce2c41eb6d15e09ab213d799855bf255bc2908c75a3f183fad45f7ab713f",
+      "system_provider": null,
+      "adapter_build": null,
+      "source": {
+        "version": "GNU coreutils 9.7 + IANA tzcode 2025b",
+        "coreutils_archive_sha256": "e8bb26ad0293f9b5a1fc43fb42ba970e312c66ce92c1b0b16713d7500db251bf",
+        "tzcode_archive": "tools/host-profile/vendor/tzcode/tzcode2025b.tar.gz",
+        "tzcode_archive_sha256": "05f8fedb3525ee70d49c87d3fae78a8a0dbae4fe87aa565c65cda9948ae135ec",
+        "build_script_sha256": "1f59a67933b80b7abd97565bdac95c644d6942b23b616a8e95a688ebdbebc19f",
+        "tzcode_flags": [
+          "-DHAVE_TZNAME=1",
+          "-DUSG_COMPAT=1",
+          "-DNETBSD_INSPIRED=0"
+        ],
+        "configure": [
+          "--disable-nls",
+          "--disable-acl",
+          "--without-selinux",
+          "--without-libgmp"
+        ]
+      }
+    },
+    "awk": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-awk",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-awk",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-awk",
+      "sha256": "6df9e6e26bee7cb151f2df056c2eb71c4000ade24297eff6430356f3fbd17ea4",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-awk",
+      "provider_sha256": "6df9e6e26bee7cb151f2df056c2eb71c4000ade24297eff6430356f3fbd17ea4",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "bc": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-bc",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-bc",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-bc",
+      "sha256": "942a133c4a41ae1c9a81fba3ee43ae35f29ff5146982d94068d5e4c74765197c",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-bc",
+      "provider_sha256": "942a133c4a41ae1c9a81fba3ee43ae35f29ff5146982d94068d5e4c74765197c",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "expr": {
+      "override": true,
+      "target": "/usr/local/bin/gexpr",
+      "provider": "/usr/local/bin/gexpr",
+      "adapter": null,
+      "realpath": "/usr/local/Cellar/coreutils/9.3/bin/gexpr",
+      "sha256": "62daa729fbaf52eaf9daa006408736fb806f921eb37768e521bff676975b8a6a",
+      "provider_realpath": "/usr/local/Cellar/coreutils/9.3/bin/gexpr",
+      "provider_sha256": "62daa729fbaf52eaf9daa006408736fb806f921eb37768e521bff676975b8a6a",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "grep": {
+      "override": false,
+      "target": "/usr/bin/grep",
+      "provider": "/usr/bin/grep",
+      "adapter": null,
+      "realpath": "/usr/bin/grep",
+      "sha256": "761f26aa7461da2e39c344bf601c8353eb0d82f8b50fab95833650b6d3fb7892",
+      "provider_realpath": "/usr/bin/grep",
+      "provider_sha256": "761f26aa7461da2e39c344bf601c8353eb0d82f8b50fab95833650b6d3fb7892",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "m4": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-m4",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-m4",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-m4",
+      "sha256": "2042ab44b8e6c61c602b2a71b5cec9cd6f086a9fde19bb1f9bcf9628bc76d437",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-m4",
+      "provider_sha256": "2042ab44b8e6c61c602b2a71b5cec9cd6f086a9fde19bb1f9bcf9628bc76d437",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "patch": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-patch",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-patch",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-patch",
+      "sha256": "3652e1d0a621778c6b5c51dbd8456423e289cb625615cfd7945e0871ac10a7af",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-patch",
+      "provider_sha256": "3652e1d0a621778c6b5c51dbd8456423e289cb625615cfd7945e0871ac10a7af",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "xargs": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-xargs",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-xargs",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-xargs",
+      "sha256": "a10fd2fac010a54ef53431a8a4939128738cb258cb457a7d0ab5727da489b95f",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-xargs",
+      "provider_sha256": "a10fd2fac010a54ef53431a8a4939128738cb258cb457a7d0ab5727da489b95f",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "gencat": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-profile/bin/gencat",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-profile/gencat-adapter",
+      "adapter": "/Users/mitchell/Projects/cshell/build/host-profile/gencat-adapter",
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-profile/gencat-adapter",
+      "sha256": "0f07e3c14feaf335df848efe78a859bd31c4c50b1a760513ec4eb0dfc4ecc570",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-profile/gencat-adapter",
+      "provider_sha256": "0f07e3c14feaf335df848efe78a859bd31c4c50b1a760513ec4eb0dfc4ecc570",
+      "system_provider": {
+        "path": "/usr/bin/gencat",
+        "sha256": "05d15bf225fb492e6b6a016a3d0c110f053d673df82e01075fd60674b5f27e60"
+      },
+      "adapter_build": [
+        "cc",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-std=c99",
+        "-O2",
+        "-D_DEFAULT_SOURCE",
+        "-D_POSIX_C_SOURCE=200809L",
+        "-I",
+        "/Users/mitchell/Projects/cshell/build/host-profile",
+        "-I",
+        "/Users/mitchell/Projects/cshell/tools/host-profile/vendor/gencat-glibc",
+        "/Users/mitchell/Projects/cshell/tools/host-profile/gencat_darwin.c",
+        "-o",
+        "/Users/mitchell/Projects/cshell/build/host-profile/gencat-adapter"
+      ]
+    },
+    "iconv": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-profile/bin/iconv",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-profile/libiconv-0d4c24a161788691d7b0/iconv",
+      "adapter": "/Users/mitchell/Projects/cshell/build/host-profile/iconv-adapter",
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-profile/iconv-adapter",
+      "sha256": "c2ff602c859b3cc507cd5d6827622532ba0796e4678ee1e108ccd38542c24d3e",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-profile/libiconv-0d4c24a161788691d7b0/iconv",
+      "provider_sha256": "c4e6bd465ed508b667db17a59aa024a9a1c6cadb4c9b56ba91f51d295e8baa46",
+      "system_provider": {
+        "path": "/usr/bin/iconv",
+        "sha256": "3d8f0db8c49788443196d1ba6c5385360f61d9da49104582c6ad2c23be00e438"
+      },
+      "adapter_build": [
+        "cc",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-std=c99",
+        "-O2",
+        "-D_DEFAULT_SOURCE",
+        "-D_POSIX_C_SOURCE=200809L",
+        "-I",
+        "/Users/mitchell/Projects/cshell/build/host-profile",
+        "-I",
+        "/Users/mitchell/Projects/cshell/tools/host-profile/vendor/gencat-glibc",
+        "/Users/mitchell/Projects/cshell/tools/host-profile/iconv_adapter.c",
+        "-o",
+        "/Users/mitchell/Projects/cshell/build/host-profile/iconv-adapter"
+      ]
+    },
+    "locale": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-profile/bin/locale",
+      "provider": "/usr/bin/locale",
+      "adapter": "/Users/mitchell/Projects/cshell/build/host-profile/locale-adapter",
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-profile/locale-adapter",
+      "sha256": "3afc6051d76fe5ba1d24ca14d226f899e521bdcbbd84adca3f5f1f651ec4d90f",
+      "provider_realpath": "/usr/bin/locale",
+      "provider_sha256": "741336c8b2921295caf4c8242fa252fe1d96e71f5fe4b2f86d6ce6a8890287e2",
+      "system_provider": null,
+      "adapter_build": [
+        "cc",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-std=c99",
+        "-O2",
+        "-I",
+        "/Users/mitchell/Projects/cshell/build/host-profile",
+        "/Users/mitchell/Projects/cshell/tools/host-profile/locale_adapter.c",
+        "-o",
+        "/Users/mitchell/Projects/cshell/build/host-profile/locale-adapter"
+      ]
+    },
+    "localedef": {
+      "override": false,
+      "target": "/usr/bin/localedef",
+      "provider": "/usr/bin/localedef",
+      "adapter": null,
+      "realpath": "/usr/bin/localedef",
+      "sha256": "77dc068b4e19b5986ce020c4570cf0c676c22a21358159faefbd8712c0f1e704",
+      "provider_realpath": "/usr/bin/localedef",
+      "provider_sha256": "77dc068b4e19b5986ce020c4570cf0c676c22a21358159faefbd8712c0f1e704",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "gettext": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-profile/bin/gettext",
+      "provider": "/usr/local/bin/gettext",
+      "adapter": "/Users/mitchell/Projects/cshell/build/host-profile/catalog-adapter",
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-profile/catalog-adapter",
+      "sha256": "6e826f5e33cd98f57b9915859df53c7020d611bf4792348eabbb5f3f61cf8d58",
+      "provider_realpath": "/usr/local/Cellar/gettext/0.26_1/bin/gettext",
+      "provider_sha256": "e2432f74353b00ba3a0e6b433427394b30f40377ab3fa1735ed8809ebb07c29d",
+      "system_provider": null,
+      "adapter_build": [
+        "cc",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-std=c99",
+        "-O2",
+        "-I",
+        "/Users/mitchell/Projects/cshell/build/host-profile",
+        "/Users/mitchell/Projects/cshell/tools/host-profile/catalog_adapter.c",
+        "-o",
+        "/Users/mitchell/Projects/cshell/build/host-profile/catalog-adapter"
+      ]
+    },
+    "msgfmt": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-profile/bin/msgfmt",
+      "provider": "/usr/local/bin/msgfmt",
+      "adapter": "/Users/mitchell/Projects/cshell/build/host-profile/catalog-adapter",
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-profile/catalog-adapter",
+      "sha256": "6e826f5e33cd98f57b9915859df53c7020d611bf4792348eabbb5f3f61cf8d58",
+      "provider_realpath": "/usr/local/Cellar/gettext/0.26_1/bin/msgfmt",
+      "provider_sha256": "120e83d6105dfcff8962168129f0ccb04ef737260677d9f0d28ff1a8ca8a5229",
+      "system_provider": null,
+      "adapter_build": [
+        "cc",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-std=c99",
+        "-O2",
+        "-I",
+        "/Users/mitchell/Projects/cshell/build/host-profile",
+        "/Users/mitchell/Projects/cshell/tools/host-profile/catalog_adapter.c",
+        "-o",
+        "/Users/mitchell/Projects/cshell/build/host-profile/catalog-adapter"
+      ]
+    },
+    "ngettext": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-profile/bin/ngettext",
+      "provider": "/usr/local/bin/ngettext",
+      "adapter": "/Users/mitchell/Projects/cshell/build/host-profile/catalog-adapter",
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-profile/catalog-adapter",
+      "sha256": "6e826f5e33cd98f57b9915859df53c7020d611bf4792348eabbb5f3f61cf8d58",
+      "provider_realpath": "/usr/local/Cellar/gettext/0.26_1/bin/ngettext",
+      "provider_sha256": "cb2fd3f0abb49863efae233bf18aea1586ab3ef6d65a07df4dc3956889e1ebc7",
+      "system_provider": null,
+      "adapter_build": [
+        "cc",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-std=c99",
+        "-O2",
+        "-I",
+        "/Users/mitchell/Projects/cshell/build/host-profile",
+        "/Users/mitchell/Projects/cshell/tools/host-profile/catalog_adapter.c",
+        "-o",
+        "/Users/mitchell/Projects/cshell/build/host-profile/catalog-adapter"
+      ]
+    },
+    "uudecode": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-uudecode",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-uudecode",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-uudecode",
+      "sha256": "daf6eea474906679087babcb105a39ee5e5a65e0e783dc926125eeed2f48a996",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-uudecode",
+      "provider_sha256": "daf6eea474906679087babcb105a39ee5e5a65e0e783dc926125eeed2f48a996",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "write": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-write",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-write",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-write",
+      "sha256": "59af713c4e73287bcd6856b07a43abd43583d44aa5fc5d7948211ec5647d4e95",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-write",
+      "provider_sha256": "59af713c4e73287bcd6856b07a43abd43583d44aa5fc5d7948211ec5647d4e95",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "newgrp": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-newgrp",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-newgrp",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-newgrp",
+      "sha256": "d5b1b4fe78b9119941ed2b7b0d0b89cc0e1e0c19edcdf581e8d436fdb05f177d",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-newgrp",
+      "provider_sha256": "d5b1b4fe78b9119941ed2b7b0d0b89cc0e1e0c19edcdf581e8d436fdb05f177d",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "tabs": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-terminal-tabs",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-terminal-tabs",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-terminal-tabs",
+      "sha256": "5d8eb606ac37263f8c62bf6ac4dbd0b80df73e72136fc09d0c461c2b768d6fe9",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-terminal-tabs",
+      "provider_sha256": "5d8eb606ac37263f8c62bf6ac4dbd0b80df73e72136fc09d0c461c2b768d6fe9",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "tput": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-terminal-tput",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-terminal-tput",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-terminal-tput",
+      "sha256": "914a30e13b84133c623a95f2b68ba782c9594daf1302e1b3413eda248184607c",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-terminal-tput",
+      "provider_sha256": "914a30e13b84133c623a95f2b68ba782c9594daf1302e1b3413eda248184607c",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "tty": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-terminal-tty",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-terminal-tty",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-terminal-tty",
+      "sha256": "f9b9ff8e6f9037594c377290ad130867f67dc1cee5b907fbb8ae253611f285ba",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-terminal-tty",
+      "provider_sha256": "f9b9ff8e6f9037594c377290ad130867f67dc1cee5b907fbb8ae253611f285ba",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "mesg": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-terminal-mesg",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-terminal-mesg",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-terminal-mesg",
+      "sha256": "a1e3f81a98eb324d181e9f40604a6cf97fa6cdeff362d46898b314a365ff07d7",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-terminal-mesg",
+      "provider_sha256": "a1e3f81a98eb324d181e9f40604a6cf97fa6cdeff362d46898b314a365ff07d7",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "who": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-terminal-who",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-terminal-who",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-terminal-who",
+      "sha256": "551292f5c54a304c8fa4b63c6fd98a7998c29d576684c26a740f183b6895589a",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-terminal-who",
+      "provider_sha256": "551292f5c54a304c8fa4b63c6fd98a7998c29d576684c26a740f183b6895589a",
+      "system_provider": null,
+      "adapter_build": null
+    },
+    "id": {
+      "override": true,
+      "target": "/Users/mitchell/Projects/cshell/build/host-id",
+      "provider": "/Users/mitchell/Projects/cshell/build/host-id",
+      "adapter": null,
+      "realpath": "/Users/mitchell/Projects/cshell/build/host-id",
+      "sha256": "810100cc3352e459168d7220f89e610d506631a387bdb4e2cfdae13360ed63b3",
+      "provider_realpath": "/Users/mitchell/Projects/cshell/build/host-id",
+      "provider_sha256": "810100cc3352e459168d7220f89e610d506631a387bdb4e2cfdae13360ed63b3",
+      "system_provider": null,
+      "adapter_build": null,
+      "source": {
+        "version": "GNU coreutils 9.7",
+        "archive": "tools/host-profile/vendor/coreutils/coreutils-9.7.tar.xz",
+        "archive_sha256": "e8bb26ad0293f9b5a1fc43fb42ba970e312c66ce92c1b0b16713d7500db251bf",
+        "configure": [
+          "--disable-nls",
+          "--disable-acl",
+          "--without-selinux",
+          "--without-libgmp"
+        ],
+        "build_targets": [
+          "src/id"
+        ],
+        "log": "build/host-coreutils-build/id.log",
+        "scope": "unmodified id; gnulib uses process getgroups on Darwin"
+      }
+    }
+  },
+  "libiconv": {
+    "url": "https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.19.tar.gz",
+    "archive_sha256": "88dd96a8c0464eca144fc791ae60cd31cd8ee78321e67397e25fc095c4a19aa6",
+    "version": "1.19",
+    "patch": "diagnose discarded invalid input unless -s; preserve failure status",
+    "builder_sha256": "61be0d1bd5637ffc0fba3cee9f4e91eb11a905780d28393d0fe2d6accbcc4143",
+    "compiler": "cc",
+    "cppflags": "",
+    "cflags": "-Wall -Wextra -Wpedantic -Wshadow -std=c99 -O2 -Wno-error",
+    "ldflags": "",
+    "platform": "macOS-14.8.7-arm64-arm-64bit",
+    "compiler_sha256": "4016687c36d60a2bbcab1de3850ebdafdd0a95f9421ff7f05aaf4ca6a002a227",
+    "patched_cli_sha256": "e77b67df5135f6c65261c9e4197ccd3ded2e99903ccd38ddca10697946f959db",
+    "path": "/Users/mitchell/Projects/cshell/build/host-profile/libiconv-0d4c24a161788691d7b0/iconv",
+    "sha256": "c4e6bd465ed508b667db17a59aa024a9a1c6cadb4c9b56ba91f51d295e8baa46",
+    "commands": [
+      [
+        "./configure",
+        "--disable-shared",
+        "--enable-static",
+        "--disable-nls"
+      ],
+      [
+        "make",
+        "-j2"
+      ]
+    ],
+    "license": "GPL-3.0-or-later (CLI), LGPL-2.1-or-later (library)"
+  },
+  "gencat_sources": [
+    {
+      "file": "gencat-darwin/genlib.c",
+      "url": "https://raw.githubusercontent.com/apple-oss-distributions/adv_cmds/6bed8737a34dbb54782a18f47dccf933a9967a12/gencat/genlib.c",
+      "upstream_sha256": "82a19b5441e907d0fd9142ac84e741c4d417932abce6bbdcad4cc83f321442f4"
+    },
+    {
+      "file": "gencat-darwin/gencat.h",
+      "url": "https://raw.githubusercontent.com/apple-oss-distributions/adv_cmds/6bed8737a34dbb54782a18f47dccf933a9967a12/gencat/gencat.h",
+      "upstream_sha256": "04eecccb8ca671740fca82d6bf5632a0599969c1071e67147059365dbe88c65c"
+    },
+    {
+      "file": "gencat-darwin/msgcat.h",
+      "url": "https://raw.githubusercontent.com/apple-oss-distributions/Libc/71bbe350ab79eef58113991d817ccc6165061a64/nls/FreeBSD/msgcat.h",
+      "upstream_sha256": "875be437583dc5e2faa625c520821847acbb7bd663d11eef4035ef7d2019f928"
+    },
+    {
+      "file": "gencat-glibc/gencat.c",
+      "url": "https://raw.githubusercontent.com/bminor/glibc/e97cfe2293ed097eb3d0b4c18274d22855e65130/catgets/gencat.c",
+      "upstream_sha256": "e9f8ef73567bb9b72e9425cb5be5cffd040e2df7cb19014f9efc5f52e3833747"
+    },
+    {
+      "file": "gencat-glibc/catgetsinfo.h",
+      "url": "https://raw.githubusercontent.com/bminor/glibc/e97cfe2293ed097eb3d0b4c18274d22855e65130/catgets/catgetsinfo.h",
+      "upstream_sha256": "09f470d07297eb4b7db76b6f491d3764e92b31ed66557215c74972b2f99b6bd5"
+    }
+  ],
+  "test_backend": {
+    "path": "/usr/local/bin/gtest",
+    "realpath": "/usr/local/Cellar/coreutils/9.3/bin/gtest",
+    "sha256": "20da32995b18808ddbfefa1a1e7d63b04d0207fbf5cc460361f9e0ca4f2a6819"
+  },
+  "newgrp_backend": {
+    "path": "/usr/bin/newgrp",
+    "realpath": "/usr/bin/newgrp",
+    "sha256": "c17ba0c1fe7057f570199e1f8191322148b83a19e6b6667937a8763adba01720"
+  }
+}
