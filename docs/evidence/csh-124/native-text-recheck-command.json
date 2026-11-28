@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+    "tests/host_text.py",
+    "./cshell",
+    "--path",
+    "/Users/mitchell/.codex/worktrees/csh-124-filesystem-environments/cshell/build/host-profile/bin:/bin:/usr/bin",
+    "--boundaries",
+    "--record",
+    "build/csh124-validation/native-text-recheck.json"
+  ],
+  "status": 0,
+  "seconds": 29.49548424999989
+}

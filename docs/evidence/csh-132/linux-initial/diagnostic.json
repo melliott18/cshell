@@ -1,0 +1,9 @@
+{
+  "report_tmpfs_bytes": 268435456,
+  "invalid_reports": [
+    [
+      "linux-host-filesystem-stock-provider-audit.json.gz",
+      "Unterminated string starting at: line 4808 column 11 (char 155637)"
+    ]
+  ]
+}

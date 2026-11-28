@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "tests/host_filesystem.py",
+    "./cshell",
+    "--extended-only",
+    "--provider-audit",
+    "--record",
+    "build/tests/host-filesystem-stock-provider-audit.json"
+  ],
+  "status": 1,
+  "seconds": 1.9973400839371607,
+  "log": "linux-command-2.log.gz"
+}
