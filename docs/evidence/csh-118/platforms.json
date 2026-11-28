@@ -1,0 +1,20 @@
+{
+  "base_image": "cshell-test:csh-117",
+  "base_image_id": "sha256:ff6fc106474e5ef1f0ff79b3dd7fc932880f454d46425f8d2e71ccb12307f1c5",
+  "validation_image_id": "sha256:bd13a837e26893a9170bcf10f5ed7caf136c3c2d10a867442d9f11f94bad973b",
+  "validation_driver_sha256": "5fcf58e0a04f75abd81a400f730a137f92b84737db23fa7c01357075f9c9dc88",
+  "native": {
+    "platform": "macOS 14.8.7 arm64",
+    "uid": 501,
+    "temp_root": "private /tmp directory via TMPDIR, uid 501, explicitly set gid 20",
+    "probes": {
+      "created_file_gid": 20,
+      "setgid_mode": "02755"
+    }
+  },
+  "linux": {
+    "platform": "Linux 6.4.16-linuxkit aarch64, glibc 2.36",
+    "uid": 10001,
+    "driver_update": "Sequential validation driver copied to the stopped task-owned container before restart; shell/test/provider sources unchanged."
+  }
+}
