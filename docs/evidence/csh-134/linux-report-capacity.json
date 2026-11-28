@@ -1,0 +1,8 @@
+{
+  "/tmp": {
+    "capacity_bytes": 536870912
+  },
+  "/work/build/tests": {
+    "capacity_bytes": 536870912
+  }
+}

@@ -783,3 +783,28 @@ sources are retained, so Bison is unnecessary for builds. Linux selects the
 pinned shared coreutils mv with declined-interactive success, preserving actual
 move failures. Vendor build subprocesses discard outer Make overrides so -B and
 -Werror cannot override their configured flags; instrumentation flags remain.
+
+## Darwin process group reporting
+
+The selected profile uses unmodified GNU coreutils 9.7 `id` from the existing
+pinned source archive. Apple `id -G` obtains the real user's account membership
+through `getgrouplist_2`, which may exceed or differ from the invoking process's
+supplementary group list. Hosted macOS evidence retained 17 output groups against
+16 independently measured process groups. POSIX `id` DESCRIPTION and `-G`
+require process IDs when no user operand is supplied. GNU's gnulib explicitly
+uses Darwin's unextended `getgroups` symbol for that contract.
+
+The permission oracle remains exact: all real, effective and supplementary
+process groups, each once, with exact separators, status and stderr. Account
+membership is retained as diagnostic evidence only; it cannot satisfy the
+process-credential assertion. Linux continues using its stock provider. Neither
+system executables nor account membership are modified. The manifest records the
+selected executable hash, source archive hash, configure arguments and `src/id`
+build target.
+
+Sources: [POSIX id](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/id.html),
+[Apple id](https://github.com/apple-oss-distributions/shell_cmds/blob/main/id/id.c),
+and the pinned archive's `lib/getgroups.c` and `lib/mgetgroups.c`.
+## ls block allocation
+
+CSH-115 selects unmodified GNU coreutils 9.7 `ls` from the existing checksum-pinned source build on both platforms. Apple `ls -H -d -s -k` reports the symlink block count instead of the referent count. The manifest records the source archive hash, configure flags, `src/ls` target, build log and executable hash. The new 80 assertions retain stock failures and qualify only explicit 1024-byte allocation on the measured private graph; default units and directory totals remain open.

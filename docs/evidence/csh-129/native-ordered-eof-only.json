@@ -1,0 +1,110 @@
+{
+  "events": [
+    {
+      "event": "ready",
+      "fds": [
+        "stderr",
+        "stdout"
+      ]
+    },
+    {
+      "event": "read",
+      "stream": "stderr",
+      "data": ""
+    },
+    {
+      "event": "read",
+      "stream": "stdout",
+      "data": ""
+    }
+  ],
+  "final": true,
+  "unread_stdout": "",
+  "outcome": "FAIL",
+  "error": "ed exited before response: b'recovered\\n*?\\n*'",
+  "signal": {
+    "argv": [
+      "/Users/mitchell/.codex/worktrees/csh-129-ed-signal-capture/cshell/build/host-ed",
+      "-s",
+      "original"
+    ],
+    "action": "int",
+    "phase": "final-response",
+    "signal": "SIGINT",
+    "status": 0,
+    "stdout": "7265636f76657265640a2a3f0a2a",
+    "stderr": "",
+    "reaped": true,
+    "incomplete": true,
+    "events": [
+      {
+        "phase": "initial-response",
+        "event": "ready",
+        "streams": [
+          "stdout"
+        ]
+      },
+      {
+        "phase": "initial-response",
+        "event": "data",
+        "stream": "stdout",
+        "size": 10
+      },
+      {
+        "phase": "readiness",
+        "event": "ready",
+        "streams": [
+          "stdout"
+        ]
+      },
+      {
+        "phase": "readiness",
+        "event": "data",
+        "stream": "stdout",
+        "size": 1
+      },
+      {
+        "phase": "signal-response",
+        "event": "ready",
+        "streams": [
+          "stdout"
+        ]
+      },
+      {
+        "phase": "signal-response",
+        "event": "data",
+        "stream": "stdout",
+        "size": 3
+      },
+      {
+        "phase": "final-response",
+        "event": "ready",
+        "streams": [
+          "stderr",
+          "stdout"
+        ]
+      },
+      {
+        "phase": "final-response",
+        "event": "eof",
+        "stream": "stderr",
+        "size": 0
+      },
+      {
+        "phase": "final-response",
+        "event": "eof",
+        "stream": "stdout",
+        "size": 0
+      }
+    ],
+    "files": {
+      "saved": "7265636f76657265640a"
+    }
+  },
+  "files": {
+    "saved": "7265636f76657265640a",
+    "original": ""
+  },
+  "reaped": true,
+  "fixture_removed": true
+}
