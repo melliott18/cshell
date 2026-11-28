@@ -1,0 +1,48 @@
+[
+  {
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+      "tests/host_text.py",
+      "./cshell",
+      "--path",
+      "/Users/mitchell/.codex/worktrees/csh-134/cshell/build/host-profile/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "--boundaries",
+      "--record",
+      "build/tests/host-text-results.json"
+    ],
+    "status": 0,
+    "seconds": 43.73923320800532,
+    "log": "native-recovery-0.log"
+  },
+  {
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_host_languages.py"
+    ],
+    "status": 0,
+    "seconds": 4.037147291004658,
+    "log": "native-recovery-1.log"
+  },
+  {
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+      "tests/host_languages.py",
+      "./cshell",
+      "--path",
+      "/Users/mitchell/.codex/worktrees/csh-134/cshell/build/host-profile/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "--ed-faults",
+      "build/tests/host_ed_faults",
+      "--record",
+      "build/tests/host-languages-profile-results.json"
+    ],
+    "status": 0,
+    "seconds": 35.13321229093708,
+    "log": "native-recovery-2.log"
+  }
+]

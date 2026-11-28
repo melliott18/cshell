@@ -805,3 +805,6 @@ build target.
 Sources: [POSIX id](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/id.html),
 [Apple id](https://github.com/apple-oss-distributions/shell_cmds/blob/main/id/id.c),
 and the pinned archive's `lib/getgroups.c` and `lib/mgetgroups.c`.
+## ls block allocation
+
+CSH-115 selects unmodified GNU coreutils 9.7 `ls` from the existing checksum-pinned source build on both platforms. Apple `ls -H -d -s -k` reports the symlink block count instead of the referent count. The manifest records the source archive hash, configure flags, `src/ls` target, build log and executable hash. The new 80 assertions retain stock failures and qualify only explicit 1024-byte allocation on the measured private graph; default units and directory totals remain open.

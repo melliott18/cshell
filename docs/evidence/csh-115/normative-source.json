@@ -1,0 +1,12 @@
+{
+  "url": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
+  "sha256": "cd4db85f09dbadf3d529b1bf6a8c157806759c5a22d3ca616aad0cc0363f07bc",
+  "bytes": 48711,
+  "sections": [
+    "DESCRIPTION",
+    "OPTIONS",
+    "STDOUT",
+    "STDERR",
+    "EXIT STATUS"
+  ]
+}
