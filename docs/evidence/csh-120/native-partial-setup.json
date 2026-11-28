@@ -1,0 +1,151 @@
+{
+  "passed": 4,
+  "failed": 0,
+  "uid": 501,
+  "cases": [
+    {
+      "mode": "direct",
+      "partial_setup": "complete directories/files and first alias; second alias absent",
+      "record": {
+        "id": "ls/recursive-default-0-0-plain",
+        "mode": "direct",
+        "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
+        "expected": {
+          "id": "ls/recursive-default-0-0-plain",
+          "utility": "ls",
+          "args": [
+            "-1",
+            "-R",
+            "recursion/tree"
+          ],
+          "stdout": "ls-recursive",
+          "stderr": {
+            "hex": ""
+          },
+          "status": 0,
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
+          "ticket": "CSH-120",
+          "ls_recursive": {
+            "selection": "default",
+            "reverse": false,
+            "follow": false,
+            "rendering": "plain"
+          }
+        },
+        "phase": "setup",
+        "verdict": "FAIL",
+        "error": "injected CSH-120 second-alias setup failure",
+        "errno": null,
+        "cleanup": true
+      }
+    },
+    {
+      "mode": "string",
+      "partial_setup": "complete directories/files and first alias; second alias absent",
+      "record": {
+        "id": "ls/recursive-default-0-0-plain",
+        "mode": "string",
+        "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
+        "expected": {
+          "id": "ls/recursive-default-0-0-plain",
+          "utility": "ls",
+          "args": [
+            "-1",
+            "-R",
+            "recursion/tree"
+          ],
+          "stdout": "ls-recursive",
+          "stderr": {
+            "hex": ""
+          },
+          "status": 0,
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
+          "ticket": "CSH-120",
+          "ls_recursive": {
+            "selection": "default",
+            "reverse": false,
+            "follow": false,
+            "rendering": "plain"
+          }
+        },
+        "phase": "setup",
+        "verdict": "FAIL",
+        "error": "injected CSH-120 second-alias setup failure",
+        "errno": null,
+        "cleanup": true
+      }
+    },
+    {
+      "mode": "file",
+      "partial_setup": "complete directories/files and first alias; second alias absent",
+      "record": {
+        "id": "ls/recursive-default-0-0-plain",
+        "mode": "file",
+        "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
+        "expected": {
+          "id": "ls/recursive-default-0-0-plain",
+          "utility": "ls",
+          "args": [
+            "-1",
+            "-R",
+            "recursion/tree"
+          ],
+          "stdout": "ls-recursive",
+          "stderr": {
+            "hex": ""
+          },
+          "status": 0,
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
+          "ticket": "CSH-120",
+          "ls_recursive": {
+            "selection": "default",
+            "reverse": false,
+            "follow": false,
+            "rendering": "plain"
+          }
+        },
+        "phase": "setup",
+        "verdict": "FAIL",
+        "error": "injected CSH-120 second-alias setup failure",
+        "errno": null,
+        "cleanup": true
+      }
+    },
+    {
+      "mode": "stdin",
+      "partial_setup": "complete directories/files and first alias; second alias absent",
+      "record": {
+        "id": "ls/recursive-default-0-0-plain",
+        "mode": "stdin",
+        "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
+        "expected": {
+          "id": "ls/recursive-default-0-0-plain",
+          "utility": "ls",
+          "args": [
+            "-1",
+            "-R",
+            "recursion/tree"
+          ],
+          "stdout": "ls-recursive",
+          "stderr": {
+            "hex": ""
+          },
+          "status": 0,
+          "source": "https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html",
+          "ticket": "CSH-120",
+          "ls_recursive": {
+            "selection": "default",
+            "reverse": false,
+            "follow": false,
+            "rendering": "plain"
+          }
+        },
+        "phase": "setup",
+        "verdict": "FAIL",
+        "error": "injected CSH-120 second-alias setup failure",
+        "errno": null,
+        "cleanup": true
+      }
+    }
+  ]
+}

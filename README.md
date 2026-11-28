@@ -74,6 +74,9 @@ make test-substitution # Integrated expansion, child ownership, and capture fail
 make test-fields   # IFS splitting, pathname expansion, and cleanup checks
 make test-options  # Invocation/set, option effects, and environment interactions
 make test-host-terminal-residuals # Strict residual terminal/locale/error witnesses
+make test-host-filesystem-ls-blocks # Measured ls allocation and operand-link counts
+make test-host-filesystem-ls-totals # Measured directory totals, selection and recursion
+make test-host-filesystem-ls-identity # Measured inode numbers and file-type suffixes
 make test-host-inventory # Complete utility and residual ownership consistency
 make test-host-utilities # Stock-host integration, identities and known gaps
 make test-host-filesystem # Bounded filesystem/pathname provider witnesses
@@ -92,6 +95,7 @@ make test-host-permissions # Predicate, mode, ownership and identity assertions
 make test-host-terminal # Stock terminal-provider checks (strict failures retained)
 make test-host-terminal-profile # Qualified bounded PTY/session-record checks
 make test-host-profile   # Opt-in qualified utilities, strict gaps and boundaries
+make test-host-filesystem-ls-sockets # Measured socket inode/type rendering
 make test-host-filesystem-removal # rmdir parent graphs, permissions and continuation
 
 make test-host-text      # Strict bounded text/byte utility subset
