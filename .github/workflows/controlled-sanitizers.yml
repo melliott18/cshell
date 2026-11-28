@@ -1,0 +1,71 @@
+name: Docker sanitizer qualification
+
+on:
+  pull_request:
+    paths:
+      - tools/host-profile/test.c
+      - .github/workflows/controlled-sanitizers.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sanitizer:
+    name: Docker sanitizer (${{ matrix.mode }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [controlled, full]
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build the current Linux source image
+        run: make docker-build
+      - name: Qualify controlled sanitizer credentials
+        if: matrix.mode == 'controlled'
+        run: >-
+          docker run --name csh-sanitizer-controlled --init --user 0
+          -e ASAN_OPTIONS=halt_on_error=1:detect_leaks=0 -e UBSAN_OPTIONS=halt_on_error=1
+          cshell-test:local sh -c
+          'runuser -u cshell -- make clean &&
+          runuser -u cshell -- make -j2 cshell host-catalog-fixtures build/tests/host_utility_helper build/tests/host_printf_faults
+          CFLAGS="-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer"
+          LDFLAGS="-fsanitize=address,undefined" &&
+          python3 tests/host_utilities.py ./cshell build/tests/host_utility_helper
+          --path "/work/build/host-profile/bin:$(getconf PATH)"
+          --locale-path /work/build/host-profile/locales --strict-gaps --boundaries
+          --printf-faults build/tests/host_printf_faults --controlled-identities --sanitizer
+          --record build/tests/host-controlled-sanitizer.json &&
+          python3 tests/host_permissions.py ./cshell
+          --path "/work/build/host-profile/bin:$(getconf PATH)" --controlled-identities --sanitizer
+          --record build/tests/host-permissions-controlled-sanitizer.json'
+      - name: Qualify the complete unprivileged sanitizer profile
+        if: matrix.mode == 'full'
+        run: >-
+          docker run --name csh-sanitizer-full --init
+          -e ASAN_OPTIONS=halt_on_error=1:detect_leaks=0 -e UBSAN_OPTIONS=halt_on_error=1
+          cshell-test:local sh -c
+          'make clean && make -j2 test test-pty test-host-profile
+          CFLAGS="-std=c99 -Wall -Wextra -Wpedantic -Wshadow -Werror -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer"
+          LDFLAGS="-fsanitize=address,undefined"'
+      - name: Collect evidence and remove the owned container
+        if: always()
+        run: |
+          mkdir -p evidence
+          if docker container inspect csh-sanitizer-${{ matrix.mode }} >/dev/null 2>&1; then
+            docker inspect csh-sanitizer-${{ matrix.mode }} > evidence/container.json
+            docker cp csh-sanitizer-${{ matrix.mode }}:/work/build/tests evidence/tests || true
+            docker cp csh-sanitizer-${{ matrix.mode }}:/work/build/host-profile/manifest.json evidence/providers.json || true
+            docker rm -f csh-sanitizer-${{ matrix.mode }}
+          fi
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: docker-sanitizer-${{ matrix.mode }}
+          path: evidence/

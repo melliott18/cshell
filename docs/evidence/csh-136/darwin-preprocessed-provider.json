@@ -1,0 +1,10 @@
+{
+  "normal": {
+    "identical": true,
+    "sha256": "8ffdc15744538133e22f16feeb4095a0ca4b8889a5a8129f78e188504169e2c1"
+  },
+  "-asan": {
+    "identical": true,
+    "sha256": "935cc24c83bd56d293a0fc103627934eea3de93fdfedf4435089af7a4fe8a96d"
+  }
+}
