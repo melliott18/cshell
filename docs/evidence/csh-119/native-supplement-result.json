@@ -1,0 +1,13 @@
+{
+  "command": "python3 docs/evidence/csh-119/native-supplement.py",
+  "statuses": [
+    0,
+    0,
+    0
+  ],
+  "logs": [
+    "native-supplement-0.log.gz",
+    "native-supplement-1.log.gz",
+    "native-supplement-2.log.gz"
+  ]
+}

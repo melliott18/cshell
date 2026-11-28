@@ -1,0 +1,33 @@
+[
+  {
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_host_languages.py"
+    ],
+    "status": 0,
+    "seconds": 3.604101000000128,
+    "log": "native-profile-continuation-0.log"
+  },
+  {
+    "argv": [
+      "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+      "tests/host_languages.py",
+      "./cshell",
+      "--path",
+      "/Users/mitchell/.codex/worktrees/csh-124-filesystem-environments/cshell/build/host-profile/bin:/bin:/usr/bin",
+      "--ed-faults",
+      "build/tests/host_ed_faults",
+      "--record",
+      "build/csh124-validation/native-host-languages-profile-results.json"
+    ],
+    "status": 0,
+    "seconds": 22.382815041999947,
+    "log": "native-profile-continuation-1.log"
+  }
+]
