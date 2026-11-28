@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "make",
+    "test-host-filesystem-audit"
+  ],
+  "status": 2,
+  "seconds": 137.57705697894562,
+  "log": "linux-command-1.log.gz"
+}

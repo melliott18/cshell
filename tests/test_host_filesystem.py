@@ -33,6 +33,11 @@ import host_filesystem_link_permissions as link_permissions
 import host_filesystem_touch_permissions as touch_permissions
 import host_filesystem_touch_current as touch_current
 import host_filesystem_touch_objects as touch_objects
+import host_filesystem_ls_blocks as ls_blocks
+import host_filesystem_ls_totals as ls_totals
+import host_filesystem_ls_identity as ls_identity
+import host_filesystem_ls_sockets as ls_sockets
+import host_filesystem_ls_visibility as ls_visibility
 import host_filesystem_output as output_cases
 import host_filesystem_magic as magic_cases
 import host_filesystem_magic_strings as magic_strings
@@ -955,6 +960,522 @@ class FilesystemHarnessTests(unittest.TestCase):
                     self.assertLess(time.monotonic(), deadline, 'timed-out provider was not reaped')
                     time.sleep(.02)
                 self.assertEqual(list(root.iterdir()), [provider])
+
+    def test_ls_visibility_matrix_and_all_modes(self):
+        rows = list(ls_visibility.cases())
+        self.assertEqual(len(rows), 24)
+        for row in rows:
+            for mode in ('direct', 'string', 'file', 'stdin'):
+                with self.subTest(case=row['id'], mode=mode), tempfile.TemporaryDirectory() as root:
+                    record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                      os.defpath, row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS', record)
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_visibility_rejects_output_and_mutation(self):
+        row = next(r for r in ls_visibility.cases() if r['id'].endswith('a-0-inode'))
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            env = ls_visibility.setup(root, row)
+            self.assertEqual([e['name'] for e in env['entries']],
+                             ['.', '..', '.hidden', '.hidden-dir', '.link', 'directory', 'visible'])
+            self.assertNotEqual(env['entries'][0]['inode'], env['entries'][1]['inode'])
+            output = b''.join(str(e['inode']).encode()+b' '+e['name'].encode()+b'\n' for e in env['entries'])
+            self.assertTrue(ls_visibility.output_matches(env, output))
+            for bad in (output.split(b'\n', 1)[1], output + b'extra\n', output.replace(b' .\n', b' wrong\n')):
+                self.assertFalse(ls_visibility.output_matches(env, bad))
+            (root / 'visibility/listing/.hidden').write_bytes(b'changed')
+            self.assertTrue(ls_visibility.verify(root, env)[0])
+
+    def test_ls_visibility_setup_failure_and_timeout_cleanup(self):
+        row = next(ls_visibility.cases())
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(row)
+        with tempfile.TemporaryDirectory() as root, patch('host_filesystem_ls_visibility.os.symlink', side_effect=OSError('injected')), patch('host_filesystem.smoke.capture') as capture:
+            record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}}, os.defpath, row, 'direct', Path(root), None)
+            self.assertEqual(record['verdict'], 'FAIL')
+            capture.assert_not_called()
+            self.assertTrue(record['cleanup'])
+            self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_sockets_matrix_and_all_modes(self):
+        rows = list(ls_sockets.cases())
+        self.assertEqual(len(rows), 36)
+        self.assertEqual(len({r['id'] for r in rows}), 36)
+        for row in rows:
+            original = copy.deepcopy(row)
+            for mode in ('direct', 'string', 'file', 'stdin'):
+                with self.subTest(case=row['id'], mode=mode), tempfile.TemporaryDirectory() as root, \
+                        patch('host_filesystem.smoke.capture', side_effect=self.ls_sockets_capture(row)):
+                    record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                      os.defpath, row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS', record)
+                    self.assertEqual(record['ls_socket_environment']['before'], record['ls_socket_observed'])
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+                    self.assertEqual(row, original)
+                    json.dumps(record)
+
+    @staticmethod
+    def ls_sockets_capture(row, fault=None):
+        # Derive the mock from live directory entries and argv, independently
+        # of the authored name list and expected_entries oracle.
+        def capture(binary, invocation, cwd, *args, **kwargs):
+            argv = row['args']
+            paths = (sorted(cwd / arg for arg in argv if arg.startswith('sockets/'))
+                     if '-d' in argv else sorted((cwd / 'sockets').iterdir()))
+            lines = []
+            for path in paths:
+                info = (path.stat() if '-L' in argv or ('-H' in argv and '-d' in argv) else path.lstat())
+                mode = info.st_mode
+                suffix = ''
+                if '-F' in argv:
+                    if stat.S_ISDIR(mode): suffix = '/'
+                    elif stat.S_ISSOCK(mode): suffix = '='
+                    elif stat.S_ISLNK(mode): suffix = '@'
+                    elif mode & 0o111: suffix = '*'
+                elif '-p' in argv and stat.S_ISDIR(mode):
+                    suffix = '/'
+                name = str(path.relative_to(cwd)) if '-d' in argv else path.name
+                lines.append((str(info.st_ino) + ' ' if '-i' in argv else '') + name + suffix + '\n')
+            output = ''.join(lines).encode()
+            if fault == 'inode': output = b'999999' + output
+            if fault == 'suffix': output = output.replace(b'link-stream=', b'link-stream@')
+            if fault == 'order': output = ''.join(reversed(lines)).encode()
+            if fault == 'missing': output = ''.join(lines[1:]).encode()
+            if fault == 'extra': output += b'extra\n'
+            if fault == 'newline': output = output.rstrip(b'\n')
+            if fault == 'bytes': (cwd / 'sockets/regular').write_bytes(b'X' * len(ls_sockets.FILES['regular']))
+            if fault == 'mode': (cwd / 'sockets/datagram').chmod(0o600)
+            if fault == 'entries': (cwd / 'sockets/directory/extra').touch()
+            if fault == 'link':
+                (cwd / 'sockets/link-stream').unlink()
+                (cwd / 'sockets/link-stream').symlink_to('regular')
+            return (1 if fault == 'status' else 0,
+                    dict(stdout=output, stderr=b'wrong' if fault == 'stderr' else b''), [])
+        return capture
+
+    def test_ls_sockets_reject_bad_output_and_changed_objects(self):
+        row = next(r for r in ls_sockets.cases() if r['id'].endswith('F-inode-L-operands'))
+        for fault in ('inode', 'suffix', 'order', 'missing', 'extra', 'newline',
+                      'bytes', 'mode', 'entries', 'link', 'status', 'stderr'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=self.ls_sockets_capture(row, fault)):
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_sockets_literal_suffix_and_inode_oracle(self):
+        row = next(r for r in ls_sockets.cases() if r['id'].endswith('F-inode-H-directory'))
+        with tempfile.TemporaryDirectory() as root:
+            environment = ls_sockets.setup(Path(root), row)
+            before = environment['before']
+            entries = {e['name']: e['inode'] for e in environment['entries']}
+            self.assertEqual(set(entries), {'datagram=', 'directory/', 'link-datagram@',
+                                           'link-stream@', 'regular', 'stream='})
+            self.assertEqual(entries['stream='], before['stream']['inode'])
+            self.assertEqual(entries['link-stream@'], before['link-stream']['inode'])
+            self.assertTrue(stat.S_ISSOCK(before['datagram']['mode']))
+            self.assertEqual(stat.S_IMODE(before['datagram']['mode']), 0o700)
+            spec = dict(row['ls_sockets'], graph='operands')
+            entries = {e['name']: e['inode'] for e in ls_sockets.expected_entries(before, spec)}
+            self.assertEqual(entries['sockets/link-stream='], before['stream']['inode'])
+            self.assertEqual(entries['sockets/link-datagram='], before['datagram']['inode'])
+            self.assertEqual(len(entries), 6)
+            for style in ('p', 'plain'):
+                entries = ls_sockets.expected_entries(before, dict(spec, style=style, inode=False))
+                self.assertTrue(all(e['inode'] is None for e in entries))
+                self.assertFalse(any(e['name'].endswith(('*', '@', '=')) for e in entries))
+                self.assertEqual(sum(e['name'].endswith('/') for e in entries), 1 if style == 'p' else 0)
+
+    def test_ls_sockets_partial_setup_and_failed_probes_never_execute(self):
+        row = next(ls_sockets.cases())
+        for target, replacement in (('bind_sockets', OSError('controlled bind setup failure')),
+                                    ('os.geteuid', lambda: 0),
+                                    ('measurements', OSError('controlled metadata failure'))):
+            with self.subTest(target=target), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem_ls_sockets.' + target, side_effect=replacement), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                capture.assert_not_called()
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'), record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_sockets_failed_exec_and_timeout_cleanup(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(ls_sockets.cases()))
+
+    def test_ls_sockets_partial_bind_failure_and_timeout(self):
+        row = next(ls_sockets.cases())
+        for failure in (OSError('second bind failed'), subprocess.TimeoutExpired('bind', 3)):
+            def partial(root):
+                (root / 'stream').touch()
+                raise failure
+            with tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem_ls_sockets.bind_sockets', side_effect=partial), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                capture.assert_not_called()
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'))
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_sockets_bind_child_protocol(self):
+        for result in (subprocess.CompletedProcess([], 1, b'', b'failed'),
+                       subprocess.CompletedProcess([], 0, b'wrong', b''),
+                       subprocess.CompletedProcess([], 0, b'bound-and-closed\n', b'warning')):
+            with patch('host_filesystem_ls_sockets.subprocess.run', return_value=result):
+                with self.assertRaises(OSError):
+                    ls_sockets.bind_sockets(Path('/unused'))
+        with tempfile.TemporaryDirectory() as root:
+            cwd = Path.cwd()
+            # The parent pathname deliberately exceeds either platform sun_path.
+            directory = Path(root) / ('x' * 120)
+            directory.mkdir()
+            ls_sockets.bind_sockets(directory)
+            self.assertEqual(Path.cwd(), cwd)
+            for name in ls_sockets.SOCKETS:
+                self.assertTrue(stat.S_ISSOCK((directory / name).lstat().st_mode))
+
+    def test_ls_sockets_real_bind_timeout_reaps_child(self):
+        run = subprocess.run
+        with tempfile.TemporaryDirectory() as root:
+            directory = Path(root)
+            def stalled_bind(argv, **kwargs):
+                return run([sys.executable, '-c',
+                            "import os,time; open('pid','w').write(str(os.getpid())); time.sleep(10)"],
+                           **dict(kwargs, timeout=.2))
+            with patch('host_filesystem_ls_sockets.subprocess.run', side_effect=stalled_bind):
+                with self.assertRaises(subprocess.TimeoutExpired):
+                    ls_sockets.bind_sockets(directory)
+            pid = int((directory / 'pid').read_text())
+            with self.assertRaises(ProcessLookupError):
+                os.kill(pid, 0)
+
+    def test_ls_identity_matrix_and_all_modes(self):
+        rows = list(ls_identity.cases())
+        self.assertEqual(len(rows), 36)
+        self.assertEqual(len({r['id'] for r in rows}), 36)
+        for row in rows:
+            original = copy.deepcopy(row)
+            for mode in ('direct', 'string', 'file', 'stdin'):
+                with self.subTest(case=row['id'], mode=mode), tempfile.TemporaryDirectory() as root, \
+                        patch('host_filesystem.smoke.capture', side_effect=self.ls_identity_capture(row)):
+                    record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                      os.defpath, row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS', record)
+                    self.assertEqual(record['ls_identity_environment']['before'], record['ls_identity_observed'])
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+                    self.assertEqual(row, original)
+                    json.dumps(record)
+
+    @staticmethod
+    def ls_identity_capture(row, fault=None):
+        # Derive the mock from live directory entries and argv, independently
+        # of the authored name list and expected_entries oracle.
+        def capture(binary, invocation, cwd, *args, **kwargs):
+            argv = row['args']
+            paths = (sorted(cwd / arg for arg in argv if arg.startswith('identity/'))
+                     if '-d' in argv else sorted((cwd / 'identity').iterdir()))
+            lines = []
+            for path in paths:
+                info = (path.stat() if '-L' in argv or ('-H' in argv and '-d' in argv) else path.lstat())
+                mode = info.st_mode
+                suffix = ''
+                if '-F' in argv:
+                    if stat.S_ISDIR(mode): suffix = '/'
+                    elif stat.S_ISFIFO(mode): suffix = '|'
+                    elif stat.S_ISLNK(mode): suffix = '@'
+                    elif mode & 0o111: suffix = '*'
+                elif '-p' in argv and stat.S_ISDIR(mode):
+                    suffix = '/'
+                name = str(path.relative_to(cwd)) if '-d' in argv else path.name
+                lines.append((str(info.st_ino) + ' ' if '-i' in argv else '') + name + suffix + '\n')
+            output = ''.join(lines).encode()
+            if fault == 'inode': output = b'999999' + output
+            if fault == 'suffix': output = output.replace(b'link-dir/', b'link-dir@')
+            if fault == 'order': output = ''.join(reversed(lines)).encode()
+            if fault == 'missing': output = ''.join(lines[1:]).encode()
+            if fault == 'extra': output += b'extra\n'
+            if fault == 'newline': output = output.rstrip(b'\n')
+            if fault == 'bytes': (cwd / 'identity/regular').write_bytes(b'X' * len(ls_identity.FILES['regular']))
+            if fault == 'mode': (cwd / 'identity/exec-group').chmod(0o600)
+            if fault == 'entries': (cwd / 'identity/directory/extra').touch()
+            if fault == 'link':
+                (cwd / 'identity/link-file').unlink()
+                (cwd / 'identity/link-file').symlink_to('exec-user')
+            return (1 if fault == 'status' else 0,
+                    dict(stdout=output, stderr=b'wrong' if fault == 'stderr' else b''), [])
+        return capture
+
+    def test_ls_identity_reject_bad_output_and_changed_objects(self):
+        row = next(r for r in ls_identity.cases() if r['id'].endswith('F-inode-L-operands'))
+        for fault in ('inode', 'suffix', 'order', 'missing', 'extra', 'newline',
+                      'bytes', 'mode', 'entries', 'link', 'status', 'stderr'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=self.ls_identity_capture(row, fault)):
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_identity_literal_suffix_and_inode_oracle(self):
+        row = next(r for r in ls_identity.cases() if r['id'].endswith('F-inode-H-directory'))
+        with tempfile.TemporaryDirectory() as root:
+            environment = ls_identity.setup(Path(root), row)
+            before = environment['before']
+            entries = {e['name']: e['inode'] for e in environment['entries']}
+            self.assertEqual(set(entries), {'.hidden', 'directory/', 'exec-group*', 'exec-other*',
+                                           'exec-user*', 'fifo|', 'hard', 'link-dir@', 'link-exec@',
+                                           'link-fifo@', 'link-file@', 'regular'})
+            self.assertEqual(entries['regular'], entries['hard'])
+            self.assertEqual(entries['link-dir@'], before['link-dir']['inode'])
+            spec = dict(row['ls_identity'], graph='operands')
+            entries = {e['name']: e['inode'] for e in ls_identity.expected_entries(before, spec)}
+            self.assertEqual(entries['identity/link-dir/'], before['directory']['inode'])
+            self.assertEqual(entries['identity/link-file'], before['regular']['inode'])
+            self.assertEqual(entries['identity/link-exec*'], before['exec-user']['inode'])
+            self.assertEqual(entries['identity/link-fifo|'], before['fifo']['inode'])
+            self.assertEqual(len(entries), 12)
+            for style in ('p', 'plain'):
+                entries = ls_identity.expected_entries(before, dict(spec, style=style, inode=False))
+                self.assertTrue(all(e['inode'] is None for e in entries))
+                self.assertFalse(any(e['name'].endswith(('*', '@', '|')) for e in entries))
+                self.assertEqual(sum(e['name'].endswith('/') for e in entries), 2 if style == 'p' else 0)
+
+    def test_ls_identity_partial_setup_and_failed_probes_never_execute(self):
+        row = next(ls_identity.cases())
+        for target, replacement in (('os.mkfifo', OSError('controlled FIFO setup failure')),
+                                    ('os.geteuid', lambda: 0),
+                                    ('measurements', OSError('controlled metadata failure'))):
+            with self.subTest(target=target), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem_ls_identity.' + target, side_effect=replacement), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                capture.assert_not_called()
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'), record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_identity_failed_exec_and_timeout_cleanup(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(ls_identity.cases()))
+
+    def test_ls_totals_matrix_and_all_modes(self):
+        rows = list(ls_totals.cases())
+        self.assertEqual(len(rows), 32)
+        self.assertEqual(len({r['id'] for r in rows}), 32)
+        for row in rows:
+            original = copy.deepcopy(row)
+            for mode in ('direct', 'string', 'file', 'stdin'):
+                with self.subTest(case=row['id'], mode=mode), tempfile.TemporaryDirectory() as root, \
+                        patch('host_filesystem.smoke.capture', side_effect=self.ls_total_capture(row)):
+                    record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                      os.defpath, row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS', record)
+                    self.assertEqual(record['ls_total_environment']['before'], record['ls_total_observed'])
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+                    self.assertEqual(row, original)
+                    json.dumps(record)
+
+    @staticmethod
+    def ls_total_capture(row, fault=None):
+        # Independent traversal of actual fixture entries, not expected_sections.
+        def capture(binary, invocation, cwd, *args, **kwargs):
+            spec = row['ls_totals']
+            paths = sorted(set(arg for arg in row['args'] if arg.startswith('totals/')))
+            if '-R' in row['args']:
+                paths.append('totals/tree/child')
+            sections = []
+            for path in paths:
+                entries = sorted((cwd / path).iterdir())
+                entries = [p for p in entries if spec['hidden'] or not p.name.startswith('.')]
+                values = [(p.name, (p.stat() if spec['follow'] else p.lstat()).st_blocks) for p in entries]
+                total = (sum(b for n, b in values) + 1) // 2
+                section = f'{path}:\n' if len(paths) > 1 else ''
+                section += f'total {total}\n'
+                section += ''.join(f'{(b + 1) // 2} {n}\n' for n, b in values)
+                sections.append(section)
+            output = '\n'.join(sections).encode()
+            if fault == 'total': output = output.replace(b'total ', b'total 999', 1)
+            if fault == 'header': output = output.replace(b'totals/tree:', b'totals/wrong:')
+            if fault == 'order': output = b'\n'.join(reversed(output.split(b'\n')))
+            if fault == 'missing': output = output.replace(b'0 empty\n', b'', 1)
+            if fault == 'extra': output += b'0 extra\n'
+            if fault == 'newline': output = output.rstrip(b'\n')
+            if fault == 'bytes': (cwd / 'totals/tree/regular').write_bytes(b'X' * len(ls_totals.FILES['tree/regular']))
+            if fault == 'mode': (cwd / 'totals/tree/empty').chmod(0o777)
+            if fault == 'entries': (cwd / 'totals/vacant/extra').touch()
+            if fault == 'link':
+                (cwd / 'totals/tree/symbol').unlink()
+                (cwd / 'totals/tree/symbol').symlink_to('empty')
+            return (1 if fault == 'status' else 0,
+                    dict(stdout=output, stderr=b'wrong' if fault == 'stderr' else b''), [])
+        return capture
+
+    def test_ls_totals_reject_bad_output_and_changed_objects(self):
+        row = next(r for r in ls_totals.cases() if r['id'].endswith('hidden-logical-recursive'))
+        for fault in ('total', 'header', 'order', 'missing', 'extra', 'newline',
+                      'bytes', 'mode', 'entries', 'link', 'status', 'stderr'):
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=self.ls_total_capture(row, fault)):
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_totals_sum_before_rounding_and_count_each_name(self):
+        # Synthetic odd counts exercise arithmetic without claiming the host
+        # physically supplies odd 512-byte allocation boundaries.
+        before = {name: dict(blocks=0) for name in ls_totals.NAMES}
+        before['tree/regular']['blocks'] = before['tree/hard']['blocks'] = 3
+        before['tree/symbol']['blocks'] = 1
+        before['tree/.hidden']['blocks'] = 5
+        before['tree/child/leaf']['blocks'] = 99
+        before['tree']['blocks'] = 99
+        spec = dict(graph='single', hidden=False, follow=False)
+        section = ls_totals.expected_sections(before, spec)[0]
+        self.assertEqual(section['total'], 4)  # ceil((3+3+1)/2), not 2+2+1
+        self.assertEqual(section['entries'], [('child', 0), ('empty', 0), ('fifo', 0),
+                                             ('hard', 2), ('regular', 2), ('symbol', 1)])
+        spec['hidden'] = True
+        self.assertEqual(ls_totals.expected_sections(before, spec)[0]['total'], 6)
+        spec['follow'] = True
+        self.assertEqual(ls_totals.expected_sections(before, spec)[0]['total'], 7)
+        recursive = ls_totals.expected_sections(before, dict(spec, graph='recursive'))
+        environment = dict(sections=recursive)
+        output = b''
+        for index, section in enumerate(recursive):
+            if index: output += b'\n'
+            output += (section['directory'] + ':\n' + f"total {section['total']}\n").encode()
+            output += b''.join(f'{count} {name}\n'.encode() for name, count in section['entries'])
+        self.assertTrue(ls_totals.output_matches(environment, output))
+        self.assertTrue(ls_totals.output_matches(environment, output.removeprefix(b'totals/tree:\n')))
+        self.assertFalse(ls_totals.output_matches(environment, output.replace(b'totals/tree/child:\n', b'')))
+        empty = ls_totals.expected_sections(before, dict(spec, graph='empty'))
+        self.assertTrue(ls_totals.output_matches(dict(sections=empty), b'total 0\n'))
+        self.assertFalse(ls_totals.output_matches(dict(sections=empty), b''))
+
+    def test_ls_totals_partial_setup_and_failed_probes_never_execute(self):
+        row = next(ls_totals.cases())
+        for target, replacement in (('os.mkfifo', OSError('controlled FIFO setup failure')),
+                                    ('os.geteuid', lambda: 0),
+                                    ('measurements', OSError('controlled metadata failure'))):
+            with self.subTest(target=target), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem_ls_totals.' + target, side_effect=replacement), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                capture.assert_not_called()
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'), record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_totals_failed_exec_and_timeout_cleanup(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(ls_totals.cases()))
+
+    def test_ls_blocks_matrix_and_all_modes(self):
+        rows = list(ls_blocks.cases())
+        self.assertEqual(len(rows), 20)
+        self.assertEqual(len({r['id'] for r in rows}), 20)
+        # Use a synthetic capture to validate the harness independently of stock
+        # ls (Darwin's -H allocation defect must remain a provider failure).
+        for row in rows:
+            original = copy.deepcopy(row)
+            for mode in ('direct', 'string', 'file', 'stdin'):
+                def capture(binary, invocation, cwd, *args, **kwargs):
+                    output = b''
+                    for name in row['ls_blocks']['names']:
+                        path = cwd / 'blocks' / name
+                        info = path.stat() if row['ls_blocks']['follow'] else path.lstat()
+                        output += f'{(info.st_blocks + 1) // 2} blocks/{name}\n'.encode()
+                    return 0, dict(stdout=output, stderr=b''), []
+                with self.subTest(case=row['id'], mode=mode), tempfile.TemporaryDirectory() as root, \
+                        patch('host_filesystem.smoke.capture', side_effect=capture):
+                    record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                      os.defpath, row, mode, Path(root), None)
+                    self.assertEqual(record['verdict'], 'PASS', record)
+                    self.assertEqual(record['ls_block_environment']['before'], record['ls_block_observed'])
+                    self.assertTrue(record['cleanup'])
+                    self.assertEqual(list(Path(root).iterdir()), [])
+                    self.assertEqual(row, original)
+                    json.dumps(record)
+
+    def test_ls_blocks_reject_wrong_counts_order_and_channels(self):
+        row = next(r for r in ls_blocks.cases() if r['id'].endswith('multiple'))
+        for fault in ('count', 'order', 'duplicate', 'missing', 'total', 'stderr', 'status',
+                      'bytes', 'inode', 'mode', 'link', 'entries', 'size'):
+            def capture(binary, invocation, cwd, *args, **kwargs):
+                root = cwd / 'blocks'
+                lines = [f'{((root / n).lstat().st_blocks + 1) // 2} blocks/{n}\n'.encode()
+                         for n in row['ls_blocks']['names']]
+                if fault == 'count': lines[0] = b'999999 blocks/directory\n'
+                if fault == 'order': lines.reverse()
+                if fault == 'duplicate': lines.append(lines[0])
+                if fault == 'missing': lines.pop()
+                if fault == 'total': lines.insert(0, b'total 99\n')
+                if fault == 'bytes': (root / 'regular').write_bytes(b'X' * len(ls_blocks.CONTENT))
+                if fault == 'inode':
+                    (root / 'empty').rename(cwd / 'saved')
+                    (root / 'empty').touch()
+                if fault == 'mode': (root / 'regular').chmod(0o777)
+                if fault == 'link':
+                    (root / 'symbol').unlink()
+                    (root / 'symbol').symlink_to('missing')
+                if fault == 'entries': (root / 'directory/extra').touch()
+                if fault == 'size': (root / 'sparse').write_bytes(b'X')
+                return (1 if fault == 'status' else 0,
+                        dict(stdout=b''.join(lines), stderr=b'wrong' if fault == 'stderr' else b''), [])
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem.smoke.capture', side_effect=capture):
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                self.assertEqual(record['verdict'], 'FAIL', record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_blocks_independent_rounding_oracle(self):
+        # Odd 512-byte counts may not occur on the actual filesystem. Exercise
+        # the ceil rule separately without claiming that physical boundary.
+        row = next(ls_blocks.cases())
+        real_measure = ls_blocks.measurements
+        def measure(root, names):
+            values = real_measure(root, names)
+            values['empty']['blocks'] = 3
+            return values
+        with tempfile.TemporaryDirectory() as root, patch.object(ls_blocks, 'measurements', side_effect=measure):
+            environment = ls_blocks.setup(Path(root), row)
+            self.assertEqual(environment['expected'], [('empty', 2)])
+            self.assertTrue(ls_blocks.output_matches(environment, b'  2 blocks/empty\n'))
+            for output in (b'1 blocks/empty\n', b'3 blocks/empty\n', b'2 blocks/empty',
+                           b'2 blocks/empty\nextra\n', b'2 blocks/empty\r\n'):
+                self.assertFalse(ls_blocks.output_matches(environment, output))
+
+    def test_ls_blocks_partial_setup_and_failed_probes_never_execute(self):
+        row = next(ls_blocks.cases())
+        for target, replacement in (('os.mkfifo', OSError('controlled FIFO setup failure')),
+                                    ('os.geteuid', lambda: 0),
+                                    ('measurements', OSError('controlled metadata failure'))):
+            with self.subTest(target=target), tempfile.TemporaryDirectory() as root, \
+                    patch('host_filesystem_ls_blocks.' + target, side_effect=replacement), \
+                    patch('host_filesystem.smoke.capture') as capture:
+                record = run_case(Path('/bin/sh'), {'ls': {'path': '/bin/ls'}},
+                                  os.defpath, row, 'direct', Path(root), None)
+                capture.assert_not_called()
+                self.assertEqual((record['verdict'], record['phase']), ('FAIL', 'setup'), record)
+                self.assertTrue(record['cleanup'])
+                self.assertEqual(list(Path(root).iterdir()), [])
+
+    def test_ls_blocks_failed_exec_and_timeout_cleanup(self):
+        self.check_fixture_exec_failure_and_timeout_clean_all_modes(next(ls_blocks.cases()))
 
     def test_touch_objects_matrix_and_all_modes(self):
         rows = list(touch_objects.cases())
@@ -2719,7 +3240,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
                 self.assertFalse(stdout_matches(output, output + b'wrong', Path('.'), Path('.'), row))
 
     def test_complete_unique_case_inventory(self):
-        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases())
+        rows = list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases()) + list(ls_visibility.cases())
         self.assertEqual({r['utility'] for r in rows}, set(UTILITIES))
         self.assertEqual(len({r['id'] for r in rows}), len(rows))
         self.assertTrue(all('gap' not in r for r in rows))
@@ -2846,6 +3367,16 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         self.assertTrue(set(entry['csh113_assertions']) <= set(entry['assertions']))
         self.assertEqual(set(entry['csh114_assertions']), {r['id'] for r in touch_objects.cases()})
         self.assertTrue(set(entry['csh114_assertions']) <= set(entry['assertions']))
+        entry = next(r for r in ledger['utilities'] if r['utility'] == 'ls')
+        self.assertEqual(set(entry['csh115_assertions']), {r['id'] for r in ls_blocks.cases()})
+        self.assertTrue(set(entry['csh115_assertions']) <= set(entry['assertions']))
+        self.assertEqual(set(entry['csh116_assertions']), {r['id'] for r in ls_totals.cases()})
+        self.assertTrue(set(entry['csh116_assertions']) <= set(entry['assertions']))
+        self.assertEqual(set(entry['csh117_assertions']), {r['id'] for r in ls_identity.cases()})
+        self.assertTrue(set(entry['csh117_assertions']) <= set(entry['assertions']))
+        self.assertEqual(set(entry['csh118_assertions']), {r['id'] for r in ls_sockets.cases()})
+        self.assertTrue(set(entry['csh118_assertions']) <= set(entry['assertions']))
+        self.assertEqual(set(entry['csh119_assertions']), {r['id'] for r in ls_visibility.cases()})
         manifest = json.loads((root / 'host_contracts.json').read_text())
         conditions = {c for owner in manifest['owners'] if 'basename' in owner['utilities'] for c in owner['conditions']}
         self.assertEqual({r['id'] for r in ledger['conditions']}, conditions)
@@ -2964,7 +3495,7 @@ with patch(target,side_effect=value): runpy.run_path(wrapper,run_name='__main__'
         root = Path(__file__).resolve().parent
         mapping = json.loads((root / 'host_filesystem_contracts.json').read_text())
         self.assertEqual({r['utility'] for r in mapping['utilities']}, set(UTILITIES))
-        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases())}
+        ids = {r['id'] for r in list(cases()) + list(audit_cases()) + list(terminal_cases()) + list(extended_cases("Linux")) + list(remaining_cases()) + list(residual_cases()) + list(isolated.cases()) + list(interactive.cases()) + list(decisions.cases()) + list(metadata.cases()) + list(recursive.cases()) + list(path_limits.cases()) + list(cwd_cases.cases()) + list(creation.cases()) + list(output_cases.cases("Linux")) + list(cwd_cases.logical_cases()) + list(magic_cases.cases()) + list(calendar_cases.cases()) + list(reference_cases.cases()) + list(datetime_cases.cases()) + list(timezone_cases.cases()) + list(day_rules.cases()) + list(transition_times.cases()) + list(magic_strings.cases()) + list(magic_messages.cases()) + list(magic_types.cases()) + list(magic_defaults.cases()) + list(link_bytes.cases()) + list(creation.omitted_who_cases()) + list(creation.parent_graph_cases()) + list(removal.cases()) + list(link_graphs.cases()) + list(link_permissions.cases()) + list(touch_permissions.cases()) + list(touch_current.cases()) + list(touch_objects.cases()) + list(ls_blocks.cases()) + list(ls_totals.cases()) + list(ls_identity.cases()) + list(ls_sockets.cases()) + list(ls_visibility.cases())}
         for row in mapping['utilities']:
             self.assertFalse(row['full_contract_qualified'])
             self.assertTrue(row['remaining'])
