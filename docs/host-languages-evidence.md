@@ -98,9 +98,17 @@ bounds. The driver observes ed print the modified buffer and a later shell-escap
 helper create a private readiness marker, then signals only its child. The
 second handshake places SIGHUP after the print operation has completed. For
 SIGINT, an additional editor prompt proves that the shell escape has returned:
-`system()` temporarily ignores SIGINT while its child is running. The PTY
-transcript requires the exact marker, restored command mode and unchanged buffer. SIGHUP must recover the exact buffer without overwriting the
-original operand. A directory named `ed.hup` forces the cwd write failure and
+`system()` temporarily ignores SIGINT while its child is running. Terminal
+input remains on a PTY; stdout and stderr are captured through
+independent pipes. The transcript requires the exact marker, restored command
+mode and unchanged buffer. [CSH-129](tickets/CSH-129-ed-signal-response.md)
+repairs early stderr EOF handling and avoids Darwin PTY output loss at slave
+closure. Each stream is drained to its own EOF before the final assertions;
+trailing output fails the unchanged exact transcript oracle. Response phases,
+descriptor readiness/EOF events, status and saved-file contents are retained
+on failures as well as success. Output stays bounded to 64 KiB and event
+records to the first 512 entries. SIGHUP must recover the exact buffer without
+overwriting the original operand. A directory named `ed.hup` forces the cwd write failure and
 HOME fallback without privileges or changes to the developer filesystem.
 The driver reaps ed; inherited process-group cleanup catches descendants.
 A fault test forces a hung editor and descendant, checks bounded failure and

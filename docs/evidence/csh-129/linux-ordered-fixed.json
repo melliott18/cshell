@@ -1,0 +1,133 @@
+{
+  "events": [
+    {
+      "event": "ready",
+      "fds": [
+        "stderr",
+        "stdout"
+      ]
+    },
+    {
+      "event": "read",
+      "stream": "stderr",
+      "data": ""
+    },
+    {
+      "event": "read",
+      "stream": "stdout",
+      "data": "7265636f76657265640a"
+    },
+    {
+      "event": "ready",
+      "fds": [
+        "stdout"
+      ]
+    },
+    {
+      "event": "read",
+      "stream": "stdout",
+      "data": ""
+    }
+  ],
+  "final": true,
+  "unread_errno": 5,
+  "outcome": "PASS",
+  "signal": {
+    "argv": [
+      "/work/build/host-ed",
+      "-s",
+      "original"
+    ],
+    "action": "int",
+    "phase": "final-drain",
+    "signal": "SIGINT",
+    "status": 0,
+    "stdout": "7265636f76657265640a2a3f0a2a7265636f76657265640a",
+    "stderr": "",
+    "reaped": true,
+    "incomplete": false,
+    "events": [
+      {
+        "phase": "initial-response",
+        "event": "ready",
+        "streams": [
+          "stdout"
+        ]
+      },
+      {
+        "phase": "initial-response",
+        "event": "data",
+        "stream": "stdout",
+        "size": 10
+      },
+      {
+        "phase": "readiness",
+        "event": "ready",
+        "streams": [
+          "stdout"
+        ]
+      },
+      {
+        "phase": "readiness",
+        "event": "data",
+        "stream": "stdout",
+        "size": 1
+      },
+      {
+        "phase": "signal-response",
+        "event": "ready",
+        "streams": [
+          "stdout"
+        ]
+      },
+      {
+        "phase": "signal-response",
+        "event": "data",
+        "stream": "stdout",
+        "size": 3
+      },
+      {
+        "phase": "final-response",
+        "event": "ready",
+        "streams": [
+          "stderr",
+          "stdout"
+        ]
+      },
+      {
+        "phase": "final-response",
+        "event": "eof",
+        "stream": "stderr",
+        "size": 0
+      },
+      {
+        "phase": "final-response",
+        "event": "data",
+        "stream": "stdout",
+        "size": 10
+      },
+      {
+        "phase": "final-drain",
+        "event": "ready",
+        "streams": [
+          "stdout"
+        ]
+      },
+      {
+        "phase": "final-drain",
+        "event": "eof",
+        "stream": "stdout",
+        "size": 0
+      }
+    ],
+    "files": {
+      "saved": "7265636f76657265640a"
+    }
+  },
+  "files": {
+    "saved": "7265636f76657265640a",
+    "original": ""
+  },
+  "reaped": true,
+  "fixture_removed": true
+}
