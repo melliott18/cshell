@@ -551,7 +551,14 @@ build/host-mv: build/host-ln
 	env -u MAKEFLAGS -u MFLAGS -u MAKEOVERRIDES $(MAKE) -C build/host-coreutils-build -j4 src/mv > build/host-coreutils-build/mv.log 2>&1 || { cat build/host-coreutils-build/mv.log; exit 1; }
 	cp build/host-coreutils-build/src/mv $@
 
-host-profile: build/host-bc build/host-mv build/host-awk build/host-uudecode build/host-ed build/host-xargs build/host-m4 build/host-patch build/host-test build/host-chmod build/host-newgrp build/host-ln build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
+# Darwin stock id -G uses account membership instead of process credentials.
+# Keep the POSIX oracle and select GNU id, whose gnulib reads raw getgroups.
+# Serialize with the other targets using this shared vendor build directory.
+build/host-id: build/host-mv
+	env -u MAKEFLAGS -u MFLAGS -u MAKEOVERRIDES $(MAKE) -C build/host-coreutils-build -j4 src/id > build/host-coreutils-build/id.log 2>&1 || { cat build/host-coreutils-build/id.log; exit 1; }
+	cp build/host-coreutils-build/src/id $@
+
+host-profile: build/host-id build/host-bc build/host-mv build/host-awk build/host-uudecode build/host-ed build/host-xargs build/host-m4 build/host-patch build/host-test build/host-chmod build/host-newgrp build/host-ln build/host-mkdir build/host-mkfifo build/host-file build/host-touch build/host-rm build/host-printf build/host-paths build/host-pax build/host-du build/host-cp
 	$(PYTHON) tools/host-profile/provision.py build/host-profile/bin --cc="$(CC)" --cppflags="$(CPPFLAGS)" --cflags="$(CFLAGS)" --ldflags="$(LDFLAGS)" --ldlibs="$(LDLIBS)" $(if $(HOST_TEXT_PROVIDER_BIN),--text-bin "$(HOST_TEXT_PROVIDER_BIN)")
 
 build/host-chmod: tools/host-profile/chmod.c

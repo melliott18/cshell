@@ -78,6 +78,8 @@ def provision(destination, gnu_bin=None, text_bin=None, catalog_bin=None, cc="cc
                       for name in ('stty', 'tabs', 'tput', 'tty', 'mesg', 'who')})
     system = platform.system()
     if system == 'Darwin':
+        # Apple id -G reads directory membership, not the invoking process list.
+        overrides['id'] = str(ROOT / 'build/host-id')
         # Homebrew's prefixed names do not change the system PATH or echo policy.
         search = str(gnu_bin) if gnu_bin else os.environ.get('PATH', os.defpath)
         overrides.update({name: shutil.which('g' + name, path=search)
@@ -200,6 +202,14 @@ def provision(destination, gnu_bin=None, text_bin=None, catalog_bin=None, cc="cc
         configure=manifest['executables']['cp']['source']['configure'],
         build_targets=['src/ln'], log='build/host-coreutils-build/ln.log',
         scope='unmodified ln from the shared pinned source build')
+    if system == 'Darwin':
+        manifest['executables']['id']['source'] = dict(
+            version='GNU coreutils 9.7',
+            archive=manifest['executables']['cp']['source']['archive'],
+            archive_sha256=manifest['executables']['cp']['source']['archive_sha256'],
+            configure=manifest['executables']['cp']['source']['configure'],
+            build_targets=['src/id'], log='build/host-coreutils-build/id.log',
+            scope='unmodified id; gnulib uses process getgroups on Darwin')
     manifest['executables']['touch']['source'] = dict(
         version='GNU coreutils 9.7 + IANA tzcode 2025b',
         coreutils_archive_sha256=manifest['executables']['cp']['source']['archive_sha256'],
