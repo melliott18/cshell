@@ -74,6 +74,9 @@ make test-substitution # Integrated expansion, child ownership, and capture fail
 make test-fields   # IFS splitting, pathname expansion, and cleanup checks
 make test-options  # Invocation/set, option effects, and environment interactions
 make test-host-terminal-residuals # Strict residual terminal/locale/error witnesses
+make test-host-filesystem-ls-blocks # Measured ls allocation and operand-link counts
+make test-host-filesystem-ls-totals # Measured directory totals, selection and recursion
+make test-host-filesystem-ls-identity # Measured inode numbers and file-type suffixes
 make test-host-inventory # Complete utility and residual ownership consistency
 make test-host-utilities # Stock-host integration, identities and known gaps
 make test-host-filesystem # Bounded filesystem/pathname provider witnesses
@@ -91,7 +94,9 @@ make test-host-permissions # Predicate, mode, ownership and identity assertions
 
 make test-host-terminal # Stock terminal-provider checks (strict failures retained)
 make test-host-terminal-profile # Qualified bounded PTY/session-record checks
+make test-host-filesystem-ls-operands # Mixed ls operands and symlink following
 make test-host-profile   # Opt-in qualified utilities, strict gaps and boundaries
+make test-host-filesystem-ls-sockets # Measured socket inode/type rendering
 make test-host-filesystem-removal # rmdir parent graphs, permissions and continuation
 
 make test-host-text      # Strict bounded text/byte utility subset
@@ -221,3 +226,5 @@ The [CSH-012 requirement, defect, platform and documentation review](docs/confor
 `make test-host-filesystem-touch-current` checks CSH-113 touch creation modes and bounded current-time behavior in direct execution and all shell input modes. See [CSH-113 evidence](docs/evidence/csh-113/README.md).
 
 `make test-host-filesystem-touch-objects` checks CSH-114 directory/FIFO timestamps and namespace-error continuation in direct execution and all shell input modes. See [CSH-114 evidence](docs/evidence/csh-114/README.md).
+
+`make test-host-filesystem-ls-operands` qualifies mixed `ls` operands and operand/entry symlink following with independent inode/type probes. See [CSH-121 evidence](docs/evidence/csh-121/README.md) for scope and retained stock failures.

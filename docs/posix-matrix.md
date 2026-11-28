@@ -345,3 +345,36 @@ records the completed implementation milestone and combined evidence.
 and pathname residuals, including case, read and alias utilities. Its condition
 map assigns external prerequisites P1–P6 without promoting whole families or
 counting unavailable capabilities as passes.
+
+### CSH-115 ls allocation increment
+
+CSH-115 supplies 20 ls cases / 80 assertions for -s -k and -k -s allocation reporting on empty, regular, seek-created, hard-linked, directory, FIFO and symlink objects; -H/-L operand following and C-sorted multiple operands retain per-name hard-link counts. Independent pre-exec lstat allocation and stat alias probes supply 1024-byte counts, with unchanged metadata, bytes, links, channels/status and cleanup required. The selected unmodified GNU coreutils 9.7 ls replaces Apple ls, whose -H block count uses the link instead of its referent. Default -s units are implementation-defined and are not qualified. Sparse allocation is reported only where measured; no shared-extent, capacity, rounding-boundary or general filesystem accounting claim is made.
+
+U-034/U-040 remain partial. [CSH-116](tickets/CSH-116-filesystem-environment-residuals.md) owns all 21 full utility contracts and four retained conditions. See [CSH-115 evidence](evidence/csh-115/README.md).
+
+## CSH-116 directory allocation totals
+
+CSH-116 supplies 32 ls cases / 128 assertions for directory allocation totals with -s -k and -k -s, empty/populated directories, hidden-entry selection with -A, C-sorted multiple operands, recursive sections and -L file-symlink following. Pre-exec lstat allocation and stat alias probes supply 1024-byte totals by summing raw 512-byte counts before rounding, counting each hard-link name and excluding unlisted descendants. Exact section/count/name order, permitted initial recursive heading omission, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Default units, arbitrary graphs, other filesystem accounting policies, shared extents, physical rounding boundaries, capacity, non-C locales and resource failures remain unqualified.
+
+See [CSH-116 evidence](evidence/csh-116/README.md). U-034/U-040 remain partial;
+[CSH-117](tickets/CSH-117-filesystem-environment-residuals.md) owns every remaining
+utility environment and all four retained conditions.
+
+## CSH-117 inode and file-type rendering
+
+CSH-117 supplies 36 ls cases / 144 assertions for inode numbers (-i) and plain, -F and -p type rendering on regular files, independently set user/group/other execute bits, directories, FIFOs, a hard-link pair and file/directory/executable/FIFO symlinks. C-sorted directory entries and reverse-authored -d operands exercise physical, -H and -L handling. Pre-exec lstat inode/type/mode and stat referent probes supply the oracle. Exact names, suffixes, inode numbers, channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Sockets/devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified.
+
+See [CSH-117 evidence](evidence/csh-117/README.md). U-034/U-040 remain partial;
+[CSH-122](tickets/CSH-122-filesystem-environment-residuals.md) owns all 21 full
+utility contracts and four retained conditions.
+
+## CSH-118 socket pathname qualification
+
+CSH-118 supplies 36 ls cases / 144 assertions for closed AF_UNIX stream/datagram socket pathnames and symlinks, with plain, -F and -p rendering, optional -i, physical/-H/-L handling, directory entries and reverse-authored -d operands. A bounded child binds and closes the sockets before provider exec. Independent lstat type/mode/inode and stat referent probes supply the oracle; the executable-mode socket still requires the socket suffix. Exact channels/status, names/order/inodes, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Live socket communication, devices, arbitrary graphs, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. U-034/U-040 remain partial. [CSH-122](tickets/CSH-122-filesystem-environment-residuals.md) owns all remaining contracts and four retained conditions. See [evidence](evidence/csh-118/README.md).
+
+CSH-119 adds 24 bounded ls hidden-entry cases (96 assertions per platform), covering default, -A and -a selection, dot-directory identities, reversal and plain/inode/type rendering. See [evidence](evidence/csh-119/README.md); full contracts and U-034/U-040 remain partial.
+
+CSH-120 adds 48 bounded recursive ls cases (192 assertions per platform) for hidden directories, dot entries and directory-link traversal. See [evidence](evidence/csh-120/README.md); U-034/U-040 and full contracts remain partial, with residual ownership in [CSH-122](tickets/CSH-122-filesystem-environment-residuals.md).
+
+
+CSH-121 supplies 36 ls cases / 144 assertions for mixed file, FIFO, directory and symlink operands, automatic directory-link following, -H versus -L, plain/-F/-p rendering, optional inode numbers and reverse C sorting. Authored groups and independent pre-exec lstat/stat probes require non-directory operands first, separately sorted directory operands, mandatory headings and empty-directory sections. Operand and entry links have distinct referent identities; nested contents must remain unlisted. Exact channels/status, unchanged metadata/bytes/link text/directory entries and cleanup are required. Selected providers are unchanged. Apple stock ls retains 48 new assertion failures for default -i directory-link following and -H file-link metadata; these are not allowances. Arbitrary graphs, devices, other identities/ACLs, terminal layouts, non-C locales, namespace races and resource failures remain unqualified. See [CSH-121 evidence](evidence/csh-121/README.md). CSH-122 owns all remaining contracts and the four retained conditions; U-034/U-040 remain partial.
