@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "docker",
+    "rm",
+    "cshell-csh133-validation"
+  ],
+  "status": 0,
+  "stdout": "cshell-csh133-validation\n",
+  "stderr": ""
+}

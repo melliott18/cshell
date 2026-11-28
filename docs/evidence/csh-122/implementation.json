@@ -1,0 +1,9 @@
+{
+  "base": "a960541ed3885020bb184c67b5bee7dda46a876f",
+  "branch": "test/CSH-122-filesystem-environments",
+  "integration_base": "d175f9f26f12775923d5f4350a1a187fb9f01f19",
+  "date": "2026-11-15",
+  "build_command": "PATH=\"$PWD/build/prerequisites:$PATH\" make -j4 cshell host-profile",
+  "native_validation_command": "PATH=\"$PWD/build/prerequisites:$PATH\" TMPDIR=\"$PWD/build/csh122-tmp\" python3 docs/evidence/csh-122/validate.py native",
+  "linux_validation_command": "sh docs/evidence/csh-122/linux.sh"
+}

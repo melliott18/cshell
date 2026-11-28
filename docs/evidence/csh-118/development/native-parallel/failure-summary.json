@@ -1,0 +1,17 @@
+[
+  "Ran 13 tests in 0.266s",
+  "Ran 10 tests in 2.019s",
+  "Ran 10 tests in 0.386s",
+  "Ran 6 tests in 6.130s",
+  "Ran 10 tests in 0.365s",
+  "FAIL: permissions: test/primary-8 (stdin)",
+  "make: *** [test-host-permissions] Error 1",
+  "make: *** Waiting for unfinished jobs....",
+  "ERROR: test_link_bytes_exec_failure_and_timeout_clean_all_modes (__main__.FilesystemHarnessTests.test_link_bytes_exec_failure_and_timeout_clean_all_modes) (mode='string', fault='timeout')",
+  "FAIL: test_touch_objects_matrix_and_all_modes (__main__.FilesystemHarnessTests.test_touch_objects_matrix_and_all_modes) (case='touch/objects-directory-both', mode='stdin')",
+  "FAIL: test_touch_objects_matrix_and_all_modes (__main__.FilesystemHarnessTests.test_touch_objects_matrix_and_all_modes) (case='touch/objects-directory-access', mode='direct')",
+  "FAIL: test_touch_objects_matrix_and_all_modes (__main__.FilesystemHarnessTests.test_touch_objects_matrix_and_all_modes) (case='touch/objects-directory-access', mode='string')",
+  "Ran 189 tests in 282.758s",
+  "FAILED (failures=3, errors=1)",
+  "make: *** [test-host-inventory] Error 1"
+]
